@@ -73,14 +73,17 @@ void __fastcall TArtifacts::TrackBarChange(TObject *Sender)
 
         extern int VSYNC_TOLLERANCEMIN;
         extern int VSYNC_TOLLERANCEMAX;
+        extern int HSYNC_TOLLERANCE;
 
         VSYNC_TOLLERANCEMIN= 283 + VBias->Position;
-        VSYNC_TOLLERANCEMAX = VSYNC_TOLLERANCEMIN + VGain->Position + 40;
+        VSYNC_TOLLERANCEMAX = VSYNC_TOLLERANCEMIN + 40; //VGain->Position + 40;
+        HSYNC_TOLLERANCE = VGain->Position+405;
 
         if (tv.AdvancedEffects)
         {
                 VSYNC_TOLLERANCEMIN *= 2;
                 VSYNC_TOLLERANCEMAX *= 2;
+                HSYNC_TOLLERANCE *= 2;
         }
 
         if (zx81.NTSC)
@@ -281,15 +284,28 @@ void __fastcall TArtifacts::AdvEffectsClick(TObject *Sender)
         {
                 DotCrawl1->Enabled=true;
                 Interlaced1->Enabled=true;
+                tv.Interlaced=Interlaced1->Checked;
+                tv.DotCrawl=DotCrawl1->Checked;
+
+
+                if (Form1->N1001->Checked) Form1->N501Click(NULL);
+                else if (Form1->N2001->Checked) Form1->N1001Click(NULL);
+                else if (Form1->N4001->Checked) Form1->N2001Click(NULL);
+                // else { Form1->ClientWidth /=2; Form1->ClientHeight /=2; }
         }
         else
         {
-                DotCrawl1->Checked=false;
+                //DotCrawl1->Checked=false;
                 DotCrawl1->Enabled=false;
-                Interlaced1->Checked=false;
+                //Interlaced1->Checked=false;
                 Interlaced1->Enabled=false;
                 tv.Interlaced=0;
                 tv.DotCrawl=0;
+
+                if (Form1->N501->Checked) Form1->N1001Click(NULL);
+                else if (Form1->N1001->Checked) Form1->N2001Click(NULL);
+                else if (Form1->N2001->Checked) Form1->N4001Click(NULL);
+                //else { Form1->ClientWidth *=2; Form1->ClientHeight *=2; }
         }
 
         if (Sender)

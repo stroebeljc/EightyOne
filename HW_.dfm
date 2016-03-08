@@ -1,8 +1,8 @@
 object HW: THW
-  Left = 543
-  Top = 157
+  Left = 334
+  Top = 158
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Hardware'
   ClientHeight = 348
   ClientWidth = 399
@@ -28,7 +28,7 @@ object HW: THW
     Top = 8
     Width = 393
     Height = 93
-    ActivePage = Others
+    ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -375,7 +375,6 @@ object HW: THW
         TabOrder = 5
         Transparent = True
         UseCustomGlyphs = True
-        Visible = False
         Toggle = True
         OnClick = QLBtnClick
       end
@@ -1194,7 +1193,7 @@ object HW: THW
     Top = 144
     Width = 392
     Height = 169
-    ActivePage = FloppyDrives
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 4
     object Interfaces: TTabSheet

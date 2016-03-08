@@ -2,7 +2,7 @@ object EditHWInfoForm: TEditHWInfoForm
   Left = 850
   Top = 68
   BorderIcons = []
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Edit Hardware Information'
   ClientHeight = 317
   ClientWidth = 343

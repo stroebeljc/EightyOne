@@ -1,6 +1,6 @@
 object Printer: TPrinter
-  Left = 594
-  Top = 127
+  Left = 616
+  Top = 115
   Anchors = [akLeft, akTop, akBottom]
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow

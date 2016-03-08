@@ -36,7 +36,7 @@ extern "C" int sound_freq;
 extern "C" int sound_stereo;
 extern "C" int sound_stereo_acb;
 
-extern "C" void sound_init(void);
+extern "C" int sound_init(void);
 extern "C" void sound_end(void);
 extern "C" void sound_frame(void);
 extern "C" void sound_ay_write(int reg,int val);
@@ -50,7 +50,7 @@ extern int sound_freq;
 extern int sound_stereo;
 extern int sound_stereo_acb;
 
-extern void sound_init(void);
+extern int sound_init(void);
 extern void sound_end(void);
 extern void sound_frame(void);
 extern void sound_ay_write(int reg,int val);

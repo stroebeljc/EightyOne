@@ -19,6 +19,8 @@
  * DbgDissassem.cpp
  */
 
+#include "symbolstore.h"
+
 BYTE GetMem(int Addr)
 {
         if (zx81.machine==MACHINESPEC48
@@ -1420,9 +1422,31 @@ AnsiString TDbg::Disassemble(int *Ad)
         p=StrText.AnsiPos("nnnn");
         if (p)
         {
-                StrText=StrRep(StrText,p,4,"$"+Hex16(GetMem(Addr) + 256*GetMem(Addr+1)));
-                StrCode += Hex16(GetMem(Addr) + 256*GetMem(Addr+1));
+                int absadd = GetMem(Addr) + 256*GetMem(Addr+1);
+                AnsiString nnnn = symbolstore::addressToSymbolOrHex(absadd);
+                StrText=StrRep(StrText,p,4,nnnn);
+                StrCode += Hex16(absadd);
                 Addr+=2;
+        }
+
+        p=StrText.AnsiPos("fz");
+        if (p)
+        {
+                int offset=GetMem(Addr);
+                if (offset>127) offset=offset-256;
+
+                AnsiString nnnn = symbolstore::addressToSymbolOrHex(Addr + 1 + offset);
+                StrText=StrRep(StrText,p,2,nnnn);
+                StrCode += Hex8(GetMem(Addr++));
+        }
+
+        p=StrText.AnsiPos("+dd");
+        if (p)
+        {
+                int i=GetMem(Addr);
+                if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(255-i));
+                else StrText=StrRep(StrText,p,3,"+$" + Hex8(i));
+                StrCode += Hex8(GetMem(Addr++));
         }
 
         p=StrText.AnsiPos("nn");
@@ -1432,40 +1456,30 @@ AnsiString TDbg::Disassemble(int *Ad)
                 StrCode += Hex8(GetMem(Addr++));
         }
 
-        p=StrText.AnsiPos("fz");
-        if (p)
-        {
-                StrText=StrRep(StrText,p,2,"$"+Hex16(Addr + 1 +((signed char)GetMem(Addr))));
-                StrCode += Hex8(GetMem(Addr++));
-        }
-
-        p=StrText.AnsiPos("+dd");
-        if (p)
-        {
-                int i;
-                AnsiString chr="+";
-
-                i=GetMem(Addr);
-                if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(255-i));
-                else StrText=StrRep(StrText,p,3,"+$" + Hex8(i));
-                StrCode += Hex8(GetMem(Addr++));
-        }
-
         p=StrText.AnsiPos("+DD");
         if (p)
         {
-                int i;
-                AnsiString chr="+";
-
-                i=Offset;
+                int i=Offset;
                 if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(255-i));
                 else StrText=StrRep(StrText,p,3,"+$" + Hex8(i));
         }
 
-        while (StrCode.Length() < 8) StrCode += "  ";
+        AnsiString lab("");
+        symbolstore::addressToSymbol(*Ad, lab);
 
-        StrAddr += " " + StrCode + " " + StrText;
+        lab += "             ";
+        lab.SetLength(12);
+
+        StrAddr += "         ";
+        StrAddr.SetLength(7);
+        lab += StrAddr;
+
+        StrCode += "         ";
+        StrCode.SetLength(10);
+        lab += StrCode;
+
+        lab += StrText;
 
         *Ad = Addr;
-        return(StrAddr);
+        return lab;
 }

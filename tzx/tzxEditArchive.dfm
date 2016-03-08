@@ -2,7 +2,7 @@ object EditArchiveInfo: TEditArchiveInfo
   Left = 462
   Top = 135
   BorderIcons = []
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Edit Archive Information'
   ClientHeight = 328
   ClientWidth = 346

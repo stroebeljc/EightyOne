@@ -95,23 +95,24 @@ struct kb KBZX81[]=
         { 0, VK_NUMPAD9 , kbA12, kbD1, 255,255 },
         { 0, VK_NUMPAD0 , kbA12, kbD0, 255,255 },
 
-        { 0, VK_MULTIPLY , kbA8, kbD4, 255,255 },
-        { 0, VK_DIVIDE , kbA15, kbD4, 255,255 },
+        { 0, VK_MULTIPLY , kbA15, kbD4, kbA8, kbD0 },
+        { 0, VK_DIVIDE , kbA8, kbD4, kbA8, kbD0 },
+        { 0, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD0 },
+        { 0, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
+        { 0, VK_DECIMAL , kbA15, kbD1, 255,255 },
+
 
         { 1, 186, kbA8, kbD2, kbA8, kbD0 },
         { 2, 186, kbA8, kbD1, kbA8, kbD0 },
         { 1, 189, kbA14, kbD3, kbA8, kbD0 },
-        { 1, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD0 },
 
         { 1, 187, kbA14, kbD1, kbA8, kbD0 },
         { 2, 187, kbA14, kbD2, kbA8, kbD0 },
-        { 2, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
 
         { 1, 188, kbA15, kbD1, kbA8, kbD0 },
         { 2, 188, kbA15, kbD3, kbA8, kbD0 },
 
         { 1, 190 , kbA15, kbD1, 255,255 },
-        { 1, VK_DECIMAL , kbA15, kbD1, 255,255 },
         { 2, 190 , kbA15, kbD2, kbA8, kbD0 },
         { 1, 191 , kbA8, kbD4, kbA8, kbD0 },
         { 2, 191 , kbA8, kbD3, kbA8, kbD0 },

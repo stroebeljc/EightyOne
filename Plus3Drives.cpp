@@ -430,9 +430,10 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                         Filename=OpenDialog2->FileName;
                         Ext=FileNameGetExt(Filename);
 
-                        if (Ext!=".HDF") Filename += ".hdf";
+                        if (Ext!=".HDF" && Ext!=".VHD") Filename += ".hdf";
+                        Ext=FileNameGetExt(Filename);
 
-                        if (access(Filename.c_str(), 0))
+                        if (access(Filename.c_str(), 0) && Ext==".HDF")
                         {
                                 char Message[256];
                                 int ret;
@@ -446,14 +447,18 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
 
                                 CreateHDF->FileName=Filename;
                                 CreateHDF->ShowModal();
-                                if (access(Filename.c_str(), 0)) return;
                         }
+                        if (access(Filename.c_str(), 0)) return;
                 }
         }
 
         HD0Text->Text = Filename;
         HD0Text->SelStart=HD0Text->Text.Length()-1; HD0Text->SelLength=0;
-        ATA_LoadHDF(0,Filename.c_str());
+        if (ATA_LoadHDF(0,Filename.c_str()))
+        {
+                HD0EjectBtnClick(NULL);
+                return;
+        }
         ATA_GetCHS(0, &c, &h, &s, &size);
         HD0ReadOnly->Checked=ATA_GetReadOnly(0);
 
@@ -523,7 +528,12 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
 
         HD1Text->Text = Filename;
         HD1Text->SelStart=HD1Text->Text.Length()-1; HD1Text->SelLength=0;
-        ATA_LoadHDF(1,Filename.c_str());
+        if (ATA_LoadHDF(1,Filename.c_str()))
+        {
+                HD1EjectBtnClick(NULL);
+                return;
+        }
+
         ATA_GetCHS(1, &c, &h, &s, &size);
         HD1ReadOnly->Checked=ATA_GetReadOnly(1);
         HD1C->Text=c;

@@ -1,7 +1,7 @@
 object SoundOutput: TSoundOutput
   Left = 466
   Top = 112
-  BorderStyle = bsSingle
+  BorderStyle = bsToolWindow
   Caption = 'SoundOutput'
   ClientHeight = 128
   ClientWidth = 441

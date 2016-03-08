@@ -2,6 +2,9 @@
 
     Copyright (C) 2000  John Elliott <jce@seasip.demon.co.uk>
 
+    Modifications to add dirty flags
+    (c) 2005 Philip Kendall <pak21-spectrum@srcf.ucam.org>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -278,6 +281,25 @@ static fd_err_t fdl_format_track(FLOPPY_DRIVE *fd, int head,
 	return fdl_xlt_error(err);
 }		
 
+/* Has this floppy been written to since it was inserted? */
+static int fdl_dirty(FLOPPY_DRIVE *fd)
+{
+	LIBDSK_FLOPPY_DRIVE *fdl = (LIBDSK_FLOPPY_DRIVE *)fd;
+
+#ifdef LIBDSK_EXPOSES_DIRTY
+	if (fdl->fdl_diskp)
+	{
+		return dsk_dirty(fdl->fdl_diskp);
+	}
+	else
+	{
+		return FD_D_UNAVAILABLE;
+	}
+#else	// def LIBDSK_EXPOSES_DIRTY
+	return FD_D_UNAVAILABLE;
+#endif	// def LIBDSK_EXPOSES_DIRTY
+}
+
 /* Eject a DSK - close the image file */
 static void fdl_eject(FLOPPY_DRIVE *fd)
 {
@@ -358,6 +380,7 @@ static FLOPPY_DRIVE_VTABLE fdv_libdsk =
 	fdl_format_track,
 	fdl_drive_status,
 	fdl_isready,
+	fdl_dirty,
 	fdl_eject,
 	fdl_set_datarate,
 	NULL,

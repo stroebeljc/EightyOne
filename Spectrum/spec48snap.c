@@ -53,7 +53,7 @@ extern int SPECMICState, SPECTopBorder, SPECLeftBorder, SPECBorder, FloatingBus;
 extern int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
 extern int SPECKb, SPECNextBorder;
 extern int SPECVSync;
-
+extern int fts;
 
 int LoadDock(char *Filename)
 {
@@ -140,6 +140,7 @@ void spec_load_z80(char *fname)
         unsigned char *buf;
         int z80version=1;
         int speccy;
+        int frame;
 
         f=fopen(fname, "rb");
         if (!f) return;
@@ -238,6 +239,7 @@ void spec_load_z80(char *fname)
         z80.im = buf[29]&3;
         z80.r7=(buf[12]&1)<<7;
         SPECBorder=(buf[12]>>1)&7;
+        SPECNextBorder=SPECBorder;
         compressed=buf[12]&32;
 
         if (z80version==1)
@@ -296,6 +298,12 @@ void spec_load_z80(char *fname)
                 spec48_writeport(0xff,buf[36], &i);
         spec48_writeport(0x7ffd,buf[35], &i);
 
+        fts=17471 - (buf[55] | (buf[56]<<8));
+        fts = (((buf[57]+1)&3)<<16) | fts;
+        fts=0;
+
+        //fts=buf[55] | (buf[56]<<8) | (buf[57]<<16);
+
         free(buf);
 }
 
@@ -341,6 +349,7 @@ void spec_load_sna(char *fname)
         z80.sp.w=buf[23] + 256*buf[24];
         z80.im=buf[25];
         SPECBorder=buf[26];
+        SPECNextBorder=SPECBorder;
 
         if (len>49179)
         {

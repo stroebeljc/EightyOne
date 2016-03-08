@@ -6,6 +6,9 @@
 
     Copyright (C) 2002,2003,2004  John Elliott <jce@seasip.demon.co.uk>
 
+    Modifications to add dirty flags
+    (c) 2005 Philip Kendall <pak21-spectrum@srcf.ucam.org>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -87,6 +90,11 @@ typedef short         fd_err_t; /* Error code returned from disc routines */
 #define FD_E_NOSECTOR (-5)	/* Sector not found */
 #define FD_E_NOTRDY   (-6)	/* Drive not ready */
 #define FD_E_READONLY (-7)	/* Read only */
+
+/* Floppy disk dirty flags */
+#define FD_D_UNAVAILABLE (-1)	/* Disk dirty information not available */
+#define FD_D_CLEAN       ( 0)	/* Disk not written to */
+#define FD_D_DIRTY       ( 1)	/* Disk written to */
 
 struct fdc_765;
 
@@ -239,6 +247,9 @@ fdc_byte fd_isready(FDRV_PTR fd);
 /* Return 1 if the disc has been changed (defined as the disc being ejected 
  * since last FDC reset). For PcW16 changeline support. */
 fdc_byte fd_changed(FDRV_PTR fd);
+/* Has this floppy been written to since it was inserted? */
+#define LIB765_EXPOSES_DIRTY
+int fd_dirty(FDRV_PTR fd);
 /* Eject the disc from the drive */
 void fd_eject(FDRV_PTR fd);
 /* Set the drive's data rate */

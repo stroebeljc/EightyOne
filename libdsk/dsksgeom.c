@@ -22,7 +22,9 @@
 
 #include "drvi.h"
 
-/* Standard disc geometries. These are used 
+#define tolower(c) (((c)>='A' && (c)<='Z')?((c)+('a'-'A')):(c));
+
+/* Standard disc geometries. These are used
  * (i)  when logging in a disc, if the superblock is recognised
  * (ii) when formatting */
 
@@ -190,7 +192,7 @@ const char *dg_sharedir(void)
     l = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
         "Software\\jce@seasip\\LibDsk", 0, KEY_READ, &hk);
     if (l == ERROR_SUCCESS)
-    {                                             
+    {
         dws = PATH_MAX;
         l = RegQueryValueEx(hk, "ShareDir", NULL, NULL, 
                 (BYTE *)buf, &dws); 
@@ -237,7 +239,6 @@ const char *dg_sharedir()
 
 static DSK_NAMEDGEOM *customgeom = NULL;
 
-#define tolower(s) _tolower(s)
 
 dsk_err_t dg_parse(FILE *fp, DSK_GEOMETRY *dg, char *description)
 {
@@ -281,7 +282,7 @@ dsk_err_t dg_parseline(char *linebuf, DSK_GEOMETRY *dg, char *description)
 /* Make the variable name case-insensitive */
     for (s = linebuf; s[0]; s++)
     {
-        *s = tolower(*s);
+         *s = tolower(*s);
     }
     if (!strcmp(linebuf, "description"))
     {

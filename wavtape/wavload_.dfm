@@ -3,6 +3,7 @@ object WavLoad: TWavLoad
   Top = 105
   Width = 344
   Height = 231
+  BorderStyle = bsSizeToolWin
   Caption = 'Wave Loader'
   Color = clBtnFace
   Constraints.MinHeight = 200
@@ -621,7 +622,7 @@ object WavLoad: TWavLoad
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 182
+    Top = 185
     Width = 336
     Height = 19
     BorderWidth = 1

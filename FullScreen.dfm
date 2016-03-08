@@ -1,8 +1,8 @@
 object FSSettings: TFSSettings
-  Left = 272
-  Top = 324
+  Left = 479
+  Top = 161
   BorderIcons = []
-  BorderStyle = bsSingle
+  BorderStyle = bsToolWindow
   Caption = 'Display Settings'
   ClientHeight = 238
   ClientWidth = 207

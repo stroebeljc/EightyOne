@@ -4,19 +4,29 @@
 #include <io.h>
 #include <fcntl.h>
 #include <windows.h>
+#include <errno.h>
 
 #include "floppy.h"
+#include "libdsk/config.h"
 #include "libdsk.h"
 #include "765.h"
 #include "wd1770.h"
 #include "zx81config.h"
 #include "parallel.h"
 
+extern void fdl_setfilename(FDRV_PTR fd, const char *s);
+
 FDC_PTR p3_fdc=NULL;
 FDRV_PTR p3_drive_a=NULL;
 FDRV_PTR p3_drive_b=NULL;
 FDRV_PTR p3_drive_null=NULL;
 wd1770_drive PlusDDrives[2], *PlusDCur;
+
+#define LARKENSIZE (80*1984)
+unsigned char LarkenDrive[LARKENSIZE*2];
+char LarkenPath0[MAXPATH], LarkenPath1[MAXPATH];
+
+#include "larhead.h"
 
 extern int USEFDC765DLL;
 HANDLE DLLHandle;
@@ -86,7 +96,7 @@ BYTE OpusD6821Access(BYTE reg, BYTE Data, BYTE Dir)
                         {
                                 Data_Reg_A=Data;
                                 floppy_set_motor(Data);
-                        }
+                       }
                         else
                                 Data_Dir_A=Data;
                 }
@@ -378,6 +388,15 @@ void floppy_init()
         Data_Reg_A=0; Data_Dir_A=0; Control_A=0;
         Data_Reg_B=0; Data_Dir_B=0; Control_B=0;
 
+        if (spectrum.floppytype==FLOPPYLARKEN81)
+        {
+                memset(LarkenDrive, 0, LARKENSIZE*2);
+                LarkenPath0[0]='\0';
+                LarkenPath1[0]='\0';
+                if (strlen(filename)) floppy_setimage(i,filename);
+                return;
+        }
+
         if (spectrum.floppytype==FLOPPYPLUSD
                 || spectrum.floppytype==FLOPPYDISCIPLE
                 || spectrum.floppytype==FLOPPYOPUSD
@@ -551,8 +570,28 @@ void floppy_init()
         }
 }
 
+
 void floppy_eject(int drive)
 {
+        if (spectrum.floppytype==FLOPPYLARKEN81)
+        {
+                int a;
+                char *filename;
+
+                if (drive==0) filename=LarkenPath0;
+                else filename=LarkenPath1;
+
+                a=open( filename, O_CREAT | O_RDWR | O_BINARY);
+                if (a>0)
+                {
+                        write(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
+                        close(a);
+                }
+
+                memset(LarkenDrive + (LARKENSIZE*drive), 0, LARKENSIZE);
+                filename[0]='\0';
+        }
+
         if (spectrum.floppytype==FLOPPYPLUS3)
         {
                 if (USEFDC765DLL)
@@ -590,6 +629,34 @@ int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_for
 void floppy_setimage(int drive, char *filename)
 {
         int a;
+
+        if (spectrum.floppytype==FLOPPYLARKEN81)
+        {
+                floppy_eject(drive);
+                if (strlen(filename))
+                {
+                        a=access(filename, 0);
+                        if (!a)
+                        {
+                                a=open( filename, O_RDWR | O_BINARY);
+                                read(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
+                                if (drive==0) strcpy(LarkenPath0, filename);
+                                if (drive==1) strcpy(LarkenPath1, filename);
+                        }
+                        else
+                        {
+                                if (errno==ENOENT)
+                                {
+                                        if (drive==0) strcpy(LarkenPath0, filename);
+                                        if (drive==1) strcpy(LarkenPath1, filename);
+                                        memset(LarkenDrive + (LARKENSIZE*drive), 0, 1984);
+                                        memcpy(LarkenDrive + (LARKENSIZE*drive), LarkenHeader,1984);
+                                }
+                        }
+                }
+                return;
+        }
+
         if (spectrum.floppytype==FLOPPYPLUSD
                 || spectrum.floppytype==FLOPPYDISCIPLE
                 || spectrum.floppytype==FLOPPYOPUSD
@@ -798,5 +865,35 @@ int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_for
 	}
 	return 0;
 }
+
+int LarkenLoadTrack(int Drive, int TrackNo, unsigned char *buf)
+{
+        int offset;
+
+        offset=Drive*LARKENSIZE;
+
+        if (LarkenDrive[offset+140]!=0xff)
+        {
+                memset(buf, 0, 1984);
+                return(0);
+        }
+
+
+        offset += TrackNo * 1984;
+
+        memcpy(buf, LarkenDrive + offset, 1984);
+        return(1);
+}
+
+void LarkenSaveTrack(int Drive, int TrackNo, unsigned char *buf)
+{
+        unsigned char *p;
+
+        p=LarkenDrive + LARKENSIZE*Drive;
+        p += TrackNo*1984;
+
+        memcpy(p, buf, 1984);
+}
+
 
 

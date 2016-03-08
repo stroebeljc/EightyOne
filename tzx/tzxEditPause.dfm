@@ -2,7 +2,7 @@ object EditPauseForm: TEditPauseForm
   Left = 200
   Top = 123
   BorderIcons = []
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Edit Pause Block'
   ClientHeight = 64
   ClientWidth = 138

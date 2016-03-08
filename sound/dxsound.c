@@ -135,9 +135,9 @@ sound_lowlevel_frame( unsigned char *data, unsigned int len )
 
   /* lock the buffer */
   hres = IDirectSoundBuffer_Lock( lpDSBuffer, nextpos, (DWORD)len,
-				  (void **)&ucbuffer1, &length1,
-				  (void **)&ucbuffer2, &length2,
-				  DSBLOCK_ENTIREBUFFER );
+  				  (void **)&ucbuffer1, &length1,
+  				  (void **)&ucbuffer2, &length2,
+  				  DSBLOCK_ENTIREBUFFER );
   if ( hres != DS_OK ) return; /* couldn't get a lock on the buffer */
 
   /* write to the first part of buffer */

@@ -30,20 +30,11 @@
  *
  */
 
-/* The Magic Incantations for exporting the functions from DLLs under
+/* The Magic Incantations for exporting the functions from DLLs under 
  * Windows. */
 
-#ifndef WIN32
-#define WIN32
-#endif
-
-#ifndef NOTWINDLL
-#define NOTWINDLL
-#endif
-
-
-
 #ifdef WIN16
+#error WIN16 is defines
 # define LDPUBLIC16 __export __far __pascal
 # define LDPUBLIC32
 #else   /* def WIN16 */
@@ -52,15 +43,16 @@
 #   define LDPUBLIC16
 #   define LDPUBLIC32
 #  else /* def NOTDLL */
+#errory NOTWINDLL not defined
 #   define LDPUBLIC16 __stdcall
 #   ifdef LIBDSK_EXPORTS
 #    define LDPUBLIC32 __declspec(dllexport)
 #   else  /* def LIBDSK_EXPORTS */
 #    define LDPUBLIC32 __declspec(dllimport)
-#   endif /* def LIBDSK_EXPORTS */
+#   endif /* def LIBDSK_EXPORTS */ 
 #  endif  /* def NOTDLL */
 # else    /* def WIN32 */
-#  define LDPUBLIC32
+#  define LDPUBLIC32 
 #  define LDPUBLIC16
 # endif /* def WIN32 */
 #endif  /* def WIN16 */
@@ -69,7 +61,7 @@
 extern "C" {
 #endif
 
-#define LIBDSK_VERSION "1.1.9"
+#define LIBDSK_VERSION "1.1.12"
 
 /************************* TYPES ********************************/
 
@@ -118,7 +110,7 @@ typedef const char *  dsk_cchar_t;	/* Const char * */
 #define DSK_TRANSIENT_ERROR(e) ((e) > DSK_ERR_COMPRESS && (e) <= DSK_ERR_NOTRDY)
 
 /* Disc sidedness (logical/physical mapping). Use SIDES_ALT for single-sided floppies. */
-typedef enum
+typedef enum 
 {	
 	SIDES_ALT, 	/* Track n is cylinder (n/heads) head (n%heads) */
 	SIDES_OUTBACK, 	/* Tracks go (head 0) 0,1,2,3,...37,38,39, then
@@ -239,7 +231,7 @@ LDPUBLIC32 void LDPUBLIC16 dsk_reportfunc_get(DSK_REPORTFUNC *report,
 					      DSK_REPORTEND  *repend);
 
 /* Calls to these functions (or no-op, as appropriate) */
-/* Report a work-in-progress message - LibDsk does this when starting a long
+/* Report a work-in-progress message - LibDsk does this when starting a long 
  * operation such as decompression */
 LDPUBLIC32 void LDPUBLIC16 dsk_report(const char *s);
 /* Remove a work-in-progress message, if appropriate */
@@ -247,34 +239,34 @@ LDPUBLIC32 void LDPUBLIC16 dsk_report_end();
 
 /*****************************************************************************/
 
-/* Open a DSK file, POSIX image, drive or whatever.
+/* Open a DSK file, POSIX image, drive or whatever. 
  * "type" is:
  *   NULL    : Autodetect file type from name or magic number
- *   "dsk"   : CPCEMU DSK or EDSK format
+ *   "dsk"   : CPCEMU DSK or EDSK format 
  *   "raw"   : Raw dd if=foo of=bar file
- *   "floppy": Host system's floppy drive
+ *   "floppy": Host system's floppy drive 
  *   "myz80" : MYZ80 image file
  *   "cfi"   : RLE-encoded raw file. Not done as a transparent compression
  *            driver, because it has no magic number.
- * "compress" is:
+ * "compress" is: 
  *  NULL     : Autodetect compression system.
- *  "sq"     : Huffman (Squeezed)
- *  "gz"     : Gzip
+ *  "sq"     : Huffman (Squeezed) 
+ *  "gz"     : Gzip 
  * Will allocate a DSK_DRIVER object.
  */
 
 typedef struct dsk_driver *DSK_PDRIVER;
 
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_open(DSK_PDRIVER *self, const char *filename,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_open(DSK_PDRIVER *self, const char *filename, 
 			const char *type,
 			const char *compress);
 
-/* As for "open", but creates a new image file. On a floppy drive
- * this will act exactly as "open"; for an image this will attempt to
+/* As for "open", but creates a new image file. On a floppy drive 
+ * this will act exactly as "open"; for an image this will attempt to 
  * create the file new or truncate it.
- * Note that "type" cannot be NULL. "compress" can be (to create an
+ * Note that "type" cannot be NULL. "compress" can be (to create an 
  * uncompresed file). */
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_creat(DSK_PDRIVER *self, const char *filename,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_creat(DSK_PDRIVER *self, const char *filename, 
 			const char *type,
 			const char *compress);
 
@@ -286,7 +278,7 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_close(DSK_PDRIVER *self);
 
 LDPUBLIC32 int              LDPUBLIC16 dsk_dirty(DSK_PDRIVER self);
 
-/* Get drive status (Ready, Read-Only etc.). The actual status is
+/* Get drive status (Ready, Read-Only etc.). The actual status is 
  * based on the FDC's ST3 register. The following bits should be available: */
 
 #define DSK_ST3_FAULT	0x80	/* Drive fault */
@@ -296,23 +288,23 @@ LDPUBLIC32 int              LDPUBLIC16 dsk_dirty(DSK_PDRIVER self);
 #define DSK_ST3_DSDRIVE	0x08	/* Drive is double-sided */
 #define DSK_ST3_HEAD1	0x04	/* Current head is head 1, not head 0 */
 
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_drive_status(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_drive_status(DSK_PDRIVER self, const DSK_GEOMETRY *geom, 
 				dsk_phead_t head, unsigned char *status);
 
 /* Read a sector. There are three alternative versions:
  *  One that uses physical sectors
  *  One that uses logical sectors
  *  One that uses physical sectors *which can have numbers not matching
- *  their positions on disc* - this functionality is only exposed by
- *  drivers which can manipulate the FDC directly. */
+ *  their positions on disc* - this functionality is only exposed by 
+ *  drivers which can manipulate the FDC directly. */ 
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_pread(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
                               void *buf, dsk_pcyl_t cylinder,
                               dsk_phead_t head, dsk_psect_t sector);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lread(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
                               void *buf, dsk_lsect_t sector);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_xread(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
-                              void *buf,
-			      dsk_pcyl_t cylinder, dsk_phead_t head,
+                              void *buf, 
+			      dsk_pcyl_t cylinder, dsk_phead_t head, 
 			      dsk_pcyl_t cyl_expected, dsk_phead_t head_expected,
 			      dsk_psect_t sector, size_t sector_len,
 			      int *deleted);
@@ -320,16 +312,16 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_xread(DSK_PDRIVER self, const DSK_GEOMETRY 
  *  One that uses physical sectors
  *  One that uses logical sectors
  *  One that uses physical sectors *which can have numbers not matching
- *  their positions on disc* - this functionality is only exposed by
- *  drivers which can manipulate the FDC directly. */
+ *  their positions on disc* - this functionality is only exposed by 
+ *  drivers which can manipulate the FDC directly. */ 
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_pwrite(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
                               const void *buf, dsk_pcyl_t cylinder,
                               dsk_phead_t head, dsk_psect_t sector);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lwrite(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
                               const void *buf, dsk_lsect_t sector);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_xwrite(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
-                              const void *buf,
-			      dsk_pcyl_t cylinder, dsk_phead_t head,
+                              const void *buf, 
+			      dsk_pcyl_t cylinder, dsk_phead_t head, 
 			      dsk_pcyl_t cyl_expected, dsk_phead_t head_expected,
 			      dsk_psect_t sector, size_t sector_len,
 			      int deleted);
@@ -338,16 +330,16 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_xwrite(DSK_PDRIVER self, const DSK_GEOMETRY
  *  One that uses physical sectors
  *  One that uses logical sectors
  *  One that uses physical sectors *which can have numbers not matching
- *  their positions on disc* - this functionality is only exposed by
- *  drivers which can manipulate the FDC directly. */
+ *  their positions on disc* - this functionality is only exposed by 
+ *  drivers which can manipulate the FDC directly. */ 
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_pcheck(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
                               const void *buf, dsk_pcyl_t cylinder,
                               dsk_phead_t head, dsk_psect_t sector);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lcheck(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
                               const void *buf, dsk_lsect_t sector);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_xcheck(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
-                              const void *buf,
-			      dsk_pcyl_t cylinder, dsk_phead_t head,
+                              const void *buf, 
+			      dsk_pcyl_t cylinder, dsk_phead_t head, 
 			      dsk_pcyl_t cyl_expected, dsk_phead_t head_expected,
 			      dsk_psect_t sector, size_t sector_len);
 /* Format a track.
@@ -359,16 +351,16 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_pformat(DSK_PDRIVER self, DSK_GEOMETRY *geo
 				dsk_pcyl_t cylinder, dsk_phead_t head,
 				const DSK_FORMAT *format, unsigned char filler);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lformat(DSK_PDRIVER self, DSK_GEOMETRY *geom,
-				dsk_ltrack_t track, const DSK_FORMAT *format,
+				dsk_ltrack_t track, const DSK_FORMAT *format, 
 				unsigned char filler);
 /* Read a track.
  */
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_xtread(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
-				void *buf,
+				void *buf, 
 			    dsk_pcyl_t cylinder,     dsk_phead_t head,
 				dsk_pcyl_t cyl_expected, dsk_phead_t head_expected);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_ptread(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
-				void *buf, dsk_pcyl_t cylinder,
+				void *buf, dsk_pcyl_t cylinder, 
 				dsk_phead_t head);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_ltread(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
 				void *buf, dsk_ltrack_t track);
@@ -382,7 +374,7 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_alform(DSK_PDRIVER self, DSK_GEOMETRY *geom
 /* Probe the geometry of a disc. This will use the boot sector and any
  * information the driver can give. */
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_getgeom(DSK_PDRIVER self, DSK_GEOMETRY *geom);
-/* Convert various types of boot sector to DSK_GEOMETRY
+/* Convert various types of boot sector to DSK_GEOMETRY 
  * Return DSK_ERR_OK if successful, else DSK_ERR_BADFMT */
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dg_dosgeom(DSK_GEOMETRY *self, const unsigned char *bootsect);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dg_pcwgeom(DSK_GEOMETRY *self, const unsigned char *bootsect);
@@ -396,27 +388,27 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_psecid(DSK_PDRIVER self, const DSK_GEOMETRY
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lsecid(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
 				dsk_ltrack_t track, DSK_FORMAT *result);
 
-/* Read all sector headers from current track in the order they appear.
+/* Read all sector headers from current track in the order they appear. 
  * Not implemented yet; this is for future expansion. */
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_ptrackids(DSK_PDRIVER self,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_ptrackids(DSK_PDRIVER self, 
 				const DSK_GEOMETRY *geom,
 				dsk_pcyl_t cylinder, dsk_phead_t head,
 				dsk_psect_t *count, DSK_FORMAT **results);
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_ltrackids(DSK_PDRIVER self,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_ltrackids(DSK_PDRIVER self, 
 				const DSK_GEOMETRY *geom,
-				dsk_ltrack_t track,
+				dsk_ltrack_t track, 
 				dsk_psect_t *count, DSK_FORMAT **result);
 
 /* Read a track as it appears on the disk, including sector headers.
  * Not implemented yet; this is for future expansion. */
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_rtread(DSK_PDRIVER self,
-		const DSK_GEOMETRY *geom, void *buf,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_rtread(DSK_PDRIVER self, 
+		const DSK_GEOMETRY *geom, void *buf, 
 	        dsk_pcyl_t cylinder,     dsk_phead_t head, int reserved);
 
 /* Seek to a cylinder */
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lseek(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_lseek(DSK_PDRIVER self, const DSK_GEOMETRY *geom, 
 				dsk_ltrack_t track);
-LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_pseek(DSK_PDRIVER self, const DSK_GEOMETRY *geom,
+LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_pseek(DSK_PDRIVER self, const DSK_GEOMETRY *geom, 
 				dsk_pcyl_t cylinder, dsk_phead_t head);
 
 /* If "index" is in range, returns the n'th driver name in (*drvname).
@@ -428,7 +420,7 @@ LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_type_enum(int idx, char **drvname);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_comp_enum(int idx, char **compname);
 
 /* Force a drive to use head 0 or head 1 only for single-sided discs
- * Pass 0 or 1, or -1 to unset it.
+ * Pass 0 or 1, or -1 to unset it. 
  * Deprecated: Use dsk_{set,get}_option(self, "HEAD", n) instead */
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_set_forcehead(DSK_PDRIVER self, int force);
 LDPUBLIC32 dsk_err_t  LDPUBLIC16 dsk_get_forcehead(DSK_PDRIVER self, int *force);

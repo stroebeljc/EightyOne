@@ -694,42 +694,46 @@ int ATA_LoadHDF(int drive, char *FileName)
                         }
                         i++;
                 }
-
+                ATA_Reset();
                 return(0);
         }
 
-        f=fopen(FileName,"rb+");
-        if (!f) return(1);
-
-        len=fread( &(Drv->hdf), 1, sizeof(HDF_HEADER), f );
-
-        if (len!=sizeof(HDF_HEADER))
+        len=strlen(FileName);
+        if ( (!strcmp(FileName+len-4,".vhd"))
+                || (!strcmp(FileName+len-4,".VHD")) )
         {
-                fclose(f);
-                return(1);
-        }
+                char ModelName[]="iEhgtynO eiVtrauPl C                    ";
+                f=fopen(FileName,"rb+");
+                if (!f) return(1);
 
-        if (strncmp(Drv->hdf.sig, "RS-IDE", 6) || (Drv->hdf.id != 0x1a))
-        {
-                fclose(f);
-                return(1);
-        }
+                len=sizeof(VHD_HEADER);
 
-        Drv->data = (Drv->hdf.data_high << 8) | Drv->hdf.data_low;
-        Drv->sector_size = Drv->hdf.flags & 0x01 ? 256 : 512;
 
-        idlen=(Drv->data)-sizeof(HDF_HEADER);
-        if (idlen>512) idlen=512;
+                fseek(f, -512, SEEK_END);
+                len=fread( &(Drv->vhd), 1, sizeof(VHD_HEADER), f);
+                if (len!=sizeof(VHD_HEADER))
+                {
+                        fclose(f);
+                        return(1);
+                }
 
-        fread(Drv->drive_id, idlen, 1, f);
+                if (strncmp(Drv->vhd.cookie, "conectix", 8))
+                {
+                        fclose(f);
+                        return(1);
+                }
 
-        Drv->cylinders = (Drv->drive_id[ 3]<<8) | Drv->drive_id[2];
-        Drv->heads = (Drv->drive_id[7]<<8) | Drv->drive_id[6];
-        Drv->sectors = (Drv->drive_id[13]<<8) | Drv->drive_id[12];
-        Drv->size = Drv->cylinders * Drv->heads * Drv->sectors;
+                Drv->data = 0;
+                Drv->sector_size = 512;
 
-        if (idlen<128)
-        {
+                Drv->cylinders = Drv->vhd.cyl_h * 256 + Drv->vhd.cyl_l;
+                Drv->heads = Drv->vhd.heads;
+                Drv->sectors = Drv->vhd.sectors;
+                Drv->size = Drv->cylinders * Drv->heads * Drv->sectors;
+
+                sectors=Drv->size;
+                memset(Drv->drive_id, 0, 512);
+
                 WriteWord(Drv->drive_id,  0, 64);
                 WriteWord(Drv->drive_id,  1, Drv->cylinders);
                 WriteWord(Drv->drive_id,  3, Drv->heads);
@@ -738,22 +742,79 @@ int ATA_LoadHDF(int drive, char *FileName)
                 WriteWord(Drv->drive_id, 54, Drv->cylinders);
                 WriteWord(Drv->drive_id, 55, Drv->heads);
                 WriteWord(Drv->drive_id, 56, Drv->sectors);
+                //WriteWord(Drv->drive_id, 57, sectors&65535);
+                //WriteWord(Drv->drive_id, 58, (sectors>>16)&65535);
+                //WriteWord(Drv->drive_id, 60, sectors&65535);
+                //WriteWord(Drv->drive_id, 61, (sectors>>16)&65535);
 
-                sectors = Drv->cylinders*Drv->heads*Drv->sectors;
+                //memcpy(head+0x16+54, ModelName, 40);
+                for(i=0;i<40;i++) Drv->drive_id[54+i]=ModelName[i];
 
-                WriteWord(Drv->drive_id, 57, sectors&65535);
-                WriteWord(Drv->drive_id, 58, (sectors>>16)&65535);
-                WriteWord(Drv->drive_id, 60, sectors&65535);
-                WriteWord(Drv->drive_id, 61, (sectors>>16)&65535);
+                Drv->f = f;
+                strcpy(Drv->filename, FileName);
+
+                Drv->AccessMode=ACCESS_HDF;
+                ATA_Reset();
+                return(0);
         }
+        else
+        {
+                f=fopen(FileName,"rb+");
+                if (!f) return(1);
 
-        Drv->f = f;
-        strcpy(Drv->filename, FileName);
+                len=fread( &(Drv->hdf), 1, sizeof(HDF_HEADER), f );
 
-        Drv->AccessMode=ACCESS_HDF;
+                if (len!=sizeof(HDF_HEADER))
+                {
+                        fclose(f);
+                        return(1);
+                }
 
-        ATA_Reset();
-        return(0);
+                if (strncmp(Drv->hdf.sig, "RS-IDE", 6) || (Drv->hdf.id != 0x1a))
+                {
+                        fclose(f);
+                        return(1);
+                }
+
+                Drv->data = (Drv->hdf.data_high << 8) | Drv->hdf.data_low;
+                Drv->sector_size = Drv->hdf.flags & 0x01 ? 256 : 512;
+
+                idlen=(Drv->data)-sizeof(HDF_HEADER);
+                if (idlen>512) idlen=512;
+
+                fread(Drv->drive_id, idlen, 1, f);
+
+                Drv->cylinders = (Drv->drive_id[ 3]<<8) | Drv->drive_id[2];
+                Drv->heads = (Drv->drive_id[7]<<8) | Drv->drive_id[6];
+                Drv->sectors = (Drv->drive_id[13]<<8) | Drv->drive_id[12];
+                Drv->size = Drv->cylinders * Drv->heads * Drv->sectors;
+
+                if (idlen<128)
+                {
+                        WriteWord(Drv->drive_id,  0, 64);
+                        WriteWord(Drv->drive_id,  1, Drv->cylinders);
+                        WriteWord(Drv->drive_id,  3, Drv->heads);
+                        WriteWord(Drv->drive_id,  6, Drv->sectors);
+                        WriteWord(Drv->drive_id, 49, 512);
+                        WriteWord(Drv->drive_id, 54, Drv->cylinders);
+                        WriteWord(Drv->drive_id, 55, Drv->heads);
+                        WriteWord(Drv->drive_id, 56, Drv->sectors);
+
+                        sectors = Drv->cylinders*Drv->heads*Drv->sectors;
+
+                        WriteWord(Drv->drive_id, 57, sectors&65535);
+                        WriteWord(Drv->drive_id, 58, (sectors>>16)&65535);
+                        WriteWord(Drv->drive_id, 60, sectors&65535);
+                        WriteWord(Drv->drive_id, 61, (sectors>>16)&65535);
+                }
+
+                Drv->f = f;
+                strcpy(Drv->filename, FileName);
+
+                Drv->AccessMode=ACCESS_HDF;
+                ATA_Reset();
+                return(0);
+        }
 }
 
 void ATA_EjectHDF(int drive)

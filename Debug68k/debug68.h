@@ -62,6 +62,7 @@ __published:	// IDE-managed Components
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall StopClick(TObject *Sender);
         void __fastcall SingleStepClick(TObject *Sender);
+        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
         AnsiString Hex32(int val);
 public:		// User declarations
@@ -71,4 +72,6 @@ public:		// User declarations
 //---------------------------------------------------------------------------
 extern PACKAGE TDebug68k *Debug68k;
 //---------------------------------------------------------------------------
+extern void DebugUpdate68k(void);
+
 #endif

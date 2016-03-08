@@ -1,12 +1,14 @@
 object ZipFile: TZipFile
-  Left = 496
-  Top = 121
+  Left = 632
+  Top = 113
+  Width = 192
+  Height = 248
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderStyle = bsSizeToolWin
   Caption = 'ZipFile'
-  ClientHeight = 153
-  ClientWidth = 336
   Color = clBtnFace
+  Constraints.MinHeight = 128
+  Constraints.MinWidth = 128
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -18,22 +20,23 @@ object ZipFile: TZipFile
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 273
+    Width = 68
     Height = 13
-    Caption = 'This archive contains several files which may be selected:'
+    Caption = 'Please Select:'
   end
   object ListBox: TListBox
     Left = 8
     Top = 32
-    Width = 321
-    Height = 81
+    Width = 168
+    Height = 144
+    Anchors = [akLeft, akTop, akRight, akBottom]
     ItemHeight = 13
     TabOrder = 0
     OnDblClick = ListBoxDblClick
   end
   object OK: TButton
-    Left = 255
-    Top = 120
+    Left = 103
+    Top = 183
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]

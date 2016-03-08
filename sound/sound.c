@@ -208,14 +208,14 @@ void sound_ay_init(void)
 }
 
 
-void sound_init(void)
+int sound_init(void)
 {
         if(sound_lowlevel_init(NULL, &sound_freq,&sound_stereo))
         {
                 /* XXX a bit vague, maybe I should put this check in sound_init() */
                 //fprintf(stderr,"z81: warning: "
                 //        "couldn't initialise sound device, sound disabled.\n");
-                return;
+                return(1);
         }
 
         /* important to override this if not using stereo */
@@ -228,7 +228,7 @@ void sound_init(void)
         if((sound_buf=malloc(sound_framesiz*(sound_stereo+1)))==NULL)
         {
                 sound_lowlevel_end();
-                return;
+                return(1);
         }
 
         sound_oldval=sound_oldval_orig=128;
@@ -241,6 +241,7 @@ void sound_init(void)
 
         //if(sound_ay)
                 sound_ay_init();
+        return(0);
 }
 
 

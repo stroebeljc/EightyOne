@@ -331,7 +331,7 @@ void DDAccurateInit(int resize)
                 WinL*=2; WinR*=2; WinT*=2; WinB*=2; ScanLen*=2;
                 TVW=ddsd.dwWidth = 1024;
                 TVH=ddsd.dwHeight = 768;
-                HSYNC_TOLLERANCE=HTOL*2; HSYNC_MINLEN=10;
+                HSYNC_MINLEN=10; // HSYNC_TOLLERANCE=HTOL*2;
                 //VSYNC_TOLLERANCEMIN=VTOLMIN*2; VSYNC_MINLEN=350;
                 //VSYNC_TOLLERANCEMAX=VTOLMAX*2;
         }
@@ -339,7 +339,7 @@ void DDAccurateInit(int resize)
         {
                 TVW=ddsd.dwWidth = 520;
                 TVH=ddsd.dwHeight = 380;
-                HSYNC_TOLLERANCE=HTOL; HSYNC_MINLEN=10;
+                HSYNC_MINLEN=10; //HSYNC_TOLLERANCE=HTOL;
                 //VSYNC_TOLLERANCEMIN=VTOLMIN; VSYNC_MINLEN=350;
                 //VSYNC_TOLLERANCEMAX=VTOLMAX;
         }
@@ -494,7 +494,7 @@ void GDIAccurateInit(int resize)
                 WinL*=2; WinR*=2; WinT*=2; WinB*=2; ScanLen*=2;
                 TVW=1024;
                 TVH=768;
-                HSYNC_TOLLERANCE=HTOL*2; HSYNC_MINLEN=10;
+                HSYNC_MINLEN=10; //HSYNC_TOLLERANCE=HTOL*2; 
                 //VSYNC_TOLLERANCEMIN=VTOLMIN*2; VSYNC_MINLEN=350;
                 //VSYNC_TOLLERANCEMAX=VTOLMAX*2;
         }
@@ -502,7 +502,7 @@ void GDIAccurateInit(int resize)
         {
                 TVW=520;
                 TVH=380;
-                HSYNC_TOLLERANCE=HTOL; HSYNC_MINLEN=10;
+                HSYNC_MINLEN=10; //HSYNC_TOLLERANCE=HTOL;
                 //VSYNC_TOLLERANCEMIN=VTOLMIN; VSYNC_MINLEN=350;
                 //VSYNC_TOLLERANCEMAX=VTOLMAX;
         }
@@ -705,58 +705,54 @@ void RecalcWinSize(void)
         rcsource.Left=WinL;
         rcsource.Top=WinT;
 
-        //if (Form1->RenderMode==RENDERGDI)
-        //{
-        //        rcsource.Top +=32;
-        //        rcsource.Bottom +=32;
-        //}
+        if (Form1->FullScreen)
+        {
+                if (FScreen.Stretch)
+                {
+                        rcdest.Top=0; rcdest.Bottom=FScreen.Height;
+                        rcdest.Left=0; rcdest.Right=FScreen.Width;
+                }
+                else
+                {
+                        scale=1; sw=WinR-WinL; sh=WinB-WinT;
 
+                        dw=FScreen.Width; dh=FScreen.Height;
 
-        if (!Form1->FullScreen)
+                        while((sw*scale <= dw) && (sh*scale <= dh)) scale++;
+                        scale--;
+
+                        if (scale==-1)
+                        {
+                                rcdest.Top=0; rcdest.Right=FScreen.Width;
+                                rcdest.Left=0; rcdest.Bottom=FScreen.Height;
+                        }
+                        else
+                        {
+                                bw = (dw - sw*scale)/2; bh = (dh - sh*scale)/2;
+
+                                rcdest.Top=bh; rcdest.Bottom=bh + sh*scale;
+                                rcdest.Left=bw; rcdest.Right=bw + sw*scale;
+
+                                BorderTop.Top=0; BorderTop.Bottom=rcdest.Top;
+                                BorderTop.Left=0; BorderTop.Right=dw;
+
+                                BorderBottom.Top=dh - bh; BorderBottom.Bottom=dh;
+                                BorderBottom.Left=0; BorderBottom.Right=dw;
+
+                                BorderLeft.Top=bh; BorderLeft.Bottom=dh - bh;
+                                BorderLeft.Left=0; BorderLeft.Right=bw;
+
+                                BorderRight.Top=bh; BorderRight.Bottom=dh - bh;
+                                BorderRight.Left=dw - bw; BorderRight.Right=dw;
+                        }
+                }
+        }
+        else
         {
                 rcdest.Top=0; rcdest.Bottom=Form1->ClientHeight;
                 rcdest.Left=0; rcdest.Right=Form1->ClientWidth;
                 if (Form1->StatusBar1->Visible) rcdest.Bottom -= Form1->StatusBar1->Height;
 
-        }
-        else if (FScreen.Stretch)
-        {
-                rcdest.Top=0; rcdest.Bottom=FScreen.Height;
-                rcdest.Left=0; rcdest.Right=FScreen.Width;
-        }
-        else
-        {
-                scale=1; sw=WinR-WinL; sh=WinB-WinT;
-
-                dw=FScreen.Width; dh=FScreen.Height;
-
-                while((sw*scale <= dw) && (sh*scale <= dh)) scale++;
-                scale--;
-
-                if (scale==-1)
-                {
-                        rcdest.Top=0; rcdest.Right=FScreen.Width;
-                        rcdest.Left=0; rcdest.Bottom=FScreen.Height;
-                }
-                else
-                {
-                        bw = (dw - sw*scale)/2; bh = (dh - sh*scale)/2;
-
-                        rcdest.Top=bh; rcdest.Bottom=bh + sh*scale;
-                        rcdest.Left=bw; rcdest.Right=bw + sw*scale;
-
-                        BorderTop.Top=0; BorderTop.Bottom=rcdest.Top;
-                        BorderTop.Left=0; BorderTop.Right=dw;
-
-                        BorderBottom.Top=dh - bh; BorderBottom.Bottom=dh;
-                        BorderBottom.Left=0; BorderBottom.Right=dw;
-
-                        BorderLeft.Top=bh; BorderLeft.Bottom=dh - bh;
-                        BorderLeft.Left=0; BorderLeft.Right=bw;
-
-                        BorderRight.Top=bh; BorderRight.Bottom=dh - bh;
-                        BorderRight.Left=dw - bw; BorderRight.Right=dw;
-                }
         }
 }
 

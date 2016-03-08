@@ -169,6 +169,8 @@ void TZipFile::LoadSettings(TIniFile *ini)
 {
         Top = ini->ReadInteger("ZIPFILE","Top",Top);
         Left = ini->ReadInteger("ZIPFILE","Left",Left);
+        Width = ini->ReadInteger("ZIPFILE","Width",Width);
+        Height = ini->ReadInteger("ZIPFILE","Height",Height);
         LastFile = ini->ReadString("ZIPFILE","LastFile","");
 }
 
@@ -176,6 +178,8 @@ void TZipFile::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("ZIPFILE","Top",Top);
         ini->WriteInteger("ZIPFILE","Left",Left);
+        ini->WriteInteger("ZIPFILE","Width",Width);
+        ini->WriteInteger("ZIPFILE","Height",Height);
         ini->WriteString("ZIPFILE","LastFile",LastFile);
 
 }

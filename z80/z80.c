@@ -146,7 +146,7 @@ int z80_nmi( int ts )
                 waitstates=(ts/2)-machine.tperscanline;
                 //len=ts%16;
                 waitstates = 4-waitstates;
-                if (waitstates<0) waitstates=0;
+                if (waitstates<0 || waitstates>=machine.tperscanline) waitstates=0;
         }
 
         writebyte( --SP, PCH ); writebyte( --SP, PCL );

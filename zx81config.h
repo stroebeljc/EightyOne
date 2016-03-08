@@ -27,8 +27,8 @@
 #define BYTE unsigned char
 
 #define EMUID           0x85
-#define MAJORVERSION    0
-#define MINORVERSION    5
+#define MAJORVERSION    1
+#define MINORVERSION    0
 //#define TESTVERSION     'e'
 
 #define SYNCTYPEH       1
@@ -82,6 +82,7 @@
 
 #define CRCACE		0x0a09
 #define CRCASZMIC	0xcac9
+#define CRCASZMIC2	0x6fe5
 #define CRCH4TH		0xa5cd
 #define CRCSG81		0x72f4
 #define CRCSP81		0x877d
@@ -103,6 +104,8 @@
 #define FLOPPYOPUSD     4
 #define FLOPPYBETA      5
 #define FLOPPYIF1       6
+#define FLOPPYZX1541    7
+#define FLOPPYLARKEN81  8
 
 #define DRIVENONE       0
 #define DRIVE3INCHSS    1
@@ -248,7 +251,6 @@ typedef struct
 } SCANLINE;
 
 
-
 typedef struct
 {
         void (*initialise)(void);
@@ -271,6 +273,8 @@ typedef struct
         int scanlines;
         char CurRom[256];
 
+        void* cset;
+
 } MACHINE;
 
 typedef struct
@@ -279,19 +283,6 @@ typedef struct
         int buttons;
 } MOUSE;
 
-
-#ifdef __cplusplus
-
-extern "C" ZX81 zx81;
-extern "C" ZX97 zx97;
-extern "C" SPECTRUM spectrum;
-extern "C" TV tv;
-extern "C" MACHINE machine;
-extern "C" MOUSE mouse;
-extern "C" void load_config();
-
-#else
-
 extern ZX81 zx81;
 extern ZX97 zx97;
 extern SPECTRUM spectrum;
@@ -299,7 +290,6 @@ extern TV tv;
 extern MACHINE machine;
 extern MOUSE mouse;
 extern void load_config();
-#endif
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))

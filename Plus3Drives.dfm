@@ -2,7 +2,7 @@ object P3Drive: TP3Drive
   Left = 638
   Top = 39
   BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Drives'
   ClientHeight = 576
   ClientWidth = 336
@@ -660,15 +660,18 @@ object P3Drive: TP3Drive
   end
   object OpenDialog1: TOpenDialog
     Filter = 
-      'Disk Images|*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip|+3 Disk Im' +
-      'ages (*.dsk)|*.dsk|+D/Disciple Images (*.mgt, *.img)|*.mgt;*.img' +
-      '|Opus Discovery Images (*.opd, *.opu)|*.opd;*.opu|TR-DOS Images ' +
-      '(*.trd)|*.trd|Compressed Images (*.zip)|*.zip'
+      'Disk Images|*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.lar;*.zip|+3 D' +
+      'isk Images (*.dsk)|*.dsk|+D/Disciple Images (*.mgt, *.img)|*.mgt' +
+      ';*.img|Opus Discovery Images (*.opd, *.opu)|*.opd;*.opu|TR-DOS I' +
+      'mages (*.trd)|*.trd|Larken Images (*.lar)|*.lar|Compressed Image' +
+      's (*.zip)|*.zip'
     Left = 224
     Top = 392
   end
   object OpenDialog2: TOpenDialog
-    Filter = 'Hard Drive Images|*.hdf'
+    Filter = 
+      'All Hard Drive Images|*.hdf;*.vhd|ZX Hard Drive Images (*.hdf)|*' +
+      '.hdf|VirtualPC Uncompressed Images (*.vhd)|*.vhd'
     Left = 192
     Top = 392
   end

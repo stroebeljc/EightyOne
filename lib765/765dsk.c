@@ -2,6 +2,9 @@
 
     Copyright (C) 2000  John Elliott <jce@seasip.demon.co.uk>
 
+    Modifications to add dirty flags
+    (c) 2005 Philip Kendall <pak21-spectrum@srcf.ucam.org>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -464,6 +467,7 @@ static fd_err_t fdd_write_sector(FLOPPY_DRIVE *fd, int xcylinder, int xhead,
                 unsigned char odel, *sh = sector_head(fdd, sector);
 		if (fwrite(buf, 1, len, fdd->fdd_fp) < len)
 			err = FD_E_READONLY;
+		fdd->fdd_dirty = 1;
 
 /* If writing deleted data, update the sector header accordingly */
                 odel = sh[5];
@@ -629,6 +633,8 @@ static fd_err_t fdd_format_track(FLOPPY_DRIVE *fd, int head,
 		memcpy(fdd->fdd_disk_header, oldhead, 256);
 		return FD_E_READONLY;
 	}
+	fdd->fdd_dirty = 1;
+
 	/* Track header written. Write sectors */
 	for (n = 0; n < sectors; n++)
 	{
@@ -657,7 +663,12 @@ static fd_err_t fdd_format_track(FLOPPY_DRIVE *fd, int head,
 	return FD_E_OK;
 }
 
+static int fdd_dirty(FLOPPY_DRIVE *fd)
+{
+	DSK_FLOPPY_DRIVE *fdd = (DSK_FLOPPY_DRIVE *)fd;
 
+	return fdd->fdd_dirty ? FD_D_DIRTY : FD_D_CLEAN;
+}
 
 /* Eject a DSK - close the image file */
 static void fdd_eject(FLOPPY_DRIVE *fd)
@@ -680,6 +691,7 @@ static FLOPPY_DRIVE_VTABLE fdv_dsk =
 	fdd_format_track,
 	fdd_drive_status,
 	fdd_isready,
+	fdd_dirty,
 	fdd_eject,
 	NULL,
 	fdd_reset
@@ -743,6 +755,7 @@ void     fdd_setfilename(FDRV_PTR fd, const char *s)
 		fd_eject(fd);
 		strncpy(fdd->fdd_filename, s, sizeof(fdd->fdd_filename) - 1);
 		fdd->fdd_filename[sizeof(fdd->fdd_filename) - 1] = 0;
+		fdd->fdd_dirty = 0;
         }
 }
 

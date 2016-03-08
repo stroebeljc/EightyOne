@@ -7,13 +7,20 @@
 #include "main_.h"
 #include "68000.h"
 #include "zx81config.h"
-#include "dis68k.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TDebug68k *Debug68k;
 
+extern "C" int m68k_disassemble(char* str_buff, int pc);
+
 extern int zx81_stop;
+
+void DebugUpdate68k(void)
+{
+        if (zx81_stop) Debug68k->UpdateVals();
+}
 
 //---------------------------------------------------------------------------
 __fastcall TDebug68k::TDebug68k(TComponent* Owner)
@@ -34,7 +41,8 @@ AnsiString TDebug68k::Hex32(int val)
 
 void TDebug68k::UpdateVals(void)
 {
-        void *p1, *p2;
+        //void *p1, *p2;
+        int p1;
         char buf[256];
 
         D0->Caption=Hex32(reg[0]);
@@ -57,25 +65,22 @@ void TDebug68k::UpdateVals(void)
         USP->Caption=Hex32(usp);
         SSP->Caption=Hex32(ssp);
 
-        p1=memory+(pc&0xfffff);
-
-        p2=dis(p1, buf); Dis1->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis2->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis3->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis4->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis5->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis6->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis7->Caption=buf; p1=p2;
-        p2=dis(p1, buf); Dis8->Caption=buf; p1=p2;
-
-
-
-
+        p1=pc&0xfffff;
+        
+        Dis1->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis1->Caption = Dis1->Caption + buf;
+        Dis2->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis2->Caption = Dis2->Caption + buf;
+        Dis3->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis3->Caption = Dis3->Caption + buf;
+        Dis4->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis4->Caption = Dis4->Caption + buf;
+        Dis5->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis5->Caption = Dis5->Caption + buf;
+        Dis6->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis6->Caption = Dis6->Caption + buf;
+        Dis7->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis7->Caption = Dis7->Caption + buf;
+        Dis8->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis8->Caption = Dis8->Caption + buf;
 }
 
 void __fastcall TDebug68k::StopClick(TObject *Sender)
 {
         zx81_stop = !zx81_stop;
+        zx81.single_step=0;
         if (zx81_stop) Stop->Caption="Run";
         else Stop->Caption="Stop";
         UpdateVals();
@@ -89,4 +94,10 @@ void __fastcall TDebug68k::SingleStepClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TDebug68k::FormShow(TObject *Sender)
+{
+        UpdateVals();        
+}
+//---------------------------------------------------------------------------
 

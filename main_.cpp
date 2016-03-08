@@ -22,11 +22,7 @@
  //---------------------------------------------------------------------------
 
 #define NO_WIN32_LEAN_AND_MEAN
-//#define WM_DEVICE WM_USER+125
-//#define SHCNRF_InterruptLevel 0x0001
-//#define SHCNRF_ShellLevel 0x0002
 
-//#include <\PKSDK\include\shlobj.h>
 #include <vcl.h>
 #include <io.h>
 #include <dirent.h>
@@ -69,40 +65,41 @@
 #include "midifrm.h"
 #include "ZipFile_.h"
 #include "debug68.h"
-
+#include "symbolstore.h"
+#include "SymBrowse.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-#pragma link "AnimTimer"
 #pragma link "ThemeMgr"
 #pragma resource "*.dfm"
 
 #define ZXDB(msg) Application->MessageBox(msg, "Debug", MB_OK);
-#define edt1 0x480
+//#define edt1 0x480
 
 TForm1 *Form1;
-//Tz80 *z80thread;
 ULONG nID;
 
 extern PACKAGE TMouse* Mouse;
-extern "C" void SpecStartUp(void);
+extern void SpecStartUp(void);
+extern BYTE spec48_readbyte(int Address);
+extern void spec48_LoadRZX(char *FileName);
+extern int AccurateDraw(SCANLINE *Line);
 
 extern bool ShowSplash;
 
 extern "C" void z80_reset();
 extern "C" int z80_nmi(int ts);
 extern char **CommandLine;
-extern "C" void ramwobble(int now);
-extern "C" int LoadDock(char *Filename);
-extern "C" void spec_load_z80(char *fname);
-extern "C" void spec_load_sna(char *fname);
-extern "C" void spec_save_z80(char *fname);
-extern "C" void spec_save_sna(char *fname);
+extern void ramwobble(int now);
+extern int LoadDock(char *Filename);
+extern void spec_load_z80(char *fname);
+extern void spec_load_sna(char *fname);
+extern void spec_save_z80(char *fname);
+extern void spec_save_sna(char *fname);
+extern "C" void rzx_close(void);
 
-//extern "C" SCANLINE *CurScanLine;
 extern "C" void VideoThread(void);
 
 int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
-
 
 int AutoLoadCount=0;
 char TEMP1[256];
@@ -112,24 +109,9 @@ DWORD VideoThreadId;
 
 SCANLINE Video[2], *BuildLine, *DisplayLine;
 
-//---------------------------------------------------------------------------
-void __fastcall TForm1::WMGetMinMaxInfo(TWMGetMinMaxInfo &Msg)
-{
-        int w=GetSystemMetrics(SM_CXSCREEN);
-        int h=GetSystemMetrics(SM_CYSCREEN);
+extern symbolstore_test(void);
 
-        Msg.MinMaxInfo->ptMaxSize.x=w; //ptMaxSize is the size of the window
-        Msg.MinMaxInfo->ptMaxSize.y=h; //when the window is fully maximized
 
-        Msg.MinMaxInfo->ptMaxPosition.x=0;
-        Msg.MinMaxInfo->ptMaxPosition.y=0;
-
-        Msg.MinMaxInfo->ptMaxTrackSize.x=2*(w + (Width-ClientWidth));
-        Msg.MinMaxInfo->ptMaxTrackSize.y=2*(h + (Height-ClientHeight) + StatusBar1->Height);
-
-        Msg.MinMaxInfo->ptMinTrackSize.x=250; //ptMinTrackSize = min size allowed
-        Msg.MinMaxInfo->ptMinTrackSize.y=150; //by dragging with the mouse.
-}
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
@@ -137,6 +119,8 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         AnsiString IniPath;
         char path[256];
         int ret,i;
+
+        symbolstore_test();
 
         strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         strcpy(TEMP1, zx81.cwd);
@@ -244,7 +228,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         ATA_Init();
 
-        if (!nosound) sound_init();
+        if (!nosound) nosound=sound_init();
         load_config();
         PCKbInit();
 
@@ -266,19 +250,14 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         delete ini;
 
         AnimTimer1->Interval=20;
-        //AnimTimer1->Enabled=true;
         Timer2->Interval=1000;
-        //Timer2->Enabled=true;
 
         LEDGreenOn = new Graphics::TBitmap;
         LEDGreenOff = new Graphics::TBitmap;
         ImageList1->GetBitmap(0,LEDGreenOff);
         ImageList1->GetBitmap(1,LEDGreenOn);
 
-        //AccurateInit();
-
-//---------------------------------------------------------------------------
-   if (!access("eightyone.chm",0)) HelpTopics2->Enabled=true;
+        if (!access("eightyone.chm",0)) HelpTopics2->Enabled=true;
         else HelpTopics2->Enabled=false;
 
         BuildConfigMenu();
@@ -292,9 +271,6 @@ void __fastcall TForm1::FormResize(TObject *Sender)
         extern void RecalcWinSize(void);
 
         if (StatusBar1->Visible) ch -= StatusBar1->Height;
-
-        //DFlipSurface->Width=cw;
-        //DFlipSurface->Height=ch;
 
         N501->Checked=false;
         N1001->Checked=false;
@@ -319,9 +295,6 @@ void __fastcall TForm1::FormResize(TObject *Sender)
                         (StatusBar1->Panels->Items[0]->Width
                          +StatusBar1->Panels->Items[1]->Width
                          +StatusBar1->Panels->Items[2]->Width);
-
-
-        //StatusBar1->Panels->Items[2]->Repaint();
 }
 
 //---------------------------------------------------------------------------
@@ -479,7 +452,6 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
         zx81_stop=true;
 
         PCAllKeysUp();
-        //Tape->OpenTape1Click(Sender);
         if (!OpenTape1->Execute())
         {
                 zx81_stop=stopped;
@@ -508,6 +480,8 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                 || Extension == ".T81"
                 || Extension == ".TAP"
                 || Extension == ".P"
+                || Extension == ".81"
+                || Extension == ".80"
                 || Extension == ".O"
                 || Extension == ".A83" )
         {
@@ -581,23 +555,6 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-/*void __fastcall TForm1::Tape1Click(TObject *Sender)
-{
-        if (Tape1->Checked)
-        {
-                Tape->Close();
-                Tape1->Checked=false;
-        }
-        else
-        {
-                PCAllKeysUp();
-                Tape->Show();
-                Tape1->Checked=true;
-        }
-} */
-//---------------------------------------------------------------------------
-
 void __fastcall TForm1::CloseTape1Click(TObject *Sender)
 {
         PCAllKeysUp();
@@ -624,23 +581,9 @@ void __fastcall TForm1::ResetButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-/*void __fastcall TForm1::InsertTapeButtonClick(TObject *Sender)
-{
-        PCAllKeysUp();
-        Tape->OpenTape1Click(Sender);
-} */
-//---------------------------------------------------------------------------
-
-/*void __fastcall TForm1::CloseTapeButtonClick(TObject *Sender)
-{
-        PCAllKeysUp();
-        Tape->CloseTape();
-} */
-//---------------------------------------------------------------------------
-
-
 void __fastcall TForm1::ResetZX811Click(TObject *Sender)
 {
+        rzx_close();
         PCAllKeysUp();
         zx81_stop=1;
         z80_reset();
@@ -659,7 +602,8 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         struct dirent *ent;
 
-        if (FullScreen) FormKeyPress(NULL, 27);
+        char escKey = 27;
+        if (FullScreen) FormKeyPress(NULL, escKey);
         if (machine.exit) machine.exit();
 
         zx81_stop=true;
@@ -691,7 +635,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
                 closedir(dir);
                 _rmdir(zx81.temppath);
         }
-
         //SHChangeNotifyDeregister(nID);
 }
 //---------------------------------------------------------------------------
@@ -716,42 +659,12 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         AnsiString Filename, Ext;
         int i=0;
 
+        if (startup<=6) startup++;
+
         switch(startup)
         {
         case 1:
-                while(CommandLine[i])
-                {
-                        Filename=CommandLine[i];
 
-                        if (Filename.UpperCase()=="FULLSCREEN") FormKeyPress(NULL, 27);
-
-                        Ext = FileNameGetExt(Filename);
-
-                        if (Ext == ".ZIP")
-                        {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
-                                Ext = FileNameGetExt(Filename);
-                        }
-
-                        if (Ext==".WAV") WavLoad->LoadFile(Filename);
-                        else if (Ext==".Z81" || Ext==".ACE") load_snap(Filename.c_str());
-                        else if (Ext==".Z80") spec_load_z80(Filename.c_str());
-                        else if (Ext==".SNA") spec_load_sna(Filename.c_str());
-                        else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
-                                  || Ext==".P" || Ext==".O" || Ext==".A83")
-                        {
-                                TZX->LoadFile(Filename, false);
-                                TZX->UpdateTable(true);
-                        }
-                        else if (Ext==".MDR" || Ext==".MDV" || Ext==".HDF"
-                                  || Ext==".DSK" || Ext==".MGT" || Ext==".IMG"
-                                  || Ext==".OPD" || Ext==".OPU" || Ext==".TRD")
-                                        P3Drive->InsertFile(Filename);
-                        i++;
-                }
-
-                break;
-        case 0:
                 if (StartUpWidth==0 || StartUpHeight==0) N1001Click(NULL);
                 else
                 {
@@ -760,11 +673,48 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 }
                 Kb->OKClick(NULL);
                 break;
+
+        case 2:
+                startup++;
+                while(CommandLine[i])
+                {
+                        Filename=CommandLine[i];
+
+                        char escKey = 27;
+                        if (Filename.UpperCase()=="FULLSCREEN") FormKeyPress(NULL, escKey);
+
+                        Ext = FileNameGetExt(Filename);
+
+                        if (Ext == ".ZIP")
+                        {
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.a83;*.81;*.80;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Ext = FileNameGetExt(Filename);
+                        }
+
+                        if (Ext==".WAV") WavLoad->LoadFile(Filename);
+                        else if (Ext==".Z81" || Ext==".ACE") load_snap(Filename.c_str());
+                        else if (Ext==".Z80") spec_load_z80(Filename.c_str());
+                        else if (Ext==".SNA") spec_load_sna(Filename.c_str());
+                        else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
+                                  || Ext==".P" || Ext==".O" || Ext==".A83"
+                                  || Ext==".81" || Ext==".80")
+                        {
+                                TZX->LoadFile(Filename, false);
+                                TZX->UpdateTable(true);
+                        }
+                        else if (Ext==".MDR" || Ext==".MDV" || Ext==".HDF"
+                                  || Ext==".DSK" || Ext==".MGT" || Ext==".IMG"
+                                  || Ext==".OPD" || Ext==".OPU" || Ext==".TRD")
+                                        P3Drive->InsertFile(Filename);
+                        else if (Ext==".RZX")
+                                spec48_LoadRZX(Filename.c_str());
+                        i++;
+                }
+
+                break;
         default:
                 break;
         }
-
-        if (startup<6) startup++;
 
         if (P3Drive->Height<80)
         {
@@ -832,10 +782,11 @@ void __fastcall TForm1::WavLoadBtnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
+void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
 {
 
         extern void RecalcWinSize(void);
+        if (Key==' ') rzx_close();
         if (Key==27)
         {
                 FullScreen = !FullScreen;
@@ -957,9 +908,17 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
                                 if (Filename=="") return;
                                 Ext = FileNameGetExt(Filename);
+                        }
+
+                        if (Ext==".SYM")
+                        {
+                                symbolstore::loadFileSymbols(Filename.c_str());
+                                // hmm there really should be an event here.
+                                SymbolBrowser->RefreshContent();
+                                return;
                         }
 
                         if (Ext==".WAV") WavLoad->LoadFile(Filename);
@@ -967,7 +926,8 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                         else if (Ext==".Z80") spec_load_z80(Filename.c_str());
                         else if (Ext==".SNA") spec_load_sna(Filename.c_str());
                         else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
-                                  || Ext==".P" || Ext==".O" || Ext==".A83")
+                                  || Ext==".P" || Ext==".O" || Ext==".A83"
+                                  || Ext==".81" || Ext==".80")
                         {
                                 TZX->LoadFile(Filename, false);
                                 TZX->UpdateTable(true);
@@ -976,6 +936,9 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                                   || Ext==".DSK" || Ext==".MGT" || Ext==".IMG"
                                   || Ext==".OPD" || Ext==".OPU" || Ext==".TRD")
                                         P3Drive->InsertFile(Filename);
+                        else if (Ext==".RZX")
+                                spec48_LoadRZX(Filename.c_str());
+
                 }
 
                 DragFinish((void *)Msg.wParam);
@@ -1025,6 +988,7 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
         }
 
         if (!nosound) sound_frame();
+
         if (zx81_stop)
         {
                 AccurateUpdateDisplay(false);
@@ -1038,8 +1002,11 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
                 Drive=spectrum.drivebusy;
         }
 
-        mouse.x = Controls::Mouse->CursorPos.x;
-        mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
+        if (spectrum.kmouse)
+        {
+                mouse.x = Controls::Mouse->CursorPos.x;
+                mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
+        }
 
         fps++;
         frametstates=0;
@@ -1082,9 +1049,6 @@ void VideoThread(void)
                 SwitchToThread();
         }
 }
-
-
-//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
@@ -1103,11 +1067,6 @@ void __fastcall TForm1::FormDeactivate(TObject *Sender)
 
 void TForm1::LoadSettings(TIniFile *ini)
 {
-        //if (ini->ReadBool("MAIN","Fast1",Fast1->Checked)) Fast1Click(NULL);
-        //if (ini->ReadBool("MAIN","Accurate1",Accurate1->Checked)) Accurate1Click(NULL);
-        //if (ini->ReadBool("MAIN","DisplayArtifacts",DisplayArtifacts1->Checked)) DisplayArtifacts1Click(NULL);
-
-
         if (ini->ReadBool("MAIN","InverseVideo",InverseVideo->Checked)) InverseVideoClick(NULL);
 
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
@@ -1316,8 +1275,8 @@ void __fastcall TForm1::SaveMemoryBlock1Click(TObject *Sender)
 
 void __fastcall TForm1::HardReset1Click(TObject *Sender)
 {
-        extern int RasterY;
         //PCAllKeysUp();
+        rzx_close();
         zx81_stop=1;
         z80_reset();
         AccurateInit(false);
@@ -1683,6 +1642,7 @@ void __fastcall TForm1::FormMouseUp(TObject *Sender, TMouseButton Button,
 
 void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 {
+        rzx_close();
         if (machine.nmi) machine.nmi();
         else z80_nmi(0);
 }
@@ -1750,7 +1710,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 
         ConfigName = ((TMenuItem *)Sender)->Caption;
 
-        while(i=ConfigName.Pos("&"))
+        while((i = ConfigName.Pos("&")) != 0)
         {
                 int len;
                 AnsiString Before="", After="";
@@ -1808,13 +1768,45 @@ void __fastcall TForm1::MemotechResetClick(TObject *Sender)
 void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
 {
         AnsiString Extension, Filename;
+        FILE *f;
+
+        SaveScrDialog->Filter = "Windows Bitmap (.bmp)|*.bmp";
+
+        if (zx81.machine==MACHINESPEC48)
+                SaveScrDialog->Filter += "|Spectrum Screen (.scr)|*.scr";
+
+
         if (!SaveScrDialog->Execute()) return;
 
         Filename=SaveScrDialog->FileName;
         Extension=FileNameGetExt(Filename);
 
-        if (Extension!=".BMP") Filename += ".bmp";
-        SaveScreenShot(Filename);
+        switch(SaveScrDialog->FilterIndex)
+        {
+        case 1:
+                if (Extension!=".BMP") Filename += ".bmp";
+                SaveScreenShot(Filename);
+                break;
+
+        case 2:
+                if (Extension!=".SCR") Filename += ".scr";
+                f=fopen(Filename.c_str(), "wb");
+                if (f)
+                {
+
+                        int i;
+
+                        for(i=0;i<6912;i++)
+                                fputc(spec48_readbyte(16384+i),f);
+                        fclose(f);
+                }
+                fclose(f);
+                break;
+        default:
+                break;
+        }
+
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::PrinterPort1Click(TObject *Sender)
@@ -1827,6 +1819,21 @@ void __fastcall TForm1::Midi1Click(TObject *Sender)
 {
         MidiForm->ShowModal();
 
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Play1Click(TObject *Sender)
+{
+        if (!OpenRZX->Execute()) return;
+
+        spec48_LoadRZX(OpenRZX->FileName.c_str());
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::QSChrEnable1Click(TObject *Sender)
+{
+        QSChrEnable1->Checked = ! QSChrEnable1->Checked;
+        zx81.enableqschrgen= QSChrEnable1->Checked;
 }
 //---------------------------------------------------------------------------
 

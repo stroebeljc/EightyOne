@@ -7,8 +7,6 @@
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
-
-#include "debug.h"
 //---------------------------------------------------------------------------
 class TEditValue : public TForm
 {
@@ -19,11 +17,13 @@ __published:	// IDE-managed Components
         TButton *Cancel;
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
+        void __fastcall FormKeyPress(TObject *Sender, char &Key);
 private:	// User declarations
         bool cancelled;
 public:		// User declarations
         __fastcall TEditValue(TComponent* Owner);
-        int Edit(int value,int len);
+        bool Edit2(int& value,int len);
+        void CentreOn(TForm* parent);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TEditValue *EditValue;

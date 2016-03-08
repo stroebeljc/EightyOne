@@ -312,10 +312,11 @@ break;
 case 0xa3:	/* OUTI */
 {
   WORD outitemp=readbyte(HL);
-  B--;		/* This does happen first, despite what the specs say */
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
   HL++;
   writeport(BC,outitemp,&tstates);
+  B--;		/* This does happen first, despite what the specs say */
+                /* Erm, no it doesn't - MW */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
 }
@@ -364,10 +365,11 @@ break;
 case 0xab:	/* OUTD */
 {
   WORD outitemp=readbyte(HL);
-  B--;		/* This does happen first, despite what the specs say */
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
   HL--;
   writeport(BC,outitemp,&tstates);
+  B--;		/* This does happen first, despite what the specs say */
+                /* Erm, no it doesn't - MW */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
 }
@@ -431,8 +433,9 @@ case 0xb3:	/* OTIR */
 {
   WORD outitemp=readbyte(HL);
   tstates++; contend( HL, 4 );
-  B--;	HL++;	/* This does happen first, despite what the specs say */
   writeport(BC,outitemp,&tstates);
+  B--;	HL++;	/* This does happen first, despite what the specs say */
+                /* Erm, no it doesn't - MW */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
@@ -504,8 +507,9 @@ case 0xbb:	/* OTDR */
 {
   WORD outitemp=readbyte(HL);
   tstates++; contend( HL, 4 );
-  B--; HL--;	/* This does happen first, despite what the specs say */
   writeport(BC,outitemp,&tstates);
+  B--; HL--;	/* This does happen first, despite what the specs say */
+                /* Erm, no it doesn't - MW */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {

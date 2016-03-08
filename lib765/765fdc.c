@@ -121,12 +121,13 @@ static void fdc_dorcheck(FDC_765 *self)
 static void fdc_get_st3(FDC_765 *self)
 {	
 	FLOPPY_DRIVE *fd = self->fdc_dor_drive[self->fdc_curunit];
-	fdc_byte value;
+	fdc_byte value = 0;
 
+	/* 0.3.4: Check this, it could be null! */
 	if (fd->fd_vtable->fdv_drive_status)
-                value = (*fd->fd_vtable->fdv_drive_status)(fd);
-        else value=0;
-        
+	{
+		value = (*fd->fd_vtable->fdv_drive_status)(fd);	
+	}
 	value &= 0xF8;
 	value |= (self->fdc_curhead ? 4 : 0);
 	value |= (self->fdc_curunit & 3);
@@ -416,34 +417,53 @@ static void fdc_sense_drive(FDC_765 *self)
 
 static void fdc_read(FDC_765 *self, int deleted)
 {
-	int err;
+	int err = 0;
 	FLOPPY_DRIVE *fd;
+	int sector;
+	size_t lensector;
+	fdc_byte *buf = self->fdc_exec_buf;
 
 	self->fdc_st0 = self->fdc_st1 = self->fdc_st2 = 0;
 	self->fdc_lastidread = 0;
 	
 	fdc_get_drive(self);	
 
-	fd = self->fdc_dor_drive[self->fdc_curunit];
-        self->fdc_exec_len = (128 << self->fdc_cmd_buf[5]);
-        if (self->fdc_cmd_buf[8] < 255) 
-		self->fdc_exec_len = self->fdc_cmd_buf[8];
+	self->fdc_exec_len = 0;
+	/* 0.4.0: Support for multisector reads. Do it naively by reading
+	 * all the sectors in one go. */
+	for (sector = self->fdc_cmd_buf[4]; sector <= self->fdc_cmd_buf[6]; 
+			sector++)
+	{
+		fd = self->fdc_dor_drive[self->fdc_curunit];
+       		lensector = (128 << self->fdc_cmd_buf[5]);
+       		if (self->fdc_cmd_buf[8] < 255) 
+			lensector = self->fdc_cmd_buf[8];
 
-	memset(self->fdc_exec_buf, 0, self->fdc_exec_len);
+		memset(buf, 0, lensector);
 
-        if (!fdc_isready(self, fd)) err = FD_E_NOTRDY;
-	else err = fd_read_sector(fd, 
-		self->fdc_cmd_buf[2], self->fdc_cmd_buf[3],
-		self->fdc_curhead,
-		self->fdc_cmd_buf[4], self->fdc_exec_buf, 
-		self->fdc_exec_len, &deleted,
-		self->fdc_cmd_buf[0] & 0x20,
-		self->fdc_cmd_buf[0] & 0x40,
-		self->fdc_cmd_buf[0] & 0x80);
+		if (!fdc_isready(self, fd)) err = FD_E_NOTRDY;
+		else err = fd_read_sector(fd, 
+			self->fdc_cmd_buf[2], /* Cylinder expected */
+			self->fdc_cmd_buf[3], /* Head expected */
+			self->fdc_curhead,    /* Real head */
+			self->fdc_cmd_buf[4], /* Sector */
+			buf,
+			lensector, 
+			&deleted,
+			self->fdc_cmd_buf[0] & 0x20,
+			self->fdc_cmd_buf[0] & 0x40,
+			self->fdc_cmd_buf[0] & 0x80);
 
-	if (err) fdc_xlt_error(self, err);
-	if (deleted) self->fdc_st2 |= 0x40;
-
+		if (err) fdc_xlt_error(self, err);
+		if (deleted) self->fdc_st2 |= 0x40;
+		if (err && err != FD_E_DATAERR)
+		{
+			break;
+		}
+		buf += lensector;
+		self->fdc_exec_len += lensector;
+		++self->fdc_cmd_buf[4];		/* Next sector */
+	}
 	fdc_results_7(self);
 	if (err && err != FD_E_DATAERR)
 	{
@@ -459,6 +479,8 @@ static void fdc_read(FDC_765 *self, int deleted)
 
 /* WRITE DATA
  * WRITE DELETED DATA 
+ *
+ * XXX Does not support multisector
  */
 
 static void fdc_write(FDC_765 *self, int deleted)

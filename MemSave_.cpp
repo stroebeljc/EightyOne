@@ -36,8 +36,8 @@
 TMemSave *MemSave;
 
 extern char memory[];
-extern "C" BYTE spec48_readbyte(int Address);
-extern "C" void spec48_writebyte(int Address, int Data);
+extern BYTE spec48_readbyte(int Address);
+extern void spec48_writebyte(int Address, int Data);
 extern int TIMEXMode;
 
 //---------------------------------------------------------------------------
@@ -108,10 +108,11 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
         len=0;
         if (LenStr.Length())
         {
-                if (LenStr[1]=='$') len=Hex2Dec(AddrStr);
+                if (LenStr[1]=='$') len=Hex2Dec(LenStr);
                 else len=atoi(LenStr.c_str());
         }
         if (addr<0 || addr>65535) return;
+        if (len == 0) return;
 
         if (Save->Caption=="Save File...")
         {

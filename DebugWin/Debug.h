@@ -30,15 +30,24 @@
 #include <Forms.hpp>
 #include <Grids.hpp>
 #include <IniFiles.hpp>
+#include <Menus.hpp>
 //---------------------------------------------------------------------------
+
+enum
+{
+        BP_EXE, BP_RD, BP_WR
+};
 
 struct breakpoint
 {
         int Addr;
         bool Permanent;
+
+        // one of BP_EXE, BP_RD, BP_WR
+        int Type;
 };
 
-extern "C" void DebugUpdate(void);
+extern void DebugUpdate(void);
 
 class TDbg : public TForm
 {
@@ -81,7 +90,6 @@ __published:	// IDE-managed Components
         TLabel *Label11;
         TLabel *Halt;
         TGroupBox *GroupBox2;
-        TLabel *Label8;
         TLabel *Disass0;
         TLabel *Disass1;
         TLabel *Disass2;
@@ -90,6 +98,8 @@ __published:	// IDE-managed Components
         TLabel *Disass5;
         TLabel *Disass6;
         TLabel *Disass7;
+        TLabel *Disass8;
+        TLabel *Disass9;
         TGroupBox *GroupBoxZX81;
         TLabel *Label39;
         TLabel *Label10;
@@ -101,7 +111,6 @@ __published:	// IDE-managed Components
         TLabel *RowCount;
         TLabel *ShiftReg;
         TGroupBox *GroupBox4;
-        TCheckBox *Continuous;
         TLabel *HSYNCGen;
         TGroupBox *GroupBox5;
         TLabel *Stack0;
@@ -117,13 +126,8 @@ __published:	// IDE-managed Components
         TButton *AddBrkBtn;
         TButton *DelBrkBtn;
         TStringGrid *BPList;
-        TLabel *Label26;
-        TCheckBox *SkipNMIBtn;
-        TCheckBox *SkipINTBtn;
         TLabel *Label27;
         TLabel *TStates;
-        TButton *History;
-        TCheckBox *EnableHistory;
         TButton *SingleStep;
         TButton *StepOver;
         TButton *RunStop;
@@ -153,13 +157,29 @@ __published:	// IDE-managed Components
         TLabel *AceStkVal5;
         TLabel *AceStkVal6;
         TLabel *AceStkVal7;
+        TLabel *Label28;
+        TLabel *Label29;
+        TPopupMenu *MemDumpPopup;
+        TMenuItem *MemDumpFromHere1;
+        TCheckBox *EnableHistory;
+        TButton *History;
+        TLabel *Label8;
+        TButton *Symbols;
+        TMenuItem *AddBreak1;
+        TLabel *SymRom;
+        TLabel *SymApp;
+        TMenuItem *OnExecute1;
+        TMenuItem *OnRead1;
+        TMenuItem *OnWrite1;
+        TCheckBox *Continuous;
+        TCheckBox *SkipNMIBtn;
+        TCheckBox *SkipINTBtn;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ContinuousClick(TObject *Sender);
         void __fastcall SingleStepClick(TObject *Sender);
         void __fastcall StepOverClick(TObject *Sender);
-        void __fastcall AddBrkBtnClick(TObject *Sender);
         void __fastcall DelBrkBtnClick(TObject *Sender);
         void __fastcall SkipNMIBtnClick(TObject *Sender);
         void __fastcall SkipINTBtnClick(TObject *Sender);
@@ -181,32 +201,71 @@ __published:	// IDE-managed Components
         void __fastcall InteruptsClick(TObject *Sender);
         void __fastcall IMClick(TObject *Sender);
         void __fastcall Stack0Click(TObject *Sender);
-        void __fastcall Stack1Click(TObject *Sender);
-        void __fastcall Stack2Click(TObject *Sender);
-        void __fastcall Stack3Click(TObject *Sender);
-        void __fastcall Stack4Click(TObject *Sender);
-        void __fastcall Stack5Click(TObject *Sender);
-        void __fastcall Stack6Click(TObject *Sender);
-        void __fastcall Stack7Click(TObject *Sender);
         void __fastcall IRClick(TObject *Sender);
         void __fastcall FClick(TObject *Sender);
         void __fastcall F_Click(TObject *Sender);
+        void __fastcall BCMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall DEMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall HLMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall BC_MouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall DE_MouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall HL_MouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall IXMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall IYMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall SPMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall PCMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall MemDumpFromHere1Click(TObject *Sender);
+        void __fastcall Stack0MouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall IRMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall AceStk0Click(TObject *Sender);
+        void __fastcall AceStkVal0Click(TObject *Sender);
+        void __fastcall AddBrkBtnClick(TObject *Sender);
+        void __fastcall SymbolsClick(TObject *Sender);
+        void __fastcall AddBreak1Click(TObject *Sender);
 private:	// User declarations
         void EnableVals(void);
         void DisableVals(void);
+        void SetMenuContent(int memloc);
         AnsiString StrRep(AnsiString Text, int Pos, int Len, AnsiString NewText);
+
         struct breakpoint Breakpoint[99];
         int Breakpoints;
+        bool BPHit(int Addr, int Type, int& idx);
+        void DelTempBreakPoints(void);
+ 
+        // default values are evil. never ever use them >:)
+        void SetLabelInfo(TLabel* label, int value, int valueWidth = 4);
+
         int StepOverAddr;
+        void __fastcall DoEditStack(int);
+        void __fastcall DoEditReg(WORD&);
+        void __fastcall DoEditReg(BYTE&);
+
+
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
         int NMIRetAddr, INTRetAddr;
         void UpdateVals(void);
         bool DoNext;
-        bool BreakPointHit(int Addr);
-        void AddBreakPoint(int Addr, bool Perm);
+
+        bool ExecBreakPointHit(int Addr);
+        bool MemoryReadHit(int Addr);
+        bool MemoryWriteHit(int Addr);
+
+        bool AddBreakPoint(int Addr, bool Perm, int type);
         void DelBreakPoint(int Addr);
-        void DelTempBreakPoints(void);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         AnsiString Disassemble(int *Ad);

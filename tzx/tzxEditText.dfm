@@ -2,7 +2,7 @@ object EditTextForm: TEditTextForm
   Left = 378
   Top = 157
   BorderIcons = []
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Edit Text Block'
   ClientHeight = 90
   ClientWidth = 297

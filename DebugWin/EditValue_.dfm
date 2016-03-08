@@ -1,6 +1,6 @@
 object EditValue: TEditValue
-  Left = 272
-  Top = 127
+  Left = 283
+  Top = 147
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'Edit Value'
@@ -13,6 +13,7 @@ object EditValue: TEditValue
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -29,6 +30,7 @@ object EditValue: TEditValue
     Height = 21
     TabOrder = 0
     Text = '0'
+    OnKeyPress = FormKeyPress
   end
   object OK: TButton
     Left = 8

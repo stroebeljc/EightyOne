@@ -93,6 +93,3 @@ dsk_err_t dsk_defgetgeom(DSK_DRIVER *self, DSK_GEOMETRY *geom);
 #else
 # define SHAREDIR NULL
 #endif
-
-//#define tolower(s) _tolower(s)
-//#define toupper(s) _toupper(s)

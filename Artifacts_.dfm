@@ -1,8 +1,8 @@
 object Artifacts: TArtifacts
-  Left = 474
-  Top = 109
+  Left = 590
+  Top = 114
   BorderIcons = []
-  BorderStyle = bsSingle
+  BorderStyle = bsToolWindow
   Caption = 'TV Emulation'
   ClientHeight = 328
   ClientWidth = 238
@@ -394,17 +394,20 @@ object Artifacts: TArtifacts
   end
   object Label1: TLabel
     Left = 8
-    Top = 170
-    Width = 56
+    Top = 210
+    Width = 72
     Height = 13
-    Caption = 'VSync Gain'
+    AutoSize = False
+    Caption = 'Horizontal Hold'
   end
   object Label2: TLabel
     Left = 8
-    Top = 204
-    Width = 54
+    Top = 172
+    Width = 72
     Height = 13
-    Caption = 'VSync Bias'
+    Alignment = taRightJustify
+    AutoSize = False
+    Caption = 'Vertical Hold'
   end
   object CloseBtn: TButton
     Left = 156
@@ -592,16 +595,16 @@ object Artifacts: TArtifacts
     OnChange = TrackBarChange
   end
   object VGain: TTrackBar
-    Left = 64
-    Top = 158
-    Width = 174
+    Left = 88
+    Top = 198
+    Width = 150
     Height = 33
-    Hint = 'Vertical Hold Gain'
-    Max = 50
-    Min = -50
+    Hint = 'Horizontal Hold'
+    Max = 400
+    Min = -400
     Orientation = trHorizontal
     ParentShowHint = False
-    Frequency = 25
+    Frequency = 200
     Position = 0
     SelEnd = 0
     SelStart = 0
@@ -612,11 +615,11 @@ object Artifacts: TArtifacts
     OnChange = TrackBarChange
   end
   object VBias: TTrackBar
-    Left = 64
-    Top = 192
-    Width = 174
+    Left = 88
+    Top = 160
+    Width = 150
     Height = 33
-    Hint = 'Vertical Hold Bias'
+    Hint = 'Vertical Hold'
     Max = 50
     Min = -50
     Orientation = trHorizontal

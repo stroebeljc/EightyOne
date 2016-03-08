@@ -43,6 +43,9 @@
 #include "ide.h"
 #include "parallel.h"
 #include "sp0256.h"
+#include "rzx.h"
+
+#define VBLANKCOLOUR (0*16)
 
 //extern void p3fdc_set_motor(BYTE Data);
 //extern void p3fd_write_data(BYTE Data);
@@ -87,6 +90,10 @@ extern void TZXWriteByte(unsigned char Byte);
 extern int TZXEventCounter;
 int InteruptPosition;
 int SPECFlashLoading=0;
+int fts=0;
+
+extern unsigned short RZXCounter;
+extern RZX_INFO rzx;
 
 int TIMEXByte, TIMEXMode, TIMEXColour;
 int TIMEXPage, TIMEXBank;
@@ -99,12 +106,55 @@ extern void LoadFDC765DLL(void);
 
 BYTE ContendArray[80000];
 
+RZX_EMULINFO  RZXemulinfo =
+{
+   "EightyOne",
+   MAJORVERSION,
+   MINORVERSION,
+   NULL, 0, 0
+} ;
+
+int RZXError;
+
+void spec48_LoadRZX(char *FileName)
+{
+        rzx_playback(FileName);
+        RZXCounter=0;
+}
+
+rzx_u32 RZXcallback(int Msg, void *data)
+{
+        int a,b,c,d;
+
+        switch(Msg)
+        {
+        case RZXMSG_CREATOR:
+                break;
+        case RZXMSG_LOADSNAP:
+                spec_load_z80( ((RZX_SNAPINFO *) data)->filename);
+                break;
+        case RZXMSG_IRBNOTIFY:
+                a=((RZX_IRBINFO *) data)->framecount;
+                b=((RZX_IRBINFO *) data)->tstates;
+                c=((RZX_IRBINFO *) data)->options;
+                d=0;
+
+                fts=a;
+                RZXCounter=0;
+                break;
+        default:
+                break;
+        }
+
+        return(0);
+}
+
 void SpecStartUp(void)
 {
         memset(&PlusDDrives[0], 0, sizeof(wd1770_drive));
         memset(&PlusDDrives[1], 0, sizeof(wd1770_drive));
         LoadFDC765DLL();
-
+        RZXError=rzx_init(&RZXemulinfo, RZXcallback);
 }
 
 int SPECShrink(int b)
@@ -924,6 +974,7 @@ int spec48_contendio(int Address, int states, int time)
 
 BYTE spec48_readport(int Address, int *tstates)
 {
+        int RZXPortVal;
         //static int LastT=0;
         //int CurT;
 
@@ -931,6 +982,13 @@ BYTE spec48_readport(int Address, int *tstates)
         //if (CurT<0) CurT+=frametstates;
         //LastT=CurT;
         //if (CurT>1000) TZXStopPlaying();
+
+        if (rzx.mode==RZX_PLAYBACK)
+        {
+                RZXPortVal = rzx_get_input();
+                if (RZXPortVal>=0) return(RZXPortVal);
+                //rzx_close();
+        }
 
         if (spectrum.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
                 return(ATA_ReadRegister((Address>>2)&7));
@@ -1188,7 +1246,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         static int ink,paper;
         static int Sy=0, loop=207;
         static int borrow=0;
-        static int fts=0, sts=0, chars=0, delay=0, IntDue=0;
+        static int sts=0, chars=0, delay=0, IntDue=0;
         static int flash=0, DrawingBorder=1, DCCount=0;
         static int BaseColour, PBaseColour;
         int y1,y2;
@@ -1216,7 +1274,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 chars=0;
         }
 
-        if (!fts) IntDue=1;
+        if (fts<=0) IntDue=1;
 
         MaxScanLen = scale * zx81.single_step? 1:500;
         do
@@ -1326,6 +1384,11 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (fts>InteruptPosition && IntDue)
                         {
                                 InteruptTime=(TIMEXByte&64)?0:z80_interrupt(0);
+                                if (rzx.mode==RZX_PLAYBACK)
+                                {
+                                        //if (RZXCounter<=0) Sy=machine.scanlines;
+                                        rzx_update(&RZXCounter);
+                                }
 
                                 if (InteruptTime && !WavInGroup()) WavStop();
                                 ts+=InteruptTime;
@@ -1419,6 +1482,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 colour = ((shift_register&32768)?ink:paper) << 4;
                                         else colour = ((shift_register&128)?ink:paper) << 4;
 
+                                        if (fts<3584) colour=VBLANKCOLOUR;
+
                                         altcolour=colour;
                                         BaseColour=colour>>4;
 
@@ -1477,16 +1542,13 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 Sy++;
                 if (Sy>=machine.scanlines)
                 {
-                        fts=0;
+                        fts =0;//-= machine.tperframe;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_valid = SYNCTYPEV;
                         Sy=0;
-                        borrow=0;
+                        //borrow=0;
                         loop=machine.tperscanline;
                 }
-
-
-
                 clean_exit=1;
         }
         else    clean_exit=0;

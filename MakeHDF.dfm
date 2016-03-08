@@ -2,7 +2,7 @@ object CreateHDF: TCreateHDF
   Left = 344
   Top = 84
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Create HDF File'
   ClientHeight = 151
   ClientWidth = 305

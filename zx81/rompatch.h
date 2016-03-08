@@ -19,5 +19,9 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" int PatchTest(int pc);
+#else
 extern int PatchTest(int pc);
+#endif
 

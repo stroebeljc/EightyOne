@@ -3,6 +3,7 @@ object TZX: TTZX
   Top = 110
   Width = 239
   Height = 300
+  BorderStyle = bsSizeToolWin
   Caption = 'Tape'
   Color = clBtnFace
   Constraints.MinHeight = 200
@@ -259,9 +260,9 @@ object TZX: TTZX
     end
   end
   object ScrollBar1: TScrollBar
-    Left = 204
+    Left = 205
     Top = 39
-    Width = 17
+    Width = 16
     Height = 190
     Anchors = [akTop, akRight, akBottom]
     Kind = sbVertical
@@ -541,9 +542,9 @@ object TZX: TTZX
   object OpenDialog: TOpenDialog
     DefaultExt = 'tzx'
     Filter = 
-      'All Tape Files|*.tzx;*.tap;*.t81;*.p;*.o;*.a83;*.zip|Spectrum Fi' +
-      'les|*.tzx;*.tap|ZX81 Files|*.t81;*.p|ZX80 Files|*.o|Lambda Files' +
-      '|*.a83|Compresses Files|*.zip'
+      'All Tape Files|*.tzx;*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83;*.zip|S' +
+      'pectrum Files|*.tzx;*.tap|ZX81 Files|*.t81;*.p;*.81|ZX80 Files|*' +
+      '.o;*.80|Lambda Files|*.a83|Compresses Files|*.zip'
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
     Left = 104
     Top = 120

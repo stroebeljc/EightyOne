@@ -3,6 +3,7 @@ object HistoryBox: THistoryBox
   Top = 151
   Width = 299
   Height = 264
+  BorderStyle = bsSizeToolWin
   Caption = 'CPU History'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

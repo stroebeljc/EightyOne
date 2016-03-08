@@ -108,6 +108,27 @@ int PatchTest(int pc)
                         pc=0x01f3;
         }
 
+        if (pc==0x38DE && byte==0xc9)
+        {
+                int drive;
+                int track;
+
+                drive=memory[12301];
+                track=memory[12289];
+
+
+                if (!LarkenLoadTrack((memory[12301]==2), memory[12289], memory+12352))
+                {
+                        memory[14335]=0xFA;
+                        pc=0x392E;
+                }
+        }
+
+        if (pc==0x3A10 && byte==0xc9)
+        {
+                LarkenSaveTrack((memory[12301]==2), memory[12289], memory+12352);
+        }
+
         return(pc);
 
         /*        if (zx81.romcrc==CRCTK85 && pc==0x21b6))

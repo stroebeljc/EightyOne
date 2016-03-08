@@ -41,6 +41,8 @@ static void z80_fdxx(BYTE opcode2);
 static void z80_ddfdcbxx(BYTE opcode3, WORD tempaddr);
 #endif
 
+unsigned short RZXCounter=0;
+
 /* Execute Z80 opcodes until the next event */
 int z80_do_opcode()
 {
@@ -51,7 +53,7 @@ int z80_do_opcode()
     /* Do the instruction fetch; readbyte_internal used here to avoid
        triggering read breakpoints */
 
-    contend( PC, 4 ); R++;
+    contend( PC, 4 ); R++; RZXCounter--;
 
     //if (z80.halted) opcode=0;
     opcode = opcode_fetch( PC++ );
@@ -830,7 +832,7 @@ int z80_do_opcode()
 	BYTE opcode2;
 	contend( PC, 4 );
 	opcode2 = opcode_fetch( PC++ );
-	R++;
+	R++; RZXCounter--;
 
 	switch(opcode2)
         {
@@ -934,7 +936,7 @@ int z80_do_opcode()
 	BYTE opcode2;
 	contend( PC, 4 );
 	opcode2 = opcode_fetch( PC++ );
-	R++;
+	R++; RZXCounter--;
 
 	switch(opcode2) {
 #define REGISTER  IX
@@ -1026,7 +1028,7 @@ int z80_do_opcode()
 	BYTE opcode2;
 	contend( PC, 4 );
 	opcode2 = opcode_fetch( PC++ );
-	R++;
+	R++; RZXCounter--;
 	switch(opcode2) {
 #include "z80_ed.c"
 	}
@@ -1104,7 +1106,7 @@ int z80_do_opcode()
 	BYTE opcode2;
 	contend( PC, 4 );
 	opcode2 = opcode_fetch( PC++ );
-	R++;
+	R++; RZXCounter--;
 	switch(opcode2) {
 #define REGISTER  IY
 #define REGISTERL IYL

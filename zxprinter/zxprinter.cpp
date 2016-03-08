@@ -197,16 +197,16 @@ unsigned char TPrinter::ReadPort(void)
 
 
 //---------------------------------------------------------------------------
-extern "C" void ZXPrinterClockTick(int ts)
+void ZXPrinterClockTick(int ts)
 {
         Printer->ClockTick(ts);
 }
-extern "C" void ZXPrinterWritePort(unsigned char Data)
+void ZXPrinterWritePort(unsigned char Data)
 {
         Printer->WritePort(Data);
 }
 
-extern "C" unsigned char ZXPrinterReadPort(void)
+unsigned char ZXPrinterReadPort(void)
 {
         return(Printer->ReadPort());
 }
@@ -269,6 +269,8 @@ void __fastcall TPrinter::OptionsBtnClick(TObject *Sender)
 
 void TPrinter::LoadSettings(TIniFile *ini)
 {
+        OptionsBtnClick(NULL);
+
         Top = ini->ReadInteger("PRINTER","Top",Top);
         Left = ini->ReadInteger("PRINTER","Left",Left);
 
@@ -342,6 +344,10 @@ void __fastcall TPrinter::StyleChange(TObject *Sender)
                 Bg=clWhite;
                 BitRate->Position=65;
                 LineRate->Position=100;
+                break;
+        default:
+                Style->ItemIndex=0;
+                StyleChange(NULL);
                 break;
         }
         ClearImageClick(NULL);

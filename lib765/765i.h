@@ -2,6 +2,9 @@
 
     Copyright (C) 2000  John Elliott <jce@seasip.demon.co.uk>
 
+    Modifications to add dirty flags
+    (c) 2005 Philip Kendall <pak21-spectrum@srcf.ucam.org>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -44,6 +47,7 @@ typedef struct floppy_drive_vtable
 		int sectors, fdc_byte *buf, fdc_byte filler);
 	fdc_byte (*fdv_drive_status )(FDRV_PTR fd);
 	int      (*fdv_isready)(FDRV_PTR fd);
+	int	 (*fdv_dirty  )(FDRV_PTR fd);
 	void     (*fdv_eject  )(FDRV_PTR fd);
 	void	 (*fdv_set_datarate)(FDRV_PTR fd, fdc_byte rate);
 	void     (*fdv_reset  )(FDRV_PTR fd);
@@ -95,6 +99,7 @@ typedef struct dsk_floppy_drive
 	FILE *fdd_fp;			/* File of the .DSK file */
 	fdc_byte fdd_disk_header[256];	/* .DSK header */
 	fdc_byte fdd_track_header[256];	/* .DSK track header */
+	int fdd_dirty;			/* Has this disk been written to? */
 } DSK_FLOPPY_DRIVE;
 
 #ifdef DSK_ERR_OK	/* LIBDSK headers included */

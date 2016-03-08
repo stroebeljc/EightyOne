@@ -76,6 +76,28 @@ typedef struct
 
 typedef struct
 {
+        char cookie[8];
+        int features;
+        int version;
+        int offset1, offset2;
+        int timestamp;
+        int creator_app;
+        int creator_ver;
+        int creator_os;
+        long origsz1, origsz2;
+        long cursz1, cursz2;
+        char cyl_h, cyl_l;
+        char heads;
+        char sectors;
+        int disk_type;
+        int checksum;
+        int uid1, uid2, uid3, uid4;
+        char state;
+        char reserved[427];
+} VHD_HEADER;
+
+typedef struct
+{
 	char filename[256];
 	FILE *f;
         HANDLE h;
@@ -83,6 +105,7 @@ typedef struct
         int AccessMode;
 	unsigned int sector_size;
 	HDF_HEADER hdf;
+        VHD_HEADER vhd;
 
         byte drive_id[512];
         int id_len;

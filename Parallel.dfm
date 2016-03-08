@@ -2,7 +2,7 @@ object ParallelPort: TParallelPort
   Left = 400
   Top = 101
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Printer Port'
   ClientHeight = 152
   ClientWidth = 230

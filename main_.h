@@ -28,7 +28,6 @@
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
-//#include "dbits.h"
 #include <ExtCtrls.hpp>
 #include <Menus.hpp>
 #include <Dialogs.hpp>
@@ -133,13 +132,19 @@ __published:	// IDE-managed Components
         TMenuItem *N7;
         TSaveDialog *SaveConfigDialog;
         TMenuItem *ConfigItem1;
-        TAnimTimer *AnimTimer1;
         TMenuItem *MemotechReset;
         TMenuItem *SaveScreenshot1;
         TSaveDialog *SaveScrDialog;
         TMenuItem *PrinterPort1;
         TThemeManager *ThemeManager1;
         TMenuItem *Midi1;
+        TMenuItem *RZX1;
+        TMenuItem *N8;
+        TMenuItem *Play1;
+        TOpenDialog *OpenRZX;
+        TAnimTimer *AnimTimer1;
+        TMenuItem *QSChrEnable1;
+        TMenuItem *N9;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -218,13 +223,14 @@ __published:	// IDE-managed Components
         void __fastcall SaveScreenshot1Click(TObject *Sender);
         void __fastcall PrinterPort1Click(TObject *Sender);
         void __fastcall Midi1Click(TObject *Sender);
+        void __fastcall Play1Click(TObject *Sender);
+        void __fastcall QSChrEnable1Click(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
         bool nosound;
         int StartUpWidth, StartUpHeight;
         void BuildConfigMenu(void);
-        void __fastcall WMGetMinMaxInfo(TWMGetMinMaxInfo &Msg);
         bool DrivesChanged;
         bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;
@@ -238,9 +244,6 @@ public:		// User declarations
         int SaveX, SaveY, SaveW, SaveH;
         int SaveScrW, SaveScrH, SaveScrBpp;
         void __fastcall AppMessage(TMsg &Msg, bool &Handled);
-        BEGIN_MESSAGE_MAP
-                MESSAGE_HANDLER (WM_GETMINMAXINFO,TWMGetMinMaxInfo,WMGetMinMaxInfo)
-        END_MESSAGE_MAP(TForm)
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);

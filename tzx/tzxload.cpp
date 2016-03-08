@@ -693,7 +693,8 @@ bool TTZXFile::LoadPFile(AnsiString FileName, bool Insert)
 
         if (!Insert) NewTZX();
 
-        if (FileNameGetExt(FileName)==".P")
+        if (FileNameGetExt(FileName)==".P"
+                || FileNameGetExt(FileName)==".81")
         {
                 ConvertASCIIZX81(RemoveExt(RemovePath(FileName)), tempdata);
                 fnamelen=ZX81Strlen(tempdata);
@@ -789,6 +790,8 @@ bool TTZXFile::LoadFile(AnsiString FileName, bool Insert)
         if (Extension == ".TAP") return(LoadTAPFile(FileName, Insert));
         if (Extension == ".P"
                 || Extension == ".O"
+                || Extension == ".81"
+                || Extension == ".80"
                 || Extension == ".A83") return(LoadPFile(FileName, Insert));
         if (Extension == ".T81") return(LoadT81File(FileName, Insert));
 

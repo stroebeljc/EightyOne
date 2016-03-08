@@ -23,7 +23,6 @@
 #define zx81_h
 
 #include "z80\config.h"
-#include "zx81config.h"
 
 #define kbD0 1
 #define kbD1 2
@@ -41,28 +40,10 @@
 #define kbA14 6
 #define kbA15 7
 
-#ifdef __cplusplus
-
-extern "C" BYTE memory[];
-extern "C" void zx81_initialise(void);
-extern "C" int zx81_do_scanline(SCANLINE *CurScanLine);
-extern "C" void zx81_writebyte(int Address, int Data);
-extern "C" BYTE zx81_readbyte(int Address);
-extern "C" BYTE zx81_opcode_fetch(int Address);
-extern "C" void zx81_writeport(int Address, int Data, int *tstates);
-extern "C" BYTE zx81_readport(int Address, int *tstates);
-extern "C" int zx81_contend(int Address, int states, int time);
-extern "C" int tstates, event_next_event;
-extern "C" int framepos, NMI_generator, HSYNC_generator, frametstates;
-extern "C" BYTE get_i_reg(void);
-extern "C" BYTE ZXKeyboard[];
-extern "C" int zx81_stop;
-#else
-
 extern BYTE memory[];
 extern BYTE acecolour[];
 extern void zx81_initialise(void);
-extern int zx81_do_scanline(SCANLINE *CurScanLine);
+//extern int zx81_do_scanline(SCANLINE *CurScanLine);
 extern void zx81_writebyte(int Address, int Data);
 extern BYTE zx81_readbyte(int Address);
 extern BYTE zx81_opcode_fetch(int Address);
@@ -75,5 +56,4 @@ extern int zx81_stop;
 extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();
 
-#endif
 #endif

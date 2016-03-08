@@ -4,6 +4,7 @@ object EditGeneralForm: TEditGeneralForm
   Width = 632
   Height = 427
   BorderIcons = []
+  BorderStyle = bsSizeToolWin
   Caption = 'Edit General Data Block'
   Color = clBtnFace
   Constraints.MaxWidth = 632

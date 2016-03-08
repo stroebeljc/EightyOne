@@ -4,6 +4,7 @@ object EditDataForm: TEditDataForm
   Width = 632
   Height = 322
   BorderIcons = []
+  BorderStyle = bsSizeToolWin
   Caption = 'Edit Data Block'
   Color = clBtnFace
   Constraints.MaxWidth = 632

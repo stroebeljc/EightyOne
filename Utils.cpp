@@ -252,6 +252,7 @@ AnsiString RemoveExt(AnsiString Fname)
                 || Ext==".T81" || Ext==".t81"
                 || Ext==".A83" || Ext==".a83"
                 || Ext==".o" || Ext==".O"
+                || Ext==".81" || Ext==".80"
                 || Ext==".TZX" || Ext==".tzx"
                 || Ext==".TAP" || Ext==".tap"
                 || Ext==".WAV" || Ext==".wav"
@@ -261,6 +262,12 @@ AnsiString RemoveExt(AnsiString Fname)
                 || Ext==".mdr" || Ext==".MDR"
                 || Ext==".mdv" || Ext==".MDV"
                 || Ext==".dsk" || Ext==".DSK"
+                || Ext==".img" || Ext==".IMG"
+                || Ext==".opd" || Ext==".OPD"
+                || Ext==".opu" || Ext==".OPU"
+                || Ext==".mgt" || Ext==".MGT"
+                || Ext==".trd" || Ext==".TRD"
+                || Ext==".hdf" || Ext==".HDF"
                 ) && pos>1)
                 Fname = Fname.SubString(1,pos-1);
 

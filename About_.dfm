@@ -1,8 +1,8 @@
 object About: TAbout
-  Left = 316
-  Top = 119
+  Left = 360
+  Top = 131
   BorderIcons = [biHelp]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'About'
   ClientHeight = 360
   ClientWidth = 336
@@ -378,7 +378,7 @@ object About: TAbout
     Top = 48
     Width = 151
     Height = 13
-    Caption = '© 2003-2007 Michael D Wynne'
+    Caption = '© 2003-2008 Michael D Wynne'
   end
   object Label2: TLabel
     Left = 8
@@ -430,6 +430,7 @@ object About: TAbout
     Width = 276
     Height = 13
     Caption = 'Many thanks to Wilf Rigter for providing essential technical'
+    Visible = False
   end
   object Label10: TLabel
     Left = 8
@@ -452,6 +453,7 @@ object About: TAbout
     Caption = 
       'information on the internal workings of the ZX81 itself and also' +
       ' '
+    Visible = False
   end
   object Label12: TLabel
     Left = 8
@@ -459,6 +461,7 @@ object About: TAbout
     Width = 303
     Height = 13
     Caption = 'various add-ons including the Memotech and G007 Hi-res cards.'
+    Visible = False
   end
   object Label13: TLabel
     Left = 8
@@ -499,6 +502,7 @@ object About: TAbout
     Width = 196
     Height = 13
     Caption = 'G007 information also provided by Kryton.'
+    Visible = False
   end
   object Label17: TLabel
     Left = 8
@@ -513,6 +517,36 @@ object About: TAbout
     Width = 184
     Height = 13
     Caption = 'lib765 && libdsk © 2000-2005 John Elliot'
+  end
+  object Label18: TLabel
+    Left = 8
+    Top = 200
+    Width = 321
+    Height = 24
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'Dedicated to Abbey'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label19: TLabel
+    Left = 8
+    Top = 224
+    Width = 321
+    Height = 25
+    Alignment = taCenter
+    AutoSize = False
+    Caption = '1998 - 2008'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
   end
   object Button1: TButton
     Left = 235

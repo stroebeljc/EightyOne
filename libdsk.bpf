@@ -1,0 +1,100 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+USE("libdsk\comp.h", File);
+USEUNIT("libdsk\compbz2.c");
+USE("libdsk\compbz2.h", File);
+USEUNIT("libdsk\compgz.c");
+USE("libdsk\compgz.h", File);
+USE("libdsk\compi.h", File);
+USEUNIT("libdsk\compress.c");
+USE("libdsk\compress.h", File);
+USE("libdsk\compress.inc", File);
+USEUNIT("libdsk\compsq.c");
+USE("libdsk\compsq.h", File);
+USE("libdsk\config.h", File);
+USEUNIT("libdsk\crc16.c");
+USE("libdsk\crc16.h", File);
+USEUNIT("libdsk\crctable.c");
+USE("libdsk\crctable.h", File);
+USE("libdsk\drivers.h", File);
+USE("libdsk\drivers.inc", File);
+USE("libdsk\drv.h", File);
+USEUNIT("libdsk\drvadisk.c");
+USE("libdsk\drvadisk.h", File);
+USEUNIT("libdsk\drvcfi.c");
+USE("libdsk\drvcfi.h", File);
+USEUNIT("libdsk\drvcpcem.c");
+USE("libdsk\drvcpcem.h", File);
+USEUNIT("libdsk\drvdos16.c");
+USE("libdsk\drvdos16.h", File);
+USEUNIT("libdsk\drvdos32.c");
+USE("libdsk\drvdos32.h", File);
+USE("libdsk\drvi.h", File);
+USEUNIT("libdsk\drvint25.c");
+USE("libdsk\drvint25.h", File);
+USEUNIT("libdsk\drvlinux.c");
+USE("libdsk\drvlinux.h", File);
+USEUNIT("libdsk\drvmyz80.c");
+USE("libdsk\drvmyz80.h", File);
+USEUNIT("libdsk\drvntwdm.c");
+USE("libdsk\drvntwdm.h", File);
+USEUNIT("libdsk\drvnwasp.c");
+USE("libdsk\drvnwasp.h", File);
+USEUNIT("libdsk\drvposix.c");
+USE("libdsk\drvposix.h", File);
+USEUNIT("libdsk\drvqm.c");
+USE("libdsk\drvqm.h", File);
+USEUNIT("libdsk\drvrcpm.c");
+USE("libdsk\drvrcpm.h", File);
+USEUNIT("libdsk\drvwin16.c");
+USE("libdsk\drvwin16.h", File);
+USEUNIT("libdsk\drvwin32.c");
+USE("libdsk\drvwin32.h", File);
+USEUNIT("libdsk\dskcheck.c");
+USEUNIT("libdsk\dskcmt.c");
+USEUNIT("libdsk\dskdirty.c");
+USEUNIT("libdsk\dskerror.c");
+USEUNIT("libdsk\dskfmt.c");
+USEUNIT("libdsk\dskgeom.c");
+USEUNIT("libdsk\dskjni.c");
+USEUNIT("libdsk\dsklphys.c");
+USEUNIT("libdsk\dskopen.c");
+USEUNIT("libdsk\dskpars.c");
+USEUNIT("libdsk\dskread.c");
+USEUNIT("libdsk\dskreprt.c");
+USEUNIT("libdsk\dskretry.c");
+USEUNIT("libdsk\dskrtrd.c");
+USEUNIT("libdsk\dsksecid.c");
+USEUNIT("libdsk\dskseek.c");
+USEUNIT("libdsk\dsksgeom.c");
+USEUNIT("libdsk\dskstat.c");
+USEUNIT("libdsk\dsktread.c");
+USEUNIT("libdsk\dsktrkid.c");
+USEUNIT("libdsk\dskwrite.c");
+USE("libdsk\LIBDSK.H", File);
+USE("libdsk\remall.h", File);
+USEUNIT("libdsk\remote.c");
+USE("libdsk\remote.h", File);
+USE("libdsk\remote.inc", File);
+USEUNIT("libdsk\rpccli.c");
+USEUNIT("libdsk\rpcfork.c");
+USE("libdsk\rpcfork.h", File);
+USEUNIT("libdsk\rpcfossl.c");
+USE("libdsk\rpcfossl.h", File);
+USE("libdsk\rpcfuncs.h", File);
+USEUNIT("libdsk\rpcmap.c");
+USEUNIT("libdsk\rpcpack.c");
+USEUNIT("libdsk\rpcserv.c");
+USEUNIT("libdsk\rpctios.c");
+USE("libdsk\rpctios.h", File);
+USEUNIT("libdsk\rpcwin32.c");
+USE("libdsk\rpcwin32.h", File);
+USE("libdsk\w16defs.h", File);
+USE("libdsk\w95defs.h", File);
+//---------------------------------------------------------------------------
+#define Library
+
+// To add a file to the library use the Project menu 'Add to Project'.
+

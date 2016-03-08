@@ -1,8 +1,9 @@
 object Debug68k: TDebug68k
-  Left = 150
-  Top = 121
+  Left = 391
+  Top = 117
   Width = 280
   Height = 427
+  BorderStyle = bsSizeToolWin
   Caption = 'Debug Window'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +13,7 @@ object Debug68k: TDebug68k
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object GroupBox1: TGroupBox
@@ -537,56 +539,56 @@ object Debug68k: TDebug68k
     object Dis1: TLabel
       Left = 8
       Top = 32
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis2: TLabel
       Left = 8
       Top = 48
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis3: TLabel
       Left = 8
       Top = 64
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis4: TLabel
       Left = 8
       Top = 80
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis5: TLabel
       Left = 8
       Top = 96
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis6: TLabel
       Left = 8
       Top = 112
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis7: TLabel
       Left = 8
       Top = 128
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end
     object Dis8: TLabel
       Left = 8
       Top = 144
-      Width = 241
+      Width = 56
       Height = 14
       Caption = '00000000'
     end

@@ -2,7 +2,7 @@ object IF1: TIF1
   Left = 386
   Top = 111
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = 'Interface 1'
   ClientHeight = 168
   ClientWidth = 424

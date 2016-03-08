@@ -2,6 +2,9 @@
 
     Copyright (C) 2000  John Elliott <jce@seasip.demon.co.uk>
 
+    Modifications to add dirty flags
+    (c) 2005 Philip Kendall <pak21-spectrum@srcf.ucam.org>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -132,6 +135,13 @@ fdc_byte fd_changed(FDRV_PTR fd)
 			return (*fd->fd_vtable->fdv_changed)(fd);
 	else if (fd)	return fd->fd_changed;
 	return 0;
+}
+
+int fd_dirty(FDRV_PTR fd)
+{
+	if (fd && (fd->fd_vtable->fdv_dirty))
+			return (*fd->fd_vtable->fdv_dirty)(fd);
+	else return FD_D_UNAVAILABLE;
 }
 
 /* Eject under computer's control */

@@ -26,6 +26,7 @@ __published:	// IDE-managed Components
         TLabel *Label4;
         TLabel *Label6;
         TLabel *Label7;
+        TLabel *Label3;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CancelClick(TObject *Sender);
 private:	// User declarations
@@ -33,6 +34,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TEditFlag(TComponent* Owner);
         int Edit(int value);
+        bool Edit2(int& value);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TEditFlag *EditFlag;

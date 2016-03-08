@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #include <vcl.h>
 #pragma hdrstop
@@ -24,12 +24,16 @@
 #include "interface1.h"
 #include "debug.h"
 #include "ql.h"
+#include "symbolstore.h"
+#include "SymBrowse.h"
 
 extern "C" void sound_ay_init(void);
 extern "C" char DockFile[];
-extern "C" void HWSetMachine(int machine, int speccy);
+extern void HWSetMachine(int machine, int speccy);
 
+extern int zx81_do_scanline(SCANLINE *CurScanLine);
 
+extern "C" BYTE ZX1541Mem[];
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
@@ -100,6 +104,20 @@ void __fastcall THW::AdvancedBtnClick(TObject *Sender)
         Advanced->Visible = !Advanced->Visible;
 }
 //---------------------------------------------------------------------------
+
+#include <set>
+extern std::set<int> dirtyBird;
+void zx81_writebyteProxy(int address, int data)
+{
+        zx81_writebyte(address,data);
+        dirtyBird.insert(address);
+}
+
+void caserMunger(AnsiString& sym, AnsiString& val)
+{
+        sym = UpperCase(sym);
+}
+
 
 void __fastcall THW::OKClick(TObject *Sender)
 {
@@ -283,6 +301,11 @@ void __fastcall THW::OKClick(TObject *Sender)
         zx81.RAM816k = EnableLowRAM->Checked;
         zx81.protectROM = ProtectROM->Checked;
         zx81.chrgen = ChrGenBox->ItemIndex;
+
+        if (zx81.chrgen == CHRGENQS) Form1->QSChrEnable1->Visible=true;
+        else Form1->QSChrEnable1->Visible=false;
+        Form1->QSChrEnable1->Checked=false;
+
         zx81.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
         if (zx81.chrgen==CHRGENDK || zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
@@ -307,6 +330,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
 
         Form1->MemotechReset->Visible=false;
+
         switch(HiResBox->ItemIndex)
         {
         case 1: zx81.truehires = HIRESWRX; break;
@@ -339,6 +363,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") spectrum.HDType=HDPITERSCF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") spectrum.HDType=HDPITERS8B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") spectrum.HDType=HDPITERS16B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde") spectrum.HDType=HDPITERSCF;
         spectrum.WriteProtectJumper=WriteProtect->Checked;
         spectrum.UploadJumper=Upload->Checked;
 
@@ -357,6 +382,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (FDC->Items->Strings[FDC->ItemIndex]=="Opus Discovery") spectrum.floppytype=FLOPPYOPUSD;
         if (FDC->Items->Strings[FDC->ItemIndex]=="BetaDisc") spectrum.floppytype=FLOPPYBETA;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Interface 1") spectrum.floppytype=FLOPPYIF1;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="ZX1541") spectrum.floppytype=FLOPPYZX1541;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="Larken") spectrum.floppytype=FLOPPYLARKEN81;
 
         if (Autoboot->Checked) spectrum.autoboot=true;
         else spectrum.autoboot=false;
@@ -396,7 +423,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         machine.scanlines=zx81.NTSC ? 262:312;
         machine.tperframe= machine.tperscanline * machine.scanlines;
 
-        if (zx81.machine==MACHINELAMBDA || !strcmp(machine.CurRom,"aszmic.rom"))
+        if (zx81.machine==MACHINELAMBDA)
                 machine.tperscanline=208;
 
 
@@ -486,7 +513,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         default:
                 machine.initialise = zx81_initialise;
                 machine.do_scanline = zx81_do_scanline;
-                machine.writebyte = zx81_writebyte;
+                machine.writebyte = zx81_writebyteProxy;
                 machine.readbyte = zx81_readbyte;
                 machine.opcode_fetch = zx81_opcode_fetch;
                 machine.readport = zx81_readport;
@@ -526,9 +553,48 @@ void __fastcall THW::OKClick(TObject *Sender)
                 || spectrum.floppytype==FLOPPYDISCIPLE
                 || spectrum.machine==SPECCYPLUS2A
                 || spectrum.machine==SPECCYPLUS3)
-                        Form1->PrinterPort1->Enabled=true;
-        else    Form1->PrinterPort1->Enabled=false;
+        {
+                Form1->PrinterPort1->Enabled=true;
+                if (spectrum.floppytype==FLOPPYOPUSD)
+                        Form1->PrinterPort1->Caption="Opus Printer Port";
+                if (spectrum.floppytype==FLOPPYDISCIPLE)
+                        Form1->PrinterPort1->Caption="Disciple Printer Port";
+                if (spectrum.floppytype==FLOPPYPLUSD)
+                        Form1->PrinterPort1->Caption="PlusD Printer Port";
+                if (spectrum.machine==SPECCYPLUS2A)
+                        Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
+                if (spectrum.machine==SPECCYPLUS3)
+                        Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
+        }
+        else
+        {
+                Form1->PrinterPort1->Enabled=false;
+                Form1->PrinterPort1->Caption="Printer Port";
+        }
 
+        symbolstore::reset();
+
+        AnsiString file = zx81.cwd;
+        if (file[file.Length()] != '\\') file += "\\";
+        file += "ROM\\";
+        file += machine.CurRom;
+        file += ".sym";
+        symbolstore::loadROMSymbols(file.c_str(), caserMunger);
+        SymbolBrowser->RefreshContent();
+
+        file = zx81.cwd;
+        if (file[file.Length()] != '\\') file += "\\";
+        file += "ROM\\";
+        file += machine.CurRom;
+        file += ".cset.bmp";
+        delete (Graphics::TBitmap*)machine.cset;
+        machine.cset = NULL;
+        if (FileExists(file))
+        {
+                Graphics::TBitmap* cset = new Graphics::TBitmap;
+                cset->LoadFromFile(file);
+                machine.cset = cset;
+        }
 
         AccurateInit(false);
         Speed->Recalc(NULL);
@@ -538,6 +604,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (ResetRequired) machine.initialise();
         sound_ay_init();
         Keyboard->KbChange();
+
+        Form1->RZX1->Enabled=false;
+        if (zx81.machine==MACHINESPEC48) Form1->RZX1->Enabled=true;
+
         if ( ((zx81.machine==MACHINESPEC48
                 || zx81.machine==MACHINEACE
                 || zx81.machine==MACHINELAMBDA)
@@ -549,12 +619,14 @@ void __fastcall THW::OKClick(TObject *Sender)
                         Form1->Sound1Click(NULL);
 
         spectrum.drivebusy = -1;
+
         if (Sender) Close();
 }
 //---------------------------------------------------------------------------
 void THW::SetupForZX81(void)
 {
-        AnsiString OldFloppy;
+        int i;
+        AnsiString OldIDE, OldFloppy;
 
         ZX80Btn->Down=false;
         ZX81Btn->Down=false;
@@ -580,18 +652,22 @@ void THW::SetupForZX81(void)
 
         //FloppyDrives->TabVisible=false;
 
+        OldFloppy=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
         FDC->Items->Strings[0]="None";
+        FDC->Items->Add("ZX1541");
+        FDC->Items->Add("Larken");
         FDC->ItemIndex=0;
-        FDC->Enabled=false;
+
+        for(i=0;i<FDC->Items->Count;i++)
+                if (FDC->Items->Strings[i]==OldFloppy) FDC->ItemIndex=i;
+
+        FDC->Enabled=true;
         DriveAType->Enabled=false;
         DriveBType->Enabled=false;
 
         QLSettings->TabVisible=false;
         ResetRequired=true;
-
-        uSpeech->Checked=false;
-        uSpeech->Enabled=false;
 
         if (RamPackBox->Items->Strings[RamPackBox->Items->Count-1] == "96k")
                 RamPackBox->Items->Delete(RamPackBox->Items->Count-1);
@@ -637,12 +713,17 @@ void THW::SetupForZX81(void)
         Multiface->Enabled=false;
         Multiface->Checked=false;
 
+        OldIDE=IDEBox->Items->Strings[IDEBox->ItemIndex];
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
+        IDEBox->Items->Add("MWCFIde");
         IDEBox->ItemIndex=0;
-        IDEBox->Enabled=false;
-        Label4->Enabled=false;
-        Label7->Enabled=false;
+        IDEBox->Enabled=true;
+        Label4->Enabled=true;
+        Label7->Enabled=true;
+        for(i=0;i<IDEBox->Items->Count;i++)
+                if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
+
 
         uSpeech->Enabled=false;
         uSpeech->Checked=false;
@@ -1278,6 +1359,18 @@ void THW::SaveSettings(TIniFile *ini)
                 fwrite(ZXCFMem, 64, 16384, f);
                 fclose(f);
         }
+
+        strcpy(FileName,zx81.cwd);
+        if (FileName[strlen(FileName)-1]=='\\')
+                FileName[strlen(FileName)-1]='\0';
+        strcat(FileName,"\\nvram\\zx1541.nv");
+
+        f=fopen(FileName,"wb");
+        if (f)
+        {
+                fwrite(ZX1541Mem, 1, 8192, f);
+                fclose(f);
+        }
 }
 
 void THW::LoadSettings(TIniFile *ini)
@@ -1404,7 +1497,8 @@ void THW::LoadSettings(TIniFile *ini)
                 FileName[strlen(FileName)-1]='\0';
         strcat(FileName,"\\nvram\\zxcf.nv");
 
-        if ((f=fopen(FileName,"rb")))
+        f=fopen(FileName,"rb");
+        if (f)
         {
                 fread(ZXCFMem, 64, 16384, f);
                 fclose(f);
@@ -1415,9 +1509,22 @@ void THW::LoadSettings(TIniFile *ini)
                 FileName[strlen(FileName)-1]='\0';
         strcat(FileName,"\\nvram\\divide.nv");
 
-        if ((f=fopen(FileName,"rb")))
+        f=fopen(FileName,"rb");
+        if (f)
         {
                 fread(divIDEMem, 64, 16384, f);
+                fclose(f);
+        }
+
+        strcpy(FileName,zx81.cwd);
+        if (FileName[strlen(FileName)-1]=='\\')
+                FileName[strlen(FileName)-1]='\0';
+        strcat(FileName,"\\nvram\\zx1541.nv");
+
+        f=fopen(FileName,"rb");
+        if (f)
+        {
+                fread(ZX1541Mem, 1, 8192, f);
                 fclose(f);
         }
 
@@ -1651,7 +1758,16 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         ZXCFLabel->Visible=false;
         ZXCFRAM->Visible=false;
         WriteProtect->Visible=false;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF") RamPackBox->ItemIndex = RamPackBox->Items->Count-1;
+
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde")
+        {
+                RamPackBox->ItemIndex = RamPackBox->Items->Count-2;
+                M1Not->Checked=true;
+        }
+
+
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF")
+                RamPackBox->ItemIndex = RamPackBox->Items->Count-1;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
         {
@@ -1705,8 +1821,11 @@ void __fastcall THW::QLBtnClick(TObject *Sender)
 
 void __fastcall THW::FDCChange(TObject *Sender)
 {
-        uSpeech->Checked=false;
-        uSpeech->Enabled=false;
+        //uSpeech->Checked=false;
+        //uSpeech->Enabled=false;
+
+        if (FDC->Items->Strings[FDC->ItemIndex]=="Larken")
+                EnableLowRAM->Checked=true;
 
         if (FDC->Items->Strings[FDC->ItemIndex]=="Plus 3 FDC")
         {
@@ -1742,7 +1861,7 @@ void __fastcall THW::FDCChange(TObject *Sender)
                 IF1Config->Visible=false;
                 Form1->IFace1->Enabled=false;
                 //uSpeech->Checked=true;
-                uSpeech->Enabled=true;
+                //uSpeech->Enabled=true;
         }
         ResetRequired=true;
 }
@@ -1750,7 +1869,7 @@ void __fastcall THW::FDCChange(TObject *Sender)
 
 void __fastcall THW::uSpeechClick(TObject *Sender)
 {
-        ResetRequired=true;        
+        ResetRequired=true;
 }
 //---------------------------------------------------------------------------
 

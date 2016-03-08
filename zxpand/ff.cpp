@@ -211,13 +211,15 @@ FRESULT f_open (
       }
    }
 
-   int handle = _open(createFullPath(path), flags);
+   const char* fullPath = createFullPath(path);
+
+   int handle = _open(fullPath, flags);
    if (-1 == handle)
    {
       return cvtERRNO();
    }
 
-   if (-1 == fstat(handle, &stats))
+   if (-1 == stat(fullPath, &stats))
    {
       _close(handle);
       return cvtERRNO();

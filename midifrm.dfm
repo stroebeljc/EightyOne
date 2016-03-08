@@ -23,7 +23,7 @@ object MidiForm: TMidiForm
     Height = 65
     Anchors = [akLeft, akRight, akBottom]
     Caption = 'Send MIDI Output to:'
-    TabOrder = 0
+    TabOrder = 1
     object MidiBox: TComboBox
       Left = 16
       Top = 24
@@ -43,7 +43,7 @@ object MidiForm: TMidiForm
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
-    TabOrder = 1
+    TabOrder = 2
     OnClick = OKClick
   end
   object GroupBox2: TGroupBox
@@ -53,7 +53,7 @@ object MidiForm: TMidiForm
     Height = 169
     Anchors = [akLeft, akTop, akRight]
     Caption = 'Volume'
-    TabOrder = 2
+    TabOrder = 0
     object Label1: TLabel
       Left = 32
       Top = 24

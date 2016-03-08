@@ -16,8 +16,12 @@
  *  08.10.2002  JH  Fixed Z-Flag for ADD.B 0x80+0x80 and Add.W 0x8000+0x8000.
  *  30.10.2002  JH  Replaced "% 8" with "& 7". Helps lesser compilers to generate faster code.
  */
+
+#pragma option push
+#pragma warn -8004
+
 #ifndef PROTOH
-static char     sccsid[] = "$Id: op68karith.c,v 1.6 2002/10/30 16:23:06 jhoenig Exp $";
+//static char     sccsid[] = "$Id: op68karith.c,v 1.6 2002/10/30 16:23:06 jhoenig Exp $";
 #include "68000.h"
 #include "op68k.h"
 
@@ -833,3 +837,6 @@ Oper (Op4820, DoNBCD, DB, SmaiB, (inst & 7), DB, DR, Cd, 0, GRB, SRB)
 Oper (Op4828, DoNBCD, DB, SdaiB, (inst & 7), DB, DR, Cd, 0, GRB, SRB)
 Oper (Op4830, DoNBCD, DB, SaixB, (inst & 7), DB, DR, Cd, 0, GRB, SRB)
 Oper (Op4838, DoNBCD, DB, SearB, (inst & 7), DB, DR, Cd, 0, GRB, SRB)
+
+#pragma option pop
+

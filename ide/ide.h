@@ -3,7 +3,7 @@
 
 #ifdef __cplusplus
 #include <vcl.h>
-#include <\pksdk\include\winioctl.h>
+#include <winioctl.h>
 #include <stdio.h>
 
 

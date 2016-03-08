@@ -23,7 +23,8 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
         : TForm(Owner)
 {
         DEVMODE Mode;
-        int i,j,c,r,added;
+        int i,j,c,added;
+        //int r;
         int retval;
         AnsiString Text,OldText;
         int w,h,modes; //,c,r;
@@ -40,9 +41,9 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
                 w=Mode.dmPelsWidth;
                 h=Mode.dmPelsHeight;
                 c=Mode.dmBitsPerPel;
-                r=Mode.dmDisplayFrequency;
+                //r=Mode.dmDisplayFrequency;
                 i++;
-                if (r==1) r=60;
+                //if (r==1) r=60;
                 if (c>8)
                 {
                         Text.sprintf("%d x %d (%d bit)", w,h,c);

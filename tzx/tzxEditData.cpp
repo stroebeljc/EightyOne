@@ -51,9 +51,7 @@ void TEditDataForm::DecodeData(int BlockNo)
         unsigned char c;
 
         AnsiString text1, text2;
-        unsigned short *pulses;
         int i,j,DataLen;
-        bool eol;
         unsigned char *p;
 
         Pause->Text = TZXFile.Tape[BlockNo].Pause;
@@ -158,10 +156,6 @@ void TEditDataForm::DecodeData(int BlockNo)
 void TEditDataForm::Go(int BlockNo, int Mx, int My)
 {
         AnsiString text;
-        unsigned short *pulses;
-        int i,j;
-        bool eol;
-        unsigned char *p;
 
         if (CharSet->ItemIndex == -1) CharSet->ItemIndex=1;
 

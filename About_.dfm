@@ -1,10 +1,10 @@
 object About: TAbout
-  Left = 360
-  Top = 131
+  Left = 273
+  Top = 265
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'About'
-  ClientHeight = 360
+  ClientHeight = 364
   ClientWidth = 336
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object About: TAbout
   object Image1: TImage
     Left = 8
     Top = 8
-    Width = 64
+    Width = 65
     Height = 57
     Picture.Data = {
       07544269746D6170B62B0000424DB62B00000000000036000000280000004000
@@ -375,21 +375,21 @@ object About: TAbout
   end
   object Label1: TLabel
     Left = 88
-    Top = 48
+    Top = 40
     Width = 151
     Height = 13
-    Caption = '© 2003-2008 Michael D Wynne'
+    Caption = '© 2003-2015 Michael D Wynne'
   end
   object Label2: TLabel
     Left = 8
-    Top = 96
+    Top = 80
     Width = 289
     Height = 13
     Caption = 'This program is released under the GNU GPL. Please see the'
   end
   object Label3: TLabel
     Left = 7
-    Top = 112
+    Top = 96
     Width = 320
     Height = 13
     Caption = 
@@ -398,46 +398,51 @@ object About: TAbout
   end
   object Label5: TLabel
     Left = 8
-    Top = 136
+    Top = 120
     Width = 300
     Height = 13
     Caption = 'Z80 core and DirectSound code taken from fuse, the free UNIX'
   end
   object Version: TLabel
     Left = 88
-    Top = 32
+    Top = 24
     Width = 84
     Height = 13
     Caption = 'Unknown Version'
   end
   object Label8: TLabel
     Left = 88
-    Top = 16
-    Width = 49
+    Top = 8
+    Width = 59
     Height = 13
     Caption = 'EightyOne'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
   end
   object Label6: TLabel
     Left = 8
-    Top = 152
+    Top = 136
     Width = 196
     Height = 13
     Caption = 'Spectrum emulator © 2003 Philip Kendall.'
   end
   object Label9: TLabel
     Left = 8
-    Top = 200
+    Top = 184
     Width = 276
     Height = 13
     Caption = 'Many thanks to Wilf Rigter for providing essential technical'
-    Visible = False
   end
   object Label10: TLabel
     Left = 8
-    Top = 176
-    Width = 279
+    Top = 160
+    Width = 282
     Height = 13
-    Caption = 'AY8910 Code taken from Z81 © 1995-2001  Russell Marks'
+    Caption = 'AY8910 Code taken from Z81 © 1995-2001  Russell Marks.'
   end
   object Label11: TLabel
     Left = 8
@@ -447,39 +452,37 @@ object About: TAbout
   end
   object Label4: TLabel
     Left = 8
-    Top = 216
+    Top = 200
     Width = 295
     Height = 13
     Caption = 
       'information on the internal workings of the ZX81 itself and also' +
       ' '
-    Visible = False
   end
   object Label12: TLabel
     Left = 8
-    Top = 232
+    Top = 216
     Width = 303
     Height = 13
     Caption = 'various add-ons including the Memotech and G007 Hi-res cards.'
-    Visible = False
   end
   object Label13: TLabel
     Left = 8
-    Top = 272
+    Top = 256
     Width = 303
     Height = 13
     Caption = 'dk'#39'tronics graphics ROM dump and several bug reports provided'
   end
   object Label14: TLabel
     Left = 8
-    Top = 288
+    Top = 272
     Width = 108
     Height = 13
     Caption = 'by Simon Holdsworth.  '
   end
   object Label15: TLabel
     Left = 88
-    Top = 72
+    Top = 56
     Width = 175
     Height = 13
     Hint = 'Click to visit the EightyOne home page'
@@ -492,67 +495,51 @@ object About: TAbout
     Font.Style = [fsUnderline]
     ParentColor = False
     ParentFont = False
+    Visible = False
     OnClick = Label15Click
     OnMouseDown = Label15MouseDown
     OnMouseUp = Label15MouseUp
   end
   object Label16: TLabel
     Left = 8
-    Top = 248
+    Top = 232
     Width = 196
     Height = 13
     Caption = 'G007 information also provided by Kryton.'
-    Visible = False
   end
   object Label17: TLabel
     Left = 8
-    Top = 336
+    Top = 319
     Width = 151
     Height = 13
     Caption = 'Icon designed by Paul E Collins.'
   end
   object Label7: TLabel
     Left = 8
-    Top = 312
-    Width = 184
+    Top = 296
+    Width = 187
     Height = 13
-    Caption = 'lib765 && libdsk © 2000-2005 John Elliot'
+    Caption = 'lib765 && libdsk © 2000-2005 John Elliot.'
   end
   object Label18: TLabel
     Left = 8
-    Top = 200
-    Width = 321
-    Height = 24
-    Alignment = taCenter
+    Top = 341
+    Width = 225
+    Height = 16
     AutoSize = False
-    Caption = 'Dedicated to Abbey'
+    Caption = 'Dedicated to Abbey (1998 - 2008)'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -19
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object Label19: TLabel
-    Left = 8
-    Top = 224
-    Width = 321
-    Height = 25
-    Alignment = taCenter
-    AutoSize = False
-    Caption = '1998 - 2008'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -19
+    Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
   end
   object Button1: TButton
-    Left = 235
-    Top = 328
-    Width = 89
-    Height = 25
+    Left = 248
+    Top = 331
+    Width = 81
+    Height = 26
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True

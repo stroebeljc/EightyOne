@@ -60,7 +60,8 @@ extern void MidiWriteBit(int Bit);
 //int sound_vsync=0;
 //int sound_ay_type=1;
 
-int temp1,temp2,temp3;
+unsigned int fineValue, coarseValue, tonePeriod;
+
 
 extern int frametstates;
 int SelectAYReg;
@@ -140,8 +141,8 @@ static struct ay_change_tag ay_change[AY_CHANGE_MAX];
 static int ay_change_count;
 
 
-static int soundfd=-1;
-static int sixteenbit=0;
+//static int soundfd=-1;
+//static int sixteenbit=0;
 
 
 void sound_ay_init(void)
@@ -326,23 +327,21 @@ static void sound_ay_overlay(void)
 
                 while(changes_left && (f>=change_ptr->ofs || f==sound_framesiz-1))
                 {
-                        sound_ay_registers[reg=change_ptr->reg]=change_ptr->val;
-                        change_ptr++; changes_left--;
+                        reg=change_ptr->reg;
+                        sound_ay_registers[reg]=change_ptr->val;
+                        change_ptr++;
+                        changes_left--;
 
                         /* fix things as needed for some register changes */
                         switch(reg)
                         {
                         case 0: case 1: case 2: case 3: case 4: case 5:
-                                r=reg>>1;
-                                temp1=sound_ay_registers[reg&~1];
-                                temp2=sound_ay_registers[reg|1]&15;
-                                temp3=8*(temp1|temp2)<<16;
+                                fineValue   = sound_ay_registers[reg & ~1];
+                                coarseValue = sound_ay_registers[reg |  1] & 15;
+                                tonePeriod = (8 * (fineValue | (coarseValue << 8))) << 16;
 
-                                ay_tone_period[r]=temp1|temp3;
-
-
-                                //ay_tone_period[r]=(8*(sound_ay_registers[reg&~1]|
-                                //        (sound_ay_registers[reg|1]&15)<<8))<<16;
+                                r = reg >> 1;
+                                ay_tone_period[r] = tonePeriod;
 
                                 /* important to get this right, otherwise e.g. Ghouls 'n' Ghosts
                                  * has really scratchy, horrible-sounding vibrato.
@@ -638,4 +637,6 @@ void sound_beeper(int on)
         sound_fillpos=newpos+1;
         sound_oldval=sound_oldval_orig=val;
 }
+
+
 

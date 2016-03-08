@@ -1,6 +1,6 @@
 object Speed: TSpeed
-  Left = 268
-  Top = 165
+  Left = 270
+  Top = 168
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Speed'
@@ -75,7 +75,7 @@ object Speed: TSpeed
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 2
     OnClick = Button1Click
   end
   object EnableFrameSkip: TCheckBox
@@ -84,7 +84,7 @@ object Speed: TSpeed
     Width = 113
     Height = 17
     Caption = 'Enable Frame Skip'
-    TabOrder = 2
+    TabOrder = 0
     OnClick = EnableFrameSkipClick
   end
 end

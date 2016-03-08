@@ -59,6 +59,7 @@ __published:	// IDE-managed Components
         TTrackBar *VBias;
         TLabel *Label1;
         TLabel *Label2;
+        void __fastcall SelectRGBOutput(Boolean rgbOutput);
         void __fastcall CloseBtnClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall TrackBarChange(TObject *Sender);
@@ -74,6 +75,8 @@ public:		// User declarations
         __fastcall TArtifacts(TComponent* Owner);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
+        void StandardPalette(void);
+        void SpectraPalette(void);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TArtifacts *Artifacts;

@@ -1,11 +1,11 @@
 object HW: THW
-  Left = 284
-  Top = 119
+  Left = 6
+  Top = 462
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
   ClientHeight = 348
-  ClientWidth = 399
+  ClientWidth = 398
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,16 +17,16 @@ object HW: THW
   PixelsPerInch = 96
   TextHeight = 13
   object RamPackLbl: TLabel
-    Left = 104
+    Left = 105
     Top = 114
     Width = 55
     Height = 13
     Caption = 'RAM Pack:'
   end
   object Machine: TPageControl
-    Left = 2
+    Left = 3
     Top = 8
-    Width = 393
+    Width = 392
     Height = 93
     ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
@@ -199,7 +199,7 @@ object HW: THW
           070707070707070707070707070707070707070707070707070707070707}
         Position = bsTop
         ShowGlyph = True
-        TabOrder = 2
+        TabOrder = 3
         Transparent = True
         UseCustomGlyphs = True
         Toggle = True
@@ -257,7 +257,7 @@ object HW: THW
           0707}
         Position = bsTop
         ShowGlyph = True
-        TabOrder = 3
+        TabOrder = 4
         Transparent = True
         UseCustomGlyphs = True
         Toggle = True
@@ -314,7 +314,7 @@ object HW: THW
           070707070707070707070707070707070707070707070707070707070707}
         Position = bsTop
         ShowGlyph = True
-        TabOrder = 4
+        TabOrder = 2
         Transparent = True
         UseCustomGlyphs = True
         Toggle = True
@@ -1157,17 +1157,17 @@ object HW: THW
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 1
+    TabOrder = 4
     OnClick = OKClick
   end
   object RamPackBox: TComboBox
-    Left = 168
+    Left = 169
     Top = 110
     Width = 81
     Height = 21
     Style = csDropDownList
     ItemHeight = 13
-    TabOrder = 2
+    TabOrder = 1
     OnChange = RamPackBoxChange
     Items.Strings = (
       'None'
@@ -1179,9 +1179,9 @@ object HW: THW
       '48k')
   end
   object AdvancedBtn: TButton
-    Left = 2
+    Left = 3
     Top = 319
-    Width = 103
+    Width = 73
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Settings'
@@ -1189,62 +1189,78 @@ object HW: THW
     OnClick = AdvancedBtnClick
   end
   object Advanced: TPageControl
-    Left = 2
+    Left = 3
     Top = 144
-    Width = 392
+    Width = 391
     Height = 169
     ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
-    TabOrder = 4
+    TabOrder = 2
     object Interfaces: TTabSheet
       Caption = 'Interfaces'
       object SoundCardLbl: TLabel
-        Left = 38
+        Left = 55
         Top = 20
-        Width = 59
+        Width = 34
         Height = 13
         Alignment = taRightJustify
-        Caption = 'Sound Card:'
+        Caption = 'Sound:'
       end
       object ChrGenLbl: TLabel
-        Left = 49
+        Left = 14
         Top = 44
-        Width = 48
+        Width = 75
         Height = 13
         Alignment = taRightJustify
-        Caption = 'Chr$ Gen:'
+        Caption = 'Chr$ Generator:'
       end
       object HiResLbl: TLabel
-        Left = 62
+        Left = 11
         Top = 68
-        Width = 35
+        Width = 78
         Height = 13
         Alignment = taRightJustify
-        Caption = 'Hi-Res:'
+        Caption = 'High Resolution:'
+      end
+      object Label8: TLabel
+        Left = 56
+        Top = 92
+        Width = 33
+        Height = 13
+        Alignment = taRightJustify
+        Caption = 'Colour:'
+      end
+      object Label9: TLabel
+        Left = 16
+        Top = 116
+        Width = 73
+        Height = 13
+        Alignment = taRightJustify
+        Caption = 'ROM Cartridge:'
       end
       object SoundCardBox: TComboBox
-        Left = 104
+        Left = 96
         Top = 16
-        Width = 81
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
         TabOrder = 0
         OnChange = SoundCardBoxChange
         Items.Strings = (
-          'Disabled'
+          'None'
           'Ace User'
           'Boldfield'
           'Fuller Box'
           'Sinclair 128k'
           'Timex'
-          'QuickSilva'
-          'Zon-X')
+          'Quicksilva'
+          'Zon X')
       end
       object ChrGenBox: TComboBox
-        Left = 104
+        Left = 96
         Top = 40
-        Width = 81
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1252,99 +1268,135 @@ object HW: THW
         OnChange = ChrGenBoxChange
         Items.Strings = (
           'Sinclair'
-          'DK'#39'tronics'
-          'QuickSilva'
+          'dk'#39'tronics'
+          'Quicksilva'
           'CHR$16'
           'Lambda')
       end
       object HiResBox: TComboBox
-        Left = 104
+        Left = 96
         Top = 64
-        Width = 81
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
         TabOrder = 2
         OnChange = HiResBoxChange
         Items.Strings = (
-          'Disabled'
+          'None'
           'WRX'
           'G007'
-          'Memotech')
+          'Memotech'
+          ' ')
       end
       object KMouse: TCheckBox
         Left = 200
-        Top = 32
+        Top = 14
         Width = 105
         Height = 17
         Caption = 'Kempston Mouse'
-        TabOrder = 3
+        TabOrder = 5
       end
       object TS2050: TCheckBox
         Left = 200
-        Top = 48
+        Top = 30
         Width = 73
         Height = 17
         Caption = 'TS2050'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 4
+        TabOrder = 6
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
         Left = 200
-        Top = 64
+        Top = 46
         Width = 97
         Height = 17
         Caption = 'Multiface'
-        TabOrder = 5
+        TabOrder = 8
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
         Left = 272
-        Top = 48
+        Top = 30
         Width = 75
         Height = 16
         Caption = 'Configure'
-        TabOrder = 6
-        OnClick = TS2050ConfigClick
-      end
-      object LambdaColour: TCheckBox
-        Left = 200
-        Top = 16
-        Width = 97
-        Height = 17
-        Caption = 'Lambda Colour'
-        Color = clBtnFace
-        ParentColor = False
         TabOrder = 7
-        OnClick = LambdaColourClick
+        OnClick = TS2050ConfigClick
       end
       object uSpeech: TCheckBox
         Left = 200
-        Top = 80
+        Top = 62
         Width = 97
         Height = 17
         Caption = 'Currah uSpeech'
-        TabOrder = 8
+        TabOrder = 9
         OnClick = uSpeechClick
       end
       object ZXPrinter: TCheckBox
         Left = 200
-        Top = 96
+        Top = 78
         Width = 97
         Height = 17
         Caption = 'ZX Printer'
-        TabOrder = 9
+        TabOrder = 10
       end
       object ZXpand: TCheckBox
         Left = 200
-        Top = 112
+        Top = 93
         Width = 97
         Height = 20
         Caption = 'ZXpand'
-        TabOrder = 10
+        TabOrder = 11
         OnClick = ZXpandClick
+      end
+      object ColourBox: TComboBox
+        Left = 96
+        Top = 88
+        Width = 89
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 3
+        OnChange = ColourBoxChange
+        Items.Strings = (
+          'None')
+      end
+      object RomCartridgeBox: TComboBox
+        Left = 96
+        Top = 112
+        Width = 89
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 4
+        OnChange = RomCartridgeBoxChange
+        Items.Strings = (
+          'None'
+          'Sinclair'
+          'ZXC2'
+          'ZXC3'
+          'ZXC4')
+      end
+      object RomCartridgeFileBox: TEdit
+        Left = 200
+        Top = 112
+        Width = 154
+        Height = 21
+        Enabled = False
+        TabOrder = 12
+      end
+      object BrowseRomCartridge: TButton
+        Left = 356
+        Top = 112
+        Width = 19
+        Height = 21
+        Caption = '...'
+        Enabled = False
+        TabOrder = 13
+        OnClick = BrowseROMCartridgeClick
       end
     end
     object FloppyDrives: TTabSheet
@@ -1394,7 +1446,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 0
+        TabOrder = 3
         OnChange = DriveATypeChange
         Items.Strings = (
           'None'
@@ -1410,7 +1462,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 1
+        TabOrder = 4
         OnChange = DriveBTypeChange
         Items.Strings = (
           'None'
@@ -1426,7 +1478,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 2
+        TabOrder = 0
         OnChange = FDCChange
         Items.Strings = (
           'None'
@@ -1436,19 +1488,19 @@ object HW: THW
       end
       object Autoboot: TCheckBox
         Left = 224
-        Top = 20
+        Top = 19
         Width = 113
-        Height = 17
+        Height = 15
         Caption = 'Autoboot TR-DOS'
-        TabOrder = 3
+        TabOrder = 2
       end
       object IF1Config: TButton
         Left = 224
-        Top = 20
-        Width = 75
-        Height = 16
+        Top = 16
+        Width = 81
+        Height = 20
         Caption = 'Configure'
-        TabOrder = 4
+        TabOrder = 1
         OnClick = IF1ConfigClick
       end
       object IDEBox: TComboBox
@@ -1566,7 +1618,7 @@ object HW: THW
         Width = 19
         Height = 21
         Caption = '...'
-        TabOrder = 1
+        TabOrder = 6
         OnClick = BrowseROMClick
       end
       object ProtectROM: TCheckBox
@@ -1579,7 +1631,7 @@ object HW: THW
         Color = clBtnFace
         ParentColor = False
         State = cbChecked
-        TabOrder = 2
+        TabOrder = 1
       end
       object NTSC: TCheckBox
         Left = 224
@@ -1589,7 +1641,7 @@ object HW: THW
         Caption = 'NTSC TV'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 3
+        TabOrder = 5
         OnClick = NTSCClick
       end
       object EnableLowRAM: TCheckBox
@@ -1600,7 +1652,7 @@ object HW: THW
         Caption = 'Enable RAM in 8k-16k'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 4
+        TabOrder = 2
         OnClick = EnableLowRAMClick
       end
       object M1Not: TCheckBox
@@ -1611,7 +1663,7 @@ object HW: THW
         Caption = 'Enable M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 5
+        TabOrder = 3
         OnClick = M1NotClick
       end
       object Issue2: TCheckBox
@@ -1624,13 +1676,13 @@ object HW: THW
         Color = clBtnFace
         ParentBiDiMode = False
         ParentColor = False
-        TabOrder = 6
+        TabOrder = 4
       end
     end
   end
   object RomSelect: TOpenDialog
     DefaultExt = 'rom'
-    Filter = 'ROM Files|*.rom'
+    Filter = 'ROM Files|*.rom;*.bin'
     Options = [ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Left = 264
     Top = 104

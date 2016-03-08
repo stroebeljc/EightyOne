@@ -345,7 +345,7 @@ static fd_err_t fdd_seekto_sector(FLOPPY_DRIVE *fd, int xcylinder, int xhead,
 
 /* Read a sector */
 static fd_err_t fdd_read_sector(FLOPPY_DRIVE *fd, int xcylinder, int xhead, 
-		int head,  int sector, fdc_byte *buf, int len, 
+		int head,  int sector, fdc_byte *buf, int len,
 		int *deleted, int skip_deleted, int mfm, int multi)
 {
         int rdeleted = 0;
@@ -390,7 +390,7 @@ static fd_err_t fdd_read_sector(FLOPPY_DRIVE *fd, int xcylinder, int xhead,
                         }
 			else *deleted = 1;
                 }
-		if (fread(buf, 1, len, ((DSK_FLOPPY_DRIVE *)fd)->fdd_fp) < len) 
+		if (fread(buf, 1, (unsigned int)len, ((DSK_FLOPPY_DRIVE *)fd)->fdd_fp) < (unsigned int)len)
 			err = FD_E_DATAERR;
 	} while (try_again);
 	return err;
@@ -439,13 +439,11 @@ static fd_err_t fdd_read_track(FLOPPY_DRIVE *fd, int xcylinder, int xhead,
 
         if (err == FD_E_DATAERR || err == FD_E_OK)
         {
-                if (fread(buf, 1, trklen, fdd->fdd_fp) < (*len))
+                if (fread(buf, 1, trklen, fdd->fdd_fp) < (unsigned int)(*len))
 			err = FD_E_DATAERR;
         }
         return err;
 }
-
-
 
 /* Write a sector */
 static fd_err_t fdd_write_sector(FLOPPY_DRIVE *fd, int xcylinder, int xhead,
@@ -465,7 +463,7 @@ static fd_err_t fdd_write_sector(FLOPPY_DRIVE *fd, int xcylinder, int xhead,
 	if (err == FD_E_DATAERR || err == 0)
 	{
                 unsigned char odel, *sh = sector_head(fdd, sector);
-		if (fwrite(buf, 1, len, fdd->fdd_fp) < len)
+		if (fwrite(buf, 1, (unsigned int)len, fdd->fdd_fp) < (unsigned int)len)
 			err = FD_E_READONLY;
 		fdd->fdd_dirty = 1;
 

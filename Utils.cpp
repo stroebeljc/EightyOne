@@ -250,6 +250,7 @@ AnsiString RemoveExt(AnsiString Fname)
 
         if ( (Ext==".p" || Ext==".P"
                 || Ext==".T81" || Ext==".t81"
+                || Ext==".P81" || Ext==".p81"
                 || Ext==".A83" || Ext==".a83"
                 || Ext==".o" || Ext==".O"
                 || Ext==".81" || Ext==".80"
@@ -299,7 +300,7 @@ AnsiString GetExt(AnsiString Fname)
 
 AnsiString RemovePath(AnsiString Str)
 {
-        int i,p;
+        int p;
 
         if (Str[Str.Length()] == '\\') Str = "";
 

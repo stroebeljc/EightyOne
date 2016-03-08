@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 616
-  Top = 201
-  Width = 255
-  Height = 215
-  Caption = 'EightyOne - ZXpand remix'
+  Left = 4
+  Top = 806
+  Width = 331
+  Height = 203
+  Caption = 'EightyOne'
   Color = clBtnFace
   Constraints.MinHeight = 128
   Constraints.MinWidth = 128
@@ -27,8 +27,8 @@ object Form1: TForm1
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 150
-    Width = 247
+    Top = 130
+    Width = 323
     Height = 19
     Panels = <
       item
@@ -66,7 +66,7 @@ object Form1: TForm1
         OnClick = CloseTape1Click
       end
       object NewTape1: TMenuItem
-        Caption = 'New Tape...'
+        Caption = 'New Tape'
         OnClick = NewTape1Click
       end
       object N6: TMenuItem
@@ -223,13 +223,21 @@ object Form1: TForm1
       object N9: TMenuItem
         Caption = '-'
       end
+      object QSChrEnable: TMenuItem
+        Caption = 'QS Chr$ Enable'
+        OnClick = QSChrEnableClick
+      end
       object MemotechReset: TMenuItem
         Caption = 'Memotech Hi-Res Reset'
         OnClick = MemotechResetClick
       end
-      object QSChrEnable1: TMenuItem
-        Caption = 'QS Chr$ Enable'
-        OnClick = QSChrEnable1Click
+      object ChromaColourEnable: TMenuItem
+        Caption = 'Chroma Colour Enable'
+        OnClick = ChromaColourEnableClick
+      end
+      object SpectraColourEnable: TMenuItem
+        Caption = 'Spectra Colour Enable'
+        OnClick = SpectraColourEnableClick
       end
       object RamPackWobble1: TMenuItem
         Caption = 'RamPack Wobble'
@@ -301,7 +309,7 @@ object Form1: TForm1
       object Ports: TMenuItem
         Caption = 'Ports'
         object IFace1: TMenuItem
-          Caption = 'Interface 1'
+          Caption = 'ZX Interface 1'
           OnClick = IFace1Click
         end
         object PrinterPort1: TMenuItem

@@ -1,6 +1,6 @@
 object ParallelPort: TParallelPort
-  Left = 400
-  Top = 101
+  Left = 402
+  Top = 104
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Printer Port'

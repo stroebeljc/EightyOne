@@ -31,6 +31,9 @@ TV tv;
 MACHINE machine;
 MOUSE mouse;
 
+int lastMemoryReadAddr, lastMemoryWriteAddr;
+bool directMemoryAccess;
+
 void load_config(void)
 {
         zx81.emuid=EMUID;
@@ -60,7 +63,7 @@ void load_config(void)
         zx81.ts2050=0;
         zx81.TZXin=0;
         zx81.TZXout=0;
-        zx81.colour=0;
+        zx81.colour=COLOURDISABLED;
         zx81.audioout=0;
         zx81.audioin=0;
         zx81.romcrc=-1;
@@ -68,7 +71,7 @@ void load_config(void)
         zx81.autoload=0;
         zx81.wobble=0;
         zx81.chrgen=CHRGENSINCLAIR;
-        zx81.enableqschrgen=0;
+        zx81.enableQSchrgen=0;
         zx81.simpleghost=1;
         zx81.maxireg=32;
         zx81.zxprinter=1;
@@ -76,11 +79,18 @@ void load_config(void)
         machine.clockspeed=3250000;
         zx81.speedup=0;
         zx81.UseRShift=0;
-        
+        zx81.chromaMode=0x0F;
+        zx81.spectraMode=0x00;
+        zx81.spectraColourSwitchOn = 0;
+        zx81.chromaColourSwitchOn = 0;
+        zx81.romCartridge = ROMCARTRIDGENONE;
+        zx81.zxcPaging = 0;
+        zx81.zxcLowerControlAccessSelected = 0;
+        zx81.zxcInterface1BankPagedIn = 0;
+        zx81.zxcCassetteBankPagedIn = 0;
         machine.tperscanline=207;
         machine.tperframe=312*207;
-        machine.intposition=0;
-
+        machine.intposition=0;    
 
         zx81.bordersize=BORDERNORMAL;
 

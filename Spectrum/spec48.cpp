@@ -45,6 +45,8 @@
 #include "parallel.h"
 #include "sp0256.h"
 #include "rzx.h"
+#include "RomCartridge\IF2RomCartridge.h"
+#include "Spectra\Spectra.h"
 
 #define VBLANKCOLOUR (0*16)
 
@@ -55,9 +57,22 @@ extern "C"
         void MidiClockTick(int);
 }
 
+extern void InitialiseSpectra();
+extern void FetchSpectraAttributeFileBytes(int y, int column, int* attr1, int* attr2);
+extern void DetermineSpectraInkPaper(int attr, int attr2, int flashSwap, int* inkLeft, int* inkRight, int* paperLeft, int* paperRight);
+extern int DetermineSpectraBorderColour(int Data, int flashSwap);
+extern void SpectraRAMWrite(int Address, BYTE Data);
+extern void DetermineSpectraDisplayBank();
+extern BYTE SpectraRAMRead(int bankOffset);
+
+extern bool directMemoryAccess;
+extern int lastMemoryReadAddr, lastMemoryWriteAddr;
+
 extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
-
+extern void LogOutAccess(int address, BYTE data);
+extern void LogInAccess(int address, BYTE data);
+extern void ResetLastIOAccesses();
 extern void DebugUpdate(void);
 extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern void LoadDock(char *filename);
@@ -66,6 +81,11 @@ extern long noise;
 extern int SelectAYReg;
 extern int zx81_stop;
 extern BYTE ZXKeyboard[8];
+
+static BYTE ReadPort(int Address, int *tstates);
+
+const BYTE idleDataBus = 0xFF;
+
 BYTE SpecMem[(128+64+16)*1024];  //enough memory for 64k ROM + 128k RAM + extra 16k on SE
 BYTE TimexMem[(64+64)*1024];  // Timex has two more blocks of 64k each
 BYTE TimexWritable[16];
@@ -95,6 +115,7 @@ extern int TZXEventCounter;
 int InteruptPosition;
 int SPECFlashLoading=0;
 int fts=0;
+int flash=0;
 
 extern unsigned short RZXCounter;
 extern RZX_INFO rzx;
@@ -130,7 +151,8 @@ extern void spec_load_z80(char *fname);
 
 rzx_u32 RZXcallback(int Msg, void *data)
 {
-        int a,b,c,d;
+        int a;
+        //int b,c,d;
 
         switch(Msg)
         {
@@ -141,9 +163,9 @@ rzx_u32 RZXcallback(int Msg, void *data)
                 break;
         case RZXMSG_IRBNOTIFY:
                 a=((RZX_IRBINFO *) data)->framecount;
-                b=((RZX_IRBINFO *) data)->tstates;
-                c=((RZX_IRBINFO *) data)->options;
-                d=0;
+                //b=((RZX_IRBINFO *) data)->tstates;
+                //c=((RZX_IRBINFO *) data)->options;
+                //d=0;
 
                 fts=a;
                 RZXCounter=0;
@@ -249,7 +271,6 @@ void spec48_reset(void)
         else if (spectrum.machine>=SPECCY128) SPECBankEnable=1;
         else SPECBankEnable=0;
 
-
         MFActive=0;
         MFLockout=0;
 
@@ -304,6 +325,11 @@ void spec48_initialise(void)
         int i, j, romlen, pos, delay;
         z80_init();
 
+        directMemoryAccess = false;
+        ResetLastIOAccesses();
+        InitialiseRomCartridge();
+        InitialiseSpectra();
+
         for(i=0;i<sizeof(SpecMem);i++) SpecMem[i]=random(256);
         for(i=0;i<sizeof(TimexMem);i++) TimexMem[i]=255;
         for(i=0;i<sizeof(PlusDMem);i++) PlusDMem[i]=255;
@@ -343,7 +369,10 @@ void spec48_initialise(void)
 
         if (spectrum.floppytype==FLOPPYIF1)
         {
-                romlen=memory_load("specif1.rom",0,65536);
+                if (IF1->RomEdition->Text == "Edition 2")
+                        romlen=memory_load("specif1_2.rom",0,65536);
+                else
+                        romlen=memory_load("specif1_1.rom",0,65536);
 
                 memcpy(SpecMem+32768,memory,romlen);
                 if (romlen<=8192) memcpy(SpecMem+32768+8192,memory,romlen);
@@ -492,9 +521,19 @@ void SPECLoadCheck(void)
         return;
 }
 
+// Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+void spec48_setbyte(int Address, int Data)
+{
+        directMemoryAccess = true;
+        spec48_writebyte(Address, Data);
+        directMemoryAccess = false;
+}
+
 void spec48_writebyte(int Address, int Data)
 {
         register int SpecSETemp;
+
+        lastMemoryWriteAddr = Address;
 
         if (Address>=32768 && spectrum.machine==SPECCY16) return;
 
@@ -553,6 +592,17 @@ void spec48_writebyte(int Address, int Data)
                                         divIDEMem[(Address&8191)+(divIDEPage1*8192)]=Data;
                         }
                         return;
+                }  
+                
+                // The ROM cartridge socket does not differentiate between a memory read or write,
+                // so all accesses are treated as reads
+                if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+                {
+                        BYTE data;
+                        if (ReadRomCartridge(Address, (BYTE*)&data))
+                        {
+                                return;
+                        }
                 }
 
                 if ((SPECBlk[0]<4) && (zx81.protectROM) && (!TIMEXPage) ) return;
@@ -570,16 +620,35 @@ void spec48_writebyte(int Address, int Data)
                 if (TimexWritable[(1<<(Address>>13))+8*TIMEXBank])
                         TimexMem[65536*TIMEXBank+Address]=Data;
         }
-        else    RAMWrite(SPECBlk[Address>>14], Address, Data);
+        else
+        {
+                RAMWrite(SPECBlk[Address>>14], Address, Data);
+                if (zx81.colour == COLOURSPECTRA)
+                {
+                        SpectraRAMWrite(Address, Data);
+                }
+        }
 
         TIMEXPage=SpecSETemp;
         noise = (noise<<8) | Data;
+}
+
+// Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+BYTE spec48_getbyte(int Address)
+{
+        directMemoryAccess = true;
+        BYTE b = spec48_readbyte(Address);
+        directMemoryAccess = false;
+        
+        return b;
 }
 
 BYTE spec48_readbyte(int Address)
 {
         int data;
         register int SpecSETemp;
+
+        lastMemoryReadAddr = Address;
 
         if (Address<16384)
         {
@@ -642,6 +711,14 @@ BYTE spec48_readbyte(int Address)
                         noise = (noise<<8) | data;
                         return(data);
                 }
+
+                if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+                {
+                        if (ReadRomCartridge(Address, (BYTE*)&data))
+                        {
+                                return data;
+                        }
+                }
         }
 
         SpecSETemp=TIMEXPage;
@@ -668,7 +745,7 @@ BYTE spec48_opcode_fetch(int Address)
 
 void spec48_writeport(int Address, int Data, int *tstates)
 {
-        unsigned char *p;
+        LogOutAccess(Address, Data);
 
         if (spectrum.HDType==HDDIVIDE && ((Address&0xa3)==0xa3))
         {
@@ -793,9 +870,21 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdf:
-                if (zx81.aytype==AY_TYPE_ACE) sound_ay_write(SelectAYReg, Data);
-                break;
-
+                switch(Address>>8)
+                {
+                case 0x7f:
+                        // The SPECTRA IO port has priority over devices connected behind it, which it
+                        // ensures by masking out the IORQ line
+                        if ((zx81.colour == COLOURSPECTRA) && zx81.spectraColourSwitchOn)
+                        {
+                                zx81.spectraMode = Data;
+                                DetermineSpectraDisplayBank();
+                                break;
+                        }
+                default:
+                        if (zx81.aytype==AY_TYPE_ACE) sound_ay_write(SelectAYReg, Data);
+                        break;
+                }
         case 0xe3:
                 if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_cmdreg(Data);
                 break;
@@ -866,12 +955,16 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 case 0x7f:
                         if (!SPECBankEnable) break;
                         SPECLast7ffd=Data;
-                        SPECBlk[0]= ((SPECLast1ffd>>1)&2) | (Data>>4)&1;
+                        SPECBlk[0]= ((SPECLast1ffd>>1)&2) | ((Data>>4)&1);
                         SPECBlk[1]=9;
                         SPECBlk[2]=6;
                         SPECBlk[3]=4+(Data&7);
                         SPECVideoBank=(Data>>3)&1 ? 11:9;
                         if (spectrum.machine!=SPECCYSE) SPECBankEnable=!((Data>>5)&1);
+                        if (zx81.colour == COLOURSPECTRA)
+                        {
+                                DetermineSpectraDisplayBank();
+                        }
                         break;
 
                 case 0x1f:
@@ -927,7 +1020,16 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 {
                         SPECMICState = Data&8;
                         if (zx81.vsyncsound) sound_beeper(Data&16);
-                        SPECNextBorder = Data&7;
+
+                        if (zx81.colour == COLOURSPECTRA)
+                        {
+                                SPECNextBorder = DetermineSpectraBorderColour(Data, flash & 0x10);
+                        }
+                        else
+                        {
+                                SPECNextBorder = (Data & 7);
+                        }
+
                         SPECKb = Data;
                 }
         }
@@ -983,7 +1085,16 @@ int spec48_contendio(int Address, int states, int time)
 
 BYTE spec48_readport(int Address, int *tstates)
 {
+        BYTE data = ReadPort(Address, tstates);
+        LogInAccess(Address, data);
+
+        return data;
+}
+
+BYTE ReadPort(int Address, int *tstates)
+{
         int RZXPortVal;
+        int data;
         //static int LastT=0;
         //int CurT;
 
@@ -1129,17 +1240,29 @@ BYTE spec48_readport(int Address, int *tstates)
                 break;
 
         case 0xdf:
-                if (spectrum.kmouse)
+                switch(Address>>8)
                 {
-                        switch((Address>>8)&255)
+                case 0x7f:
+                        // The SPECTRA IO port has priority over devices connected behind it, which it
+                        // ensures by masking out the IORQ line
+                        if ((zx81.colour == COLOURSPECTRA) && zx81.spectraColourSwitchOn)
                         {
-                        case 0xfb: return(mouse.x & 255);
-                        case 0xff: return(mouse.y & 255);
-                        case 0xfa: return(mouse.buttons);
+                                return zx81.spectraMode;
                         }
+                default:
+                        if (spectrum.kmouse)
+                        {
+                                switch((Address>>8)&255)
+                                {
+                                case 0xfb: return(mouse.x & 255);
+                                case 0xff: return(mouse.y & 255);
+                                case 0xfa: return(mouse.buttons);
+                                }
+                        }
+                        break;
                 }
                 break;
-
+                
         case 0xe3:
                 if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_statusreg());
                 break;
@@ -1245,29 +1368,31 @@ BYTE spec48_readport(int Address, int *tstates)
                 }
                 break;
         }
+
         if (spectrum.machine<=SPECCY128) return(FloatingBus);
-        return(255);
+
+        return(idleDataBus);
 }
 
 int spec48_do_scanline(SCANLINE *CurScanLine)
 {
-        int ts,i,j;
-        static int ink,paper;
+        int ts,i;
+        static int ink, paper, ink2, paper2;
         static int Sy=0, loop=207;
         static int borrow=0;
         static int sts=0, chars=0, delay=0, IntDue=0;
-        static int flash=0, DrawingBorder=1, DCCount=0;
+        static int DrawingBorder=1, DCCount=0;
         static int BaseColour, PBaseColour;
-        int y1,y2;
         static int shift_register;
         static int clean_exit=1;
-        int inv,bitmap,chr, attr, b1,b2;
+        int attr, attr2, b1, b2;
         int MaxScanLen;
         int PrevBit=0, PrevGhost=0;
         int scale= (tv.AdvancedEffects ? 2:1);
         int LastPC;
         int SpeedUp, SpeedUpCount;
         int InteruptTime;
+        int shiftCount;
 
         SpeedUpCount=0;
         SpeedUp=(zx81.speedup*machine.tperscanline)/100;
@@ -1436,29 +1561,41 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         else
                                         {
                                                 DrawingBorder=0;
-                                                y1 = Sy-SPECTopBorder;
-                                                y2 = ((y1>>3)&7) | ((y1&7)<<3) | (y1 & 192);
+                                                int y = Sy-SPECTopBorder;
+                                                int area = (y & 0xC0);
+                                                int line = ((y & 0x7) << 3);
+                                                int row = ((y >> 3) & 0x7);
+                                                int lineOffset = ((area | line | row) << 5);
+                                                int cellOffset = lineOffset + chars;
+                                                
                                                 switch(TIMEXMode)
                                                 {
                                                 case 0:
                                                 case 1:
-                                                        attr=RAMRead(SPECVideoBank,
-                                                                (TIMEXMode<<13)+6144+chars+((y1>>3)<<5));
-                                                        shift_register=RAMRead(SPECVideoBank,
-                                                                (TIMEXMode<<13)+chars+(y2<<5));
+                                                        if (zx81.colour != COLOURSPECTRA)
+                                                        {
+                                                                shift_register=RAMRead(SPECVideoBank, (TIMEXMode<<13)+cellOffset);
+                                                                attr=RAMRead(SPECVideoBank, (TIMEXMode<<13)+6144+chars+((y>>3)<<5));
+                                                        }
+                                                        else
+                                                        {
+                                                                shift_register = SpectraRAMRead(cellOffset);
+                                                                FetchSpectraAttributeFileBytes(y, chars, &attr, &attr2);
+                                                                shiftCount = 0;
+                                                        }
                                                         break;
                                                 case 2:
                                                 case 3:
-                                                        attr=RAMRead(SPECVideoBank, 8192+chars+(y2<<5));
-                                                        shift_register=RAMRead(SPECVideoBank, chars+(y2<<5));
+                                                        attr=RAMRead(SPECVideoBank, 8192+cellOffset);
+                                                        shift_register=RAMRead(SPECVideoBank, cellOffset);
                                                         break;
                                                 case 4:
                                                 case 5:
                                                 case 6:
                                                 case 7:
                                                         attr=(((~TIMEXColour)&7)<<3) | TIMEXColour | 64;
-                                                        b1=RAMRead(SPECVideoBank, chars+(y2<<5));
-                                                        b2=RAMRead(SPECVideoBank, 8192+chars+(y2<<5));
+                                                        b1=RAMRead(SPECVideoBank, cellOffset);
+                                                        b2=RAMRead(SPECVideoBank, 8192+cellOffset);
 
                                                         if (tv.AdvancedEffects)
                                                                 shift_register=(b1<<8)|b2;
@@ -1468,11 +1605,29 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                         break;
                                                 }
 
-                                                if (attr&128 && flash&16) shift_register = ~shift_register;
-                                                ink=attr&7;
-                                                paper=(attr>>3)&7;
-                                                if (attr&64) { ink+=8; paper+=8; }
                                                 FloatingBus=attr;
+
+                                                int flashSwap = (flash & 0x10);
+
+                                                if (zx81.colour == COLOURSPECTRA)
+                                                {
+                                                        DetermineSpectraInkPaper(attr, attr2, flashSwap, &ink, &ink2, &paper, &paper2);
+                                                        SPECNextBorder = DetermineSpectraBorderColour(SPECKb, flashSwap);
+                                                }
+                                                else
+                                                {
+                                                        int inkMask = 0x07;
+                                                        int paperMask = 0x38;
+                                                        int brightMask = 0x40;
+                                                        int flashMask = 0x80;
+                                                        int brightColour = 0x08;
+                                                        
+                                                        if ((attr &  flashMask) && flashSwap) shift_register = ~shift_register;
+                                                        ink = (attr & inkMask);
+                                                        paper = ((attr & paperMask) >> 3);
+                                                        if (attr & brightMask) { ink += brightColour; paper += brightColour; }
+                                                }
+
                                                 chars++;
                                                 //noise=0;
                                                 noise=(noise<<8) | attr;
@@ -1480,7 +1635,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         }
                                 }
 
-                                if (DrawingBorder) paper=SPECBorder;
+                                if (DrawingBorder) paper=paper2=SPECBorder;
 
                                 i=(tv.AdvancedEffects && (TIMEXMode&4)) ? 2:1;
 
@@ -1489,9 +1644,19 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                                         if (tv.AdvancedEffects && (TIMEXMode&4))
                                                 colour = ((shift_register&32768)?ink:paper) << 4;
-                                        else colour = ((shift_register&128)?ink:paper) << 4;
-
-                                        if (fts<3584) colour=VBLANKCOLOUR;
+                                        else if (zx81.colour != COLOURSPECTRA)
+                                                colour = ((shift_register&128)?ink:paper) << 4;
+                                        else
+                                        {
+                                                // SPECTRA
+                                                if (shiftCount < 4)
+                                                        colour = ((shift_register&128)?ink:paper);
+                                                else
+                                                        colour = ((shift_register&128)?ink2:paper2);
+                                        }
+                                        
+                                        if (fts<3584)
+                                                colour=VBLANKCOLOUR;
 
                                         altcolour=colour;
                                         BaseColour=colour>>4;
@@ -1527,6 +1692,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         CurScanLine->scanline[CurScanLine->scanline_len++]=colour; //(SPECVSync>0)? 0:colour;
                                         PBaseColour=BaseColour;
                                         shift_register <<= 1;
+                                        ++shiftCount;
                                 }
                         }
                         if (loop<0) SpeedUpCount=SpeedUp;
@@ -1564,7 +1730,4 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
         return(sts);
 }
-
-
-
 

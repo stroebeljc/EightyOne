@@ -326,6 +326,7 @@ private:
         bool SaveTapFile(AnsiString FileName);
         bool SaveT81File(AnsiString FileName);
         bool SavePFile(AnsiString FileName);
+        bool SaveP81File(AnsiString FileName);
         bool SaveOFile(AnsiString FileName);
         void WriteByte(FILE *f, unsigned char a);
         void WriteWord(FILE *f, int c);

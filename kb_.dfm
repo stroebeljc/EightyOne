@@ -53,7 +53,7 @@ object Kb: TKb
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 7
+    TabOrder = 8
     OnClick = OKClick
   end
   object CustomUp: TEdit
@@ -101,7 +101,7 @@ object Kb: TKb
     Caption = 'Function'
     Checked = True
     ParentBiDiMode = False
-    TabOrder = 5
+    TabOrder = 9
     TabStop = True
   end
   object RadioButton2: TRadioButton
@@ -119,7 +119,7 @@ object Kb: TKb
     Height = 17
     Caption = 'Symbol Shift'
     Enabled = False
-    TabOrder = 8
+    TabOrder = 7
     Visible = False
   end
   object CheckBox1: TCheckBox
@@ -128,6 +128,6 @@ object Kb: TKb
     Width = 177
     Height = 17
     Caption = 'Use Right Shift as Symbol Shift'
-    TabOrder = 9
+    TabOrder = 5
   end
 end

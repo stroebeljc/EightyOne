@@ -431,7 +431,6 @@ int save_snap(char *filename)
         return(0);
 }
 
-
 int memory_load(char *filename, int address, int length)
 {
         int fptr;

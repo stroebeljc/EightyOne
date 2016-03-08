@@ -107,8 +107,7 @@ int TTZXFile::AddROMBlock(char *data, int len)
 int TTZXFile::AddGeneralBlock(char *data, int len)
 {
         char *DataBuf;
-        int i;
-
+ 
         unsigned short SymDef[]=
         { 3, 530, 520, 530, 520, 530, 520, 530, 4689,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

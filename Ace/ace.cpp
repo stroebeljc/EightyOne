@@ -148,7 +148,6 @@ BYTE ace_opcode_fetch(int Address)
 void ace_writeport(int Address, int Data, int *tstates)
 {
         static int beeper=0;
-        unsigned char *p;
 
         if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
         {
@@ -271,7 +270,7 @@ int ace_contend(int Address, int tstates, int time)
 
 int ace_do_scanline(SCANLINE *CurScanLine)
 {
-        int ts,i,j;
+        int ts,i;
         static int ink,paper;
         static int Sy=0, loop=207;
         static int borrow=0;

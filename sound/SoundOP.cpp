@@ -35,7 +35,7 @@ TSoundOutput *SoundOutput;
 
 void TSoundOutput::UpdateImage(unsigned char *data, int len)
 {
-        long x,y;
+        long x;
         static int skip=0;
 
         if (++skip <3) return;

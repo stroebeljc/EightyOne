@@ -52,7 +52,7 @@ void TEditGeneralForm::DecodeData(int BlockNo)
 
         AnsiString text1, text2;
         unsigned short *pulses;
-        int i,j,k;
+        int i,j;
         bool eol;
         unsigned char *p;
 
@@ -180,8 +180,6 @@ void TEditGeneralForm::DecodeData(int BlockNo)
 
 
         Data->Lines->Text = text1;
-
-
 }
 
 void TEditGeneralForm::Go(int BlockNo, int Mx, int My)

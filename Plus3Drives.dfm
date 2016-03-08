@@ -1,6 +1,6 @@
 object P3Drive: TP3Drive
-  Left = 638
-  Top = 39
+  Left = 643
+  Top = 43
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Drives'
@@ -24,7 +24,7 @@ object P3Drive: TP3Drive
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
-    TabOrder = 0
+    TabOrder = 3
     OnClick = OKClick
   end
   object FloppyGroup: TGroupBox
@@ -33,7 +33,7 @@ object P3Drive: TP3Drive
     Width = 321
     Height = 73
     Caption = 'Floppy Drives'
-    TabOrder = 1
+    TabOrder = 0
     object DriveALabel: TLabel
       Left = 8
       Top = 20
@@ -69,7 +69,7 @@ object P3Drive: TP3Drive
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 1
+      TabOrder = 3
       Text = '< Empty >'
     end
     object DriveAFSBtn: TButton
@@ -78,7 +78,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = DriveAFSBtnClick
     end
     object DriveBFSBtn: TButton
@@ -87,7 +87,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 3
+      TabOrder = 4
       OnClick = DriveBFSBtnClick
     end
     object DriveAEjectBtn: TButton
@@ -96,7 +96,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 4
+      TabOrder = 2
       OnClick = DriveAEjectBtnClick
     end
     object DriveBEjectBtn: TButton
@@ -115,7 +115,7 @@ object P3Drive: TP3Drive
     Width = 321
     Height = 225
     Caption = 'Hard Drives'
-    TabOrder = 2
+    TabOrder = 1
     object HD1Label: TLabel
       Left = 18
       Top = 116
@@ -153,7 +153,7 @@ object P3Drive: TP3Drive
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 0
+      TabOrder = 12
       Text = '< Empty >'
     end
     object HD1FSBtn: TButton
@@ -162,7 +162,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 1
+      TabOrder = 13
       OnClick = HD1FSBtnClick
     end
     object HD1EjectBtn: TButton
@@ -171,7 +171,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 2
+      TabOrder = 14
       OnClick = HD1EjectBtnClick
     end
     object RedetectDrives: TButton
@@ -180,7 +180,7 @@ object P3Drive: TP3Drive
       Width = 137
       Height = 17
       Caption = 'Redetect Physical Drives'
-      TabOrder = 3
+      TabOrder = 20
       OnClick = RedetectDrivesClick
     end
     object HD1List: TComboBox
@@ -190,7 +190,7 @@ object P3Drive: TP3Drive
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
-      TabOrder = 4
+      TabOrder = 10
       OnChange = HD1ListChange
     end
     object HD1C: TEdit
@@ -199,7 +199,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 21
       Enabled = False
-      TabOrder = 5
+      TabOrder = 15
       Text = '0'
     end
     object HD1H: TEdit
@@ -208,7 +208,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 21
       Enabled = False
-      TabOrder = 6
+      TabOrder = 16
       Text = '0'
     end
     object HD1HUD: TUpDown
@@ -219,7 +219,7 @@ object P3Drive: TP3Drive
       Min = 0
       Orientation = udHorizontal
       Position = 0
-      TabOrder = 7
+      TabOrder = 17
       Wrap = False
       OnClick = HD1HUDClick
     end
@@ -229,7 +229,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 21
       Enabled = False
-      TabOrder = 8
+      TabOrder = 18
       Text = '0'
     end
     object HD1SUD: TUpDown
@@ -240,7 +240,7 @@ object P3Drive: TP3Drive
       Min = 0
       Orientation = udHorizontal
       Position = 0
-      TabOrder = 9
+      TabOrder = 19
       Wrap = False
       OnClick = HD1HUDClick
     end
@@ -251,7 +251,7 @@ object P3Drive: TP3Drive
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
-      TabOrder = 10
+      TabOrder = 0
       OnChange = HD0ListChange
     end
     object HD0Text: TEdit
@@ -263,7 +263,7 @@ object P3Drive: TP3Drive
       ParentShowHint = False
       ReadOnly = True
       ShowHint = True
-      TabOrder = 11
+      TabOrder = 2
       Text = '< Empty >'
     end
     object HD0FSBtn: TButton
@@ -272,7 +272,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 12
+      TabOrder = 3
       OnClick = HD0FSBtnClick
     end
     object HD0EjectBtn: TButton
@@ -281,7 +281,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 13
+      TabOrder = 4
       OnClick = HD0EjectBtnClick
     end
     object HD0C: TEdit
@@ -290,7 +290,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 21
       Enabled = False
-      TabOrder = 14
+      TabOrder = 5
       Text = '0'
     end
     object HD0H: TEdit
@@ -299,7 +299,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 21
       Enabled = False
-      TabOrder = 15
+      TabOrder = 6
       Text = '0'
     end
     object HD0HUD: TUpDown
@@ -310,7 +310,7 @@ object P3Drive: TP3Drive
       Min = 0
       Orientation = udHorizontal
       Position = 0
-      TabOrder = 16
+      TabOrder = 7
       Wrap = False
       OnClick = HD0HUDClick
     end
@@ -320,7 +320,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 21
       Enabled = False
-      TabOrder = 17
+      TabOrder = 8
       Text = '0'
     end
     object HD0SUD: TUpDown
@@ -331,7 +331,7 @@ object P3Drive: TP3Drive
       Min = 0
       Orientation = udHorizontal
       Position = 0
-      TabOrder = 18
+      TabOrder = 9
       Wrap = False
       OnClick = HD0HUDClick
     end
@@ -341,7 +341,7 @@ object P3Drive: TP3Drive
       Width = 73
       Height = 17
       Caption = 'Read Only'
-      TabOrder = 19
+      TabOrder = 1
       OnClick = HD0ReadOnlyClick
     end
     object HD1ReadOnly: TCheckBox
@@ -350,7 +350,7 @@ object P3Drive: TP3Drive
       Width = 77
       Height = 17
       Caption = 'Read Only'
-      TabOrder = 20
+      TabOrder = 11
       OnClick = HD1ReadOnlyClick
     end
   end
@@ -360,7 +360,7 @@ object P3Drive: TP3Drive
     Width = 321
     Height = 217
     Caption = 'Microdrives'
-    TabOrder = 3
+    TabOrder = 2
     object MDV0Label: TLabel
       Left = 9
       Top = 20
@@ -461,7 +461,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 3
+      TabOrder = 5
       OnClick = MDV0EjectBtnClick
     end
     object MDV1FSBtn: TButton
@@ -480,7 +480,7 @@ object P3Drive: TP3Drive
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 5
+      TabOrder = 3
       Text = '< Empty >'
     end
     object MDV2Text: TEdit
@@ -502,7 +502,7 @@ object P3Drive: TP3Drive
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 7
+      TabOrder = 9
       Text = '< Empty >'
     end
     object MDV3FSBtn: TButton
@@ -511,7 +511,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 8
+      TabOrder = 10
       OnClick = MDV0FSBtnClick
     end
     object MDV2FSBtn: TButton
@@ -520,7 +520,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 9
+      TabOrder = 7
       OnClick = MDV0FSBtnClick
     end
     object MDV2EjectBtn: TButton
@@ -529,7 +529,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 10
+      TabOrder = 8
       OnClick = MDV0EjectBtnClick
     end
     object MDV3EjectBtn: TButton
@@ -548,7 +548,7 @@ object P3Drive: TP3Drive
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 12
+      TabOrder = 21
       Text = '< Empty >'
     end
     object MDV6Text: TEdit
@@ -560,7 +560,7 @@ object P3Drive: TP3Drive
       ParentShowHint = False
       ReadOnly = True
       ShowHint = True
-      TabOrder = 13
+      TabOrder = 18
       Text = '< Empty >'
     end
     object MDV5Text: TEdit
@@ -570,7 +570,7 @@ object P3Drive: TP3Drive
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 14
+      TabOrder = 15
       Text = '< Empty >'
     end
     object MDV4Text: TEdit
@@ -582,7 +582,7 @@ object P3Drive: TP3Drive
       ParentShowHint = False
       ReadOnly = True
       ShowHint = True
-      TabOrder = 15
+      TabOrder = 12
       Text = '< Empty >'
     end
     object MDV4FSBtn: TButton
@@ -591,7 +591,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 16
+      TabOrder = 13
       OnClick = MDV0FSBtnClick
     end
     object MDV5FSBtn: TButton
@@ -600,7 +600,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 17
+      TabOrder = 16
       OnClick = MDV0FSBtnClick
     end
     object MDV6FSBtn: TButton
@@ -609,7 +609,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 18
+      TabOrder = 19
       OnClick = MDV0FSBtnClick
     end
     object MDV7FSBtn: TButton
@@ -618,7 +618,7 @@ object P3Drive: TP3Drive
       Width = 25
       Height = 23
       Caption = '...'
-      TabOrder = 19
+      TabOrder = 22
       OnClick = MDV0FSBtnClick
     end
     object MDV7EjectBtn: TButton
@@ -627,7 +627,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 20
+      TabOrder = 23
       OnClick = MDV0EjectBtnClick
     end
     object MDV6EjectBtn: TButton
@@ -636,7 +636,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 21
+      TabOrder = 20
       OnClick = MDV0EjectBtnClick
     end
     object MDV5EjectBtn: TButton
@@ -645,7 +645,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 22
+      TabOrder = 17
       OnClick = MDV0EjectBtnClick
     end
     object MDV4EjectBtn: TButton
@@ -654,7 +654,7 @@ object P3Drive: TP3Drive
       Width = 41
       Height = 23
       Caption = 'Eject'
-      TabOrder = 23
+      TabOrder = 14
       OnClick = MDV0EjectBtnClick
     end
   end

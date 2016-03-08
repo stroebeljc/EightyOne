@@ -27,7 +27,7 @@
  *  08.10.2002  JH  Implemented Trace exception
  *  25.10.2002  JH  CHKTRACE no longer optional, improved implementation.
  */
-static char     sccsid[] = "$Id: 68000.c,v 1.20 2002/10/30 16:23:04 jhoenig Exp $";
+//static char     sccsid[] = "$Id: 68000.c,v 1.20 2002/10/30 16:23:04 jhoenig Exp $";
 #include "68kconfig.h"
 
 #include <stdio.h>
@@ -481,4 +481,6 @@ unsigned        CPURun(unsigned count)
     }
     return executed;
 }
+
+
 

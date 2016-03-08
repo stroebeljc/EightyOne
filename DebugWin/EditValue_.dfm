@@ -1,6 +1,6 @@
 object EditValue: TEditValue
-  Left = 283
-  Top = 147
+  Left = 285
+  Top = 149
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'Edit Value'

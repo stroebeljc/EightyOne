@@ -54,7 +54,6 @@ void SP0256_Init(void)
                 a =(int)Phones[i].position;
                 a += offset;
                 Phones[i].position = (((char *)Phones) + a);
-                a=0;
         }
 }
 

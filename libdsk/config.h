@@ -9,7 +9,9 @@
 
 #define HAVE_GETTEMPFILENAME
 
+#ifndef WIN32
 #define WIN32
+#endif
 #define NOTWINDLL
 
 #define HAVE_LIMITS_H 1

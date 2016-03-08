@@ -1,4 +1,5 @@
 #include "iecbus.h"
+#include <string.h>
 
 #define SET(Line, Device)  (Line) = ((Line) | (1<<(Device)))
 #define RESET(Line, Device)  (Line) = ((Line) & ~(1<<(Device)))
@@ -18,6 +19,9 @@ static unsigned int TimeOut = 0;
 void Device8Tick(void);
 void Device8TurnAround(void);
 void Device8UnTurnAround(void);
+void Device8Talk(void);
+void Received1541(int Byte);
+int Device8Listen(void);
 
 char SendBuffer[65536], *SendBuf;
 int SendBufLen=0;
@@ -39,7 +43,7 @@ int SendBufLen=0;
 
 void Device8Tick(void)
 {
-        int Byte=0;
+        int Byte;
 
         if (SendBufLen) Device8Talk();
         else
@@ -49,7 +53,7 @@ void Device8Tick(void)
         }
 }
 
-int Received1541(int Byte)
+void Received1541(int Byte)
 {
         static int State=IDLE;
 
@@ -90,11 +94,10 @@ int Received1541(int Byte)
 
 // ***************************************************************
 
-int Device8Talk()
+void Device8Talk(void)
 {
-        static int State=IDLE, LastByte=false;
-        static int LastClock=true;
-        static int BitCount, BitValue;
+        static int State=IDLE;
+        static int BitCount;
 
         switch(State)
         {
@@ -178,7 +181,7 @@ int Device8Talk()
 
 // ***************************************************************
 
-int Device8Listen()
+int Device8Listen(void)
 {
         static int State=IDLE, LastByte=false;
         static int LastClock=true;

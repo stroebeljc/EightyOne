@@ -1,13 +1,12 @@
 object EditGeneralForm: TEditGeneralForm
   Left = 574
   Top = 53
-  Width = 632
-  Height = 427
-  BorderIcons = []
+  Width = 640
+  Height = 663
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = 'Edit General Data Block'
   Color = clBtnFace
-  Constraints.MaxWidth = 632
   Constraints.MinHeight = 377
   Constraints.MinWidth = 632
   Font.Charset = DEFAULT_CHARSET
@@ -19,96 +18,98 @@ object EditGeneralForm: TEditGeneralForm
   PixelsPerInch = 96
   TextHeight = 13
   object Label4: TLabel
-    Left = 144
-    Top = 8
-    Width = 116
+    Left = 143
+    Top = 7
+    Width = 138
     Height = 13
     Caption = 'Pilot/Sync Symbol Table'
   end
   object Label5: TLabel
-    Left = 144
-    Top = 104
-    Width = 90
+    Left = 143
+    Top = 103
+    Width = 114
     Height = 13
     Caption = 'Data Symbol Table'
   end
   object Label7: TLabel
-    Left = 8
-    Top = 371
-    Width = 30
+    Left = 6
+    Top = 604
+    Width = 33
     Height = 13
-    Anchors = [akRight, akBottom]
-    Caption = 'Pause'
+    Anchors = [akLeft, akBottom]
+    Caption = 'Pause:'
   end
   object Label8: TLabel
-    Left = 8
-    Top = 208
-    Width = 23
+    Left = 7
+    Top = 207
+    Width = 34
     Height = 13
     Caption = 'Data'
   end
   object Label9: TLabel
-    Left = 312
-    Top = 371
-    Width = 68
+    Left = 295
+    Top = 604
+    Width = 74
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Character Set:'
   end
   object Label1: TLabel
-    Left = 8
-    Top = 8
-    Width = 75
+    Left = 7
+    Top = 7
+    Width = 98
     Height = 13
     Caption = 'Pilot/Sync Data'
   end
   object SymDefP: TMemo
-    Left = 144
-    Top = 24
-    Width = 473
+    Left = 143
+    Top = 23
+    Width = 479
     Height = 73
+    Anchors = [akLeft, akTop, akRight]
     Lines.Strings = (
       'SyncPulses')
     ReadOnly = True
     ScrollBars = ssBoth
-    TabOrder = 0
+    TabOrder = 1
   end
   object SymDefD: TMemo
-    Left = 144
-    Top = 120
-    Width = 473
+    Left = 143
+    Top = 119
+    Width = 479
     Height = 81
+    Anchors = [akLeft, akTop, akRight]
     Lines.Strings = (
       'Alphabet')
     ReadOnly = True
     ScrollBars = ssBoth
-    TabOrder = 1
+    TabOrder = 2
   end
   object Pause: TEdit
-    Left = 48
-    Top = 367
-    Width = 145
+    Left = 46
+    Top = 600
+    Width = 144
     Height = 21
-    Anchors = [akRight, akBottom]
-    TabOrder = 2
+    Anchors = [akLeft, akBottom]
+    TabOrder = 4
     Text = 'Pause'
   end
   object OK: TButton
-    Left = 544
-    Top = 362
-    Width = 75
+    Left = 551
+    Top = 597
+    Width = 74
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 3
+    TabOrder = 6
     OnClick = OKClick
   end
   object Data: TMemo
-    Left = 8
-    Top = 224
-    Width = 609
-    Height = 131
+    Left = 7
+    Top = 223
+    Width = 616
+    Height = 362
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -120,12 +121,12 @@ object EditGeneralForm: TEditGeneralForm
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssVertical
-    TabOrder = 4
+    TabOrder = 3
   end
   object CharSet: TComboBox
-    Left = 392
-    Top = 367
-    Width = 89
+    Left = 369
+    Top = 600
+    Width = 88
     Height = 21
     Style = csDropDownList
     Anchors = [akLeft, akBottom]
@@ -137,13 +138,13 @@ object EditGeneralForm: TEditGeneralForm
       'ASCII')
   end
   object PRLE: TMemo
-    Left = 8
-    Top = 24
-    Width = 129
+    Left = 7
+    Top = 23
+    Width = 128
     Height = 177
     Lines.Strings = (
       'PRLE')
     ScrollBars = ssVertical
-    TabOrder = 6
+    TabOrder = 0
   end
 end

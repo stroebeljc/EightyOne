@@ -1,6 +1,6 @@
 object MemoryWindow: TMemoryWindow
-  Left = 443
-  Top = 103
+  Left = 451
+  Top = 109
   Width = 580
   Height = 302
   HorzScrollBar.Visible = False
@@ -28,10 +28,10 @@ object MemoryWindow: TMemoryWindow
   PixelsPerInch = 96
   TextHeight = 14
   object ScrollBar1: TScrollBar
-    Left = 556
+    Left = 555
     Top = 0
-    Width = 16
-    Height = 256
+    Width = 17
+    Height = 249
     Align = alRight
     Kind = sbVertical
     LargeChange = 8
@@ -42,7 +42,7 @@ object MemoryWindow: TMemoryWindow
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 256
+    Top = 249
     Width = 572
     Height = 19
     Panels = <

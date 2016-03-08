@@ -38,7 +38,6 @@
 #include "zx81config.h"
 #include "sound.h"
 #include "FullScreen.h"
-#include "ZXpand_Emu.h"
 #include "main_.h"
 #include "accdraw_.h"
 #include "About_.h"
@@ -67,28 +66,22 @@
 #include "debug68.h"
 #include "symbolstore.h"
 #include "SymBrowse.h"
+#include "Spectra\Spectra.h"
+#include "Chroma\Chroma.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "ThemeMgr"
 #pragma resource "*.dfm"
 
 #define ZXDB(msg) Application->MessageBox(msg, "Debug", MB_OK);
-//#define edt1 0x480
 
 TForm1 *Form1;
 ULONG nID;
 
-
-ZXP_CREATEFN zxpand_create = NULL;
-ZXP_DESTROYFN zxpand_destroy = NULL;
-ZXP_UPDATEFN zxpand_update = NULL;
-ZXP_IOWRFN zxpand_iowrite = NULL;
-ZXP_IORDFN zxpand_ioread = NULL;
-
-
 extern PACKAGE TMouse* Mouse;
 extern void SpecStartUp(void);
-extern BYTE spec48_readbyte(int Address);
+extern BYTE spec48_getbyte(int Address);
 extern void spec48_LoadRZX(char *FileName);
 extern int AccurateDraw(SCANLINE *Line);
 
@@ -126,7 +119,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 {
         AnsiString IniPath;
         char path[256];
-        int ret,i;
+        int i;
 
         symbolstore_test();
 
@@ -204,8 +197,9 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
         TIniFile *ini;
-        int i;
         char soundfile[256];
+
+        AnimTimer1->Enabled=false;
 
 //        LPITEMIDLIST ppidl;
 //
@@ -242,17 +236,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         PCKbInit();
 
         Application->OnDeactivate=FormDeactivate;
-        AnsiString dllfile = zx81.cwd;
-        dllfile += "ZXpand_emu.dll";
-        HANDLE zxpandhand = LoadLibrary(dllfile.c_str());
-        if (zxpandhand)
-        {
-                zxpand_create = (ZXP_CREATEFN)GetProcAddress(zxpandhand, "ZXpand_Create");
-                zxpand_destroy = (ZXP_DESTROYFN)GetProcAddress(zxpandhand, "ZXpand_Destroy");
-                zxpand_update = (ZXP_UPDATEFN)GetProcAddress(zxpandhand, "ZXpand_Update");
-                zxpand_iowrite = (ZXP_IOWRFN)GetProcAddress(zxpandhand, "ZXpand_IO_Write");
-                zxpand_ioread = (ZXP_IORDFN)GetProcAddress(zxpandhand, "ZXpand_IO_Read");
-        }
 
         ini = new TIniFile(zx81.inipath);
         ShowSplash=ini->ReadBool("MAIN","ShowSplash", ShowSplash);
@@ -501,6 +484,7 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                 || Extension == ".TAP"
                 || Extension == ".P"
                 || Extension == ".81"
+                || Extension == ".P81"
                 || Extension == ".80"
                 || Extension == ".O"
                 || Extension == ".A83" )
@@ -526,7 +510,7 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
         zx81_stop=1;
 
         if (zx81.machine==MACHINEACE) SaveSnapDialog->Filter = ".ACE Snapshot|*.ace";
-        else if (zx81.machine==MACHINESPEC48) SaveSnapDialog->Filter = ".SNA Snapshop|*.sna|.Z80 Snapshot|*.z80";
+        else if (zx81.machine==MACHINESPEC48) SaveSnapDialog->Filter = ".SNA Snapshot|*.sna|.Z80 Snapshot|*.z80";
         else SaveSnapDialog->Filter = ".Z81 Snapshot|*.z81";
         if (!SaveSnapDialog->Execute())
         {
@@ -551,7 +535,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         stopped=zx81_stop;
 
         if (zx81.machine==MACHINEACE) LoadSnapDialog->Filter = ".ACE Snapshot|*.ace|Compressed Snapshot|*.zip";
-        else if (zx81.machine==MACHINESPEC48) LoadSnapDialog->Filter = "Spectrum Snapshots|*.sna;*.z80|.SNA Snapshop|*.sna|.Z80 Snapshot|*.z80|Compressed Snapshot|*.zip";
+        else if (zx81.machine==MACHINESPEC48) LoadSnapDialog->Filter = "Spectrum Snapshots|*.sna;*.z80|.SNA Snapshot|*.sna|.Z80 Snapshot|*.z80|Compressed Snapshot|*.zip";
         else LoadSnapDialog->Filter = ".Z81 Snapshot|*.z81|Compressed Snapshot|*.zip";
         if (!LoadSnapDialog->Execute()) return;
 
@@ -603,14 +587,16 @@ void __fastcall TForm1::ResetButtonClick(TObject *Sender)
 
 void __fastcall TForm1::ResetZX811Click(TObject *Sender)
 {
+        int initialStopState = zx81_stop;
+
         rzx_close();
         PCAllKeysUp();
         zx81_stop=1;
         z80_reset();
-        zx81.enableqschrgen=0;
         sound_ay_reset();
         if (machine.reset) machine.reset();
-        zx81_stop=0;
+        zx81_stop=initialStopState;
+        DebugUpdate();
 }
 //---------------------------------------------------------------------------
 
@@ -707,7 +693,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.a83;*.81;*.80;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.a83;*.81;*.80;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
                                 Ext = FileNameGetExt(Filename);
                         }
 
@@ -717,7 +703,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                         else if (Ext==".SNA") spec_load_sna(Filename.c_str());
                         else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
-                                  || Ext==".81" || Ext==".80")
+                                  || Ext==".81" || Ext==".80" || Ext==".P81")
                         {
                                 TZX->LoadFile(Filename, false);
                                 TZX->UpdateTable(true);
@@ -762,10 +748,14 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 
         AnsiString text="";
 
-        if (zx81_stop) text +="Paused";
+        if (zx81_stop)
+        {
+                text +="Paused";
+        }
         else
         {
-                if (zx81.single_step) text +="Debug Mode";
+                if (zx81.single_step)
+                        text +="Debug Mode";
                 else
                 {
                         text += fps;
@@ -843,9 +833,9 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                                 {
                                         retval=EnumDisplaySettings(NULL,i, &Mode);
 
-                                        if (Mode.dmPelsWidth == FScreen.Width
-                                                && Mode.dmPelsHeight == FScreen.Height
-                                                && Mode.dmBitsPerPel == FScreen.Bpp)
+                                        if ((unsigned short)Mode.dmPelsWidth == FScreen.Width
+                                                && (unsigned short)Mode.dmPelsHeight == FScreen.Height
+                                                && (unsigned short)Mode.dmBitsPerPel == FScreen.Bpp)
                                         {
                                                 ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
                                                 retval=0;
@@ -928,7 +918,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
                                 if (Filename=="") return;
                                 Ext = FileNameGetExt(Filename);
                         }
@@ -947,7 +937,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                         else if (Ext==".SNA") spec_load_sna(Filename.c_str());
                         else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
-                                  || Ext==".81" || Ext==".80")
+                                  || Ext==".81" || Ext==".80" || Ext==".P81")
                         {
                                 TZX->LoadFile(Filename, false);
                                 TZX->UpdateTable(true);
@@ -984,7 +974,8 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
 {
         static int j, borrow, Drive;
-        SCANLINE *templine;
+        unsigned short rshift = VK_RSHIFT;
+        unsigned short lshift = VK_LSHIFT;
 
         if (zx81.UseRShift)
         {
@@ -995,15 +986,15 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
                 if (R != RShift)
                 {
                         RShift=R;
-                        if (R) FormKeyDown(NULL, VK_RSHIFT, z);
-                        else FormKeyUp(NULL, VK_RSHIFT,z);
+                        if (R) FormKeyDown(NULL, rshift, z);
+                        else FormKeyUp(NULL, rshift,z);
                 }
 
                 if (L != LShift)
                 {
                         LShift=L;
-                        if (L) FormKeyDown(NULL, VK_LSHIFT,z);
-                        else FormKeyUp(NULL, VK_LSHIFT,z);
+                        if (L) FormKeyDown(NULL, lshift,z);
+                        else FormKeyUp(NULL, lshift,z);
                 }
         }
 
@@ -1081,7 +1072,8 @@ void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 
 void __fastcall TForm1::FormDeactivate(TObject *Sender)
 {
-        if (FullScreen) FormKeyPress(NULL, 27);
+        char escKey = 27;
+        if (FullScreen) FormKeyPress(NULL, escKey);
 }
 //---------------------------------------------------------------------------
 
@@ -1118,6 +1110,8 @@ void TForm1::LoadSettings(TIniFile *ini)
         OpenTape1->FileName=ini->ReadString("MAIN","LoadFile",OpenTape1->FileName);
         OpenTape1->FilterIndex=ini->ReadInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
 
+        SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
+        ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
 
         if (None1->Checked) { zx81.bordersize=BORDERNONE; None1Click(NULL); }
         if (Small1->Checked) { zx81.bordersize=BORDERSMALL; Small1Click(NULL); }
@@ -1138,8 +1132,8 @@ void TForm1::LoadSettings(TIniFile *ini)
         if (ini->ReadBool("MAIN","UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
         if (!StatusBar2->Checked) StatusBar2Click(NULL);
 
-        Top = ini->ReadInteger("MAIN","Top",Top);
-        Left = ini->ReadInteger("MAIN","Left",Left);
+        Top = ini->ReadInteger("MAIN","Top",0);
+        Left = ini->ReadInteger("MAIN","Left",0);
         StartUpHeight = ini->ReadInteger("MAIN","Height",0);
         StartUpWidth = ini->ReadInteger("MAIN","Width",0);
 }
@@ -1190,6 +1184,9 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "KeyMap", KeyboardMap1->Checked);
         ini->WriteString("MAIN","LoadFile",OpenTape1->FileName);
         ini->WriteInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
+
+        ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
+        ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);
@@ -1295,15 +1292,15 @@ void __fastcall TForm1::SaveMemoryBlock1Click(TObject *Sender)
 
 void __fastcall TForm1::HardReset1Click(TObject *Sender)
 {
-        //PCAllKeysUp();
+        int initialStopState = zx81_stop;
         rzx_close();
         zx81_stop=1;
         z80_reset();
         AccurateInit(false);
         machine.initialise();
         sound_ay_reset();
-        zx81_stop=0;
-
+        zx81_stop=initialStopState;
+        DebugUpdate();
 }
 //---------------------------------------------------------------------------
 
@@ -1815,7 +1812,7 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
                         int i;
 
                         for(i=0;i<6912;i++)
-                                fputc(spec48_readbyte(16384+i),f);
+                                fputc(spec48_getbyte(16384+i),f);
                         fclose(f);
                 }
                 fclose(f);
@@ -1848,10 +1845,38 @@ void __fastcall TForm1::Play1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QSChrEnable1Click(TObject *Sender)
+void __fastcall TForm1::QSChrEnableClick(TObject *Sender)
 {
-        QSChrEnable1->Checked = ! QSChrEnable1->Checked;
-        zx81.enableqschrgen= QSChrEnable1->Checked;
+        QSChrEnable->Checked = !QSChrEnable->Checked;
+        zx81.enableQSchrgen = QSChrEnable->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SpectraColourEnableClick(TObject *Sender)
+{
+        bool previousSpectraColourEnable = SpectraColourEnable->Checked;
+
+        SpectraColourEnable->Checked = !SpectraColourEnable->Checked;
+        zx81.spectraColourSwitchOn = SpectraColourEnable->Checked;
+
+        if (previousSpectraColourEnable)
+        {
+                DisableSpectra();
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
+{
+        bool previousChromaColourEnable = ChromaColourEnable->Checked;
+
+        ChromaColourEnable->Checked = !ChromaColourEnable->Checked;
+        zx81.chromaColourSwitchOn = ChromaColourEnable->Checked;
+
+        if (previousChromaColourEnable)
+        {
+                DisableChroma();
+        }
 }
 //---------------------------------------------------------------------------
 

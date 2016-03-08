@@ -284,9 +284,9 @@ static fd_err_t fdl_format_track(FLOPPY_DRIVE *fd, int head,
 /* Has this floppy been written to since it was inserted? */
 static int fdl_dirty(FLOPPY_DRIVE *fd)
 {
+#ifdef LIBDSK_EXPOSES_DIRTY
 	LIBDSK_FLOPPY_DRIVE *fdl = (LIBDSK_FLOPPY_DRIVE *)fd;
 
-#ifdef LIBDSK_EXPOSES_DIRTY
 	if (fdl->fdl_diskp)
 	{
 		return dsk_dirty(fdl->fdl_diskp);
@@ -315,11 +315,11 @@ static fdc_byte fdl_drive_status(FLOPPY_DRIVE *fd)
 {
         LIBDSK_FLOPPY_DRIVE *fdl = (LIBDSK_FLOPPY_DRIVE *)fd;
 	fdc_byte st;
-	dsk_err_t err;
+	//dsk_err_t err;
 
         if (fdl->fdl_diskp)
 	{
-		err = dsk_drive_status(fdl->fdl_diskp, &fdl->fdl_diskg, 0, &st);
+		//err = dsk_drive_status(fdl->fdl_diskp, &fdl->fdl_diskg, 0, &st);
 	}
 	else 
 	{

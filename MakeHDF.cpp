@@ -153,7 +153,7 @@ void __fastcall TCreateHDF::OKClick(TObject *Sender)
 {
         FILE *f;
         unsigned char *track, head[512+0x16];
-        int i,j, tracklen;
+        int i, tracklen;
 
         int cylinders, heads, sectors;
         int secsize, tracks;

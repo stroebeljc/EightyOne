@@ -31,7 +31,7 @@
                  spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditDataForm), &EditDataForm);
                  spl->IncProgress("Tzx"); Application->CreateForm(__classid(TFSSettings), &FSSettings);
                  spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditGeneralForm), &EditGeneralForm);
-                 spl->IncProgress("Interface 1"); Application->CreateForm(__classid(TIF1), &IF1);
+                 spl->IncProgress("ZX Interface 1"); Application->CreateForm(__classid(TIF1), &IF1);
                  spl->IncProgress("P3 Floppy"); Application->CreateForm(__classid(TP3Drive), &P3Drive);
                  spl->IncProgress("HDF Support"); Application->CreateForm(__classid(TCreateHDF), &CreateHDF);
                  spl->IncProgress("Machine Emulation"); Application->CreateForm(__classid(THW), &HW);

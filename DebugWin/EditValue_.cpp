@@ -60,7 +60,6 @@ void TEditValue::CentreOn(TForm* parent)
 bool TEditValue::Edit2(int& value,int len)
 {
         AnsiString NewVal;
-        int val;
 
         cancelled=false;
         EditVal->Text = "$" + IntToHex(value, len*2);

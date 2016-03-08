@@ -24,8 +24,12 @@
  *  30.10.2002  JH  Replaced "% 8" with "& 7". Helps lesser compilers to generate faster code.
  *  11.11.2002  JH  Fixed BTST Dx,Dy etc. for negative Dx values (thx to schtruck@users.sourceforge.net)
  */
+
+#pragma option push
+#pragma warn -8004
+
 #ifndef PROTOH
-static char     sccsid[] = "$Id: op68kmisc.c,v 1.13 2002/11/13 01:04:30 jhoenig Exp $";
+//static char     sccsid[] = "$Id: op68kmisc.c,v 1.13 2002/11/13 01:04:30 jhoenig Exp $";
 #include "68000.h"
 #include "op68k.h"
 
@@ -1778,3 +1782,5 @@ Oper (Op08e0, DoBset8, DB, SimmB, 0, DB, DA, CmaiB, (inst & 7), GMB, SMB)
 Oper (Op08e8, DoBset8, DB, SimmB, 0, DB, DA, Cdai, (inst & 7), GMB, SMB)
 Oper (Op08f0, DoBset8, DB, SimmB, 0, DB, DA, Caix, (inst & 7), GMB, SMB)
 Oper (Op08f8, DoBset8, DB, SimmB, 0, DB, DA, Cear, (inst & 7), GMB, SMB)
+
+#pragma option pop

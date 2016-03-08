@@ -50,6 +50,15 @@ BYTE cr81_readbyte(int Address)
         return 0;
 }
 
+void cr81_setbyte(int Address, int Data)
+{
+}
+
+BYTE cr81_getbyte(int Address)
+{
+        return 0;
+}
+
 BYTE cr81_opcode_fetch(int Address)
 {
         return 0;

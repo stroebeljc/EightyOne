@@ -98,7 +98,7 @@ void z80_reset( void )
 }
 
 /* Process a z80 maskable interrupt */
-int z80_interrupt( int ts )
+int z80_interrupt( /*int ts*/ )
 {
         /* Process if IFF1 set */
         if( IFF1 )

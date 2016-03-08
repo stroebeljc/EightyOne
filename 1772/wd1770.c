@@ -132,7 +132,7 @@ static void wd1770_seek( wd1770_drive *d, int track, int update, int verify )
 
 BYTE wd1770_sr_read( wd1770_drive *d )
 {
-        int temp;
+        //t temp;
 
         //temp=d->status_register;
 
@@ -204,7 +204,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 	{                         /* Type I */
     		int update = b & 0x10 ? 1 : 0;
     		int verify = b & 0x04 ? 1 : 0;
-    		int rate   = b & 0x03 ? 1 : 0;
+    		//int rate   = b & 0x03 ? 1 : 0;
 
     		switch( ( b >> 5 ) & 0x03 )
 		{
@@ -242,7 +242,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 	else if( !( b & 0x40 ) )
 	{                  /* Type II */
     		int multisector = b & 0x10 ? 1 : 0;
-    		int delay       = b & 0x04 ? 1 : 0;
+    		//int delay       = b & 0x04 ? 1 : 0;
 
     		if( !( b & 0x20 ) )
 		{                               /* Read Sector */
@@ -250,7 +250,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
     		}
 		else
 		{                                            /* Write Sector */
-      			int dammark = b & 0x01;
+      			//int dammark = b & 0x01;
 
       			if (d->disk->fd!=-1) d->state = wd1770_state_write;
     		}
@@ -279,7 +279,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
   	}
 	else if( ( b & 0xf0 ) != 0xd0 )
 	{           /* Type III */
-    		int delay = b & 0x04;
+    		//int delay = b & 0x04;
 
     		switch( b & 0xf0 )
 		{

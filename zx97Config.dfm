@@ -89,7 +89,7 @@ object ZX97Dialog: TZX97Dialog
     Checked = True
     ParentBiDiMode = False
     State = cbChecked
-    TabOrder = 4
+    TabOrder = 5
   end
   object PrinterOutput: TComboBox
     Left = 256
@@ -100,7 +100,7 @@ object ZX97Dialog: TZX97Dialog
     DropDownCount = 12
     Enabled = False
     ItemHeight = 13
-    TabOrder = 5
+    TabOrder = 6
     OnChange = PrinterOutputChange
     Items.Strings = (
       'File...'
@@ -123,7 +123,7 @@ object ZX97Dialog: TZX97Dialog
     Width = 81
     Height = 21
     Enabled = False
-    TabOrder = 6
+    TabOrder = 7
   end
   object FileNameSelector: TButton
     Left = 304
@@ -132,7 +132,7 @@ object ZX97Dialog: TZX97Dialog
     Height = 21
     Caption = '...'
     Enabled = False
-    TabOrder = 7
+    TabOrder = 8
     OnClick = FileNameSelectorClick
   end
   object OK: TButton
@@ -141,7 +141,7 @@ object ZX97Dialog: TZX97Dialog
     Width = 75
     Height = 25
     Caption = 'OK'
-    TabOrder = 8
+    TabOrder = 9
     OnClick = OKClick
   end
   object SwapRAMROM: TCheckBox
@@ -150,7 +150,7 @@ object ZX97Dialog: TZX97Dialog
     Width = 113
     Height = 17
     Caption = 'Swap ROM/RAM'
-    TabOrder = 9
+    TabOrder = 4
     OnClick = SwapRAMROMClick
   end
   object SaveDialog1: TSaveDialog

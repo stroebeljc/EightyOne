@@ -25,14 +25,14 @@ object Printer: TPrinter
     Anchors = [akLeft, akTop, akRight]
   end
   object ScrollBar: TScrollBar
-    Left = 255
+    Left = 254
     Top = 0
-    Width = 16
+    Width = 17
     Height = 265
     Anchors = [akTop, akRight]
     Kind = sbVertical
     PageSize = 0
-    TabOrder = 1
+    TabOrder = 0
     OnChange = ScrollBarChange
   end
   object SaveImage: TButton
@@ -41,20 +41,20 @@ object Printer: TPrinter
     Width = 75
     Height = 25
     Caption = 'Save Image'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = SaveImageClick
   end
   object ClearImage: TButton
-    Left = 100
+    Left = 99
     Top = 272
     Width = 75
     Height = 25
     Caption = 'Clear Image'
-    TabOrder = 0
+    TabOrder = 2
     OnClick = ClearImageClick
   end
   object OptionsBtn: TButton
-    Left = 192
+    Left = 190
     Top = 272
     Width = 75
     Height = 25
@@ -70,28 +70,28 @@ object Printer: TPrinter
     TabOrder = 4
     object BitRateTxt: TLabel
       Left = 24
-      Top = 8
+      Top = 5
       Width = 73
       Height = 13
       Caption = 'Carriage Speed'
     end
     object LineRateTxt: TLabel
       Left = 24
-      Top = 64
+      Top = 61
       Width = 89
       Height = 13
       Caption = 'Paper Feed Speed'
     end
     object Label1: TLabel
       Left = 16
-      Top = 124
+      Top = 121
       Width = 26
       Height = 13
       Caption = 'Style:'
     end
     object BitRate: TTrackBar
       Left = 8
-      Top = 24
+      Top = 21
       Width = 241
       Height = 33
       Max = 100
@@ -107,7 +107,7 @@ object Printer: TPrinter
     end
     object LineRate: TTrackBar
       Left = 8
-      Top = 80
+      Top = 77
       Width = 241
       Height = 33
       Max = 100
@@ -123,7 +123,7 @@ object Printer: TPrinter
     end
     object Style: TComboBox
       Left = 48
-      Top = 120
+      Top = 117
       Width = 97
       Height = 21
       Style = csDropDownList

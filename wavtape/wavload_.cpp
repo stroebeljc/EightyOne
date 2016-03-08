@@ -76,7 +76,7 @@ void TWavLoad::UpdateImage()
 {
         TCanvas *Img;
         TRect rect;
-        long x,y;
+        long x;
         int Pos,Sample;
 
         if (!Visible) return;
@@ -246,7 +246,7 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
         if (Recording)
         {
                 static int count=0, level=128, lastbit=0;
-                int curve[12] = { 36, 56, 60,  64, 64, 64,  64, 64, 64,  60, 56, 36 };
+                //int curve[12] = { 36, 56, 60,  64, 64, 64,  64, 64, 64,  60, 56, 36 };
 
                 if (SoundOn->Down) sound_beeper(MicState);
 
@@ -296,7 +296,7 @@ void TWavLoad::Start()
         if (Playing) return;
 
         if (Recording) RecordBtnClick(NULL);
-        PlayBtnClick(NULL);
+        if (TapePos < Wav.NoSamples) PlayBtnClick(NULL);
 }
 
 void TWavLoad::StartRec()
@@ -307,7 +307,6 @@ void TWavLoad::StartRec()
         if (Playing) StopBtnClick(NULL);
         RecordBtnClick(NULL);
 }
-
 
 void TWavLoad::DoCaption(AnsiString Message)
 {
@@ -337,10 +336,6 @@ void TWavLoad::DoCaption(AnsiString Message)
 
         if (FileName=="") Caption="Untitled - Wave";
         else Caption=FileNameGetFname(FileName)+FileNameGetExt(FileName)+" - Wave";
-
-
-
-
 }
 
 void __fastcall TWavLoad::Image1MouseMove(TObject *Sender,
@@ -355,7 +350,6 @@ void __fastcall TWavLoad::Image1MouseMove(TObject *Sender,
                 Threshold = ((128.0/ImgScale)-Y)*ImgScale;
                 UpdateImage();
         }
-
 }
 //---------------------------------------------------------------------------
 
@@ -443,7 +437,7 @@ AnsiString TWavLoad::RemoveExt(AnsiString Fname)
 
         Ext = Fname.SubString(pos, 1+len-pos);
 
-        if ( (Ext==".p" || Ext==".P" || Ext==".T81") && pos>1)
+        if ( (Ext==".p" || Ext==".P" || Ext==".T81" || Ext==".P81") && pos>1)
                 Fname = Fname.SubString(1,pos-1);
 
         return(Fname);
@@ -746,8 +740,7 @@ void __fastcall TWavLoad::NewWav1Click(TObject *Sender)
 
 void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
 {
-	unsigned long  	i;
-	BYTE	*inbuf, *dataptr;
+        BYTE	*inbuf, *dataptr;
 	long	ByteCount, DataCount;
 	unsigned 	buffersize = (1024 * 64);
         bool    PlayingSave,  start;

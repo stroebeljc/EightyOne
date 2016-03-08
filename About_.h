@@ -55,7 +55,6 @@ __published:	// IDE-managed Components
         TLabel *Label17;
         TLabel *Label7;
         TLabel *Label18;
-        TLabel *Label19;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall Label15Click(TObject *Sender);
         void __fastcall Label15MouseDown(TObject *Sender,

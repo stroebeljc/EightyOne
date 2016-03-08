@@ -1,9 +1,9 @@
 object IF1: TIF1
-  Left = 386
-  Top = 111
+  Left = 1155
+  Top = 141
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
-  Caption = 'Interface 1'
+  Caption = 'ZX Interface 1'
   ClientHeight = 168
   ClientWidth = 424
   Color = clBtnFace
@@ -14,6 +14,7 @@ object IF1: TIF1
   Font.Style = []
   OldCreateOrder = False
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object GroupSerial: TGroupBox
@@ -254,34 +255,54 @@ object IF1: TIF1
     Width = 75
     Height = 25
     Caption = 'OK'
-    TabOrder = 1
+    TabOrder = 3
     OnClick = OKClick
   end
-  object GroupNetwork: TGroupBox
+  object GroupROM: TGroupBox
     Left = 232
     Top = 8
     Width = 185
-    Height = 73
-    Caption = 'Network'
-    TabOrder = 2
+    Height = 57
+    Caption = 'ROM'
+    TabOrder = 1
+    object Label11: TLabel
+      Left = 8
+      Top = 25
+      Width = 77
+      Height = 13
+      Caption = 'Release Edition:'
+    end
+    object RomEdition: TComboBox
+      Left = 98
+      Top = 21
+      Width = 81
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 0
+      OnChange = RomEditionChange
+      Items.Strings = (
+        'Edition 1'
+        'Edition 2')
+    end
   end
   object GroupDrives: TGroupBox
     Left = 232
-    Top = 88
+    Top = 72
     Width = 185
-    Height = 41
+    Height = 57
     Caption = 'Microdrives'
-    TabOrder = 3
+    TabOrder = 2
     object Label4: TLabel
       Left = 8
-      Top = 16
+      Top = 23
       Width = 85
       Height = 13
       Caption = 'Number of Drives:'
     end
     object NoMicroDrives: TComboBox
       Left = 98
-      Top = 12
+      Top = 19
       Width = 81
       Height = 21
       Style = csDropDownList

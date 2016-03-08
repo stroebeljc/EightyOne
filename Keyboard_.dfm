@@ -1,6 +1,6 @@
 object Keyboard: TKeyboard
-  Left = 579
-  Top = 167
+  Left = 355
+  Top = 157
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Keyboard'
@@ -31784,7 +31784,7 @@ object Keyboard: TKeyboard
     Left = 0
     Top = 0
     Width = 505
-    Height = 225
+    Height = 223
     Picture.Data = {
       07544269746D6170DEBA0100424DDEBA0100000000005A00000028000000F901
       0000DF000000010008000000000084BA0100120B0000120B0000090000000900

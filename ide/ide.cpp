@@ -33,7 +33,6 @@ void DetectPhysDrives(void)
                 sprintf(path,"\\\\.\\PhysicalDrive%d",drive);
 
                 memset(buffer, 0 , 512);
-                ReadOnly=0;
                 hDevice = CreateFile(path,  // drive to open
                     GENERIC_READ|GENERIC_WRITE,                // no access to the drive
                     FILE_SHARE_READ | // share mode
@@ -235,7 +234,7 @@ static void ATA_IncSectorNo(void)
 
         if (ATA_Channel.head & ATA_HEAD_LBA)
         {
-                SectorNo = (ATA_Channel.head & ATA_HEAD_HEAD << 24)
+                SectorNo = ((ATA_Channel.head & ATA_HEAD_HEAD) << 24)
                                 + (ATA_Channel.cylinder_high << 16)
                                 + (ATA_Channel.cylinder_low << 8)
                                 + (ATA_Channel.sector);
@@ -290,7 +289,7 @@ static int ATA_CalculateSectorNo(void)
 
         if (ATA_Channel.head & ATA_HEAD_LBA)
         {
-                SectorNo = (ATA_Channel.head & ATA_HEAD_HEAD << 24)
+                SectorNo = ((ATA_Channel.head & ATA_HEAD_HEAD) << 24)
                                 + (ATA_Channel.cylinder_high << 16)
                                 + (ATA_Channel.cylinder_low << 8)
                                 + (ATA_Channel.sector);
@@ -530,10 +529,10 @@ static void ATA_Execute(int Data)
         case INIT_PARAMS:
                         int c,h,s;
 
-                        h=(ATA_Channel.head&15)+1;
-                        s=ATA_Channel.sector_count;
-                        c=Drv->size / (h*s);
-                        if (c>65535) c=65535;
+                        //h=(ATA_Channel.head&15)+1;
+                        //s=ATA_Channel.sector_count;
+                        //c=Drv->size / (h*s);
+                        //if (c>65535) c=65535;
 
                         ATA_SetCHS(ATA_Channel.cur_drive, Drv->cylinders , Drv->heads, Drv->sectors);
                         //Logical_Sectors=ATA_Channel.sector_count;
@@ -631,7 +630,7 @@ int ATA_LoadHDF(int drive, char *FileName)
 {
         FILE *f;
         int len, idlen,i;
-        int sectors=0;
+        int sectors;
         ATA_DRIVE *Drv = &ATA_Channel.drive[drive];
 
 
@@ -672,7 +671,7 @@ int ATA_LoadHDF(int drive, char *FileName)
                                 Drv->AccessMode=ACCESS_PHY;
                                 Drv->read_only=PhysDrives[i].ReadOnly;
 
-                                sectors=PhysDrives[i].Size;
+                                //sectors=PhysDrives[i].Size;
                                 memset(Drv->drive_id, 0, 512);
 
                                 WriteWord(Drv->drive_id,  0, 64);
@@ -706,7 +705,7 @@ int ATA_LoadHDF(int drive, char *FileName)
                 f=fopen(FileName,"rb+");
                 if (!f) return(1);
 
-                len=sizeof(VHD_HEADER);
+                //len=sizeof(VHD_HEADER);
 
 
                 fseek(f, -512, SEEK_END);
@@ -731,7 +730,7 @@ int ATA_LoadHDF(int drive, char *FileName)
                 Drv->sectors = Drv->vhd.sectors;
                 Drv->size = Drv->cylinders * Drv->heads * Drv->sectors;
 
-                sectors=Drv->size;
+                //sectors=Drv->size;
                 memset(Drv->drive_id, 0, 512);
 
                 WriteWord(Drv->drive_id,  0, 64);

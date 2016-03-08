@@ -78,6 +78,10 @@ static rzx_u8 *zbuf=0;
 static int zmode=0;
 static rzx_u32 packed_bytes=0;
 
+int rzx_pclose(void);
+int rzx_scan(void);
+int rzx_seek_irb(void);
+void rzx_close_irb(void);
 
 int rzx_pwrite(rzx_u8 *buffer, int len)
 {
@@ -93,7 +97,7 @@ int rzx_pwrite(rzx_u8 *buffer, int len)
     packed_bytes+=err;
     zs.avail_out=ZBUFLEN;
   }
-   err=deflate(&zs,Z_NO_FLUSH);
+   //err=deflate(&zs,Z_NO_FLUSH);
  }
  return len-zs.avail_in;
 }
@@ -117,7 +121,7 @@ int rzx_pread(rzx_u8 *buffer, int len)
 }
 
 
-int rzx_pclose()
+int rzx_pclose(void)
 {
  int len, done=0,err;
  zs.avail_in=0;
@@ -188,7 +192,7 @@ static rzx_u8 *inputbuffer=NULL;
 static rzx_u16 INold=0;
 static rzx_u8 *oldbuffer=NULL;
 
-int rzx_scan()
+int rzx_scan(void)
 {
   long fpos=10;
   memset(&file_emul,0,sizeof(RZX_EMULINFO));
@@ -239,7 +243,7 @@ int rzx_scan()
 }
 
 
-void rzx_close_irb()
+void rzx_close_irb(void)
 {
   long pos,len;
 
@@ -273,7 +277,7 @@ void rzx_close_irb()
 }
 
 
-int rzx_seek_irb()
+int rzx_seek_irb(void)
 {
   int done=0;
   long fpos;
@@ -710,7 +714,8 @@ int rzx_add_snapshot(const char *filename, const rzx_u32 flags)
  FILE *snapfile;
  long snaplen;
  long fpos=0;
- int blocklen=17,i;
+ int blocklen=17;
+ unsigned int i;
  if(filename==0) return RZX_INVALID;
  snapfile=fopen(filename,"rb");
  if(snapfile==NULL) return RZX_NOTFOUND;
@@ -790,7 +795,7 @@ int rzx_add_snapshot(const char *filename, const rzx_u32 flags)
    }
    #endif
  }
- fclose(snapfile); snapfile=NULL;
+ fclose(snapfile); //snapfile=NULL;
  /* remove the snapshot if requested */
  if(flags&RZX_REMOVE) remove(filename);
  return RZX_OK;

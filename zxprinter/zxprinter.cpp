@@ -34,7 +34,7 @@ TPrinter *Printer;
 //---------------------------------------------------------------------------
 void TPrinter::ClearBitmap(Graphics::TBitmap *Bitmap)
 {
-        int x,y;
+        int y;
 
         Bitmap->Canvas->Pen->Color = Bg;
         for(y=0; y < Bitmap->Height; y++)

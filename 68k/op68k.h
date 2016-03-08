@@ -10,8 +10,6 @@
 
 #include "config.h"
 
-
-
 /*
  * Status Register Access
  */
@@ -535,4 +533,5 @@ void            Code(void)\
     SetEA2 (address2, target)\
 }
 #endif
+
 #endif

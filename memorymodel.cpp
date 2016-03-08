@@ -53,7 +53,7 @@ bool checkpage(int start, int len, int val)
 {
         for (int i = start; i < start + len; ++i)
         {
-                assert(readbyte(i) == val);
+                assert(getbyte(i) == val);
         }
 }
 
@@ -171,21 +171,21 @@ void tests(void)
         checkpage(ROM1ADDR, ROM1LEN, 2);
 
         // check we can't write to ROM - at any page
-        m->writebyte(ROM1ADDR, 123);
-        assert(m->readbyte(ROM1ADDR) == 2);
+        m->setbyte(ROM1ADDR, 123);
+        assert(m->getbyte(ROM1ADDR) == 2);
         m->activatePage(ROM1ADDR, 1);
-        assert(m->readbyte(ROM1ADDR) == 1);
+        assert(m->getbyte(ROM1ADDR) == 1);
         m->activatePage(ROM1ADDR, 3);
-        assert(m->readbyte(ROM1ADDR) == 3);
+        assert(m->getbyte(ROM1ADDR) == 3);
         m->activatePage(ROM1ADDR, 0);
-        assert(m->readbyte(ROM1ADDR) == 0);
+        assert(m->getbyte(ROM1ADDR) == 0);
 
         // check we can always write to ram and that shadowing works
-        m->writebyte(RAMADDR, 123);
-        assert(m->readbyte(RAMADDR) == 123);
-        assert(m->readbyte(RAMSHADOWADDR) == 123);
-        m->writebyte(RAMADDR, 127);
-        assert(m->readbyte(RAMADDR) == 127);
-        assert(m->readbyte(RAMSHADOWADDR) == 127);
+        m->setbyte(RAMADDR, 123);
+        assert(m->getbyte(RAMADDR) == 123);
+        assert(m->getbyte(RAMSHADOWADDR) == 123);
+        m->setbyte(RAMADDR, 127);
+        assert(m->getbyte(RAMADDR) == 127);
+        assert(m->getbyte(RAMSHADOWADDR) == 127);
 }
 

@@ -29,6 +29,7 @@
 
 extern BYTE SpecMem[];  //enough memory for 64k ROM + 128k RAM
 extern BYTE TimexMem[];  // Timex has two more blocks of 64k each
+extern BYTE SpectraMem[]; // Spectra has two banks of 16K RAM
 extern BYTE SPECLast7ffd;
 extern BYTE divIDEMem[];       // divIDE has 8k of FlashRAM and 32k of RAM
 extern BYTE ZXCFMem[];  // ZXCF has 1024k arranged as 64 x 16k pages
@@ -48,11 +49,14 @@ extern BYTE ZXCFMem[];  // ZXCF has 1024k arranged as 64 x 16k pages
 #define kbA14 6
 #define kbA15 7
 
+extern int SPECNextBorder;
 extern BYTE memory[];
 extern void spec48_initialise(void);
 extern int spec48_do_scanline(SCANLINE *CurScanLine);
 extern void spec48_writebyte(int Address, int Data);
+extern void spec48_setbyte(int Address, int Data);
 extern BYTE spec48_readbyte(int Address);
+extern BYTE spec48_getbyte(int Address);
 extern BYTE spec48_opcode_fetch(int Address);
 extern void spec48_writeport(int Address, int Data, int *tstates);
 extern BYTE spec48_readport(int Address, int *tstates);

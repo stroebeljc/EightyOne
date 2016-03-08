@@ -1,10 +1,10 @@
 object Debug68k: TDebug68k
-  Left = 391
-  Top = 117
-  Width = 280
-  Height = 427
-  BorderStyle = bsSizeToolWin
+  Left = 399
+  Top = 124
+  BorderStyle = bsToolWindow
   Caption = 'Debug Window'
+  ClientHeight = 400
+  ClientWidth = 272
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

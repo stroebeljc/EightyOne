@@ -142,9 +142,11 @@ __published:	// IDE-managed Components
         TMenuItem *N8;
         TMenuItem *Play1;
         TOpenDialog *OpenRZX;
-        TAnimTimer *AnimTimer1;
-        TMenuItem *QSChrEnable1;
+        TMenuItem *QSChrEnable;
         TMenuItem *N9;
+        TAnimTimer *AnimTimer1;
+        TMenuItem *SpectraColourEnable;
+        TMenuItem *ChromaColourEnable;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -224,7 +226,9 @@ __published:	// IDE-managed Components
         void __fastcall PrinterPort1Click(TObject *Sender);
         void __fastcall Midi1Click(TObject *Sender);
         void __fastcall Play1Click(TObject *Sender);
-        void __fastcall QSChrEnable1Click(TObject *Sender);
+        void __fastcall QSChrEnableClick(TObject *Sender);
+        void __fastcall SpectraColourEnableClick(TObject *Sender);
+        void __fastcall ChromaColourEnableClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

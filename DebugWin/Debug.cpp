@@ -52,7 +52,8 @@ extern unsigned char shift_store;
 extern unsigned char memory[];
 extern int lastMemoryReadAddr, lastMemoryWriteAddr;
 
-AnsiString HistoryLog[1000];
+const int historySize = 2000;
+AnsiString HistoryLog[historySize];
 int HistoryPos=0;
 
 int recentHistory[4];
@@ -73,7 +74,7 @@ void DebugUpdate(void)
                 if (Dbg->EnableHistory->Checked)
                 {
                         HistoryLog[HistoryPos++] = Dbg->Disassemble(&i);
-                        if (HistoryPos==1000) HistoryPos=0;
+                        if (HistoryPos==historySize) HistoryPos=0;
                 }
 
                 lastpc=z80.pc.w;
@@ -94,7 +95,7 @@ void DebugUpdate(void)
         if (z80.pc.w==0x66 && Dbg->SkipNMIBtn->Checked
                 && Dbg->NMIRetAddr==-1 && Dbg->Continuous->Checked)
         {
-                Dbg->NMIRetAddr = readbyte(z80.sp.w) + 256*readbyte(z80.sp.w + 1);
+                Dbg->NMIRetAddr = getbyte(z80.sp.w) + 256*getbyte(z80.sp.w + 1);
                 NMISaveSingleStep = zx81.single_step;
                 zx81.single_step=0;
         }
@@ -108,7 +109,7 @@ void DebugUpdate(void)
         if (z80.pc.w==0x38 && Dbg->SkipINTBtn->Checked
                 && Dbg->INTRetAddr==-1 && Dbg->Continuous->Checked)
         {
-                Dbg->INTRetAddr = readbyte(z80.sp.w) + 256*readbyte(z80.sp.w + 1);
+                Dbg->INTRetAddr = getbyte(z80.sp.w) + 256*getbyte(z80.sp.w + 1);
                 INTSaveSingleStep = zx81.single_step;
                 zx81.single_step=0;
         }
@@ -123,10 +124,16 @@ void DebugUpdate(void)
         lastMemoryReadAddr = -1;
         int lmw = lastMemoryWriteAddr;
         lastMemoryWriteAddr = -1;
+        int lpi = Dbg->lastPortInAddr;
+        Dbg->lastPortInAddr = -1;
+        int lpo = Dbg->lastPortOutAddr;
+        Dbg->lastPortOutAddr = -1;
 
         if (Dbg->ExecBreakPointHit(z80.pc.w) ||
                 Dbg->MemoryReadHit(lmr) ||
-                Dbg->MemoryWriteHit(lmw))
+                Dbg->MemoryWriteHit(lmw) ||
+                Dbg->PortInHit(lpi) ||
+                Dbg->PortOutHit(lpo))
         {
                 //zx81_stop=1;
                 Dbg->DoNext=0;
@@ -157,7 +164,11 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type)
         // type 0 = execute
         // type 1 = mem read
         // type 2 = mem write
-        const AnsiString types("xrw");
+        const AnsiString types("xrwio");
+        const int maxBreakpoints = 99;
+
+        if (Breakpoints == maxBreakpoints)
+                return false;
 
         int i;
         for(i=0; i<Breakpoints; i++)
@@ -247,7 +258,17 @@ bool TDbg::MemoryWriteHit(int Addr)
         return BPHit(Addr, BP_WR, idx);
 }
 
+bool TDbg::PortInHit(int Addr)
+{
+        int idx;
+        return BPHit(Addr, BP_IN, idx);
+}
 
+bool TDbg::PortOutHit(int Addr)
+{
+        int idx;
+        return BPHit(Addr, BP_OUT, idx);
+}
 
 void TDbg::DelTempBreakPoints(void)
 {
@@ -273,7 +294,9 @@ int TDbg::Hex2Dec(AnsiString num)
 
 AnsiString TDbg::Hex16(int Value)
 {
-        return AnsiString::IntToHex(Value,4);
+        int byteSwapValue = ((Value & 0xFF) << 8) + (Value >> 8);
+
+        return AnsiString::IntToHex(byteSwapValue,4);
 }
 //---------------------------------------------------------------------------
 AnsiString TDbg::Hex8(int Value)
@@ -312,7 +335,7 @@ void TDbg::SetLabelInfo(TLabel* label, int value, int valueWidth)
                 label->ShowHint = symbolstore::addressToSymbol(label->Tag, hint);
                 label->Hint = hint;
 
-                // lowlight the lavel if there's a hint to show
+                // lowlight the label if there's a hint to show
                 //
                 label->Color = label->ShowHint ? clInfoBk : clBtnFace;
         }
@@ -325,27 +348,30 @@ void TDbg::UpdateVals(void)
         switch(zx81.machine)
         {
         case MACHINEACE:
-                Stack=readbyte(0x3C3B)+256*readbyte(0x3C3C) -2;
+                Stack=getbyte(0x3C3B)+256*getbyte(0x3C3C) -2;
 
-                AceStk0->Caption = "$"+Hex16(Stack); AceStkVal0->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk0->Caption = "$"+Hex16(Stack); AceStkVal0->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk1->Caption = "$"+Hex16(Stack); AceStkVal1->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk1->Caption = "$"+Hex16(Stack); AceStkVal1->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk2->Caption = "$"+Hex16(Stack); AceStkVal2->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk2->Caption = "$"+Hex16(Stack); AceStkVal2->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk3->Caption = "$"+Hex16(Stack); AceStkVal3->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk3->Caption = "$"+Hex16(Stack); AceStkVal3->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk4->Caption = "$"+Hex16(Stack); AceStkVal4->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk4->Caption = "$"+Hex16(Stack); AceStkVal4->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk5->Caption = "$"+Hex16(Stack); AceStkVal5->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk5->Caption = "$"+Hex16(Stack); AceStkVal5->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk6->Caption = "$"+Hex16(Stack); AceStkVal6->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
+                AceStk6->Caption = "$"+Hex16(Stack); AceStkVal6->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 Stack-=2;
-                AceStk7->Caption = "$"+Hex16(Stack); AceStkVal7->Caption = "$"+Hex16(readbyte(Stack)+256*readbyte(Stack+1));
-                Stack-=2;
+                AceStk7->Caption = "$"+Hex16(Stack); AceStkVal7->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 break;
 
         case MACHINESPEC48:
+                GroupBoxSpectra->Enabled = zx81.spectraColourSwitchOn;
+                SpectraModeLabel->Enabled = zx81.spectraColourSwitchOn;
+                SpectraMode->Enabled = zx81.spectraColourSwitchOn;
+                SpectraMode->Caption = "$"+Hex8(zx81.spectraMode);
                 break;
 
         default:
@@ -355,8 +381,34 @@ void TDbg::UpdateVals(void)
                 TStates->Caption = frametstates;
                 NMIGen->Caption = NMI_generator ? "On":"Off";
                 HSYNCGen->Caption = HSYNC_generator ? "On":"Off";
+
+                GroupBoxChroma->Enabled = zx81.chromaColourSwitchOn;
+                ChromaColourModeLabel->Enabled = zx81.chromaColourSwitchOn;
+                ChromaColourMode->Enabled = zx81.chromaColourSwitchOn;
+                ChromaColourMode->Caption = "$"+Hex8(zx81.chromaMode);
                 break;
         }
+
+        switch (zx81.romCartridge)
+        {
+                case ROMCARTRIDGEZXC2:
+                        GroupBoxZXC->Caption = "ZXC2";
+                        break;
+                case ROMCARTRIDGEZXC3:
+                        GroupBoxZXC->Caption = "ZXC3";
+                        break;
+                case ROMCARTRIDGEZXC4:
+                        GroupBoxZXC->Caption = "ZXC4";
+                        break;
+                default:
+                        GroupBoxZXC->Caption = "ZXC";
+                break;
+        }
+
+        bool zxcEnabled = (zx81.romCartridge != ROMCARTRIDGENONE) && (zx81.romCartridge != ROMCARTRIDGESINCLAIR);
+        ZXCModeLabel->Enabled = zxcEnabled;
+        ZXCMode->Enabled = zxcEnabled;
+        ZXCMode->Caption = "$"+Hex8(zx81.zxcPaging);         
 
         SetLabelInfo(HL, z80.hl.w);
         SetLabelInfo(BC, z80.bc.w);
@@ -375,14 +427,13 @@ void TDbg::UpdateVals(void)
         F_->Caption = Bin8(z80.af_.b.l);
 
         i=z80.sp.w;
-        Stack0->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack1->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack2->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack3->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack4->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack5->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack6->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
-        Stack7->Caption = "$"+Hex16( readbyte(i)+256*readbyte(i+1) ); i+=2;
+        Stack0->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
+        Stack1->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
+        Stack2->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
+        Stack3->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
+        Stack4->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
+        Stack5->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
+        Stack6->Caption = "$"+Hex16( getbyte(i)+256*getbyte(i+1) ); i+=2;
 
         i = recentHistory[(recentHistoryPos+0)&3];
         Disass0->Caption = Disassemble(&i);
@@ -401,10 +452,62 @@ void TDbg::UpdateVals(void)
         Disass9->Caption = Disassemble(&i);
 
         Halt->Caption = z80.halted ? "Yes":"No" ;
-        Interupts->Caption = z80.iff1 ? "Enabled":"Disabled" ;
+        Interrupts->Caption = z80.iff1 ? "Enabled":"Disabled" ;
         IM->Caption = z80.im;
 
         MemoryWindow->UpdateChanges();
+
+        if (lastIOAccess[0].direction != IO_NONE)
+        {
+                if (lastIOAccess[0].direction == IO_IN) IOPort0Direction->Caption = "IN"; else IOPort0Direction->Caption = "OUT";
+                IOPort0Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[0].address, 4);
+                IOPort0Data->Caption = "$"+Hex8(lastIOAccess[0].data);
+        }
+        else
+        {
+                IOPort0Direction->Caption = "-";
+                IOPort0Address->Caption = "-";
+                IOPort0Data->Caption = "-";
+        }
+
+        if (lastIOAccess[1].direction != IO_NONE)
+        {
+                if (lastIOAccess[1].direction == IO_IN) IOPort1Direction->Caption = "IN"; else IOPort1Direction->Caption = "OUT";
+                IOPort1Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[1].address, 4);
+                IOPort1Data->Caption = "$"+Hex8(lastIOAccess[1].data);
+        }
+        else
+        {
+                IOPort1Direction->Caption = "-";
+                IOPort1Address->Caption = "-";
+                IOPort1Data->Caption = "-";
+        }
+
+        if (lastIOAccess[2].direction != IO_NONE)
+        {
+                if (lastIOAccess[2].direction == IO_IN) IOPort2Direction->Caption = "IN"; else IOPort2Direction->Caption = "OUT";
+                IOPort2Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[2].address, 4);
+                IOPort2Data->Caption = "$"+Hex8(lastIOAccess[2].data);
+        }
+        else
+        {
+                IOPort2Direction->Caption = "-";
+                IOPort2Address->Caption = "-";
+                IOPort2Data->Caption = "-";
+        }
+
+        if (lastIOAccess[3].direction != IO_NONE)
+        {
+                if (lastIOAccess[3].direction == IO_IN) IOPort3Direction->Caption = "IN"; else IOPort3Direction->Caption = "OUT";
+                IOPort3Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[3].address, 4);
+                IOPort3Data->Caption = "$"+Hex8(lastIOAccess[3].data);
+        }
+        else
+        {
+                IOPort3Direction->Caption = "-";
+                IOPort3Address->Caption = "-";
+                IOPort3Data->Caption = "-";
+        }
 
         if (zx81_stop)
         {
@@ -424,123 +527,72 @@ void TDbg::UpdateVals(void)
 
 }
 //---------------------------------------------------------------------------
+void TDbg::EnableValues(bool enable)
+{
+        HL->Enabled = enable;
+        BC->Enabled = enable;
+        DE->Enabled = enable;
+        HL_->Enabled = enable;
+        BC_->Enabled = enable;
+        DE_->Enabled = enable;
+        IX->Enabled = enable;
+        IY->Enabled = enable;
+        PC->Enabled = enable;
+        SP->Enabled = enable;
+        IR->Enabled = enable;
+        A->Enabled = enable;
+        A_->Enabled = enable;
+        F->Enabled = enable;
+        F_->Enabled = enable;
+
+        Stack0->Enabled = enable;
+        Stack1->Enabled = enable;
+        Stack2->Enabled = enable;
+        Stack3->Enabled = enable;
+        Stack4->Enabled = enable;
+        Stack5->Enabled = enable;
+        Stack6->Enabled = enable;
+
+        Disass0->Enabled = enable;
+        Disass1->Enabled = enable;
+        Disass2->Enabled = enable;
+        Disass3->Enabled = enable;
+        Disass4->Enabled = enable;
+        Disass5->Enabled = enable;
+        Disass6->Enabled = enable;
+        Disass7->Enabled = enable;
+        Disass8->Enabled = enable;
+        Disass9->Enabled = enable;
+
+        Halt->Enabled = enable;
+        Interrupts->Enabled = enable;
+        IM->Enabled = enable;
+
+        RowCount->Enabled = enable;
+        Scanline->Enabled = enable;
+        ShiftReg->Enabled = enable;
+
+        NMIGen->Enabled = enable;
+        HSYNCGen->Enabled = enable;
+
+        AceStk0->Enabled=enable; AceStkVal0->Enabled=enable;
+        AceStk1->Enabled=enable; AceStkVal1->Enabled=enable;
+        AceStk2->Enabled=enable; AceStkVal2->Enabled=enable;
+        AceStk3->Enabled=enable; AceStkVal3->Enabled=enable;
+        AceStk4->Enabled=enable; AceStkVal4->Enabled=enable;
+        AceStk5->Enabled=enable; AceStkVal5->Enabled=enable;
+        AceStk6->Enabled=enable; AceStkVal6->Enabled=enable;
+        AceStk7->Enabled=enable; AceStkVal7->Enabled=enable;
+}
+
 void TDbg::DisableVals(void)
 {
-        HL->Enabled = false;
-        BC->Enabled = false;
-        DE->Enabled = false;
-        HL_->Enabled = false;
-        BC_->Enabled = false;
-        DE_->Enabled = false;
-        IX->Enabled = false;
-        IY->Enabled = false;
-        PC->Enabled = false;
-        SP->Enabled = false;
-        IR->Enabled = false;
-        A->Enabled = false;
-        A_->Enabled = false;
-        F->Enabled = false;
-        F_->Enabled = false;
-
-        Stack0->Enabled = false;
-        Stack1->Enabled = false;
-        Stack2->Enabled = false;
-        Stack3->Enabled = false;
-        Stack4->Enabled = false;
-        Stack5->Enabled = false;
-        Stack6->Enabled = false;
-        Stack7->Enabled = false;
-
-        Disass0->Enabled = false;
-        Disass1->Enabled = false;
-        Disass2->Enabled = false;
-        Disass3->Enabled = false;
-        Disass4->Enabled = false;
-        Disass5->Enabled = false;
-        Disass6->Enabled = false;
-        Disass7->Enabled = false;
-        Disass8->Enabled = false;
-        Disass9->Enabled = false;
-
-
-        Halt->Enabled = false;
-        Interupts->Enabled = false;
-        IM->Enabled = false;
-
-        RowCount->Enabled = false;
-        Scanline->Enabled = false;
-        ShiftReg->Enabled = false;
-
-        NMIGen->Enabled = false;
-        HSYNCGen->Enabled = false;
-
-        AceStk0->Enabled=false; AceStkVal0->Enabled=false;
-        AceStk1->Enabled=false; AceStkVal1->Enabled=false;
-        AceStk2->Enabled=false; AceStkVal2->Enabled=false;
-        AceStk3->Enabled=false; AceStkVal3->Enabled=false;
-        AceStk4->Enabled=false; AceStkVal4->Enabled=false;
-        AceStk5->Enabled=false; AceStkVal5->Enabled=false;
-        AceStk6->Enabled=false; AceStkVal6->Enabled=false;
-        AceStk7->Enabled=false; AceStkVal7->Enabled=false;
+        EnableValues(false);
 }
+
 void TDbg::EnableVals(void)
 {
-        HL->Enabled = true;
-        BC->Enabled = true;
-        DE->Enabled = true;
-        HL_->Enabled = true;
-        BC_->Enabled = true;
-        DE_->Enabled = true;
-        IX->Enabled = true;
-        IY->Enabled = true;
-        PC->Enabled = true;
-        SP->Enabled = true;
-        IR->Enabled = true;
-        A->Enabled = true;
-        A_->Enabled = true;
-        F->Enabled = true;
-        F_->Enabled = true;
-
-        Stack0->Enabled = true;
-        Stack1->Enabled = true;
-        Stack2->Enabled = true;
-        Stack3->Enabled = true;
-        Stack4->Enabled = true;
-        Stack5->Enabled = true;
-        Stack6->Enabled = true;
-        Stack7->Enabled = true;
-
-        Disass0->Enabled = true;
-        Disass1->Enabled = true;
-        Disass2->Enabled = true;
-        Disass3->Enabled = true;
-        Disass4->Enabled = true;
-        Disass5->Enabled = true;
-        Disass6->Enabled = true;
-        Disass7->Enabled = true;
-        Disass8->Enabled = true;
-        Disass9->Enabled = true;
-
-
-        Halt->Enabled = true;
-        Interupts->Enabled = true;
-        IM->Enabled = true;
-
-        RowCount->Enabled = true;
-        Scanline->Enabled = true;
-        ShiftReg->Enabled = true;
-
-        NMIGen->Enabled = true;
-        HSYNCGen->Enabled = true;
-
-        AceStk0->Enabled=true; AceStkVal0->Enabled=true;
-        AceStk1->Enabled=true; AceStkVal1->Enabled=true;
-        AceStk2->Enabled=true; AceStkVal2->Enabled=true;
-        AceStk3->Enabled=true; AceStkVal3->Enabled=true;
-        AceStk4->Enabled=true; AceStkVal4->Enabled=true;
-        AceStk5->Enabled=true; AceStkVal5->Enabled=true;
-        AceStk6->Enabled=true; AceStkVal6->Enabled=true;
-        AceStk7->Enabled=true; AceStkVal7->Enabled=true;
+        EnableValues(true);
 }
 //---------------------------------------------------------------------------
 __fastcall TDbg::TDbg(TComponent* Owner)
@@ -561,7 +613,7 @@ __fastcall TDbg::TDbg(TComponent* Owner)
 
         BPList->DefaultColWidth = BPList->Width;
 
-        //AddBreakPoint(0x0048, true,0);
+        ResetLastIOAccesses();
 }
 //---------------------------------------------------------------------------
 
@@ -629,12 +681,12 @@ void __fastcall TDbg::StepOverClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TDbg::AddBrkBtnClick(TObject *Sender)
+void __fastcall TDbg::AddrBrkBtnClick(TObject *Sender)
 {
         EditValue->CentreOn(this);
 
         int Addr = 0;
-        if (EditValue->Edit2(Addr ,2))
+        if (EditValue->Edit2(Addr, 2))
         {
                 AddBreakPoint(Addr, true, BP_EXE);
         }
@@ -647,17 +699,18 @@ void __fastcall TDbg::DelBrkBtnClick(TObject *Sender)
                 DelBreakPoint(BPList->Row + 100000);
 }
 //---------------------------------------------------------------------------
-
-
+                                                
 void __fastcall TDbg::SkipNMIBtnClick(TObject *Sender)
 {
-        if (!SkipNMIBtn->Checked) NMIRetAddr=-1;
+        if (!SkipNMIBtn->Checked)
+                NMIRetAddr=-1;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::SkipINTBtnClick(TObject *Sender)
 {
-        if (!SkipINTBtn->Checked) INTRetAddr=-1;
+        if (!SkipINTBtn->Checked)
+                INTRetAddr=-1;
 }
 //---------------------------------------------------------------------------
 
@@ -693,12 +746,12 @@ void __fastcall TDbg::HistoryClick(TObject *Sender)
         HistoryBox->Text->Clear();
 
         i=HistoryPos-1;
-        if (i==-1) i=999;
+        if (i==-1) i=historySize-1;
         while(i!=HistoryPos)
         {
                 if (HistoryLog[i]!="") HistoryBox->Text->Lines->Add(HistoryLog[i]);
-                i--;
-                if (i==-1) i=999;
+                --i;
+                if (i==-1) i=historySize-1;
         }
         HistoryBox->Show();
 }
@@ -817,7 +870,7 @@ void __fastcall TDbg::A_Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TDbg::InteruptsClick(TObject *Sender)
+void __fastcall TDbg::InterruptsClick(TObject *Sender)
 {
         // DI - IFF1=IFF2=0
         // EI - IFF1=IFF2=1;
@@ -839,11 +892,11 @@ void __fastcall TDbg::DoEditStack(int offs)
         EditValue->CentreOn(this);
 
         int i = 2 * offs + z80.sp.w;
-        int v = readbyte(i)+256*readbyte(i+1);
+        int v = getbyte(i)+256*getbyte(i+1);
         if (EditValue->Edit2(v, 2))
         {
-                writebyte(i, v&255);
-                writebyte(i+1, v>>8);
+                setbyte(i, v&255);
+                setbyte(i+1, v>>8);
                 UpdateVals();
         }
 }
@@ -870,7 +923,7 @@ void __fastcall TDbg::Stack0MouseDown(TObject *Sender, TMouseButton Button,
 
         int i = z80.sp.w;
         i += 2 * idx;
-        SetMenuContent(readbyte(i)+256*readbyte(i+1));
+        SetMenuContent(getbyte(i)+256*getbyte(i+1));
 }
 //---------------------------------------------------------------------------
 
@@ -1022,9 +1075,6 @@ void __fastcall TDbg::AddBreak1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-
-
 void __fastcall TDbg::AceStk0Click(TObject *Sender)
 {
 //        fred;
@@ -1043,6 +1093,97 @@ void __fastcall TDbg::SymbolsClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TDbg::MemoryClick(TObject *Sender)
+{
+        MemoryWindow->BaseAddress = z80.pc.w;
+        MemoryWindow->Show();
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TDbg::WriteBrkBtnClick(TObject *Sender)
+{
+        EditValue->CentreOn(this);
 
+        int Addr = 0;
+        if (EditValue->Edit2(Addr, 2))
+        {
+                AddBreakPoint(Addr, true, BP_WR);
+        }                                      
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::ReadBrkBtnClick(TObject *Sender)
+{
+        EditValue->CentreOn(this);
+
+        int Addr = 0;
+        if (EditValue->Edit2(Addr, 2))
+        {
+                AddBreakPoint(Addr, true, BP_RD);
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::OutBrkBtnClick(TObject *Sender)
+{
+        EditValue->CentreOn(this);
+
+        int Addr = 0;
+        if (EditValue->Edit2(Addr, 2))
+        {
+                AddBreakPoint(Addr, true, BP_OUT);
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::InBrkBtnClick(TObject *Sender)
+{
+        EditValue->CentreOn(this);
+
+        int Addr = 0;
+        if (EditValue->Edit2(Addr, 2))
+        {
+                AddBreakPoint(Addr, true, BP_IN);
+        }
+}
+//---------------------------------------------------------------------------
+
+void ResetLastIOAccesses()
+{
+        for (int i = 0; i < 4; i++)
+        {
+                Dbg->lastIOAccess[i].direction = IO_NONE;
+        }
+}
+//---------------------------------------------------------------------------
+
+void LogInAccess(int address, BYTE data)
+{
+        Dbg->lastPortInAddr = address;
+
+        for (int i = 0; i < 3; i++)
+        {
+                  Dbg->lastIOAccess[i+1] = Dbg->lastIOAccess[i];
+        }
+
+        Dbg->lastIOAccess[0].direction = IO_IN;
+        Dbg->lastIOAccess[0].address = address;
+        Dbg->lastIOAccess[0].data = data;
+}
+//---------------------------------------------------------------------------
+
+void LogOutAccess(int address, BYTE data)
+{
+        Dbg->lastPortOutAddr = address;
+
+        for (int i = 0; i < 3; i++)
+        {
+                  Dbg->lastIOAccess[i+1] = Dbg->lastIOAccess[i];
+        }
+
+        Dbg->lastIOAccess[0].direction = IO_OUT;
+        Dbg->lastIOAccess[0].address = address;
+        Dbg->lastIOAccess[0].data = data;
+}
+//---------------------------------------------------------------------------
 

@@ -39,8 +39,9 @@
 #include "ide.h"
 #include "symbolstore.h"
 #include "SymBrowse.h"
-
-#include "ZXpand_emu.h"
+#include "zxpand\ZXpand_emu.h"
+#include "RomCartridge\IF2RomCartridge.h"
+#include "Chroma\Chroma.h"
 
 #define VBLANKCOLOUR (0*16)
 
@@ -56,21 +57,28 @@ extern "C"
         void P3DriveMachineHasInitialised(void);
 }
 
-extern ZXP_CREATEFN zxpand_create;
-extern ZXP_DESTROYFN zxpand_destroy;
-extern ZXP_UPDATEFN zxpand_update;
-extern ZXP_IOWRFN zxpand_iowrite;
-extern ZXP_IORDFN zxpand_ioread;
-
-void* zxpand = NULL;
+ZXpand* zxpand = NULL;
 
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
+extern void LogOutAccess(int address, BYTE data);
+extern void LogInAccess(int address, BYTE data);
+extern void ResetLastIOAccesses();
 extern void DebugUpdate(void);
 extern long noise;
 extern int SelectAYReg;
 
-int border=7, ink=0, paper=7;
+extern bool directMemoryAccess;
+extern int lastMemoryReadAddr, lastMemoryWriteAddr;
+
+static BYTE ReadInputPort(int Address, int *tstates);
+
+const BYTE idleDataBus = 0xFF;
+
+const int colourBlack = 0;
+const int colourBrightWhite = 15;
+
+int border=colourBrightWhite, ink=colourBlack, paper=colourBrightWhite;
 
 int NMI_generator=0;
 int HSYNC_generator=0;
@@ -86,9 +94,7 @@ int MemotechMode=0;
 int HWidthCounter=0;
 
 BYTE memory[1024 * 1024];
-int lastMemoryReadAddr, lastMemoryWriteAddr;
-
-BYTE font[512];
+BYTE font[1024];                //Allows for both non-inverted and inverted for the QS Chars Board 
 BYTE zxpfont[512];
 BYTE memhrg[1024];
 BYTE ZXKeyboard[8];
@@ -114,7 +120,16 @@ void zx81_initialise(void)
         int i, romlen;
         z80_init();
 
+        directMemoryAccess = false;
+        ResetLastIOAccesses();
+        InitialiseRomCartridge();
+
+        InitialiseChroma();
+
         for(i=0;i<65536;i++) memory[i]=7;
+        for(i=0;i<1024;i++) font[i]=0;
+        for(i=0;i<1024;i++) memhrg[i]=0;
+
         AnsiString romname = machine.CurRom;
         if (zx81.zxpand)
         {
@@ -156,7 +171,7 @@ void zx81_initialise(void)
         if (zx81.truehires==HIRESG007) memory_load("g007hrg.rom",10240,2048);
 
         if (zx81.machine==MACHINELAMBDA) { ink=7; paper=border=0; }
-        else { ink=0; paper=border=7; }
+        else { ink=0; paper=border=15; }
 
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
@@ -200,14 +215,14 @@ void zx81_initialise(void)
 
         if (zxpand)
         {
-                if (zxpand_destroy) zxpand_destroy(zxpand);
+                delete(zxpand);
                 zxpand = NULL;
         }
         if (zx81.zxpand)
         {
                 AnsiString card = zx81.cwd;
                 card += "card.bin";
-                if (zxpand_create) zxpand = zxpand_create(card.c_str());
+                zxpand = new ZXpand(card.c_str());
         }
 
         P3DriveMachineHasInitialised();
@@ -218,13 +233,34 @@ void zx81_initialise(void)
 // Stores the supplied byte in memory,
 // taking into account memory mapped devices and RAM/ROM shadows.
 
+// Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+void zx81_setbyte(int Address, int Data)
+{
+        directMemoryAccess = true;
+        zx81_writebyte(Address, Data);
+        directMemoryAccess = false;
+}
+
 void zx81_writebyte(int Address, int Data)
 {
         lastMemoryWriteAddr = Address;
 
         noise = (noise<<8) | Data;
 
-        // Quicksilva Sound Board uses a Memory mapped AY8912 chip
+        // A ROM cartridge has highest precedence over the 0K-16K region, which it
+        // ensures by masking out the MREQ line.
+        // The ROM cartridge socket does not differentiate between a memory read or write,
+        // so all accesses are treated as reads.
+        if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+        {
+                BYTE data;
+                if (ReadRomCartridge(Address, (BYTE*)&data))
+                {
+                        return;
+                }
+        }
+
+        // Quicksilva Sound Board uses a memory mapped AY8912 chip
 
         if (zx81.aytype == AY_TYPE_QUICKSILVA)
         {
@@ -249,7 +285,7 @@ void zx81_writebyte(int Address, int Data)
                 if (zx97.protect08 && Address<0x2000) return;
                 if (zx97.protectab && Address>=0xa000 && Address<0xc000) return;
 
-                if (Address>=49152)
+                if (Address>=0xC000)
                 {
                         if (!(d8255_read(D8255PRTB)&16)) return;
                         if (zx97.protectb0 && ((d8255_read(D8255PRTB)&15)==0)) return;
@@ -263,13 +299,18 @@ void zx81_writebyte(int Address, int Data)
                 if (zx97.bankswitch && Address<8192) Address += 0x8000;
         }
 
-        // QS Character board has a programmable character set, with the
-        // character RAM stored at address 0x8400
+        // The RAM of the Chroma interface has precedence over devices connected behind it, e.g. ZXpand,
+        // which it ensures by masking out the MREQ line
+        if (ChromaRAMWrite(Address, Data, memory, font))
+        {
+                return;
+        }
 
         if (zx81.chrgen==CHRGENQS && Address>=0x8400 && Address<=0x87ff)
         {
                 font[Address-0x8400]=Data;
-                //zx81.enableqschrgen=1;
+                memory[Address] = Data;
+                return;
         }
 
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
@@ -292,25 +333,58 @@ void zx81_writebyte(int Address, int Data)
                 }
         }
 
-        // Take into account RAM Shadows when writing beyond RAMTOP
+        if (zx81.zxpand)
+        {
+                int configData;
+                zxpand->GetConfig(configData);
+                bool configLow = ((configData & (1<<CFG_BIT_LOW)) != 0);
 
-        if (Address>zx81.RAMTOP) Address = (Address&(zx81.RAMTOP));
-
+                // ZXpand 8-16K RAM is not shadowed at 40-48K
+                if ((configLow && (Address >= 0x2000 && Address < 0xA000)) ||
+                    (!configLow && (Address >= 0x4000 && Address < 0xC000)))
+                {
+                        memory[Address] = Data;
+                        return;
+                }
+        }
+        
         // Memotech Hi-res board has 1k of RAM available at address 8192
-        // permanently and overlaid the ROM at address 0 wieh z80.i is odd
+        // permanently and overlaid the ROM at address 0 when z80.i is odd
         // or data is written to address 0-1k
 
         if (Address<=zx81.ROMTOP && zx81.protectROM)
         {
                 if ((zx81.truehires==HIRESMEMOTECH) && (Address<1024))
-                                memhrg[Address]=Data;
+                        memhrg[Address]=Data;
                 return;
         }
 
-        if (Address<10240 && zx81.truehires==HIRESMEMOTECH) return;
+        // Take into account RAM Shadows when writing beyond RAMTOP
+        if (Address > zx81.RAMTOP)
+        {
+                if ((Address & 0x7FFF) >= 0x4000)
+                {
+                        // Shadowing 16K RAM between 16-32K and 48-64K
+                        // Shadowing 1K RAM at 17-18K, 18-19K, 19-20K ... 31-32K, and repeated within 48-64K region
+                        Address = 0x4000 | (Address & zx81.RAMTOP & 0x3FFF);
+                }
+                else if (((Address & 0x7FFF) >= 0x2000) && zx81.RAM816k)
+                {
+                        // Shadow the RAM at 40-48K
+                        Address = Address & 0x7FFF;
+                }
+                else
+                {
+                        // Shadow the ROM at 32-48K
+                        Address = Address & zx81.ROMTOP;
+                }
+        }
 
-        if (Address>8191 && Address<16384 && zx81.shadowROM && zx81.protectROM) return;
+        if (Address<10240 && zx81.truehires==HIRESMEMOTECH) return;
         if (Address>=10240 && Address<12288 && zx81.truehires==HIRESG007) return;
+        if (Address<=zx81.ROMTOP && zx81.protectROM) return;
+        if (Address>8191 && Address<16384 && zx81.shadowROM && zx81.protectROM) return;
+        if (Address>8191 && Address<16384 && !zx81.RAM816k) return;
 
         memory[Address]=Data;
 }
@@ -321,11 +395,32 @@ void zx81_writebyte(int Address, int Data)
 // taking into account memory mapped devices and RAM/ROM shadows.
 int video = 0;
 
+// Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+BYTE zx81_getbyte(int Address)
+{
+        directMemoryAccess = true;
+        BYTE b = zx81_readbyte(Address);
+        directMemoryAccess = false;
+
+        return b;
+}
+
 BYTE zx81_readbyte(int Address)
 {
         lastMemoryReadAddr = Address;
 
         int data;
+
+        // A ROM cartridge has highest precedence over the 0K-16K region, which it
+        // ensures by masking out the MREQ line
+        if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+        {
+                BYTE data;
+                if (ReadRomCartridge(Address, (BYTE*)&data))
+                {
+                        return data;
+                }
+        }
 
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
         // with a further 8 shadows between 49152 and 57344.
@@ -375,33 +470,78 @@ BYTE zx81_readbyte(int Address)
                 }
         }
 
-        // Take into account RAM Shadows when writing beyond RAMTOP
-
-        if (Address<=zx81.RAMTOP)
+        bool zxpandRamAccess = false;
+        if (zx81.zxpand)
         {
-                // evil hack.
-                //
-                if (zx81.zxpand && zx81.machine==MACHINEZX81 && video && Address>=0x1e00 && Address<0x2000)
+                int configData;
+                zxpand->GetConfig(configData);
+                bool configLow = ((configData & (1<<CFG_BIT_LOW)) != 0);
+
+                // ZXpand 8-16K RAM is not shadowed at 40-48K
+                zxpandRamAccess = (configLow && Address >= 0x2000 && Address < 0xA000) ||
+                                  (!configLow && Address >= 0x4000 && Address < 0xC000);
+        }
+
+        // The Chroma interface has precedence over devices containing RAM connected behind it
+        if (ChromaRAMRead(Address, (BYTE*)&data, memory))
+        {
+        }
+        else if (zxpandRamAccess)
+        {
+                data=memory[Address];
+        }
+        else if (zx81.zxpand && zx81.machine==MACHINEZX81 && video && Address>=0x1E00 && Address<0x2000)
+        {
+                data=zxpfont[Address-7680];
+        }
+        else if (zx81.chrgen==CHRGENQS && Address >= 0x8400 && Address < 0x8800)
+        {
+                data=memory[Address];
+        }
+        else if (zx81.RAM816k && Address >= 0x2000 && Address < 0x4000)
+        {
+                data=memory[Address];
+        }
+        else if (Address >= 0x4000 && Address <= zx81.RAMTOP)
+        {
+                data=memory[Address];
+        }
+        else if (Address <= zx81.ROMTOP)
+        {
+                data=memory[Address];
+        }
+        else if ((Address & 0x7FFF) >= 0x4000)
+        {
+                // Shadow 16K RAM between 16-32K and 48-64K
+                // Shadow 1K RAM at 17-18K, 18-19K, 19-20K ... 31-32K, and repeat within 48-64K region
+                data=memory[0x4000 | (Address & zx81.RAMTOP & 0x3FFF)];
+        }
+        else
+        {
+                if (zx81.RAM816k)
                 {
-                        data=zxpfont[Address-7680];
+                        // Shadow 8-16K RAM at 40-48K
+                        data=memory[Address & 0x7FFF];
                 }
                 else
                 {
-                        data=memory[Address];
+                        // Shadow the ROM at 32-48K
+                        data=memory[Address & zx81.ROMTOP];
                 }
         }
-        else data=memory[(Address&(zx81.RAMTOP-16384))+16384];
 
         // Memotech Hi-res board has 1k of RAM available at address 8192
-        // permanently and overlaid the ROM at address 0 wieh z80.i is odd
-
+        // permanently and overlaid the ROM at address 0 when z80.i is odd
         if ((Address<1024 && (zx81.truehires==HIRESMEMOTECH)) && (z80.i&1))
-                        data=memhrg[Address];
+        {
+                data=memhrg[Address];
+        }
 
         // G007 similarly overlays the ROM but a smaller range
-
         if ((Address>=0x0c00 && Address<=0x0cff) && (zx81.truehires==HIRESG007))
+        {
                 data=memory[Address+8192];
+        }
 
         if ((Address<256 || (Address>=512 && Address<768))
                 && (z80.i&1) && (zx81.truehires==HIRESG007))
@@ -413,7 +553,7 @@ BYTE zx81_readbyte(int Address)
 
 // BYTE opcode_fetch(int Address)
 //
-// Given an address, opcode fetch return the byte at that memory address,
+// Given an address, opcode fetch returns the byte at that memory address,
 // modified depending on certain circumstances.
 // It also loads the video shift register and generates video noise.
 //
@@ -432,24 +572,23 @@ BYTE zx81_readbyte(int Address)
 // on which bus RAM is placed, it can either be used for extended
 // Fonts OR WRX style hi-res graphics, but never both.
 
-
 BYTE zx81_opcode_fetch(int Address)
 {
         static int calls = 0;
-        int NewAddress, inv;
+        int inv;
         int opcode, bit6, update=0;
         BYTE data;
 
         // very rough timing here;
-        // assuming a  1mhz call rate it will be 1ms every 1000 calls.
+        // assuming a 1mhz call rate it will be 1ms every 1000 calls.
         ++calls;
         if (calls == 1000)
         {
                 calls = 0;
-                if (zxpand_update) zxpand_update(zxpand, 1);
+                if (zxpand) zxpand->Update(1);
         }
 
-        if (Address<zx81.m1not)
+        if (Address < zx81.m1not)
         {
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
@@ -480,8 +619,10 @@ BYTE zx81_opcode_fetch(int Address)
         // First check for WRX graphics.  This is easy, we just create a
         // 16 bit Address from the IR Register pair and fetch that byte
         // loading it into the video shift register.
-        if (z80.i>=zx81.maxireg && zx81.truehires==HIRESWRX && !bit6)
+        if (((z80.i>=zx81.maxireg) || (z80.i>= 0x20 && zx81.RAM816k)) && zx81.truehires==HIRESWRX && !bit6)
         {
+                FetchChromaColour(Address, data, rowcounter, memory);
+
                 data=zx81_readbyte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
                 update=1;
         }
@@ -514,13 +655,14 @@ BYTE zx81_opcode_fetch(int Address)
                 // If we get here, we're generating normal Characters
                 // (or pseudo Hi-Res), but we still need to figure out
                 // where to get the bitmap for the character from
+                FetchChromaColour(Address, data, rowcounter, memory);
 
                 // First try to figure out which character set we're going
                 // to use if CHR$x16 is in use.  Else, standard ZX81
                 // character sets are only 64 characters in size.
 
                 if ((zx81.chrgen==CHRGENCHR16 && (z80.i&1))
-                        || (zx81.chrgen==CHRGENQS && zx81.enableqschrgen))
+                        || (zx81.chrgen==CHRGENQS && zx81.enableQSchrgen))
                         data = ((data&128)>>1)|(data&63);
                 else    data = data&63;
 
@@ -532,19 +674,19 @@ BYTE zx81_opcode_fetch(int Address)
                 // is enabled we better fetch it from the dedicated
                 // external memory.
                 // Otherwise, we can't get a bitmap from anywhere, so
-                // display 11111111 (??What does a real ZX81 do?).
+                // display 11111111.
 
                 if (z80.i<64 || (z80.i>=128 && z80.i<192 && zx81.chrgen==CHRGENCHR16))
                 {
-                        if (zx81.extfont || (zx81.chrgen==CHRGENQS && zx81.enableqschrgen))
+                        if (zx81.extfont || (zx81.chrgen==CHRGENQS && zx81.enableQSchrgen))
                         {
                                 data= font[(data<<3) | rowcounter];
                         }
                         else
                         {
                                 video = 1;
-                            data=zx81_readbyte(((z80.i&254)<<8) + (data<<3) | rowcounter);
-                            video = 0;
+                                data=zx81_readbyte(((z80.i&254)<<8) + (data<<3) | rowcounter);
+                                video = 0;
                         }
                 }
                 else data=255;
@@ -558,23 +700,39 @@ BYTE zx81_opcode_fetch(int Address)
                 // somewhere.  The only time this doesn't happen is if we encountered
                 // an opcode with bit 6 set above M1NOT.
 
-                if (zx81.colour==COLOURLAMBDA)
+                if (zx81.colour == COLOURLAMBDA)
                 {
                         int c;
 
                         // If Lambda colour is enabled, we had better fetch
                         // the ink and paper colour from memory too.
+                        //
+                        // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
+                        // Ink = bits 0-2, Paper = bits 4-6
 
                         c=zx81_readbyte((Address&1023)+8192);
 
-                        ink = c&15;
-                        paper = (c>>4) & 15;
+                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                        c = (c >> 4);
+                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
 
                         if (setborder)
                         {
                                 border=paper;
                                 setborder=0;
                         }
+                }
+                else if (zx81.colour == COLOURCHROMA)
+                {
+                        if (setborder)
+                        {
+                                border = GetChromaBorderColour();
+                                setborder = 0;
+                        }
+                }
+                else if (zx81.machine != MACHINELAMBDA)
+                {
+                        border = colourBrightWhite;
                 }
 
                 // Finally load the bitmap we retrieved into the video shift
@@ -592,14 +750,25 @@ BYTE zx81_opcode_fetch(int Address)
                 // bit 6 set in the display file.  We actually execute these
                 // opcodes, and generate the noise.
 
+                SetChromaColours();
+
                 noise |= data;
                 return(opcode);
         }
 }
 
-
 void zx81_writeport(int Address, int Data, int *tstates)
 {
+        LogOutAccess(Address, Data);
+
+        // The Chroma IO port is fully decoded
+        if (ChromaIOWrite(Address, Data))
+        {
+                if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
+                if (zx81.vsyncsound) sound_beeper(1);
+                return;
+        }
+
         if ((spectrum.HDType==HDPITERSCF) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
@@ -610,7 +779,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0x07:
-                if (zxpand_iowrite) zxpand_iowrite(zxpand, Data, Address>>8);
+                if (zxpand) zxpand->IO_Write(Address>>8, Data);
                 break;
 
         case 0x0f:
@@ -679,11 +848,14 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 LastInstruction = LASTINSTOUTFD;
                 break;
 
-        case 0xfe:
-                if (zx81.machine==MACHINEZX80) break;
-                LastInstruction = LASTINSTOUTFE;
-                break;
+        //case 0xfe:
         default:
+                if (!(Address&1))
+                {
+                        if (zx81.machine==MACHINEZX80) break;
+                        LastInstruction = LASTINSTOUTFE;
+                        break;
+                }
                 break;
         }
 
@@ -694,13 +866,28 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
 BYTE zx81_readport(int Address, int *tstates)
 {
+        BYTE data = ReadInputPort(Address, tstates);
+        LogInAccess(Address, data);
+
+        return data;
+}
+
+BYTE ReadInputPort(int Address, int *tstates)
+{
         static int beeper;
+        BYTE data = 0;
 
         setborder=1;
 
+        // The Chroma IO port is fully decoded
+        if (ChromaIORead(Address, &data))
+        {
+                return data;
+        }
+
         if (!(Address&1))
         {
-                BYTE keyb, data=0;
+                BYTE keyb;
                 int i;
                 if ((zx81.machine!=MACHINELAMBDA) && zx81.vsyncsound)
                         sound_beeper(0);
@@ -715,7 +902,7 @@ BYTE zx81_readport(int Address, int *tstates)
                 }
 
                 return(~data);
-        }
+        }   
         else
         {
                 if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
@@ -732,7 +919,7 @@ BYTE zx81_readport(int Address, int *tstates)
                 }
 
                 case 0x7:
-                        if (zxpand_ioread) return zxpand_ioread(zxpand, Address>>8);
+                        if (zxpand) return zxpand->IO_Read(Address>>8);
                         return 0xfd;
 
                 case 0x41:
@@ -780,11 +967,13 @@ BYTE zx81_readport(int Address, int *tstates)
                         return(255);
                 case 0xfb:
                         if (zx81.zxprinter) return(ZXPrinterReadPort());
+
                 default:
                         break;
                 }
         }
-        return(255);
+        
+        return idleDataBus;
 }
 
 int zx81_contend(int Address, int states, int time)
@@ -844,7 +1033,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                         machine.tperscanline=HWidthCounter;
                                 HWidthCounter=0;
                         }
-                        paper=border;
                         int_pending=0;
                 }
 
@@ -864,8 +1052,10 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         bit=((shift_register^shift_reg_inv)&32768);
 
-                        if (HSYNC_generator) colour = (bit ? ink:paper)<<4;
-                        else colour=VBLANKCOLOUR;
+                        if (HSYNC_generator)
+                            colour = (bit ? ink:paper)<<4;
+                        else
+                            colour = VBLANKCOLOUR;
 
                         if (zx81.dirtydisplay)
                         {
@@ -885,6 +1075,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         shift_register<<=1;
                         shift_reg_inv<<=1;
+
+                        if ((zx81.colour == COLOURCHROMA) && ((i & 7) == 7))
+                        {
+                                GetChromaColours(&ink, &paper);
+                        }
                 }
 
                 switch(LastInstruction)
@@ -963,5 +1158,4 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         return(tstotal);
 }
-
 

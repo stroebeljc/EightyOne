@@ -34,7 +34,9 @@
 #include "zx81config.h"
 #include "ZipFile_.h"
 
+#ifndef edt1
 #define edt1 0x480
+#endif
 
 TTZXFile TZXFile;
 
@@ -106,7 +108,7 @@ void TTZX::AddBlock(char *buffer, int len)
 
 void TTZX::UpdateTable(bool NewFile)
 {
-        int i,j;
+        int i;
         AnsiString Name, Type, Length;
         int Indent;
 
@@ -355,24 +357,25 @@ void __fastcall TTZX::NewTZXClick(TObject *Sender)
 void __fastcall TTZX::SaveAs1Click(TObject *Sender)
 {
         int zx81, spec, other;
-        int canT81, canTAP, canP;
+        int canT81, canTAP, canP, canP81;
         AnsiString Filter;
         AnsiString FileName;
 
-        canT81=canTAP=canP=true;
+        canT81=canTAP=canP=canP81=true;
 
         TZXFile.CountBlocks(&zx81, &spec, &other);
 
-        if (other) { canTAP=canT81=canP=false; }
-        if (spec) { canT81=canP=false; }
+        if (other) { canTAP=canT81=canP=canP81=false; }
+        if (spec) { canT81=canP=canP81=false; }
         if (zx81) { canTAP=false; }
-        if (zx81!=1) {canP=false; }
-        if (!zx81 && !spec && !other) { canTAP=canT81=canP=false; }
+        if (zx81!=1) { canP=false; canP81=false; }
+        if (!zx81 && !spec && !other) { canTAP=canT81=canP=canP81=false; }
 
         Filter="TZX File (*.tzx)|*.tzx";
         if (canTAP) Filter += "|TAP File (*.tap)|*.tap";
         if (canT81) Filter += "|T81 File (*.t81)|*.t81";
         if (canP) Filter += "|P File (*.p)|*.p|O File (*.o)|*.o";
+        if (canP81) Filter += "|P81 File (*.p81)|*.p81";
 
         SaveDialog->Filter=Filter;
 
@@ -389,12 +392,14 @@ void __fastcall TTZX::SaveAs1Click(TObject *Sender)
                 if (Ext==".T81" && !canT81) Ext=".TZX";
                 if (Ext==".P" && !canP) Ext=".TZX";
                 if (Ext==".O" && !canP) Ext=".TZX";
+                if (Ext==".P81" && !canP81) Ext=".TZX";
 
                 SaveDialog->FilterIndex=1;
                 if (Ext==".TAP") SaveDialog->FilterIndex=2;
                 if (Ext==".T81") SaveDialog->FilterIndex=2;
                 if (Ext==".P") SaveDialog->FilterIndex=3;
                 if (Ext==".O") SaveDialog->FilterIndex=3;
+                if (Ext==".P81") SaveDialog->FilterIndex=4;
 
                 FileName += Ext;
         }
@@ -674,11 +679,11 @@ void __fastcall TTZX::ExtractBlock1Click(TObject *Sender)
 
 void __fastcall TTZX::Save1Click(TObject *Sender)
 {
-        if (TZXFile.FileName=="") SaveAs1Click(NULL);
-        else TZXFile.SaveFile(SaveDialog->FileName);
+        //if (TZXFile.FileName=="")
+        SaveAs1Click(NULL);
+        //else
+        //TZXFile.SaveFile(SaveDialog->FileName);
 }
-//---------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------
 
 void __fastcall TTZX::AutoLoadonInsert1Click(TObject *Sender)
@@ -687,7 +692,6 @@ void __fastcall TTZX::AutoLoadonInsert1Click(TObject *Sender)
         if (!AutoStartBtn->Down && AutoLoadBtn->Down) AutoStartStopClick(NULL);
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall TTZX::ScrollBar1Change(TObject *Sender)
 {

@@ -86,7 +86,7 @@ object CreateHDF: TCreateHDF
     Top = 64
     Width = 57
     Height = 21
-    TabOrder = 2
+    TabOrder = 3
     Text = '16'
     OnChange = HeadTextChange
   end
@@ -95,7 +95,7 @@ object CreateHDF: TCreateHDF
     Top = 88
     Width = 57
     Height = 21
-    TabOrder = 3
+    TabOrder = 5
     Text = '16'
     OnChange = SecTextChange
   end
@@ -108,7 +108,7 @@ object CreateHDF: TCreateHDF
     Max = 32767
     Orientation = udHorizontal
     Position = -31745
-    TabOrder = 4
+    TabOrder = 2
     Wrap = False
     OnClick = CylUpDownClick
   end
@@ -121,7 +121,7 @@ object CreateHDF: TCreateHDF
     Max = 15
     Orientation = udHorizontal
     Position = 8
-    TabOrder = 5
+    TabOrder = 4
     Wrap = False
     OnClick = HeadUpDownClick
   end

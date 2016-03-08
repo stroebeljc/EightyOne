@@ -1,6 +1,6 @@
 object WavLoad: TWavLoad
   Left = 329
-  Top = 105
+  Top = 92
   Width = 344
   Height = 231
   BorderStyle = bsSizeToolWin
@@ -75,7 +75,7 @@ object WavLoad: TWavLoad
     Position = 0
     SelEnd = 0
     SelStart = 0
-    TabOrder = 1
+    TabOrder = 2
     TickMarks = tmTopLeft
     TickStyle = tsAuto
     OnChange = BiasChange
@@ -93,7 +93,7 @@ object WavLoad: TWavLoad
     Position = 0
     SelEnd = 0
     SelStart = 0
-    TabOrder = 2
+    TabOrder = 1
     TickMarks = tmBottomRight
     TickStyle = tsAuto
     OnChange = VolumeChange
@@ -105,7 +105,7 @@ object WavLoad: TWavLoad
     Height = 25
     Anchors = [akBottom]
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 4
     object RewStart: TOffice97Button
       Left = 8
       Top = 0
@@ -200,7 +200,7 @@ object WavLoad: TWavLoad
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 2
+      TabOrder = 3
       Transparent = True
       UseCustomGlyphs = True
       Toggle = True
@@ -234,7 +234,7 @@ object WavLoad: TWavLoad
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 2
       Transparent = True
       UseCustomGlyphs = True
       Toggle = True
@@ -348,7 +348,7 @@ object WavLoad: TWavLoad
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 0
     object NewWav1: TOffice97Button
       Left = 4
       Top = 0
@@ -478,7 +478,7 @@ object WavLoad: TWavLoad
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 5
       Transparent = True
       UseCustomGlyphs = True
       Down = True
@@ -514,7 +514,7 @@ object WavLoad: TWavLoad
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 6
       Transparent = True
       UseCustomGlyphs = True
       Toggle = True
@@ -549,7 +549,7 @@ object WavLoad: TWavLoad
       Position = bsTop
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 5
+      TabOrder = 3
       Transparent = True
       UseCustomGlyphs = True
       OnClick = ConvertNextBlock1Click
@@ -601,7 +601,7 @@ object WavLoad: TWavLoad
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 6
+      TabOrder = 4
       Transparent = True
       UseCustomGlyphs = True
       Toggle = True
@@ -617,12 +617,12 @@ object WavLoad: TWavLoad
     LargeChange = 256
     PageSize = 0
     SmallChange = 4
-    TabOrder = 0
+    TabOrder = 3
     OnChange = ScrollBarChange
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 185
+    Top = 178
     Width = 336
     Height = 19
     BorderWidth = 1

@@ -72,12 +72,10 @@ void TTZXFile::ReadBytes(FILE *f, int len, void *buf)
 
 bool TTZXFile::LoadOldGeneralBlock(FILE *f)
 {
-        int bl, flags, pl, pp, ns, np, as, usedbits, pause;
+        int bl, flags, pl, pp, ns, np, as, pause;
         int datalen;
         unsigned short *sp, *at;
         char *data;
-        int BlockType;
-        long pos;
         int i;
 
         unsigned short SymDef[]=
@@ -115,7 +113,9 @@ bool TTZXFile::LoadOldGeneralBlock(FILE *f)
         at=(unsigned short *) malloc(np * as * sizeof(short));
         for(i=0; i< (np*as); i++) at[i]=ReadWord(f);
 
-        usedbits=ReadByte(f);
+        //usedbits=ReadByte(f);
+        ReadByte(f);
+
         pause=ReadWord(f);
 
         datalen=bl-(11+2*(ns+np*as));
@@ -147,7 +147,7 @@ bool TTZXFile::LoadGeneralBlock(FILE *f)
 {
         unsigned short *SymDefP, *SymDefD, *PRLE;
         unsigned char *Data;
-        long DataLen, Pause;
+        long Pause;
         int TOTP, NPP, ASP, TOTD, NPD,ASD;
         int bits, bytes;
         int i,j,k;
@@ -160,7 +160,9 @@ bool TTZXFile::LoadGeneralBlock(FILE *f)
 
         fseek(f,pos,SEEK_SET);
 
-        DataLen=ReadDWord(f);
+        //DataLen=ReadDWord(f);
+        ReadDWord(f);
+        
         Pause=ReadWord(f);
         TOTP=ReadDWord(f);
         NPP=ReadByte(f)+1;
@@ -203,8 +205,6 @@ bool TTZXFile::LoadGeneralBlock(FILE *f)
 
         if (TOTD>0)
         {
-                int SymSize, i;
-
                 i=1;
                 bits=0;
                 while(i<ASD)
@@ -234,7 +234,10 @@ bool TTZXFile::LoadGeneralBlock(FILE *f)
                 Data=(unsigned char *)malloc(bytes);
                 ReadBytes(f,bytes, Data);
         }
-        else    Data=NULL;
+        else
+        {
+            Data=NULL;
+        }
 
         Tape[CurBlock].BlockID=TZX_BLOCK_GENERAL;
         Tape[CurBlock].Pause=Pause;
@@ -616,8 +619,7 @@ bool TTZXFile::LoadUnknownBlock(FILE *f, int BlockID)
 bool TTZXFile::LoadTAPFile(AnsiString FileName, bool Insert)
 {
         FILE *f;
-        char *p;
-        int BlockID, error, i;
+        int error, i;
         int HeaderLen;
         int len;
         bool FirstBlock, AddSync, AddChecksum;
@@ -714,7 +716,7 @@ bool TTZXFile::LoadPFile(AnsiString FileName, bool Insert)
 bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)
 {
         char header[5];
-        char fname[32], flen[16];
+        char fname[33], flen[17];
         unsigned char buffer1[65536+256], buffer2[65535+256];
 
         FILE *fptr;
@@ -735,14 +737,14 @@ bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)
 
         do
         {
-                memset(fname, 0, 32);
-                memset(flen, 0, 16);
+                memset(fname, 0, 33);
+                memset(flen, 0, 17);
                 fread(fname, 32, 1, fptr);
                 fread (flen, 16, 1, fptr);
 
                 length = atoi(flen);
 
-                if ( (strlen(fname)>29) || (length < 20) || (length > 65535) )
+                if ( (strlen(fname)>32) || (length < 20) || (length > 65535) )
                         break;
 
                 if (!strcmp(fname,"<Silence>")) MoveBlock(AddPauseBlock(length), CurBlock++);
@@ -751,8 +753,15 @@ bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)
                         fread(buffer1, length, 1, fptr);
                         if ( (*buffer1==0x00) || (*buffer1==255) || (*buffer1==1) ) // If buffer doesn't include the filename, add one
                         {
-                                ConvertASCIIZX81(fname, buffer2);
-                                zxnamelen = ZX81Strlen(buffer2);
+                                if (*fname != '\0')
+                                {
+                                        ConvertASCIIZX81(fname, buffer2);
+                                        zxnamelen = ZX81Strlen(buffer2);
+                                }
+                                else
+                                {
+                                        zxnamelen = 0;
+                                }
                         }
                         else    zxnamelen = 0;
 
@@ -779,8 +788,7 @@ bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)
 bool TTZXFile::LoadFile(AnsiString FileName, bool Insert)
 {
         FILE *f;
-        char *p;
-        int BlockID, error, i, OldCurBlock;
+        int BlockID, error;
         AnsiString Extension;
 
         struct TZXHeader head;
@@ -791,6 +799,7 @@ bool TTZXFile::LoadFile(AnsiString FileName, bool Insert)
         if (Extension == ".P"
                 || Extension == ".O"
                 || Extension == ".81"
+                || Extension == ".P81"
                 || Extension == ".80"
                 || Extension == ".A83") return(LoadPFile(FileName, Insert));
         if (Extension == ".T81") return(LoadT81File(FileName, Insert));

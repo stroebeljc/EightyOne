@@ -359,9 +359,6 @@ void TTZXFile::SaveGlueBlock(int Block, FILE *f)
 
 void TTZXFile::SaveUnknownBlock(int Block, FILE *f)
 {
-        int length;
-        unsigned char *data;
-
         WriteByte(f, Tape[Block].Head.Unknown.type);
         WriteDWord(f,Tape[Block].Head.Unknown.length);
         WriteBytes(f,Tape[Block].Head.Unknown.length,
@@ -466,8 +463,8 @@ bool TTZXFile::SaveT81File(AnsiString FileName)
                         memset(flen, 0, 16);
                         itoa(Tape[i].Head.General.DataLen, flen, 10);
                         zx81Fname=GetFName(i);
-                        if (zx81Fname.Length()>10)
-                                zx81Fname = zx81Fname.SubString(10,zx81Fname.Length()-10);
+                        if (zx81Fname.Length()>32)
+                                zx81Fname = zx81Fname.SubString(32,zx81Fname.Length()-32);
 
                         memcpy(fname, zx81Fname.c_str(), zx81Fname.Length());
 
@@ -517,6 +514,25 @@ bool TTZXFile::SavePFile(AnsiString FileName)
         return(true);
 }
 
+bool TTZXFile::SaveP81File(AnsiString FileName)
+{
+        FILE *f;
+        int i;
+        int namelen;
+        char *p;
+
+        f=fopen(FileName.c_str(), "wb");
+        if (!f) return(false);
+        this->FileName=FileName;
+
+        i=0;
+        while(i<Blocks && Tape[i].BlockID != TZX_BLOCK_GENERAL) i++;
+
+        WriteBytes(f, Tape[i].Head.General.DataLen, Tape[i].Data.Data);
+        fclose(f);
+        return(true);
+}
+
 bool TTZXFile::SaveOFile(AnsiString FileName)
 {
         FILE *f;
@@ -540,13 +556,12 @@ bool TTZXFile::SaveFile(AnsiString FileName)
         int i, version;
         AnsiString Ext;
 
-        struct TZXHeader head;
-
         Ext=GetExt(FileName);
         if (Ext==".TAP") return(SaveTapFile(FileName));
         if (Ext==".T81") return(SaveT81File(FileName));
         if (Ext==".P") return(SavePFile(FileName));
         if (Ext==".O") return(SaveOFile(FileName));
+        if (Ext==".P81") return(SaveP81File(FileName));
 
         version=13;
         for(i=0;i<Blocks;i++)

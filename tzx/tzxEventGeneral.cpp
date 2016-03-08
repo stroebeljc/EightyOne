@@ -58,7 +58,7 @@ bool TTZXFile::EventGeneral(void)
 
         if (!BlockInProgress)
         {
-                int Syms, i;
+                int Syms;
                 phase=0;
 
                 data=Tape[CurBlock].Data.Data -1;

@@ -126,8 +126,6 @@ bool TWavFile::LoadCSW(AnsiString FName)
 bool TWavFile::LoadFile(AnsiString FName)
 {
         FILE *f;
-        int i, total;
-        unsigned char *buffer;
 
         if (FileNameGetExt(FName)==".CSW") return(LoadCSW(FName));
 
@@ -193,8 +191,6 @@ bool TWavFile::LoadFile(AnsiString FName)
 bool TWavFile::SaveFile(AnsiString FName)
 {
         FILE *f;
-        int i, total;
-        unsigned char *buffer;
 
         if (FileNameGetExt(FName)==".CSW") return(SaveCSW(FName));
 

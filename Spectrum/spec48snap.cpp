@@ -102,7 +102,6 @@ int LoadDock(char *Filename)
 
 unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
 {
-        int size=0;
         while(Count)
         {
                 if ((in[0]==0xed) && (in[1]==0xed))
@@ -112,21 +111,19 @@ unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
                         byte=in[3];
                         while(repeat)
                         {
-                                spec48_writebyte(OutAddr, byte);
+                                spec48_setbyte(OutAddr, byte);
                                 OutAddr++;
                                 repeat--;
                                 Count--;
-                                size++;
                         }
                         in+=4;
                 }
                 else
                 {
-                        spec48_writebyte(OutAddr, *in);
+                        spec48_setbyte(OutAddr, *in);
                         in++;
                         OutAddr++;
                         Count--;
-                        size++;
                 }
         }
 
@@ -137,11 +134,10 @@ unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
 void spec_load_z80(char *fname)
 {
         FILE *f;
-        int i,j,k, FileLen, compressed;
+        int i, FileLen, compressed;
         unsigned char *buf;
-        int z80version=1;
+        int z80version;
         int speccy;
-        int frame;
 
         f=fopen(fname, "rb");
         if (!f) return;
@@ -246,7 +242,7 @@ void spec_load_z80(char *fname)
         if (z80version==1)
         {
                 if (compressed) z80expand(buf+30, 16384, 49152);
-                else for(i=0;i<49152;i++) spec48_writebyte(i+16384, buf[i+30]);
+                else for(i=0;i<49152;i++) spec48_setbyte(i+16384, buf[i+30]);
 
                 free(buf);
                 return;
@@ -255,8 +251,7 @@ void spec_load_z80(char *fname)
         {
                 unsigned char *ptr;
                 int page, len;
-                int Count;
-
+              
                 ptr=buf+32;
                 ptr+=buf[30];
 
@@ -283,7 +278,7 @@ void spec_load_z80(char *fname)
                         if (len==0xffff)
                         {
                                 for(i=0;i<16384;i++)
-                                        RAMWrite(page+4, i, ptr[i]);
+                                        RAMWrite((page+4), i, ptr[i]);
                                 ptr+=16384;
                         }
                         else
@@ -294,6 +289,16 @@ void spec_load_z80(char *fname)
                         SPECBlk[0]=0;
                 }
         }
+
+        if (zx81.colour == COLOURSPECTRA)
+        {
+                 for(i=0; i<16384; i++)
+                 {
+                        SpectraMem[i] = SpecMem[(9<<14) + i];
+                        SpectraMem[0x4000 + i] = SpecMem[(11<<14) + i];
+                 }
+        }
+
         z80.pc.w=buf[32]+ 256*buf[33];
         if (speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
                 spec48_writeport(0xff,buf[36], &i);
@@ -314,7 +319,7 @@ void spec_load_sna(char *fname)
         FILE *f;
         int i,j,k, len;
         unsigned char *buf;
-        int banks[8], currentbank;
+        int banks[8];
 
         for(i=0;i<8;i++) banks[i]=0;
         banks[5]=1;
@@ -359,12 +364,12 @@ void spec_load_sna(char *fname)
                 banks[i&7]=1;
         }
 
-        for(i=0;i<49152;i++) spec48_writebyte(i+16384, buf[i+27]);
+        for(i=0;i<49152;i++) spec48_setbyte(i+16384, buf[i+27]);
 
         if (len==49179)
         {
-                z80.pc.w=spec48_readbyte(z80.sp.w++);
-                z80.pc.w += 256*spec48_readbyte(z80.sp.w++);
+                z80.pc.w=spec48_getbyte(z80.sp.w++);
+                z80.pc.w += 256*spec48_getbyte(z80.sp.w++);
                 free(buf);
                 return;
         }
@@ -374,7 +379,16 @@ void spec_load_sna(char *fname)
         k=49183;
         for(i=0;i<8;i++)
                 if (!banks[i])
-                        for(j=0;j<16384;j++) RAMWrite(i+4, j, buf[k++]);
+                        for(j=0;j<16384;j++) RAMWrite((i+4), j, buf[k++]);
+
+        if (zx81.colour == COLOURSPECTRA)
+        {
+                 for(i=0; i<16384; i++)
+                 {
+                        SpectraMem[i] = SpecMem[(9<<14) + i];
+                        SpectraMem[0x4000 + i] = SpecMem[(11<<14) + i];
+                 }
+        }
 
         free(buf);
 }
@@ -394,8 +408,8 @@ void spec_save_sna(char *fname)
                 || spectrum.machine==SPECCYPLUS3))
         {
                 z80.sp.w -= 2;
-                spec48_writebyte(z80.sp.w, z80.pc.b.l);
-                spec48_writebyte(z80.sp.w+1, z80.pc.b.h);
+                spec48_setbyte(z80.sp.w, z80.pc.b.l);
+                spec48_setbyte(z80.sp.w+1, z80.pc.b.h);
         }
 
         fputc(z80.i, f);
@@ -425,7 +439,7 @@ void spec_save_sna(char *fname)
         fputc(z80.im,f);
         fputc(SPECBorder,f);
 
-        for(i=0;i<49152;i++) fputc(spec48_readbyte(16384+i),f);
+        for(i=0;i<49152;i++) fputc(spec48_getbyte(16384+i),f);
 
         if (spectrum.machine==SPECCY128
                 || spectrum.machine==SPECCYPLUS2
@@ -443,7 +457,7 @@ void spec_save_sna(char *fname)
 
                 for(i=0;i<8;i++)
                         if (!banks[i])
-                                for(j=0;j<16384;j++) fputc(RAMRead(i+4,j),f);
+                                for(j=0;j<16384;j++) fputc(RAMRead((i+4),j),f);
         }
         else    z80.sp.w += 2;
         fclose(f);
@@ -499,7 +513,7 @@ void z80_save_block(FILE *f, int bank, int z80block)
 void spec_save_z80(char *fname)
 {
         FILE *f;
-        int i,j;
+        int i;
         int mode, flags;
 
         f=fopen(fname,"wb");

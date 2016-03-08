@@ -1,11 +1,11 @@
 object Dbg: TDbg
-  Left = 292
-  Top = 117
+  Left = 197
+  Top = 185
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
-  ClientHeight = 406
-  ClientWidth = 575
+  ClientHeight = 437
+  ClientWidth = 567
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,25 +17,25 @@ object Dbg: TDbg
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object SymRom: TLabel
-    Left = 464
-    Top = 181
-    Width = 25
+  object Label33: TLabel
+    Left = 55
+    Top = 16
+    Width = 18
     Height = 13
-    Caption = 'ROM'
+    Caption = '$FF'
   end
-  object SymApp: TLabel
-    Left = 496
-    Top = 181
-    Width = 21
+  object Label34: TLabel
+    Left = 89
+    Top = 16
+    Width = 18
     Height = 13
-    Caption = 'APP'
+    Caption = '$FF'
   end
   object GroupBox1: TGroupBox
-    Left = 2
-    Top = 0
+    Left = 4
+    Top = 3
     Width = 305
-    Height = 201
+    Height = 137
     Caption = 'Z80'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -46,8 +46,8 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 0
     object Label1: TLabel
-      Left = 3
-      Top = 56
+      Left = 11
+      Top = 48
       Width = 25
       Height = 13
       Alignment = taRightJustify
@@ -55,8 +55,8 @@ object Dbg: TDbg
       Caption = 'HL:'
     end
     object Label2: TLabel
-      Left = 3
-      Top = 24
+      Left = 11
+      Top = 16
       Width = 25
       Height = 13
       Alignment = taRightJustify
@@ -64,8 +64,8 @@ object Dbg: TDbg
       Caption = 'BC:'
     end
     object Label3: TLabel
-      Left = 3
-      Top = 40
+      Left = 11
+      Top = 32
       Width = 25
       Height = 13
       Alignment = taRightJustify
@@ -73,8 +73,8 @@ object Dbg: TDbg
       Caption = 'DE:'
     end
     object Label4: TLabel
-      Left = 3
-      Top = 72
+      Left = 11
+      Top = 64
       Width = 25
       Height = 13
       Alignment = taRightJustify
@@ -82,8 +82,8 @@ object Dbg: TDbg
       Caption = 'A:'
     end
     object Label5: TLabel
-      Left = 3
-      Top = 88
+      Left = 11
+      Top = 80
       Width = 25
       Height = 13
       Alignment = taRightJustify
@@ -91,8 +91,8 @@ object Dbg: TDbg
       Caption = 'F:'
     end
     object HL: TLabel
-      Left = 32
-      Top = 56
+      Left = 40
+      Top = 48
       Width = 40
       Height = 13
       AutoSize = False
@@ -109,8 +109,8 @@ object Dbg: TDbg
       OnMouseDown = HLMouseDown
     end
     object BC: TLabel
-      Left = 32
-      Top = 24
+      Left = 40
+      Top = 16
       Width = 40
       Height = 13
       AutoSize = False
@@ -131,8 +131,8 @@ object Dbg: TDbg
       OnMouseDown = BCMouseDown
     end
     object DE: TLabel
-      Left = 32
-      Top = 40
+      Left = 40
+      Top = 32
       Width = 40
       Height = 13
       AutoSize = False
@@ -149,8 +149,8 @@ object Dbg: TDbg
       OnMouseDown = DEMouseDown
     end
     object A: TLabel
-      Left = 32
-      Top = 72
+      Left = 40
+      Top = 64
       Width = 40
       Height = 13
       AutoSize = False
@@ -165,8 +165,8 @@ object Dbg: TDbg
       OnClick = AClick
     end
     object F: TLabel
-      Left = 32
-      Top = 88
+      Left = 40
+      Top = 80
       Width = 57
       Height = 13
       AutoSize = False
@@ -181,8 +181,8 @@ object Dbg: TDbg
       OnClick = FClick
     end
     object Label6: TLabel
-      Left = 110
-      Top = 56
+      Left = 118
+      Top = 48
       Width = 30
       Height = 13
       Alignment = taRightJustify
@@ -190,8 +190,8 @@ object Dbg: TDbg
       Caption = 'HL'#39':'
     end
     object HL_: TLabel
-      Left = 144
-      Top = 56
+      Left = 152
+      Top = 48
       Width = 40
       Height = 13
       AutoSize = False
@@ -208,8 +208,8 @@ object Dbg: TDbg
       OnMouseDown = HL_MouseDown
     end
     object BC_: TLabel
-      Left = 144
-      Top = 24
+      Left = 152
+      Top = 16
       Width = 40
       Height = 13
       AutoSize = False
@@ -226,8 +226,8 @@ object Dbg: TDbg
       OnMouseDown = BC_MouseDown
     end
     object DE_: TLabel
-      Left = 144
-      Top = 40
+      Left = 152
+      Top = 32
       Width = 40
       Height = 13
       AutoSize = False
@@ -244,8 +244,8 @@ object Dbg: TDbg
       OnMouseDown = DE_MouseDown
     end
     object A_: TLabel
-      Left = 144
-      Top = 72
+      Left = 152
+      Top = 64
       Width = 40
       Height = 13
       AutoSize = False
@@ -260,8 +260,8 @@ object Dbg: TDbg
       OnClick = A_Click
     end
     object F_: TLabel
-      Left = 144
-      Top = 88
+      Left = 152
+      Top = 80
       Width = 57
       Height = 13
       AutoSize = False
@@ -276,8 +276,8 @@ object Dbg: TDbg
       OnClick = F_Click
     end
     object Label12: TLabel
-      Left = 110
-      Top = 88
+      Left = 118
+      Top = 80
       Width = 30
       Height = 13
       Alignment = taRightJustify
@@ -285,8 +285,8 @@ object Dbg: TDbg
       Caption = 'F'#39':'
     end
     object Label13: TLabel
-      Left = 110
-      Top = 72
+      Left = 118
+      Top = 64
       Width = 30
       Height = 13
       Alignment = taRightJustify
@@ -294,8 +294,8 @@ object Dbg: TDbg
       Caption = 'A'#39':'
     end
     object Label14: TLabel
-      Left = 110
-      Top = 40
+      Left = 118
+      Top = 32
       Width = 30
       Height = 13
       Alignment = taRightJustify
@@ -303,8 +303,8 @@ object Dbg: TDbg
       Caption = 'DE'#39':'
     end
     object Label15: TLabel
-      Left = 110
-      Top = 24
+      Left = 118
+      Top = 16
       Width = 30
       Height = 13
       Alignment = taRightJustify
@@ -312,8 +312,8 @@ object Dbg: TDbg
       Caption = 'BC'#39':'
     end
     object Label16: TLabel
-      Left = 224
-      Top = 24
+      Left = 232
+      Top = 16
       Width = 20
       Height = 13
       Alignment = taRightJustify
@@ -321,8 +321,8 @@ object Dbg: TDbg
       Caption = 'IX:'
     end
     object IX: TLabel
-      Left = 248
-      Top = 24
+      Left = 256
+      Top = 16
       Width = 40
       Height = 13
       AutoSize = False
@@ -339,8 +339,8 @@ object Dbg: TDbg
       OnMouseDown = IXMouseDown
     end
     object Label18: TLabel
-      Left = 224
-      Top = 40
+      Left = 232
+      Top = 32
       Width = 20
       Height = 13
       Alignment = taRightJustify
@@ -348,8 +348,8 @@ object Dbg: TDbg
       Caption = 'IY:'
     end
     object IY: TLabel
-      Left = 248
-      Top = 40
+      Left = 256
+      Top = 32
       Width = 40
       Height = 13
       AutoSize = False
@@ -366,8 +366,8 @@ object Dbg: TDbg
       OnMouseDown = IYMouseDown
     end
     object Label20: TLabel
-      Left = 224
-      Top = 56
+      Left = 232
+      Top = 48
       Width = 20
       Height = 13
       Alignment = taRightJustify
@@ -375,8 +375,8 @@ object Dbg: TDbg
       Caption = 'IR:'
     end
     object IR: TLabel
-      Left = 248
-      Top = 56
+      Left = 256
+      Top = 48
       Width = 40
       Height = 13
       AutoSize = False
@@ -393,8 +393,8 @@ object Dbg: TDbg
       OnMouseDown = IRMouseDown
     end
     object Label22: TLabel
-      Left = 224
-      Top = 72
+      Left = 232
+      Top = 64
       Width = 20
       Height = 13
       Alignment = taRightJustify
@@ -402,8 +402,8 @@ object Dbg: TDbg
       Caption = 'SP:'
     end
     object SP: TLabel
-      Left = 248
-      Top = 72
+      Left = 256
+      Top = 64
       Width = 40
       Height = 13
       AutoSize = False
@@ -420,8 +420,8 @@ object Dbg: TDbg
       OnMouseDown = SPMouseDown
     end
     object Label24: TLabel
-      Left = 224
-      Top = 88
+      Left = 232
+      Top = 80
       Width = 20
       Height = 13
       Alignment = taRightJustify
@@ -429,8 +429,8 @@ object Dbg: TDbg
       Caption = 'PC:'
     end
     object PC: TLabel
-      Left = 248
-      Top = 88
+      Left = 256
+      Top = 80
       Width = 40
       Height = 13
       AutoSize = False
@@ -447,17 +447,17 @@ object Dbg: TDbg
       OnMouseDown = PCMouseDown
     end
     object Label7: TLabel
-      Left = 254
-      Top = 123
+      Left = 258
+      Top = 112
       Width = 23
       Height = 13
       AutoSize = False
       Caption = 'IM:'
     end
     object IM: TLabel
-      Left = 280
-      Top = 123
-      Width = 17
+      Left = 284
+      Top = 112
+      Width = 9
       Height = 13
       AutoSize = False
       Caption = '0'
@@ -465,39 +465,39 @@ object Dbg: TDbg
     end
     object Label9: TLabel
       Left = 96
-      Top = 123
+      Top = 112
       Width = 73
       Height = 13
       AutoSize = False
-      Caption = 'Interupts:'
+      Caption = 'Interrupts:'
     end
-    object Interupts: TLabel
-      Left = 170
-      Top = 123
+    object Interrupts: TLabel
+      Left = 178
+      Top = 112
       Width = 56
       Height = 14
       Caption = 'Disabled'
-      OnClick = InteruptsClick
+      OnClick = InterruptsClick
     end
     object Label11: TLabel
-      Left = 8
-      Top = 123
+      Left = 11
+      Top = 112
       Width = 37
       Height = 13
       AutoSize = False
       Caption = 'Halt:'
     end
     object Halt: TLabel
-      Left = 48
-      Top = 123
+      Left = 51
+      Top = 112
       Width = 25
       Height = 13
       AutoSize = False
       Caption = 'Yes'
     end
     object Label28: TLabel
-      Left = 32
-      Top = 102
+      Left = 40
+      Top = 94
       Width = 56
       Height = 14
       Caption = 'SZ-H-VNC'
@@ -510,8 +510,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label29: TLabel
-      Left = 144
-      Top = 102
+      Left = 152
+      Top = 94
       Width = 56
       Height = 14
       Caption = 'SZ-H-VNC'
@@ -523,112 +523,12 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
     end
-    object SingleStep: TButton
-      Left = 8
-      Top = 154
-      Width = 65
-      Height = 25
-      Caption = 'Single Step'
-      Enabled = False
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Pitch = fpFixed
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
-      OnClick = SingleStepClick
-    end
-    object StepOver: TButton
-      Left = 80
-      Top = 154
-      Width = 65
-      Height = 25
-      Caption = 'Step Over'
-      Enabled = False
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Pitch = fpFixed
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 1
-      OnClick = StepOverClick
-    end
-    object RunStop: TButton
-      Left = 152
-      Top = 154
-      Width = 65
-      Height = 25
-      Caption = 'Stop'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Pitch = fpFixed
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 2
-      OnClick = RunStopClick
-    end
-    object Continuous: TCheckBox
-      Left = 224
-      Top = 144
-      Width = 73
-      Height = 17
-      Caption = 'Continuous'
-      Checked = True
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Pitch = fpFixed
-      Font.Style = []
-      ParentFont = False
-      State = cbChecked
-      TabOrder = 3
-      OnClick = ContinuousClick
-    end
-    object SkipNMIBtn: TCheckBox
-      Left = 224
-      Top = 160
-      Width = 73
-      Height = 17
-      Caption = 'Skip NMI'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Pitch = fpFixed
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 4
-      OnClick = SkipNMIBtnClick
-    end
-    object SkipINTBtn: TCheckBox
-      Left = 224
-      Top = 176
-      Width = 73
-      Height = 17
-      Caption = 'Skip INT'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Pitch = fpFixed
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 5
-      OnClick = SkipINTBtnClick
-    end
   end
   object GroupBox2: TGroupBox
-    Left = 2
-    Top = 202
-    Width = 383
-    Height = 199
+    Left = 4
+    Top = 227
+    Width = 367
+    Height = 206
     Caption = 'Program'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -638,8 +538,8 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 1
     object Disass0: TLabel
-      Left = 16
-      Top = 32
+      Left = 8
+      Top = 37
       Width = 301
       Height = 14
       Caption = 'LABEL000    $0000  xxxxxxxx  LD HL,(IX+$zz)'
@@ -654,8 +554,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass1: TLabel
-      Left = 16
-      Top = 48
+      Left = 8
+      Top = 53
       Width = 70
       Height = 14
       Caption = '<history2>'
@@ -670,8 +570,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass2: TLabel
-      Left = 16
-      Top = 64
+      Left = 8
+      Top = 69
       Width = 70
       Height = 14
       Caption = '<history3>'
@@ -686,8 +586,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass3: TLabel
-      Left = 16
-      Top = 80
+      Left = 8
+      Top = 85
       Width = 350
       Height = 14
       Caption = '<currentPC> 01234567890123456789012345678901234567'
@@ -702,8 +602,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass4: TLabel
-      Left = 16
-      Top = 96
+      Left = 8
+      Top = 101
       Width = 7
       Height = 14
       Caption = '"'
@@ -716,8 +616,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass5: TLabel
-      Left = 16
-      Top = 112
+      Left = 8
+      Top = 117
       Width = 7
       Height = 14
       Caption = '"'
@@ -730,8 +630,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass6: TLabel
-      Left = 16
-      Top = 128
+      Left = 8
+      Top = 133
       Width = 7
       Height = 14
       Caption = '"'
@@ -744,8 +644,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass7: TLabel
-      Left = 16
-      Top = 144
+      Left = 8
+      Top = 149
       Width = 7
       Height = 14
       Caption = '"'
@@ -758,8 +658,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass8: TLabel
-      Left = 16
-      Top = 160
+      Left = 8
+      Top = 165
       Width = 7
       Height = 14
       Caption = '"'
@@ -772,8 +672,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Disass9: TLabel
-      Left = 16
-      Top = 176
+      Left = 8
+      Top = 181
       Width = 7
       Height = 14
       Caption = '"'
@@ -786,8 +686,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label8: TLabel
-      Left = 16
-      Top = 16
+      Left = 8
+      Top = 21
       Width = 259
       Height = 14
       Caption = 'Label       Addr   Code      Mnemonic'
@@ -801,11 +701,11 @@ object Dbg: TDbg
     end
   end
   object GroupBoxZX81: TGroupBox
-    Left = 394
-    Top = 234
-    Width = 177
-    Height = 167
-    Caption = 'ZX81'
+    Left = 378
+    Top = 314
+    Width = 185
+    Height = 119
+    Caption = 'Display Generation'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -815,7 +715,7 @@ object Dbg: TDbg
     TabOrder = 2
     object Label39: TLabel
       Left = 5
-      Top = 24
+      Top = 18
       Width = 105
       Height = 14
       Alignment = taRightJustify
@@ -830,7 +730,7 @@ object Dbg: TDbg
     end
     object Label10: TLabel
       Left = 5
-      Top = 40
+      Top = 34
       Width = 105
       Height = 14
       Alignment = taRightJustify
@@ -845,7 +745,7 @@ object Dbg: TDbg
     end
     object Label19: TLabel
       Left = 5
-      Top = 56
+      Top = 50
       Width = 105
       Height = 14
       Alignment = taRightJustify
@@ -860,7 +760,7 @@ object Dbg: TDbg
     end
     object Label21: TLabel
       Left = 5
-      Top = 72
+      Top = 66
       Width = 105
       Height = 14
       Alignment = taRightJustify
@@ -875,7 +775,7 @@ object Dbg: TDbg
     end
     object Label23: TLabel
       Left = 5
-      Top = 88
+      Top = 82
       Width = 105
       Height = 14
       Alignment = taRightJustify
@@ -889,7 +789,7 @@ object Dbg: TDbg
     end
     object NMIGen: TLabel
       Left = 115
-      Top = 24
+      Top = 18
       Width = 57
       Height = 14
       AutoSize = False
@@ -904,7 +804,7 @@ object Dbg: TDbg
     end
     object Scanline: TLabel
       Left = 115
-      Top = 56
+      Top = 50
       Width = 57
       Height = 14
       AutoSize = False
@@ -918,7 +818,7 @@ object Dbg: TDbg
     end
     object RowCount: TLabel
       Left = 115
-      Top = 72
+      Top = 66
       Width = 57
       Height = 13
       AutoSize = False
@@ -932,7 +832,7 @@ object Dbg: TDbg
     end
     object ShiftReg: TLabel
       Left = 115
-      Top = 88
+      Top = 82
       Width = 57
       Height = 13
       AutoSize = False
@@ -946,7 +846,7 @@ object Dbg: TDbg
     end
     object HSYNCGen: TLabel
       Left = 115
-      Top = 40
+      Top = 34
       Width = 57
       Height = 14
       AutoSize = False
@@ -960,12 +860,12 @@ object Dbg: TDbg
       OnClick = HSYNCGenClick
     end
     object Label27: TLabel
-      Left = 54
-      Top = 104
-      Width = 56
+      Left = 47
+      Top = 98
+      Width = 63
       Height = 14
       Alignment = taRightJustify
-      Caption = 'TStates:'
+      Caption = 'T-States:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -975,7 +875,7 @@ object Dbg: TDbg
     end
     object TStates: TLabel
       Left = 115
-      Top = 104
+      Top = 98
       Width = 57
       Height = 13
       AutoSize = False
@@ -989,11 +889,11 @@ object Dbg: TDbg
     end
   end
   object GroupBox4: TGroupBox
-    Left = 394
-    Top = 0
-    Width = 177
-    Height = 169
-    Caption = 'Control'
+    Left = 378
+    Top = 3
+    Width = 185
+    Height = 190
+    Caption = 'Breakpoints'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -1001,42 +901,41 @@ object Dbg: TDbg
     Font.Style = []
     ParentFont = False
     TabOrder = 3
-    object Label25: TLabel
-      Left = 8
-      Top = 16
-      Width = 59
-      Height = 13
-      Caption = 'Breakpoints:'
+    object AddrBrkBtn: TButton
+      Left = 125
+      Top = 18
+      Width = 53
+      Height = 25
+      Caption = 'Address'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-    end
-    object AddBrkBtn: TButton
-      Left = 120
-      Top = 104
-      Width = 49
-      Height = 25
-      Caption = 'Add'
-      TabOrder = 0
-      OnClick = AddBrkBtnClick
+      TabOrder = 1
+      OnClick = AddrBrkBtnClick
     end
     object DelBrkBtn: TButton
-      Left = 120
-      Top = 136
-      Width = 49
+      Left = 125
+      Top = 153
+      Width = 53
       Height = 25
-      Caption = 'Del'
-      TabOrder = 1
+      Caption = 'Delete'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 6
       OnClick = DelBrkBtnClick
     end
     object BPList: TStringGrid
       Left = 8
-      Top = 32
-      Width = 105
-      Height = 129
+      Top = 19
+      Width = 111
+      Height = 159
       ColCount = 1
       DefaultColWidth = 10
       DefaultRowHeight = 14
@@ -1045,14 +944,62 @@ object Dbg: TDbg
       FixedRows = 0
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRowSelect]
       ScrollBars = ssVertical
+      TabOrder = 0
+    end
+    object WriteBrkBtn: TButton
+      Left = 125
+      Top = 45
+      Width = 53
+      Height = 25
+      Caption = 'Write'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
+      OnClick = WriteBrkBtnClick
+    end
+    object ReadBrkBtn: TButton
+      Left = 125
+      Top = 72
+      Width = 53
+      Height = 25
+      Caption = 'Read'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = ReadBrkBtnClick
+    end
+    object OutBrkBtn: TButton
+      Left = 125
+      Top = 99
+      Width = 53
+      Height = 25
+      Caption = 'Out'
+      TabOrder = 4
+      OnClick = OutBrkBtnClick
+    end
+    object InBrkBtn: TButton
+      Left = 125
+      Top = 126
+      Width = 53
+      Height = 25
+      Caption = 'In'
+      TabOrder = 5
+      OnClick = InBrkBtnClick
     end
   end
   object GroupBox5: TGroupBox
     Left = 314
-    Top = 0
-    Width = 73
-    Height = 201
+    Top = 3
+    Width = 57
+    Height = 137
     Caption = 'Stack'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -1062,8 +1009,8 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 4
     object Stack0: TLabel
-      Left = 19
-      Top = 32
+      Left = 11
+      Top = 16
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1079,8 +1026,8 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object Stack1: TLabel
-      Left = 19
-      Top = 48
+      Left = 11
+      Top = 32
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1095,8 +1042,8 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object Stack2: TLabel
-      Left = 19
-      Top = 64
+      Left = 11
+      Top = 48
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1111,8 +1058,8 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object Stack3: TLabel
-      Left = 19
-      Top = 80
+      Left = 11
+      Top = 64
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1127,8 +1074,8 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object Stack4: TLabel
-      Left = 19
-      Top = 96
+      Left = 11
+      Top = 80
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1143,8 +1090,8 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object Stack5: TLabel
-      Left = 19
-      Top = 112
+      Left = 11
+      Top = 96
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1159,8 +1106,8 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object Stack6: TLabel
-      Left = 19
-      Top = 128
+      Left = 11
+      Top = 112
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1173,37 +1120,14 @@ object Dbg: TDbg
       PopupMenu = MemDumpPopup
       OnClick = Stack0Click
       OnMouseDown = Stack0MouseDown
-    end
-    object Stack7: TLabel
-      Left = 19
-      Top = 144
-      Width = 35
-      Height = 14
-      Caption = '$FFFF'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Courier New'
-      Font.Style = []
-      ParentFont = False
-      PopupMenu = MemDumpPopup
-      OnClick = Stack0Click
-      OnMouseDown = Stack0MouseDown
-    end
-    object Label17: TLabel
-      Left = 19
-      Top = 16
-      Width = 21
-      Height = 14
-      Caption = 'SP:'
     end
   end
   object GroupBoxAce: TGroupBox
-    Left = 392
-    Top = 234
-    Width = 179
-    Height = 167
-    Caption = 'Jupiter Ace'
+    Left = 378
+    Top = 275
+    Width = 185
+    Height = 158
+    Caption = 'Jupiter Ace Forth Stack'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -1213,7 +1137,7 @@ object Dbg: TDbg
     TabOrder = 5
     object AceStk0: TLabel
       Left = 43
-      Top = 32
+      Top = 20
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1228,7 +1152,7 @@ object Dbg: TDbg
     end
     object AceStk1: TLabel
       Left = 43
-      Top = 48
+      Top = 36
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1242,7 +1166,7 @@ object Dbg: TDbg
     end
     object AceStk2: TLabel
       Left = 43
-      Top = 64
+      Top = 52
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1256,7 +1180,7 @@ object Dbg: TDbg
     end
     object AceStk3: TLabel
       Left = 43
-      Top = 80
+      Top = 68
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1270,7 +1194,7 @@ object Dbg: TDbg
     end
     object AceStk4: TLabel
       Left = 43
-      Top = 96
+      Top = 84
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1284,7 +1208,7 @@ object Dbg: TDbg
     end
     object AceStk5: TLabel
       Left = 43
-      Top = 112
+      Top = 100
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1298,7 +1222,7 @@ object Dbg: TDbg
     end
     object AceStk6: TLabel
       Left = 43
-      Top = 128
+      Top = 116
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1312,7 +1236,7 @@ object Dbg: TDbg
     end
     object AceStk7: TLabel
       Left = 43
-      Top = 144
+      Top = 132
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1324,16 +1248,9 @@ object Dbg: TDbg
       ParentFont = False
       OnClick = AceStk0Click
     end
-    object Label36: TLabel
-      Left = 8
-      Top = 16
-      Width = 84
-      Height = 14
-      Caption = 'Forth Stack:'
-    end
     object Label37: TLabel
       Left = 83
-      Top = 32
+      Top = 20
       Width = 7
       Height = 14
       Caption = ':'
@@ -1348,7 +1265,7 @@ object Dbg: TDbg
     end
     object Label38: TLabel
       Left = 83
-      Top = 48
+      Top = 36
       Width = 7
       Height = 14
       Caption = ':'
@@ -1361,7 +1278,7 @@ object Dbg: TDbg
     end
     object Label40: TLabel
       Left = 83
-      Top = 64
+      Top = 52
       Width = 7
       Height = 14
       Caption = ':'
@@ -1374,7 +1291,7 @@ object Dbg: TDbg
     end
     object Label41: TLabel
       Left = 83
-      Top = 80
+      Top = 68
       Width = 7
       Height = 14
       Caption = ':'
@@ -1387,7 +1304,7 @@ object Dbg: TDbg
     end
     object Label42: TLabel
       Left = 83
-      Top = 96
+      Top = 84
       Width = 7
       Height = 14
       Caption = ':'
@@ -1400,7 +1317,7 @@ object Dbg: TDbg
     end
     object Label43: TLabel
       Left = 83
-      Top = 112
+      Top = 100
       Width = 7
       Height = 14
       Caption = ':'
@@ -1413,7 +1330,7 @@ object Dbg: TDbg
     end
     object Label44: TLabel
       Left = 83
-      Top = 128
+      Top = 116
       Width = 7
       Height = 14
       Caption = ':'
@@ -1426,7 +1343,7 @@ object Dbg: TDbg
     end
     object Label45: TLabel
       Left = 83
-      Top = 144
+      Top = 132
       Width = 7
       Height = 14
       Caption = ':'
@@ -1439,7 +1356,7 @@ object Dbg: TDbg
     end
     object AceStkVal0: TLabel
       Left = 99
-      Top = 32
+      Top = 20
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1454,7 +1371,7 @@ object Dbg: TDbg
     end
     object AceStkVal1: TLabel
       Left = 99
-      Top = 48
+      Top = 36
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1468,7 +1385,7 @@ object Dbg: TDbg
     end
     object AceStkVal2: TLabel
       Left = 99
-      Top = 64
+      Top = 52
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1482,7 +1399,7 @@ object Dbg: TDbg
     end
     object AceStkVal3: TLabel
       Left = 99
-      Top = 80
+      Top = 68
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1496,7 +1413,7 @@ object Dbg: TDbg
     end
     object AceStkVal4: TLabel
       Left = 99
-      Top = 96
+      Top = 84
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1510,7 +1427,7 @@ object Dbg: TDbg
     end
     object AceStkVal5: TLabel
       Left = 99
-      Top = 112
+      Top = 100
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1524,7 +1441,7 @@ object Dbg: TDbg
     end
     object AceStkVal6: TLabel
       Left = 99
-      Top = 128
+      Top = 116
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1538,7 +1455,7 @@ object Dbg: TDbg
     end
     object AceStkVal7: TLabel
       Left = 99
-      Top = 144
+      Top = 132
       Width = 35
       Height = 14
       Caption = '$FFFF'
@@ -1551,35 +1468,424 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
   end
-  object EnableHistory: TCheckBox
-    Left = 464
-    Top = 212
-    Width = 65
-    Height = 17
-    Caption = 'Enable'
+  object Execute: TGroupBox
+    Left = 4
+    Top = 141
+    Width = 238
+    Height = 84
+    Caption = 'Control'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 6
+    object SingleStep: TButton
+      Left = 12
+      Top = 21
+      Width = 65
+      Height = 25
+      Caption = 'Single Step'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      OnClick = SingleStepClick
+    end
+    object StepOver: TButton
+      Left = 87
+      Top = 21
+      Width = 65
+      Height = 25
+      Caption = 'Step Over'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      OnClick = StepOverClick
+    end
+    object RunStop: TButton
+      Left = 162
+      Top = 21
+      Width = 65
+      Height = 25
+      Caption = 'Stop'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      OnClick = RunStopClick
+    end
+    object Continuous: TCheckBox
+      Left = 155
+      Top = 56
+      Width = 73
+      Height = 17
+      Caption = 'Continuous'
+      Checked = True
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      State = cbChecked
+      TabOrder = 5
+      OnClick = ContinuousClick
+    end
+    object SkipNMIBtn: TCheckBox
+      Left = 11
+      Top = 56
+      Width = 65
+      Height = 17
+      Caption = 'Skip NMI'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = SkipNMIBtnClick
+    end
+    object SkipINTBtn: TCheckBox
+      Left = 83
+      Top = 56
+      Width = 65
+      Height = 17
+      Caption = 'Skip INT'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      OnClick = SkipINTBtnClick
+    end
   end
-  object History: TButton
-    Left = 392
-    Top = 212
-    Width = 65
-    Height = 17
-    Caption = 'History'
+  object GroupBox3: TGroupBox
+    Left = 378
+    Top = 195
+    Width = 185
+    Height = 78
+    Caption = 'View'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 7
-    OnClick = HistoryClick
+    object SymRom: TLabel
+      Left = 125
+      Top = 52
+      Width = 25
+      Height = 13
+      Caption = 'ROM'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object SymApp: TLabel
+      Left = 157
+      Top = 52
+      Width = 21
+      Height = 13
+      Caption = 'APP'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object EnableHistory: TCheckBox
+      Left = 8
+      Top = 52
+      Width = 57
+      Height = 17
+      Caption = 'Enable'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+    end
+    object History: TButton
+      Left = 7
+      Top = 20
+      Width = 53
+      Height = 25
+      Caption = 'History'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      OnClick = HistoryClick
+    end
+    object Memory: TButton
+      Left = 66
+      Top = 20
+      Width = 53
+      Height = 25
+      Caption = 'Memory'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      OnClick = MemoryClick
+    end
+    object Symbols: TButton
+      Left = 125
+      Top = 20
+      Width = 53
+      Height = 25
+      Caption = 'Symbols'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = SymbolsClick
+    end
   end
-  object Symbols: TButton
-    Left = 392
-    Top = 180
-    Width = 65
-    Height = 17
-    Caption = 'Symbols'
+  object IOPorts: TGroupBox
+    Left = 249
+    Top = 141
+    Width = 122
+    Height = 84
+    Caption = 'I/O'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 8
-    OnClick = SymbolsClick
+    object IOPort0Address: TLabel
+      Left = 40
+      Top = 16
+      Width = 35
+      Height = 14
+      Caption = '$xxFE'
+    end
+    object IOPort2Address: TLabel
+      Left = 40
+      Top = 48
+      Width = 35
+      Height = 14
+      Caption = '$BFFD'
+    end
+    object IOPort1Address: TLabel
+      Left = 40
+      Top = 32
+      Width = 35
+      Height = 14
+      Caption = '$7FFD'
+    end
+    object IOPort3Address: TLabel
+      Left = 40
+      Top = 64
+      Width = 35
+      Height = 14
+      Caption = '$FFFD'
+    end
+    object IOPort0Data: TLabel
+      Left = 88
+      Top = 16
+      Width = 21
+      Height = 14
+      Caption = '$FF'
+    end
+    object IOPort0Direction: TLabel
+      Left = 10
+      Top = 16
+      Width = 21
+      Height = 14
+      Caption = 'OUT'
+    end
+    object IOPort2Data: TLabel
+      Left = 88
+      Top = 48
+      Width = 21
+      Height = 14
+      Caption = '$FF'
+    end
+    object IOPort1Data: TLabel
+      Left = 88
+      Top = 32
+      Width = 21
+      Height = 14
+      Caption = '$FF'
+    end
+    object IOPort3Data: TLabel
+      Left = 88
+      Top = 64
+      Width = 21
+      Height = 14
+      Caption = '$FF'
+    end
+    object IOPort3Direction: TLabel
+      Left = 10
+      Top = 64
+      Width = 21
+      Height = 14
+      Caption = 'OUT'
+    end
+    object IOPort1Direction: TLabel
+      Left = 10
+      Top = 32
+      Width = 21
+      Height = 14
+      Caption = 'OUT'
+    end
+    object IOPort2Direction: TLabel
+      Left = 10
+      Top = 48
+      Width = 21
+      Height = 14
+      Caption = 'OUT'
+    end
+  end
+  object GroupBoxChroma: TGroupBox
+    Left = 378
+    Top = 275
+    Width = 90
+    Height = 36
+    Caption = 'Chroma'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 9
+    object ChromaColourModeLabel: TLabel
+      Left = 14
+      Top = 15
+      Width = 35
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Mode:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+    end
+    object ChromaColourMode: TLabel
+      Left = 54
+      Top = 15
+      Width = 21
+      Height = 14
+      Caption = '$00'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+    end
+  end
+  object GroupBoxZXC: TGroupBox
+    Left = 473
+    Top = 275
+    Width = 90
+    Height = 36
+    Caption = 'ZXC'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 10
+    object ZXCModeLabel: TLabel
+      Left = 14
+      Top = 15
+      Width = 35
+      Height = 14
+      Alignment = taRightJustify
+      Caption = 'Mode:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+    end
+    object ZXCMode: TLabel
+      Left = 54
+      Top = 15
+      Width = 21
+      Height = 14
+      Caption = '$00'
+    end
+  end
+  object GroupBoxSpectra: TGroupBox
+    Left = 378
+    Top = 275
+    Width = 90
+    Height = 36
+    Caption = 'Spectra'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Courier New'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 11
+    object SpectraModeLabel: TLabel
+      Left = 14
+      Top = 15
+      Width = 35
+      Height = 14
+      Caption = 'Mode:'
+    end
+    object SpectraMode: TLabel
+      Left = 54
+      Top = 15
+      Width = 21
+      Height = 14
+      Caption = '$00'
+    end
   end
   object MemDumpPopup: TPopupMenu
-    Left = 536
-    Top = 184
+    Left = 538
+    Top = 187
     object MemDumpFromHere1: TMenuItem
       Caption = 'Show Memory'
       OnClick = MemDumpFromHere1Click

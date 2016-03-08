@@ -14,8 +14,6 @@ int MidiDev=-1;
 
 void MidiWriteBit(int Bit)
 {
-        static int Byte=0;
-
         if (zx81.machine==MACHINESPEC48 &&
                 ( spectrum.machine==SPECCYPLUS2A || spectrum.machine==SPECCYPLUS3))
         {
@@ -80,8 +78,4 @@ void MidiStop(void)
         if (outHandle) midiOutClose(outHandle);
         outHandle=NULL;
 }
-
-
-
-
 

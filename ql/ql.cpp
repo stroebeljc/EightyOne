@@ -110,16 +110,14 @@ int ql_contend(int Address, int tstates, int time)
 
 int ql_do_scanline(SCANLINE *CurScanLine)
 {
-        int ts,i,j;
-        static int ink,paper;
+        int ts;
+        static int paper;
         static int Sy=0, loop=207;
         static int borrow=0;
-        static int fts=0, sts=0, chars=0, delay=0;
-        static int shift_register;
+        static int fts=0, sts=0, delay=0;
         static int clean_exit=1;
-        int inv,flash,pixels;
+        int pixels;
         int MaxScanLen;
-        int PrevBit=0, PrevGhost=0;
 
         CurScanLine->scanline_len=0;
 
@@ -159,7 +157,7 @@ int ql_do_scanline(SCANLINE *CurScanLine)
                         }
                         else
                         {
-                                int data,addr,shift;
+                                int data,addr;
 
                                 pixels++;
                                 delay=0;

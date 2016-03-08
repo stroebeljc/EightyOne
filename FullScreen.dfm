@@ -1,11 +1,11 @@
 object FSSettings: TFSSettings
-  Left = 479
-  Top = 161
+  Left = 484
+  Top = 165
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Display Settings'
-  ClientHeight = 238
-  ClientWidth = 207
+  ClientHeight = 214
+  ClientWidth = 192
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,30 +25,30 @@ object FSSettings: TFSSettings
     Caption = 'Renderer:'
   end
   object OK: TButton
-    Left = 128
-    Top = 208
+    Left = 110
+    Top = 183
     Width = 75
     Height = 25
     Caption = 'OK'
-    TabOrder = 0
+    TabOrder = 3
     OnClick = OKClick
   end
   object GroupBox1: TGroupBox
     Left = 8
-    Top = 64
-    Width = 193
+    Top = 48
+    Width = 177
     Height = 129
     Caption = 'Full Screen Settings'
-    TabOrder = 1
+    TabOrder = 2
     object Label1: TLabel
-      Left = 16
+      Left = 8
       Top = 24
       Width = 53
       Height = 13
       Caption = 'Resolution:'
     end
     object ModeList: TComboBox
-      Left = 16
+      Left = 8
       Top = 40
       Width = 161
       Height = 21
@@ -58,27 +58,27 @@ object FSSettings: TFSSettings
       OnChange = ModeListChange
     end
     object Letterbox: TRadioButton
-      Left = 16
+      Left = 8
       Top = 88
       Width = 97
       Height = 17
       Caption = 'Letterbox'
-      TabOrder = 1
+      TabOrder = 2
       OnClick = ModeListChange
     end
     object Stretch: TRadioButton
-      Left = 16
+      Left = 8
       Top = 72
       Width = 97
       Height = 17
       Caption = 'Stretch Image'
       Checked = True
-      TabOrder = 2
+      TabOrder = 1
       TabStop = True
       OnClick = ModeListChange
     end
     object White: TCheckBox
-      Left = 16
+      Left = 8
       Top = 104
       Width = 97
       Height = 17
@@ -89,21 +89,21 @@ object FSSettings: TFSSettings
   end
   object GDIBtn: TRadioButton
     Left = 24
-    Top = 32
+    Top = 24
     Width = 65
     Height = 17
     Caption = 'GDI'
-    TabOrder = 2
+    TabOrder = 0
     OnClick = GDIBtnClick
   end
   object DDrawBtn: TRadioButton
-    Left = 104
-    Top = 32
+    Left = 96
+    Top = 24
     Width = 89
     Height = 17
     Caption = 'DirectDraw'
     Checked = True
-    TabOrder = 3
+    TabOrder = 1
     TabStop = True
     OnClick = GDIBtnClick
   end

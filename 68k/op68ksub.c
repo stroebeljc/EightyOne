@@ -14,7 +14,7 @@
  *  30.10.2002  JH  Replaced "% 8" with "& 7". Helps lesser compilers to generate faster code.
  */
 #ifndef PROTOH
-static char     sccsid[] = "$Id: op68ksub.c,v 1.4 2002/10/30 16:23:06 jhoenig Exp $";
+//static char     sccsid[] = "$Id: op68ksub.c,v 1.4 2002/10/30 16:23:06 jhoenig Exp $";
 #include "68000.h"
 #include "op68k.h"
 
@@ -798,3 +798,4 @@ Oper (Op5fa0, DoSubL, DL, Ss, 7, DL, DA, CmaiL, (inst & 7), GML, SML)
 Oper (Op5fa8, DoSubL, DL, Ss, 7, DL, DA, Cdai, (inst & 7), GML, SML)
 Oper (Op5fb0, DoSubL, DL, Ss, 7, DL, DA, Caix, (inst & 7), GML, SML)
 Oper (Op5fb8, DoSubL, DL, Ss, 7, DL, DA, Ceaw, (inst & 7), GML, SML)
+

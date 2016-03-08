@@ -15,6 +15,8 @@
 #include "parallel.h"
 
 extern void fdl_setfilename(FDRV_PTR fd, const char *s);
+extern FDRV_PTR fd_newldsk(void);
+extern void spec48_nmi(void);
 
 FDC_PTR p3_fdc=NULL;
 FDRV_PTR p3_drive_a=NULL;
@@ -31,33 +33,44 @@ char LarkenPath0[MAXPATH], LarkenPath1[MAXPATH];
 extern int USEFDC765DLL;
 HANDLE DLLHandle;
 
-void _stdcall (*u765_Initialise)(void);
-void _stdcall (*u765_InsertDisk)(LPCSTR lpFileName, BYTE unit);
-void _stdcall (*u765_EjectDisk)(BYTE unit);
-void _stdcall (*u765_SetMotorState)(BYTE state);
-BYTE _stdcall (*u765_StatusPortRead)(void);
-BYTE _stdcall (*u765_DataPortRead)(void);
-void _stdcall (*u765_DataPortWrite)(BYTE data);
-void _stdcall (*u765_SetActiveCallback)(DWORD lpCallback);
-void _stdcall (*u765_Shutdown)(void);
-DWORD _stdcall (*u765_DiskInserted)(BYTE unit);
-DWORD _stdcall (*u765_SetRandomMethod)(BYTE method);
+typedef void _stdcall (*u765_InitialiseT)(void);
+u765_InitialiseT u765_Initialise;
+typedef void _stdcall (*u765_InsertDiskT)(LPCSTR lpFileName, BYTE unit);
+u765_InsertDiskT u765_InsertDisk;
+typedef void _stdcall (*u765_EjectDiskT)(BYTE unit);
+u765_EjectDiskT u765_EjectDisk;
+typedef void _stdcall (*u765_SetMotorStateT)(BYTE state);
+u765_SetMotorStateT u765_SetMotorState;
+typedef BYTE _stdcall (*u765_StatusPortReadT)(void);
+u765_StatusPortReadT u765_StatusPortRead;
+typedef BYTE _stdcall (*u765_DataPortReadT)(void);
+u765_DataPortReadT u765_DataPortRead;
+typedef void _stdcall (*u765_DataPortWriteT)(BYTE data);
+u765_DataPortWriteT u765_DataPortWrite;
+typedef void _stdcall (*u765_SetActiveCallbackT)(DWORD lpCallback);
+u765_SetActiveCallbackT u765_SetActiveCallback;
+typedef void _stdcall (*u765_ShutdownT)(void);
+u765_ShutdownT u765_Shutdown;
+typedef DWORD _stdcall (*u765_DiskInsertedT)(BYTE unit);
+u765_DiskInsertedT u765_DiskInserted;
+typedef DWORD _stdcall (*u765_SetRandomMethodT)(BYTE method);
+u765_SetRandomMethodT u765_SetRandomMethod;
 
 void LoadFDC765DLL(void)
 {
         USEFDC765DLL=1;
-        if (!(DLLHandle=LoadLibrary("fdc765"))) { USEFDC765DLL=0; return; }
-        if (!(u765_Initialise=GetProcAddress(DLLHandle,"u765_Initialise"))) USEFDC765DLL=0;
-        if (!(u765_InsertDisk=GetProcAddress(DLLHandle,"u765_InsertDisk"))) USEFDC765DLL=0;
-        if (!(u765_EjectDisk=GetProcAddress(DLLHandle,"u765_EjectDisk"))) USEFDC765DLL=0;
-        if (!(u765_SetMotorState=GetProcAddress(DLLHandle,"u765_SetMotorState"))) USEFDC765DLL=0;
-        if (!(u765_StatusPortRead=GetProcAddress(DLLHandle,"u765_StatusPortRead"))) USEFDC765DLL=0;
-        if (!(u765_DataPortRead=GetProcAddress(DLLHandle,"u765_DataPortRead"))) USEFDC765DLL=0;
-        if (!(u765_DataPortWrite=GetProcAddress(DLLHandle,"u765_DataPortWrite"))) USEFDC765DLL=0;
-        if (!(u765_SetActiveCallback=GetProcAddress(DLLHandle,"u765_SetActiveCallback"))) USEFDC765DLL=0;
-        if (!(u765_Shutdown=GetProcAddress(DLLHandle,"u765_Shutdown"))) USEFDC765DLL=0;
-        if (!(u765_DiskInserted=GetProcAddress(DLLHandle,"u765_DiskInserted"))) USEFDC765DLL=0;
-        if (!(u765_SetRandomMethod=GetProcAddress(DLLHandle,"u765_SetRandomMethod"))) USEFDC765DLL=0;
+        if ((DLLHandle=LoadLibrary("fdc765")) != 0) { USEFDC765DLL=0; return; }
+        if ((u765_Initialise=(u765_InitialiseT)GetProcAddress(DLLHandle,"u765_Initialise")) == 0) USEFDC765DLL=0;
+        if ((u765_InsertDisk=(u765_InsertDiskT)GetProcAddress(DLLHandle,"u765_InsertDisk")) == 0) USEFDC765DLL=0;
+        if ((u765_EjectDisk=(u765_EjectDiskT)GetProcAddress(DLLHandle,"u765_EjectDisk")) == 0) USEFDC765DLL=0;
+        if ((u765_SetMotorState=(u765_SetMotorStateT)GetProcAddress(DLLHandle,"u765_SetMotorState")) == 0) USEFDC765DLL=0;
+        if ((u765_StatusPortRead=(u765_StatusPortReadT)GetProcAddress(DLLHandle,"u765_StatusPortRead")) == 0) USEFDC765DLL=0;
+        if ((u765_DataPortRead=(u765_DataPortReadT)GetProcAddress(DLLHandle,"u765_DataPortRead")) == 0) USEFDC765DLL=0;
+        if ((u765_DataPortWrite=(u765_DataPortWriteT)GetProcAddress(DLLHandle,"u765_DataPortWrite")) == 0) USEFDC765DLL=0;
+        if ((u765_SetActiveCallback=(u765_SetActiveCallbackT)GetProcAddress(DLLHandle,"u765_SetActiveCallback")) == 0) USEFDC765DLL=0;
+        if ((u765_Shutdown=(u765_ShutdownT)GetProcAddress(DLLHandle,"u765_Shutdown")) == 0) USEFDC765DLL=0;
+        if ((u765_DiskInserted=(u765_DiskInsertedT)GetProcAddress(DLLHandle,"u765_DiskInserted")) == 0) USEFDC765DLL=0;
+        if ((u765_SetRandomMethod=(u765_SetRandomMethodT)GetProcAddress(DLLHandle,"u765_SetRandomMethod")) == 0) USEFDC765DLL=0;
 
         if (USEFDC765DLL) u765_Initialise();
         else if (DLLHandle) FreeLibrary(DLLHandle);
@@ -306,7 +319,7 @@ void floppy_ClockTick(int ts)
         static int counter=190;
         static int NMICount=NMIREADTICKER;
 
-        int a=WD1770_SR_BUSY;
+        //int a=WD1770_SR_BUSY;
 
         if (spectrum.floppytype==FLOPPYPLUS3 && !USEFDC765DLL)
         {
@@ -382,7 +395,7 @@ void floppy_shutdown()
 
 void floppy_init()
 {
-        int i;
+        int i=0;
         char filename[MAXPATH]="\0";
 
         Data_Reg_A=0; Data_Dir_A=0; Control_A=0;
@@ -754,7 +767,7 @@ void floppy_setimage(int drive, char *filename)
                         if (u765_DiskInserted(drive))
                                 u765_EjectDisk(drive);
                         if (strlen(filename)) u765_InsertDisk(filename,drive);
-                        a=u765_DiskInserted(0);
+                        u765_DiskInserted(0);
                         return;
                 }
 

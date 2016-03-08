@@ -28,8 +28,8 @@
 
 #define EMUID           0x85
 #define MAJORVERSION    1
-#define MINORVERSION    0
-//#define TESTVERSION     'e'
+#define MINORVERSION    1
+//#define TESTVERSION     'x'
 
 #define SYNCTYPEH       1
 #define SYNCTYPEV       2
@@ -74,11 +74,20 @@
 #define CHRGENLAMBDA    4
 
 #define COLOURDISABLED  0
-#define COLOURPRISM     1
-#define COLOURLAMBDA    2
-#define COLOURDDC       3
-#define COLOURHAVEN     4
-#define COLOURACE       5
+#define COLOURSINCLAIR  0
+#define COLOURLAMBDA    1
+#define COLOURCHROMA    2
+#define COLOURPRISM     3
+#define COLOURDDC       4
+#define COLOURHAVEN     5
+#define COLOURACE       6
+#define COLOURSPECTRA   7
+
+#define ROMCARTRIDGENONE     0
+#define ROMCARTRIDGESINCLAIR 1
+#define ROMCARTRIDGEZXC2     2
+#define ROMCARTRIDGEZXC3     3
+#define ROMCARTRIDGEZXC4     4
 
 #define CRCACE		0x0a09
 #define CRCASZMIC	0xcac9
@@ -150,12 +159,17 @@ typedef struct
         CFGBYTE debug1, debug2;
         CFGBYTE autoload;
         CFGBYTE wobble;
-        CFGBYTE chrgen, enableqschrgen;
+        CFGBYTE chrgen, enableQSchrgen;
         CFGBYTE bordersize;
         CFGBYTE simpleghost;
         CFGBYTE maxireg;
         CFGBYTE zxprinter;
         CFGBYTE zxpand;
+        CFGBYTE romCartridge;
+        int zxcPaging;
+        int zxcLowerControlAccessSelected;
+        int zxcInterface1BankPagedIn;
+        int zxcCassetteBankPagedIn;
         int RAMTOP;
         int ROMTOP;
         int m1not;
@@ -164,6 +178,10 @@ typedef struct
         int frameskip;
         int speedup;
         int UseRShift;
+        CFGBYTE chromaMode;
+        CFGBYTE spectraMode;
+        CFGBYTE spectraColourSwitchOn;
+        CFGBYTE chromaColourSwitchOn;
         
         char ROM80[256];
         char ROM81[256];
@@ -194,6 +212,7 @@ typedef struct
         char ROMOPUSD[256];
         char ROMBETADISC[256];
         char ROMUSPEECH[256];
+        char ROMCARTRIDGE[4 * 1024 * 1024];
         char cwd[256];
         char temppath[256];
         char inipath[256];
@@ -257,7 +276,9 @@ typedef struct
         void (*initialise)(void);
         int (*do_scanline)(SCANLINE *line);
         void (*writebyte)(int Address, int Data);
+        void (*setbyte)(int Address, int Data);
         BYTE (*readbyte)(int Address);
+        BYTE (*getbyte)(int Address);
         BYTE (*opcode_fetch)(int Address);
         void (*writeport)(int Address, int Data, int *tstates);
         BYTE (*readport)(int Address, int *tstates);
@@ -294,7 +315,9 @@ extern void load_config();
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))
+#define getbyte(Addr) (machine.getbyte(Addr))
 #define writebyte(Addr,Data) (machine.writebyte(Addr,Data))
+#define setbyte(Addr,Data) (machine.setbyte(Addr,Data))
 #define writeport(Addr,Data,tstates) (machine.writeport(Addr,Data,tstates))
 #define readport(Addr, tstates) (machine.readport(Addr, tstates))
 #define opcode_fetch(Addr) (machine.opcode_fetch(Addr))

@@ -1,6 +1,6 @@
 object SerialConfig: TSerialConfig
-  Left = 724
-  Top = 115
+  Left = 726
+  Top = 117
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'TS2050 Configuration'
@@ -29,7 +29,7 @@ object SerialConfig: TSerialConfig
     Width = 217
     Height = 89
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 5
     object Label2: TLabel
       Left = 13
       Top = 12
@@ -129,7 +129,7 @@ object SerialConfig: TSerialConfig
     Width = 225
     Height = 81
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 1
     object Label5: TLabel
       Left = 8
       Top = 12
@@ -172,7 +172,7 @@ object SerialConfig: TSerialConfig
     Height = 17
     Alignment = taLeftJustify
     Caption = 'Connected:'
-    TabOrder = 1
+    TabOrder = 3
   end
   object OK: TButton
     Left = 152
@@ -180,7 +180,7 @@ object SerialConfig: TSerialConfig
     Width = 75
     Height = 25
     Caption = 'OK'
-    TabOrder = 2
+    TabOrder = 4
     OnClick = OKClick
   end
   object TCPPanel: TPanel
@@ -189,7 +189,7 @@ object SerialConfig: TSerialConfig
     Width = 209
     Height = 121
     BevelOuter = bvNone
-    TabOrder = 5
+    TabOrder = 2
     object Label6: TLabel
       Left = 8
       Top = 52
@@ -211,7 +211,7 @@ object SerialConfig: TSerialConfig
       Top = 28
       Width = 137
       Height = 21
-      TabOrder = 0
+      TabOrder = 1
     end
     object TCPInboundPort: TEdit
       Left = 8
@@ -219,7 +219,7 @@ object SerialConfig: TSerialConfig
       Width = 201
       Height = 21
       Enabled = False
-      TabOrder = 1
+      TabOrder = 4
     end
     object ConnectTo: TRadioButton
       Left = 8
@@ -228,7 +228,7 @@ object SerialConfig: TSerialConfig
       Height = 17
       Caption = 'Connect to:'
       Checked = True
-      TabOrder = 2
+      TabOrder = 0
       TabStop = True
     end
     object ListenOn: TRadioButton
@@ -245,7 +245,7 @@ object SerialConfig: TSerialConfig
       Top = 28
       Width = 57
       Height = 21
-      TabOrder = 4
+      TabOrder = 2
     end
   end
   object ComPort1: TComPort

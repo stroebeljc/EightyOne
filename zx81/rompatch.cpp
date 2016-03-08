@@ -172,8 +172,8 @@ bool ZX80ZX81LambdaStopTape(int& pc)
 // handle: 0x38DEc9
 bool LarkenLoadTrack(int& pc)
 {
-        int drive=memory[12301];
-        int track=memory[12289];
+        //int drive=memory[12301];
+        //int track=memory[12289];
         if (!LarkenLoadTrack((memory[12301]==2), memory[12289], memory+12352))
         {
                 memory[14335]=0xFA;
@@ -227,7 +227,7 @@ void InitPatches(int machineType)
 
 int PatchTest(int pc)
 {
-        DWORD patchHandle = pc << 8 | memory[pc];
+        DWORD patchHandle = (pc << 8) | memory[pc];
 
         PATCHMAP::iterator it = patches.find(patchHandle);
         if (it != patches.end())

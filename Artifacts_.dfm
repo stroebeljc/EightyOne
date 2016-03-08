@@ -1,6 +1,6 @@
 object Artifacts: TArtifacts
-  Left = 590
-  Top = 114
+  Left = 453
+  Top = 104
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'TV Emulation'
@@ -416,7 +416,7 @@ object Artifacts: TArtifacts
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 14
     OnClick = CloseBtnClick
   end
   object NoiseTrack: TTrackBar
@@ -434,7 +434,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 1
+    TabOrder = 3
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -454,7 +454,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 2
+    TabOrder = 4
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -467,7 +467,7 @@ object Artifacts: TArtifacts
     Caption = 'Enabled'
     Checked = True
     State = cbChecked
-    TabOrder = 3
+    TabOrder = 8
     OnClick = ArtEnabledClick
   end
   object ScanLineTrack: TTrackBar
@@ -485,7 +485,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 4
+    TabOrder = 5
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -504,7 +504,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 5
+    TabOrder = 0
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -517,7 +517,7 @@ object Artifacts: TArtifacts
     Caption = 'Simple Ghosting'
     Checked = True
     State = cbChecked
-    TabOrder = 6
+    TabOrder = 10
     OnClick = SimpleGhostingClick
   end
   object ContrastTrack: TTrackBar
@@ -530,11 +530,11 @@ object Artifacts: TArtifacts
     Orientation = trVertical
     ParentShowHint = False
     Frequency = 128
-    Position = 50
+    Position = 85
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 7
+    TabOrder = 1
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -545,7 +545,7 @@ object Artifacts: TArtifacts
     Width = 81
     Height = 17
     Caption = 'Dot Crawl'
-    TabOrder = 8
+    TabOrder = 12
     OnClick = DotCrawl1Click
   end
   object AdvEffects: TCheckBox
@@ -554,7 +554,7 @@ object Artifacts: TArtifacts
     Width = 113
     Height = 17
     Caption = 'Advanced Effects'
-    TabOrder = 9
+    TabOrder = 11
     OnClick = AdvEffectsClick
   end
   object Interlaced1: TCheckBox
@@ -563,7 +563,7 @@ object Artifacts: TArtifacts
     Width = 105
     Height = 17
     Caption = 'Interlaced Display'
-    TabOrder = 10
+    TabOrder = 13
     OnClick = Interlaced1Click
   end
   object Vibrant: TCheckBox
@@ -572,7 +572,7 @@ object Artifacts: TArtifacts
     Width = 97
     Height = 17
     Caption = 'Vibrant Colour'
-    TabOrder = 11
+    TabOrder = 9
     OnClick = TrackBarChange
   end
   object ColourTrack: TTrackBar
@@ -589,7 +589,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 12
+    TabOrder = 2
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -609,7 +609,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 13
+    TabOrder = 7
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange
@@ -629,7 +629,7 @@ object Artifacts: TArtifacts
     SelEnd = 0
     SelStart = 0
     ShowHint = True
-    TabOrder = 14
+    TabOrder = 6
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange

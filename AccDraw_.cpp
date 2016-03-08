@@ -167,7 +167,8 @@ int DDInit(void)
 
         if (Form1->FullScreen)
         {
-                hRet = m_pDD->SetCooperativeLevel(hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+                //hRet = m_pDD->SetCooperativeLevel(hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+                m_pDD->SetCooperativeLevel(hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
                 hRet = m_pDD->SetDisplayMode(FScreen.Width, FScreen.Height, FScreen.Bpp,NULL,NULL);
 
         }
@@ -636,7 +637,7 @@ int AccurateDraw(SCANLINE *Line)
                         RasterX=0;
                         dest += TVP * Scale;
                         RasterY += Scale;
-                        if (!tv.AdvancedEffects) Shade=8-Shade;
+                        if ((!tv.AdvancedEffects) && (zx81.colour != COLOURSPECTRA)) Shade=8-Shade;
 
                         if (RasterY>=TVH)
                         {
@@ -656,7 +657,7 @@ int AccurateDraw(SCANLINE *Line)
                         //scanlen[RasterY]=RasterX;
                         RasterX=0;
                         RasterY+= Scale;
-                        if (!tv.AdvancedEffects) Shade=8-Shade;
+                        if ((!tv.AdvancedEffects) && (zx81.colour != COLOURSPECTRA)) Shade=8-Shade;
                         dest += TVP* Scale;
                 }
                 if (RasterY>=TVH ||  RasterY>=VSYNC_TOLLERANCEMAX
@@ -845,7 +846,6 @@ void RecalcPalette(void)
                 Colours[i]=CompiledPixel;
                 if (i==0 && !FScreen.WhiteLetterbox) LetterBoxColour=CompiledPixel;
                 if (i==(7*16) && FScreen.WhiteLetterbox) LetterBoxColour=CompiledPixel;
-
         }
 }
 

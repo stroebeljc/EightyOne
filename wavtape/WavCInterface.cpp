@@ -81,7 +81,7 @@ void WavStart()
         if (zx81.TZXin)
         {
                 if (TZX->AutoStartBtn->Down)
-                TZX->PlayBtnClick(NULL);
+                        TZX->PlayBtnClick(NULL);
         }
         else    WavLoad->Start();
 }

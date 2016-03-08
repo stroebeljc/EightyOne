@@ -590,8 +590,7 @@ void PCKeySetCTRL(char key)
 void PCKeySetCursor(char left, char down, char up, char right, int shift)
 {
         int Kleft,Kdown, Kright, Kup;
-        char temp;
-
+ 
         Kleft=PCFindKey(left);
         Kdown=PCFindKey(down);
         Kup=PCFindKey(up);

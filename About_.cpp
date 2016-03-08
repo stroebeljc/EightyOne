@@ -47,8 +47,9 @@ __fastcall TAbout::TAbout(TComponent* Owner)
         Version->Caption = Version->Caption + ".";
         Version->Caption = Version->Caption + MINORVERSION;
 #ifdef TESTVERSION
-        Version->Caption = Version->Caption + " (Test " + TESTVERSION +")";
+        Version->Caption = Version->Caption + TESTVERSION;
 #endif
+
         MaxWidth(Label1,w); MaxWidth(Label9,w);
         MaxWidth(Label2,w); MaxWidth(Label10,w);
         MaxWidth(Label3,w); MaxWidth(Label11,w);

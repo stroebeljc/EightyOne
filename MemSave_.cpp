@@ -36,8 +36,8 @@
 TMemSave *MemSave;
 
 extern char memory[];
-extern BYTE spec48_readbyte(int Address);
-extern void spec48_writebyte(int Address, int Data);
+extern BYTE spec48_getbyte(int Address);
+extern void spec48_setbyte(int Address, int Data);
 extern int TIMEXMode;
 
 //---------------------------------------------------------------------------
@@ -122,13 +122,13 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                 f=fopen(FileName.c_str(), "wb");
                 if (f)
                 {
-                        int l,i=0;
                         char *p = memory+addr;
+                        int i=0;
 
                         while(len--)
                         {
                                 if (zx81.machine==MACHINESPEC48)
-                                        fputc(spec48_readbyte(addr+i),f);
+                                        fputc(spec48_getbyte(addr+i),f);
                                 else    fputc(p[i], f);
                                 i++;
                         }
@@ -153,16 +153,16 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                                 if (Ext==".SCR" && (len==12288 || len==12289))
                                 {
                                         for(i=0;i<6144;i++)
-                                                spec48_writebyte(addr+i, p[i]);
+                                                spec48_setbyte(addr+i, p[i]);
                                         for(i=6144;i<12288;i++)
-                                                spec48_writebyte(addr+8192+i, p[i]);
+                                                spec48_setbyte(addr+8192+i, p[i]);
                                         TIMEXMode=4;
 
                                         if (len==12289) TIMEXMode=p[12289]&63;
                                 }
                                 else
                                         for(i=0;i<len;i++)
-                                                spec48_writebyte(addr+i, p[i]);
+                                                spec48_setbyte(addr+i, p[i]);
                         }
                         else
                         fclose(f);

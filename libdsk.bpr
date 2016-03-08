@@ -21,6 +21,8 @@
       libdsk\rpcfossl.obj libdsk\rpcmap.obj libdsk\rpcpack.obj 
       libdsk\rpcserv.obj libdsk\rpctios.obj libdsk\rpcwin32.obj"/>
     <RESFILES value=""/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
     <LIBFILES value=""/>
@@ -31,19 +33,20 @@
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
     <LINKER value="TLib"/>
-    <USERDEFINES value="_DEBUG"/>
+    <USERDEFINES value=""/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT"/>
     <MAINSOURCE value="libdsk.bpf"/>
     <INCLUDEPATH value="libdsk;$(BCB)\include;$(BCB)\include\vcl"/>
     <LIBPATH value="libdsk;$(BCB)\lib\obj;$(BCB)\lib"/>
-    <WARNINGS value="-w-par"/>
+    <WARNINGS value="-w-tai -w-sus -w-rch -w-8065 -w-pia -w-pck -w-pch -w-par -w-csu -w-ccc 
+      -w-aus"/>
     <LISTFILE value=""/>
   </MACROS>
   <OPTIONS>
-    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
-      -tW -tWM"/>
-    <PFLAGS value="-$YD -$W -$O- -v -JPHNE -M"/>
-    <AFLAGS value="/mx /w2 /zd"/>
+    <IDLCFLAGS value="-Ilibdsk -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -X- -a8 -b- -k- -vi -c -tW -tWM"/>
+    <PFLAGS value="-$Y- -$L- -$D- -v -JPHNE -M"/>
+    <AFLAGS value="/mx /w2 /zn"/>
     <LFLAGS value=""/>
   </OPTIONS>
   <LINKER>
@@ -112,6 +115,11 @@ RemoteDebug=0
 ShowInfoMsgs=0
 LinkDebugVcl=0
 LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
 
 [Language]
 ActiveLang=

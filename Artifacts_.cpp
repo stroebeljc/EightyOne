@@ -38,6 +38,8 @@
 
 extern void RecalcPalette(void);
 
+int DetermineLevel(int component);
+
 TArtifacts *Artifacts;
 //---------------------------------------------------------------------------
 __fastcall TArtifacts::TArtifacts(TComponent* Owner)
@@ -63,6 +65,60 @@ void __fastcall TArtifacts::FormClose(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 void __fastcall TArtifacts::TrackBarChange(TObject *Sender)
+{
+        if (zx81.colour == COLOURSPECTRA)
+        {
+                SpectraPalette();
+        }
+        else
+        {
+                StandardPalette();
+        }
+        
+        RecalcPalette();
+}                                        
+
+void TArtifacts::SpectraPalette(void)
+{
+        // This routine needs to be enhanced to support TV emulation:
+        // brightness, contrast and colour adjustment
+        
+        int r, g, b, i;
+
+        for(i=0; i<64; i++)
+        {
+                g = DetermineLevel((i & 0x30) >> 4);
+                r = DetermineLevel((i & 0x0C) >> 2);
+                b = DetermineLevel(i & 0x03);
+
+                Palette[i] = DoPal(r, g, b);
+        }
+}
+
+int DetermineLevel(int component)
+{
+        int level;
+
+        switch (component)
+        {
+        case 0:
+                level = 0;
+                break;
+        case 1:
+                level = 100;
+                break;
+        case 2:
+                level = 200;
+                break;
+        case 3:
+                level = 255;
+                break;
+        }
+
+        return level;
+}
+
+void TArtifacts::StandardPalette(void)
 {
         int NoiseLevel, GhostLevel, GhostLevel2, ScanLineLevel;
         int BrightnessLevel, ContrastLevel, ColourLevel;
@@ -169,11 +225,9 @@ void __fastcall TArtifacts::TrackBarChange(TObject *Sender)
                         Palette[i*16+f+8]=DoPal(r,g,b);
                 }
         }
-
-        RecalcPalette();
 }
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 
 void __fastcall TArtifacts::ArtEnabledClick(TObject *Sender)
 {
@@ -275,6 +329,24 @@ void __fastcall TArtifacts::DotCrawl1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TArtifacts::SelectRGBOutput(Boolean rgbOutput)
+{
+        if (rgbOutput)
+        {
+                ArtEnabled->Checked = false;
+                AdvEffects->Checked = false;
+                Vibrant->Checked = true;
+                DotCrawl1->Checked = false;
+                Interlaced1->Checked = false;
+                SimpleGhosting->Checked = false;
+        }
+
+        ArtEnabled->Enabled = !rgbOutput;
+        AdvEffects->Enabled = !rgbOutput;
+        Vibrant->Enabled = !rgbOutput;
+}
+
+//---------------------------------------------------------------------------
 
 void __fastcall TArtifacts::AdvEffectsClick(TObject *Sender)
 {

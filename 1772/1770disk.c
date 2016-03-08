@@ -65,21 +65,19 @@ int disk_sector_size( disk_info *disk, int layer, int track, int sector )
 
 int disk_image_write_sector( disk_info *disk, int layer, int track, int sector )
 {
-  	unsigned long fileofs;
-  	BYTE *buffer;
+  	long fileofs;
   	int sectorbytes = disk->sectorsize * sizeof( BYTE );
   	long linear = disk_phys_to_linear( disk, layer, track, sector );
-  	long bufofs = linear * sectorbytes;
+  	long bufofs; // = linear * sectorbytes;
 
   	if( layer >= disk->numlayers || track >= disk->numtracks || sector >= disk->numsectors )
     		return NULL;
 
   	bufofs = linear * sectorbytes;
-  	buffer = &disk->buffer[ bufofs ];
 
   	if( disk->dirty[ linear ] )
 	{
-    		if( !disk->alternatesides ) fileofs = linear;
+  		if( !disk->alternatesides ) fileofs = linear;
     		else fileofs = ( disk->numlayers * track + layer ) * disk->numsectors + sector;
 
 		fileofs *= sectorbytes;
@@ -93,7 +91,8 @@ int disk_image_write_sector( disk_info *disk, int layer, int track, int sector )
 BYTE *disk_image_read_sector( disk_info *disk, int layer, int track, int sector )
 {
   	int sectorbytes, linear;
-  	unsigned long bufofs, fileofs;
+  	unsigned long bufofs;
+        long fileofs;
   	BYTE *buffer;
   	int numread, toread, readpos;
 
@@ -107,10 +106,6 @@ BYTE *disk_image_read_sector( disk_info *disk, int layer, int track, int sector 
 
   	if( !disk->present[ linear ] )
 	{
-                long temp;
-                FILE *f;
-                char *p;
-
     		if( !disk->alternatesides )
       			fileofs = linear;
     		else

@@ -65,7 +65,6 @@ __published:	// IDE-managed Components
         TCheckBox *TS2050;
         TCheckBox *Multiface;
         TButton *TS2050Config;
-        TCheckBox *LambdaColour;
         TOffice97Button *QLBtn;
         TTabSheet *AdvSettings;
         TLabel *Label1;
@@ -93,6 +92,12 @@ __published:	// IDE-managed Components
         TCheckBox *uSpeech;
         TCheckBox *ZXPrinter;
         TCheckBox *ZXpand;
+        TComboBox *ColourBox;
+        TLabel *Label8;
+        TLabel *Label9;
+        TComboBox *RomCartridgeBox;
+        TEdit *RomCartridgeFileBox;
+        TButton *BrowseRomCartridge;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -134,6 +139,9 @@ __published:	// IDE-managed Components
         void __fastcall FDCChange(TObject *Sender);
         void __fastcall uSpeechClick(TObject *Sender);
         void __fastcall ZXpandClick(TObject *Sender);
+        void __fastcall BrowseRomCartridgeClick(TObject *Sender);
+        void __fastcall RomCartridgeBoxChange(TObject *Sender);
+        void __fastcall ColourBoxChange(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;
@@ -141,6 +149,7 @@ private:	// User declarations
         void SetupForZX81(void);
         void SetupForSpectrum(void);
         void SetupForQL(void);
+        void EnableRomCartridgeOption(bool enable);
         bool ResetRequired;
 public:		// User declarations
         __fastcall THW(TComponent* Owner);

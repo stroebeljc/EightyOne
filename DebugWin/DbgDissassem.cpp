@@ -26,9 +26,9 @@ BYTE GetMem(int Addr)
         if (zx81.machine==MACHINESPEC48
                 || zx81.machine==MACHINEACE
                 || Addr<zx81.m1not)
-                return(readbyte(Addr));
+                return(getbyte(Addr));
         else
-                return(readbyte(Addr&32767));
+                return(getbyte(Addr&32767));
 }
 
 // #define GetMem(Addr) (memory[(Addr)&32767])
@@ -58,7 +58,7 @@ AnsiString TDbg::Disassemble(int *Ad)
         AnsiString StrText;
 
         Opcode = GetMem(Addr);
-        StrAddr = "$"+Hex16(Addr);
+        StrAddr = "$"+AnsiString::IntToHex(Addr,4);
         StrCode += Hex8(Opcode);
         Addr++;
 
@@ -214,46 +214,46 @@ AnsiString TDbg::Disassemble(int *Ad)
         case 0x8d: StrText="ADC A,L"; break;
         case 0x8e: StrText="ADC A,(HL)"; break;
         case 0x8f: StrText="ADC A,A"; break;
-        case 0x90: StrText="SUB A,B"; break;
-        case 0x91: StrText="SUB A,C"; break;
-        case 0x92: StrText="SUB A,D"; break;
-        case 0x93: StrText="SUB A,E"; break;
-        case 0x94: StrText="SUB A,H"; break;
-        case 0x95: StrText="SUB A,L"; break;
-        case 0x96: StrText="SUB A,(HL)"; break;
-        case 0x97: StrText="SUB A,A"; break;
-        case 0x98: StrText="SBC A,B"; break;
-        case 0x99: StrText="SBC A,C"; break;
-        case 0x9a: StrText="SBC A,D"; break;
-        case 0x9b: StrText="SBC A,E"; break;
-        case 0x9c: StrText="SBC A,H"; break;
-        case 0x9d: StrText="SBC A,L"; break;
-        case 0x9e: StrText="SBC A,(HL)"; break;
-        case 0x9f: StrText="SBC A,A"; break;
-        case 0xa0: StrText="AND A,B"; break;
-        case 0xa1: StrText="AND A,C"; break;
-        case 0xa2: StrText="AND A,D"; break;
-        case 0xa3: StrText="AND A,E"; break;
-        case 0xa4: StrText="AND A,H"; break;
-        case 0xa5: StrText="AND A,L"; break;
-        case 0xa6: StrText="AND A,(HL)"; break;
-        case 0xa7: StrText="AND A,A"; break;
-        case 0xa8: StrText="XOR A,B"; break;
-        case 0xa9: StrText="XOR A,C"; break;
-        case 0xaa: StrText="XOR A,D"; break;
-        case 0xab: StrText="XOR A,E"; break;
-        case 0xac: StrText="XOR A,H"; break;
-        case 0xad: StrText="XOR A,L"; break;
-        case 0xae: StrText="XOR A,(HL)"; break;
-        case 0xaf: StrText="XOR A,A"; break;
-        case 0xb0: StrText="OR A,B"; break;
-        case 0xb1: StrText="OR A,C"; break;
-        case 0xb2: StrText="OR A,D"; break;
-        case 0xb3: StrText="OR A,E"; break;
-        case 0xb4: StrText="OR A,H"; break;
-        case 0xb5: StrText="OR A,L"; break;
-        case 0xb6: StrText="OR A,(HL)"; break;
-        case 0xb7: StrText="OR A,A"; break;
+        case 0x90: StrText="SUB B"; break;
+        case 0x91: StrText="SUB C"; break;
+        case 0x92: StrText="SUB D"; break;
+        case 0x93: StrText="SUB E"; break;
+        case 0x94: StrText="SUB H"; break;
+        case 0x95: StrText="SUB L"; break;
+        case 0x96: StrText="SUB (HL)"; break;
+        case 0x97: StrText="SUB A"; break;
+        case 0x98: StrText="SBC B"; break;
+        case 0x99: StrText="SBC C"; break;
+        case 0x9a: StrText="SBC D"; break;
+        case 0x9b: StrText="SBC E"; break;
+        case 0x9c: StrText="SBC H"; break;
+        case 0x9d: StrText="SBC L"; break;
+        case 0x9e: StrText="SBC (HL)"; break;
+        case 0x9f: StrText="SBC A"; break;
+        case 0xa0: StrText="AND B"; break;
+        case 0xa1: StrText="AND C"; break;
+        case 0xa2: StrText="AND D"; break;
+        case 0xa3: StrText="AND E"; break;
+        case 0xa4: StrText="AND H"; break;
+        case 0xa5: StrText="AND L"; break;
+        case 0xa6: StrText="AND (HL)"; break;
+        case 0xa7: StrText="AND A"; break;
+        case 0xa8: StrText="XOR B"; break;
+        case 0xa9: StrText="XOR C"; break;
+        case 0xaa: StrText="XOR D"; break;
+        case 0xab: StrText="XOR E"; break;
+        case 0xac: StrText="XOR H"; break;
+        case 0xad: StrText="XOR L"; break;
+        case 0xae: StrText="XOR (HL)"; break;
+        case 0xaf: StrText="XOR A"; break;
+        case 0xb0: StrText="OR B"; break;
+        case 0xb1: StrText="OR C"; break;
+        case 0xb2: StrText="OR D"; break;
+        case 0xb3: StrText="OR E"; break;
+        case 0xb4: StrText="OR H"; break;
+        case 0xb5: StrText="OR L"; break;
+        case 0xb6: StrText="OR (HL)"; break;
+        case 0xb7: StrText="OR A"; break;
         case 0xb8: StrText="CP B"; break;
         case 0xb9: StrText="CP C"; break;
         case 0xba: StrText="CP D"; break;
@@ -630,24 +630,24 @@ AnsiString TDbg::Disassemble(int *Ad)
                 case 0x8c: StrText="ADC A,IXH"; break;
                 case 0x8d: StrText="ADC A,IXL"; break;
                 case 0x8e: StrText="ADC A,(IX+dd)"; break;
-                case 0x94: StrText="SUB A,IXH"; break;
-                case 0x95: StrText="SUB A,IXL"; break;
-                case 0x96: StrText="SUB A,(IX+dd)"; break;
-                case 0x9c: StrText="SBC A,IXH"; break;
-                case 0x9d: StrText="SBC A,IXL"; break;
+                case 0x94: StrText="SUB IXH"; break;
+                case 0x95: StrText="SUB IXL"; break;
+                case 0x96: StrText="SUB (IX+dd)"; break;
+                case 0x9c: StrText="SBC IXH"; break;
+                case 0x9d: StrText="SBC IXL"; break;
                 case 0x9e: StrText="SBC A,(IX+dd)"; break;
-                case 0xa4: StrText="AND A,IXH"; break;
-                case 0xa5: StrText="AND A,IXL"; break;
-                case 0xa6: StrText="AND A,(IX+dd)"; break;
-                case 0xac: StrText="XOR A,IXH"; break;
-                case 0xad: StrText="XOR A,IXL"; break;
-                case 0xae: StrText="XOR A,(IX+dd)"; break;
-                case 0xb4: StrText="OR A,IXH"; break;
-                case 0xb5: StrText="OR A,IXL"; break;
-                case 0xb6: StrText="OR A,(IX+dd)"; break;
-                case 0xbc: StrText="CP A,IXH"; break;
-                case 0xbd: StrText="CP A,IXL"; break;
-                case 0xbe: StrText="CP A,(IX+dd)"; break;
+                case 0xa4: StrText="AND IXH"; break;
+                case 0xa5: StrText="AND IXL"; break;
+                case 0xa6: StrText="AND (IX+dd)"; break;
+                case 0xac: StrText="XOR IXH"; break;
+                case 0xad: StrText="XOR IXL"; break;
+                case 0xae: StrText="XOR (IX+dd)"; break;
+                case 0xb4: StrText="OR IXH"; break;
+                case 0xb5: StrText="OR IXL"; break;
+                case 0xb6: StrText="OR (IX+dd)"; break;
+                case 0xbc: StrText="CP IXH"; break;
+                case 0xbd: StrText="CP IXL"; break;
+                case 0xbe: StrText="CP (IX+dd)"; break;
                 case 0xcb:
                         Offset = GetMem(Addr++);
                         StrCode += Hex8(Offset);
@@ -922,7 +922,7 @@ AnsiString TDbg::Disassemble(int *Ad)
                 case 0xe1: StrText="POP IX"; break;
                 case 0xe3: StrText="EX (SP),IX"; break;
                 case 0xe5: StrText="PUSH IX"; break;
-                case 0xe9: StrText="JP IX"; break;
+                case 0xe9: StrText="JP (IX)"; break;
                 case 0xf9: StrText="LD SP,IX"; break;
                 }
                 break;
@@ -937,7 +937,7 @@ AnsiString TDbg::Disassemble(int *Ad)
         case 0xe6: StrText="AND nn"; break;
         case 0xe7: StrText="RST 20"; break;
         case 0xe8: StrText="RET PE"; break;
-        case 0xe9: StrText="JP HL"; break;
+        case 0xe9: StrText="JP (HL)"; break;
         case 0xea: StrText="JP PE,nnnn"; break;
         case 0xeb: StrText="EX DE,HL"; break;
         case 0xec: StrText="CALL PE,nnnn"; break;
@@ -1032,7 +1032,7 @@ AnsiString TDbg::Disassemble(int *Ad)
                 default:        break;
                 }
                 break;
-        case 0xee: StrText="XOR A,nn"; break;
+        case 0xee: StrText="XOR nn"; break;
         case 0xef: StrText="RST 28"; break;
         case 0xf0: StrText="RET P"; break;
         case 0xf1: StrText="POP AF"; break;
@@ -1119,24 +1119,24 @@ AnsiString TDbg::Disassemble(int *Ad)
                 case 0x8c: StrText="ADC A,IYH"; break;
                 case 0x8d: StrText="ADC A,IYL"; break;
                 case 0x8e: StrText="ADC A,(IY+dd)"; break;
-                case 0x94: StrText="SUB A,IYH"; break;
-                case 0x95: StrText="SUB A,IYL"; break;
-                case 0x96: StrText="SUB A,(IY+dd)"; break;
-                case 0x9c: StrText="SBC A,IYH"; break;
-                case 0x9d: StrText="SBC A,IYL"; break;
+                case 0x94: StrText="SUB IYH"; break;
+                case 0x95: StrText="SUB IYL"; break;
+                case 0x96: StrText="SUB (IY+dd)"; break;
+                case 0x9c: StrText="SBC IYH"; break;
+                case 0x9d: StrText="SBC IYL"; break;
                 case 0x9e: StrText="SBC A,(IY+dd)"; break;
-                case 0xa4: StrText="AND A,IYH"; break;
-                case 0xa5: StrText="AND A,IYL"; break;
-                case 0xa6: StrText="AND A,(IY+dd)"; break;
-                case 0xac: StrText="XOR A,IYH"; break;
-                case 0xad: StrText="XOR A,IYL"; break;
-                case 0xae: StrText="XOR A,(IY+dd)"; break;
-                case 0xb4: StrText="OR A,IYH"; break;
-                case 0xb5: StrText="OR A,IYL"; break;
-                case 0xb6: StrText="OR A,(IY+dd)"; break;
-                case 0xbc: StrText="CP A,IYH"; break;
-                case 0xbd: StrText="CP A,IYL"; break;
-                case 0xbe: StrText="CP A,(IY+dd)"; break;
+                case 0xa4: StrText="AND IYH"; break;
+                case 0xa5: StrText="AND IYL"; break;
+                case 0xa6: StrText="AND (IY+dd)"; break;
+                case 0xac: StrText="XOR IYH"; break;
+                case 0xad: StrText="XOR IYL"; break;
+                case 0xae: StrText="XOR (IY+dd)"; break;
+                case 0xb4: StrText="OR IYH"; break;
+                case 0xb5: StrText="OR IYL"; break;
+                case 0xb6: StrText="OR (IY+dd)"; break;
+                case 0xbc: StrText="CP IYH"; break;
+                case 0xbd: StrText="CP IYL"; break;
+                case 0xbe: StrText="CP (IY+dd)"; break;
                 case 0xcb:
                         Offset = GetMem(Addr++);
                         StrCode += Hex8(Offset);
@@ -1411,7 +1411,7 @@ AnsiString TDbg::Disassemble(int *Ad)
                 case 0xe1: StrText="POP IY"; break;
                 case 0xe3: StrText="EX (SP),IY"; break;
                 case 0xe5: StrText="PUSH IY"; break;
-                case 0xe9: StrText="JP IY"; break;
+                case 0xe9: StrText="JP (IY)"; break;
                 case 0xf9: StrText="LD SP,IY"; break;
                 }
                 break;

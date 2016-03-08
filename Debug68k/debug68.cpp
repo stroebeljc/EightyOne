@@ -74,7 +74,7 @@ void TDebug68k::UpdateVals(void)
         Dis5->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis5->Caption = Dis5->Caption + buf;
         Dis6->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis6->Caption = Dis6->Caption + buf;
         Dis7->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis7->Caption = Dis7->Caption + buf;
-        Dis8->Caption=Hex32(p1)+" "; p1+=m68k_disassemble(buf,p1); Dis8->Caption = Dis8->Caption + buf;
+        Dis8->Caption=Hex32(p1)+" ";     m68k_disassemble(buf,p1); Dis8->Caption = Dis8->Caption + buf;
 }
 
 void __fastcall TDebug68k::StopClick(TObject *Sender)

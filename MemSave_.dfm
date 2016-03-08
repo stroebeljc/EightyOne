@@ -1,7 +1,7 @@
 object MemSave: TMemSave
-  Left = 503
-  Top = 100
-  BorderIcons = []
+  Left = 506
+  Top = 102
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'MemSave'
   ClientHeight = 126

@@ -35,7 +35,7 @@
 
 enum
 {
-        BP_EXE, BP_RD, BP_WR
+        BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT
 };
 
 struct breakpoint
@@ -43,11 +43,28 @@ struct breakpoint
         int Addr;
         bool Permanent;
 
-        // one of BP_EXE, BP_RD, BP_WR
+        // one of BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT
         int Type;
 };
 
+enum IODirection
+{
+        IO_NONE,
+        IO_OUT,
+        IO_IN
+};
+
+struct LastIOAccess
+{
+        IODirection direction;
+        int address;
+        BYTE data;
+};
+
 extern void DebugUpdate(void);
+extern void ResetLastIOAccesses();
+extern void LogInAccess(int address, BYTE data);
+extern void LogOutAccess(int address, BYTE data);
 
 class TDbg : public TForm
 {
@@ -86,7 +103,7 @@ __published:	// IDE-managed Components
         TLabel *Label7;
         TLabel *IM;
         TLabel *Label9;
-        TLabel *Interupts;
+        TLabel *Interrupts;
         TLabel *Label11;
         TLabel *Halt;
         TGroupBox *GroupBox2;
@@ -120,17 +137,11 @@ __published:	// IDE-managed Components
         TLabel *Stack4;
         TLabel *Stack5;
         TLabel *Stack6;
-        TLabel *Stack7;
-        TLabel *Label17;
-        TLabel *Label25;
-        TButton *AddBrkBtn;
+        TButton *AddrBrkBtn;
         TButton *DelBrkBtn;
         TStringGrid *BPList;
         TLabel *Label27;
         TLabel *TStates;
-        TButton *SingleStep;
-        TButton *StepOver;
-        TButton *RunStop;
         TGroupBox *GroupBoxAce;
         TLabel *AceStk0;
         TLabel *AceStk1;
@@ -140,7 +151,6 @@ __published:	// IDE-managed Components
         TLabel *AceStk5;
         TLabel *AceStk6;
         TLabel *AceStk7;
-        TLabel *Label36;
         TLabel *Label37;
         TLabel *Label38;
         TLabel *Label40;
@@ -161,19 +171,53 @@ __published:	// IDE-managed Components
         TLabel *Label29;
         TPopupMenu *MemDumpPopup;
         TMenuItem *MemDumpFromHere1;
-        TCheckBox *EnableHistory;
-        TButton *History;
         TLabel *Label8;
-        TButton *Symbols;
         TMenuItem *AddBreak1;
-        TLabel *SymRom;
-        TLabel *SymApp;
         TMenuItem *OnExecute1;
         TMenuItem *OnRead1;
         TMenuItem *OnWrite1;
+        TButton *WriteBrkBtn;
+        TButton *ReadBrkBtn;
+        TGroupBox *Execute;
+        TButton *SingleStep;
+        TButton *StepOver;
+        TButton *RunStop;
         TCheckBox *Continuous;
         TCheckBox *SkipNMIBtn;
         TCheckBox *SkipINTBtn;
+        TGroupBox *GroupBox3;
+        TCheckBox *EnableHistory;
+        TButton *History;
+        TGroupBox *IOPorts;
+        TButton *Memory;
+        TButton *Symbols;
+        TLabel *SymRom;
+        TLabel *SymApp;
+        TButton *OutBrkBtn;
+        TButton *InBrkBtn;
+        TLabel *IOPort0Address;
+        TLabel *IOPort2Address;
+        TLabel *IOPort1Address;
+        TLabel *IOPort3Address;
+        TLabel *IOPort0Data;
+        TLabel *IOPort0Direction;
+        TLabel *IOPort2Data;
+        TLabel *IOPort1Data;
+        TLabel *Label33;
+        TLabel *Label34;
+        TLabel *IOPort3Data;
+        TLabel *IOPort3Direction;
+        TLabel *IOPort1Direction;
+        TLabel *IOPort2Direction;
+        TGroupBox *GroupBoxChroma;
+        TLabel *ChromaColourModeLabel;
+        TLabel *ChromaColourMode;
+        TGroupBox *GroupBoxZXC;
+        TLabel *ZXCModeLabel;
+        TLabel *ZXCMode;
+        TGroupBox *GroupBoxSpectra;
+        TLabel *SpectraModeLabel;
+        TLabel *SpectraMode;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -198,7 +242,7 @@ __published:	// IDE-managed Components
         void __fastcall PCClick(TObject *Sender);
         void __fastcall AClick(TObject *Sender);
         void __fastcall A_Click(TObject *Sender);
-        void __fastcall InteruptsClick(TObject *Sender);
+        void __fastcall InterruptsClick(TObject *Sender);
         void __fastcall IMClick(TObject *Sender);
         void __fastcall Stack0Click(TObject *Sender);
         void __fastcall IRClick(TObject *Sender);
@@ -231,10 +275,16 @@ __published:	// IDE-managed Components
           TShiftState Shift, int X, int Y);
         void __fastcall AceStk0Click(TObject *Sender);
         void __fastcall AceStkVal0Click(TObject *Sender);
-        void __fastcall AddBrkBtnClick(TObject *Sender);
+        void __fastcall AddrBrkBtnClick(TObject *Sender);
         void __fastcall SymbolsClick(TObject *Sender);
         void __fastcall AddBreak1Click(TObject *Sender);
+        void __fastcall MemoryClick(TObject *Sender);
+        void __fastcall WriteBrkBtnClick(TObject *Sender);
+        void __fastcall ReadBrkBtnClick(TObject *Sender);
+        void __fastcall OutBrkBtnClick(TObject *Sender);
+        void __fastcall InBrkBtnClick(TObject *Sender);
 private:	// User declarations
+        void EnableValues(bool enable);
         void EnableVals(void);
         void DisableVals(void);
         void SetMenuContent(int memloc);
@@ -244,7 +294,7 @@ private:	// User declarations
         int Breakpoints;
         bool BPHit(int Addr, int Type, int& idx);
         void DelTempBreakPoints(void);
- 
+
         // default values are evil. never ever use them >:)
         void SetLabelInfo(TLabel* label, int value, int valueWidth = 4);
 
@@ -263,6 +313,8 @@ public:		// User declarations
         bool ExecBreakPointHit(int Addr);
         bool MemoryReadHit(int Addr);
         bool MemoryWriteHit(int Addr);
+        bool PortInHit(int Addr);
+        bool PortOutHit(int Addr);
 
         bool AddBreakPoint(int Addr, bool Perm, int type);
         void DelBreakPoint(int Addr);
@@ -273,6 +325,9 @@ public:		// User declarations
         AnsiString Hex8(int value);
         AnsiString Bin8(int Value);
         int Hex2Dec(AnsiString num);
+
+        LastIOAccess lastIOAccess[4];
+        int lastPortInAddr, lastPortOutAddr;     
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

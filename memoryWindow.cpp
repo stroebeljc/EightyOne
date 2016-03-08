@@ -17,6 +17,7 @@
 TMemoryWindow *MemoryWindow;
 //---------------------------------------------------------------------------
 
+extern bool directMemoryAccess;
 
 std::set<int> dirtyBird;
 std::set<int>::iterator changeCursor;
@@ -106,7 +107,7 @@ void RowRenderer::AddressOut(void)
 
 bool RowRenderer::ByteAtX(const int x, int& byte)
 {
-        int dataRegionWidth = mDisplayCellsPerRow * mCellWidth;
+        //int dataRegionWidth = mDisplayCellsPerRow * mCellWidth;
         if (x <= mLMargin || x >= mLMargin + (mDisplayCellsPerRow * mCellWidth))
         {
                 return false;
@@ -167,7 +168,7 @@ void ByteRowRenderer::RenderRow(void)
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
-                int val = readbyte(mAddress);
+                int val = getbyte(mAddress);
                 TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                         AnsiString::IntToHex(val ,2).c_str(), 2);
                 ++mAddress;
@@ -180,7 +181,7 @@ void WordRowRenderer::RenderRow(void)
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
-                int val = readbyte(mAddress) + 256 * readbyte(mAddress+1);
+                int val = getbyte(mAddress) + 256 * getbyte(mAddress+1);
                 TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                         AnsiString::IntToHex(val ,4).c_str(), 4);
                 mAddress += 2;
@@ -194,7 +195,7 @@ void BinaryRowRenderer::RenderRow(void)
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
-                int val = readbyte(mAddress);
+                int val = getbyte(mAddress);
                 TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                         Dbg->Bin8(val).c_str(), 8);
                 ++mAddress;
@@ -219,7 +220,7 @@ void TraditionalRowRenderer::RenderRow(void)
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
-                int by = readbyte(mAddress);
+                int by = getbyte(mAddress);
                 TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                         AnsiString::IntToHex(by, 2).c_str(), 2);
 
@@ -424,19 +425,19 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
 
                 if (mViewMode != MWVM_WORD)
                 {
-                        int n = readbyte(address);
+                        int n = getbyte(address);
                         if (EditValue->Edit2(n,1))
                         {
-                                writebyte(address,n);
+                                setbyte(address,n);
                         }
                 }
                 else
                 {
-                        int n = readbyte(address) + 256 * readbyte(address + 1);
+                        int n = getbyte(address) + 256 * getbyte(address + 1);
                         if (EditValue->Edit2(n,2))
                         {
-                                writebyte(address, n & 255);
-                                writebyte(address+1, n >> 8);
+                                setbyte(address, n & 255);
+                                setbyte(address+1, n >> 8);
                         }
                 }
         }
@@ -470,7 +471,7 @@ void __fastcall TMemoryWindow::FormMouseDown(TObject *Sender,
 
                 // indirect address
 
-                address = readbyte(address) + 256 * readbyte(address + 1);
+                address = getbyte(address) + 256 * getbyte(address + 1);
                 JumpTo1->Caption += " $" + AnsiString::IntToHex(address,4);
                 JumpTo1->Tag = address;
          }
@@ -522,8 +523,6 @@ void __fastcall TMemoryWindow::ButtonChangeMouseMove(TObject *Sender,
                 "First", "Previous", "Next", "Last"
         };
 
-        // tags are graet
-        //
         StatusBar1->Panels->Items[4]->Text = btnDescs[((TButton*)Sender)->Tag] + " Change";
 }
 //---------------------------------------------------------------------------

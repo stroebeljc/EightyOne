@@ -11,6 +11,8 @@
       zlib\minizip\zip.obj zlib\minizip\unzip.obj zlib\zutil.obj 
       zlib\zlcompress.obj"/>
     <RESFILES value=""/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
     <LIBFILES value=""/>
@@ -26,10 +28,12 @@
     <MAINSOURCE value="zlib.bpf"/>
     <INCLUDEPATH value="zlib\minizip;zlib;$(BCB)\include;$(BCB)\include\vcl"/>
     <LIBPATH value="zlib\minizip;zlib;$(BCB)\lib\obj;$(BCB)\lib"/>
-    <WARNINGS value="-w-par"/>
+    <WARNINGS value="-w-rch -w-8065 -w-par -w-ccc -w-aus"/>
     <LISTFILE value=""/>
   </MACROS>
   <OPTIONS>
+    <IDLCFLAGS value="-Izlib\minizip -Izlib -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix 
+      cpp -boa"/>
     <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -X- -a8 -b- -k- -vi -c -tW -tWM"/>
     <PFLAGS value="-$Y- -$L- -$D- -v -JPHNE -M"/>
     <AFLAGS value="/mx /w2 /zn"/>
@@ -81,6 +85,11 @@ RemoteDebug=0
 ShowInfoMsgs=0
 LinkDebugVcl=0
 LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
 
 [Language]
 ActiveLang=

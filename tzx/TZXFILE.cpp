@@ -459,6 +459,8 @@ AnsiString TTZXFile::GetBlockLength(int BlockNo)
 
 bool TTZXFile::GetEarState(void)
 {
+        if (!Playing) return 0;
+
         return(EarState!=0);
 }
 

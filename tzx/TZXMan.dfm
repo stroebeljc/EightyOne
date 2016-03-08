@@ -1,7 +1,7 @@
 object TZX: TTZX
-  Left = 764
-  Top = 110
-  Width = 239
+  Left = 1352
+  Top = 117
+  Width = 244
   Height = 300
   BorderStyle = bsSizeToolWin
   Caption = 'Tape'
@@ -22,14 +22,14 @@ object TZX: TTZX
   object Bevel1: TBevel
     Left = 6
     Top = 34
-    Width = 219
+    Width = 224
     Height = 200
     Anchors = [akLeft, akTop, akRight, akBottom]
   end
   object Table: TStringGrid
     Left = 10
     Top = 38
-    Width = 192
+    Width = 197
     Height = 191
     Anchors = [akLeft, akTop, akRight, akBottom]
     BorderStyle = bsNone
@@ -41,7 +41,7 @@ object TZX: TTZX
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
     PopupMenu = PopupMenu1
     ScrollBars = ssNone
-    TabOrder = 0
+    TabOrder = 1
     OnContextPopup = TableContextPopup
     OnDblClick = EditBlock1Click
     OnSelectCell = TableSelectCell
@@ -50,13 +50,13 @@ object TZX: TTZX
       64)
   end
   object Panel1: TPanel
-    Left = 37
+    Left = 40
     Top = 241
     Width = 161
     Height = 25
     Anchors = [akBottom]
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 3
     object RewEnd: TOffice97Button
       Left = 4
       Top = 0
@@ -260,9 +260,9 @@ object TZX: TTZX
     end
   end
   object ScrollBar1: TScrollBar
-    Left = 205
+    Left = 209
     Top = 39
-    Width = 16
+    Width = 17
     Height = 190
     Anchors = [akTop, akRight, akBottom]
     Kind = sbVertical
@@ -274,13 +274,13 @@ object TZX: TTZX
   object Panel2: TPanel
     Left = 8
     Top = 4
-    Width = 217
+    Width = 224
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 0
     object AutoStartBtn: TOffice97Button
-      Left = 152
+      Left = 159
       Top = 0
       Width = 25
       Height = 25
@@ -307,16 +307,16 @@ object TZX: TTZX
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 0
+      TabOrder = 5
       UseCustomGlyphs = True
       Down = True
       Toggle = True
       OnClick = AutoStartStopClick
     end
     object AutoLoadBtn: TOffice97Button
-      Left = 176
+      Left = 183
       Top = 0
-      Width = 41
+      Width = 38
       Height = 25
       Hint = 'Auto LOAD on Insert'
       Anchors = [akRight]
@@ -343,14 +343,14 @@ object TZX: TTZX
       Position = bsBottom
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 1
+      TabOrder = 6
       UseCustomGlyphs = True
       Down = True
       Toggle = True
       OnClick = AutoLoadonInsert1Click
     end
     object FlashLoadBtn: TOffice97Button
-      Left = 128
+      Left = 135
       Top = 0
       Width = 25
       Height = 25
@@ -375,7 +375,7 @@ object TZX: TTZX
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 2
+      TabOrder = 4
       Transparent = True
       TransparentColor = clWhite
       UseCustomGlyphs = True
@@ -412,7 +412,7 @@ object TZX: TTZX
       Position = bsTop
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 0
       UseCustomGlyphs = True
       OnClick = NewTZXClick
     end
@@ -447,7 +447,7 @@ object TZX: TTZX
       Position = bsTop
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 1
       UseCustomGlyphs = True
       OnClick = Open1Click
     end
@@ -480,12 +480,12 @@ object TZX: TTZX
       Position = bsTop
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 5
+      TabOrder = 2
       UseCustomGlyphs = True
       OnClick = SaveAs1Click
     end
     object SoundOn: TOffice97Button
-      Left = 102
+      Left = 109
       Top = 0
       Width = 27
       Height = 25
@@ -531,7 +531,7 @@ object TZX: TTZX
       ParentShowHint = False
       ShowGlyph = True
       ShowHint = True
-      TabOrder = 6
+      TabOrder = 3
       Transparent = True
       UseCustomGlyphs = True
       Down = True
@@ -542,9 +542,10 @@ object TZX: TTZX
   object OpenDialog: TOpenDialog
     DefaultExt = 'tzx'
     Filter = 
-      'All Tape Files|*.tzx;*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83;*.zip|S' +
-      'pectrum Files|*.tzx;*.tap|ZX81 Files|*.t81;*.p;*.81|ZX80 Files|*' +
-      '.o;*.80|Lambda Files|*.a83|Compresses Files|*.zip'
+      'All Tape Files|*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*' +
+      '.zip|Spectrum Files|*.tzx;*.tap|ZX81 Files|*.t81;*.p;*.p81;*.81|' +
+      'ZX80 Files|*.t81;*.o;*.80|Lambda Files|*.a83|Compressed Files|*.' +
+      'zip'
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
     Left = 104
     Top = 120

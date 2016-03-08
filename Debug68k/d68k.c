@@ -320,7 +320,7 @@ static char* get_ea_mode_str(uint instruction, uint size)
    uint preindex;
    uint postindex;
    uint comma = 0;
-   uint temp_value = 0;
+   uint temp_value;
 
    /* Switch buffers so we don't clobber on a double-call to this function */
    mode = mode == b1 ? b2 : b1;

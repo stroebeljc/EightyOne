@@ -110,7 +110,7 @@ object EditDataForm: TEditDataForm
     Top = 24
     Width = 137
     Height = 21
-    TabOrder = 2
+    TabOrder = 6
     Text = 'UsedBits'
   end
   object Pause: TEdit
@@ -118,7 +118,7 @@ object EditDataForm: TEditDataForm
     Top = 72
     Width = 137
     Height = 21
-    TabOrder = 3
+    TabOrder = 7
     Text = 'Pause'
   end
   object OK: TButton
@@ -129,7 +129,7 @@ object EditDataForm: TEditDataForm
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 4
+    TabOrder = 10
     OnClick = OKClick
   end
   object Data: TMemo
@@ -148,14 +148,14 @@ object EditDataForm: TEditDataForm
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssVertical
-    TabOrder = 5
+    TabOrder = 8
   end
   object Sync1: TEdit
     Left = 160
     Top = 24
     Width = 145
     Height = 21
-    TabOrder = 6
+    TabOrder = 2
     Text = 'Sync1'
   end
   object Sync2: TEdit
@@ -163,7 +163,7 @@ object EditDataForm: TEditDataForm
     Top = 72
     Width = 145
     Height = 21
-    TabOrder = 7
+    TabOrder = 3
     Text = 'Sync2'
   end
   object Bit0: TEdit
@@ -171,7 +171,7 @@ object EditDataForm: TEditDataForm
     Top = 24
     Width = 145
     Height = 21
-    TabOrder = 8
+    TabOrder = 4
     Text = 'Bit0'
   end
   object Bit1: TEdit
@@ -179,7 +179,7 @@ object EditDataForm: TEditDataForm
     Top = 72
     Width = 145
     Height = 21
-    TabOrder = 9
+    TabOrder = 5
     Text = 'Bit1'
   end
   object CharSet: TComboBox
@@ -190,7 +190,7 @@ object EditDataForm: TEditDataForm
     Style = csDropDownList
     Anchors = [akLeft, akBottom]
     ItemHeight = 13
-    TabOrder = 10
+    TabOrder = 9
     OnChange = CharSetChange
     Items.Strings = (
       'ZX81'

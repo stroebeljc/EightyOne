@@ -81,7 +81,7 @@ USEFORM("Plus3Drives.cpp", P3Drive);
 USEUNIT("floppy.c");
 USEUNIT("ide\ide.cpp");
 USEFORM("MakeHDF.cpp", CreateHDF);
-USELIB("C:\DXSDK\borland\ddraw.lib");
+USELIB("ddraw.lib");
 USEUNIT("68k\68000.c");
 USEUNIT("ql\ql.cpp");
 USEUNIT("68k\op68kadd.c");
@@ -112,6 +112,19 @@ USEFORM("SymBrowse.cpp", SymbolBrowser);
 USELIB("libdsk.lib");
 USELIB("zlib.lib");
 USEUNIT("zx81\rompatch.cpp");
+USEUNIT("RomCartridge\IF2RomCartridge.cpp");
+USEUNIT("Spectra\Spectra.cpp");
+USEUNIT("zxpand\ZXpand-emu.cpp");
+USEUNIT("zxpand\zxpandclass.cpp");
+USEUNIT("zxpand\zxpandcore.cpp");
+USEUNIT("zxpand\diskio.cpp");
+USEUNIT("zxpand\ff.cpp");
+USEUNIT("zxpand\wildcard.cpp");
+USEUNIT("zxpand\zxpandcom.cpp");
+USEUNIT("zxpand\smbsd.cpp");
+USEUNIT("zxpand\js.cpp");
+USEUNIT("zxpand\dirlib.cpp");
+USEUNIT("Chroma\Chroma.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
@@ -131,7 +144,6 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 
         spl = new TSplash(Splash);
 
-        i=strlen(cmdline);
         CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
         strcpy(CmdLineRaw,cmdline);
 

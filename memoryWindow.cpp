@@ -357,7 +357,7 @@ void __fastcall TMemoryWindow::FormResize(TObject *Sender)
 void __fastcall TMemoryWindow::ScrollBar1Change(TObject *Sender)
 {
         int value = ScrollBar1->Position;
-        mBaseAddress = value;
+        mBaseAddress = value & 0xFFF0;
 
         if (mOffscreenBitmap)
         {

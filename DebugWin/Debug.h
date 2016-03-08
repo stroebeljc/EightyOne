@@ -218,6 +218,10 @@ __published:	// IDE-managed Components
         TGroupBox *GroupBoxSpectra;
         TLabel *SpectraModeLabel;
         TLabel *SpectraMode;
+        TLabel *Label17;
+        TLabel *Label25;
+        TLabel *Label26;
+        TLabel *Label30;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);

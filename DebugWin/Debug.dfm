@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 197
-  Top = 185
+  Left = 169
+  Top = 128
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -1695,35 +1695,35 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 8
     object IOPort0Address: TLabel
-      Left = 40
+      Left = 38
       Top = 16
       Width = 35
       Height = 14
-      Caption = '$xxFE'
+      Caption = '$FFFF'
     end
     object IOPort2Address: TLabel
-      Left = 40
+      Left = 39
       Top = 48
       Width = 35
       Height = 14
-      Caption = '$BFFD'
+      Caption = '$FFFF'
     end
     object IOPort1Address: TLabel
-      Left = 40
+      Left = 39
       Top = 32
       Width = 35
       Height = 14
-      Caption = '$7FFD'
+      Caption = '$FFFF'
     end
     object IOPort3Address: TLabel
-      Left = 40
+      Left = 39
       Top = 64
       Width = 35
       Height = 14
-      Caption = '$FFFD'
+      Caption = '$FFFF'
     end
     object IOPort0Data: TLabel
-      Left = 88
+      Left = 90
       Top = 16
       Width = 21
       Height = 14
@@ -1737,21 +1737,21 @@ object Dbg: TDbg
       Caption = 'OUT'
     end
     object IOPort2Data: TLabel
-      Left = 88
+      Left = 90
       Top = 48
       Width = 21
       Height = 14
       Caption = '$FF'
     end
     object IOPort1Data: TLabel
-      Left = 88
+      Left = 90
       Top = 32
       Width = 21
       Height = 14
       Caption = '$FF'
     end
     object IOPort3Data: TLabel
-      Left = 88
+      Left = 90
       Top = 64
       Width = 21
       Height = 14
@@ -1777,6 +1777,34 @@ object Dbg: TDbg
       Width = 21
       Height = 14
       Caption = 'OUT'
+    end
+    object Label17: TLabel
+      Left = 78
+      Top = 16
+      Width = 7
+      Height = 14
+      Caption = ':'
+    end
+    object Label25: TLabel
+      Left = 78
+      Top = 32
+      Width = 7
+      Height = 14
+      Caption = ':'
+    end
+    object Label26: TLabel
+      Left = 78
+      Top = 48
+      Width = 7
+      Height = 14
+      Caption = ':'
+    end
+    object Label30: TLabel
+      Left = 78
+      Top = 64
+      Width = 7
+      Height = 14
+      Caption = ':'
     end
   end
   object GroupBoxChroma: TGroupBox

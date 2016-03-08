@@ -1,6 +1,6 @@
 object MemoryWindow: TMemoryWindow
-  Left = 451
-  Top = 109
+  Left = 215
+  Top = 392
   Width = 580
   Height = 302
   HorzScrollBar.Visible = False
@@ -35,7 +35,7 @@ object MemoryWindow: TMemoryWindow
     Align = alRight
     Kind = sbVertical
     LargeChange = 8
-    Max = 65536
+    Max = 65535
     PageSize = 0
     TabOrder = 0
     OnChange = ScrollBar1Change

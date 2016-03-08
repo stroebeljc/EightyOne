@@ -1422,10 +1422,13 @@ AnsiString TDbg::Disassemble(int *Ad)
         p=StrText.AnsiPos("nnnn");
         if (p)
         {
-                int absadd = GetMem(Addr) + 256*GetMem(Addr+1);
+                int lowByte = GetMem(Addr);
+                int highByte = GetMem(Addr+1);
+                int absadd = lowByte + 256*highByte;
                 AnsiString nnnn = symbolstore::addressToSymbolOrHex(absadd);
                 StrText=StrRep(StrText,p,4,nnnn);
-                StrCode += Hex16(absadd);
+                StrCode += Hex8(lowByte);
+                StrCode += Hex8(highByte);
                 Addr+=2;
         }
 

@@ -306,7 +306,7 @@ void zx81_writebyte(int Address, int Data)
                 return;
         }
 
-        if (zx81.chrgen==CHRGENQS && Address>=0x8400 && Address<=0x87ff)
+        if ((zx81.chrgen == CHRGENQS) && (zx81.colour != COLOURCHROMA) && (Address >= 0x8400) && (Address < 0x8800))
         {
                 font[Address-0x8400]=Data;
                 memory[Address] = Data;
@@ -494,7 +494,7 @@ BYTE zx81_readbyte(int Address)
         {
                 data=zxpfont[Address-7680];
         }
-        else if (zx81.chrgen==CHRGENQS && Address >= 0x8400 && Address < 0x8800)
+        else if ((zx81.chrgen == CHRGENQS) && (zx81.colour != COLOURCHROMA) && (Address >= 0x8400) && (Address < 0x8800))
         {
                 data=memory[Address];
         }

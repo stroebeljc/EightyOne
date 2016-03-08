@@ -44,7 +44,7 @@ TDbg *Dbg;
 // TODO
 //
 // ability to disable the breakpoint w/o deleting it
-// re-calculat breakpoints if symbols change???
+// re-calculate breakpoints if symbols change???
 
 extern int frametstates, rowcounter, RasterY, HSYNC_generator, NMI_generator;
 extern unsigned char shift_store;
@@ -184,7 +184,15 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type)
         Breakpoint[Breakpoints].Permanent=Perm;
         Breakpoint[Breakpoints].Type=Type;
         AnsiString t(types[Type + 1]);
-        AnsiString str = t + " " + symbolstore::addressToSymbolOrHex(Addr);
+        AnsiString str;
+        if (t == "x")
+        {
+                str = t + " " + symbolstore::addressToSymbolOrHex(Addr);
+        }
+        else
+        {
+                str = t + " $" + Hex16(Addr);
+        }
 
         if (Perm)
         {
@@ -291,12 +299,10 @@ int TDbg::Hex2Dec(AnsiString num)
         }
         return(val);
 }
-
+//---------------------------------------------------------------------------
 AnsiString TDbg::Hex16(int Value)
 {
-        int byteSwapValue = ((Value & 0xFF) << 8) + (Value >> 8);
-
-        return AnsiString::IntToHex(byteSwapValue,4);
+        return AnsiString::IntToHex(Value,4);
 }
 //---------------------------------------------------------------------------
 AnsiString TDbg::Hex8(int Value)
@@ -1161,7 +1167,7 @@ void LogInAccess(int address, BYTE data)
 {
         Dbg->lastPortInAddr = address;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 2; i >= 0; i--)
         {
                   Dbg->lastIOAccess[i+1] = Dbg->lastIOAccess[i];
         }
@@ -1176,7 +1182,7 @@ void LogOutAccess(int address, BYTE data)
 {
         Dbg->lastPortOutAddr = address;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 2; i >= 0; i--)
         {
                   Dbg->lastIOAccess[i+1] = Dbg->lastIOAccess[i];
         }

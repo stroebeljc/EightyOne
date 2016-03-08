@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------
 
 #include <vcl.h>
-#include <cddraw.h>
+#include <ddraw.h>
 #include <stdio.h>
 #pragma hdrstop
 
@@ -37,12 +37,15 @@
 #pragma package(smart_init)
 
 #define HTOL 405
-#define VTOL 290
+//#define VTOL 290
+#define VTOLMIN 290
+#define VTOLMAX 340
 #define HMIN 10
 #define VMIN 350
 
 int HSYNC_TOLLERANCE=HTOL;
-int VSYNC_TOLLERANCE=VTOL;
+int VSYNC_TOLLERANCEMIN=VTOLMIN;
+int VSYNC_TOLLERANCEMAX=VTOLMAX;
 int HSYNC_MINLEN=HMIN;
 int VSYNC_MINLEN=VMIN;
 
@@ -88,10 +91,7 @@ int TVW, TVH, TVP;
 int BPP, ScanLen;
 int Paletteised, Scale;
 
-int sync_len, sync_valid;
 long noise;
-BYTE scanline[800*50];
-int scanline_len=0;
 
 DWORD Palette[256], Colours[256], LetterBoxColour;
 
@@ -110,12 +110,12 @@ BYTE *dest=NULL, *buffer=NULL;
 TRect BorderTop, BorderBottom, BorderLeft, BorderRight;
 TRect rcsource, rcdest;
 
-void add_blank(int tstates, BYTE colour)
+void add_blank(SCANLINE *CurScanLine, int tstates, BYTE colour)
 {
         while(tstates-- > 0)
         {
-                scanline[scanline_len++]=colour;
-                scanline[scanline_len++]=colour;
+                CurScanLine->scanline[CurScanLine->scanline_len++]=colour;
+                CurScanLine->scanline[CurScanLine->scanline_len++]=colour;
         }
 }
 
@@ -332,20 +332,26 @@ void DDAccurateInit(int resize)
                 TVW=ddsd.dwWidth = 1024;
                 TVH=ddsd.dwHeight = 768;
                 HSYNC_TOLLERANCE=HTOL*2; HSYNC_MINLEN=10;
-                VSYNC_TOLLERANCE=VTOL*2; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMIN=VTOLMIN*2; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMAX=VTOLMAX*2;
         }
         else
         {
                 TVW=ddsd.dwWidth = 520;
                 TVH=ddsd.dwHeight = 380;
                 HSYNC_TOLLERANCE=HTOL; HSYNC_MINLEN=10;
-                VSYNC_TOLLERANCE=VTOL; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMIN=VTOLMIN; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMAX=VTOLMAX;
         }
 
         m_pddsFrame->Release(); m_pddsFrame = NULL;
         m_pDD->CreateSurface(&ddsd, &m_pddsFrame, NULL);
 
-        if (zx81.NTSC) VSYNC_TOLLERANCE-=60;
+        //if (zx81.NTSC)
+        //{
+        //        VSYNC_TOLLERANCEMIN-=60;
+        //        VSYNC_TOLLERANCEMAX-=60;
+        //}
 
         if ((resize) && (!Form1->FullScreen))
         {
@@ -489,14 +495,16 @@ void GDIAccurateInit(int resize)
                 TVW=1024;
                 TVH=768;
                 HSYNC_TOLLERANCE=HTOL*2; HSYNC_MINLEN=10;
-                VSYNC_TOLLERANCE=VTOL*2; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMIN=VTOLMIN*2; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMAX=VTOLMAX*2;
         }
         else
         {
                 TVW=520;
                 TVH=380;
                 HSYNC_TOLLERANCE=HTOL; HSYNC_MINLEN=10;
-                VSYNC_TOLLERANCE=VTOL; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMIN=VTOLMIN; VSYNC_MINLEN=350;
+                //VSYNC_TOLLERANCEMAX=VTOLMAX;
         }
 
 
@@ -507,7 +515,11 @@ void GDIAccurateInit(int resize)
         //m_pddsFrame->Release(); m_pddsFrame = NULL;
         //m_pDD->CreateSurface(&ddsd, &m_pddsFrame, NULL);
 
-        if (zx81.NTSC) VSYNC_TOLLERANCE-=60;
+        //if (zx81.NTSC)
+        //{
+        //        VSYNC_TOLLERANCEMIN-=60;
+        //        VSYNC_TOLLERANCEMAX-=60;
+        //}
 
         if ((resize) && (!Form1->FullScreen))
         {
@@ -590,7 +602,7 @@ void GDIDrawBorder()
 // -----------------------------------------------------------------------------
 
 
-int AccurateDraw()
+int AccurateDraw(SCANLINE *Line)
 {
         static int FrameNo=0;
         static int LastVSyncLen=0, Shade=0;
@@ -598,9 +610,9 @@ int AccurateDraw()
 
         if (!dest) return(0);
 
-        for(i=0; i<scanline_len; i++)
+        for(i=0; i<Line->scanline_len; i++)
         {
-                c=scanline[i];
+                c=Line->scanline[i];
 
                 Plot(FrameNo*TVP, c+Shade);
 
@@ -631,13 +643,13 @@ int AccurateDraw()
                                 //RasterX=0;
                                 //RasterY=0;
                                 //dest=buffer;
-                                i=scanline_len+1;
-                                sync_valid=true;
+                                i=Line->scanline_len+1;
+                                Line->sync_valid=true;
                         }
                 }
         }
-        if (sync_len<HSYNC_MINLEN) sync_valid=0;
-        if (sync_valid)
+        if (Line->sync_len<HSYNC_MINLEN) Line->sync_valid=0;
+        if (Line->sync_valid)
         {
                 if (RasterX>(HSYNC_TOLLERANCE*BPP))
                 {
@@ -647,7 +659,9 @@ int AccurateDraw()
                         if (!tv.AdvancedEffects) Shade=8-Shade;
                         dest += TVP* Scale;
                 }
-                if (RasterY>=TVH || (sync_len>VSYNC_MINLEN && RasterY>VSYNC_TOLLERANCE))
+                if (RasterY>=TVH ||  RasterY>=VSYNC_TOLLERANCEMAX
+                                      ||  (Line->sync_len>VSYNC_MINLEN
+                                          && RasterY>VSYNC_TOLLERANCEMIN))
                 {
                         CompleteFrame();
                         RasterX=RasterY=0;
@@ -658,8 +672,8 @@ int AccurateDraw()
                                 FrameNo = 1-FrameNo;
                                 Shade=FrameNo*8;
 
-                                if (scanline_len >= ((LastVSyncLen*5)/4)) FrameNo=0;
-                                LastVSyncLen=scanline_len;
+                                if (Line->scanline_len >= ((LastVSyncLen*5)/4)) FrameNo=0;
+                                LastVSyncLen=Line->scanline_len;
                         }
                         else
                         {
@@ -668,9 +682,6 @@ int AccurateDraw()
                         }
                         AccurateUpdateDisplay(false);
                 }
-
-                sync_len=0;
-                sync_valid=-1;
         }
 
         if (zx81.single_step)

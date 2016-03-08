@@ -50,19 +50,14 @@
 //extern BYTE p3fd_read_status(void);
 
 extern void DebugUpdate(void);
-extern void add_blank(int tstates, BYTE colour);
+extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern int CRC32Block(char *memory, int romlen);
 extern void LoadDock(char *filename);
 extern void P3DriveMachineHasInitialised(void);
 
-extern int RasterY;
-extern int sync_len, sync_valid;
 extern long noise;
-extern BYTE scanline[];
-extern int scanline_len;
 extern int SelectAYReg;
 extern int zx81_stop;
-//extern BYTE memory[];
 extern BYTE ZXKeyboard[8];
 BYTE SpecMem[(128+64+16)*1024];  //enough memory for 64k ROM + 128k RAM + extra 16k on SE
 BYTE TimexMem[(64+64)*1024];  // Timex has two more blocks of 64k each
@@ -103,7 +98,6 @@ int USEFDC765DLL;
 extern void LoadFDC765DLL(void);
 
 BYTE ContendArray[80000];
-
 
 void SpecStartUp(void)
 {
@@ -189,17 +183,17 @@ void spec48_reset(void)
         SPECVideoBank=9;
         SPECLast7ffd=0;
         SPECLast1ffd=0;
+        if (spectrum.divIDEVersion==2) SPECLast7ffd=16;
 
         if (spectrum.machine==SPECCYSE) SPECBlk[2]=8+4;
         if (spectrum.machine==SPECCYTS2068) SPECBankEnable=0;
         else if (spectrum.machine>=SPECCY128) SPECBankEnable=1;
         else SPECBankEnable=0;
 
+
         MFActive=0;
         MFLockout=0;
 
-        sync_len=0;
-        sync_valid=0;
         TIMEXByte=0;
         TIMEXMode=0;
         TIMEXColour=0;
@@ -322,7 +316,7 @@ void spec48_initialise(void)
         SPECTopBorder= (zx81.NTSC) ? 32:56;
         SPECLeftBorder=1+37*2;
 
-        InteruptPosition=8+((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-machine.intposition;
+        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-machine.intposition;
         if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
 
         for(i=0;i<79999;i++) ContendArray[i]=0;
@@ -888,8 +882,42 @@ int spec48_contend(int Address, int states, int time)
 
 int spec48_contendio(int Address, int states, int time)
 {
-        if (!(Address&1) || (Address>16384 && Address<32768))
+        if (!(Address&1) || (Address>=16384 && Address<=32768))
                 time += ContendArray[ContendCounter+states+time];
+        return(time);
+
+        time=0;
+        if (Address&1)
+        {
+                if (Address>16384 && Address<32768)
+                {
+                        time++;
+                        time += 1+ContendArray[ContendCounter+states+time];
+                        time +=2;
+
+                }
+                else
+                {
+                        time+=4;
+                }
+        }
+        else
+        {
+                if (Address>16384 && Address<32768)
+                {
+                        time += 1+ContendArray[ContendCounter+states+time];
+                        time += 1+ContendArray[ContendCounter+states+time+time];
+                        time += 2;
+                }
+                else
+                {
+                        time += 1+ContendArray[ContendCounter+states+time];
+                        time += 1+ContendArray[ContendCounter+states+time];
+                        time += 1+ContendArray[ContendCounter+states+time];
+                        time += 1+ContendArray[ContendCounter+states+time];
+                }
+        }
+
         return(time);
 }
 
@@ -1154,7 +1182,7 @@ BYTE spec48_readport(int Address, int *tstates)
         return(255);
 }
 
-int spec48_do_scanline()
+int spec48_do_scanline(SCANLINE *CurScanLine)
 {
         int ts,i,j;
         static int ink,paper;
@@ -1177,11 +1205,11 @@ int spec48_do_scanline()
         SpeedUpCount=0;
         SpeedUp=(zx81.speedup*machine.tperscanline)/100;
 
-        scanline_len=0;
+        CurScanLine->scanline_len=0;
 
         if (clean_exit)
         {
-                add_blank(borrow*scale,paper*16);
+                add_blank(CurScanLine, borrow*scale,paper*16);
                 PBaseColour=paper;
                 sts=0;
                 delay=SPECLeftBorder - borrow*2;
@@ -1276,14 +1304,20 @@ int spec48_do_scanline()
                                 || LastPC==0x0562
                                 || (z80.pc.w>=0x3d00 && z80.pc.w<=0x3dff))
                         {
-                                divIDEPaged |= 1;
-                                divIDEPage();
+                                if ((spectrum.divIDEVersion==1)
+                                        || ((spectrum.divIDEVersion==2)
+                                                && (SPECLast7ffd&16)))
+                                        divIDEPaged |= 1;
+                                        divIDEPage();
                         }
 
                         if (LastPC>=0x1ff8 && LastPC<=0x1fff)
                         {
-                                divIDEPaged &= 254;
-                                divIDEPage();
+                                if ((spectrum.divIDEVersion==1)
+                                        || ((spectrum.divIDEVersion==2)
+                                                && (SPECLast7ffd&16)))
+                                        divIDEPaged &= 254;
+                                        divIDEPage();
                         }
                 }
 
@@ -1316,7 +1350,8 @@ int spec48_do_scanline()
                                 delay--;
 
                                 if (TIMEXMode&4) SPECBorder=8+((~TIMEXColour)&7);
-                                else SPECBorder=SPECNextBorder;
+                                else if (((CurScanLine->scanline_len-10)%16)==0)
+                                        SPECBorder=SPECNextBorder;
 
                                 if (!(Sy<SPECTopBorder || Sy>SPECTopBorder+191 || delay))
                                 {
@@ -1413,9 +1448,9 @@ int spec48_do_scanline()
                                         }
 
                                         if (tv.AdvancedEffects && !(TIMEXMode&4))
-                                                scanline[scanline_len++]=altcolour;
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=altcolour;
 
-                                        scanline[scanline_len++]=colour; //(SPECVSync>0)? 0:colour;
+                                        CurScanLine->scanline[CurScanLine->scanline_len++]=colour; //(SPECVSync>0)? 0:colour;
                                         PBaseColour=BaseColour;
                                         shift_register <<= 1;
                                 }
@@ -1431,9 +1466,10 @@ int spec48_do_scanline()
 
         if (loop<=0)
         {
-                sync_len=24;
-                sync_valid = SYNCTYPEH;
-                if (scanline_len > (machine.tperscanline*scale)) scanline_len=(machine.tperscanline*2*scale);
+                CurScanLine->sync_len=24;
+                CurScanLine->sync_valid = SYNCTYPEH;
+                if (CurScanLine->scanline_len > (machine.tperscanline*scale))
+                        CurScanLine->scanline_len=(machine.tperscanline*2*scale);
 
                 borrow = -loop;
                 loop += machine.tperscanline;
@@ -1442,8 +1478,8 @@ int spec48_do_scanline()
                 if (Sy>=machine.scanlines)
                 {
                         fts=0;
-                        sync_len=414;
-                        sync_valid = SYNCTYPEV;
+                        CurScanLine->sync_len=414;
+                        CurScanLine->sync_valid = SYNCTYPEV;
                         Sy=0;
                         borrow=0;
                         loop=machine.tperscanline;

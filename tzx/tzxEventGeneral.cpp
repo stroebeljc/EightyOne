@@ -1,5 +1,5 @@
 /* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+ * Copyright (C) 2003-2007 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,23 +33,28 @@
 #pragma package(smart_init)
 
 #define TZX_BYTE_EMPTY -1
-#define TPAUSE 6
+
+#define SetEarState(State)                                      \
+        switch(State)                                           \
+        {                                                       \
+        case 0: EarState = EarState; PulseList++; break;        \
+        case 1: EarState = !EarState; PulseList++; break;       \
+        case 2: EarState = 0; PulseList++; break;               \
+        case 3: EarState = 1; PulseList++; break;               \
+        }                                                       \
+        if ((zx81.machine != MACHINESPEC48)                     \
+                && (WavLoad->IgnoreZX81==false) )               \
+                        EarState=!EarState;                     \
 
 int TZXByte=TZX_BYTE_EMPTY;
 
 bool TTZXFile::EventGeneral(void)
 {
         static unsigned char *data;
-        static unsigned short *SymDefP, *SymDefD, *PRLE, *CurPR;
-        static unsigned char *Data;
+        static unsigned short *CurPR, *PulseList;
+        static unsigned char SymbolSize, SymbolMask, SymbolShift, CurrentBitCount, PulseCount;
+        static int usedbits, CurrentBit, CurrentByte, CurPRCount, TOTP, phase;
         static long DataLen;
-        static int TOTP, NPP, ASP, TOTD, NPD,ASD;
-        static int phase, fetchdata;
-        static unsigned char SymbolSize, SymbolMask, SymbolShift;
-        static unsigned char CurrentBitCount, PulseCount=0;
-        static int CurrentBit, usedbits;
-        static int CurrentByte, CurPRCount;
-        static unsigned short *PulseList;
 
         if (!BlockInProgress)
         {
@@ -57,20 +62,12 @@ bool TTZXFile::EventGeneral(void)
                 phase=0;
 
                 data=Tape[CurBlock].Data.Data -1;
-                SymDefP=Tape[CurBlock].SymDefP;
-                SymDefD=Tape[CurBlock].SymDefD;
-                PRLE=Tape[CurBlock].PRLE;
                 DataLen=Tape[CurBlock].Head.General.DataLen;
                 TOTP=Tape[CurBlock].Head.General.TOTP;
-                NPP=Tape[CurBlock].Head.General.NPP;
-                ASP=Tape[CurBlock].Head.General.ASP;
-                TOTD=Tape[CurBlock].Head.General.TOTD;
-                NPD=Tape[CurBlock].Head.General.NPD;
-                ASD=Tape[CurBlock].Head.General.ASD;
 
                 if (FlashLoad && zx81.machine!=MACHINESPEC48) data++;
 
-                Syms=ASD; if (Syms) Syms -= 1;
+                Syms=Tape[CurBlock].Head.General.ASD; if (Syms) Syms -= 1;
                 SymbolSize=0;
 
                 while(Syms)
@@ -83,7 +80,7 @@ bool TTZXFile::EventGeneral(void)
                 SymbolShift = 8-SymbolSize;
                 SymbolMask <<= SymbolShift;
 
-                usedbits=8-(DataLen*8 - TOTD*SymbolSize);
+                usedbits=8-(DataLen*8 - Tape[CurBlock].Head.General.TOTD*SymbolSize);
 
                 BlockInProgress=true;
 
@@ -119,25 +116,18 @@ bool TTZXFile::EventGeneral(void)
 
         if (phase==0)
         {
-                CurPR=PRLE;
+                CurPR=Tape[CurBlock].PRLE;
                 CurPRCount=CurPR[1];
-                PulseList=SymDefP + (CurPR[0] * NPP);
+                PulseList=Tape[CurBlock].SymDefP + (CurPR[0] * Tape[CurBlock].Head.General.NPP);
 
-                switch(*PulseList)
-                {
-                case 0: EarState = EarState; PulseList++; break;
-                case 1: EarState = !EarState; PulseList++; break;
-                case 2: EarState = 0; PulseList++; break;
-                case 3: EarState = 1; PulseList++; break;
-                }
-                if ((zx81.machine != MACHINESPEC48) && (WavLoad->IgnoreZX81==false) ) EarState=!EarState;
+                SetEarState(*PulseList);
                 PulseCount=1;
                 phase=1;
         }
 
         if (phase==1)
         {
-                if (*PulseList && PulseCount<NPP)
+                if (*PulseList && PulseCount<Tape[CurBlock].Head.General.NPP)
                 {
                         TZXEventCounter += TZXSCALE(*PulseList);
                         EarState=!EarState;
@@ -157,15 +147,8 @@ bool TTZXFile::EventGeneral(void)
                         }
                 }
 
-                PulseList=SymDefP + (CurPR[0] * NPP);
-                switch(*PulseList)
-                {
-                case 0: EarState = EarState; PulseList++; break;
-                case 1: EarState = !EarState; PulseList++; break;
-                case 2: EarState = 0; PulseList++; break;
-                case 3: EarState = 1; PulseList++; break;
-                }
-                if ((zx81.machine != MACHINESPEC48) && (WavLoad->IgnoreZX81==false) ) EarState=!EarState;
+                PulseList=Tape[CurBlock].SymDefP + (CurPR[0] * Tape[CurBlock].Head.General.NPP);
+                SetEarState(*PulseList);
                 PulseCount=1;
                 return(false);
         }
@@ -174,7 +157,6 @@ bool TTZXFile::EventGeneral(void)
         {
                 if (DataLen==0)
                 {
-                        //EarState=1;
                         TZXByte=TZX_BYTE_EMPTY;
                         Pause=Tape[CurBlock].Pause;
                         CurBlockLen=0;
@@ -190,23 +172,16 @@ bool TTZXFile::EventGeneral(void)
                 CurrentByte=(data[0]<<8) | data[1];
                 CurrentBitCount=8;
                 CurrentBit=(CurrentByte&SymbolMask) >> SymbolShift;
-                PulseList = SymDefD + (CurrentBit*NPD);
+                PulseList = Tape[CurBlock].SymDefD + (CurrentBit*Tape[CurBlock].Head.General.NPD);
 
-                switch(*PulseList)
-                {
-                case 0: EarState = EarState; PulseList++; break;
-                case 1: EarState = !EarState; PulseList++; break;
-                case 2: EarState = 0; PulseList++; break;
-                case 3: EarState = 1; PulseList++; break;
-                }
-                if ((zx81.machine != MACHINESPEC48) && (WavLoad->IgnoreZX81==false) ) EarState=!EarState;
+                SetEarState(*PulseList);
                 PulseCount=1;
                 phase=3;
         }
 
         if (phase==3)
         {
-                if (*PulseList && PulseCount<NPD)
+                if (*PulseList && PulseCount<Tape[CurBlock].Head.General.NPD)
                 {
                         TZXEventCounter += TZXSCALE(*PulseList);
                         EarState=!EarState;
@@ -230,7 +205,6 @@ bool TTZXFile::EventGeneral(void)
 
                         if (!--DataLen)
                         {
-                                //EarState=1;
                                 TZXByte=TZX_BYTE_EMPTY;
                                 Pause=Tape[CurBlock].Pause;
                                 CurBlockLen=0;
@@ -242,168 +216,11 @@ bool TTZXFile::EventGeneral(void)
                 else    CurrentByte<<=SymbolSize;
 
                 CurrentBit=(CurrentByte&SymbolMask) >> SymbolShift;
-                PulseList = SymDefD + (CurrentBit*NPD);
-                switch(*PulseList)
-                {
-                        case 0: EarState = EarState; PulseList++; break;
-                        case 1: EarState = !EarState; PulseList++; break;
-                        case 2: EarState = 0; PulseList++; break;
-                        case 3: EarState = 1; PulseList++; break;
-                }
-                if ((zx81.machine != MACHINESPEC48) && (WavLoad->IgnoreZX81==false) ) EarState=!EarState;
-
+                PulseList = Tape[CurBlock].SymDefD + (CurrentBit*Tape[CurBlock].Head.General.NPD);
+                SetEarState(*PulseList);
                 return(false);
         }
 
         return(false);
-
-/*
-        static unsigned short *SyncPulses, *Alphabet, *PulseList;
-        static int Flags, DataLen;
-        static unsigned short PilotLen;
-        static unsigned short NoPilotPulses;
-        static unsigned short NoSyncPulses;
-        static unsigned short MaxPulsesBit;
-        static unsigned short NoSymbols;
-        static unsigned short FinalBits;
-        static unsigned char CurrentBitCount, PulseCount=0;
-        static int CurrentBit;
-        static unsigned char SymbolSize, SymbolMask, SymbolShift;
-        static int CurrentByte;
-
-        if (!BlockInProgress)
-        {
-                int Syms, i;
-
-                data=Tape[CurBlock].Data.Data;
-                SyncPulses=Tape[CurBlock].SyncPulses;
-                Alphabet=Tape[CurBlock].Alphabet;
-                Flags=Tape[CurBlock].Head.General.Flags;
-                DataLen=Tape[CurBlock].Head.General.DataLen;
-                PilotLen=TZXSCALE(Tape[CurBlock].Head.General.PilotLen);
-                NoPilotPulses=Tape[CurBlock].Head.General.PilotPulses;
-                NoSyncPulses=Tape[CurBlock].Head.General.SyncPulses;
-                MaxPulsesBit=Tape[CurBlock].Head.General.MaxPulsesBit;
-                NoSymbols=Tape[CurBlock].Head.General.NoSymbols;
-                FinalBits=Tape[CurBlock].Head.General.FinalBits;
-
-                // Calculate how many bits we need to store 1 symbol
-
-                Syms=NoSymbols; if (Syms) Syms -= 1;
-                SymbolSize=0;
-
-                while(Syms)
-                {
-                        SymbolSize +=1;
-                        Syms >>= 1;
-                }
-
-                SymbolMask = (1<<SymbolSize) -1;
-                SymbolShift = 8-SymbolSize;
-                SymbolMask <<= SymbolShift;
-
-                CurBlockLen=DataLen;
-                CurBlockProgress=0;
-
-                CurrentBitCount=0;
-                EarState= !(Flags&1);
-                if (zx81.machine==MACHINESPEC48) EarState=!EarState;
-
-                CurrentByte=(data[0]<<8) | data[1];
-                data++;
-                CurrentBitCount=8;
-                CurrentBit=(CurrentByte&SymbolMask) >> SymbolShift;
-                PulseList = Alphabet + (CurrentBit*MaxPulsesBit);
-
-                BlockInProgress=true;
-                PulseCount=0;
-                TZXByte=(CurrentByte>>8);
-        }
-
-        if (NoPilotPulses)
-        {
-                EarState=!EarState;
-                NoPilotPulses--;
-                TZXEventCounter+=TZXSCALE(PilotLen);
-                return(false);
-        }
-
-        if (NoSyncPulses)
-        {
-                EarState=!EarState;
-                NoSyncPulses--;
-                TZXEventCounter+=TZXSCALE(*SyncPulses);
-                SyncPulses++;
-                return(false);
-        }
-
-        if (FlashLoad && zx81.machine!=MACHINESPEC48)
-        {
-                if (TZXByte==TZX_BYTE_EMPTY)
-                {
-                        CurrentByte=(data[0]<<8) | data[1];
-                        data++;
-                        CurrentBitCount=8;
-                        CurrentBit=(CurrentByte&128)==128;
-                        PulseList = Alphabet + (CurrentBit*MaxPulsesBit);
-                        BlockInProgress=true;
-                        PulseCount=0;
-                        TZXByte=CurrentByte>>8;
-
-                        CurBlockProgress++;
-                        if (!--DataLen)
-                        {
-                                EarState=0;
-                                TZXByte=TZX_BYTE_EMPTY;
-                                Pause= Tape[CurBlock].Pause / 100;
-                                CurBlockProgress=0;
-                                CurBlockLen=0;
-                                EventNextBlock();
-                                return(true);
-                        }
-                        return(false);
-                }
-                TZXEventCounter=1;
-                return(false);
-        }
-
-
-        if (*PulseList && PulseCount<MaxPulsesBit)
-        {
-                TZXEventCounter += TZXSCALE(*PulseList);
-                EarState=!EarState;
-                PulseList++;
-                PulseCount++;
-                return(false);
-        }
-
-        CurrentBitCount -= SymbolSize;
-        PulseCount=0;
-
-        if (CurrentBitCount<=0)
-        {
-                CurrentByte=(data[0]<<8) | data[1];
-                data++;
-                CurrentBitCount+=8;
-                CurBlockProgress++;
-
-                if (!--DataLen)
-                {
-                        EarState=1;
-                        TZXByte=TZX_BYTE_EMPTY;
-                        Pause=Tape[CurBlock].Pause;
-                        CurBlockLen=0;
-                        CurBlockProgress=0;
-                        EventNextBlock();
-                        return(true);
-                }
-        }
-        else    CurrentByte<<=SymbolSize;
-
-        CurrentBit=(CurrentByte&SymbolMask) >> SymbolShift;
-        PulseList = Alphabet + (CurrentBit*MaxPulsesBit);
-
-        return(false);
-*/
 }
 

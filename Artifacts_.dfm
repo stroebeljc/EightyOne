@@ -4,7 +4,7 @@ object Artifacts: TArtifacts
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'TV Emulation'
-  ClientHeight = 256
+  ClientHeight = 328
   ClientWidth = 238
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -392,9 +392,23 @@ object Artifacts: TArtifacts
       EF1CEF1CEF1CEF1CEF1CEF1CEF1C}
     Transparent = True
   end
+  object Label1: TLabel
+    Left = 8
+    Top = 170
+    Width = 56
+    Height = 13
+    Caption = 'VSync Gain'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 204
+    Width = 54
+    Height = 13
+    Caption = 'VSync Bias'
+  end
   object CloseBtn: TButton
     Left = 156
-    Top = 224
+    Top = 296
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -444,7 +458,7 @@ object Artifacts: TArtifacts
   end
   object ArtEnabled: TCheckBox
     Left = 8
-    Top = 164
+    Top = 236
     Width = 73
     Height = 17
     Caption = 'Enabled'
@@ -494,7 +508,7 @@ object Artifacts: TArtifacts
   end
   object SimpleGhosting: TCheckBox
     Left = 8
-    Top = 196
+    Top = 268
     Width = 97
     Height = 17
     Caption = 'Simple Ghosting'
@@ -524,7 +538,7 @@ object Artifacts: TArtifacts
   end
   object DotCrawl1: TCheckBox
     Left = 120
-    Top = 180
+    Top = 252
     Width = 81
     Height = 17
     Caption = 'Dot Crawl'
@@ -533,7 +547,7 @@ object Artifacts: TArtifacts
   end
   object AdvEffects: TCheckBox
     Left = 120
-    Top = 164
+    Top = 236
     Width = 113
     Height = 17
     Caption = 'Advanced Effects'
@@ -542,7 +556,7 @@ object Artifacts: TArtifacts
   end
   object Interlaced1: TCheckBox
     Left = 120
-    Top = 196
+    Top = 268
     Width = 105
     Height = 17
     Caption = 'Interlaced Display'
@@ -551,7 +565,7 @@ object Artifacts: TArtifacts
   end
   object Vibrant: TCheckBox
     Left = 8
-    Top = 180
+    Top = 252
     Width = 97
     Height = 17
     Caption = 'Vibrant Colour'
@@ -573,6 +587,46 @@ object Artifacts: TArtifacts
     SelStart = 0
     ShowHint = True
     TabOrder = 12
+    TickMarks = tmBoth
+    TickStyle = tsAuto
+    OnChange = TrackBarChange
+  end
+  object VGain: TTrackBar
+    Left = 64
+    Top = 158
+    Width = 174
+    Height = 33
+    Hint = 'Vertical Hold Gain'
+    Max = 50
+    Min = -50
+    Orientation = trHorizontal
+    ParentShowHint = False
+    Frequency = 25
+    Position = 0
+    SelEnd = 0
+    SelStart = 0
+    ShowHint = True
+    TabOrder = 13
+    TickMarks = tmBoth
+    TickStyle = tsAuto
+    OnChange = TrackBarChange
+  end
+  object VBias: TTrackBar
+    Left = 64
+    Top = 192
+    Width = 174
+    Height = 33
+    Hint = 'Vertical Hold Bias'
+    Max = 50
+    Min = -50
+    Orientation = trHorizontal
+    ParentShowHint = False
+    Frequency = 25
+    Position = 0
+    SelEnd = 0
+    SelStart = 0
+    ShowHint = True
+    TabOrder = 14
     TickMarks = tmBoth
     TickStyle = tsAuto
     OnChange = TrackBarChange

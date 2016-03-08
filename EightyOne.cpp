@@ -176,57 +176,138 @@ USEUNIT("zlib\minizip\zip.c");
 USEFORM("ZipFile_.cpp", ZipFile);
 USEFORM("Debug68k\debug68.cpp", Debug68k);
 USEUNIT("Debug68k\dis68k.cpp");
+USEFORM("SplashScreen.cpp", Splash);
+
+#include "SplashScreen.h"
+#include "main_.h"
 //---------------------------------------------------------------------------
-char *CommandLine;
+char **CommandLine;
+TSplash *spl;
+bool ShowSplash=true;
+
+extern HANDLE Mutex;
 
 //---------------------------------------------------------------------------
-WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmd, int)
+WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 {
-        CommandLine=cmd;
+        int i;
+        char *p, *CmdLineRaw;
+        bool quote;
+
+        spl = new TSplash(Splash);
+
+        i=strlen(cmdline);
+        CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
+        strcpy(CmdLineRaw,cmdline);
+
+        p=CmdLineRaw;
+        quote=false;
+
+        while(*p)
+        {
+                if (*p=='\"') quote=!quote;
+                if ((*p==' ') && (quote==false)) *p=0;
+                p++;
+        }
+        *++p=0;
+
+        i=0;
+        p=CmdLineRaw;
+        while(strlen(p))
+        {
+                i++;
+                p+=strlen(p)+1;
+        }
+        i++;
+
+        CommandLine=(char **)malloc(i*sizeof(char *));
+
+        p=CmdLineRaw;
+        i=0;
+        while(strlen(p))
+        {
+                CommandLine[i++]=p;
+                p+=strlen(p)+1;
+        }
+        CommandLine[i]=NULL;
+
+        i=0;
+        while(CommandLine[i])
+        {
+                p=CommandLine[i];
+
+                if ((p[0]=='\"') && (p[strlen(p)-1]=='\"'))
+                {
+                        p[strlen(p)-1]=0;
+                        CommandLine[i]++;
+                }
+                i++;
+        }
+
+        Mutex=NULL;
 
         try
         {
                  Application->Initialize();
                  Application->Title = "EightyOne";
-                 Application->CreateForm(__classid(TForm1), &Form1);
-                 Application->CreateForm(__classid(TNewBreakForm), &NewBreakForm);
-                 Application->CreateForm(__classid(TAbout), &About);
-                 Application->CreateForm(__classid(TKeyboard), &Keyboard);
-                 Application->CreateForm(__classid(TSpeed), &Speed);
-                 Application->CreateForm(__classid(TKb), &Kb);
-                 Application->CreateForm(__classid(TWavLoad), &WavLoad);
-                 Application->CreateForm(__classid(TDbg), &Dbg);
-                 Application->CreateForm(__classid(TPrinter), &Printer);
-                 Application->CreateForm(__classid(TArtifacts), &Artifacts);
-                 Application->CreateForm(__classid(TSoundOutput), &SoundOutput);
-                 Application->CreateForm(__classid(THistoryBox), &HistoryBox);
-                 Application->CreateForm(__classid(TMemSave), &MemSave);
-                 Application->CreateForm(__classid(TZX97Dialog), &ZX97Dialog);
-                 Application->CreateForm(__classid(TSerialConfig), &SerialConfig);
-                 Application->CreateForm(__classid(TTZX), &TZX);
-                 Application->CreateForm(__classid(TEditPauseForm), &EditPauseForm);
-                 Application->CreateForm(__classid(TEditArchiveInfo), &EditArchiveInfo);
-                 Application->CreateForm(__classid(TEditTextForm), &EditTextForm);
-                 Application->CreateForm(__classid(TEditHWInfoForm), &EditHWInfoForm);
-                 Application->CreateForm(__classid(TEditDataForm), &EditDataForm);
-                 Application->CreateForm(__classid(TEditValue), &EditValue);
-                 Application->CreateForm(__classid(TEditFlag), &EditFlag);
-                 Application->CreateForm(__classid(TFSSettings), &FSSettings);
-                 Application->CreateForm(__classid(TEditGeneralForm), &EditGeneralForm);
-                 Application->CreateForm(__classid(TIF1), &IF1);
-                 Application->CreateForm(__classid(TP3Drive), &P3Drive);
-                 Application->CreateForm(__classid(TCreateHDF), &CreateHDF);
-                 Application->CreateForm(__classid(THW), &HW);
-                 Application->CreateForm(__classid(TParallelPort), &ParallelPort);
-                 Application->CreateForm(__classid(TMidiForm), &MidiForm);
-                 Application->CreateForm(__classid(TZipFile), &ZipFile);
-                 Application->CreateForm(__classid(TDebug68k), &Debug68k);
+
+                 spl->SetProgress(33,"");
+                 spl->IncProgress("Main Timer"); Application->CreateForm(__classid(TForm1), &Form1);
+
+                 if (ShowSplash)
+                 {
+                        spl->Show();
+                        Application->ProcessMessages();
+
+                 }
+                 spl->IncProgress("Breakpoint"); Application->CreateForm(__classid(TNewBreakForm), &NewBreakForm);
+                 spl->IncProgress("About Box"); Application->CreateForm(__classid(TAbout), &About);
+                 spl->IncProgress("Keyboard"); Application->CreateForm(__classid(TKeyboard), &Keyboard);
+                 spl->IncProgress("Speed"); Application->CreateForm(__classid(TSpeed), &Speed);
+                 spl->IncProgress("Keyboard Helper"); Application->CreateForm(__classid(TKb), &Kb);
+                 spl->IncProgress("Wav Loader"); Application->CreateForm(__classid(TWavLoad), &WavLoad);
+                 spl->IncProgress("Debugger"); Application->CreateForm(__classid(TDbg), &Dbg);
+                 spl->IncProgress("ZX Printer emulator"); Application->CreateForm(__classid(TPrinter), &Printer);
+                 spl->IncProgress("TV emulation"); Application->CreateForm(__classid(TArtifacts), &Artifacts);
+                 spl->IncProgress("Sound"); Application->CreateForm(__classid(TSoundOutput), &SoundOutput);
+                 spl->IncProgress("CPU History"); Application->CreateForm(__classid(THistoryBox), &HistoryBox);
+                 spl->IncProgress("Memory Manager"); Application->CreateForm(__classid(TMemSave), &MemSave);
+                 spl->IncProgress("zx97"); Application->CreateForm(__classid(TZX97Dialog), &ZX97Dialog);
+                 spl->IncProgress("Serial Port"); Application->CreateForm(__classid(TSerialConfig), &SerialConfig);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TTZX), &TZX);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditPauseForm), &EditPauseForm);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditArchiveInfo), &EditArchiveInfo);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditTextForm), &EditTextForm);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditHWInfoForm), &EditHWInfoForm);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditDataForm), &EditDataForm);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditValue), &EditValue);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditFlag), &EditFlag);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TFSSettings), &FSSettings);
+                 spl->IncProgress("Tzx"); Application->CreateForm(__classid(TEditGeneralForm), &EditGeneralForm);
+                 spl->IncProgress("Interface 1"); Application->CreateForm(__classid(TIF1), &IF1);
+                 spl->IncProgress("P3 Floppy"); Application->CreateForm(__classid(TP3Drive), &P3Drive);
+                 spl->IncProgress("HDF Support"); Application->CreateForm(__classid(TCreateHDF), &CreateHDF);
+                 spl->IncProgress("Hardware"); Application->CreateForm(__classid(THW), &HW);
+                 spl->IncProgress("Parallel Port"); Application->CreateForm(__classid(TParallelPort), &ParallelPort);
+                 spl->IncProgress("Midi"); Application->CreateForm(__classid(TMidiForm), &MidiForm);
+                 spl->IncProgress("ZIP Support"); Application->CreateForm(__classid(TZipFile), &ZipFile);
+                 spl->IncProgress("Debug68k"); Application->CreateForm(__classid(TDebug68k), &Debug68k);
+                 spl->Close();
+
+                 Application->ProcessMessages();
+                 delete spl;
+
+                 Form1->AnimTimer1->Enabled=true;
+                 Form1->Timer2->Enabled=true;
                  Application->Run();
         }
         catch (Exception &exception)
         {
                  Application->ShowException(&exception);
         }
+
+        if (Mutex) CloseHandle(Mutex); 
+
         return 0;
 }
 //---------------------------------------------------------------------------

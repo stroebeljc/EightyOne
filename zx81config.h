@@ -28,8 +28,8 @@
 
 #define EMUID           0x85
 #define MAJORVERSION    0
-#define MINORVERSION    43
-#define TESTVERSION     'd'
+#define MINORVERSION    5
+//#define TESTVERSION     'e'
 
 #define SYNCTYPEH       1
 #define SYNCTYPEV       2
@@ -159,7 +159,8 @@ typedef struct
         int romcrc;
         int frameskip;
         int speedup;
-
+        int UseRShift;
+        
         char ROM80[256];
         char ROM81[256];
         char ROMACE[256];
@@ -193,6 +194,7 @@ typedef struct
         char temppath[256];
         char inipath[256];
         char configpath[256];
+        char mydocs[256];
         char machinename[256];
 } ZX81;
 
@@ -215,6 +217,7 @@ typedef struct
         int MFActive;
         int MFLockout;
         int MFVersion;
+        int divIDEVersion;
 } SPECTRUM;
 
 
@@ -237,11 +240,19 @@ typedef struct
         int DisableAdvanced;
 } TV;
 
+typedef struct
+{
+        int sync_len, sync_valid;
+        int scanline_len;
+        BYTE scanline[4000];
+} SCANLINE;
+
+
 
 typedef struct
 {
         void (*initialise)(void);
-        int (*do_scanline)(void);
+        int (*do_scanline)(SCANLINE *line);
         void (*writebyte)(int Address, int Data);
         BYTE (*readbyte)(int Address);
         BYTE (*opcode_fetch)(int Address);

@@ -109,12 +109,12 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
                 case 0:
                         switch(p->ID)
                         {
-                        case 0x0C: SetRadio(p->Information, RadioButton5, RadioButton6, RadioButton7, RadioButton8); break;
-                        case 0x0D: SetRadio(p->Information, RadioButton1, RadioButton2, RadioButton3, RadioButton4); break;
-                        case 0x1E: SetRadio(p->Information, RadioButton9, RadioButton10, RadioButton11, RadioButton12); break;
-                        case 0x1F: SetRadio(p->Information, RadioButton13, RadioButton14, RadioButton15, RadioButton16); break;
-                        case 0x20: SetRadio(p->Information, RadioButton17, RadioButton18, RadioButton19, RadioButton20); break;
-                        case 0x21: SetRadio(p->Information, RadioButton21, RadioButton22, RadioButton23, RadioButton24); break;
+                        case 0x0C: SetRadio(p->Information, RadioButton1, RadioButton2, RadioButton3, RadioButton4); break;
+                        case 0x0D: SetRadio(p->Information, RadioButton5, RadioButton6, RadioButton7, RadioButton8); break;
+                        case 0x2A: SetRadio(p->Information, RadioButton9, RadioButton10, RadioButton11, RadioButton12); break;
+                        case 0x2B: SetRadio(p->Information, RadioButton13, RadioButton14, RadioButton15, RadioButton16); break;
+                        case 0x2C: SetRadio(p->Information, RadioButton17, RadioButton18, RadioButton19, RadioButton20); break;
+                        case 0x2D: SetRadio(p->Information, RadioButton21, RadioButton22, RadioButton23, RadioButton24); break;
                         case 0x1A: SetRadio(p->Information, RadioButton81, RadioButton82, RadioButton83, RadioButton84); break;
                         default: break;
                         }
@@ -123,10 +123,10 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
                 case 0x02:
                         switch(p->ID)
                         {
-                        case 0x06: SetRadio(p->Information, RadioButton25, RadioButton26, RadioButton27, RadioButton28); break;
-                        case 0x07: SetRadio(p->Information, RadioButton29, RadioButton30, RadioButton31, RadioButton32); break;
-                        case 0x08: SetRadio(p->Information, RadioButton37, RadioButton38, RadioButton39, RadioButton40); break;
-                        case 0x09: SetRadio(p->Information, RadioButton41, RadioButton42, RadioButton43, RadioButton44); break;
+                        case 0x07: SetRadio(p->Information, RadioButton25, RadioButton26, RadioButton27, RadioButton28); break;
+                        case 0x08: SetRadio(p->Information, RadioButton29, RadioButton30, RadioButton31, RadioButton32); break;
+                        case 0x09: SetRadio(p->Information, RadioButton37, RadioButton38, RadioButton39, RadioButton40); break;
+                        case 0x0A: SetRadio(p->Information, RadioButton41, RadioButton42, RadioButton43, RadioButton44); break;
                         default: break;
                         }
                         break;
@@ -134,10 +134,10 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
                 case 0x03:
                         switch(p->ID)
                         {
-                        case 0x06: SetRadio(p->Information, RadioButton45, RadioButton46, RadioButton47, RadioButton48); break;
-                        case 0x07: SetRadio(p->Information, RadioButton49, RadioButton50, RadioButton51, RadioButton52); break;
-                        case 0x08: SetRadio(p->Information, RadioButton53, RadioButton54, RadioButton55, RadioButton56); break;
-                        case 0x09: SetRadio(p->Information, RadioButton57, RadioButton58, RadioButton59, RadioButton60); break;
+                        case 0x0A: SetRadio(p->Information, RadioButton45, RadioButton46, RadioButton47, RadioButton48); break;
+                        case 0x0B: SetRadio(p->Information, RadioButton49, RadioButton50, RadioButton51, RadioButton52); break;
+                        case 0x0C: SetRadio(p->Information, RadioButton53, RadioButton54, RadioButton55, RadioButton56); break;
+                        case 0x0D: SetRadio(p->Information, RadioButton57, RadioButton58, RadioButton59, RadioButton60); break;
                         default: break;
                         }
                         break;
@@ -145,10 +145,10 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
                 case 0x10:
                         switch(p->ID)
                         {
-                        case 0x01: SetRadio(p->Information, RadioButton61, RadioButton62, RadioButton63, RadioButton64); break;
-                        case 0x02: SetRadio(p->Information, RadioButton65, RadioButton66, RadioButton67, RadioButton68); break;
-                        case 0x03: SetRadio(p->Information, RadioButton69, RadioButton70, RadioButton71, RadioButton72); break;
-                        case 0x04: SetRadio(p->Information, RadioButton73, RadioButton74, RadioButton75, RadioButton76); break;
+                        case 0x00: SetRadio(p->Information, RadioButton61, RadioButton62, RadioButton63, RadioButton64); break;
+                        case 0x01: SetRadio(p->Information, RadioButton65, RadioButton66, RadioButton67, RadioButton68); break;
+                        case 0x02: SetRadio(p->Information, RadioButton69, RadioButton70, RadioButton71, RadioButton72); break;
+                        case 0x03: SetRadio(p->Information, RadioButton73, RadioButton74, RadioButton75, RadioButton76); break;
                         default: break;
                         }
                         break;
@@ -165,28 +165,28 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
         p=NULL;
         Blocks=0;
 
-        GetRadio(&p, &Blocks, 0, 0x0C, RadioButton5, RadioButton6, RadioButton7, RadioButton8);
-        GetRadio(&p, &Blocks, 0, 0x0D, RadioButton1, RadioButton2, RadioButton3, RadioButton4);
-        GetRadio(&p, &Blocks, 0, 0x1E, RadioButton9, RadioButton10, RadioButton11, RadioButton12);
-        GetRadio(&p, &Blocks, 0, 0x1F, RadioButton13, RadioButton14, RadioButton15, RadioButton16);
-        GetRadio(&p, &Blocks, 0, 0x20, RadioButton17, RadioButton18, RadioButton19, RadioButton20);
-        GetRadio(&p, &Blocks, 0, 0x21, RadioButton21, RadioButton22, RadioButton23, RadioButton24);
+        GetRadio(&p, &Blocks, 0, 0x0C, RadioButton1, RadioButton2, RadioButton3, RadioButton4);
+        GetRadio(&p, &Blocks, 0, 0x0D, RadioButton5, RadioButton6, RadioButton7, RadioButton8);
+        GetRadio(&p, &Blocks, 0, 0x2A, RadioButton9, RadioButton10, RadioButton11, RadioButton12);
+        GetRadio(&p, &Blocks, 0, 0x2B, RadioButton13, RadioButton14, RadioButton15, RadioButton16);
+        GetRadio(&p, &Blocks, 0, 0x2C, RadioButton17, RadioButton18, RadioButton19, RadioButton20);
+        GetRadio(&p, &Blocks, 0, 0x2D, RadioButton21, RadioButton22, RadioButton23, RadioButton24);
         GetRadio(&p, &Blocks, 0, 0x1A, RadioButton81, RadioButton82, RadioButton83, RadioButton84);
 
-        GetRadio(&p, &Blocks, 2, 0x06, RadioButton25, RadioButton26, RadioButton27, RadioButton28);
-        GetRadio(&p, &Blocks, 2, 0x07, RadioButton29, RadioButton30, RadioButton31, RadioButton32);
-        GetRadio(&p, &Blocks, 2, 0x08, RadioButton37, RadioButton38, RadioButton39, RadioButton40);
-        GetRadio(&p, &Blocks, 2, 0x09, RadioButton41, RadioButton42, RadioButton43, RadioButton44);
+        GetRadio(&p, &Blocks, 2, 0x07, RadioButton25, RadioButton26, RadioButton27, RadioButton28);
+        GetRadio(&p, &Blocks, 2, 0x08, RadioButton29, RadioButton30, RadioButton31, RadioButton32);
+        GetRadio(&p, &Blocks, 2, 0x09, RadioButton37, RadioButton38, RadioButton39, RadioButton40);
+        GetRadio(&p, &Blocks, 2, 0x0A, RadioButton41, RadioButton42, RadioButton43, RadioButton44);
 
-        GetRadio(&p, &Blocks, 3, 0x06, RadioButton45, RadioButton46, RadioButton47, RadioButton48);
-        GetRadio(&p, &Blocks, 3, 0x07, RadioButton49, RadioButton50, RadioButton51, RadioButton52);
-        GetRadio(&p, &Blocks, 3, 0x08, RadioButton53, RadioButton54, RadioButton55, RadioButton56);
-        GetRadio(&p, &Blocks, 3, 0x09, RadioButton57, RadioButton58, RadioButton59, RadioButton60);
+        GetRadio(&p, &Blocks, 3, 0x0A, RadioButton45, RadioButton46, RadioButton47, RadioButton48);
+        GetRadio(&p, &Blocks, 3, 0x0B, RadioButton49, RadioButton50, RadioButton51, RadioButton52);
+        GetRadio(&p, &Blocks, 3, 0x0C, RadioButton53, RadioButton54, RadioButton55, RadioButton56);
+        GetRadio(&p, &Blocks, 3, 0x0D, RadioButton57, RadioButton58, RadioButton59, RadioButton60);
 
-        GetRadio(&p, &Blocks, 0x10, 0x01, RadioButton61, RadioButton62, RadioButton63, RadioButton64);
-        GetRadio(&p, &Blocks, 0x10, 0x02, RadioButton65, RadioButton66, RadioButton67, RadioButton68);
-        GetRadio(&p, &Blocks, 0x10, 0x03, RadioButton69, RadioButton70, RadioButton71, RadioButton72);
-        GetRadio(&p, &Blocks, 0x10, 0x04, RadioButton73, RadioButton74, RadioButton75, RadioButton76);
+        GetRadio(&p, &Blocks, 0x10, 0x00, RadioButton61, RadioButton62, RadioButton63, RadioButton64);
+        GetRadio(&p, &Blocks, 0x10, 0x01, RadioButton65, RadioButton66, RadioButton67, RadioButton68);
+        GetRadio(&p, &Blocks, 0x10, 0x02, RadioButton69, RadioButton70, RadioButton71, RadioButton72);
+        GetRadio(&p, &Blocks, 0x10, 0x03, RadioButton73, RadioButton74, RadioButton75, RadioButton76);
 
         if (p)
         {

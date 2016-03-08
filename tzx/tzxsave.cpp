@@ -549,7 +549,9 @@ bool TTZXFile::SaveFile(AnsiString FileName)
         if (Ext==".O") return(SaveOFile(FileName));
 
         version=13;
-        for(i=0;i<Blocks;i++) if (Tape[i].BlockID==TZX_BLOCK_GENERAL) version=20;
+        for(i=0;i<Blocks;i++)
+                if ((Tape[i].BlockID==TZX_BLOCK_GENERAL)
+                        || (Tape[i].BlockID==TZX_BLOCK_SETLEVEL)) version=20;
 
         f=fopen(FileName.c_str(), "wb");
         if (!f) return(false);

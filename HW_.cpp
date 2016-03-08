@@ -290,8 +290,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
 
         zx81.NTSC = NTSC->Checked;
-        if (zx81.NTSC) Form1->AnimTimer1->Interval=16;
-        else Form1->AnimTimer1->Interval=19;
+        if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
+        else Form1->AnimTimer1->Interval=20;
 
         if (RamPackBox->Items->Strings[RamPackBox->ItemIndex]=="96k")
         {
@@ -332,7 +332,8 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         spectrum.HDType=HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF") spectrum.HDType=HDZXCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE") spectrum.HDType=HDDIVIDE;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V1") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=1; }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V2") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=2; }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E") spectrum.HDType=HDPLUS3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF") spectrum.HDType=HDACECF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") spectrum.HDType=HDPITERSCF;
@@ -533,6 +534,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         Speed->Recalc(NULL);
         PCKbInit();
         Kb->OKClick(NULL);
+        Artifacts->TrackBarChange(NULL);
         if (ResetRequired) machine.initialise();
         sound_ay_init();
         Keyboard->KbChange();
@@ -735,7 +737,8 @@ void THW::SetupForSpectrum(void)
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
         IDEBox->Items->Add("Plus 2/3E");
-        IDEBox->Items->Add("divIDE");
+        IDEBox->Items->Add("divIDE V1");
+        IDEBox->Items->Add("divIDE V2");
         IDEBox->Items->Add("ZXCF");
         IDEBox->Items->Add("Piters CF");
         IDEBox->Items->Add("Piters 8Bit");
@@ -825,7 +828,8 @@ void THW::SetupForQL(void)
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
         IDEBox->Items->Add("Plus 2/3E");
-        IDEBox->Items->Add("divIDE");
+        IDEBox->Items->Add("divIDE V1");
+        IDEBox->Items->Add("divIDE V2");
         IDEBox->Items->Add("ZXCF");
         IDEBox->Items->Add("Piters CF");
         IDEBox->ItemIndex=0;
@@ -1100,7 +1104,8 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         NewMachineName=AceBtn->Caption;
         RomBox->Text = zx81.ROMACE;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
-        //NTSC->Checked=true;
+        NTSC->Checked=false;
+        NTSC->Enabled=false;
         EnableLowRAM->Checked=false;
         EnableLowRAM->Enabled=false;
         M1Not->Checked=false;
@@ -1657,7 +1662,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 if (SpecP2aBtn->Down || SpecP3Btn->Down) RomBox->Text = zx81.ROMSPP3ECF;
         }
 
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE")
+        if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
         {
                 WriteProtect->Visible=true;
                 Upload->Visible=true;

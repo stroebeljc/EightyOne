@@ -44,6 +44,7 @@ __published:	// IDE-managed Components
         TRadioButton *RadioButton2;
         TLabel *Label2;
         TRadioButton *RadioButton3;
+        TCheckBox *CheckBox1;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CursorModeChange(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);

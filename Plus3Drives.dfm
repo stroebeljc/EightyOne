@@ -1,6 +1,6 @@
 object P3Drive: TP3Drive
-  Left = 692
-  Top = 58
+  Left = 638
+  Top = 39
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = 'Drives'
@@ -661,8 +661,9 @@ object P3Drive: TP3Drive
   object OpenDialog1: TOpenDialog
     Filter = 
       'Disk Images|*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip|+3 Disk Im' +
-      'ages|*.dsk|+D/Disciple Images|*.mgt;*.img|Opus Discovery Images|' +
-      '*.opd;*.opu|TR-DOS Images|*.trd|Compressed Images|*.zip'
+      'ages (*.dsk)|*.dsk|+D/Disciple Images (*.mgt, *.img)|*.mgt;*.img' +
+      '|Opus Discovery Images (*.opd, *.opu)|*.opd;*.opu|TR-DOS Images ' +
+      '(*.trd)|*.trd|Compressed Images (*.zip)|*.zip'
     Left = 224
     Top = 392
   end

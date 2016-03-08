@@ -42,14 +42,11 @@
 
 
 extern void DebugUpdate(void);
-extern void add_blank(int tstates, BYTE colour);
+extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern int CRC32Block(char *memory, int romlen);
 
 extern int RasterY;
-extern int sync_len, sync_valid;
 extern long noise;
-extern BYTE scanline[];
-extern int scanline_len;
 extern int SelectAYReg;
 extern int zx81_stop;
 extern BYTE memory[];
@@ -81,10 +78,6 @@ void ace_initialise(void)
         ACETopBorder= (zx81.NTSC) ? 32:56;
         ACELeftBorder=37*2+1;
 
-        sync_len=0;
-        sync_valid=0;
-
-        // NASTY HACK ALERT!
         z80_reset();
         d8255_reset();
         d8251reset();
@@ -270,7 +263,7 @@ int ace_contend(int Address, int tstates, int time)
         return(time);
 }
 
-int ace_do_scanline()
+int ace_do_scanline(SCANLINE *CurScanLine)
 {
         int ts,i,j;
         static int ink,paper;
@@ -285,11 +278,11 @@ int ace_do_scanline()
         int FlashLoading=0;
 
 
-        scanline_len=0;
+        CurScanLine->scanline_len=0;
 
         if (clean_exit)
         {
-                add_blank(borrow,paper*16);
+                add_blank(CurScanLine, borrow,paper*16);
                 sts=0;
                 delay=ACELeftBorder - borrow*2;
                 chars=0;
@@ -380,7 +373,7 @@ int ace_do_scanline()
                                 noise>>=1;
                                 PrevBit= shift_register&128;
                         }
-                        scanline[scanline_len++]=colour;
+                        CurScanLine->scanline[CurScanLine->scanline_len++]=colour;
                         shift_register <<= 1;
                 }
                 DebugUpdate();
@@ -389,9 +382,9 @@ int ace_do_scanline()
 
         if (loop<=0)
         {
-                sync_len=24;
-                sync_valid = SYNCTYPEH;
-                if (scanline_len > machine.tperscanline*2) scanline_len=machine.tperscanline*2;
+                CurScanLine->sync_len=24;
+                CurScanLine->sync_valid = SYNCTYPEH;
+                if (CurScanLine->scanline_len > machine.tperscanline*2) CurScanLine->scanline_len=machine.tperscanline*2;
 
                 borrow = -loop;
                 loop += machine.tperscanline;
@@ -400,8 +393,8 @@ int ace_do_scanline()
                 if (Sy==311)
                 {
                         fts=0;
-                        sync_len=414;
-                        sync_valid = SYNCTYPEV;
+                        CurScanLine->sync_len=414;
+                        CurScanLine->sync_valid = SYNCTYPEV;
                         Sy=0;
                         borrow=0;
                         loop=machine.tperscanline;

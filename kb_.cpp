@@ -74,6 +74,10 @@ void __fastcall TKb::OKClick(TObject *Sender)
         if (RadioButton2->Checked) PCKeySetCTRL('0');
         //if (RadioButton3->Checked) PCKeySetCTRL('.');
 
+        if (CheckBox1->Checked && (zx81.machine==MACHINESPEC48
+                                    || zx81.machine==MACHINEACE)) zx81.UseRShift=true;
+        else zx81.UseRShift=false;
+
         if (Sender) Close();
 }
 //---------------------------------------------------------------------------
@@ -111,9 +115,10 @@ void TKb::LoadSettings(TIniFile *ini)
 
         RadioButton1->Checked = ini->ReadBool("KB","CTRLFunc", RadioButton1->Checked);
         RadioButton2->Checked = ini->ReadBool("KB","CTRL0", RadioButton2->Checked);
+        CheckBox1->Checked = ini->ReadBool("KB","RIGHTSHIFT", CheckBox1->Checked);
         //RadioButton3->Checked = ini->ReadBool("KB","SYMSHIFT", RadioButton3->Checked);
         CursorMode->ItemIndex = ini->ReadInteger("KB","CursorMode", CursorMode->ItemIndex);
-        
+
         CursorModeChange(NULL);
         OKClick(NULL);
 }
@@ -133,6 +138,7 @@ void TKb::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("KB","CTRLFunc", RadioButton1->Checked);
         ini->WriteBool("KB","CTRL0", RadioButton2->Checked);
+        ini->WriteBool("KB","RIGHTSHIFT", CheckBox1->Checked);
         //ini->WriteBool("KB","SYMSHIFT", RadioButton3->Checked);
 }
 
@@ -146,12 +152,14 @@ void __fastcall TKb::FormShow(TObject *Sender)
                 Label2->Visible=false;
                 RadioButton1->Visible=false;
                 RadioButton2->Visible=false;
+                CheckBox1->Visible=true;
         }
         else
         {
                 Label2->Visible=true;
                 RadioButton1->Visible=true;
                 RadioButton2->Visible=true;
+                CheckBox1->Visible=true;
         }
 }
 //---------------------------------------------------------------------------

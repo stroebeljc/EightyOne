@@ -118,6 +118,7 @@ struct kb KBZX81[]=
         { 0, 219 , kbA13, kbD2, kbA8, kbD0 },
         { 0, 221 , kbA13, kbD1, kbA8, kbD0 },
         { 2, 222 , kbA13, kbD0, kbA8, kbD0 },
+        { 0, 192 , kbA13, kbD0, kbA8, kbD0 },
 
         //{ 2, 188, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, 190, kbA15, kbD2, kbA8, kbD0 },

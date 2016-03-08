@@ -26,11 +26,13 @@
 //---------------------------------------------------------------------------
 #endif
 
+#include "zx81config.h"
+
 extern void AccurateInit(int resize);
-extern int AccurateDraw(void);
+extern int AccurateDraw(SCANLINE *Line);
 extern void AccurateUpdateDisplay(bool singlestep);
 extern void RecalcPalette(void);
-extern "C" void add_blank(int tstates, BYTE colour);
+extern "C" void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern DWORD Palette[];
 extern int RenderInit(void);
 extern void RenderEnd(void);

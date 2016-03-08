@@ -40,10 +40,7 @@ extern void add_blank(int tstates, BYTE colour);
 extern int CRC32Block(char *memory, int romlen);
 
 extern int RasterY;
-extern int sync_len, sync_valid;
 extern long noise;
-extern BYTE scanline[];
-extern int scanline_len;
 extern int zx81_stop;
 extern BYTE memory[];
 
@@ -61,8 +58,8 @@ void ql_initialise(void)
         zx81.ROMTOP=romlen-1;
         HWReset();
 
-        sync_len=0;
-        sync_valid=0;
+        //CurScanLine->sync_len=0;
+        //CurScanLine->sync_valid=0;
 
         QLTopBorder= (zx81.NTSC) ? 1:24;
         QLLeftBorder=37*2+1;
@@ -105,7 +102,7 @@ int ql_contend(int Address, int tstates, int time)
         return(time);
 }
 
-int ql_do_scanline()
+int ql_do_scanline(SCANLINE *CurScanLine)
 {
         int ts,i,j;
         static int ink,paper;
@@ -118,7 +115,7 @@ int ql_do_scanline()
         int MaxScanLen;
         int PrevBit=0, PrevGhost=0;
 
-        scanline_len=0;
+        CurScanLine->scanline_len=0;
 
         if (clean_exit)
         {
@@ -175,7 +172,7 @@ int ql_do_scanline()
 
                         }
 
-                        scanline[scanline_len++]=colour;
+                        CurScanLine->scanline[CurScanLine->scanline_len++]=colour;
                 }
                 DebugUpdate();
         } while(loop>0 && !zx81_stop && sts<MaxScanLen);
@@ -183,9 +180,9 @@ int ql_do_scanline()
 
         if (loop<=0)
         {
-                sync_len=24;
-                sync_valid = SYNCTYPEH;
-                if (scanline_len > machine.tperscanline*2) scanline_len=machine.tperscanline*2;
+                CurScanLine->sync_len=24;
+                CurScanLine->sync_valid = SYNCTYPEH;
+                if (CurScanLine->scanline_len > machine.tperscanline*2) CurScanLine->scanline_len=machine.tperscanline*2;
 
                 borrow = -loop;
                 loop += machine.tperscanline;
@@ -194,8 +191,8 @@ int ql_do_scanline()
                 if (Sy==311)
                 {
                         fts=0;
-                        sync_len=414;
-                        sync_valid = SYNCTYPEV;
+                        CurScanLine->sync_len=414;
+                        CurScanLine->sync_valid = SYNCTYPEV;
                         Sy=0;
                         borrow=0;
                         loop=machine.tperscanline;

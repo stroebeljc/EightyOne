@@ -684,8 +684,9 @@ void floppy_setimage(int drive, char *filename)
 
                 if (USEFDC765DLL)
                 {
-                        u765_EjectDisk(drive);
-                        u765_InsertDisk(filename,drive);
+                        if (u765_DiskInserted(drive))
+                                u765_EjectDisk(drive);
+                        if (strlen(filename)) u765_InsertDisk(filename,drive);
                         a=u765_DiskInserted(0);
                         return;
                 }

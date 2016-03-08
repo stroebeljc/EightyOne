@@ -79,7 +79,6 @@
 #define I  z80.i
 #define R  z80.r
 #define R7 z80.r7
-#define IR ( ( z80.i ) << 8 | ( z80.r7 & 0x80 ) | ( z80.r & 0x7f ) )
 
 #define IFF1 z80.iff1
 #define IFF2 z80.iff2

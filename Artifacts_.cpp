@@ -71,6 +71,23 @@ void __fastcall TArtifacts::TrackBarChange(TObject *Sender)
         int basecolour, difference;
         int colr, colg, colb, bwr, bwg, bwb;
 
+        extern int VSYNC_TOLLERANCEMIN;
+        extern int VSYNC_TOLLERANCEMAX;
+
+        VSYNC_TOLLERANCEMIN= 283 + VBias->Position;
+        VSYNC_TOLLERANCEMAX = VSYNC_TOLLERANCEMIN + VGain->Position + 40;
+
+        if (tv.AdvancedEffects)
+        {
+                VSYNC_TOLLERANCEMIN *= 2;
+                VSYNC_TOLLERANCEMAX *= 2;
+        }
+
+        if (zx81.NTSC)
+        {
+                VSYNC_TOLLERANCEMIN-=60;
+                VSYNC_TOLLERANCEMAX-=60;
+        }
 
         NoiseLevel = - NoiseTrack->Position;
         GhostLevel = - GhostTrack->Position;
@@ -192,6 +209,9 @@ void TArtifacts::SaveSettings(TIniFile *ini)
         ini->WriteInteger("ARTIFACTS","Brightness",BrightTrack->Position);
         ini->WriteInteger("ARTIFACTS","Contrast",ContrastTrack->Position);
         ini->WriteInteger("ARTIFACTS","Colour",ColourTrack->Position);
+        ini->WriteInteger("ARTIFACTS","VGAIN",VGain->Position);
+        ini->WriteInteger("ARTIFACTS","VBIAS",VBias->Position);
+
         ini->WriteBool("ARTIFACTS", "ArtEnabled", ArtEnabled->Checked);
         ini->WriteBool("ARTIFACTS", "SimpleGhosting", SimpleGhosting->Checked);
         ini->WriteBool("ARTIFACTS", "DotCrawl", DotCrawl1->Checked);
@@ -214,6 +234,8 @@ void TArtifacts::LoadSettings(TIniFile *ini)
         BrightTrack->Position= ini->ReadInteger("ARTIFACTS","Brightness",BrightTrack->Position);
         ContrastTrack->Position= ini->ReadInteger("ARTIFACTS","Contrast",ContrastTrack->Position);
         ColourTrack->Position= ini->ReadInteger("ARTIFACTS","Colour",ColourTrack->Position);
+        VGain->Position=ini->ReadInteger("ARTIFACTS","VGAIN",VGain->Position);
+        VBias->Position=ini->ReadInteger("ARTIFACTS","VBIAS",VBias->Position);
         ArtEnabled->Checked= ini->ReadBool("ARTIFACTS", "ArtEnabled", ArtEnabled->Checked);
         SimpleGhosting->Checked= ini->ReadBool("ARTIFACTS", "SimpleGhosting", SimpleGhosting->Checked);
         DotCrawl1->Checked= ini->ReadBool("ARTIFACTS", "DotCrawl", DotCrawl1->Checked);
@@ -270,7 +292,12 @@ void __fastcall TArtifacts::AdvEffectsClick(TObject *Sender)
                 tv.DotCrawl=0;
         }
 
-        if (Sender) AccurateInit(true);
+        if (Sender)
+        {
+                AccurateInit(true);
+                TrackBarChange(NULL);
+        }
+
 }
 //---------------------------------------------------------------------------
 

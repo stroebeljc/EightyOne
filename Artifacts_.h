@@ -55,6 +55,10 @@ __published:	// IDE-managed Components
         TImage *Image4;
         TImage *Image5;
         TImage *Image6;
+        TTrackBar *VGain;
+        TTrackBar *VBias;
+        TLabel *Label1;
+        TLabel *Label2;
         void __fastcall CloseBtnClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall TrackBarChange(TObject *Sender);

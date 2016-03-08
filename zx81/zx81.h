@@ -23,6 +23,7 @@
 #define zx81_h
 
 #include "z80\config.h"
+#include "zx81config.h"
 
 #define kbD0 1
 #define kbD1 2
@@ -44,7 +45,7 @@
 
 extern "C" BYTE memory[];
 extern "C" void zx81_initialise(void);
-extern "C" int zx81_do_scanline(void);
+extern "C" int zx81_do_scanline(SCANLINE *CurScanLine);
 extern "C" void zx81_writebyte(int Address, int Data);
 extern "C" BYTE zx81_readbyte(int Address);
 extern "C" BYTE zx81_opcode_fetch(int Address);
@@ -55,18 +56,13 @@ extern "C" int tstates, event_next_event;
 extern "C" int framepos, NMI_generator, HSYNC_generator, frametstates;
 extern "C" BYTE get_i_reg(void);
 extern "C" BYTE ZXKeyboard[];
-extern "C" BYTE scanline[];
-extern "C" int scanline_len;
-extern "C" int sync_len, sync_valid;
 extern "C" int zx81_stop;
-extern "C" int zx81_zx81_do_scanline();
-extern "C" int ace_do_accurate();
 #else
 
 extern BYTE memory[];
 extern BYTE acecolour[];
 extern void zx81_initialise(void);
-extern int zx81_do_scanline(void);
+extern int zx81_do_scanline(SCANLINE *CurScanLine);
 extern void zx81_writebyte(int Address, int Data);
 extern BYTE zx81_readbyte(int Address);
 extern BYTE zx81_opcode_fetch(int Address);
@@ -77,10 +73,6 @@ extern int tstates, event_next_event;
 extern int framepos, NMI_generator, HSYNC_generator, frametstates;
 extern int zx81_stop;
 extern BYTE ZXKeyboard[];
-extern BYTE scanline[];
-extern int scanline_len;
-extern int sync_len, sync_valid;
-extern int zx81_do_scanline();
 extern int ace_do_accurate();
 
 #endif

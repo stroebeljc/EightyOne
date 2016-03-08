@@ -52,7 +52,7 @@ extern BYTE ZXCFMem[];  // ZXCF has 1024k arranged as 64 x 16k pages
 
 extern "C" BYTE memory[];
 extern "C" void spec48_initialise(void);
-extern "C" int spec48_do_scanline(void);
+extern "C" int spec48_do_scanline(SCANLINE *CurScanLine);
 extern "C" void spec48_writebyte(int Address, int Data);
 extern "C" BYTE spec48_readbyte(int Address);
 extern "C" BYTE spec48_opcode_fetch(int Address);
@@ -65,11 +65,7 @@ extern "C" int tstates, event_next_event;
 extern "C" int framepos, NMI_generator, HSYNC_generator, frametstates;
 extern "C" BYTE get_i_reg(void);
 extern "C" BYTE ZXKeyboard[];
-extern "C" BYTE scanline[];
-extern "C" int scanline_len;
-extern "C" int sync_len, sync_valid;
 extern "C" int zx81_stop;
-extern "C" int spec48_do_scanline();
 extern "C" int spec48_contend(int Address, int states, int time);
 extern "C" int spec48_contendio(int Address, int states, int time);
 
@@ -77,7 +73,7 @@ extern "C" int spec48_contendio(int Address, int states, int time);
 
 extern BYTE memory[];
 extern void spec48_initialise(void);
-extern int spec48_do_scanline(void);
+extern int spec48_do_scanline(SCANLINE *CurScanLine);
 extern void spec48_writebyte(int Address, int Data);
 extern BYTE spec48_readbyte(int Address);
 extern BYTE spec48_opcode_fetch(int Address);
@@ -87,11 +83,6 @@ extern int tstates, event_next_event;
 extern int framepos, NMI_generator, HSYNC_generator, frametstates;
 extern int zx81_stop;
 extern BYTE ZXKeyboard[];
-extern BYTE scanline[];
-extern int scanline_len;
-extern int sync_len, sync_valid;
-extern int zx81_do_scanline();
-extern int spec48_do_scanline();
 extern int spec48_contend(int Address, int states, int time);
 #endif
 #endif

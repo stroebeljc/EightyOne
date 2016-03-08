@@ -74,6 +74,8 @@ void load_config(void)
         zx81.zxprinter=1;
         machine.clockspeed=3250000;
         zx81.speedup=0;
+        zx81.UseRShift=0;
+        
         machine.tperscanline=207;
         machine.tperframe=312*207;
         machine.intposition=0;
@@ -140,13 +142,10 @@ void load_config(void)
         spectrum.WriteProtectJumper=0;
         spectrum.MFVersion=MFNONE;
 
-
         mouse.x=0;
         mouse.y=0;
         mouse.buttons=0;
         mouse.lastx=0;
         mouse.lasty=0;
-
-        getcwd(zx81.cwd,256);
 }
 

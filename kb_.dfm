@@ -1,6 +1,6 @@
 object Kb: TKb
-  Left = 508
-  Top = 139
+  Left = 485
+  Top = 120
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Keyboard'
@@ -121,5 +121,13 @@ object Kb: TKb
     Enabled = False
     TabOrder = 8
     Visible = False
+  end
+  object CheckBox1: TCheckBox
+    Left = 8
+    Top = 56
+    Width = 177
+    Height = 17
+    Caption = 'Use Right Shift as Symbol Shift'
+    TabOrder = 9
   end
 end

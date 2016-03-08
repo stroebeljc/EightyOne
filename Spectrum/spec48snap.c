@@ -331,8 +331,8 @@ void spec_load_sna(char *fname)
         z80.hl.w=buf[9] + 256*buf[10];
         z80.de.w=buf[11] + 256*buf[12];
         z80.bc.w=buf[13] + 256*buf[14];
-        z80.ix.w=buf[15] + 256*buf[16];
-        z80.iy.w=buf[17] + 256*buf[18];
+        z80.iy.w=buf[15] + 256*buf[16];
+        z80.ix.w=buf[17] + 256*buf[18];
 
         z80.iff1=buf[19]&2; z80.iff2=buf[19]&4;
 

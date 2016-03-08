@@ -21,7 +21,7 @@
 
  //---------------------------------------------------------------------------
 
-//#define NO_WIN32_LEAN_AND_MEAN
+#define NO_WIN32_LEAN_AND_MEAN
 //#define WM_DEVICE WM_USER+125
 //#define SHCNRF_InterruptLevel 0x0001
 //#define SHCNRF_ShellLevel 0x0002
@@ -72,7 +72,6 @@
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-#pragma link "dbits"
 #pragma link "AnimTimer"
 #pragma link "ThemeMgr"
 #pragma resource "*.dfm"
@@ -87,9 +86,11 @@ ULONG nID;
 extern PACKAGE TMouse* Mouse;
 extern "C" void SpecStartUp(void);
 
+extern bool ShowSplash;
+
 extern "C" void z80_reset();
 extern "C" int z80_nmi(int ts);
-extern char *CommandLine;
+extern char **CommandLine;
 extern "C" void ramwobble(int now);
 extern "C" int LoadDock(char *Filename);
 extern "C" void spec_load_z80(char *fname);
@@ -97,7 +98,19 @@ extern "C" void spec_load_sna(char *fname);
 extern "C" void spec_save_z80(char *fname);
 extern "C" void spec_save_sna(char *fname);
 
+//extern "C" SCANLINE *CurScanLine;
+extern "C" void VideoThread(void);
+
+int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
+
+
 int AutoLoadCount=0;
+char TEMP1[256];
+
+HANDLE Mutex;
+DWORD VideoThreadId;
+
+SCANLINE Video[2], *BuildLine, *DisplayLine;
 
 //---------------------------------------------------------------------------
 void __fastcall TForm1::WMGetMinMaxInfo(TWMGetMinMaxInfo &Msg)
@@ -122,6 +135,56 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
         AnsiString IniPath;
+        char path[256];
+        int ret,i;
+
+        strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
+        strcpy(TEMP1, zx81.cwd);
+        GetTempPath(256, zx81.temppath);
+        if (zx81.temppath[strlen(zx81.temppath)-1]!='\\')
+                strcat(zx81.temppath, "\\");
+        strcat(zx81.temppath, "eo\\");
+        mkdir(zx81.temppath);
+
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, path))
+        {
+                IniPath=path;
+                if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
+                IniPath += "EightyOne\\";
+                mkdir(IniPath.c_str());
+                strcpy(zx81.configpath, IniPath.c_str());
+
+                IniPath += FileNameGetFname(Application->ExeName);
+                IniPath += ".ini";
+                strcpy(zx81.inipath, IniPath.c_str());
+        }
+        else
+        {
+                IniPath=ChangeFileExt(Application->ExeName, ".ini" );
+                strcpy(zx81.inipath, IniPath.c_str());
+                IniPath=FileNameGetPath(Application->ExeName);
+                strcpy(zx81.configpath, IniPath.c_str());
+        }
+
+        if (!SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, path))
+        {
+                IniPath=path;
+                if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
+                strcpy(zx81.mydocs, IniPath.c_str());
+        }
+        else    strcpy(zx81.mydocs, zx81.cwd);
+
+        for(i=0; CommandLine[i]!=NULL; i++)
+        {
+                if (FileNameGetExt(CommandLine[i]) == ".INI")
+                {
+                        IniPath=CommandLine[i];
+                        if (IniPath.Pos("\\")==0)
+                                IniPath=zx81.configpath + IniPath;
+                        strcpy(zx81.inipath, IniPath.c_str());
+
+                }
+        }
 
         FullScreen=false;
         startup=true;
@@ -129,9 +192,17 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         Application->OnDeactivate=FormDeactivate;
         DrivesChanged=false;
 
-        IniPath=ChangeFileExt(Application->ExeName, ".ini" );
-        strcpy(zx81.inipath, IniPath.c_str());
+        BuildLine=&Video[0];
+        DisplayLine=&Video[1];
 
+        //Mutex=CreateMutex(NULL, true, NULL);
+        //CreateThread(
+        //             NULL,       // default security attributes
+        //             0,          // default stack size
+        //             (LPTHREAD_START_ROUTINE) VideoThread,
+        //             NULL,       // no thread function arguments
+        //             0,          // default creation flags
+        //             &VideoThreadId); // receive thread identifier
 
         SpecStartUp();
 }
@@ -141,6 +212,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 {
         TIniFile *ini;
         int i;
+        char soundfile[256];
 
 //        LPITEMIDLIST ppidl;
 //
@@ -167,25 +239,19 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         Application->OnMessage = AppMessage;
 
         nosound=true;
-        if (access("nosound",0)) nosound=false;
+        strcpy(soundfile,zx81.cwd); strcat(soundfile,"nosound");
+        if (access(soundfile,0)) nosound=false;
 
         ATA_Init();
 
         if (!nosound) sound_init();
         load_config();
-
-        strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
-        GetTempPath(256, zx81.temppath);
-        if (zx81.temppath[strlen(zx81.temppath)-1]!='\\')
-                strcat(zx81.temppath, "\\");
-        strcat(zx81.temppath, "eo\\");
-        mkdir(zx81.temppath);
-
         PCKbInit();
 
         Application->OnDeactivate=FormDeactivate;
 
         ini = new TIniFile(zx81.inipath);
+        ShowSplash=ini->ReadBool("MAIN","ShowSplash", ShowSplash);
         RenderMode=ini->ReadInteger("MAIN","RenderMode", RENDERGDI);
 
         if (!RenderInit())
@@ -200,9 +266,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         delete ini;
 
         AnimTimer1->Interval=20;
-        AnimTimer1->Enabled=true;
+        //AnimTimer1->Enabled=true;
         Timer2->Interval=1000;
-        Timer2->Enabled=true;
+        //Timer2->Enabled=true;
 
         LEDGreenOn = new Graphics::TBitmap;
         LEDGreenOff = new Graphics::TBitmap;
@@ -263,6 +329,9 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
+        if ((Key==VK_SHIFT) && (zx81.UseRShift)) return;
+        if (Key==VK_LSHIFT) Key=VK_SHIFT;
+        if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyDown(Key);
         if (zx81.wobble) ramwobble(false);
 }
@@ -271,6 +340,9 @@ void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
 void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
+        if ((Key==VK_SHIFT) && (zx81.UseRShift)) return;
+        if (Key==VK_LSHIFT) Key=VK_SHIFT;
+        if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyUp(Key);
 }
 //---------------------------------------------------------------------------
@@ -587,6 +659,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         struct dirent *ent;
 
+        if (FullScreen) FormKeyPress(NULL, 27);
         if (machine.exit) machine.exit();
 
         zx81_stop=true;
@@ -638,40 +711,60 @@ void __fastcall TForm1::ViewPrinterClick(TObject *Sender)
 
 void __fastcall TForm1::Timer2Timer(TObject *Sender)
 {
+        static int startup=0;
         int targetfps;
+        AnsiString Filename, Ext;
+        int i=0;
 
-        if (CommandLine)
+        switch(startup)
         {
-                AnsiString Cmd, Ext;
-
-                if (strlen(CommandLine)>3)
+        case 1:
+                while(CommandLine[i])
                 {
-                        Cmd = CommandLine;
+                        Filename=CommandLine[i];
 
-                        if (Cmd[1]=='\"') Cmd = Cmd.SubString(2,Cmd.Length());
-                        if (Cmd[Cmd.Length()]=='\"') Cmd = Cmd.SubString(1,Cmd.Length()-1);
+                        if (Filename.UpperCase()=="FULLSCREEN") FormKeyPress(NULL, 27);
 
-                        Ext = FileNameGetExt(Cmd);
+                        Ext = FileNameGetExt(Filename);
 
-                        if ( (Ext == ".TZX") || (Ext == ".P") ||(Ext == ".TAP") || (Ext==".T81") )
+                        if (Ext == ".ZIP")
                         {
-                                TZX->LoadFile(Cmd,false);
-                                TZX->UpdateTable(true);
-                                //load_tape_buffer(65536);
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.o;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Ext = FileNameGetExt(Filename);
                         }
-                        if ( (Ext == ".z81") || (Ext == ".Z81")
-                                || (Ext == ".ace") || (Ext == ".ACE") ) load_snap(Cmd.c_str());
+
+                        if (Ext==".WAV") WavLoad->LoadFile(Filename);
+                        else if (Ext==".Z81" || Ext==".ACE") load_snap(Filename.c_str());
+                        else if (Ext==".Z80") spec_load_z80(Filename.c_str());
+                        else if (Ext==".SNA") spec_load_sna(Filename.c_str());
+                        else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
+                                  || Ext==".P" || Ext==".O" || Ext==".A83")
+                        {
+                                TZX->LoadFile(Filename, false);
+                                TZX->UpdateTable(true);
+                        }
+                        else if (Ext==".MDR" || Ext==".MDV" || Ext==".HDF"
+                                  || Ext==".DSK" || Ext==".MGT" || Ext==".IMG"
+                                  || Ext==".OPD" || Ext==".OPU" || Ext==".TRD")
+                                        P3Drive->InsertFile(Filename);
+                        i++;
                 }
 
+                break;
+        case 0:
                 if (StartUpWidth==0 || StartUpHeight==0) N1001Click(NULL);
                 else
                 {
                         Width=StartUpWidth;
                         Height=StartUpHeight;
                 }
-                CommandLine=NULL;
                 Kb->OKClick(NULL);
+                break;
+        default:
+                break;
         }
+
+        if (startup<6) startup++;
 
         if (P3Drive->Height<80)
         {
@@ -686,7 +779,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         }
         
         targetfps = zx81.NTSC ? 60:50;
-        if (fps==targetfps+1) fps=targetfps;
+        if (((targetfps-1) == fps) || ((targetfps+1)==fps)) fps=targetfps;
         targetfps = (targetfps  * 9) / 10;
         if (fps > (targetfps+2) && zx81.frameskip>0) zx81.frameskip--;
         if (fps < targetfps && zx81.frameskip<10 && zx81.frameskip>=0) zx81.frameskip++;
@@ -908,6 +1001,28 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
 {
         static int j, borrow, Drive;
+        SCANLINE *templine;
+
+        if (zx81.UseRShift)
+        {
+                bool L=((GetAsyncKeyState(VK_LSHIFT)&32768)!=0);
+                bool R=((GetAsyncKeyState(VK_RSHIFT)&32768)!=0);
+                TShiftState z;
+
+                if (R != RShift)
+                {
+                        RShift=R;
+                        if (R) FormKeyDown(NULL, VK_RSHIFT, z);
+                        else FormKeyUp(NULL, VK_RSHIFT,z);
+                }
+
+                if (L != LShift)
+                {
+                        LShift=L;
+                        if (L) FormKeyDown(NULL, VK_LSHIFT,z);
+                        else FormKeyUp(NULL, VK_LSHIFT,z);
+                }
+        }
 
         if (!nosound) sound_frame();
         if (zx81_stop)
@@ -938,12 +1053,38 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
 
         while (j>0 && !zx81_stop)
         {
-                j-= machine.do_scanline();
-                AccurateDraw();
+                j-= machine.do_scanline(BuildLine);
+                AccurateDraw(BuildLine);
+                //WaitForSingleObject(Mutex,INFINITE);
+                //templine=BuildLine;
+                //BuildLine=DisplayLine;
+                //DisplayLine=templine;
+                //BuildLine->sync_len=DisplayLine->sync_len;
+                //BuildLine->sync_valid=DisplayLine->sync_valid;
+                //ReleaseMutex(Mutex);
+                //SwitchToThread();
+                //Sleep(0);
+                //AccurateDraw(DisplayLine);
         }
 
         if (!zx81_stop) borrow=j;
 }
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+
+void VideoThread(void)
+{
+        while(1)
+        {
+                WaitForSingleObject(Mutex,INFINITE);
+                AccurateDraw(DisplayLine);
+                ReleaseMutex(Mutex);
+                SwitchToThread();
+        }
+}
+
+
+//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
@@ -966,7 +1107,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         //if (ini->ReadBool("MAIN","Accurate1",Accurate1->Checked)) Accurate1Click(NULL);
         //if (ini->ReadBool("MAIN","DisplayArtifacts",DisplayArtifacts1->Checked)) DisplayArtifacts1Click(NULL);
 
-        
+
         if (ini->ReadBool("MAIN","InverseVideo",InverseVideo->Checked)) InverseVideoClick(NULL);
 
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
@@ -1031,6 +1172,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteInteger("MAIN","Height",Height);
         ini->WriteInteger("MAIN","Width",Width);
 
+        ini->WriteBool("MAIN","ShowSplash", ShowSplash);
         ini->WriteInteger("MAIN","RenderMode", RenderMode);
 
         ini->WriteBool("MAIN","N1001",N1001->Checked);
@@ -1302,7 +1444,7 @@ void TForm1::DoAutoLoad(void)
 
         switch(AutoLoadCount)
         {
-        case 1: machine.initialise(); break;
+        case 1: ResetZX811Click(NULL); break;
         case AUTOINC(0): if (zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128)
                                 PCKeyDown(VK_RETURN);
                          else if (zx81.machine==MACHINELAMBDA) PCKeyDown('L');
@@ -1553,7 +1695,7 @@ void TForm1::BuildConfigMenu(void)
 
         while(Config1->Count >2) Config1->Delete(2);
 
-        if ((dir = opendir(zx81.cwd)) != NULL)
+        if ((dir = opendir(zx81.configpath)) != NULL)
         {
                 while ((ent = readdir(dir)) != NULL)
                 {
@@ -1582,7 +1724,7 @@ void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
         AnsiString FileName;
 
         SaveConfigDialog->FileName="";
-        SaveConfigDialog->InitialDir=zx81.cwd;
+        SaveConfigDialog->InitialDir=zx81.configpath;
 
         if (!SaveConfigDialog->Execute()) return;
 
@@ -1620,7 +1762,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
                 ConfigName=Before+After;
         }
 
-        FileName = zx81.cwd;
+        FileName = zx81.configpath;
         if (FileName[FileName.Length()]!='\\') FileName=FileName+'\\';
         FileName = FileName + ConfigName;
         FileName = FileName + ".ini";

@@ -107,13 +107,13 @@ __published:	// IDE-managed Components
         TMenuItem *RamPackWobble1;
         TMenuItem *WobbleNow1;
         TMenuItem *BorderSize1;
-        TMenuItem *Small1;
         TMenuItem *Normal1;
         TMenuItem *Large1;
         TMenuItem *FullImage1;
         TOpenDialog *OpenTape1;
         TMenuItem *FullScreenSettings1;
         TMenuItem *None1;
+        TMenuItem *Small1;
         TStatusBar *StatusBar1;
         TMenuItem *StatusBar2;
         TMenuItem *IFace1;
@@ -226,6 +226,7 @@ private:	// User declarations
         void BuildConfigMenu(void);
         void __fastcall WMGetMinMaxInfo(TWMGetMinMaxInfo &Msg);
         bool DrivesChanged;
+        bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
 public:		// User declarations

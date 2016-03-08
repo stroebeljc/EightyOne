@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 377
-  Top = 111
+  Left = 543
+  Top = 157
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Hardware'
@@ -28,7 +28,7 @@ object HW: THW
     Top = 8
     Width = 393
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Others
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet

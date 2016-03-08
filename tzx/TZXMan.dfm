@@ -259,9 +259,9 @@ object TZX: TTZX
     end
   end
   object ScrollBar1: TScrollBar
-    Left = 205
+    Left = 204
     Top = 39
-    Width = 16
+    Width = 17
     Height = 190
     Anchors = [akTop, akRight, akBottom]
     Kind = sbVertical
@@ -317,7 +317,7 @@ object TZX: TTZX
       Top = 0
       Width = 41
       Height = 25
-      Hint = 'Auto LOAD in Insert'
+      Hint = 'Auto LOAD on Insert'
       Anchors = [akRight]
       Color = clBtnFace
       HoverFont.Charset = DEFAULT_CHARSET

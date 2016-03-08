@@ -44,15 +44,10 @@
 #define LASTINSTOUTFD 3
 #define LASTINSTOUTFF 4
 
-
 extern void DebugUpdate(void);
-extern void add_blank(int borrow, BYTE colour);
+extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 extern int CRC32Block(char *memory, int romlen);
-extern int RasterY;
-extern int sync_len, sync_valid;
 extern long noise;
-extern BYTE scanline[];
-extern int scanline_len;
 extern int SelectAYReg;
 
 int border=7, ink=0, paper=7;
@@ -126,8 +121,6 @@ void zx81_initialise(void)
 
         NMI_generator=0;
         HSYNC_generator=0;
-        sync_len=0;
-        sync_valid=0;
         MemotechMode=0;
 
         z80_reset();
@@ -306,8 +299,9 @@ BYTE zx81_opcode_fetch(int Address)
                 // When the I register is odd.
 
                 extern int RasterY;
+                extern SCANLINE *BuildLine;
 
-                if ((opcode!=118 || scanline_len<66) && RasterY>=56 && RasterY<=(56+192))
+                if ((opcode!=118 || BuildLine->scanline_len<66) && RasterY>=56 && RasterY<=(56+192))
                 {
                         opcode=0;
                         inv=(MemotechMode==3);
@@ -604,7 +598,7 @@ void ramwobble(int now)
 }
 */
 
-int zx81_do_scanline()
+int zx81_do_scanline(SCANLINE *CurScanLine)
 {
         int ts,i;
         int MaxScanLen;
@@ -612,15 +606,16 @@ int zx81_do_scanline()
         int tstotal=0;
         int pixels;
 
-        scanline_len=0;
+        CurScanLine->scanline_len=0;
 
         MaxScanLen = (zx81.single_step? 1:420);
 
-        if (sync_valid)
+        if (CurScanLine->sync_valid)
         {
-                add_blank(borrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR );
+                add_blank(CurScanLine, borrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR );
                 borrow=0;
-                sync_valid=0;
+                CurScanLine->sync_valid=0;
+                CurScanLine->sync_len=0;
         }
 
         do
@@ -657,8 +652,6 @@ int zx81_do_scanline()
                                 if (PrevGhost) colour|=4;
                                 PrevGhost=0;
 
-                                //if (RasterY&1) colour|=8;
-
                                 if (PrevBit && (PrevRev || zx81.simpleghost))
                                         { colour|=2; PrevGhost=1; }
 
@@ -668,7 +661,7 @@ int zx81_do_scanline()
                                 PrevBit= bit;
                         }
 
-                        scanline[scanline_len++] = colour;
+                        CurScanLine->scanline[CurScanLine->scanline_len++] = colour;
 
                         shift_register<<=1;
                         shift_reg_inv<<=1;
@@ -679,26 +672,26 @@ int zx81_do_scanline()
                 case LASTINSTOUTFD:
                         NMI_generator=0;
                         if (!HSYNC_generator) rowcounter=0;
-                        if (sync_len) sync_valid=SYNCTYPEV;
+                        if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
                         break;
                 case LASTINSTOUTFE:
                         NMI_generator=1;
                         if (!HSYNC_generator) rowcounter=0;
-                        if (sync_len) sync_valid=SYNCTYPEV;
+                        if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
                         break;
                 case LASTINSTINFE:
                         if (!NMI_generator)
                         {
                                 HSYNC_generator=0;
-                                if (sync_len==0) sync_valid=0;
+                                if (CurScanLine->sync_len==0) CurScanLine->sync_valid=0;
                                 HaltCount=0;
                         }
                         break;
                 case LASTINSTOUTFF:
                         if (!HSYNC_generator) rowcounter=0;
-                        if (sync_len) sync_valid=SYNCTYPEV;
+                        if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
                         break;
                 default:
@@ -709,27 +702,27 @@ int zx81_do_scanline()
 
                 if (!(z80.r & 64))
                         int_pending=1;
-                if (!HSYNC_generator) sync_len += ts;
+                if (!HSYNC_generator) CurScanLine->sync_len += ts;
 
                 if (hsync_counter<=0)
                 {
                         if (NMI_generator)
                         {
                                 int nmilen;
-                                nmilen = z80_nmi(scanline_len);
+                                nmilen = z80_nmi(CurScanLine->scanline_len);
                                 //if (nmilen!=11) add_blank(nmilen-11,60);
                                 hsync_counter -= nmilen;
                                 ts += nmilen;
                         }
 
                         borrow=-hsync_counter;
-                        if (HSYNC_generator && sync_len==0)
+                        if (HSYNC_generator && CurScanLine->sync_len==0)
                         {
-                                sync_len=10;
-                                sync_valid=SYNCTYPEH;
-                                if (scanline_len>=(machine.tperscanline*2))
-                                        scanline_len=machine.tperscanline*2;
-                                //for(i=0;i<24;i++) scanline[i]=HBLANKCOLOUR;
+                                CurScanLine->sync_len=10;
+                                CurScanLine->sync_valid=SYNCTYPEH;
+                                if (CurScanLine->scanline_len>=(machine.tperscanline*2))
+                                        CurScanLine->scanline_len=machine.tperscanline*2;
+                                //for(i=0;i<24;i++) CurScanLine->scanline[i]=HBLANKCOLOUR;
                                 rowcounter = (++rowcounter)&7;
                         }
                         hsync_counter += machine.tperscanline;
@@ -739,9 +732,9 @@ int zx81_do_scanline()
 
                 DebugUpdate();
 
-        } while(scanline_len<MaxScanLen && !sync_valid && !zx81_stop);
+        } while(CurScanLine->scanline_len<MaxScanLen && !CurScanLine->sync_valid && !zx81_stop);
 
-        if (sync_valid==SYNCTYPEV)
+        if (CurScanLine->sync_valid==SYNCTYPEV)
         {
                 hsync_counter=machine.tperscanline;
                 //borrow=0;

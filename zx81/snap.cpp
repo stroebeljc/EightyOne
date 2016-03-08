@@ -446,7 +446,6 @@ int memory_load(char *filename, int address, int length)
         else
         {
                 strcpy(file, zx81.cwd);
-                if (file[strlen(file)-1]!='\\') strcat(file,"\\");
                 strcat(file,"ROM\\");
                 strcat(file,filename);
         }
@@ -475,7 +474,6 @@ int font_load(char *filename, char *address, int length)
         int len;
 
         strcpy(file, zx81.cwd);
-        if (file[strlen(file)-1]!='\\') strcat(file,"\\");
         strcat(file,"ROM\\");
         strcat(file,filename);
 

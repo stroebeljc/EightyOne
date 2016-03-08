@@ -155,6 +155,7 @@ typedef struct
         CFGBYTE simpleghost;
         CFGBYTE maxireg;
         CFGBYTE zxprinter;
+        CFGBYTE zxpand;
         int RAMTOP;
         int ROMTOP;
         int m1not;

@@ -200,7 +200,7 @@ void zx81_initialise(void)
 
         if (zxpand)
         {
-                if (zxpand_destroy) zxpand_destroy(zxpand);
+                if (zxpand_delete) zxpand_delete(zxpand);
                 zxpand = NULL;
         }
         if (zx81.zxpand)

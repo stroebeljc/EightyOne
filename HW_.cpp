@@ -28,12 +28,15 @@
 #include "SymBrowse.h"
 
 extern "C" void sound_ay_init(void);
-extern "C" char DockFile[];
+extern "C" BYTE ZX1541Mem[];
+
 extern void HWSetMachine(int machine, int speccy);
 
 extern int zx81_do_scanline(SCANLINE *CurScanLine);
 
-extern "C" BYTE ZX1541Mem[];
+extern void InitPatches(int machineType);
+
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
@@ -146,6 +149,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         + " " + Name;
         }
 
+        zx81.zxpand = 0;
+
         strcpy(zx81.machinename, Name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = Name;
 
@@ -163,12 +168,14 @@ void __fastcall THW::OKClick(TObject *Sender)
         {
         case MACHINEZX80:
                 strcpy(zx81.ROM80, machine.CurRom);
+                zx81.zxpand = (ZXpand->Checked == true);
                 break;
 
         case MACHINEZX81:
                 if (R470Btn->Down) strcpy(zx81.ROMR470, machine.CurRom);
                 else if (TK85Btn->Down) strcpy(zx81.ROMTK85, machine.CurRom);
                 else strcpy(zx81.ROM81, machine.CurRom);
+                zx81.zxpand = (ZXpand->Checked == true);
                 break;
 
         case MACHINEACE:
@@ -177,6 +184,7 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         case MACHINETS1500:
                 strcpy(zx81.ROMTS1500, machine.CurRom);
+                zx81.zxpand = (ZXpand->Checked == true);
                 break;
 
         case MACHINELAMBDA:
@@ -575,7 +583,6 @@ void __fastcall THW::OKClick(TObject *Sender)
         symbolstore::reset();
 
         AnsiString file = zx81.cwd;
-        if (file[file.Length()] != '\\') file += "\\";
         file += "ROM\\";
         file += machine.CurRom;
         file += ".sym";
@@ -620,6 +627,8 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         spectrum.drivebusy = -1;
 
+        InitPatches(NewMachine);
+
         if (Sender) Close();
 }
 //---------------------------------------------------------------------------
@@ -649,6 +658,8 @@ void THW::SetupForZX81(void)
         TS2068Btn->Down=false;
         SpecSEBtn->Down=false;
         QLBtn->Down=false;
+
+        ZXpand->Enabled=true;
 
         //FloppyDrives->TabVisible=false;
 
@@ -756,6 +767,8 @@ void THW::SetupForSpectrum(void)
         SpecSEBtn->Down=false;
         QLBtn->Down=false;
 
+        ZXpand->Enabled=false;
+
         ResetRequired=true;
 
         OldFDC=FDC->Items->Strings[FDC->ItemIndex];
@@ -839,6 +852,8 @@ void THW::SetupForQL(void)
 {
         AnsiString OldIDE;
         int i;
+
+        ZXpand->Enabled=false;
 
         ZX80Btn->Down=false;
         ZX81Btn->Down=false;
@@ -1337,9 +1352,7 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=zx81.ROMQL; ini->WriteString("HWARE","ROMQL",Rom);
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\')
-                FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\nvram\\divide.nv");
+        strcat(FileName,"nvram\\divide.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -1550,7 +1563,6 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         char cPath[512];
 
         Path= zx81.cwd;
-        if (Path[Path.Length()]!='\\') Path += "\\";
         Path += "ROM";
 
         RomSelect->InitialDir = Path;
@@ -1868,6 +1880,12 @@ void __fastcall THW::FDCChange(TObject *Sender)
 //---------------------------------------------------------------------------
 
 void __fastcall THW::uSpeechClick(TObject *Sender)
+{
+        ResetRequired=true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::ZXpandClick(TObject *Sender)
 {
         ResetRequired=true;
 }

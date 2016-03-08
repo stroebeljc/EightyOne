@@ -44,7 +44,6 @@ USEUNIT("sound\dxsound.c");
 USEUNIT("sound\sound.c");
 USEFORM("sound\SoundOP.cpp", SoundOutput);
 USEFORM("DebugWin\Hist.cpp", HistoryBox);
-USEUNIT("zx81\rompatch.c");
 USEFORM("MemSave_.cpp", MemSave);
 USEFORM("zx97Config.cpp", ZX97Dialog);
 USEUNIT("peripherals\dev8255.c");
@@ -112,6 +111,7 @@ USEUNIT("zx81\zx81.cpp");
 USEFORM("SymBrowse.cpp", SymbolBrowser);
 USELIB("libdsk.lib");
 USELIB("zlib.lib");
+USEUNIT("zx81\rompatch.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

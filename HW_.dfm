@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 334
-  Top = 158
+  Left = 284
+  Top = 119
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1336,6 +1336,15 @@ object HW: THW
         Height = 17
         Caption = 'ZX Printer'
         TabOrder = 9
+      end
+      object ZXpand: TCheckBox
+        Left = 200
+        Top = 112
+        Width = 97
+        Height = 20
+        Caption = 'ZXpand'
+        TabOrder = 10
+        OnClick = ZXpandClick
       end
     end
     object FloppyDrives: TTabSheet

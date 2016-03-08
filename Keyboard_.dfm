@@ -1,11 +1,11 @@
 object Keyboard: TKeyboard
-  Left = 555
-  Top = 145
-  Width = 512
-  Height = 250
+  Left = 579
+  Top = 167
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsSizeToolWin
+  BorderStyle = bsToolWindow
   Caption = 'Keyboard'
+  ClientHeight = 224
+  ClientWidth = 506
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

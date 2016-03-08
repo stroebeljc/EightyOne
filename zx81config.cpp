@@ -72,6 +72,7 @@ void load_config(void)
         zx81.simpleghost=1;
         zx81.maxireg=32;
         zx81.zxprinter=1;
+        zx81.zxpand=0;
         machine.clockspeed=3250000;
         zx81.speedup=0;
         zx81.UseRShift=0;

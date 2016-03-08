@@ -92,6 +92,7 @@ __published:	// IDE-managed Components
         TLabel *ZXCFLabel;
         TCheckBox *uSpeech;
         TCheckBox *ZXPrinter;
+        TCheckBox *ZXpand;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -132,6 +133,7 @@ __published:	// IDE-managed Components
         void __fastcall QLBtnClick(TObject *Sender);
         void __fastcall FDCChange(TObject *Sender);
         void __fastcall uSpeechClick(TObject *Sender);
+        void __fastcall ZXpandClick(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;

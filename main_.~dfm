@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 616
-  Top = 201
+  Left = 679
+  Top = 231
   Width = 255
   Height = 215
-  Caption = 'EightyOne - ZXpand remix'
+  Caption = 'EightyOne'
   Color = clBtnFace
   Constraints.MinHeight = 128
   Constraints.MinWidth = 128

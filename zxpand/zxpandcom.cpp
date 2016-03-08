@@ -164,7 +164,7 @@ static const rom char* SEPARATOR = "=";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
-static const rom char* VERSION = "ZXPAND EO";
+static const rom char* VERSION = "ZXPAND EO 1.0";
 
 typedef const rom far char* RFC;
 

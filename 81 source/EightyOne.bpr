@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.05.03"/>
+    <PROJECT value="EightyOne.exe"/>
+    <OBJFILES value="EightyOne.obj main_.obj z80\z80_ops.obj z80\z80.obj FastDraw_.obj 
+      z80thread.obj kbstatus.obj About_.obj Keyboard_.obj Speed_.obj kb_.obj 
+      Hardware_.obj zx81\fastdirty.obj zx81\snap.obj zx81\zx81.obj 
+      zx81\zx81config.obj zx81\accurate.obj AccDraw_.obj TapeMan\TapeMan_.obj 
+      TapeMan\TapeCInterface.obj zxprinter\zxprinter.obj zx81\ace.obj 
+      wavtape\WavFile.obj wavtape\wavload_.obj wavtape\WavCInterface.obj 
+      DebugWin\Debug.obj zxprinter\PrintOptions_.obj DebugWin\AddBreak_.obj"/>
+    <RESFILES value="EightyOne.res"/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) main_.dfm About_.dfm Keyboard_.dfm Speed_.dfm kb_.dfm 
+      Hardware_.dfm TapeMan\TapeMan_.dfm zxprinter\zxprinter.dfm 
+      wavtape\wavload_.dfm DebugWin\Debug.dfm zxprinter\PrintOptions_.dfm 
+      DebugWin\AddBreak_.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="AnimTimer.lib dbits.lib Vcl50.lib"/>
+    <SPARELIBS value="Vcl50.lib dbits.lib AnimTimer.lib"/>
+    <PACKAGES value="Vcl50.bpi Vclx50.bpi bcbsmp50.bpi Qrpt50.bpi Vcldb50.bpi Vclbde50.bpi 
+      ibsmp50.bpi vcldbx50.bpi TeeUI50.bpi TeeDB50.bpi Tee50.bpi TeeQR50.bpi 
+      VCLIB50.bpi bcbie50.bpi vclie50.bpi Inetdb50.bpi Inet50.bpi NMFast50.bpi 
+      dclocx50.bpi bcb2kaxserver50.bpi dbits.bpi"/>
+    <PATHCPP value=".;z80;zx81;TapeMan;zxprinter;wavtape;DebugWin"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="tlink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="NO_STRICT"/>
+    <MAINSOURCE value="EightyOne.cpp"/>
+    <INCLUDEPATH value="DebugWin;wavtape;zxprinter;TapeMan;zx81;&quot;C:\Program Files\Borland\CBuilder5\Projects\&quot;;z80;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="DebugWin;wavtape;zxprinter;TapeMan;zx81;&quot;C:\Program Files\Borland\CBuilder5\Projects\&quot;;z80;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+  </MACROS>
+  <OPTIONS>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -RT- -X- -r- -a8 -5 -b- -k -y -v 
+      -vi- -c -tW -tWM"/>
+    <PFLAGS value="-$Y+ -$W -$O- -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zi"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+  </LINKER>
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=0
+MinorVer=0
+Release=0
+Build=1
+Debug=0
+PreRelease=1
+Special=0
+Private=0
+DLL=0
+Locale=2057
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=A simple ZX81 emulator
+FileVersion=0.0.0.1
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=EightyOne
+ProductVersion=1.0.0.0
+Comments=Test version for comments only
+
+[HistoryLists\hlIncludePath]
+Count=7
+Item0=DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl
+Item1=wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl
+Item2=zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl
+Item3=TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl
+Item4=zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl
+Item5=C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl
+Item6=C:\Program Files\Borland\CBuilder5\Projects;z80;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=7
+Item0=DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\lib\obj;$(BCB)\lib
+Item1=wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\lib\obj;$(BCB)\lib
+Item2=zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\lib\obj;$(BCB)\lib
+Item3=TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\lib\obj;$(BCB)\lib
+Item4=zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\lib\obj;$(BCB)\lib
+Item5=C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\lib\obj;$(BCB)\lib
+Item6=C:\Program Files\Borland\CBuilder5\Projects;z80;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=2
+Item0=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\
+Item1=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[Debugging]
+DebugSourceDirs=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\
+
+[Parameters]
+RunParams=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

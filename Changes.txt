@@ -1,0 +1,84 @@
+Version 0.21 - 6/10/03
+
+The Snap file format has changed to something a bit more robust, portable and extensible.  Also, it's now possible to hack the snap files in notepad or whatever if you so wish. You can now drag tape files onto the emulator window and they'll automaticly be inserted.
+
+Version 0.20 - 4/10/03
+
+Removed the Memotech option from the Hardware dialog until I can figure it out.  Instead, there's an option to select or deselect True-hires mode.  Enabled, WRX true hires mode works whereas disabled, you can use alternate character sets defined in the 8192-16383 memory range.
+
+
+Version 0.19 - 4/10/03
+Tidied up the Hardware dialog box.  Also the Maxdemo now works :)   - The timing was fine, however I'd forgotten to treat the second memory fetch of an EDxx instruction as an M1 cycle.  oops.
+
+Version 0.18 - 2/10/03
+
+1/2 the time, switching between machines wouldn't work properly - fixed this time (hopefully). EightyOne finally has its own icon (Thanks to Paul Collins). I renamed the sliders on the Printer Control.  Added some functionality to the Fast 'n Dirty Mode so that a lot of true hi-res games now work as well as in Accurate mode.  Nothing much today...
+
+Version 0.17 - 1/10/03
+
+Small change to the timing again.  HR-Chess display the left-hand quote around the input now.  Not many more features I want to do now... maybe saving to wav files. Oh, and I've still to code saving its config (Still putting it off).
+Other changed include the NMI/INT skip in the debugger now kind of working (There appears to be a bug if you try and turn on/off the continuous display while it's executing code).  Another small change is the little blue blob that scans across the screen when continuous display is enabled - it represents the position of the TVs electron beam.  Oh, and the debugger doesn't work well with interlace display turned on because of the way the display is generated.
+
+
+Version 0.16 - 30/9/03
+
+OK, the debugger seemed to break a lot of other things too. It now has breakpoints though. Jupiter Ace emulation is working again, as is the ZX Printer.  There's few setting you can choose from for the printer too - they select the horizontal and vertical speed of the "carriage".  In fact, moving these about while the ZX81 is printing can produce very realistic looking ZX Printer output ;-)
+There's a small change in the IM2 timing - ZX-tricator displays better now.
+
+Version 0.15 - 30/9/03
+
+It appears that ZX80 emulation got broken somewhere - fixed now.  Also a small change to the way ports are handled.  The game "intruder", a space invaders clone (Actually an interesting little program.  It was written for the ZX80 and is the only "interactive" flicker free zx80 game I know of) now works properly.
+
+Version 0.14 - 28/9/03
+
+Todays new feature? - A Debug window.  It's not much use yet until I add something like breakpoints or skipping the NMI.  At the moment you end up "debugging" the screen generation 50% of the time.  Still, it's a start.
+
+Version 0.13 - 27/9/03
+
+Whoops, looks like I left some debug code enabled in last nights release. Whenever you loaded a file, it'd stop with a D/0 error afterwards.  Anyway, I've finished off the Wav Loader - it doesn't seem quite as prone to the chuntey now and should handle 8/16 bit/mono/stereo samples.  There was a fairly hefty memory leak too where it would forget to release the sample buffer when you loaded a new wav file.  
+
+Version 0.12 - 27/9/03
+
+Added Wav Player.
+You can now load a program directly from a wav recording. I've also split the load/save rom patch into two separate options, so if you just enable the save patch, you can load a wav file then save it out to a .p or .T81.
+
+To load a wav file, do the following:
+
+	1. Go to "Hardware" and ensure the LOAD patch is disabled.
+	2. Open up the Wav Loader Window
+	3. In the Wav Loader, Click on "Open" and select your wav file.
+	   At the moment, only 8bit mono files are supported (Any sample rate
+	   though).
+	4. You can move about the wav file with the slider.  Position the red bar
+	   before the start of the program.
+	5. On the ZX81, enter LOAD ""
+	6. Press "Play" in the Wav Loader.
+	7. If the wind is right and you've crossed all the right fingers,
+	   the program will now load into EightyOne.
+
+If you're having problems with noise, try adjusting the Threshold - That's the green
+bar.  Anything below it is ignored as noise.
+
+A sample wav file to play with can be found at
+
+http://www.chuntey.com/eightyone/byter.zip
+
+I've also hopefully fixed the problem where EightyOne would sometimes not boot the machine properly after a hardware change.
+
+
+
+Version 0.11 - 25/9/03
+
+Minor Changes.
+Changed Rendering engine slightly.  The first line of Pseudo Hi-res games no longer appears corrupt. ZX80 screen appears too far to the right now though... Another look and a lot of things appear too far right. grrrr.
+
+Added fps counter.
+
+Added a ROM file selector to the hardware Dialog, however it will only let you select rom files in the same directory as the emulator.  I really do need to add the code that loads/saves the current config on startup/shutdown.
+
+Fixed small bug where keys like , . ; ' # etc wouldn't work until after shift had been pressed and released.
+
+
+Version 0.1 - 24/9/03
+
+First Public Release.

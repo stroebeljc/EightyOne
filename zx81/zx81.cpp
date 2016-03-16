@@ -93,9 +93,9 @@ int LastInstruction;
 int MemotechMode=0;
 int HWidthCounter=0;
 
+BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
 BYTE font[1024];                //Allows for both non-inverted and inverted for the QS Chars Board 
-BYTE zxpfont[512];
 BYTE memhrg[1024];
 BYTE ZXKeyboard[8];
 BYTE ZX1541Mem[(8+32)*1024]; // ZX1541 has 8k EEPROM and 32k RAM
@@ -109,6 +109,8 @@ extern int shift_register, shift_reg_inv;
 extern long noise;
 
 extern int font_load(char*, char*,int);
+
+int memoryLoadToAddress(char *filename, void* destAddress, int length);
 
 BYTE get_i_reg(void)
 {
@@ -133,14 +135,8 @@ void zx81_initialise(void)
         AnsiString romname = machine.CurRom;
         if (zx81.zxpand)
         {
-                if (zx81.machine==MACHINEZX81)
-                {
-                        AnsiString fntname = machine.CurRom;
-                        fntname = StringReplace(fntname, ".rom", "-font.bin", TReplaceFlags() << rfIgnoreCase);
-                        font_load(fntname.c_str(),zxpfont,512);
-                }
-
-                romname = StringReplace(romname, ".rom", "-zxpand.rom", TReplaceFlags() << rfIgnoreCase);
+                AnsiString overlayName = StringReplace(romname, ".rom", "-zxpand.rom", TReplaceFlags() << rfIgnoreCase);
+                memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
         romlen=memory_load(romname.c_str(), 0, 65536);
         zx81.romcrc=CRC32Block(memory,romlen);
@@ -470,13 +466,18 @@ BYTE zx81_readbyte(int Address)
                 }
         }
 
+        int zxpConfigData;
+        zxpand->GetConfig(zxpConfigData);
+
+        bool configLow = ((zxpConfigData & (1<<CFG_BIT_LOW)) != 0);
+
+        // CR  we need to know if zxpand is disabled
+        bool zxpandDisabled = zxpConfigData & (1<<CFG_BIT_DISABLED);
+
         bool zxpandRamAccess = false;
+
         if (zx81.zxpand)
         {
-                int configData;
-                zxpand->GetConfig(configData);
-                bool configLow = ((configData & (1<<CFG_BIT_LOW)) != 0);
-
                 // ZXpand 8-16K RAM is not shadowed at 40-48K
                 zxpandRamAccess = (configLow && Address >= 0x2000 && Address < 0xA000) ||
                                   (!configLow && Address >= 0x4000 && Address < 0xC000);
@@ -492,7 +493,8 @@ BYTE zx81_readbyte(int Address)
         }
         else if (zx81.zxpand && zx81.machine==MACHINEZX81 && video && Address>=0x1E00 && Address<0x2000)
         {
-                data=zxpfont[Address-7680];
+                // CR  zxpand enables the ROM for character access
+                data=memory[Address];
         }
         else if ((zx81.chrgen == CHRGENQS) && (zx81.colour != COLOURCHROMA) && (Address >= 0x8400) && (Address < 0x8800))
         {
@@ -508,7 +510,18 @@ BYTE zx81_readbyte(int Address)
         }
         else if (Address <= zx81.ROMTOP)
         {
-                data=memory[Address];
+                // CR  reads from ROM whilst zxpand is disabled will return
+                // normal ROM content, else overlay ROM
+                
+                if (zx81.zxpand && zx81.machine==MACHINEZX81)
+                {
+                        if (!zxpandDisabled)
+                                data = zxpandROMOverlay[Address];
+                        else
+                                data=memory[Address];
+                }
+                else
+                        data=memory[Address];
         }
         else if ((Address & 0x7FFF) >= 0x4000)
         {

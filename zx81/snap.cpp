@@ -431,6 +431,40 @@ int save_snap(char *filename)
         return(0);
 }
 
+int memoryLoadToAddress(char *filename, void* destAddress, int length)
+{
+        int fptr;
+        char file[256];
+        int len;
+
+        if (strchr(filename, '\\') || strchr(filename, '/'))
+        {
+                strcpy(file, filename);
+        }
+        else
+        {
+                strcpy(file, zx81.cwd);
+                strcat(file,"ROM\\");
+                strcat(file,filename);
+        }
+
+        fptr=open(file, O_RDONLY | O_BINARY);
+        if (fptr<1) return(errno);
+
+        if ((len=read(fptr, destAddress, length))==-1)
+        {
+                int err;
+
+                err=errno;
+                close(fptr);
+                return(err);
+        }
+
+        close(fptr);
+
+        return(len);
+}
+
 int memory_load(char *filename, int address, int length)
 {
         int fptr;

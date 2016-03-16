@@ -357,7 +357,8 @@ void __fastcall TMemoryWindow::FormResize(TObject *Sender)
 void __fastcall TMemoryWindow::ScrollBar1Change(TObject *Sender)
 {
         int value = ScrollBar1->Position;
-        mBaseAddress = value & 0xFFF0;
+        // mBaseAddress = value & 0xFFF0;
+        mBaseAddress = value; // CR: allow byte offsets in memory window & 0xFFF0;
 
         if (mOffscreenBitmap)
         {
@@ -418,6 +419,10 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
         int address;
         TPoint cp = ScreenToClient(Mouse->CursorPos);
 
+        // CR  this is nasty - but it's the quickest way to tell if the debugger
+        // is running continuously
+        if (Dbg->SingleStep->Enabled == false) return;
+
         if (xyToAddress(cp.x, cp.y, address))
         {
                 EditValue->Top = Mouse->CursorPos.y;
@@ -429,6 +434,7 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                         if (EditValue->Edit2(n,1))
                         {
                                 setbyte(address,n);
+                                UpdateChanges();  // CR  refresh after edit
                         }
                 }
                 else
@@ -438,6 +444,7 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                         {
                                 setbyte(address, n & 255);
                                 setbyte(address+1, n >> 8);
+                                UpdateChanges();  // CR  refresh after edit
                         }
                 }
         }

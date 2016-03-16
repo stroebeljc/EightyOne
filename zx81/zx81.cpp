@@ -466,18 +466,15 @@ BYTE zx81_readbyte(int Address)
                 }
         }
 
-        int zxpConfigData;
-        zxpand->GetConfig(zxpConfigData);
-
-        bool configLow = ((zxpConfigData & (1<<CFG_BIT_LOW)) != 0);
-
-        // CR  we need to know if zxpand is disabled
-        bool zxpandDisabled = zxpConfigData & (1<<CFG_BIT_DISABLED);
-
         bool zxpandRamAccess = false;
 
         if (zx81.zxpand)
         {
+                int zxpConfigData;
+                zxpand->GetConfig(zxpConfigData);
+
+                bool configLow = ((zxpConfigData & (1<<CFG_BIT_LOW)) != 0);
+
                 // ZXpand 8-16K RAM is not shadowed at 40-48K
                 zxpandRamAccess = (configLow && Address >= 0x2000 && Address < 0xA000) ||
                                   (!configLow && Address >= 0x4000 && Address < 0xC000);
@@ -512,9 +509,13 @@ BYTE zx81_readbyte(int Address)
         {
                 // CR  reads from ROM whilst zxpand is disabled will return
                 // normal ROM content, else overlay ROM
-                
+
                 if (zx81.zxpand && zx81.machine==MACHINEZX81)
                 {
+                        int zxpConfigData;
+                        zxpand->GetConfig(zxpConfigData);
+                        bool zxpandDisabled = zxpConfigData & (1<<CFG_BIT_DISABLED);
+
                         if (!zxpandDisabled)
                                 data = zxpandROMOverlay[Address];
                         else

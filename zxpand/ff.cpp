@@ -211,15 +211,17 @@ FRESULT f_open (
       }
    }
 
-   const char* fullPath = createFullPath(path);
-
-   int handle = _open(fullPath, flags);
+   // CR  fix the fstat bug so that the read-only-forces-overlay-off works,
+   // use stat(name,...) instead of fstat(handle,...)
+   
+   const char* fullNme = createFullPath(path);
+   int handle = _open(fullNme, flags);
    if (-1 == handle)
    {
       return cvtERRNO();
    }
 
-   if (-1 == stat(fullPath, &stats))
+   if (-1 == stat(fullNme, &stats))
    {
       _close(handle);
       return cvtERRNO();

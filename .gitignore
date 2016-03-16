@@ -2,3 +2,5 @@
 *.obj
 *.lib
 MMC_CARD/
+*.exe
+EightyOne.tds

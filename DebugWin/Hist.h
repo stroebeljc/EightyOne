@@ -36,7 +36,8 @@ __published:	// IDE-managed Components
         TRichEdit *Text;
 private:	// User declarations
 public:		// User declarations
-        __fastcall THistoryBox(TComponent* Owner);
+	__fastcall THistoryBox(TComponent* Owner);
+	void __fastcall THistoryBox::CreateParams(TCreateParams &Params);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THistoryBox *HistoryBox;

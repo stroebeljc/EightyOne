@@ -34,5 +34,12 @@ __fastcall THistoryBox::THistoryBox(TComponent* Owner)
         : TForm(Owner)
 {
 }
+
+void __fastcall THistoryBox::CreateParams(TCreateParams &Params)
+{
+    TForm::CreateParams(Params);
+    int i = GetSystemMetrics(SM_CXSIZEFRAME);
+    Params.Width=Params.Width+(2*(i-4));
+}
 //---------------------------------------------------------------------------
 

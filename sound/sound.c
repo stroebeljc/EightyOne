@@ -495,6 +495,8 @@ void sound_ay_reset(void)
 
         for(f=0;f<16;f++)
                 sound_ay_write(f,0);
+
+        sound_ay_overlay();
 }
 
 

@@ -134,6 +134,10 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                         }
                         fclose(f);
                 }
+                else
+                {
+                        ShowMessage("Save failed");
+                }
         }
         else
         {
@@ -167,6 +171,11 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                         else
                         fclose(f);
                 }
+                else
+                {
+                        ShowMessage("Load failed");
+                }
+
         }
 
         Close();

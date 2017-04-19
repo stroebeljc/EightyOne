@@ -133,6 +133,12 @@ void zx81_initialise(void)
         for(i=0;i<1024;i++) memhrg[i]=0;
 
         AnsiString romname = machine.CurRom;
+
+        // horrible cheesy hack
+        //  to preprevent zxpand from interfering with - say - aszmic
+        if (romname.SubString(0,3).LowerCase() != "zx8")
+                zx81.zxpand = 0;
+
         if (zx81.zxpand)
         {
                 AnsiString overlayName = StringReplace(romname, ".rom", "-zxpand.rom", TReplaceFlags() << rfIgnoreCase);

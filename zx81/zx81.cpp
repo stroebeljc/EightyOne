@@ -135,8 +135,8 @@ void zx81_initialise(void)
         AnsiString romname = machine.CurRom;
 
         // horrible cheesy hack
-        //  to preprevent zxpand from interfering with - say - aszmic
-        if (romname.SubString(0,3).LowerCase() != "zx8")
+        //  to prevent zxpand from interfering with - say - aszmic
+        if (romname.SubString(1,3).LowerCase() != "zx8")
                 zx81.zxpand = 0;
 
         if (zx81.zxpand)

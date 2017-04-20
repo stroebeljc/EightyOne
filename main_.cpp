@@ -68,6 +68,7 @@
 #include "SymBrowse.h"
 #include "Spectra\Spectra.h"
 #include "Chroma\Chroma.h"
+#include "MemoryWindow.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -1887,8 +1888,8 @@ void MoveWindow(TForm* form, int& x, int& y)
 
         form->Left = x;
         form->Top = y;
-        x += 20;
-        y += 20;
+        x += 40;
+        y += 40;
 }
 
 void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
@@ -1897,6 +1898,15 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         int t = (Screen->Height - Height) / 2;
         MoveWindow(this, l, t);
         MoveWindow(Dbg, l, t);
+        MoveWindow(MemoryWindow, l, t);
+        MoveWindow(SymbolBrowser, l, t);
+        MoveWindow(SoundOutput, l, t);
+        MoveWindow(WavLoad, l, t);
+        MoveWindow(Speed, l, t);
+        MoveWindow(Artifacts, l, t);
+        MoveWindow(Keyboard, l, t);
+        MoveWindow(FSSettings, l, t);
+        MoveWindow(Printer, l, t);
 }
 //---------------------------------------------------------------------------
 

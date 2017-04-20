@@ -1880,3 +1880,23 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void MoveWindow(TForm* form, int& x, int& y)
+{
+        if (!form->Visible)
+                return;
+
+        form->Left = x;
+        form->Top = y;
+        x += 20;
+        y += 20;
+}
+
+void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
+{
+        int l = (Screen->Width - Width) / 2;
+        int t = (Screen->Height - Height) / 2;
+        MoveWindow(this, l, t);
+        MoveWindow(Dbg, l, t);
+}
+//---------------------------------------------------------------------------
+

@@ -147,6 +147,8 @@ __published:	// IDE-managed Components
         TAnimTimer *AnimTimer1;
         TMenuItem *SpectraColourEnable;
         TMenuItem *ChromaColourEnable;
+        TMenuItem *GatherWindows1;
+        TMenuItem *N10;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -229,6 +231,7 @@ __published:	// IDE-managed Components
         void __fastcall QSChrEnableClick(TObject *Sender);
         void __fastcall SpectraColourEnableClick(TObject *Sender);
         void __fastcall ChromaColourEnableClick(TObject *Sender);
+        void __fastcall GatherWindows1Click(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

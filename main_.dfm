@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 6
-  Top = 695
+  Left = 89
+  Top = 563
   Width = 331
   Height = 203
   Caption = 'EightyOne'
@@ -27,8 +27,8 @@ object Form1: TForm1
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 130
-    Width = 323
+    Top = 126
+    Width = 315
     Height = 19
     Panels = <
       item
@@ -185,6 +185,13 @@ object Form1: TForm1
         Caption = 'Status Bar'
         Checked = True
         OnClick = StatusBar2Click
+      end
+      object N10: TMenuItem
+        Caption = '-'
+      end
+      object GatherWindows1: TMenuItem
+        Caption = 'Gather Windows'
+        OnClick = GatherWindows1Click
       end
     end
     object Control1: TMenuItem

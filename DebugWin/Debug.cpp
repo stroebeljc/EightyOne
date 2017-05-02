@@ -32,6 +32,7 @@
 
 #include "main_.h"
 #include "EditValue_.h"
+#include "ConfigureBreakpoint_.h"
 #include "EditFlags.h"
 #include "memoryWindow.h"
 #include "symbolstore.h"
@@ -47,17 +48,29 @@ TDbg *Dbg;
 // re-calculate breakpoints if symbols change???
 
 extern int frametstates, rowcounter, RasterY, HSYNC_generator, NMI_generator;
+extern WORD tStatesCount;
 extern unsigned char shift_store;
 
 extern unsigned char memory[];
 extern int lastMemoryReadAddr, lastMemoryWriteAddr;
 
-const int historySize = 2000;
-AnsiString HistoryLog[historySize];
+const int maxInstructionBytes = 8;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
+
+struct InstructionEntry
+{
+	int Address;
+	BYTE Bytes[maxInstructionBytes];
+};
+
+const int historySize = 2048;
+InstructionEntry HistoryLog[historySize];
 int HistoryPos=0;
+bool historyWrappedAround = false;
 
 int recentHistory[4];
 int recentHistoryPos=0;
+
+WORD displayedTStatesCount;
 
 void DebugUpdate(void)
 {
@@ -73,8 +86,20 @@ void DebugUpdate(void)
 
                 if (Dbg->EnableHistory->Checked)
                 {
-                        HistoryLog[HistoryPos++] = Dbg->Disassemble(&i);
-                        if (HistoryPos==historySize) HistoryPos=0;
+		    	HistoryLog[HistoryPos].Address = i;
+
+		    	for (int i = 0; i < maxInstructionBytes; ++i)
+		    	{
+				// The instruction bytes must be saved in case these address locations are subsequently overwritten,
+			        // i.e. by self modifying code
+		        	HistoryLog[HistoryPos].Bytes[i] = getbyte(z80.pc.w + i);
+		    	}
+		    	++HistoryPos;
+                        if (HistoryPos==historySize)
+                        {
+                                HistoryPos=0;
+                                historyWrappedAround = true;
+                        }
                 }
 
                 lastpc=z80.pc.w;
@@ -129,14 +154,17 @@ void DebugUpdate(void)
         int lpo = Dbg->lastPortOutAddr;
         Dbg->lastPortOutAddr = -1;
 
+        displayedTStatesCount = tStatesCount;
+
         if (Dbg->ExecBreakPointHit(z80.pc.w) ||
                 Dbg->MemoryReadHit(lmr) ||
                 Dbg->MemoryWriteHit(lmw) ||
                 Dbg->PortInHit(lpi) ||
-                Dbg->PortOutHit(lpo))
+                Dbg->PortOutHit(lpo) ||
+                Dbg->TStatesBreakPointHit(z80.pc.w))
         {
                 //zx81_stop=1;
-                Dbg->DoNext=0;
+                Dbg->DoNext=false;
                 Dbg->UpdateVals();
                 //zx81.single_step=Dbg->Continuous->Checked;
                 Dbg->RunStopClick(NULL);
@@ -146,9 +174,9 @@ void DebugUpdate(void)
         if (Dbg->DoNext)
         {
                 zx81_stop=1;
-                Dbg->DoNext=0;
+                Dbg->DoNext=false;
                 Dbg->UpdateVals();
-                zx81.single_step=Dbg->Continuous->Checked;
+                zx81.single_step = Dbg->Continuous->Checked ? 1 : 0;
         }
 
         if (Dbg->Continuous->Checked==true && Dbg->Visible==true)
@@ -159,12 +187,15 @@ void DebugUpdate(void)
         Dbg->SymApp->Enabled = symbolstore::fileLoaded();
 }
 //---------------------------------------------------------------------------
-bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type)
+bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
 {
         // type 0 = execute
         // type 1 = mem read
         // type 2 = mem write
-        const AnsiString types("xrwio");
+        // type 3 = input
+        // type 4 = output
+        // type 5 = T-states count
+        const AnsiString types("xrwiot");
         const int maxBreakpoints = 99;
 
         if (Breakpoints == maxBreakpoints)
@@ -173,6 +204,12 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type)
         int i;
         for(i=0; i<Breakpoints; i++)
         {
+                if ((Type == BP_TSTATES) && (Breakpoint[i].Type == BP_TSTATES))
+                {
+                        DelBreakPoint(Breakpoint[i].Addr);
+                        break;
+                }
+
                 if (Breakpoint[i].Addr == Addr && Breakpoint[i].Type == Type)
                 {
                         // already exists
@@ -183,11 +220,17 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type)
         Breakpoint[Breakpoints].Addr=Addr;
         Breakpoint[Breakpoints].Permanent=Perm;
         Breakpoint[Breakpoints].Type=Type;
+        Breakpoint[Breakpoints].Count=Count;
         AnsiString t(types[Type + 1]);
         AnsiString str;
+        
         if (t == "x")
         {
                 str = t + " " + symbolstore::addressToSymbolOrHex(Addr);
+        }
+        else if (t == "t")
+        {
+                str = t + " $" + Hex16(Addr) + " T=" + Count;
         }
         else
         {
@@ -234,12 +277,31 @@ bool TDbg::BPHit(int Addr, int Type, int& idx)
         {
                 if (Breakpoint[idx].Addr == Addr && Breakpoint[idx].Type == Type)
                 {
-                        BPList->Row=idx;
-                        return true;
+                        if (Type == BP_TSTATES)
+                        {
+                                tStatesCount = 0;
+
+                                if (displayedTStatesCount != Breakpoint[idx].Count)
+                                {
+                                        BPList->Row=idx;
+                                        return true;
+                                }
+                        }
+                        else
+                        {
+                                BPList->Row=idx;
+                                return true;
+                        }
                 }
         }
 
         return false;
+}
+
+bool TDbg::TStatesBreakPointHit(int Addr)
+{
+        int idx;
+        return BPHit(Addr, BP_TSTATES, idx);
 }
 
 bool TDbg::ExecBreakPointHit(int Addr)
@@ -456,10 +518,14 @@ void TDbg::UpdateVals(void)
         Disass7->Caption = Disassemble(&i);
         Disass8->Caption = Disassemble(&i);
         Disass9->Caption = Disassemble(&i);
+        Disass10->Caption = Disassemble(&i);
+        Disass11->Caption = Disassemble(&i);
 
         Halt->Caption = z80.halted ? "Yes":"No" ;
         Interrupts->Caption = z80.iff1 ? "Enabled":"Disabled" ;
         IM->Caption = z80.im;
+
+        TStatesCount->Caption = displayedTStatesCount;
 
         MemoryWindow->UpdateChanges();
 
@@ -569,6 +635,8 @@ void TDbg::EnableValues(bool enable)
         Disass7->Enabled = enable;
         Disass8->Enabled = enable;
         Disass9->Enabled = enable;
+        Disass10->Enabled = enable;
+        Disass11->Enabled = enable;
 
         Halt->Enabled = enable;
         Interrupts->Enabled = enable;
@@ -577,6 +645,7 @@ void TDbg::EnableValues(bool enable)
         RowCount->Enabled = enable;
         Scanline->Enabled = enable;
         ShiftReg->Enabled = enable;
+        TStates->Enabled = enable;
 
         NMIGen->Enabled = enable;
         HSYNCGen->Enabled = enable;
@@ -589,6 +658,21 @@ void TDbg::EnableValues(bool enable)
         AceStk5->Enabled=enable; AceStkVal5->Enabled=enable;
         AceStk6->Enabled=enable; AceStkVal6->Enabled=enable;
         AceStk7->Enabled=enable; AceStkVal7->Enabled=enable;
+
+        IOPort0Direction->Enabled = enable;
+        IOPort0Address->Enabled = enable;
+        IOPort0Data->Enabled = enable;
+        IOPort1Direction->Enabled = enable;
+        IOPort1Address->Enabled = enable;
+        IOPort1Data->Enabled = enable;
+        IOPort2Direction->Enabled = enable;
+        IOPort2Address->Enabled = enable;
+        IOPort2Data->Enabled = enable;
+        IOPort3Direction->Enabled = enable;
+        IOPort3Address->Enabled = enable;
+        IOPort3Data->Enabled = enable;
+
+        TStatesCount->Enabled = enable;
 }
 
 void TDbg::DisableVals(void)
@@ -752,13 +836,19 @@ void __fastcall TDbg::HistoryClick(TObject *Sender)
         HistoryBox->Text->Clear();
 
         i=HistoryPos-1;
-        if (i==-1) i=historySize-1;
-        while(i!=HistoryPos)
+        if (i == -1) i=historySize-1;
+        while(i != HistoryPos)
         {
-                if (HistoryLog[i]!="") HistoryBox->Text->Lines->Add(HistoryLog[i]);
+                if (historyWrappedAround || (i < HistoryPos))
+		 {
+		 	AnsiString instruction = Dbg->Disassemble(HistoryLog[i].Address, HistoryLog[i].Bytes);
+		 	HistoryBox->Text->Lines->Add(instruction);
+		 }
+					
                 --i;
                 if (i==-1) i=historySize-1;
         }
+		
         HistoryBox->Show();
 }
 //---------------------------------------------------------------------------
@@ -1095,12 +1185,24 @@ void __fastcall TDbg::AceStkVal0Click(TObject *Sender)
 
 void __fastcall TDbg::SymbolsClick(TObject *Sender)
 {
+        if (SymbolBrowser->Visible)
+        {
+                SymbolBrowser->Close();
+                return;
+        }
+
         SymbolBrowser->Show();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::MemoryClick(TObject *Sender)
 {
+        if (MemoryWindow->Visible)
+        {
+                MemoryWindow->Close();
+                return;
+        }
+
         MemoryWindow->BaseAddress = z80.pc.w;
         MemoryWindow->Show();
 }
@@ -1190,6 +1292,30 @@ void LogOutAccess(int address, BYTE data)
         Dbg->lastIOAccess[0].direction = IO_OUT;
         Dbg->lastIOAccess[0].address = address;
         Dbg->lastIOAccess[0].data = data;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::TStatesBrkBtnClick(TObject *Sender)
+{
+        ConfigureBreakpoint->CentreOn(this);
+
+        int Addr = 0;
+        int Count = 0;
+
+        for (int idx = 0; idx < Breakpoints; ++idx)
+        {
+                if (Breakpoint[idx].Type == BP_TSTATES)
+                {
+                        Addr = Breakpoint[idx].Addr;
+                        Count = Breakpoint[idx].Count;
+                        break;
+                }
+        }               
+
+        if (ConfigureBreakpoint->EditValues(Addr, 2, Count))
+        {
+                AddBreakPoint(Addr, true, BP_TSTATES, Count);
+        }
 }
 //---------------------------------------------------------------------------
 

@@ -398,8 +398,8 @@ void __fastcall TTZX::SaveAs1Click(TObject *Sender)
                 if (Ext==".TAP") SaveDialog->FilterIndex=2;
                 if (Ext==".T81") SaveDialog->FilterIndex=2;
                 if (Ext==".P") SaveDialog->FilterIndex=3;
-                if (Ext==".O") SaveDialog->FilterIndex=3;
-                if (Ext==".P81") SaveDialog->FilterIndex=4;
+                if (Ext==".O") SaveDialog->FilterIndex=4;
+                if (Ext==".P81") SaveDialog->FilterIndex=5;
 
                 FileName += Ext;
         }
@@ -940,7 +940,7 @@ void __fastcall TTZX::ConvertBlocktoWave1Click(TObject *Sender)
         }
 
         StopBtnClick(NULL);
-        i==3500000;
+        i=3500000;
         while(i>=0)
         {
                 ClockTick(8, false);

@@ -98,6 +98,7 @@ __published:	// IDE-managed Components
         TComboBox *RomCartridgeBox;
         TEdit *RomCartridgeFileBox;
         TButton *BrowseRomCartridge;
+        TCheckBox *FloatingPointHardwareFix;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);

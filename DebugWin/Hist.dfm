@@ -1,8 +1,8 @@
 object HistoryBox: THistoryBox
-  Left = 273
-  Top = 151
-  Width = 299
-  Height = 264
+  Left = 313
+  Top = 196
+  Width = 483
+  Height = 383
   BorderStyle = bsSizeToolWin
   Caption = 'CPU History'
   Color = clBtnFace
@@ -12,13 +12,14 @@ object HistoryBox: THistoryBox
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object Text: TRichEdit
     Left = 0
     Top = 0
-    Width = 291
-    Height = 229
+    Width = 475
+    Height = 348
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText

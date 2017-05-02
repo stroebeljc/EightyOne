@@ -61,6 +61,7 @@ USEFORM("tzx\tzxEditText.cpp", EditTextForm);
 USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditData.cpp", EditDataForm);
 USEFORM("DebugWin\EditValue_.cpp", EditValue);
+USEFORM("DebugWin\ConfigureBreakpoint_.cpp", ConfigureBreakpoint);
 USEFORM("FullScreen.cpp", FSSettings);
 USEUNIT("zx81config.cpp");
 USEUNIT("ace\ace.cpp");
@@ -221,7 +222,6 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->CreateForm(__classid(TEditTextForm), &EditTextForm);
                  Application->CreateForm(__classid(TEditHWInfoForm), &EditHWInfoForm);
                  Application->CreateForm(__classid(TEditDataForm), &EditDataForm);
-                 Application->CreateForm(__classid(TEditValue), &EditValue);
                  Application->CreateForm(__classid(TFSSettings), &FSSettings);
                  Application->CreateForm(__classid(TEditGeneralForm), &EditGeneralForm);
                  Application->CreateForm(__classid(TIF1), &IF1);
@@ -233,6 +233,8 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->CreateForm(__classid(TZipFile), &ZipFile);
                  Application->CreateForm(__classid(TDebug68k), &Debug68k);
                  Application->CreateForm(__classid(TSymbolBrowser), &SymbolBrowser);
+                 Application->CreateForm(__classid(TEditValue), &EditValue);
+                 Application->CreateForm(__classid(TConfigureBreakpoint), &ConfigureBreakpoint);
                  #endif
 
                  Application->ProcessMessages();

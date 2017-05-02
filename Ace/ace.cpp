@@ -73,6 +73,7 @@ void ace_initialise(void)
 {
         int i, romlen;
         z80_init();
+        tStatesCount = 0;
 
         for(i=0;i<65536;i++) memory[i]=random(255);
 
@@ -334,6 +335,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 fts+=ts;
                 sts+=ts;
                 frametstates+=ts;
+                tStatesCount += ts;
 
                 ts*=2;
                 while(ts--)

@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 6
-  Top = 462
+  Left = 75
+  Top = 182
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1634,7 +1634,7 @@ object HW: THW
         TabOrder = 1
       end
       object NTSC: TCheckBox
-        Left = 224
+        Left = 232
         Top = 64
         Width = 97
         Height = 17
@@ -1667,7 +1667,7 @@ object HW: THW
         OnClick = M1NotClick
       end
       object Issue2: TCheckBox
-        Left = 224
+        Left = 232
         Top = 48
         Width = 105
         Height = 17
@@ -1677,6 +1677,16 @@ object HW: THW
         ParentBiDiMode = False
         ParentColor = False
         TabOrder = 4
+      end
+      object FloatingPointHardwareFix: TCheckBox
+        Left = 72
+        Top = 96
+        Width = 153
+        Height = 17
+        Caption = 'Floating Point Hardware Fix'
+        Color = clBtnFace
+        ParentColor = False
+        TabOrder = 7
       end
     end
   end

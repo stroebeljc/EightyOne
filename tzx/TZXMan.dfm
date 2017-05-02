@@ -1,6 +1,6 @@
 object TZX: TTZX
-  Left = 1352
-  Top = 117
+  Left = 100
+  Top = 50
   Width = 244
   Height = 300
   BorderStyle = bsSizeToolWin

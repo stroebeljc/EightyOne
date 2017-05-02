@@ -34,10 +34,10 @@ class THistoryBox : public TForm
 {
 __published:	// IDE-managed Components
         TRichEdit *Text;
+        void __fastcall FormResize(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
-	__fastcall THistoryBox(TComponent* Owner);
-	void __fastcall THistoryBox::CreateParams(TCreateParams &Params);
+        __fastcall THistoryBox(TComponent* Owner);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THistoryBox *HistoryBox;

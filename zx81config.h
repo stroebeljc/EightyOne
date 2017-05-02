@@ -28,7 +28,7 @@
 
 #define EMUID           0x85
 #define MAJORVERSION    1
-#define MINORVERSION    2
+#define MINORVERSION    3
 //#define TESTVERSION     'x'
 
 #define SYNCTYPEH       1
@@ -182,7 +182,8 @@ typedef struct
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
         CFGBYTE chromaColourSwitchOn;
-        
+        CFGBYTE FloatingPointHardwareFix;
+
         char ROM80[256];
         char ROM81[256];
         char ROMACE[256];

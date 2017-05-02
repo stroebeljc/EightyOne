@@ -385,6 +385,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
         Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPEC48);
 
+        zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
+         
         zx81.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
         if (zx81.chrgen==CHRGENDK || zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
@@ -501,8 +503,12 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         machine.clockspeed=3250000;
         machine.tperscanline=207;
-        machine.scanlines=zx81.NTSC ? 262:312;
-        machine.tperframe= machine.tperscanline * machine.scanlines;
+        machine.scanlines=zx81.NTSC ? 262:310;
+        machine.tperframe = machine.tperscanline * machine.scanlines;
+        if (zx81.machine == MACHINEZX80)
+        {
+                machine.tperframe -= 3;
+        }
 
         if (zx81.machine==MACHINELAMBDA)
                 machine.tperscanline=208;
@@ -748,6 +754,7 @@ void THW::SetupForZX81(void)
         SpecSEBtn->Down=false;
         QLBtn->Down=false;
 
+        FloatingPointHardwareFix->Enabled = false;
         ZXpand->Enabled=true;
 
         EnableRomCartridgeOption(true);
@@ -862,6 +869,7 @@ void THW::SetupForSpectrum(void)
         SpecSEBtn->Down=false;
         QLBtn->Down=false;
 
+        FloatingPointHardwareFix->Enabled = false;
         ZXpand->Enabled=false;
 
         ResetRequired=true;
@@ -958,6 +966,7 @@ void THW::SetupForQL(void)
         AnsiString OldIDE;
         int i;
 
+        FloatingPointHardwareFix->Enabled = false;
         ZXpand->Enabled=false;
 
         EnableRomCartridgeOption(false);
@@ -1075,6 +1084,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         NewMachineName=ZX80Btn->Caption;
         RomBox->Text = zx81.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        FloatingPointHardwareFix->Enabled = true;
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
 }
@@ -1089,6 +1099,7 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         NewMachineName=ZX81Btn->Caption;
         RomBox->Text = zx81.ROM81;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        FloatingPointHardwareFix->Enabled = true;
         NTSC->Checked=false;
         IDEBoxChange(NULL);
 }
@@ -1386,17 +1397,29 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
-        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down
-                || Spec48Btn->Down || Spec128Btn->Down || QLBtn->Down)
-                        Machine->ActivePage=Sinclair;
+        FloatingPointHardwareFix->Enabled = false;
+
+        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || Spec128Btn->Down || QLBtn->Down)
+        {
+                Machine->ActivePage=Sinclair;
+                FloatingPointHardwareFix->Enabled = ZX81Btn->Down;
+        }
         else if (SpecP2Btn->Down || SpecP2aBtn->Down || SpecP3Btn->Down)
-                        Machine->ActivePage=Amstrad;
-        else if (TS1000Btn->Down || TS1500Btn->Down
-                || TC2048Btn->Down || TS2068Btn->Down)
-                        Machine->ActivePage=Timex;
+        {
+                Machine->ActivePage=Amstrad;
+        }
+        else if (TS1000Btn->Down || TS1500Btn->Down  || TC2048Btn->Down || TS2068Btn->Down)
+        {
+                Machine->ActivePage=Timex;
+        }
         else if (ZX97LEBtn->Down || SpecSEBtn->Down)
-                        Machine->ActivePage=HomeBrew;
-        else            Machine->ActivePage=Others;
+        {
+                Machine->ActivePage=HomeBrew;
+        }
+        else
+        {
+                Machine->ActivePage=Others;
+        }
 
         ResetRequired=false;
 }
@@ -1488,6 +1511,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         ini->WriteInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);
         ini->WriteInteger("HWARE","HDRIVE",IDEBox->ItemIndex);
+        ini->WriteBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
 
         Rom=zx81.ROM80; ini->WriteString("HWARE","ROM80",Rom);
         Rom=zx81.ROM81; ini->WriteString("HWARE","ROM81",Rom);
@@ -1663,6 +1687,7 @@ void THW::LoadSettings(TIniFile *ini)
         WriteProtect->Checked=ini->ReadBool("HWARE","divIDEWP",WriteProtect->Checked);
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
+        FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
 
         Upload->Checked=ini->ReadBool("HWARE","ZXCFWP",Upload->Checked);
         ZXCFRAM->ItemIndex=ini->ReadInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);

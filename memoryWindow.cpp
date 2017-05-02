@@ -33,6 +33,7 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
         SetViewMode(MWVM_TRADITIONAL);
 
         mCharSize = Canvas->TextExtent(AnsiString("0"));
+       	mHeadingHeight = mCharSize.cy + (mCharSize.cy / 2);
 }
 
  __fastcall TMemoryWindow::~TMemoryWindow()
@@ -48,7 +49,7 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
 
 void __fastcall TMemoryWindow::SetBaseAddress(int value)
 {
-        ScrollBar1->Position = value;
+        ScrollBar1->Position = mRowRenderer->mDisplayCellsPerRow * (int)(value / mRowRenderer->mDisplayCellsPerRow);
 }
 //---------------------------------------------------------------------------
 
@@ -107,7 +108,6 @@ void RowRenderer::AddressOut(void)
 
 bool RowRenderer::ByteAtX(const int x, int& byte)
 {
-        //int dataRegionWidth = mDisplayCellsPerRow * mCellWidth;
         if (x <= mLMargin || x >= mLMargin + (mDisplayCellsPerRow * mCellWidth))
         {
                 return false;
@@ -117,12 +117,32 @@ bool RowRenderer::ByteAtX(const int x, int& byte)
         return true;
 }
 
+bool TraditionalRowRenderer::ByteAtX(const int x, int& byte)
+{
+        int basex = mLMargin + (mDisplayCellsPerRow * mCellWidth) + mCellWidth;
+
+        if (x >= basex && x < basex + (mDisplayCellsPerRow * 8))
+        {
+                byte = (x - basex) / 8;
+        }
+        else if (x <= mLMargin || x >= mLMargin + (mDisplayCellsPerRow * mCellWidth))
+        {
+                return false;
+        }
+        else
+        {
+                byte = (x - mLMargin) / mCellWidth;
+        }
+
+        return true;
+}
+
 void RowRenderer::SetGeometry(int width, const TSize& charSize, int nCharsPerCell)
 {
         mKern = charSize.cx / 2;
         mCellWidth = charSize.cx * (nCharsPerCell + 1);
         mLMargin = (charSize.cx * 6);
-
+		
         int availWidth = width - mLMargin - SBARWIDTH;
 
         mDisplayCellsPerRow = availWidth / mCellWidth;
@@ -169,8 +189,11 @@ void ByteRowRenderer::RenderRow(void)
         {
                 ChooseTextColour();
                 int val = getbyte(mAddress);
-                TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
-                        AnsiString::IntToHex(val ,2).c_str(), 2);
+                if (mAddress <= 0xFFFF)
+                {
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                AnsiString::IntToHex(val ,2).c_str(), 2);
+                }
                 ++mAddress;
         }
 }
@@ -182,8 +205,11 @@ void WordRowRenderer::RenderRow(void)
         {
                 ChooseTextColour();
                 int val = getbyte(mAddress) + 256 * getbyte(mAddress+1);
-                TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
-                        AnsiString::IntToHex(val ,4).c_str(), 4);
+                if (mAddress <= 0xFFFF)
+                {
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                AnsiString::IntToHex(val ,4).c_str(), 4);
+                }
                 mAddress += 2;
                 ++mDirty;
         }
@@ -196,8 +222,11 @@ void BinaryRowRenderer::RenderRow(void)
         {
                 ChooseTextColour();
                 int val = getbyte(mAddress);
-                TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
-                        Dbg->Bin8(val).c_str(), 8);
+                if (mAddress <= 0xFFFF)
+                {
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                Dbg->Bin8(val).c_str(), 8);
+                }
                 ++mAddress;
         }
 }
@@ -221,15 +250,18 @@ void TraditionalRowRenderer::RenderRow(void)
         {
                 ChooseTextColour();
                 int by = getbyte(mAddress);
-                TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
-                        AnsiString::IntToHex(by, 2).c_str(), 2);
-
-                if (machine.cset)
+                if (mAddress <= 0xFFFF)
                 {
-                        int charX = by % 32;
-                        int charY = by / 32;
-                        BitBlt(mCHDC, x * 8 + basex, mY, 8, 8,
-                                another, charX * 8, charY * 8, SRCCOPY);
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                AnsiString::IntToHex(by, 2).c_str(), 2);
+
+                        if (machine.cset)
+                        {
+                                int charX = by % 32;
+                                int charY = by / 32;
+                                BitBlt(mCHDC, x * 8 + basex, 3 + mY, 8, 8,
+                                        another, charX * 8, charY * 8, SRCCOPY);
+                        }
                 }
                 ++mAddress;
         }
@@ -237,6 +269,20 @@ void TraditionalRowRenderer::RenderRow(void)
         SelectObject(another, oldBM);
         DeleteDC(another);
 }
+
+void RowRenderer::RenderColumnHeadings(const TSize& charSize)
+{
+        TextOut(mCHDC, mLMargin + 2 * mKern - charSize.cy, 0, "+", 1);
+
+        int columnInset = ((mCellWidth - charSize.cy) / 2) + mLMargin;
+
+        for (int x = 0; x < mDisplayCellsPerRow; ++x)
+        {
+		AnsiString heading = AnsiString::IntToHex(x, 2);
+                TextOut(mCHDC, (x * mCellWidth) + columnInset, 0, heading.c_str(), 2);
+        }
+}
+
 //---------------------------------------------------------------------------
 
 
@@ -271,18 +317,24 @@ void TMemoryWindow::CreateBitmap(void)
 
         mRowRenderer->SetGeometry(mBMWidth, mCharSize);
 
-        mRows = mBMHeight / mCharSize.cy;
+        mRows = (mBMHeight - mHeadingHeight) / mCharSize.cy;
 
         ScrollBar1->SmallChange = mRowRenderer->mDisplayCellsPerRow;
 
         ScrollBar1->LargeChange = 8 * ScrollBar1->SmallChange;
-        ScrollBar1->Max = 65536 - (ScrollBar1->SmallChange * mRows);
+        bool partRow = ((65536 % ScrollBar1->SmallChange) != 0);
+        int max = partRow ? 65536 + ScrollBar1->SmallChange : 65536;
+        ScrollBar1->Max = max - (ScrollBar1->SmallChange * mRows * mRowRenderer->BytesPerCell());
+
+        mBaseAddress = mRowRenderer->mDisplayCellsPerRow * (int)(mBaseAddress / mRowRenderer->mDisplayCellsPerRow);
 
         mRowRenderer->mAddress = mBaseAddress;
         mRowRenderer->mDirty = dirtyBird.lower_bound(mRowRenderer->mAddress);
         mRowRenderer->mLast = dirtyBird.end();
         mRowRenderer->mCHDC = chdc;
-        mRowRenderer->mY = 0;
+        mRowRenderer->mY = mHeadingHeight;
+
+        mRowRenderer->RenderColumnHeadings(mCharSize);
 
         for (int i = 0; i < mRows; ++i)
         {
@@ -351,14 +403,16 @@ void __fastcall TMemoryWindow::FormResize(TObject *Sender)
         {
                 CreateBitmap();
                 Invalidate();
+
+				// Required if the form has been resized using the grip control
+				GlueButtonsToStatusBar();
         }
 }
 
 void __fastcall TMemoryWindow::ScrollBar1Change(TObject *Sender)
 {
         int value = ScrollBar1->Position;
-        // mBaseAddress = value & 0xFFF0;
-        mBaseAddress = value; // CR: allow byte offsets in memory window & 0xFFF0;
+        mBaseAddress = mRowRenderer->mDisplayCellsPerRow * (int)(value / mRowRenderer->mDisplayCellsPerRow);
 
         if (mOffscreenBitmap)
         {
@@ -402,26 +456,23 @@ void __fastcall TMemoryWindow::SetAddress1Click(TObject *Sender)
 
 bool  __fastcall TMemoryWindow::xyToAddress(int xIn, int yIn, int& address)
 {
-        int x, y = yIn / mCharSize.cy;
+        int x;
+        int y = (yIn - mHeadingHeight) / mCharSize.cy;
 
-        if (!mRowRenderer->ByteAtX(xIn, x) || yIn >= mRows * mCharSize.cy)
+        if (!mRowRenderer->ByteAtX(xIn, x) || yIn < mHeadingHeight || yIn >= mHeadingHeight + (mRows * mCharSize.cy))
         {
                 return false;
         }
 
-        address = mBaseAddress + x + (y * mRowRenderer->mDisplayCellsPerRow);
+        address = mBaseAddress + x + (y * mRowRenderer->mDisplayCellsPerRow * mRowRenderer->BytesPerCell());
 
-        return true;
+        return (address <= 0xFFFF);
 }
 
 void __fastcall TMemoryWindow::FormClick(TObject *Sender)
 {
         int address;
         TPoint cp = ScreenToClient(Mouse->CursorPos);
-
-        // CR  this is nasty - but it's the quickest way to tell if the debugger
-        // is running continuously
-        if (Dbg->SingleStep->Enabled == false) return;
 
         if (xyToAddress(cp.x, cp.y, address))
         {
@@ -434,7 +485,6 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                         if (EditValue->Edit2(n,1))
                         {
                                 setbyte(address,n);
-                                UpdateChanges();  // CR  refresh after edit
                         }
                 }
                 else
@@ -444,7 +494,6 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                         {
                                 setbyte(address, n & 255);
                                 setbyte(address+1, n >> 8);
-                                UpdateChanges();  // CR  refresh after edit
                         }
                 }
         }
@@ -503,7 +552,11 @@ void __fastcall TMemoryWindow::SetSBButtonPosition(TButton* btn, int idx)
         RECT r;
         StatusBar1->Perform(SB_GETRECT, idx, (LPARAM)&r);
 
+		// Detach the button and then re-attach it (required to ensure the button
+		// stays in the status bar when the form is resized using the grip control)
+        btn->Parent = NULL;		
         btn->Parent = StatusBar1;
+		
         btn->Top = r.top;
         btn->Left = r.left;
         btn->Width = r.right - r.left;
@@ -512,6 +565,11 @@ void __fastcall TMemoryWindow::SetSBButtonPosition(TButton* btn, int idx)
 
 
 void __fastcall TMemoryWindow::FormShow(TObject *Sender)
+{
+        GlueButtonsToStatusBar();
+}
+
+void __fastcall TMemoryWindow::GlueButtonsToStatusBar()
 {
         // glue the change navigation buttons to the status bar
         //

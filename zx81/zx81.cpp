@@ -59,6 +59,8 @@ extern "C"
 
 ZXpand* zxpand = NULL;
 
+int memoryLoadToAddress(char *filename, void* destAddress, int length);
+
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
 extern void LogOutAccess(int address, BYTE data);
@@ -86,6 +88,7 @@ int rowcounter=0;
 int hsync_counter=207;
 int borrow=0;
 int tstates, frametstates;
+WORD tStatesCount;
 int configbyte=0;
 int setborder=0;
 int zx81_stop=0;
@@ -110,8 +113,6 @@ extern long noise;
 
 extern int font_load(char*, char*,int);
 
-int memoryLoadToAddress(char *filename, void* destAddress, int length);
-
 BYTE get_i_reg(void)
 {
         return(z80.i);
@@ -121,6 +122,7 @@ void zx81_initialise(void)
 {
         int i, romlen;
         z80_init();
+        tStatesCount = 0;
 
         directMemoryAccess = false;
         ResetLastIOAccesses();
@@ -214,6 +216,8 @@ void zx81_initialise(void)
         d8255_reset();
         d8251reset();
         z80_reset();
+
+        tStatesCount = 0;
 
         if (zxpand)
         {
@@ -613,6 +617,21 @@ BYTE zx81_opcode_fetch(int Address)
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
                 data = zx81_readbyte(Address);
+
+                // The floating point hardware fix intercepts instruction opcode fetches from addresses
+                // matching %-0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
+                // The fix affects addresses $0335, $0735, $1335, $1735, $2335, $2735, $3335 and $3735,
+                // and upper locations $8335, $8735, $9335, $9735, $A335, $A735, $B335 and $B735 which
+                // can affect programs utilising the M1Not modification that allows code to run from the
+                // 32K-48K region.
+                if (((zx81.machine == MACHINEZX80) ||(zx81.machine == MACHINEZX81)) && zx81.FloatingPointHardwareFix)
+                {
+                        if ((Address & 0x4BFF) == 0x0335)
+                        {
+                                data &= 0xBF;
+                        }
+                }
+
                 noise |= data;
                 return(data);
         }
@@ -1059,6 +1078,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 HWidthCounter+=ts;
 
                 frametstates += ts;
+                tStatesCount += ts;
                 WavClockTick(ts, !HSYNC_generator);
                 if (zx81.zxprinter) ZXPrinterClockTick(ts);
                 if (spectrum.floppytype==FLOPPYZX1541) IECClockTick(ts);

@@ -324,7 +324,8 @@ void spec48_initialise(void)
 {
         int i, j, romlen, pos, delay;
         z80_init();
-
+        tStatesCount = 0;
+        
         directMemoryAccess = false;
         ResetLastIOAccesses();
         InitialiseRomCartridge();
@@ -1538,6 +1539,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         fts+=ts;
                         sts+=ts;
                         frametstates+=ts;
+                        tStatesCount += ts;
                         ContendCounter+=ts;
 
                         ts*=2;

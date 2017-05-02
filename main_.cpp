@@ -1901,6 +1901,7 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(MemoryWindow, l, t);
         MoveWindow(SymbolBrowser, l, t);
         MoveWindow(SoundOutput, l, t);
+        MoveWindow(TZX, l, t);
         MoveWindow(WavLoad, l, t);
         MoveWindow(Speed, l, t);
         MoveWindow(Artifacts, l, t);

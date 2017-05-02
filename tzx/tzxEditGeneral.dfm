@@ -1,5 +1,5 @@
 object EditGeneralForm: TEditGeneralForm
-  Left = 574
+  Left = 474
   Top = 53
   Width = 640
   Height = 663

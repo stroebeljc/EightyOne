@@ -13,7 +13,8 @@
       tzx\tzxevent.obj tzx\tzxEventTurbo.obj tzx\tzxfile.obj tzx\tzxload.obj 
       tzx\TZXMan.obj tzx\tzxsave.obj tzx\tzxadd.obj tzx\tzxEditPause.obj 
       tzx\tzxEditArchive.obj tzx\tzxEditText.obj tzx\tzxEditHWInfo.obj 
-      tzx\tzxEditData.obj DebugWin\EditValue_.obj FullScreen.obj zx81config.obj 
+      tzx\tzxEditData.obj DebugWin\EditValue_.obj 
+      DebugWin\ConfigureBreakpoint_.obj FullScreen.obj zx81config.obj 
       ace\ace.obj Spectrum\spec48.obj tzx\tzxEventGeneral.obj 
       tzx\tzxEventMisc.obj tzx\tzxEditGeneral.obj HW_.obj Interface1.obj 
       Spectrum\spec48snap.obj lib765\765drive.obj lib765\765dsk.obj 
@@ -38,10 +39,11 @@
       Artifacts_.dfm sound\SoundOP.dfm DebugWin\Hist.dfm MemSave_.dfm 
       zx97Config.dfm SerialPort.dfm tzx\TZXMan.dfm tzx\tzxEditPause.dfm 
       tzx\tzxEditArchive.dfm tzx\tzxEditText.dfm tzx\tzxEditHWInfo.dfm 
-      tzx\tzxEditData.dfm DebugWin\EditValue_.dfm FullScreen.dfm 
-      tzx\tzxEditGeneral.dfm HW_.dfm Interface1.dfm Plus3Drives.dfm MakeHDF.dfm 
-      Parallel.dfm midifrm.dfm ZipFile_.dfm Debug68k\debug68.dfm 
-      SplashScreen.dfm main_.dfm memoryWindow.dfm SymBrowse.dfm"/>
+      tzx\tzxEditData.dfm DebugWin\EditValue_.dfm 
+      DebugWin\ConfigureBreakpoint_.dfm FullScreen.dfm tzx\tzxEditGeneral.dfm 
+      HW_.dfm Interface1.dfm Plus3Drives.dfm MakeHDF.dfm Parallel.dfm 
+      midifrm.dfm ZipFile_.dfm Debug68k\debug68.dfm SplashScreen.dfm main_.dfm 
+      memoryWindow.dfm SymBrowse.dfm"/>
     <LIBFILES value="ddraw.lib libdsk.lib zlib.lib"/>
     <LIBRARIES value="OfficeButton97.lib VCLX50.lib VCLDB50.lib THEMEMANAGERC5.lib 
       CPORTLIBCB5.lib AnimTimer.lib Vcl50.lib"/>
@@ -58,7 +60,7 @@
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="tlink32"/>
-    <USERDEFINES value="_DEBUG"/>
+    <USERDEFINES value=""/>
     <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="EightyOne.cpp"/>
     <INCLUDEPATH value="ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;&quot;..\Components\Office Button 97\OffBtn97&quot;;&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot;;&quot;..\Components\ComPort Library&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot;"/>
@@ -76,14 +78,13 @@
       -I&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot; 
       -I&quot;..\Components\ComPort Library&quot; 
       -I&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot; 
-      -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp 
-      -D_DEBUG -boa"/>
-    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -RT- -X- -r- -a8 -6 -b- -k -y -v 
-      -vi- -c -tW -tWM"/>
-    <PFLAGS value="-$Y+ -$W -$O- -$I- -$C- -v -JPHNE -M"/>
+      -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -RT- -X- -a8 -6 -b- -k- -vi -c -tW 
+      -tWM"/>
+    <PFLAGS value="-$Y- -$L- -$I- -$D- -$C- -v -JPHNE -M"/>
     <RFLAGS value=""/>
-    <AFLAGS value="/mx /w2 /zi"/>
-    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn"/>
   </OPTIONS>
   <LINKER>
     <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
@@ -95,7 +96,7 @@
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=2
+MinorVer=3
 Release=0
 Build=0
 Debug=0
@@ -109,7 +110,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Michael D Wynne
 FileDescription=EightyOne Emulator
-FileVersion=1.2.0.0
+FileVersion=1.3.0.0
 InternalName=
 LegalCopyright=Michael D Wynne
 LegalTrademarks=

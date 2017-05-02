@@ -82,7 +82,7 @@ void TIF1::PortF7Write(int Data)
 
                 if (SerialOut&1)
                 {
-                        int baud=3500000/((z80.hl.w +2)*26);
+                        int baud=machine.clockspeed/((z80.hl.w +2)*26);
                         SerialOut = (~(SerialOut>>1))&255;
                         SendSerialData(SerialOut, baud);
                         SerialOut=0;
@@ -123,7 +123,7 @@ int TIF1::PortF7Read(void)
                         int baud;
 
                         SerialIn=GetSerialData();
-                        baud=3500000/((z80.de.w +2)*26);
+                        baud=machine.clockspeed/((z80.de.w +2)*26);
                         SerialTimeOut=machine.clockspeed/baud;
                         SerialCount=SerialTimeOut;
                 }

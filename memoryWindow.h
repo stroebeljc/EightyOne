@@ -28,7 +28,9 @@ public:
         virtual void RenderRow(void) = 0;
         virtual void SetGeometry(int, TSize&) = 0;
 
-        bool ByteAtX(const int, int&);
+        virtual bool ByteAtX(const int, int&);
+        void RenderColumnHeadings(const TSize& charSize);
+        int BytesPerCell() { return mBytesPerCell; };
 
         // in
         std::set<int>::iterator mDirty;
@@ -72,6 +74,7 @@ class TraditionalRowRenderer : public RowRenderer
 public:
         virtual void RenderRow(void);
         virtual void SetGeometry(int, TSize&);
+        virtual bool ByteAtX(const int, int&);
 };
 
 
@@ -121,7 +124,8 @@ private:
         bool __fastcall xyToAddress(int xIn, int yIn, int& address);
 
         void __fastcall SetSBButtonPosition(TButton* btn, int idx);
-
+		void __fastcall GlueButtonsToStatusBar();
+		
         int mRows;
         int mBaseAddress;
 
@@ -133,6 +137,7 @@ private:
 
         int mViewMode;
         TSize mCharSize;
+        int mHeadingHeight;
         RowRenderer* mRowRenderer;
 
         void CreateBitmap(void);

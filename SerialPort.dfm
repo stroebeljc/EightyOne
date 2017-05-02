@@ -1,5 +1,5 @@
 object SerialConfig: TSerialConfig
-  Left = 726
+  Left = 426
   Top = 117
   BorderIcons = []
   BorderStyle = bsToolWindow

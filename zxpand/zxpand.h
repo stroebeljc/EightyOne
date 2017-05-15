@@ -24,6 +24,7 @@ extern int TRISD;
 #define ROM
 #define rom
 #define far
+#define near
 
 extern bool L_LOW;
 extern bool disabled;
@@ -45,5 +46,4 @@ extern void zx_process(void);
    extern void com##x(void); \
    void com##x##Shim(void){fnPtr = com##x;delay=(y);} \
    const WORKERFN COM_##x = com##x##Shim;
-
 #endif

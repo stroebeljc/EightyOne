@@ -961,6 +961,10 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (zxpand) return zxpand->IO_Read(Address>>8);
                         return 0xfd;
 
+                case 0x17:
+                        if (zxpand) return zxpand->IO_ReadStatus();
+                        return 0;
+
                 case 0x41:
                         if (spectrum.floppytype==FLOPPYLARKEN81) return(0xfe);
                         break;

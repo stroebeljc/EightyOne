@@ -242,6 +242,12 @@ FRESULT f_open (
 }
 
 
+FRESULT f_lseek (FIL *fp,
+   DWORD pos)
+   {
+        lseek(GetHandle(fp), SEEK_SET, pos);
+        return cvtERRNO();
+   }
 
 
 /*-----------------------------------------------------------------------*/

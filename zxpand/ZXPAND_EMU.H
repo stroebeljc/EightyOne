@@ -13,6 +13,8 @@ public:
         bool GetConfig(int& configData);
         void IO_Write(int addr, int data);
         int  IO_Read(int addr);
+        int  IO_ReadStatus();
+
 };
 
 enum

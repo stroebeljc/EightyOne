@@ -38,6 +38,8 @@ extern bool disabled;
 
 #define strtokpgmram strtok
 #define strcpypgm2ram strcpy
+#define memcpypgm2ram memcpy
+#define strncmppgm2ram strncmp
 
 extern void zx_initprocessor(void);
 extern void zx_process(void);

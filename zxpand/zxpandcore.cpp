@@ -7,7 +7,7 @@
 
 #include "zxpandcom.h"
 
-/////#include <usart.h>
+#include <usart.h>
 
 extern BYTE globalIndex;
 extern WORD globalAmount;
@@ -238,7 +238,14 @@ void zx_process_write(void)
              break;
              case 0x01:
              {
-                  LATD = 42;
+                 // parse a command buffer
+                 worker = COM_ParseBufferPlus;
+             }
+             break;
+             case 0x02:
+             {
+                 // 'zxpand' command continuation
+                 worker = COM_ZXpandContinuation;
              }
              break;
              case 0xa0:
@@ -366,15 +373,14 @@ void zx_process_write(void)
                int i;
                for (i = 0; i < globalIndex; ++i)
                {
-                   /////while(BusyUSART()){}
-                   /////WriteUSART(globalData[i]);
-                }
+                   serialWrite(globalData[i]);
+               }
              }
              break;
              case 0xc1:
              {
                // get serial bytes - careful if there's more than 127...
-               int n = 0;/////serialCopy();
+               int n = serialCopy();
                globalData[n] = 0;
                zeddify(globalData);
                gdp = globalData;
@@ -385,7 +391,7 @@ void zx_process_write(void)
              case 0xc5:
              {
                // serial buffer status
-               LATD = 0; //////serialAvailable();
+               LATD = serialAvailable();
              }
              break;
              case 0xf0:

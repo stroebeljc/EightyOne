@@ -8,7 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-//////#include <usart.h>
+#include <usart.h>
 
 static BYTE res;
 
@@ -48,7 +48,9 @@ extern void ringReset(void);
 extern int serialAvailable(void);
 extern BYTE serialRead(void);
 extern void serialWrite(BYTE);
-
+extern void serialInit(int, int);
+extern void serialClose(void);
+extern void serialHex(BYTE);
 
 #define GOOUTPUTMODE {gdp = globalData; mode = 0;}
 
@@ -181,6 +183,7 @@ static char ROM zx80Token2ascii[] = ";,()?-+*/???=<>";
 
 
 static const rom char* SEPARATOR = "=";
+static const rom char* SPACE = " ";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
@@ -251,6 +254,33 @@ void decodeJS(void)
    {
       LATD = 0xff;
    }
+}
+
+void deZeddifyHBT(unsigned char* buffer)
+{
+   unsigned char q = 0;
+   do
+   {
+      q = *buffer;
+      if (q & 0x40)
+      {
+         if (q > 0xd6 && q < 0xe6)
+         {
+            *buffer = zx80Token2ascii[q - 0xd7];
+         }
+         else
+         {
+            *buffer = '?';
+         }
+      }
+      else
+      {
+         *buffer = zx2ascii[q & 0x3f];
+      }
+
+      ++buffer;
+   }
+   while (q < 128);
 }
 
 void deZeddify(unsigned char* buffer)
@@ -340,8 +370,6 @@ void GetWildcard(void)
 
       Idx++;
    }
-
-   //log0("GetWildcard() Idx=%d, WildPos=%d, LastSlash=%d\n",Idx,WildPos,LastSlash);
 
    if(WildPos>-1)
    {
@@ -484,12 +512,6 @@ void comDirectoryRead(void)
             ++g;
          }
 
-         ////if (filinfo.fattrib & AM_RDO)
-         ////{
-         ////   *g = 0x16; // ascii2zx('-');
-         ////   ++g;
-         ////}
-
          if (dirFlags == 0xff)
          {
             // classic compatibility mode - 0 terminated
@@ -499,6 +521,14 @@ void comDirectoryRead(void)
          else
          {
             // plus mode - newline/ff terminated
+
+            if (filinfo.fattrib & AM_RDO)
+            {
+               *g = 0;
+               ++g;
+               *g = ascii2zx('R') + 128;
+               ++g;
+            }
             *g = 0x76;
             ++g;
             *g = 0xff;
@@ -653,7 +683,7 @@ void comFileOpenRead(void)
    if (res != 0x40 && globalData[0] == '$')
    {
       ringReset();
-      //////putcUSART('I');
+      putcUSART('I');
       while(serialAvailable() < 2);
       length = serialRead();
       length += 256 * serialRead();
@@ -866,10 +896,7 @@ void comFileDelete(void)
 BYTE lb;
 
 
-// ld bc,$e007
-// ld a,$b0
-// out (c),a
-// ret
+
 static BYTE ROM disableOverlay[8] = { 0x01,0x07,0xe0,0x3e,0xb0,0xed,0x79,0xc9 };
 static BYTE ROM      setRamtop[9] = { 0x21,0xff,0xff,0x22,0x04,0x40,0xc3,0xc3,0x03 };
 
@@ -939,8 +966,8 @@ void comParseBuffer(void)
          start = atoi(token);
          memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&setRamtop[0]), sizeof(setRamtop));
          globalData[0] = 2;
-         globalData[3] = start & 255;
-         globalData[4] = start / 256;
+         globalData[2] = start & 255;
+         globalData[3] = start / 256;
       }
       break;
       case  'F'-'A'+3:
@@ -948,13 +975,10 @@ void comParseBuffer(void)
          // flash cpld
          if (!token) break;
 
-      	// hold zeddy in reset
-   	   //////P_RESET = 0;
-   	   //////T_RESET = 0;
-   
-         tryProgramCPLD(token);
-   
-         //////Reset(); // reset interface
+         // hold zeddy in reset while the cpld programs, then reset zxpand
+         ASSERT_RESET;
+   	 tryProgramCPLD(token);
+         Reset();
       }
       break;
 
@@ -1024,18 +1048,18 @@ void comParseBuffer(void)
             lb += n;
          }
 
-         //////while(BusyUSART());
-         //////putcUSART(128+16);
-         //////while(BusyUSART());
-         //////putcUSART(lb);
-         //////while(BusyUSART());
+         while(BusyUSART());
+         putcUSART(128+16);
+         while(BusyUSART());
+         putcUSART(lb);
+         while(BusyUSART());
          if (token)
          {
-           //////putcUSART(127);
+           putcUSART(127);
          }
          else
          {
-           //////putcUSART(0);
+           putcUSART(0);
          }
       }
       break;
@@ -1043,7 +1067,7 @@ void comParseBuffer(void)
       case 'C'-'A'+3:
       {
          // config control
-   
+
          if (token)
          {
             unsigned char n = *token - '0';
@@ -1148,3 +1172,197 @@ void comParseBuffer(void)
    GOOUTPUTMODE;
    LATD = retcode;
 }
+
+
+rom far char* verbs[] = {
+   (rom far char*)"OPEN",
+   (rom far char*)"PUT",
+   (rom far char*)"GET",
+   (rom far char*)"CLOSE",
+   (rom far char*)"DELETE",
+   (rom far char*)"RENAME",
+   (rom far char*)NULL
+};
+
+rom far char* streams[4] =
+{
+   (rom far char*)"SERIAL",
+   (rom far char*)"MOUSE",
+   (rom far char*)"FILE",
+   (rom far char*)NULL
+};
+
+char* nextToken(char* q)
+{
+   while(*q != ' ' && *q != 0) q = q + 1;
+   while(*q == ' ') { * q = 0; q = q + 1; }
+   return q;
+}
+
+int identifyToken(char** p, rom far char** tokens)
+{
+   int i = 0;
+   char* q = *p;
+   while(tokens[i] != NULL)
+   {
+      // match 3 chars
+      if (strncmppgm2ram(q, tokens[i], 3) == 0)
+      {
+         *p = nextToken(*p);
+         return i;
+      }
+      ++i;
+   }
+
+   return -1;
+}
+
+static int zxpandContinuation;
+
+// buffer of form "VERB STREAMID PARAM,PARAM,..."
+//
+void comParseBufferPlus(void)
+{
+   BYTE retcode = 0x40;
+
+   deZeddifyHBT(globalData);
+
+   {
+      char* p = globalData;
+      int verb = identifyToken(&p, verbs);
+      if (verb >= 0)
+      {
+         switch (verb)
+         {
+            case 0: {
+               int stream = identifyToken(&p, streams);
+               switch (stream)
+               {
+                  case 0: { // open serial [rate]
+                     serialInit(12, 1);
+                  } break;
+
+                  case 2: { // open file name
+                     
+                  } break;
+
+                  default:
+                     putrsUSART((rom far char *)"OPEN ");
+                     serialHex(stream);
+                     putrsUSART((rom far char *)" \r");
+                     break;
+               }
+            } break;
+            
+            case 1: {
+               int stream = identifyToken(&p, streams);
+               switch (stream)
+               {
+                  case 0: {
+                     if (*p =='*')
+                     {
+                        // PUT SER *30000 123
+                        char* ap = p;
+                        char* lp =  nextToken(p);
+
+                        int address = atoi(ap);
+                        int len = atoi(lp);
+
+                        static BYTE ROM serialPut[10] = { 0x11,0xff,0xff,0x2e,0xff,0x3e,0x01,0xc3,0xfc,0x1f };
+/*
+11 34 12  ld de,$1234   ; data ptr
+2E 12	  ld l,$12      ; len
+3E 01	  ld a,$01      ; mode
+CD FC 1F  jp $1ffc      ; api_xfer
+*/
+                        globalData[0] = 2;
+                        memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&serialPut[0]), sizeof(serialPut));
+                        globalData[2] = address & 255;
+                        globalData[3] = address / 256;
+                        globalData[5] = len;
+
+                        zxpandContinuation = stream * 16 + verb;
+                     }
+                     else
+                     {
+                        while(*p)
+                        {
+                            serialWrite(*p);
+                            ++p;
+                        }
+                     }
+                  } break;
+
+                  default:
+                     putrsUSART((rom far char *)"PUT ");
+                     serialHex(stream);
+                     putrsUSART((rom far char *)" \r");
+                     break;
+               }
+            } break;
+
+            case 2: {
+               int stream = identifyToken(&p, streams);
+               switch (stream)
+               {
+                  case 0: {
+                  } break;
+
+                  default:
+                     putrsUSART((rom far char *)"GET ");
+                     serialHex(stream);
+                     putrsUSART((rom far char *)" \r");
+                     break;
+               }
+               // get
+            } break;
+
+            case 3: {
+               int stream = identifyToken(&p, streams);
+               switch (stream)
+               {
+                  case 0:
+                     serialClose();
+                     break;
+
+                  default:
+                     putrsUSART((rom far char *)"CLOSE ");
+                     serialHex(stream);
+                     putrsUSART((rom far char *)" \r");
+               }
+               // close
+            } break;
+
+            case 4: {
+               // delete
+               retcode = 0x40 | f_unlink(p);
+            } break;
+
+            case 5: {
+               // rename
+               char* q = nextToken(p);
+               retcode = 0x40 | f_rename(p, q);
+            } break;
+         }
+      }
+   }
+
+   GOOUTPUTMODE;
+   LATD = retcode;
+}
+
+
+void comZXpandContinuation(void)
+{
+    switch (zxpandContinuation)
+    {
+        case 0x01: {
+           int i;
+           for (i = 0; i < globalIndex; ++i)
+              serialWrite(globalData[i]);
+        } break;
+    }
+
+    LATD = 0x40;
+}
+

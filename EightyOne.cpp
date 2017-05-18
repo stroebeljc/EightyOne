@@ -126,6 +126,7 @@ USEUNIT("zxpand\smbsd.cpp");
 USEUNIT("zxpand\js.cpp");
 USEUNIT("zxpand\dirlib.cpp");
 USEUNIT("Chroma\Chroma.cpp");
+USE("zxpand\zxpandcom.h", File);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

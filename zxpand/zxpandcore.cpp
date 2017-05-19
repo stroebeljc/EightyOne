@@ -22,11 +22,8 @@ extern void serialWrite(BYTE);
 extern char defaultExtension;
 extern WORD defaultLoadAddr;
 
-#define near
-
 extern BYTE near mode;
 extern BYTE* near gdp;
-extern BYTE near gdi;
 
 extern BYTE dirFlags;
 
@@ -71,20 +68,18 @@ void zx_process_write(void)
          }
          else if (PORTD == 42)
          {
-            BYTE gdi = 0;
+            BYTE near gdi = 0;
 			   gdp = globalData;
 
-			do
-			{
-				LATD = *gdp;
-				++gdp;
-
-				/////PIR1bits.PSPIF = 0;
-				/////while(!PIR1bits.PSPIF){}
-				++gdi;
-			}
-		   	while(gdi);
-		}
+			   do
+			   {
+				   LATD = *gdp;
+				   ++gdp;
+				   WAITPP;
+				   ++gdi;
+			   }
+		      while(gdi);
+		   }
          else
          {
             // reset buffer index ready for writing

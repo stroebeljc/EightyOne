@@ -187,7 +187,7 @@ static const rom char* SPACE = " ";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
-static const rom char* VERSION = "ZXPAND+ \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ 1.00 \"MOGGY\"";
 static const rom char* MOREMSG = "\nPRESS stop OR cont";
 
 typedef const rom far char* RFC;
@@ -256,7 +256,7 @@ void decodeJS(void)
    }
 }
 
-void deZeddifyHBT(unsigned char* buffer)
+void zeddyHBT2asciiZ(unsigned char* buffer)
 {
    unsigned char q = 0;
    do
@@ -281,6 +281,7 @@ void deZeddifyHBT(unsigned char* buffer)
       ++buffer;
    }
    while (q < 128);
+   *buffer = 0;
 }
 
 void deZeddify(unsigned char* buffer)
@@ -807,7 +808,7 @@ void comFileRead(void)
          rxcrc = serialRead();
          rxcrc += 256 * serialRead();
 
-         error = (ring_error | crc) != rxcrc;
+         error = ring_error | crc != rxcrc;
          ring_error = 0;
       }
       while(error);
@@ -1175,20 +1176,20 @@ void comParseBuffer(void)
 
 
 rom far char* verbs[] = {
-   (rom far char*)"OPEN",
+   (rom far char*)"OPE",
    (rom far char*)"PUT",
    (rom far char*)"GET",
-   (rom far char*)"CLOSE",
-   (rom far char*)"DELETE",
-   (rom far char*)"RENAME",
+   (rom far char*)"CLO",
+   (rom far char*)"DEL",
+   (rom far char*)"REN",
    (rom far char*)NULL
 };
 
 rom far char* streams[4] =
 {
-   (rom far char*)"SERIAL",
-   (rom far char*)"MOUSE",
-   (rom far char*)"FILE",
+   (rom far char*)"SER",
+   (rom far char*)"MOU",
+   (rom far char*)"FIL",
    (rom far char*)NULL
 };
 
@@ -1217,21 +1218,47 @@ int identifyToken(char** p, rom far char** tokens)
    return -1;
 }
 
-static int zxpandContinuation;
+#if defined(__BORLANDC__)
+#pragma pack(push, 1)
+#endif
+static struct
+{
+   BYTE op;       // 16444
+   BYTE retval;   // 16445
+   BYTE len;      // 16446
+   WORD address;  // 16447
+}
+zxpandRetblk;
+#if defined(__BORLANDC__)
+#pragma pack(pop)
+#endif
+
+/*
+ED 5B 3F 40  ld de,(16447) ; data ptr
+2A 3E 40     ld hl,(16446) ; l = len, h = unused
+3E 01	       ld a,$01      ; 1 = write
+C3 FC 1F     jp $1ffc      ; api_xfer
+*/
+static BYTE ROM memPut[12] = { 0xed,0x5b,0x3f,0x40,0x2a,0x3e,0x40,0x3e,0x01,0xc3,0xfc,0x1f };
+
+int zxpandContinuation;
 
 // buffer of form "VERB STREAMID PARAM,PARAM,..."
 //
 void comParseBufferPlus(void)
 {
    BYTE retcode = 0x40;
+   zxpandContinuation = -1;
 
-   deZeddifyHBT(globalData);
+   zeddyHBT2asciiZ(globalData);
 
    {
       char* p = globalData;
       int verb = identifyToken(&p, verbs);
       if (verb >= 0)
       {
+        globalData[0] = 0;
+
          switch (verb)
          {
             case 0: {
@@ -1262,26 +1289,21 @@ void comParseBufferPlus(void)
                      if (*p =='*')
                      {
                         // PUT SER *30000 123
-                        char* ap = p;
+                        char* ap = p + 1;
                         char* lp =  nextToken(p);
 
                         int address = atoi(ap);
                         int len = atoi(lp);
 
-                        static BYTE ROM serialPut[10] = { 0x11,0xff,0xff,0x2e,0xff,0x3e,0x01,0xc3,0xfc,0x1f };
-/*
-11 34 12  ld de,$1234   ; data ptr
-2E 12	  ld l,$12      ; len
-3E 01	  ld a,$01      ; mode
-CD FC 1F  jp $1ffc      ; api_xfer
-*/
-                        globalData[0] = 2;
-                        memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&serialPut[0]), sizeof(serialPut));
-                        globalData[2] = address & 255;
-                        globalData[3] = address / 256;
-                        globalData[5] = len;
+                        zxpandRetblk.op = 2;             // executable
+                        zxpandRetblk.retval = 0;         // all good
+                        zxpandRetblk.len = len;          // 0 = 256
+                        zxpandRetblk.address = address;  // memory ptr
 
-                        zxpandContinuation = stream * 16 + verb;
+                        zxpandContinuation = 16 * stream + verb;
+
+                        memcpy(globalData, (void*)&zxpandRetblk, 5);
+                        memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
                      }
                      else
                      {
@@ -1358,6 +1380,7 @@ void comZXpandContinuation(void)
     {
         case 0x01: {
            int i;
+           zeddyHBT2asciiZ(globalData);
            for (i = 0; i < globalIndex; ++i)
               serialWrite(globalData[i]);
         } break;

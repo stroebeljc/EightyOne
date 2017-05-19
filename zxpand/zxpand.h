@@ -41,6 +41,8 @@ extern bool disabled;
 #define memcpypgm2ram memcpy
 #define strncmppgm2ram strncmp
 
+#define WAITPP
+
 extern void zx_initprocessor(void);
 extern void zx_process(void);
 

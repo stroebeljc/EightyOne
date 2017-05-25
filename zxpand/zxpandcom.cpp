@@ -188,7 +188,7 @@ static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
 static const rom char* VERSION = "ZXPAND+ 1.00 \"MOGGY\"";
-static const rom char* MOREMSG = "\nPRESS stop OR cont";
+static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
 
 typedef const rom far char* RFC;
 
@@ -1247,126 +1247,126 @@ int zxpandContinuation;
 //
 void comParseBufferPlus(void)
 {
+   char* p;
+   int verb, noun;
    BYTE retcode = 0x40;
    zxpandContinuation = -1;
 
    zeddyHBT2asciiZ(globalData);
 
+   p = globalData;
+   verb = identifyToken(&p, verbs);
+   if (verb == -1)
    {
-      char* p = globalData;
-      int verb = identifyToken(&p, verbs);
-      if (verb >= 0)
-      {
-        globalData[0] = 0;
+      LATD = 0x4a;
+      return;
+   }
 
-         switch (verb)
+   globalData[0] = 0;
+   noun = identifyToken(&p, streams);
+
+   switch (verb)
+   {
+      case 0: {
+         switch (noun)
+         {
+            case 0: { // open serial [rate]
+               serialInit(12, 1);
+            } break;
+
+            case 2: { // open file name
+               
+            } break;
+
+            default:
+               putrsUSART((rom far char *)"OPEN ");
+               serialHex(noun);
+               putrsUSART((rom far char *)" \r");
+               break;
+         }
+      } break;
+      
+      case 1: {
+         switch (noun)
          {
             case 0: {
-               int stream = identifyToken(&p, streams);
-               switch (stream)
+               if (*p =='*')
                {
-                  case 0: { // open serial [rate]
-                     serialInit(12, 1);
-                  } break;
+                  // PUT SER *30000 123
+                  char* ap = p + 1;
+                  char* lp =  nextToken(p);
 
-                  case 2: { // open file name
-                     
-                  } break;
+                  int address = atoi(ap);
+                  int len = atoi(lp);
 
-                  default:
-                     putrsUSART((rom far char *)"OPEN ");
-                     serialHex(stream);
-                     putrsUSART((rom far char *)" \r");
-                     break;
+                  zxpandRetblk.op = 2;             // executable
+                  zxpandRetblk.retval = 0;         // all good
+                  zxpandRetblk.len = len;          // 0 = 256
+                  zxpandRetblk.address = address;  // memory ptr
+
+                  zxpandContinuation = 16 * noun + verb;
+
+                  memcpy(globalData, (void*)&zxpandRetblk, 5);
+                  memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
                }
-            } break;
-            
-            case 1: {
-               int stream = identifyToken(&p, streams);
-               switch (stream)
+               else
                {
-                  case 0: {
-                     if (*p =='*')
-                     {
-                        // PUT SER *30000 123
-                        char* ap = p + 1;
-                        char* lp =  nextToken(p);
-
-                        int address = atoi(ap);
-                        int len = atoi(lp);
-
-                        zxpandRetblk.op = 2;             // executable
-                        zxpandRetblk.retval = 0;         // all good
-                        zxpandRetblk.len = len;          // 0 = 256
-                        zxpandRetblk.address = address;  // memory ptr
-
-                        zxpandContinuation = 16 * stream + verb;
-
-                        memcpy(globalData, (void*)&zxpandRetblk, 5);
-                        memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
-                     }
-                     else
-                     {
-                        while(*p)
-                        {
-                            serialWrite(*p);
-                            ++p;
-                        }
-                     }
-                  } break;
-
-                  default:
-                     putrsUSART((rom far char *)"PUT ");
-                     serialHex(stream);
-                     putrsUSART((rom far char *)" \r");
-                     break;
+                  while(*p)
+                  {
+                      serialWrite(*p);
+                      ++p;
+                  }
                }
             } break;
 
-            case 2: {
-               int stream = identifyToken(&p, streams);
-               switch (stream)
-               {
-                  case 0: {
-                  } break;
-
-                  default:
-                     putrsUSART((rom far char *)"GET ");
-                     serialHex(stream);
-                     putrsUSART((rom far char *)" \r");
-                     break;
-               }
-               // get
-            } break;
-
-            case 3: {
-               int stream = identifyToken(&p, streams);
-               switch (stream)
-               {
-                  case 0:
-                     serialClose();
-                     break;
-
-                  default:
-                     putrsUSART((rom far char *)"CLOSE ");
-                     serialHex(stream);
-                     putrsUSART((rom far char *)" \r");
-               }
-               // close
-            } break;
-
-            case 4: {
-               // delete
-               retcode = 0x40 | f_unlink(p);
-            } break;
-
-            case 5: {
-               // rename
-               char* q = nextToken(p);
-               retcode = 0x40 | f_rename(p, q);
-            } break;
+            default:
+               putrsUSART((rom far char *)"PUT ");
+               serialHex(noun);
+               putrsUSART((rom far char *)" \r");
+               break;
          }
-      }
+      } break;
+
+      case 2: {
+         switch (noun)
+         {
+            case 0: {
+            } break;
+
+            default:
+               putrsUSART((rom far char *)"GET ");
+               serialHex(noun);
+               putrsUSART((rom far char *)" \r");
+               break;
+         }
+         // get
+      } break;
+
+      case 3: {
+         switch (noun)
+         {
+            case 0:
+               serialClose();
+               break;
+
+            default:
+               putrsUSART((rom far char *)"CLOSE ");
+               serialHex(noun);
+               putrsUSART((rom far char *)" \r");
+         }
+         // close
+      } break;
+
+      case 4: {
+         // delete
+         retcode = 0x40 | f_unlink(p);
+      } break;
+
+      case 5: {
+         // rename
+         char* q = nextToken(p);
+         retcode = 0x40 | f_rename(p, q);
+      } break;
    }
 
    GOOUTPUTMODE;

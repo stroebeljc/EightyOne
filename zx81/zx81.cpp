@@ -143,7 +143,8 @@ void zx81_initialise(void)
 
         if (zx81.zxpand)
         {
-                AnsiString overlayName = StringReplace(romname, ".rom", "-zxpand.rom", TReplaceFlags() << rfIgnoreCase);
+                AnsiString shortRom = romname.SubString(1,4);
+                AnsiString overlayName = romName + "-zxpand.rom";
                 memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
         romlen=memory_load(romname.c_str(), 0, 65536);

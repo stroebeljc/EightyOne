@@ -79,6 +79,11 @@ void ZXpand::IO_Write(int addr, int data)
    }
 }
 
+int ZXpand::IO_ReadStatus()
+{
+   return _zxpand->activityFlag;
+}
+
 int ZXpand::IO_Read(int addr)
 {
    int retval = 0xfd;

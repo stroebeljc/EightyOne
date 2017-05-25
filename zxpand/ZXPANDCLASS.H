@@ -8,10 +8,15 @@ extern void DelayMillis(char);
 #include "smbsd.h"
 #include <io.h>
 
+extern BYTE* gdp;
+extern BYTE  mode;
+
 class zxpand_t
 {
 public:
    zxpand_t();
+
+   int activityFlag;
 
    void power_on_reset(void)
    {
@@ -21,19 +26,11 @@ public:
       LoadEEPROM();
       init();
       delay = 0;
+      activityFlag = 0;
    }
 
    void periodic_update(int milliseconds)
    {
-      static int mouseupdatetime = 0;
-
-      mouseupdatetime += milliseconds;
-      if (mouseupdatetime > 50)
-      {
-         updateMouse();
-         mouseupdatetime -= 50;
-      }
-
       if (delay)
       {
          if (milliseconds <= 1)
@@ -47,23 +44,24 @@ public:
          if (delay <= 0)
          {
             delay = 0;
-            LATD = tLATD;
+            activityFlag = 0;
+            fnPtr();
+            fnPtr = NULL;
          }
       }
    }
 
    unsigned char iord(unsigned char address)
    {
-      PORTA = address >> 5;
-      WASWRITE = FALSE;
+      BYTE retval = LATD;
 
-      // the retuen value is already latched in LATD
-      unsigned char latd = LATD;
+      if (mode == 0)
+      {
+        LATD = *gdp;
+        ++gdp;
+      }
 
-      // this will set up the next value to be read
-      process();
-
-      return latd;
+      return retval;
    }
 
    void iowr(unsigned char address, unsigned char data)
@@ -73,23 +71,15 @@ public:
       PORTA = address >> 5;
       PORTD = data;
 
-      WASWRITE = TRUE;
+      mode = 1;
+
       fnPtr = NULL;
       process();
       if (fnPtr != NULL)
       {
          // this write invoked a slow function
-         // save latd then perform the worker function
-         // save away the past-worker latd then replace it with the saved version
-         // the post-worker latd will be released when the delay expires
-         //
-         unsigned char temp = LATD;
-         fnPtr();
-         tLATD = LATD;
-         LATD = temp;
-
-         fnPtr = NULL;
-      }
+         activityFlag = 0x80;
+       }
    }
 
    bool isDisabled(void);

@@ -38,13 +38,6 @@ BYTE LEDs;
 
 int TRISD;
 
-extern volatile int mousex;
-extern volatile int mousey;
-extern volatile int counts;
-
-int mousespeed = 0x100;
-
-
 typedef void (*WORKERFN)(void);
 
 extern unsigned char readJoy(void);
@@ -94,37 +87,3 @@ BYTE ReadEEPROM(BYTE address)
    return eeprom[address];
 }
 
-
-void updateMouse(void)
-{
-   unsigned char jv = ~readJoy();
-
-   if (jv & 0x80) // up
-   {
-      mousey -= mousespeed;
-   }
-   else if (jv & 0x40) // down
-   {
-      mousey += mousespeed;
-   }
-
-   if (jv & 0x20) // left
-   {
-      mousex -= mousespeed;
-   }
-   else if (jv & 0x10) // right
-   {
-      mousex += mousespeed;
-   }
-
-   if (jv & 8) // button
-      PORTB &= 0xf7;
-   else
-      PORTB |= 8;
-}
-
-
-void setMouseSpeed(int speed)
-{
-   mousespeed = speed;
-}

@@ -4,15 +4,15 @@
 bool L_LOW;
 bool disabled;
 extern void zx_initprocessor(void);
-extern void zx_process(void);
+extern void zx_process_write(void);
 
 extern void initJoy(void);
 extern unsigned char readJoy(void);
 
-volatile int mousex;
-volatile int mousey;
-volatile int counts;
+BYTE* gdp;
+BYTE mode;
 
+BYTE ring_error;
 
 void DelayMillis(char x)
 {
@@ -20,10 +20,16 @@ void DelayMillis(char x)
 
 extern void mapJS(unsigned char, unsigned char);
 
+void ringReset(void){}
+int serialAvailable(void){ return 0; }
+BYTE serialRead(void){ return 0; }
+void serialWrite(BYTE b){}
+void tryProgramCPLD(const char* p){}
+
 zxpand_t::zxpand_t()
 {
    init = zx_initprocessor;
-   process = zx_process;
+   process = zx_process_write;
    PORTB = 0xf9;
 
    disabled = false;

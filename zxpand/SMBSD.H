@@ -36,8 +36,6 @@ extern unsigned char ReadEEPROM(unsigned char address);
 
 extern unsigned char getJSbyte(void);
 
-extern void updateMouse(void);
-
 typedef void (*WORKERFN)(void);
 
 extern WORKERFN fnPtr;

@@ -144,9 +144,10 @@ void zx81_initialise(void)
         if (zx81.zxpand)
         {
                 AnsiString shortRom = romname.SubString(1,4);
-                AnsiString overlayName = romName + "-zxpand.rom";
+                AnsiString overlayName = shortRom + "-zxpand.rom";
                 memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
+
         romlen=memory_load(romname.c_str(), 0, 65536);
         zx81.romcrc=CRC32Block(memory,romlen);
 

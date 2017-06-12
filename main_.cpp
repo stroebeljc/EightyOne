@@ -262,6 +262,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         ImageList1->GetBitmap(0,LEDGreenOff);
         ImageList1->GetBitmap(1,LEDGreenOn);
 
+//                Left = GetSystemMetrics(SM_CXSCREEN) / 2;
+//                Top = GetSystemMetrics(SM_CXSCREEN) / 2;
+
         if (!access("eightyone.chm",0)) HelpTopics2->Enabled=true;
         else HelpTopics2->Enabled=false;
 
@@ -294,7 +297,7 @@ void __fastcall TForm1::FormResize(TObject *Sender)
         else UserDefined1->Checked=true;
 
         RecalcWinSize();
-
+        
         StatusBar1->Panels->Items[3]->Width =
                 StatusBar1->ClientWidth -
                         (StatusBar1->Panels->Items[0]->Width

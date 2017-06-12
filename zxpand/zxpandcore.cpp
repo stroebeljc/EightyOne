@@ -11,7 +11,7 @@
 
 extern BYTE globalIndex;
 extern WORD globalAmount;
-extern void DelayMillis(char);
+extern void delayMillis(short);
 extern void decodeJS(void);
 
 extern int serialAvailable(void);
@@ -270,7 +270,7 @@ void zx_process_write(void)
              break;
              case 0xac:
              {
-                 LATD = 0xff; //configByte;
+                 LATD = configByte;
              }
              break;
              case 0xae:
@@ -392,7 +392,7 @@ void zx_process_write(void)
              case 0xf0:
              {
                  // delay a couple of milliseconds, then disable
-                 DelayMillis(2);
+                 delayMillis(2);
                  DISABLE_OVERLAY;
              }
              break;

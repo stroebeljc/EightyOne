@@ -52,9 +52,13 @@ BYTE XFER_SPI(BYTE x)
    return 0;
 }
 
+void delayMillis(short x)
+{
+}
+
 void saveEEPROM(void)
 {
-   FILE* eep = fopen("eeprom.bin","wb");
+   FILE* eep = fopen("nvram\\eeprom.bin","wb");
    if (eep)
    {
       fwrite(eeprom, 1, 256, eep);
@@ -65,7 +69,7 @@ void saveEEPROM(void)
 
 void LoadEEPROM(void)
 {
-   FILE* eep = fopen("eeprom.bin","rb");
+   FILE* eep = fopen("nvram\\eeprom.bin","rb");
    if (eep)
    {
       fread(eeprom, 1, 256, eep);

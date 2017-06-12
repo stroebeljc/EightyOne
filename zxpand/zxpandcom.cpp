@@ -8,6 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <usart.h>
 
 static BYTE res;
@@ -51,6 +52,8 @@ extern void serialWrite(BYTE);
 extern void serialInit(int, int);
 extern void serialClose(void);
 extern void serialHex(BYTE);
+
+extern void delayMillis(short);
 
 #define GOOUTPUTMODE {gdp = globalData; mode = 0;}
 
@@ -180,6 +183,21 @@ static const ROM char* validfns = &zx2ascii81[24];
 static char ROM zx80Token2ascii[] = ";,()?-+*/???=<>";
 
 
+#if defined(__BORLANDC__)
+#pragma pack(push, 1)
+#endif
+static struct
+{
+   BYTE op;       // 16444
+   BYTE retval;   // 16445
+   BYTE len;      // 16446
+   WORD address;  // 16447
+}
+zxpandRetblk;
+#if defined(__BORLANDC__)
+#pragma pack(pop)
+#endif
+
 
 
 static const rom char* SEPARATOR = "=";
@@ -187,7 +205,8 @@ static const rom char* SPACE = " ";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
-static const rom char* VERSION = "ZXPAND+ 1.00 \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ 1.01 \"MOGGY\"";
+//static const rom char* VERSION = "RETRO COMPUTER MUSEUM";
 static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
 
 typedef const rom far char* RFC;
@@ -324,6 +343,18 @@ void zeddify(BYTE* buffer)
 }
 
 
+void zeddifyUpper(BYTE* buffer)
+{
+   while (*buffer)
+   {
+      *buffer = ascii2zx(toupper(*buffer));
+      ++buffer;
+   }
+   // force 'zeddy' type termination
+   *buffer = 255;
+}
+
+
 
 // check that the supplied ascii filename only consists of alphanums slash and dot.
 char isValidFN(unsigned char* buffer)
@@ -351,22 +382,22 @@ void zx_initprocessor(void)
 
 
 
-void GetWildcard(void)
+void GetWildcard(char* p)
 {
-   unsigned int   Idx         = 0;
+   unsigned int Idx = 0;
    int   WildPos     = -1;
    int   LastSlash   = -1;
 
-   //log0("GetWildcard() %s\n",(const char *)globalData);
+   //log0("GetWildcard() %s\n",(const char *)p);
 
-   while ((Idx<strlen((const char*)globalData)) && (WildPos<0))
+   while ((Idx<strlen((const char*)p)) && (WildPos<0))
    {
       // Check for wildcard character
-      if((globalData[Idx]=='?') || (globalData[Idx]=='*'))
+      if((p[Idx]=='?') || (p[Idx]=='*'))
          WildPos=Idx;
 
       // Check for path seperator
-      if((globalData[Idx]=='\\') || (globalData[Idx]=='/'))
+      if((p[Idx]=='\\') || (p[Idx]=='/'))
          LastSlash=Idx;
 
       Idx++;
@@ -378,15 +409,15 @@ void GetWildcard(void)
       {
          // Path followed by wildcard
          // Terminate dir filename at last slash and copy wildcard
-         globalData[LastSlash]=0x00;
-         strncpy(WildPattern,(const char*)&globalData[LastSlash+1],WILD_LEN);
+         p[LastSlash]=0x00;
+         strncpy(WildPattern,(const char*)&p[LastSlash+1],WILD_LEN);
       }
       else
       {
          // Wildcard on it's own
          // Copy wildcard, then set path to null
-         strncpy(WildPattern,(const char*)globalData,WILD_LEN);
-         globalData[0]=0x00;
+         strncpy(WildPattern,(const char*)p,WILD_LEN);
+         p[0]=0x00;
       }
    }
    else
@@ -401,29 +432,29 @@ void GetWildcard(void)
 
 
 
+static int dirstate;
+BYTE dirFlags = 0xff;
 
-void comDirectoryOpen(void)
+BYTE directoryOpen(char* p)
 {
    char ret = 0x40 + FR_INVALID_NAME;
 
-   deZeddify(globalData);
-
    filinfo.fattrib = 0; // normal dir mode
 
-   if (*globalData == '>')
+   if (*p == '>')
    {
       // we will change to the directory
-      ret = 0x40 | f_chdir((char*)(globalData + 1));
+      ret = 0x40 | f_chdir((char*)(p + 1));
       if (ret == 0x40)
       {
          // the CD succeeded, so instruct the 'read directory entry' routine to exit with 'all done'
          filinfo.fattrib = 0x42;
       }
    }
-   else if (*globalData == '+')
+   else if (*p == '+')
    {
       // we will try to create a directory
-      ret = 0x40 | f_mkdir((char*)(globalData + 1));
+      ret = 0x40 | f_mkdir((char*)(p + 1));
       if (ret == 0x40)
       {
          // the CD succeeded, so instruct the 'read directory entry' routine to exit with 'all done'
@@ -433,34 +464,79 @@ void comDirectoryOpen(void)
    else
    {
       // Separate wildcard and path
-      GetWildcard();
-
-      if (isValidFN(globalData))
+      GetWildcard(p);
+      if (isValidFN(p))
       {
-         ret = 0x40 + f_opendir(&dir, (const char*)&globalData[0]);
+         dirstate = 0; // reading dirs
+
+         memcpy((void*)(p + 64), (void*)p, 64);
+         ret = 0x40 + f_opendir(&dir, (const char*)&p[64]);
       }
    }
 
-   // com function only returns status code
-   LATD = ret;
+   return ret;
+}
+
+void comDirectoryOpen(void)
+{
+   deZeddify(globalData);
+
+   LATD = directoryOpen(globalData);
 }
 
 
-
-BYTE dirFlags = 0xff;
-
-void comDirectoryRead(void)
+int directoryStat(char* g)
 {
-   char *p, *g;
-   int   Match;
+   char *p;
+   char* originalG = g;
+   int Match, count = 0;
+
+   while (1)
+   {
+      res = f_readdir(&dir, &filinfo);
+      if (res != FR_OK)
+      {
+         return count;
+      }
+
+      p = &filinfo.fname[0];
+      if (*p == '.' && *(p+1) == 0) continue;
+
+      if (!*p)
+      {
+         f_opendir(&dir, (const char*)&globalData[64]);
+
+         ++dirstate;
+         if (dirstate == 1) continue;
+
+         return count;
+      }
+
+      // need to do this test first
+      if (filinfo.fattrib & AM_HID) continue;
+      if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
+      if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
+
+      if (wildcmp(WildPattern,p))
+      {
+         ++count;
+      }
+   }
+}
+
+
+BYTE directoryRead(char* g)
+{
+   char *p;
+   char* originalG = g;
+   int Match;
 
    if (filinfo.fattrib == 0x42)
    {
       // early bath
       // com function only returns status code
       filinfo.fattrib = 0;
-      LATD = 0x3f;
-      return;
+      return 0x3f;
    }
 
    while (1)
@@ -468,50 +544,60 @@ void comDirectoryRead(void)
       res = f_readdir(&dir, &filinfo);
       if (res != FR_OK)
       {
-         LATD = 0x40 | res;
-         return;
+         return 0x40 | res;
       }
 
       p = &filinfo.fname[0];
+      if (*p == '.' && *(p+1) == 0) continue;
+
       if (!*p)
       {
-         // done!
+         // done a loop, need to go again?
+         if (dirstate == 0)
+         {
+            dirstate = 1;
+            f_opendir(&dir, (const char*)&globalData[64]);
+            continue;
+         }
          // com function only returns status code
-         LATD = 0x3f;
-         return;
+         return 0x3f;
       }
 
       // need to do this test first
-      if (filinfo.fattrib & AM_HID)
-      {
-         continue;
-      }
+      if (filinfo.fattrib & AM_HID) continue;
+      if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
+      if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
 
       Match=wildcmp(WildPattern,p);
 
       if(Match)
       {
-         g = (char*)&globalData[0];
-
          if (filinfo.fattrib & AM_DIR)
          {
-            *g = ZEDDY_LT;
-            ++g;
+            if (dirFlags == 0xff)
+               g += sprintf(g, (rom far char*)"<%s>", p);
+            else
+               g += sprintf(g, (rom far char*)"%s/", p);
+         }
+         else
+         {
+            if (dirFlags == 0xff)
+            {
+               g += sprintf(g, (rom far char*)"%s", p);
+            }
+            else
+            {
+               g += sprintf(g, (rom far char*)"%-13s", p);
+               if (filinfo.fsize > 1024)
+                  g += sprintf(g, (rom far char*)"% 4ldK", filinfo.fsize / (DWORD)1024);
+               else
+                  g += sprintf(g, (rom far char*)"% 4ldB", filinfo.fsize);
+            }
          }
 
-         // no LFNs here ;)
-         //
-         for (; *p; ++p)
-         {
-            *g = ascii2zx(toupper(*p));
-            ++g;
-         }
-
-         if (filinfo.fattrib & AM_DIR)
-         {
-            *g = ZEDDY_GT;
-            ++g;
-         }
+         *g = 0;
+         zxpandRetblk.len = (BYTE)(originalG - g);
+         zeddifyUpper(originalG);
 
          if (dirFlags == 0xff)
          {
@@ -522,14 +608,6 @@ void comDirectoryRead(void)
          else
          {
             // plus mode - newline/ff terminated
-
-            if (filinfo.fattrib & AM_RDO)
-            {
-               *g = 0;
-               ++g;
-               *g = ascii2zx('R') + 128;
-               ++g;
-            }
             *g = 0x76;
             ++g;
             *g = 0xff;
@@ -543,12 +621,17 @@ void comDirectoryRead(void)
 
          mem_cpy(g, (void*)(&filinfo.fsize), sizeof(DWORD));
 
-         GOOUTPUTMODE;
-         LATD=0x40;
-         return;
+         return 0x40;
       }
    }
 }
+
+void comDirectoryRead(void)
+{
+    GOOUTPUTMODE;
+    LATD = directoryRead(globalData);
+}
+
 
 static WORD flags;
 static WORD start;
@@ -683,7 +766,10 @@ void comFileOpenRead(void)
 
    if (res != 0x40 && globalData[0] == '$')
    {
-      ringReset();
+      serialInit(12, 1);
+
+      delayMillis(100);
+
       putcUSART('I');
       while(serialAvailable() < 2);
       length = serialRead();
@@ -850,6 +936,7 @@ void comFileClose(void)
       sb = 0;
       LATD = 0x40;
       serialWrite('X');
+      serialInit(12,0); // turn off rx irq
    }
    else LATD=0x40 | f_close(&fil);
 }
@@ -943,6 +1030,7 @@ void comParseBuffer(void)
          globalData[0] = 1;
       }
       break;
+      
       case 'V'-'A'+3:
       {
          // version string
@@ -953,6 +1041,7 @@ void comParseBuffer(void)
          globalData[0] = 1;
       }
       break;
+
       case 'X'-'A'+3:
       {
          // disable overlay binary
@@ -960,6 +1049,7 @@ void comParseBuffer(void)
          globalData[0] = 2;
       }
       break;
+
       case 'R'-'A'+3:
       {
          // set RAMTOP binary
@@ -971,6 +1061,7 @@ void comParseBuffer(void)
          globalData[3] = start / 256;
       }
       break;
+
       case  'F'-'A'+3:
       {
          // flash cpld
@@ -1185,11 +1276,12 @@ rom far char* verbs[] = {
    (rom far char*)NULL
 };
 
-rom far char* streams[4] =
+rom far char* streams[5] =
 {
    (rom far char*)"SER",
    (rom far char*)"MOU",
    (rom far char*)"FIL",
+   (rom far char*)"CAT",
    (rom far char*)NULL
 };
 
@@ -1218,21 +1310,6 @@ int identifyToken(char** p, rom far char** tokens)
    return -1;
 }
 
-#if defined(__BORLANDC__)
-#pragma pack(push, 1)
-#endif
-static struct
-{
-   BYTE op;       // 16444
-   BYTE retval;   // 16445
-   BYTE len;      // 16446
-   WORD address;  // 16447
-}
-zxpandRetblk;
-#if defined(__BORLANDC__)
-#pragma pack(pop)
-#endif
-
 /*
 ED 5B 3F 40  ld de,(16447) ; data ptr
 2A 3E 40     ld hl,(16446) ; l = len, h = unused
@@ -1243,7 +1320,7 @@ static BYTE ROM memPut[12] = { 0xed,0x5b,0x3f,0x40,0x2a,0x3e,0x40,0x3e,0x01,0xc3
 
 int zxpandContinuation;
 
-// buffer of form "VERB STREAMID PARAM,PARAM,..."
+// buffer of form "VERB STREAMID PARAM PARAM,..."
 //
 void comParseBufferPlus(void)
 {
@@ -1267,15 +1344,30 @@ void comParseBufferPlus(void)
 
    switch (verb)
    {
-      case 0: {
+      case 0: { // OPE[N]
          switch (noun)
          {
             case 0: { // open serial [rate]
                serialInit(12, 1);
             } break;
 
-            case 2: { // open file name
+            case 3: { // open catalog, get item count
+               int count = 0;
+               zxpandRetblk.op = 0;
+               zxpandRetblk.retval = directoryOpen(p);
                
+               if (0x40 == zxpandRetblk.retval)
+               {
+                  count = directoryStat(p);
+               }
+
+               zxpandRetblk.len = 2;          // 0 = 256
+               zxpandRetblk.address = 16449;  // memory ptr
+
+               memcpy(globalData, (void*)&zxpandRetblk, 5);
+
+               globalData[5] = count & 255;
+               globalData[6] = count / 256;
             } break;
 
             default:
@@ -1286,7 +1378,7 @@ void comParseBufferPlus(void)
          }
       } break;
       
-      case 1: {
+      case 1: { // PUT
          switch (noun)
          {
             case 0: {
@@ -1300,7 +1392,7 @@ void comParseBufferPlus(void)
                   int len = atoi(lp);
 
                   zxpandRetblk.op = 2;             // executable
-                  zxpandRetblk.retval = 0;         // all good
+                  zxpandRetblk.retval = 0x40;      // all good
                   zxpandRetblk.len = len;          // 0 = 256
                   zxpandRetblk.address = address;  // memory ptr
 
@@ -1331,6 +1423,14 @@ void comParseBufferPlus(void)
          switch (noun)
          {
             case 0: {
+            } break;
+
+            case 3: { // get cat
+               zxpandRetblk.retval = directoryRead(&globalData[5]);
+               zxpandRetblk.op = 1;             // string data
+               zxpandRetblk.address = 16449;    // memory ptr
+
+               memcpy(globalData, (void*)&zxpandRetblk, 5);
             } break;
 
             default:

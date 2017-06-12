@@ -1,8 +1,6 @@
 #ifndef __ZXPANDCLASS_H
 #define __ZXPANDCLASS_H
 
-extern void DelayMillis(char);
-
 
 #include "integer.h"
 #include "smbsd.h"

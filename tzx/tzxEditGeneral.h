@@ -45,6 +45,7 @@ __published:	// IDE-managed Components
         TComboBox *CharSet;
         TMemo *PRLE;
         TLabel *Label1;
+        TButton *Button1;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CharSetChange(TObject *Sender);
 private:	// User declarations

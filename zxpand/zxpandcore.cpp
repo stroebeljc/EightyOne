@@ -374,6 +374,18 @@ void zx_process_write(void)
              break;
              case 0xc1:
              {
+               // output to USART using count in buffer
+               BYTE count = LATD;
+               while(count)
+               {
+                   serialWrite(*gdp);
+                   ++gdp;
+                   --count;
+               }
+             }
+             break;
+             case 0xc2:
+             {
                // get serial bytes - careful if there's more than 127...
                int n = serialCopy();
                globalData[n] = 0;
@@ -396,18 +408,25 @@ void zx_process_write(void)
                  DISABLE_OVERLAY;
              }
              break;
-             case 0xaa:
-             {
-                 // heartbeat/debug 0
-                 LATD = 0xf0;
-             }
-             break;
              case 0x55:
              {
                  // heartbeat/debug 1
                  LATD = 0x0f;
              }
              break;
+             case 0xaa:
+             {
+                 // heartbeat/debug 0
+                 LATD = 0xf0;
+             }
+             break;
+             case 0x1d:
+             {
+                 // ID
+                 LATD = 3; // zxpand+ 
+             }
+             break;
+
          }
       }
       break;

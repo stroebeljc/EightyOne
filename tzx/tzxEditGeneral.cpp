@@ -135,6 +135,8 @@ void TEditGeneralForm::DecodeData(int BlockNo)
 
         PRLE->Lines->Text=text1;
 
+        int nx = 0;
+        byte pbuffer[65536];
 
         text1="0000: ";
         text2=": ";
@@ -144,6 +146,8 @@ void TEditGeneralForm::DecodeData(int BlockNo)
         for(i=0;i<TZXFile.Tape[BlockNo].Head.General.DataLen;i++)
         {
                 c=*(p++);
+                pbuffer[nx++] = c;
+
                 text1 += IntToHex(c, 2);
                 text1 += " ";
 
@@ -178,6 +182,20 @@ void TEditGeneralForm::DecodeData(int BlockNo)
                 text1 += text2;
         }
 
+        byte *px = pbuffer;
+        AnsiString fn;
+        while(1)
+        {
+                fn += (char)ZXCharSet[(*px) & 127];
+                if (*px > 128) break;
+                ++px;
+        }
+        FILE* pee = fopen((fn+".p").c_str(), "wb");
+        if (pee)
+        {
+                fwrite(pbuffer, 1, nx, pee);
+                fclose(pee);
+        }
 
         Data->Lines->Text = text1;
 }
@@ -208,4 +226,5 @@ void __fastcall TEditGeneralForm::CharSetChange(TObject *Sender)
         DecodeData(Block);
 }
 //---------------------------------------------------------------------------
+
 

@@ -1,8 +1,8 @@
 object EditGeneralForm: TEditGeneralForm
-  Left = 474
-  Top = 53
+  Left = 994
+  Top = 211
   Width = 640
-  Height = 663
+  Height = 664
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = 'Edit General Data Block'
@@ -20,20 +20,20 @@ object EditGeneralForm: TEditGeneralForm
   object Label4: TLabel
     Left = 143
     Top = 7
-    Width = 138
+    Width = 116
     Height = 13
     Caption = 'Pilot/Sync Symbol Table'
   end
   object Label5: TLabel
     Left = 143
     Top = 103
-    Width = 114
+    Width = 90
     Height = 13
     Caption = 'Data Symbol Table'
   end
   object Label7: TLabel
     Left = 6
-    Top = 604
+    Top = 605
     Width = 33
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -42,14 +42,14 @@ object EditGeneralForm: TEditGeneralForm
   object Label8: TLabel
     Left = 7
     Top = 207
-    Width = 34
+    Width = 23
     Height = 13
     Caption = 'Data'
   end
   object Label9: TLabel
     Left = 295
-    Top = 604
-    Width = 74
+    Top = 605
+    Width = 68
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Character Set:'
@@ -57,7 +57,7 @@ object EditGeneralForm: TEditGeneralForm
   object Label1: TLabel
     Left = 7
     Top = 7
-    Width = 98
+    Width = 75
     Height = 13
     Caption = 'Pilot/Sync Data'
   end
@@ -87,7 +87,7 @@ object EditGeneralForm: TEditGeneralForm
   end
   object Pause: TEdit
     Left = 46
-    Top = 600
+    Top = 601
     Width = 144
     Height = 21
     Anchors = [akLeft, akBottom]
@@ -96,7 +96,7 @@ object EditGeneralForm: TEditGeneralForm
   end
   object OK: TButton
     Left = 551
-    Top = 597
+    Top = 598
     Width = 74
     Height = 25
     Anchors = [akRight, akBottom]
@@ -109,7 +109,7 @@ object EditGeneralForm: TEditGeneralForm
     Left = 7
     Top = 223
     Width = 616
-    Height = 362
+    Height = 363
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -125,7 +125,7 @@ object EditGeneralForm: TEditGeneralForm
   end
   object CharSet: TComboBox
     Left = 369
-    Top = 600
+    Top = 601
     Width = 88
     Height = 21
     Style = csDropDownList
@@ -146,5 +146,13 @@ object EditGeneralForm: TEditGeneralForm
       'PRLE')
     ScrollBars = ssVertical
     TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 466
+    Top = 597
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 7
   end
 end

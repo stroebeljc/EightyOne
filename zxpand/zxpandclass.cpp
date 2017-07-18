@@ -22,6 +22,7 @@ extern void mapJS(unsigned char, unsigned char);
 
 void ringReset(void){}
 int serialAvailable(void){ return 0; }
+void serialInit(int b, int i){} 
 BYTE serialRead(void){ return 0; }
 void serialWrite(BYTE b){}
 void tryProgramCPLD(const char* p){}

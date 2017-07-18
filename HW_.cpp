@@ -122,6 +122,18 @@ void caserMunger(AnsiString& sym, AnsiString& val)
         sym = UpperCase(sym);
 }
 
+
+AnsiString getMachineRoot(AnsiString fullRomName)
+{
+        // return the first part of the rom name up to but excluding the first '.'
+        char* p1 = fullRomName.c_str();
+        char* p2 = strchr(p1, '.');
+        if (p2 == NULL) return fullRomName;
+        int len = p2 - p1;
+        return fullRomName.SubString(1,len);
+}
+
+
 void __fastcall THW::OKClick(TObject *Sender)
 {
         AnsiString Name=NewMachineName;
@@ -676,6 +688,7 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         symbolstore::reset();
 
+        // WRONG WRONG WRONG - this is the wrong place to be using the rom name
         AnsiString file = zx81.cwd;
         file += "ROM\\";
         file += machine.CurRom;
@@ -686,8 +699,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         file = zx81.cwd;
         if (file[file.Length()] != '\\') file += "\\";
         file += "ROM\\";
-        file += machine.CurRom;
-        file += ".cset.bmp";
+        file += getMachineRoot(machine.CurRom);
+        file += ".rom.cset.bmp";
         delete (Graphics::TBitmap*)machine.cset;
         machine.cset = NULL;
         if (FileExists(file))

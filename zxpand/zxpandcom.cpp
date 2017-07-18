@@ -49,6 +49,7 @@ extern void ringReset(void);
 extern int serialAvailable(void);
 extern BYTE serialRead(void);
 extern void serialWrite(BYTE);
+extern void serialPrint(char*);
 extern void serialInit(int, int);
 extern void serialClose(void);
 extern void serialHex(BYTE);
@@ -95,52 +96,52 @@ BYTE L007E[] =
 //
 static BYTE ROM char2offs[] =
 {
-   35,19, // 1b
-   14,15, // 1d
-   16,17, // 1f
-   18,23, // 21
-   22,21, // 23
-   20, 4, // 25
-   38, 2, // 27
+    35,19, // 1b
+    14,15, // 1d
+    16,17, // 1f
+    18,23, // 21
+    22,21, // 23
+    20, 4, // 25
+    38, 2, // 27
     6,11, // 29
     7, 8, // 2b
-   33,26, // 2d
-   32,31, // 2f
-   30,36, // 31
-   37,25, // 33
-   24, 9, // 35
-   12, 5, // 37
-   13,27, // 39
+    33,26, // 2d
+    32,31, // 2f
+    30,36, // 31
+    37,25, // 33
+    24, 9, // 35
+    12, 5, // 37
+    13,27, // 39
     3,10, // 3b
     1,28, // 3d
     0, 0  // 3f + pad
 };
 
 static char ROM ascii2zxData[] = {
-   0x00,0x0f,0x0b,0x0f,0x0d,0x0f,0x0f,0x0f,
-   0x10,0x11,0x17,0x15,0x1a,0x16,0x1b,0x18,
+    0x00,0x0f,0x0b,0x0f,0x0d,0x0f,0x0f,0x0f,
+    0x10,0x11,0x17,0x15,0x1a,0x16,0x1b,0x18,
 
-   0x1c,0x1d,0x1e,0x1f,0x20,0x21,0x22,0x23,
-   0x24,0x25,0x0e,0x19,0x13,0x14,0x12,0x0f,
+    0x1c,0x1d,0x1e,0x1f,0x20,0x21,0x22,0x23,
+    0x24,0x25,0x0e,0x19,0x13,0x14,0x12,0x0f,
 
-   0x0f,0x26,0x27,0x28,0x29,0x2a,0x2b,0x2c,
-   0x2d,0x2e,0x2f,0x30,0x31,0x32,0x33,0x34,
+    0x0f,0x26,0x27,0x28,0x29,0x2a,0x2b,0x2c,
+    0x2d,0x2e,0x2f,0x30,0x31,0x32,0x33,0x34,
 
-   0x35,0x36,0x37,0x38,0x39,0x3a,0x3b,0x3c,
-   0x3d,0x3e,0x3f,0x0f,0x18,0x0f,0x0f,0x0f,
+    0x35,0x36,0x37,0x38,0x39,0x3a,0x3b,0x3c,
+    0x3d,0x3e,0x3f,0x0f,0x18,0x0f,0x0f,0x0f,
 
-   0x0f,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,
-   0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
+    0x0f,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,
+    0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
 
-   0xb5,0xb6,0xb7,0xb8,0xb9,0xba,0xbb,0xbc,
-   0xbd,0xbe,0xbf,0x0f,0x0f,0x0f,0x0f,0x0f
+    0xb5,0xb6,0xb7,0xb8,0xb9,0xba,0xbb,0xbc,
+    0xbd,0xbe,0xbf,0x0f,0x0f,0x0f,0x0f,0x0f
 };
 
 BYTE ascii2zx(char n)
 {
-   if (n == '\n') return 0x76;
-   if (n < 32) return 0x0f;
-   return ascii2zxData[n - 32];
+    if (n == '\n') return 0x76;
+    if (n < 32) return 0x0f;
+    return ascii2zxData[n - 32];
 }
 
 #define ZEDDY_LT 0x13
@@ -148,8 +149,8 @@ BYTE ascii2zx(char n)
 
 
 static char ROM zx2ascii81[] = " ??????????\"?$:?()><=+-*/;,"             // 0..26 inclusive (indexed in zx->ascii conversion) - watch out for the \" escape sequence!
-                             ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
-                             "-()$;\0";                                 // zero-terminated additions for the valid filename test
+                               ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
+                               "-()$;\0";                                 // zero-terminated additions for the valid filename test
 
 static char ROM zx2ascii80[] = "....";
 
@@ -188,10 +189,10 @@ static char ROM zx80Token2ascii[] = ";,()?-+*/???=<>";
 #endif
 static struct
 {
-   BYTE op;       // 16444
-   BYTE retval;   // 16445
-   BYTE len;      // 16446
-   WORD address;  // 16447
+    BYTE op;       // 16444
+    BYTE retval;   // 16445
+    BYTE len;      // 16446
+    WORD address;  // 16447
 }
 zxpandRetblk;
 #if defined(__BORLANDC__)
@@ -205,8 +206,9 @@ static const rom char* SPACE = " ";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
-static const rom char* VERSION = "ZXPAND+ 1.01 \"MOGGY\"";
-//static const rom char* VERSION = "RETRO COMPUTER MUSEUM";
+//                                ---\-----========--------=====\===
+static const rom char* VERSION = "\"FFS MOGGY IS THAT BETTER?\" ;)";
+//static const rom char* VERSION = "-= RETRO COMPUTER MUSEUM =-";
 static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
 
 typedef const rom far char* RFC;
@@ -216,142 +218,141 @@ BYTE jsmap[6];
 
 void mapJS(BYTE dirn, BYTE val)
 {
-   int q = 0;
+    int q = 0;
 
-   if (val == 0)
-   {
-      q = 39;
-   }
-   else
-   if (val == 0x76)
-   {
-      q = 29;
-   }
-   else
-   {
-      q = char2offs[val - 0x1b];
-   }
+    if (val == 0)
+    {
+        q = 39;
+    }
+    else if (val == 0x76)
+    {
+        q = 29;
+    }
+    else
+    {
+        q = char2offs[val - 0x1b];
+    }
 
-   jsmap[dirn] = q;
+    jsmap[dirn] = q;
 }
 
 // decode joystick bits into INKEY$ directions
 // ATM only UDLR & fire are reported - no diagonals
 void decodeJS(void)
 {
-   BYTE idx = 5;
-   BYTE temp = GETJS;
+    BYTE idx = 5;
+    BYTE temp = GETJS;
 
-   // fire gets priority
-   //
-   if ((temp & 0x08) == 0)
-   {
-      idx = 4;
-   }
-   else if((temp & 0x80) == 0)
-   {
-      idx = 0;
-   }
-   else if ((temp & 0x40) == 0)
-   {
-      idx = 1;
-   }
-   else if ((temp & 0x20) == 0)
-   {
-      idx = 2;
-   }
-   else if ((temp & 0x10) == 0)
-   {
-      idx = 3;
-   }
+    // fire gets priority
+    //
+    if ((temp & 0x08) == 0)
+    {
+        idx = 4;
+    }
+    else if((temp & 0x80) == 0)
+    {
+        idx = 0;
+    }
+    else if ((temp & 0x40) == 0)
+    {
+        idx = 1;
+    }
+    else if ((temp & 0x20) == 0)
+    {
+        idx = 2;
+    }
+    else if ((temp & 0x10) == 0)
+    {
+        idx = 3;
+    }
 
-   if (idx != 5)
-   {
-      LATD = jsmap[idx];
-   }
-   else
-   {
-      LATD = 0xff;
-   }
+    if (idx != 5)
+    {
+        LATD = jsmap[idx];
+    }
+    else
+    {
+        LATD = 0xff;
+    }
 }
 
 void zeddyHBT2asciiZ(unsigned char* buffer)
 {
-   unsigned char q = 0;
-   do
-   {
-      q = *buffer;
-      if (q & 0x40)
-      {
-         if (q > 0xd6 && q < 0xe6)
-         {
-            *buffer = zx80Token2ascii[q - 0xd7];
-         }
-         else
-         {
-            *buffer = '?';
-         }
-      }
-      else
-      {
-         *buffer = zx2ascii[q & 0x3f];
-      }
+    unsigned char q = 0;
+    do
+    {
+        q = *buffer;
+        if (q & 0x40)
+        {
+            if (q > 0xd6 && q < 0xe6)
+            {
+                *buffer = zx80Token2ascii[q - 0xd7];
+            }
+            else
+            {
+                *buffer = '?';
+            }
+        }
+        else
+        {
+            *buffer = zx2ascii[q & 0x3f];
+        }
 
-      ++buffer;
-   }
-   while (q < 128);
-   *buffer = 0;
+        ++buffer;
+    }
+    while (q < 128);
+    *buffer = 0;
 }
 
 void deZeddify(unsigned char* buffer)
 {
-   unsigned char q;
-   while (*buffer)
-   {
-      q = *buffer;
-      if (q & 0x40)
-      {
-         if (q > 0xd6 && q < 0xe6)
-         {
-            *buffer = zx80Token2ascii[q - 0xd7];
-         }
-         else
-         {
-            *buffer = '?';
-         }
-      }
-      else
-      {
-         *buffer = zx2ascii[q & 0x3f];
-      }
+    unsigned char q;
+    while (*buffer)
+    {
+        q = *buffer;
+        if (q & 0x40)
+        {
+            if (q > 0xd6 && q < 0xe6)
+            {
+                *buffer = zx80Token2ascii[q - 0xd7];
+            }
+            else
+            {
+                *buffer = '?';
+            }
+        }
+        else
+        {
+            *buffer = zx2ascii[q & 0x3f];
+        }
 
-      ++buffer;
-   }
+        ++buffer;
+    }
 }
 
 
 
 void zeddify(BYTE* buffer)
 {
-   while (*buffer)
-   {
-      *buffer = ascii2zx(*buffer);
-      ++buffer;
-   }
-   // force 'zeddy' type termination
-   *buffer = 255;
+    while (*buffer)
+    {
+        *buffer = ascii2zx(*buffer);
+        ++buffer;
+    }
+    // force 'zeddy' type termination
+    *buffer = 255;
 }
 
 
 void zeddifyUpper(BYTE* buffer)
 {
-   while (*buffer)
-   {
-      *buffer = ascii2zx(toupper(*buffer));
-      ++buffer;
-   }
-   // force 'zeddy' type termination
-   *buffer = 255;
+    while (*buffer)
+    {
+        *buffer = ascii2zx(toupper(*buffer));
+        ++buffer;
+    }
+    // force 'zeddy' type termination
+    *buffer = 255;
 }
 
 
@@ -359,74 +360,74 @@ void zeddifyUpper(BYTE* buffer)
 // check that the supplied ascii filename only consists of alphanums slash and dot.
 char isValidFN(unsigned char* buffer)
 {
-   while (*buffer)
-   {
-      char c = chk_chr(validfns, *buffer);
-      if (c == 0 || c == ';')
-         return c;
-      ++buffer;
-   }
+    while (*buffer)
+    {
+        char c = chk_chr(validfns, *buffer);
+        if (c == 0 || c == ';')
+            return c;
+        ++buffer;
+    }
 
-   return 1;
+    return 1;
 }
 
 
 
 void zx_initprocessor(void)
 {
-   fatfs.win = windowData;
+    fatfs.win = windowData;
 
-   f_chdrive(0);
-   f_mount(0, &fatfs);
+    f_chdrive(0);
+    f_mount(0, &fatfs);
 }
 
 
 
 void GetWildcard(char* p)
 {
-   unsigned int Idx = 0;
-   int   WildPos     = -1;
-   int   LastSlash   = -1;
+    unsigned int Idx = 0;
+    int   WildPos     = -1;
+    int   LastSlash   = -1;
 
-   //log0("GetWildcard() %s\n",(const char *)p);
+    //log0("GetWildcard() %s\n",(const char *)p);
 
-   while ((Idx<strlen((const char*)p)) && (WildPos<0))
-   {
-      // Check for wildcard character
-      if((p[Idx]=='?') || (p[Idx]=='*'))
-         WildPos=Idx;
+    while ((Idx<strlen((const char*)p)) && (WildPos<0))
+    {
+        // Check for wildcard character
+        if((p[Idx]=='?') || (p[Idx]=='*'))
+            WildPos=Idx;
 
-      // Check for path seperator
-      if((p[Idx]=='\\') || (p[Idx]=='/'))
-         LastSlash=Idx;
+        // Check for path seperator
+        if((p[Idx]=='\\') || (p[Idx]=='/'))
+            LastSlash=Idx;
 
-      Idx++;
-   }
+        Idx++;
+    }
 
-   if(WildPos>-1)
-   {
-      if(LastSlash>-1)
-      {
-         // Path followed by wildcard
-         // Terminate dir filename at last slash and copy wildcard
-         p[LastSlash]=0x00;
-         strncpy(WildPattern,(const char*)&p[LastSlash+1],WILD_LEN);
-      }
-      else
-      {
-         // Wildcard on it's own
-         // Copy wildcard, then set path to null
-         strncpy(WildPattern,(const char*)p,WILD_LEN);
-         p[0]=0x00;
-      }
-   }
-   else
-   {
-      WildPattern[0]='*';
-      WildPattern[1]=0;
-   }
+    if(WildPos>-1)
+    {
+        if(LastSlash>-1)
+        {
+            // Path followed by wildcard
+            // Terminate dir filename at last slash and copy wildcard
+            p[LastSlash]=0x00;
+            strncpy(WildPattern,(const char*)&p[LastSlash+1],WILD_LEN);
+        }
+        else
+        {
+            // Wildcard on it's own
+            // Copy wildcard, then set path to null
+            strncpy(WildPattern,(const char*)p,WILD_LEN);
+            p[0]=0x00;
+        }
+    }
+    else
+    {
+        WildPattern[0]='*';
+        WildPattern[1]=0;
+    }
 
-   //log0("GetWildcard() globalData=%s WildPattern=%s\n",(const char*)globalData,WildPattern);
+    //log0("GetWildcard() globalData=%s WildPattern=%s\n",(const char*)globalData,WildPattern);
 }
 
 
@@ -437,193 +438,192 @@ BYTE dirFlags = 0xff;
 
 BYTE directoryOpen(char* p)
 {
-   char ret = 0x40 + FR_INVALID_NAME;
+    char ret = 0x40 + FR_INVALID_NAME;
 
-   filinfo.fattrib = 0; // normal dir mode
+    filinfo.fattrib = 0; // normal dir mode
 
-   if (*p == '>')
-   {
-      // we will change to the directory
-      ret = 0x40 | f_chdir((char*)(p + 1));
-      if (ret == 0x40)
-      {
-         // the CD succeeded, so instruct the 'read directory entry' routine to exit with 'all done'
-         filinfo.fattrib = 0x42;
-      }
-   }
-   else if (*p == '+')
-   {
-      // we will try to create a directory
-      ret = 0x40 | f_mkdir((char*)(p + 1));
-      if (ret == 0x40)
-      {
-         // the CD succeeded, so instruct the 'read directory entry' routine to exit with 'all done'
-         filinfo.fattrib = 0x42;
-      }
-   }
-   else
-   {
-      // Separate wildcard and path
-      GetWildcard(p);
-      if (isValidFN(p))
-      {
-         dirstate = 0; // reading dirs
+    if (*p == '>')
+    {
+        // we will change to the directory
+        ret = 0x40 | f_chdir((char*)(p + 1));
+        if (ret == 0x40)
+        {
+            // the CD succeeded, so instruct the 'read directory entry' routine to exit with 'all done'
+            filinfo.fattrib = 0x42;
+        }
+    }
+    else if (*p == '+')
+    {
+        // we will try to create a directory
+        ret = 0x40 | f_mkdir((char*)(p + 1));
+        if (ret == 0x40)
+        {
+            // the CD succeeded, so instruct the 'read directory entry' routine to exit with 'all done'
+            filinfo.fattrib = 0x42;
+        }
+    }
+    else
+    {
+        // Separate wildcard and path
+        GetWildcard(p);
+        if (isValidFN(p))
+        {
+            dirstate = 0; // reading dirs
 
-         memcpy((void*)(p + 64), (void*)p, 64);
-         ret = 0x40 + f_opendir(&dir, (const char*)&p[64]);
-      }
-   }
+            memcpy((void*)(p + 64), (void*)p, 64);
+            ret = 0x40 + f_opendir(&dir, (const char*)&p[64]);
+        }
+    }
 
-   return ret;
+    return ret;
 }
 
 void comDirectoryOpen(void)
 {
-   deZeddify(globalData);
+    deZeddify(globalData);
 
-   LATD = directoryOpen(globalData);
+    LATD = directoryOpen(globalData);
 }
 
 
 int directoryStat(char* g)
 {
-   char *p;
-   char* originalG = g;
-   int Match, count = 0;
+    char *p;
+    int Match, count = 0;
 
-   while (1)
-   {
-      res = f_readdir(&dir, &filinfo);
-      if (res != FR_OK)
-      {
-         return count;
-      }
+    while (1)
+    {
+        res = f_readdir(&dir, &filinfo);
+        if (res != FR_OK)
+        {
+            return count;
+        }
 
-      p = &filinfo.fname[0];
-      if (*p == '.' && *(p+1) == 0) continue;
+        p = &filinfo.fname[0];
+        if (*p == '.' && *(p+1) == 0) continue;
 
-      if (!*p)
-      {
-         f_opendir(&dir, (const char*)&globalData[64]);
+        if (!*p)
+        {
+            f_opendir(&dir, (const char*)&globalData[64]);
 
-         ++dirstate;
-         if (dirstate == 1) continue;
+            ++dirstate;
+            if (dirstate == 1) continue;
 
-         return count;
-      }
+            return count;
+        }
 
-      // need to do this test first
-      if (filinfo.fattrib & AM_HID) continue;
-      if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
-      if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
+        // need to do this test first
+        if (filinfo.fattrib & AM_HID) continue;
+        if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
+        if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
 
-      if (wildcmp(WildPattern,p))
-      {
-         ++count;
-      }
-   }
+        if (wildcmp(WildPattern,p))
+        {
+            ++count;
+        }
+    }
 }
 
 
 BYTE directoryRead(char* g)
 {
-   char *p;
-   char* originalG = g;
-   int Match;
+    char *p;
+    char* originalG = g;
+    int Match;
 
-   if (filinfo.fattrib == 0x42)
-   {
-      // early bath
-      // com function only returns status code
-      filinfo.fattrib = 0;
-      return 0x3f;
-   }
+    if (filinfo.fattrib == 0x42)
+    {
+        // early bath
+        // com function only returns status code
+        filinfo.fattrib = 0;
+        return 0x3f;
+    }
 
-   while (1)
-   {
-      res = f_readdir(&dir, &filinfo);
-      if (res != FR_OK)
-      {
-         return 0x40 | res;
-      }
+    while (1)
+    {
+        res = f_readdir(&dir, &filinfo);
+        if (res != FR_OK)
+        {
+            return 0x40 | res;
+        }
 
-      p = &filinfo.fname[0];
-      if (*p == '.' && *(p+1) == 0) continue;
+        p = &filinfo.fname[0];
+        if (*p == '.' && *(p+1) == 0) continue;
 
-      if (!*p)
-      {
-         // done a loop, need to go again?
-         if (dirstate == 0)
-         {
-            dirstate = 1;
-            f_opendir(&dir, (const char*)&globalData[64]);
-            continue;
-         }
-         // com function only returns status code
-         return 0x3f;
-      }
-
-      // need to do this test first
-      if (filinfo.fattrib & AM_HID) continue;
-      if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
-      if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
-
-      Match=wildcmp(WildPattern,p);
-
-      if(Match)
-      {
-         if (filinfo.fattrib & AM_DIR)
-         {
-            if (dirFlags == 0xff)
-               g += sprintf(g, (rom far char*)"<%s>", p);
-            else
-               g += sprintf(g, (rom far char*)"%s/", p);
-         }
-         else
-         {
-            if (dirFlags == 0xff)
+        if (!*p)
+        {
+            // done a loop, need to go again?
+            if (dirstate == 0)
             {
-               g += sprintf(g, (rom far char*)"%s", p);
+                dirstate = 1;
+                f_opendir(&dir, (const char*)&globalData[64]);
+                continue;
+            }
+            // com function only returns status code
+            return 0x3f;
+        }
+
+        // need to do this test first
+        if (filinfo.fattrib & AM_HID) continue;
+        if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
+        if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
+
+        Match=wildcmp(WildPattern,p);
+
+        if(Match)
+        {
+            if (filinfo.fattrib & AM_DIR)
+            {
+                if (dirFlags == 0xff)
+                    g += sprintf(g, (rom far char*)"<%s>", p);
+                else
+                    g += sprintf(g, (rom far char*)"%s/", p);
             }
             else
             {
-               g += sprintf(g, (rom far char*)"%-13s", p);
-               if (filinfo.fsize > 1024)
-                  g += sprintf(g, (rom far char*)"% 4ldK", filinfo.fsize / (DWORD)1024);
-               else
-                  g += sprintf(g, (rom far char*)"% 4ldB", filinfo.fsize);
+                if (dirFlags == 0xff)
+                {
+                    g += sprintf(g, (rom far char*)"%s", p);
+                }
+                else
+                {
+                    g += sprintf(g, (rom far char*)"%-13s", p);
+                    if (filinfo.fsize > 1024)
+                        g += sprintf(g, (rom far char*)"% 4ldK", filinfo.fsize / (DWORD)1024);
+                    else
+                        g += sprintf(g, (rom far char*)"% 4ldB", filinfo.fsize);
+                }
             }
-         }
 
-         *g = 0;
-         zxpandRetblk.len = (BYTE)(originalG - g);
-         zeddifyUpper(originalG);
-
-         if (dirFlags == 0xff)
-         {
-            // classic compatibility mode - 0 terminated
             *g = 0;
-            ++g;
-         }
-         else
-         {
-            // plus mode - newline/ff terminated
-            *g = 0x76;
-            ++g;
-            *g = 0xff;
-            ++g;
-         }
+            zxpandRetblk.len = (BYTE)(g - originalG);
+            zeddifyUpper(originalG);
 
-         // just for giggles put the attribute & filesize in the buffer
-         //
-         *g = filinfo.fattrib;
-         ++g;
+            if (dirFlags == 0xff)
+            {
+                // classic compatibility mode - 0 terminated
+                *g = 0;
+                ++g;
+            }
+            else
+            {
+                // plus mode - newline/ff terminated
+                *g = 0x76;
+                ++g;
+                *g = 0xff;
+                ++g;
+            }
 
-         mem_cpy(g, (void*)(&filinfo.fsize), sizeof(DWORD));
+            // just for giggles put the attribute & filesize in the buffer
+            //
+            *g = filinfo.fattrib;
+            ++g;
 
-         return 0x40;
-      }
-   }
+            mem_cpy(g, (void*)(&filinfo.fsize), sizeof(DWORD));
+
+            return 0x40;
+        }
+    }
 }
 
 void comDirectoryRead(void)
@@ -640,290 +640,326 @@ static WORD length;
 static char* fp_fn = (char*)(&globalData[128]);
 static char* fp_fnBak = (char*)(&globalData[128+32]);
 
+static char paramStore[64];
 
-static unsigned char fileOpen(unsigned char mode)
+
+static unsigned char fileOpen(char*p, unsigned char mode)
 {
-   char* token;
-   char autogenext = 1;
-   char* p = (char*)globalData;
+    char* token;
+    char autogenext = 1;
 
-   deZeddify((BYTE*)p);
+    if (*p == '+' || *p == '>')
+    {
+        ++p;
+    }
 
-   if (*p == '+' || *p == '>')
-   {
-      ++p;
-   }
+    if (*p == '/')
+    {
+        autogenext = 0;
+    }
 
-   if (*p == '/')
-   {
-      autogenext = 0;
-   }
+    if (!isValidFN((unsigned char*)p))
+    {
+        return 0x40 + FR_INVALID_NAME;
+    }
 
-   if (!isValidFN((unsigned char*)p))
-   {
-      return 0x40 + FR_INVALID_NAME;
-   }
+    token = strtokpgmram(p, (RFC)SEMICOL);
+    if (NULL == token)
+    {
+        // no filename specified
+        return 0x40 + FR_INVALID_NAME;
+    }
 
-   token = strtokpgmram(p, (RFC)SEMICOL);
-   if (NULL == token)
-   {
-      // no filename specified
-      return 0x40 + FR_INVALID_NAME;
-   }
+    // change $ for 0x7e, to support short LFN forms
+    {
+        if (p[6] == '$')
+        {
+            p[6] = 0x7e;
+        }
+    }
 
-   // change $ for 0x7e, to support short LFN forms
-   {
-	   if (p[6] == '$')
-	   {
-		   p[6] = 0x7e;
-	   }
-   }
+    start = defaultLoadAddr;
+    length = 0;
+    flags = 0;
 
-   start = defaultLoadAddr;
-   length = 0;
-   flags = 0;
+    // parse optional parameters
+    //
+    while ((token = strtokpgmram((char*)NULL, (RFC)SEMICOL)) != NULL)
+    {
+        // if it starts with an alpha then it's a flag - add it to the bitset
+        if (isalpha(*token))
+        {
+            if (*token == 'X')
+            {
+                flags |= 1;
+            }
+        }
+        else
+        {
+            // see if it's of the form start,end: if not it's just start
+            //
+            char* comma = strchr(token,',');
+            start = atoi(token);
+            if (comma)
+            {
+                length = atoi(comma+1);
+            }
+        }
+    }
 
-   // parse optional parameters
-   //
-   while ((token = strtokpgmram((char*)NULL, (RFC)SEMICOL)) != NULL)
-   {
-      // if it starts with an alpha then it's a flag - add it to the bitset
-      if (isalpha(*token))
-      {
-         if (*token == 'X')
-         {
-            flags |= 1;
-         }
-      }
-      else
-      {
-         // see if it's of the form start,end: if not it's just start
-         //
-         char* comma = strchr(token,',');
-         start = atoi(token);
-         if (comma)
-         {
-            length = atoi(comma+1);
-         }
-      }
-   }
+    // now all the params are parsed, we can create the filename
+    //
+    {
+        char* newFN = fp_fn;
+        char found = 0;
+        for(token = p; *token; ++token, ++newFN)
+        {
+            *newFN = *token;
+            if (*token == '.')
+            {
+                found = 1;
+            }
+        }
+        *newFN = 0;
+        if (!found && autogenext)
+        {
+            *newFN = '.';
+            ++newFN;
+            *newFN = defaultExtension;
+            ++newFN;
+            *newFN = 0;
+        }
+    }
 
-   // now all the params are parsed, we can create the filename
-   //
-   {
-      char* newFN = fp_fn;
-      char found = 0;
-      for(token = p; *token; ++token, ++newFN)
-      {
-         *newFN = *token;
-         if (*token == '.')
-         {
-            found = 1;
-         }
-      }
-      *newFN = 0;
-      if (!found && autogenext)
-      {
-         *newFN = '.';
-         ++newFN;
-         *newFN = defaultExtension;
-         ++newFN;
-         *newFN = 0;
-      }
-   }
-
-   return 0x40 | f_open(&fil, fp_fn, mode);
+    return 0x40 | f_open(&fil, fp_fn, mode);
 }
 
-
-
+static const int D_FILE = 0x400c;
+static const int NXTLIN = 0x4029;
+void (*modifyBytes)(void)=NULL;
+void stop(void)
+{
+    int x = NXTLIN - 0x4009;
+    int y = D_FILE - 0x4009;
+    globalData[x] = globalData[y];
+    globalData[x+1] = globalData[y+1];
+}
 
 void comFileOpenRead(void)
 {
-   sb = -1;
-   res = fileOpen(FA_OPEN_EXISTING|FA_READ);
+    char *p, *param;
 
-   if (0x40 == res)
-   {
-      get_fileinfo_special(&filinfo);
+    sb = -1;
 
-      if (length == 0)
-      {
-         length = (WORD)filinfo.fsize;
-      }
+    if (globalData[strlen(globalData) - 1] == 227)
+    {
+       modifyBytes = stop;
+       globalData[strlen(globalData) - 1] = 0;
+    }
 
-      // hack to make programs auto-disable ROM if read-only attribute is set
-      if (filinfo.fattrib & AM_RDO)
-      {
-         flags |= 1;
-      }
-   
-      globalData[6] = filinfo.fsize & 0xff;
-      globalData[7] = (filinfo.fsize >>  8) & 0xff;
-      globalData[8] = (filinfo.fsize >> 16) & 0xff;
-      globalData[9] = (filinfo.fsize >> 24) & 0xff;
-   }
+    p = globalData;
+    deZeddify(p);
 
-   if (res != 0x40 && globalData[0] == '$')
-   {
-      serialInit(12, 1);
+    paramStore[0] = 0;
+    if ((param = strchr(p,':')) != NULL)
+    {
+        strcpy(paramStore, param+1);
+        *param = 0;
+    }
 
-      delayMillis(100);
+    res = fileOpen(p, FA_OPEN_EXISTING|FA_READ);
 
-      putcUSART('I');
-      while(serialAvailable() < 2);
-      length = serialRead();
-      length += 256 * serialRead();
-      res = 0x40;
-      sb = 0;
-   }
+    if (0x40 == res)
+    {
+        get_fileinfo_special(&filinfo);
 
-   globalData[0] = length & 255;
-   globalData[1] = length / 256;
-   globalData[2] = start & 255;
-   globalData[3] = start / 256;
-   globalData[4] = flags & 255;
-   globalData[5] = flags / 256;
+        if (length == 0)
+        {
+            length = (WORD)filinfo.fsize;
+        }
 
-   memset(&globalData[10], 0, 32-10);
+        // hack to make programs auto-disable ROM if read-only attribute is set
+        if (filinfo.fattrib & AM_RDO)
+        {
+            flags |= 1;
+        }
 
-   GOOUTPUTMODE;
-   LATD = res;
+        globalData[6] = filinfo.fsize & 0xff;
+        globalData[7] = (filinfo.fsize >>  8) & 0xff;
+        globalData[8] = (filinfo.fsize >> 16) & 0xff;
+        globalData[9] = (filinfo.fsize >> 24) & 0xff;
+    }
+    else
+    {
+        if (*p == '$')
+        {
+            serialInit(12, 1);
+
+            delayMillis(100);
+
+            serialWrite('I');
+            while(serialAvailable() < 2);
+            length = serialRead();
+            length += 256 * serialRead();
+            res = 0x40;
+            sb = 0;
+        }
+    }
+    globalData[0] = length & 255;
+    globalData[1] = length / 256;
+    globalData[2] = start & 255;
+    globalData[3] = start / 256;
+    globalData[4] = flags & 255;
+    globalData[5] = flags / 256;
+
+// WHY 10?
+    memset(&globalData[10], 0, 32-10);
+
+    GOOUTPUTMODE;
+    LATD = res;
 }
 
 
 void comBoot(void)
 {
-   BYTE bootName[5]={0x32,0x2a,0x33,0xba,0x00};
-   memcpy(globalData, (void*)bootName, 5);
-   comFileOpenRead();
+    BYTE bootName[5]= {0x32,0x2a,0x33,0xba,0x00};
+    memcpy(globalData, (void*)bootName, 5);
+    comFileOpenRead();
 }
 
 void comFileOpenWrite(void)
 {
-   res = fileOpen(FA_CREATE_NEW|FA_WRITE);
+    deZeddify(globalData);
+    res = fileOpen(globalData, FA_CREATE_NEW|FA_WRITE);
 
-   if (res == 0x48)
-   {
-      // file exists
-      if (globalData[0] == '+' || (fsConfig & 0x03) == 1)
-      {
-         char* p = fp_fnBak;
-         memcpy((void*)fp_fnBak, (void*)fp_fn, 32);
-         while(*p != '.'){++p;}
-         strcpypgm2ram(p, (RFC)".BAK");
-         res = 0x40 | f_rename(fp_fn, fp_fnBak);
-      }
+    if (res == 0x48)
+    {
+        // file exists
+        if (globalData[0] == '+' || (fsConfig & 0x03) == 1)
+        {
+            char* p = fp_fnBak;
+            memcpy((void*)fp_fnBak, (void*)fp_fn, 32);
+            while(*p != '.') {
+                ++p;
+            }
+            strcpypgm2ram(p, (RFC)".BAK");
+            res = 0x40 | f_rename(fp_fn, fp_fnBak);
+        }
 
-      if (globalData[0] == '>' || (fsConfig & 0x03) == 2)
-      {
-         // overwrite (ala dos pipe)
-         res = 0x40 | f_unlink(fp_fn);
-      }
+        if (globalData[0] == '>' || (fsConfig & 0x03) == 2)
+        {
+            // overwrite (ala dos pipe)
+            res = 0x40 | f_unlink(fp_fn);
+        }
 
-      if (0x40 == res)
-      {
-         // now try again
-         res = 0x40 | f_open(&fil, fp_fn, FA_CREATE_NEW|FA_WRITE);
-      }
-   }
+        if (0x40 == res)
+        {
+            // now try again
+            res = 0x40 | f_open(&fil, fp_fn, FA_CREATE_NEW|FA_WRITE);
+        }
+    }
 
-   if (0x40 == res)
-   {
-      globalData[0] = length & 255;
-      globalData[1] = length / 256;
-      globalData[2] = start & 255;
-      globalData[3] = start / 256;
-      globalData[4] = flags & 255;
-      globalData[5] = flags / 256;
+    if (0x40 == res)
+    {
+        globalData[0] = length & 255;
+        globalData[1] = length / 256;
+        globalData[2] = start & 255;
+        globalData[3] = start / 256;
+        globalData[4] = flags & 255;
+        globalData[5] = flags / 256;
 
-      globalData[6] = filinfo.fsize & 0xff;
-      globalData[7] = (filinfo.fsize >>  8) & 0xff;
-      globalData[8] = (filinfo.fsize >> 16) & 0xff;
-      globalData[9] = (filinfo.fsize >> 24) & 0xff;
+        globalData[6] = filinfo.fsize & 0xff;
+        globalData[7] = (filinfo.fsize >>  8) & 0xff;
+        globalData[8] = (filinfo.fsize >> 16) & 0xff;
+        globalData[9] = (filinfo.fsize >> 24) & 0xff;
 
-      memset(&globalData[10], 0, 32-10);
-   }
+        memset(&globalData[10], 0, 32-10);
+    }
 
-   GOOUTPUTMODE;
-   LATD = res;
+    GOOUTPUTMODE;
+    LATD = res;
 }
 
 
 void comFileSeek(void)
 {
-	DWORD* dpw = (DWORD*)globalData;
-	DWORD seekpos = *dpw;
-	LATD = 0x40 | f_lseek (&fil, seekpos);
+    DWORD* dpw = (DWORD*)globalData;
+    DWORD seekpos = *dpw;
+    LATD = 0x40 | f_lseek (&fil, seekpos);
 }
 
 
 void comFileRead(void)
 {
-   UINT read;
-   BYTE res;
+    UINT read;
+    BYTE res;
 
-   if (globalAmount == 0)
-   {
-      globalAmount = 256;
-   }
+    if (globalAmount == 0)
+    {
+        globalAmount = 256;
+    }
 
-   if (sb >= 0)
-   {
-      BYTE error;
-      do
-      {
-         BYTE b, *p = (BYTE*)globalData;
-         unsigned short crc, rxcrc;
-         serialWrite('T');
-         serialWrite(sb);
-         serialWrite(globalAmount&0xff);
-   
-         crc = 0;
-         for (read = 0; read < globalAmount; ++read)
-         {
-            while(!serialAvailable());
-            b = serialRead();
-            *p = b;
-            ++p;
+    if (sb >= 0)
+    {
+        BYTE error;
+        do
+        {
+            BYTE b, *p = (BYTE*)globalData;
+            unsigned short crc, rxcrc;
+            serialWrite('T');
+            serialWrite(sb);
+            serialWrite(globalAmount&0xff);
 
-            crc += b;
-         }
+            crc = 0;
+            for (read = 0; read < globalAmount; ++read)
+            {
+                while(!serialAvailable());
+                b = serialRead();
+                *p = b;
+                ++p;
 
-         while(serialAvailable() < 2);
-         rxcrc = serialRead();
-         rxcrc += 256 * serialRead();
+                crc += b;
+            }
 
-         error = ring_error | crc != rxcrc;
-         ring_error = 0;
-      }
-      while(error);
+            while(serialAvailable() < 2);
+            rxcrc = serialRead();
+            rxcrc += 256 * serialRead();
 
-      res = 0x40;
-      ++sb;
-   }
-   else
-   {
-      res = 0x40 | f_read(&fil, globalData, globalAmount, &read);
-   }
+            error = ring_error | (crc != rxcrc);
+            ring_error = 0;
+        }
+        while(error);
 
-   GOOUTPUTMODE;
-   LATD = res;
+        res = 0x40;
+        ++sb;
+    }
+    else
+    {
+        res = 0x40 | f_read(&fil, globalData, globalAmount, &read);
+    }
+
+    if (modifyBytes)
+    {
+        modifyBytes();
+        modifyBytes = NULL;
+    }
+
+    GOOUTPUTMODE;
+    LATD = res;
 }
-
 
 
 
 void comFileWrite(void)
 {
-   UINT written;
+    UINT written;
 
-   if (globalAmount == 0)
-   {
-      globalAmount = 256;
-   }
+    if (globalAmount == 0)
+    {
+        globalAmount = 256;
+    }
 
-   LATD = 0x40 | f_write(&fil, (void*)globalData, globalAmount, &written);
+    LATD = 0x40 | f_write(&fil, (void*)globalData, globalAmount, &written);
 }
 
 
@@ -931,54 +967,54 @@ void comFileWrite(void)
 
 void comFileClose(void)
 {
-   if (sb >= 0)
-   {
-      sb = 0;
-      LATD = 0x40;
-      serialWrite('X');
-      serialInit(12,0); // turn off rx irq
-   }
-   else LATD=0x40 | f_close(&fil);
+    if (sb >= 0)
+    {
+        sb = -1;
+        LATD = 0x40;
+        serialWrite('X'); // goodnight kiss
+        serialInit(12,0); // turn off rx irq
+    }
+    else LATD=0x40 | f_close(&fil);
 }
 
 
 void comFileRename(void)
 {
-   char* token;
-   char* p = (char*)globalData;
+    char* token;
+    char* p = (char*)globalData;
 
-   char ret = 0x40 + FR_INVALID_NAME;
+    char ret = 0x40 + FR_INVALID_NAME;
 
-   deZeddify(globalData);
+    deZeddify(globalData);
 
-   token = strtokpgmram(p, (RFC)SEMICOL);
-   if (NULL != token)
-   {
-      token = strtokpgmram((char*)NULL, (RFC)SEMICOL);
-      if (NULL != token)
-      {
-         if (isValidFN(globalData) && isValidFN((BYTE*)token))
-         {
-            ret = 0x40 | f_rename((const XCHAR*)&globalData[0], (const XCHAR*)token);
-         }
-      }
-   }
+    token = strtokpgmram(p, (RFC)SEMICOL);
+    if (NULL != token)
+    {
+        token = strtokpgmram((char*)NULL, (RFC)SEMICOL);
+        if (NULL != token)
+        {
+            if (isValidFN(globalData) && isValidFN((BYTE*)token))
+            {
+                ret = 0x40 | f_rename((const XCHAR*)&globalData[0], (const XCHAR*)token);
+            }
+        }
+    }
 
-   LATD = ret;
+    LATD = ret;
 }
 
 
 void comFileDelete(void)
 {
-   char ret = 0x40 + FR_INVALID_NAME;
+    char ret = 0x40 + FR_INVALID_NAME;
 
-   deZeddify(globalData);
-   if (isValidFN(globalData))
-   {
-      ret = 0x40 | f_unlink((const XCHAR*)&globalData[0]);
-   }
+    deZeddify(globalData);
+    if (isValidFN(globalData))
+    {
+        ret = 0x40 | f_unlink((const XCHAR*)&globalData[0]);
+    }
 
-   LATD = ret;
+    LATD = ret;
 }
 
 BYTE lb;
@@ -992,182 +1028,153 @@ static BYTE ROM      setRamtop[9] = { 0x21,0xff,0xff,0x22,0x04,0x40,0xc3,0xc3,0x
 //
 void comParseBuffer(void)
 {
-   char* token;
-   BYTE cmd, retcode = 0x40;
+    char* token;
+    BYTE cmd, retcode = 0x40;
 
-   // keep any raw keycodes that might be lost in a conversionRFC
-   //
-   mem_cpy((void*)&globalData[128], (void*)&globalData[0], 128);
+    // keep any raw keycodes that might be lost in a conversionRFC
+    //
+    mem_cpy((void*)&globalData[128], (void*)&globalData[0], 128);
 
-   deZeddify(globalData);
+    deZeddify(globalData);
 
-   //if(!isalpha(globalData[0]))
-   //{
-   //   LATD = retcode | FR_INVALID_OBJECT;
-   //   return;
-   //}
+    //if(!isalpha(globalData[0]))
+    //{
+    //   LATD = retcode | FR_INVALID_OBJECT;
+    //   return;
+    //}
 
 
-   // type 0 - no data, all done
-   // type 1 - string to print
-   // type 2 - array of ints
-   // type 3+ - command identifier [A=3 ... Z=29] + parameter block
+    // type 0 - no data, all done
+    // type 1 - string to print
+    // type 2 - array of ints
+    // type 3+ - command identifier [A=3 ... Z=29] + parameter block
 
-   // Set return value  -  'A' = 3.
-   //
-   cmd = globalData[0]-'A'+3;
-   globalData[0] = cmd;
+    // Set return value  -  'A' = 3.
+    //
+    cmd = globalData[0]-'A'+3;
+    globalData[0] = cmd;
 
-   token = strtokpgmram((char*)&globalData[1], (RFC)SEPARATOR);
+    token = strtokpgmram((char*)&globalData[1], (RFC)SEPARATOR);
 
-   switch(cmd)
-   {
-      case 0xf2: //'0'-'A'+3:
-      {
-         // more message
-         strcpypgm2ram((char*)&globalData[1], (RFC)MOREMSG);
-         zeddify(&globalData[1]);
-         globalData[0] = 1;
-      }
-      break;
-      
-      case 'V'-'A'+3:
-      {
-         // version string
+    switch(cmd)
+    {
+    case 0xf2: //'0'-'A'+3:
+    {
+        // more message
+        strcpypgm2ram((char*)&globalData[1], (RFC)MOREMSG);
+        zeddify(&globalData[1]);
+        globalData[0] = 1;
+    }
+    break;
 
-         strcpypgm2ram((char*)&globalData[1], (RFC)VERSION);
-   
-         zeddify(&globalData[1]);
-         globalData[0] = 1;
-      }
-      break;
+    case 'V'-'A'+3:
+    {
+        // version string
 
-      case 'X'-'A'+3:
-      {
-         // disable overlay binary
-         memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&disableOverlay[0]), sizeof(disableOverlay));
-         globalData[0] = 2;
-      }
-      break;
+        strcpypgm2ram((char*)&globalData[1], (RFC)VERSION);
 
-      case 'R'-'A'+3:
-      {
-         // set RAMTOP binary
-         if (!token) break;
-         start = atoi(token);
-         memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&setRamtop[0]), sizeof(setRamtop));
-         globalData[0] = 2;
-         globalData[2] = start & 255;
-         globalData[3] = start / 256;
-      }
-      break;
+        zeddify(&globalData[1]);
+        globalData[0] = 1;
+    }
+    break;
 
-      case  'F'-'A'+3:
-      {
-         // flash cpld
-         if (!token) break;
+    case 'X'-'A'+3:
+    {
+        // disable overlay binary
+        memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&disableOverlay[0]), sizeof(disableOverlay));
+        globalData[0] = 2;
+    }
+    break;
 
-         // hold zeddy in reset while the cpld programs, then reset zxpand
-         ASSERT_RESET;
-   	 tryProgramCPLD(token);
-         Reset();
-      }
-      break;
+    case 'R'-'A'+3:
+    {
+        // set RAMTOP binary
+        if (!token) break;
+        start = atoi(token);
+        memcpypgm2ram((void*)(&globalData[1]), (const rom far void*)(&setRamtop[0]), sizeof(setRamtop));
+        globalData[0] = 2;
+        globalData[2] = start & 255;
+        globalData[3] = start / 256;
+    }
+    break;
 
-      case 'D'-'A'+3:
-      {
-         // set current working directory
-   
-         if (!token)
-         {
+    case  'F'-'A'+3:
+    {
+        // flash cpld
+        if (!token) break;
+
+        // hold zeddy in reset while the cpld programs, then reset zxpand
+        ASSERT_RESET;
+        tryProgramCPLD(token);
+        Reset();
+    }
+    break;
+
+    case 'D'-'A'+3:
+    {
+        // set current working directory
+
+        if (!token)
+        {
             globalData[32]='\\';
             globalData[33]=0;
             token = (char*)&globalData[32];
-         }
-   
-         retcode |= f_chdir(token);
-      }
-      break;
+        }
 
-      case 'M'-'A'+3:
-      {
-         // memory map control
-   
-         if (token)
-         {
+        retcode |= f_chdir(token);
+    }
+    break;
+
+    case 'M'-'A'+3:
+    {
+        // memory map control
+
+        if (token)
+        {
             if (*token == 'H')
             {
-               // HI ram
-               GO_HIGH;
+                // HI ram
+                GO_HIGH;
             }
             else if (*token == 'L')
             {
-               // LO ram
-               GO_LOW;
+                // LO ram
+                GO_LOW;
             }
             else
             {
-               retcode |= FR_INVALID_OBJECT;
+                retcode |= FR_INVALID_OBJECT;
             }
-         }
-         else
-         {
+        }
+        else
+        {
             if (L_LOW)
             {
-               strcpypgm2ram((char*)&globalData[1], (RFC)EIGHT40);
+                strcpypgm2ram((char*)&globalData[1], (RFC)EIGHT40);
             }
             else
             {
-               strcpypgm2ram((char*)&globalData[1], (RFC)SIXTEEN48);
+                strcpypgm2ram((char*)&globalData[1], (RFC)SIXTEEN48);
             }
-   
+
             zeddify(&globalData[1]);
             globalData[0] = 1;
-         }
-      }
-      break;
+        }
+    }
+    break;
 
-      case 'N'-'A'+3:
-      {
-         if (token)
-         {
-            unsigned char n = *token - '0';
-            if (n > 9) n -= 7;
-            ++token;
-            lb = n * 16;
-            n = *token - '0';
-            if (n > 9) n -= 7;
-            lb += n;
-         }
+    case 'C'-'A'+3:
+    {
+        // config control
 
-         while(BusyUSART());
-         putcUSART(128+16);
-         while(BusyUSART());
-         putcUSART(lb);
-         while(BusyUSART());
-         if (token)
-         {
-           putcUSART(127);
-         }
-         else
-         {
-           putcUSART(0);
-         }
-      }
-      break;
-
-      case 'C'-'A'+3:
-      {
-         // config control
-
-         if (token)
-         {
+        if (token)
+        {
             unsigned char n = *token - '0';
             if (n > 9) n -= 7;
             if (n > 15)
             {
-               retcode |= FR_INVALID_OBJECT;
-               break;
+                retcode |= FR_INVALID_OBJECT;
+                break;
             }
             ++token;
             configByte = n * 16;
@@ -1175,14 +1182,14 @@ void comParseBuffer(void)
             if (n > 9) n -= 7;
             if (n > 15)
             {
-               retcode |= FR_INVALID_OBJECT;
-               break;
+                retcode |= FR_INVALID_OBJECT;
+                break;
             }
             configByte += n;
             WriteEEPROM(0x04, configByte);
-         }
-         else
-         {
+        }
+        else
+        {
             unsigned char* p = &globalData[0];
             *p = 1;
             ++p;
@@ -1193,54 +1200,54 @@ void comParseBuffer(void)
             *p = 0xff;
             ++p;
             *p = configByte;
-         }
-      }
-      break;
+        }
+    }
+    break;
 
-      case 'O'-'A'+3:
-      {
-         // overwrite control
-         if (token)
-         {
+    case 'O'-'A'+3:
+    {
+        // overwrite control
+        if (token)
+        {
             unsigned char n = *token - '0';
             if (n > 2)
             {
-               retcode |= FR_INVALID_OBJECT;
-               break;
+                retcode |= FR_INVALID_OBJECT;
+                break;
             }
             fsConfig = n;
             WriteEEPROM(0x05, fsConfig);
-         }
-         else
-         {
+        }
+        else
+        {
             unsigned char* p = &globalData[0];
             *p = 1;
             ++p;
             if ((fsConfig & 3) == 1)
             {
-               strcpypgm2ram((char*)p, (RFC)"BAK");
+                strcpypgm2ram((char*)p, (RFC)"BAK");
             }
             else if ((fsConfig & 3) == 2)
             {
-               strcpypgm2ram((char*)p, (RFC)"OVR");
+                strcpypgm2ram((char*)p, (RFC)"OVR");
             }
             else
             {
-               strcpypgm2ram((char*)p, (RFC)"ERR");
+                strcpypgm2ram((char*)p, (RFC)"ERR");
             }
             zeddify(p);
             p+= 3;
             *p = 0xff;
-         }
-      }
-      break;
+        }
+    }
+    break;
 
-      case 'J'-'A'+3:
-      {
-         // joystick mapping control
-   
-         if (token)
-         {
+    case 'J'-'A'+3:
+    {
+        // joystick mapping control
+
+        if (token)
+        {
             token += 128;
             mapJS(0, *token);
             ++token;
@@ -1252,62 +1259,75 @@ void comParseBuffer(void)
             ++token;
             mapJS(4, *token & 0x3f); // might have top bit set being last char in string
             // might not. there might not be 4 chars there.
-         }
-         else
-         {
+        }
+        else
+        {
             retcode |= FR_INVALID_OBJECT;
-         }
-      }
-      break;
-   }
+        }
+    }
+    break;
+    }
 
-   GOOUTPUTMODE;
-   LATD = retcode;
+    GOOUTPUTMODE;
+    LATD = retcode;
 }
 
-
-rom far char* verbs[] = {
-   (rom far char*)"OPE",
-   (rom far char*)"PUT",
-   (rom far char*)"GET",
-   (rom far char*)"CLO",
-   (rom far char*)"DEL",
-   (rom far char*)"REN",
-   (rom far char*)NULL
+enum verbs
+{
+    V_OPEN, V_PUT, V_GET, V_CLOSE, V_DELETE, V_RENAME
 };
 
-rom far char* streams[5] =
+rom far char* verbs[] = {
+    (rom far char*)"OPE",
+    (rom far char*)"PUT",
+    (rom far char*)"GET",
+    (rom far char*)"CLO",
+    (rom far char*)"DEL",
+    (rom far char*)"REN",
+    (rom far char*)NULL
+};
+
+enum nouns
 {
-   (rom far char*)"SER",
-   (rom far char*)"MOU",
-   (rom far char*)"FIL",
-   (rom far char*)"CAT",
-   (rom far char*)NULL
+    N_SERIAL, N_MIDI, N_FILE, N_CAT, N_PARAM
+};
+
+rom far char* streams[] =
+{
+    (rom far char*)"SER",
+    (rom far char*)"MID",
+    (rom far char*)"FIL",
+    (rom far char*)"CAT",
+    (rom far char*)"PAR",
+    (rom far char*)NULL
 };
 
 char* nextToken(char* q)
 {
-   while(*q != ' ' && *q != 0) q = q + 1;
-   while(*q == ' ') { * q = 0; q = q + 1; }
-   return q;
+    while(*q != ' ' && *q != 0) q = q + 1;
+    while(*q == ' ') {
+        * q = 0;
+        q = q + 1;
+    }
+    return q;
 }
 
 int identifyToken(char** p, rom far char** tokens)
 {
-   int i = 0;
-   char* q = *p;
-   while(tokens[i] != NULL)
-   {
-      // match 3 chars
-      if (strncmppgm2ram(q, tokens[i], 3) == 0)
-      {
-         *p = nextToken(*p);
-         return i;
-      }
-      ++i;
-   }
+    int i = 0;
+    char* q = *p;
+    while(tokens[i] != NULL)
+    {
+        // match 3 chars
+        if (strncmppgm2ram(q, tokens[i], 3) == 0)
+        {
+            *p = nextToken(*p);
+            return i;
+        }
+        ++i;
+    }
 
-   return -1;
+    return -1;
 }
 
 /*
@@ -1320,172 +1340,266 @@ static BYTE ROM memPut[12] = { 0xed,0x5b,0x3f,0x40,0x2a,0x3e,0x40,0x3e,0x01,0xc3
 
 int zxpandContinuation;
 
+void midiSoundOff(int i, int type)
+{
+    serialWrite(0xb0|i);
+    serialWrite(type);
+    serialWrite(0);
+}
+
 // buffer of form "VERB STREAMID PARAM PARAM,..."
 //
 void comParseBufferPlus(void)
 {
-   char* p;
-   int verb, noun;
-   BYTE retcode = 0x40;
-   zxpandContinuation = -1;
+    char* p;
+    int verb, noun;
+    BYTE retcode = 0x40;
+    zxpandContinuation = -1;
 
-   zeddyHBT2asciiZ(globalData);
+    zeddyHBT2asciiZ(globalData);
 
-   p = globalData;
-   verb = identifyToken(&p, verbs);
-   if (verb == -1)
-   {
-      LATD = 0x4a;
-      return;
-   }
+    p = globalData;
+    verb = identifyToken(&p, verbs);
+    if (verb == -1)
+    {
+        LATD = 0x4a;
+        return;
+    }
 
-   globalData[0] = 0;
-   noun = identifyToken(&p, streams);
+    globalData[0] = 0; // no-op
+    noun = identifyToken(&p, streams);
 
-   switch (verb)
-   {
-      case 0: { // OPE[N]
-         switch (noun)
-         {
-            case 0: { // open serial [rate]
-               serialInit(12, 1);
-            } break;
+    switch (verb)
+    {
+    case V_OPEN: {
+        switch (noun)
+        {
+        case N_SERIAL: { // open serial [rate]
+            serialInit(12, 1);
+        }
+        break;
 
-            case 3: { // open catalog, get item count
-               int count = 0;
-               zxpandRetblk.op = 0;
-               zxpandRetblk.retval = directoryOpen(p);
-               
-               if (0x40 == zxpandRetblk.retval)
-               {
-                  count = directoryStat(p);
-               }
+        case N_MIDI: { // open midi
+            serialInit(15, 0);
+        }
+        break;
 
-               zxpandRetblk.len = 2;          // 0 = 256
-               zxpandRetblk.address = 16449;  // memory ptr
+        case N_FILE: { // open file
+            zxpandRetblk.retval = fileOpen(p, FA_OPEN_EXISTING|FA_READ);
+        }
+        break;
 
-               memcpy(globalData, (void*)&zxpandRetblk, 5);
+        case N_CAT: { // open catalog, get item count
+            int count = 0;
+            zxpandRetblk.op = 0;
+            zxpandRetblk.retval = directoryOpen(p);
 
-               globalData[5] = count & 255;
-               globalData[6] = count / 256;
-            } break;
+            if (0x40 == zxpandRetblk.retval)
+            {
+                count = directoryStat(p);
+            }
 
-            default:
-               putrsUSART((rom far char *)"OPEN ");
-               serialHex(noun);
-               putrsUSART((rom far char *)" \r");
-               break;
-         }
-      } break;
-      
-      case 1: { // PUT
-         switch (noun)
-         {
-            case 0: {
-               if (*p =='*')
-               {
-                  // PUT SER *30000 123
-                  char* ap = p + 1;
-                  char* lp =  nextToken(p);
+            zxpandRetblk.len = 2;          // 0 = 256
+            zxpandRetblk.address = 16449;  // memory ptr
 
-                  int address = atoi(ap);
-                  int len = atoi(lp);
+            memcpy(globalData, (void*)&zxpandRetblk, 5);
 
-                  zxpandRetblk.op = 2;             // executable
-                  zxpandRetblk.retval = 0x40;      // all good
-                  zxpandRetblk.len = len;          // 0 = 256
-                  zxpandRetblk.address = address;  // memory ptr
+            globalData[5] = count & 255;
+            globalData[6] = count / 256;
+        }
+        break;
 
-                  zxpandContinuation = 16 * noun + verb;
+        default:
+            putrsUSART((rom far char *)"OPEN ");
+            serialHex(noun);
+            putrsUSART((rom far char *)" \r");
+            break;
+        }
+    }
+    break;
 
-                  memcpy(globalData, (void*)&zxpandRetblk, 5);
-                  memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
-               }
-               else
-               {
-                  while(*p)
-                  {
-                      serialWrite(*p);
-                      ++p;
-                  }
-               }
-            } break;
+    case V_PUT: {
+        switch (noun)
+        {
+        case 0:    // ser & mid
+        case 1: {
+            if (*p =='*')
+            {
+                // PUT SER *30000 123
+                char* ap = p + 1;
+                char* lp =  nextToken(p);
 
-            default:
-               putrsUSART((rom far char *)"PUT ");
-               serialHex(noun);
-               putrsUSART((rom far char *)" \r");
-               break;
-         }
-      } break;
+                int address = atoi(ap);
+                int len = atoi(lp);
 
-      case 2: {
-         switch (noun)
-         {
-            case 0: {
-            } break;
+                zxpandRetblk.op = 2;             // executable
+                zxpandRetblk.retval = 0x40;      // all good
+                zxpandRetblk.len = len;          // 0 = 256
+                zxpandRetblk.address = address;  // memory ptr
 
-            case 3: { // get cat
-               zxpandRetblk.retval = directoryRead(&globalData[5]);
-               zxpandRetblk.op = 1;             // string data
-               zxpandRetblk.address = 16449;    // memory ptr
+                zxpandContinuation = 16 * noun + verb;
 
-               memcpy(globalData, (void*)&zxpandRetblk, 5);
-            } break;
+                memcpy(globalData, (void*)&zxpandRetblk, 5);
+                memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
+            }
+            else
+            {
+                while(*p)
+                {
+                    serialWrite(*p);
+                    ++p;
+                }
+            }
+        }
+        break;
 
-            default:
-               putrsUSART((rom far char *)"GET ");
-               serialHex(noun);
-               putrsUSART((rom far char *)" \r");
-               break;
-         }
-         // get
-      } break;
+        default:
+            putrsUSART((rom far char *)"PUT ");
+            serialHex(noun);
+            putrsUSART((rom far char *)" \r");
+            break;
+        }
+    }
+    break;
 
-      case 3: {
-         switch (noun)
-         {
-            case 0:
-               serialClose();
-               break;
+    case V_GET: {
+        switch (noun)
+        {
+        case N_CAT: { // get cat
+            if (*p =='*')
+            {
+                // GET CAT *30000
+                char* ap = p + 1;
+                zxpandRetblk.op = 2;                // exec data
+                zxpandRetblk.retval = 0x40;
+                zxpandRetblk.address = (short)atoi(ap);    // memory ptr
 
-            default:
-               putrsUSART((rom far char *)"CLOSE ");
-               serialHex(noun);
-               putrsUSART((rom far char *)" \r");
-         }
-         // close
-      } break;
+                memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
+                globalData[5+8] = 0; // now it's memget ;)
+                directoryRead(&globalData[32]);
+            }
+            else
+            {
+                zxpandRetblk.op = 1;             // string data
+                zxpandRetblk.address = 16449;    // memory ptr
+                zxpandRetblk.retval = directoryRead(&globalData[5]);
+            }
 
-      case 4: {
-         // delete
-         retcode = 0x40 | f_unlink(p);
-      } break;
+            memcpy(globalData, (void*)&zxpandRetblk, 5);
+        }
+        break;
 
-      case 5: {
-         // rename
-         char* q = nextToken(p);
-         retcode = 0x40 | f_rename(p, q);
-      } break;
-   }
+        case N_PARAM: {
+            int o = 32;
+            zxpandRetblk.retval = 0x40;
+            zxpandRetblk.len = strlen(paramStore);    // memory ptr
+            if (*p =='*')
+            {
+                // GET PARM *30000
+                char* ap = p + 1;
+                zxpandRetblk.op = 2;                // exec data
+                zxpandRetblk.address = (short)atoi(ap);    // memory ptr
 
-   GOOUTPUTMODE;
-   LATD = retcode;
+                memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
+                globalData[5+8] = 0; // now it's memget ;)
+            }
+            else
+            {
+                zxpandRetblk.op = 1;             // string data
+                zxpandRetblk.address = 16449;    // memory ptr
+                o = 5;
+            }
+
+            strcpy(&globalData[o], paramStore);
+            zeddify(&globalData[o]);
+            memcpy(globalData, (void*)&zxpandRetblk, 5);
+        }
+        break;
+
+        default:
+            putrsUSART((rom far char *)"GET ");
+            serialHex(noun);
+            putrsUSART((rom far char *)" \r");
+            break;
+        }
+        // get
+    }
+    break;
+
+    case V_CLOSE: {
+        switch (noun)
+        {
+        case 0:
+            serialClose();
+            break;
+
+        case 1: {
+            int i;
+            for(i = 0; i < 16; ++i)
+            {
+                midiSoundOff(i, 120);
+                midiSoundOff(i, 121);
+                midiSoundOff(i, 123);
+                serialWrite(0xe0|i); // pitch bend reset
+                serialWrite(0);
+                serialWrite(0x40);
+            }
+
+            // pitch bend sensitivity
+            serialWrite(101);
+            serialWrite(0);
+            serialWrite(100);
+            serialWrite(0);
+            serialWrite(6);
+            serialWrite(2);
+            serialWrite(38);
+            serialWrite(0);
+
+            serialClose();
+        }
+        break;
+
+        default:
+            putrsUSART((rom far char *)"CLOSE ");
+            serialHex(noun);
+            putrsUSART((rom far char *)" \r");
+            break;
+        }
+        // close
+    }
+    break;
+
+    case 4: {
+        // delete
+        retcode = 0x40 | f_unlink(p);
+    }
+    break;
+
+    case 5: {
+        // rename
+        char* q = nextToken(p);
+        retcode = 0x40 | f_rename(p, q);
+    }
+    break;
+    }
+
+    GOOUTPUTMODE;
+    LATD = retcode;
 }
-
 
 void comZXpandContinuation(void)
 {
+    // cont. = 16 * noun + verb
     switch (zxpandContinuation)
     {
-        case 0x01: {
-           int i;
-           zeddyHBT2asciiZ(globalData);
-           for (i = 0; i < globalIndex; ++i)
-              serialWrite(globalData[i]);
-        } break;
+    case 0x01: // ser & mid
+    case 0x11: {
+        int i;
+        for (i = 0; i < globalIndex; ++i)
+            serialWrite(globalData[i]);
+    }
+    break;
     }
 
     LATD = 0x40;
 }
-

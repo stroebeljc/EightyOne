@@ -1,6 +1,11 @@
 object HW: THW
+<<<<<<< HEAD
   Left = 75
   Top = 182
+=======
+  Left = 255
+  Top = 117
+>>>>>>> update-1.2-to-1.5
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1611,6 +1616,7 @@ object HW: THW
         Height = 21
         TabOrder = 0
         Text = 'RomBox'
+        OnChange = RomBoxChange
       end
       object BrowseROM: TButton
         Left = 290

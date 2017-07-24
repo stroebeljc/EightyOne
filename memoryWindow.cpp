@@ -8,11 +8,13 @@
 #include "debug.h"
 #include "memoryWindow.h"
 #include "EditValue_.h"
+#include "SearchSequence_.h"
 #include <set>
 #include "zx81config.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
+#pragma link "OffBtn"
 #pragma resource "*.dfm"
 TMemoryWindow *MemoryWindow;
 //---------------------------------------------------------------------------
@@ -29,6 +31,10 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
 
         mOffscreenBitmap = NULL;
         mRowRenderer = NULL;
+
+        mSelectedAddress = -1;
+
+        ignoreScrollChange = false;
 
         SetViewMode(MWVM_TRADITIONAL);
 
@@ -47,12 +53,15 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
 
 //---------------------------------------------------------------------------
 
+<<<<<<< HEAD
 void __fastcall TMemoryWindow::SetBaseAddress(int value)
 {
         ScrollBar1->Position = mRowRenderer->mDisplayCellsPerRow * (int)(value / mRowRenderer->mDisplayCellsPerRow);
 }
 //---------------------------------------------------------------------------
 
+=======
+>>>>>>> update-1.2-to-1.5
 void __fastcall TMemoryWindow::SetViewMode(int mode)
 {
         delete mRowRenderer;
@@ -69,6 +78,10 @@ void __fastcall TMemoryWindow::SetViewMode(int mode)
         {
                 mRowRenderer = new BinaryRowRenderer;
         }
+        else if (mode == MWVM_DECIMAL)
+        {
+                mRowRenderer = new DecimalRowRenderer;
+        }
         else
         {
                 mRowRenderer = new TraditionalRowRenderer;
@@ -76,18 +89,11 @@ void __fastcall TMemoryWindow::SetViewMode(int mode)
 
         mViewMode = mode;
 
-        if (mOffscreenBitmap)
-        {
-            ::DeleteObject(mOffscreenBitmap);
-            mOffscreenBitmap = NULL;
-        }
-
-        Invalidate();
+        UpdateChanges();
 }
-
 //---------------------------------------------------------------------------
 
-void RowRenderer::ChooseTextColour(void)
+void RowRenderer::ChooseTextColour()
 {
         if (mDirty != mLast && mAddress == *mDirty)
         {
@@ -103,7 +109,14 @@ void RowRenderer::ChooseTextColour(void)
 void RowRenderer::AddressOut(void)
 {
         SetTextColor(mCHDC, GetSysColor(COLOR_WINDOWTEXT));
-        TextOut(mCHDC, 0, mY, AnsiString::IntToHex(mAddress,4).c_str(), 4);
+        if (mAddress >= 0)
+        {
+                TextOut(mCHDC, 0, mY, AnsiString::IntToHex(mAddress,4).c_str(), 4);
+        }
+        else
+        {
+                TextOut(mCHDC, 0, mY, AnsiString::IntToHex(65536 + mAddress,4).c_str(), 4);
+        }
 }
 
 bool RowRenderer::ByteAtX(const int x, int& byte)
@@ -158,6 +171,11 @@ void ByteRowRenderer::SetGeometry(int width, TSize& charSize)
         RowRenderer::SetGeometry(width, charSize, 2);
 }
 
+void DecimalRowRenderer::SetGeometry(int width, TSize& charSize)
+{
+        RowRenderer::SetGeometry(width, charSize, 3);
+}
+
 void WordRowRenderer::SetGeometry(int width, TSize& charSize)
 {
         RowRenderer::SetGeometry(width, charSize, 4);
@@ -184,51 +202,169 @@ void TraditionalRowRenderer::SetGeometry(int width, TSize& charSize)
 
 void ByteRowRenderer::RenderRow(void)
 {
+        COLORREF prevBackgroundColour = GetBkColor(mCHDC);
+        COLORREF paper = RGB(255,255,0);
+        COLORREF ink = RGB(0,0,255);
+
         AddressOut();
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
+<<<<<<< HEAD
                 int val = getbyte(mAddress);
                 if (mAddress <= 0xFFFF)
                 {
                         TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                                 AnsiString::IntToHex(val ,2).c_str(), 2);
+=======
+
+                if ((mAddress >= 0x0000) && (mAddress <= 0xFFFF))
+                {
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, paper);
+                                SetTextColor(mCHDC, ink);
+                        }
+
+                        int val = getbyte(mAddress);
+
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                AnsiString::IntToHex(val ,2).c_str(), 2);
+
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, prevBackgroundColour);
+                        }
+>>>>>>> update-1.2-to-1.5
                 }
                 ++mAddress;
         }
+
+        SetBkColor(mCHDC, prevBackgroundColour);
 }
 
 void WordRowRenderer::RenderRow(void)
 {
+        COLORREF prevBackgroundColour = GetBkColor(mCHDC);
+        COLORREF paper = RGB(255,255,0);
+        COLORREF ink = RGB(0,0,255);
+
         AddressOut();
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
+<<<<<<< HEAD
                 int val = getbyte(mAddress) + 256 * getbyte(mAddress+1);
                 if (mAddress <= 0xFFFF)
                 {
                         TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                                 AnsiString::IntToHex(val ,4).c_str(), 4);
+=======
+                if ((mAddress >= 0x0000) && (mAddress <= 0xFFFF))
+                {
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, paper);
+                                SetTextColor(mCHDC, ink);
+                        }
+
+                        int b1 = getbyte(mAddress);
+                        int b2 = (mAddress <= 0xFFFF) ? getbyte(mAddress+1) : getbyte(0);
+                        int val = b1 + 256 * b2;
+
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                AnsiString::IntToHex(val ,4).c_str(), 4);
+
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, prevBackgroundColour);
+                        }
+>>>>>>> update-1.2-to-1.5
                 }
                 mAddress += 2;
                 ++mDirty;
         }
+
+        SetBkColor(mCHDC, prevBackgroundColour);
 }
 
-void BinaryRowRenderer::RenderRow(void)
+void DecimalRowRenderer::RenderRow(void)
 {
+        COLORREF prevBackgroundColour = GetBkColor(mCHDC);
+        COLORREF paper = RGB(255,255,0);
+        COLORREF ink = RGB(0,0,255);
+
         AddressOut();
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
+
+                if ((mAddress >= 0x0000) && (mAddress <= 0xFFFF))
+                {
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, paper);
+                                SetTextColor(mCHDC, ink);
+                        }
+
+                        int val = getbyte(mAddress);
+                        AnsiString value = Format("%.3d", ARRAYOFCONST((val)));
+
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                value.c_str(), 3);
+
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, prevBackgroundColour);
+                        }
+                }
+                ++mAddress;
+        }
+
+        SetBkColor(mCHDC, prevBackgroundColour);
+}
+
+void BinaryRowRenderer::RenderRow(void)
+{
+        COLORREF prevBackgroundColour = GetBkColor(mCHDC);
+        COLORREF paper = RGB(255,255,0);
+        COLORREF ink = RGB(0,0,255);
+
+        AddressOut();
+        for (int x = 0; x < mDisplayCellsPerRow; ++x)
+        {
+                ChooseTextColour();
+<<<<<<< HEAD
                 int val = getbyte(mAddress);
                 if (mAddress <= 0xFFFF)
                 {
                         TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                                 Dbg->Bin8(val).c_str(), 8);
+=======
+
+                if ((mAddress >= 0x0000) && (mAddress <= 0xFFFF))
+                {
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, paper);
+                                SetTextColor(mCHDC, ink);
+                        }
+
+                        int val = getbyte(mAddress);
+
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                        Dbg->Bin8(val).c_str(), 8);
+
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, prevBackgroundColour);
+                        }
+>>>>>>> update-1.2-to-1.5
                 }
                 ++mAddress;
         }
+
+        SetBkColor(mCHDC, prevBackgroundColour);
 }
 
 void TraditionalRowRenderer::RenderRow(void)
@@ -244,23 +380,60 @@ void TraditionalRowRenderer::RenderRow(void)
                 oldBM = SelectObject(another, (HGDIOBJ)((Graphics::TBitmap*)machine.cset)->Handle);
         }
 
+        COLORREF prevBackgroundColour = GetBkColor(mCHDC);
+        COLORREF paper = RGB(255,255,0);
+        COLORREF ink = RGB(0,0,255);
+
         AddressOut();
         int basex = mLMargin + (mDisplayCellsPerRow * mCellWidth) + mCellWidth;
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
                 ChooseTextColour();
+<<<<<<< HEAD
                 int by = getbyte(mAddress);
                 if (mAddress <= 0xFFFF)
                 {
                         TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
                                 AnsiString::IntToHex(by, 2).c_str(), 2);
 
+=======
+
+                int by = getbyte(mAddress);
+                if ((mAddress >= 0x0000) && (mAddress <= 0xFFFF))
+                {
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, paper);
+                                SetTextColor(mCHDC, ink);
+                        }
+
+                        TextOut(mCHDC, x * mCellWidth + mLMargin + mKern, mY,
+                                AnsiString::IntToHex(by, 2).c_str(), 2);
+
+                        if (mSelectedAddress == mAddress)
+                        {
+                                SetBkColor(mCHDC, prevBackgroundColour);
+                        }
+                        
+>>>>>>> update-1.2-to-1.5
                         if (machine.cset)
                         {
                                 int charX = by % 32;
                                 int charY = by / 32;
+<<<<<<< HEAD
                                 BitBlt(mCHDC, x * 8 + basex, 3 + mY, 8, 8,
                                         another, charX * 8, charY * 8, SRCCOPY);
+=======
+                                int xpos = x * 8 + basex;
+                                int ypos = 3 + mY;
+                                BitBlt(mCHDC, xpos, ypos, 8, 8,
+                                        another, charX * 8, charY * 8, SRCCOPY);
+
+                                if (mSelectedAddress == mAddress)
+                                {
+                                        SetCharacterBackgroundColour(xpos, ypos, paper, ink);
+                                }
+>>>>>>> update-1.2-to-1.5
                         }
                 }
                 ++mAddress;
@@ -268,11 +441,35 @@ void TraditionalRowRenderer::RenderRow(void)
 
         SelectObject(another, oldBM);
         DeleteDC(another);
+
+        SetBkColor(mCHDC, prevBackgroundColour);
+}
+
+void RowRenderer::SetCharacterBackgroundColour(int xpos, int ypos, COLORREF paper, COLORREF ink)
+{
+        for (int bx = 0; bx < 8; bx++)
+        {
+                for (int by = 0; by < 8; by++)
+                {
+                        if (GetPixel(mCHDC, xpos + bx, ypos + by) == RGB(255,255,255))
+                        {
+                                SetPixel(mCHDC, xpos + bx, ypos + by, paper);
+                        }
+                        else
+                        {
+                                SetPixel(mCHDC, xpos + bx, ypos + by, ink);
+                        }
+                }
+        }
 }
 
 void RowRenderer::RenderColumnHeadings(const TSize& charSize)
 {
+<<<<<<< HEAD
         TextOut(mCHDC, mLMargin + 2 * mKern - charSize.cy, 0, "+", 1);
+=======
+//        TextOut(mCHDC, mLMargin + 2 * mKern - charSize.cy, 0, "+", 1);
+>>>>>>> update-1.2-to-1.5
 
         int columnInset = ((mCellWidth - charSize.cy) / 2) + mLMargin;
 
@@ -285,6 +482,14 @@ void RowRenderer::RenderColumnHeadings(const TSize& charSize)
 
 //---------------------------------------------------------------------------
 
+void __fastcall TMemoryWindow::SetBaseAddress(int value)
+{
+        mSelectedAddress = -1;
+        ignoreScrollChange = true;
+        ScrollBar1->Position = value;
+        ignoreScrollChange = false;
+}
+//---------------------------------------------------------------------------
 
 void TMemoryWindow::CreateBitmap(void)
 {
@@ -319,16 +524,24 @@ void TMemoryWindow::CreateBitmap(void)
 
         mRows = (mBMHeight - mHeadingHeight) / mCharSize.cy;
 
-        ScrollBar1->SmallChange = mRowRenderer->mDisplayCellsPerRow;
+        int bytesPerRow = mRowRenderer->BytesPerCell() * mRowRenderer->mDisplayCellsPerRow;
 
+        ScrollBar1->SmallChange = bytesPerRow;
         ScrollBar1->LargeChange = 8 * ScrollBar1->SmallChange;
+<<<<<<< HEAD
         bool partRow = ((65536 % ScrollBar1->SmallChange) != 0);
         int max = partRow ? 65536 + ScrollBar1->SmallChange : 65536;
         ScrollBar1->Max = max - (ScrollBar1->SmallChange * mRows * mRowRenderer->BytesPerCell());
 
         mBaseAddress = mRowRenderer->mDisplayCellsPerRow * (int)(mBaseAddress / mRowRenderer->mDisplayCellsPerRow);
+=======
+
+        ScrollBar1->Min = 0;
+        ScrollBar1->Max = 65536 - (mRows * bytesPerRow) + bytesPerRow - 1;
+>>>>>>> update-1.2-to-1.5
 
         mRowRenderer->mAddress = mBaseAddress;
+        mRowRenderer->mSelectedAddress = mSelectedAddress;
         mRowRenderer->mDirty = dirtyBird.lower_bound(mRowRenderer->mAddress);
         mRowRenderer->mLast = dirtyBird.end();
         mRowRenderer->mCHDC = chdc;
@@ -346,6 +559,25 @@ void TMemoryWindow::CreateBitmap(void)
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
 }
+
+//---------------------------------------------------------------------------
+
+void __fastcall TMemoryWindow::ScrollBar1Change(TObject *Sender)
+{
+        if ((ScrollBar1->Position > 0) && !ignoreScrollChange)
+        {
+                int delta = ScrollBar1->Position - mBaseAddress;
+                int bytesPerRow = mRowRenderer->BytesPerCell() * mRowRenderer->mDisplayCellsPerRow;
+                int offset = delta % bytesPerRow;
+
+                ScrollBar1->Position -= offset;
+        }
+
+        mBaseAddress = ScrollBar1->Position;
+
+        UpdateChanges();
+}
+
 //---------------------------------------------------------------------------
 
 void __fastcall TMemoryWindow::OnEraseBkgnd (TMessage msg)
@@ -401,6 +633,7 @@ void __fastcall TMemoryWindow::FormResize(TObject *Sender)
 {
         if (mHWND)
         {
+<<<<<<< HEAD
                 CreateBitmap();
                 Invalidate();
 
@@ -418,15 +651,16 @@ void __fastcall TMemoryWindow::ScrollBar1Change(TObject *Sender)
         {
             ::DeleteObject(mOffscreenBitmap);
             mOffscreenBitmap = NULL;
+=======
+                UpdateChanges();
+
+                // Required if the form has been resized using the grip control
+                GlueButtonsToStatusBar();
+>>>>>>> update-1.2-to-1.5
         }
-
-        Invalidate();
 }
+
 //---------------------------------------------------------------------------
-
-static void UpdateCheckSetMode(TObject *Sender)
-{
-}
 
 void __fastcall TMemoryWindow::ViewBytes1Click(TObject *Sender)
 {
@@ -434,12 +668,11 @@ void __fastcall TMemoryWindow::ViewBytes1Click(TObject *Sender)
         ViewBytes1->Checked = false;
         ViewWords1->Checked = false;
         ViewBinary1->Checked = false;
+        ViewDecimal1->Checked = false;
         ViewTraditional1->Checked = false;
         item->Checked = true;
         SetViewMode(item->Tag);
 }
-//---------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------
 
 void __fastcall TMemoryWindow::SetAddress1Click(TObject *Sender)
@@ -474,6 +707,10 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
         int address;
         TPoint cp = ScreenToClient(Mouse->CursorPos);
 
+        // CR  this is nasty - but it's the quickest way to tell if the debugger  
+        // is running continuously
+        if (Dbg->SingleStep->Enabled == false) return;
+
         if (xyToAddress(cp.x, cp.y, address))
         {
                 EditValue->Top = Mouse->CursorPos.y;
@@ -485,6 +722,7 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                         if (EditValue->Edit2(n,1))
                         {
                                 setbyte(address,n);
+                                UpdateChanges();  // CR  refresh after edit
                         }
                 }
                 else
@@ -494,6 +732,7 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                         {
                                 setbyte(address, n & 255);
                                 setbyte(address+1, n >> 8);
+                                UpdateChanges();  // CR  refresh after edit
                         }
                 }
         }
@@ -505,12 +744,17 @@ void __fastcall TMemoryWindow::FormMouseMove(TObject *Sender,
 {
         int address;
         AnsiString t;
+        mSelectedAddress = -1;
+
         if (xyToAddress(X,Y,address))
         {
                 t = "$" + AnsiString::IntToHex(address,4);
+                mSelectedAddress = address;
         }
 
         StatusBar1->Panels->Items[4]->Text = t;
+
+        UpdateChanges();
 }
 //---------------------------------------------------------------------------
 
@@ -552,8 +796,13 @@ void __fastcall TMemoryWindow::SetSBButtonPosition(TButton* btn, int idx)
         RECT r;
         StatusBar1->Perform(SB_GETRECT, idx, (LPARAM)&r);
 
+<<<<<<< HEAD
 		// Detach the button and then re-attach it (required to ensure the button
 		// stays in the status bar when the form is resized using the grip control)
+=======
+        // Detach the button and then re-attach it (required to ensure the button
+	// stays in the status bar when the form is resized using the grip control)
+>>>>>>> update-1.2-to-1.5
         btn->Parent = NULL;		
         btn->Parent = StatusBar1;
 		
@@ -628,6 +877,108 @@ void __fastcall TMemoryWindow::ButtonLastChangeClick(TObject *Sender)
         changeCursor = dirtyBird.end();
         --changeCursor;
         SetBaseAddress(*changeCursor);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMemoryWindow::IncDecAddressChangingEx(TObject *Sender,
+      bool &AllowChange, short NewValue, TUpDownDirection Direction)
+{
+     AllowChange = false;
+
+     SetBaseAddress(mBaseAddress + NewValue);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMemoryWindow::FormKeyDown(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+        if (Shift.Contains(ssCtrl) && (Key == 'F'))
+        {
+                if (Shift.Contains(ssShift))
+                {
+                        std::vector<int> bytes;
+                        bool performSearch = SearchSequence->ValidateSearchSequence(bytes);
+                        if (performSearch)
+                        {
+                                PerformSearch(bytes);
+                        }
+                }
+                else
+                {
+                        DoSearch();
+                }
+        }
+}
+//---------------------------------------------------------------------------
+bool TMemoryWindow::FindSequence(std::vector<int>& bytes, int& addr)
+{
+        bool found = false;
+
+        do
+        {
+                found = FindMatch(addr, bytes);
+        }
+        while (!found && (addr < 65536));
+
+        return found;
+}
+
+bool TMemoryWindow::FindMatch(int& addr, std::vector<int>& bytes)
+{
+        int firstByte = bytes[0];
+        
+        while ((addr < 65536) && (getbyte(addr) != firstByte))
+        {
+                ++addr;
+        }
+
+        if (addr == 65536)
+        {
+                return false;
+        }
+
+        for (int b = 1; b < (int)bytes.size(); b++)
+        {
+                ++addr;
+                int byte = getbyte(addr);
+
+                if (byte != bytes[b])
+                {
+                        return false;
+                }
+        }
+
+        
+        addr -= bytes.size() - 1;
+
+        return true;
+}
+//---------------------------------------------------------------------------
+void TMemoryWindow::DoSearch()
+{
+        SearchSequence->CentreOn(this);
+
+        std::vector<int> bytes;
+        bool performSearch = SearchSequence->EditSequenceBytes(mSearchText, bytes);
+        if (performSearch)
+        {
+                PerformSearch(bytes);
+        }
+}
+
+void TMemoryWindow::PerformSearch(std::vector<int>& bytes)
+{
+        int address = mBaseAddress + 1;
+        
+        if ((address < 65536) && FindSequence(bytes, address))
+        {
+                SetBaseAddress(address);
+        }
+}
+
+void __fastcall TMemoryWindow::Search1Click(TObject *Sender)
+{
+         DoSearch();
 }
 //---------------------------------------------------------------------------
 

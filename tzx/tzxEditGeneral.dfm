@@ -1,6 +1,11 @@
 object EditGeneralForm: TEditGeneralForm
+<<<<<<< HEAD
   Left = 994
   Top = 211
+=======
+  Left = 474
+  Top = 53
+>>>>>>> update-1.2-to-1.5
   Width = 640
   Height = 664
   BorderIcons = [biSystemMenu]

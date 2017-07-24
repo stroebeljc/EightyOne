@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *~*
 *.obj
 *.lib
@@ -5,3 +6,9 @@ MMC_CARD/
 *.exe
 EightyOne.tds
 *.bak
+=======
+*.~*
+*.obj
+*.bak
+MMC_CARD/
+>>>>>>> update-1.2-to-1.5

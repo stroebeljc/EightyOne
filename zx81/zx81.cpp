@@ -143,8 +143,12 @@ void zx81_initialise(void)
 
         if (zx81.zxpand)
         {
+<<<<<<< HEAD
                 AnsiString shortRom = romname.SubString(1,4);
                 AnsiString overlayName = shortRom + ".zxpand.rom";
+=======
+                AnsiString overlayName = romname.SubString(1,4) + "-zxpand.rom";
+>>>>>>> update-1.2-to-1.5
                 memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
 
@@ -228,9 +232,7 @@ void zx81_initialise(void)
         }
         if (zx81.zxpand)
         {
-                AnsiString card = zx81.cwd;
-                card += "card.bin";
-                zxpand = new ZXpand(card.c_str());
+                zxpand = new ZXpand();
         }
 
         P3DriveMachineHasInitialised();

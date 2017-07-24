@@ -33,6 +33,11 @@
 #include "main_.h"
 #include "EditValue_.h"
 #include "ConfigureBreakpoint_.h"
+<<<<<<< HEAD
+=======
+#include "SetBreakpoint_.h"
+#include "SearchSequence_.h"
+>>>>>>> update-1.2-to-1.5
 #include "EditFlags.h"
 #include "memoryWindow.h"
 #include "symbolstore.h"
@@ -54,7 +59,11 @@ extern unsigned char shift_store;
 extern unsigned char memory[];
 extern int lastMemoryReadAddr, lastMemoryWriteAddr;
 
+<<<<<<< HEAD
 const int maxInstructionBytes = 8;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
+=======
+const int maxInstructionBytes = 4;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
+>>>>>>> update-1.2-to-1.5
 
 struct InstructionEntry
 {
@@ -62,7 +71,11 @@ struct InstructionEntry
 	BYTE Bytes[maxInstructionBytes];
 };
 
+<<<<<<< HEAD
 const int historySize = 2048;
+=======
+const int historySize = 3000;
+>>>>>>> update-1.2-to-1.5
 InstructionEntry HistoryLog[historySize];
 int HistoryPos=0;
 bool historyWrappedAround = false;
@@ -86,6 +99,7 @@ void DebugUpdate(void)
 
                 if (Dbg->EnableHistory->Checked)
                 {
+<<<<<<< HEAD
 		    	HistoryLog[HistoryPos].Address = i;
 
 		    	for (int i = 0; i < maxInstructionBytes; ++i)
@@ -99,6 +113,35 @@ void DebugUpdate(void)
                         {
                                 HistoryPos=0;
                                 historyWrappedAround = true;
+=======
+                        bool show0K8KAddresses = HistoryBox->Show0K8KAddresses();
+                        bool show8K16KAddresses = HistoryBox->Show8K16KAddresses();
+                        bool show16K32KAddresses = HistoryBox->Show16K32KAddresses();
+                        bool show32K48KAddresses = HistoryBox->Show32K48KAddresses();
+                        bool show48K64KAddresses = HistoryBox->Show48K64KAddresses();
+                        bool includeInstruction = (show0K8KAddresses   && (i <= 0x1FFF)) ||
+                                                  (show8K16KAddresses  && (i >= 0x2000) && (i <= 0x3FFF)) ||
+                                                  (show16K32KAddresses && (i >= 0x4000) && (i <= 0x7FFF)) ||
+                                                  (show32K48KAddresses && (i >= 0x8000) && (i <= 0xBFFF)) ||
+                                                  (show48K64KAddresses && (i >= 0xC000) && (i <= 0xFFFF));
+
+                        if (includeInstruction)
+                        {
+                                HistoryLog[HistoryPos].Address = i;
+
+		        	for (int i = 0; i < maxInstructionBytes; ++i)
+		        	{
+			        	// The instruction bytes must be saved in case these address locations are subsequently overwritten,
+			                // i.e. by self modifying code
+		                	HistoryLog[HistoryPos].Bytes[i] = getbyte(z80.pc.w + i);
+		    	        }
+		    	        ++HistoryPos;
+                                if (HistoryPos==historySize)
+                                {
+                                        HistoryPos=0;
+                                        historyWrappedAround = true;
+                                }
+>>>>>>> update-1.2-to-1.5
                         }
                 }
 
@@ -163,10 +206,12 @@ void DebugUpdate(void)
                 Dbg->PortOutHit(lpo) ||
                 Dbg->TStatesBreakPointHit(z80.pc.w))
         {
+<<<<<<< HEAD
                 //zx81_stop=1;
+=======
+>>>>>>> update-1.2-to-1.5
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
-                //zx81.single_step=Dbg->Continuous->Checked;
                 Dbg->RunStopClick(NULL);
         }
 
@@ -187,7 +232,11 @@ void DebugUpdate(void)
         Dbg->SymApp->Enabled = symbolstore::fileLoaded();
 }
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
+=======
+bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, BreakpointConditionType Condition, int Count)
+>>>>>>> update-1.2-to-1.5
 {
         // type 0 = execute
         // type 1 = mem read
@@ -196,6 +245,10 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
         // type 4 = output
         // type 5 = T-states count
         const AnsiString types("xrwiot");
+<<<<<<< HEAD
+=======
+        const AnsiString conditions("<=>");
+>>>>>>> update-1.2-to-1.5
         const int maxBreakpoints = 99;
 
         if (Breakpoints == maxBreakpoints)
@@ -210,7 +263,11 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
                         break;
                 }
 
+<<<<<<< HEAD
                 if (Breakpoint[i].Addr == Addr && Breakpoint[i].Type == Type)
+=======
+                if ((Breakpoint[i].Addr == Addr) && (Breakpoint[i].Type == Type) && (Breakpoint[i].Condition == Condition))
+>>>>>>> update-1.2-to-1.5
                 {
                         // already exists
                         return false;
@@ -221,12 +278,21 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
         Breakpoint[Breakpoints].Permanent=Perm;
         Breakpoint[Breakpoints].Type=Type;
         Breakpoint[Breakpoints].Count=Count;
+<<<<<<< HEAD
+=======
+        Breakpoint[Breakpoints].Condition=Condition;
+>>>>>>> update-1.2-to-1.5
         AnsiString t(types[Type + 1]);
+        AnsiString c(conditions[Condition + 1]);
         AnsiString str;
         
         if (t == "x")
         {
-                str = t + " " + symbolstore::addressToSymbolOrHex(Addr);
+                str = t + c + symbolstore::addressToSymbolOrHex(Addr);
+        }
+        else if (t == "t")
+        {
+                str = t + c + "$" + Hex16(Addr) + " T=" + Count;
         }
         else if (t == "t")
         {
@@ -234,7 +300,7 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
         }
         else
         {
-                str = t + " $" + Hex16(Addr);
+                str = t + c + "$" + Hex16(Addr);
         }
 
         if (Perm)
@@ -248,6 +314,8 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
 
         Breakpoints++;
         BPList->RowCount++;
+        if (BPList->RowCount > 1)
+                BPList->Row = BPList->RowCount - 2;
 
         return true;
 }
@@ -275,7 +343,15 @@ bool TDbg::BPHit(int Addr, int Type, int& idx)
 {
         for (idx = 0; idx < Breakpoints; ++idx)
         {
-                if (Breakpoint[idx].Addr == Addr && Breakpoint[idx].Type == Type)
+                bool equalMet = (Breakpoint[idx].Condition == Equal) && (Addr == Breakpoint[idx].Addr);
+                bool lessThanMet = (Breakpoint[idx].Condition == LessThan) && (Addr >= 0) && (Addr < Breakpoint[idx].Addr);
+                bool ramGreaterThanMet = (Breakpoint[idx].Type != BP_IN) && (Breakpoint[idx].Type != BP_OUT) && (Breakpoint[idx].Condition == GreaterThan) && (Addr > Breakpoint[idx].Addr) && (Addr <= zx81.RAMTOP);
+                bool ioGreaterThanMet = ((Breakpoint[idx].Type == BP_IN) || (Breakpoint[idx].Type == BP_OUT)) && (Breakpoint[idx].Condition == GreaterThan) && (Addr > Breakpoint[idx].Addr);
+                bool typeMet = (Breakpoint[idx].Type == Type);
+
+                bool breakpointConditionMet = (typeMet && (equalMet || lessThanMet || ramGreaterThanMet || ioGreaterThanMet));
+
+                if (breakpointConditionMet)
                 {
                         if (Type == BP_TSTATES)
                         {
@@ -286,6 +362,11 @@ bool TDbg::BPHit(int Addr, int Type, int& idx)
                                         BPList->Row=idx;
                                         return true;
                                 }
+<<<<<<< HEAD
+=======
+
+                                return false;
+>>>>>>> update-1.2-to-1.5
                         }
                         else
                         {
@@ -436,9 +517,8 @@ void TDbg::UpdateVals(void)
                 break;
 
         case MACHINESPEC48:
-                GroupBoxSpectra->Enabled = zx81.spectraColourSwitchOn;
-                SpectraModeLabel->Enabled = zx81.spectraColourSwitchOn;
-                SpectraMode->Enabled = zx81.spectraColourSwitchOn;
+                SpectraModeLabel->Enabled = (zx81.colour == COLOURSPECTRA);
+                SpectraMode->Enabled = (zx81.colour == COLOURSPECTRA) && zx81.spectraColourSwitchOn;
                 SpectraMode->Caption = "$"+Hex8(zx81.spectraMode);
                 break;
 
@@ -450,9 +530,8 @@ void TDbg::UpdateVals(void)
                 NMIGen->Caption = NMI_generator ? "On":"Off";
                 HSYNCGen->Caption = HSYNC_generator ? "On":"Off";
 
-                GroupBoxChroma->Enabled = zx81.chromaColourSwitchOn;
-                ChromaColourModeLabel->Enabled = zx81.chromaColourSwitchOn;
-                ChromaColourMode->Enabled = zx81.chromaColourSwitchOn;
+                ChromaColourModeLabel->Enabled = (zx81.colour == COLOURCHROMA);
+                ChromaColourMode->Enabled = (zx81.colour == COLOURCHROMA) && zx81.chromaColourSwitchOn;
                 ChromaColourMode->Caption = "$"+Hex8(zx81.chromaMode);
                 break;
         }
@@ -673,6 +752,13 @@ void TDbg::EnableValues(bool enable)
         IOPort3Data->Enabled = enable;
 
         TStatesCount->Enabled = enable;
+<<<<<<< HEAD
+=======
+
+        SpectraMode->Enabled = enable;
+        ChromaColourMode->Enabled = enable;
+        ZXCMode->Enabled = enable;
+>>>>>>> update-1.2-to-1.5
 }
 
 void TDbg::DisableVals(void)
@@ -728,6 +814,8 @@ void __fastcall TDbg::FormClose(TObject *Sender, TCloseAction &Action)
 
 void __fastcall TDbg::FormShow(TObject *Sender)
 {
+        Continuous->Enabled = true;
+
         if (Continuous->Checked==true) zx81.single_step=1;
         UpdateVals();
 }
@@ -735,18 +823,21 @@ void __fastcall TDbg::FormShow(TObject *Sender)
 
 void __fastcall TDbg::ContinuousClick(TObject *Sender)
 {
-        if (Continuous->Checked==true)
+        if (Continuous->Enabled)
         {
-                zx81.single_step=1;
-                EnableVals();
-        }
-        else
-        {
-                zx81.single_step=0;
-                DisableVals();
-        }
+                if (Continuous->Checked==true)
+                {
+                        zx81.single_step=1;
+                        EnableVals();
+                }
+                else
+                {
+                        zx81.single_step=0;
+                        DisableVals();
+                }
 
-        UpdateVals();
+                UpdateVals();
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -773,13 +864,17 @@ void __fastcall TDbg::StepOverClick(TObject *Sender)
 
 void __fastcall TDbg::AddrBrkBtnClick(TObject *Sender)
 {
-        EditValue->CentreOn(this);
+        SetBreakpoint->CentreOn(this);
 
         int Addr = 0;
-        if (EditValue->Edit2(Addr, 2))
+        BreakpointConditionType condition = Equal;
+        
+        if (SetBreakpoint->EditValue(Addr, condition))
         {
-                AddBreakPoint(Addr, true, BP_EXE);
+                AddBreakPoint(Addr, true, BP_EXE, condition);
         }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -787,6 +882,13 @@ void __fastcall TDbg::DelBrkBtnClick(TObject *Sender)
 {
         if (BPList->Row < (BPList->RowCount-1))
                 DelBreakPoint(BPList->Row + 100000);
+
+        if ((BPList->RowCount > 1) && ((BPList->Row + 1) >= BPList->RowCount))
+        {
+                BPList->Row -= 1; 
+        }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
                                                 
@@ -811,45 +913,105 @@ void TDbg::LoadSettings(TIniFile *ini)
 
         if (Form1->DebugWin->Checked)
         {
-                //Show();
                 Form1->DebugWin->Checked=false;
         }
+
+        Continuous->Checked = ini->ReadBool("DEBUG", "Continuous", true);
 }
 
 void TDbg::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("DEBUG","Top",Top);
         ini->WriteInteger("DEBUG","Left",Left);
+        ini->WriteBool("DEBUG", "Continuous", Continuous->Checked);
 }
 
+void TDbg::ClearHistoryWindow()
+{
+        HistoryPos = 0;
+        historyWrappedAround = false;
+
+        PopulateHistoryWindow();
+}
+
+void TDbg::ReloadHistoryWindow()
+{
+        PopulateHistoryWindow();
+}
 
 void __fastcall TDbg::HistoryClick(TObject *Sender)
 {
-        int i;
-
         if (HistoryBox->Visible)
         {
                 HistoryBox->Close();
                 return;
         }
 
+        PopulateHistoryWindow();
+        HistoryBox->Show();
+}
+
+void TDbg::PopulateHistoryWindow()
+{
+        HistoryBox->Text->Enabled = false;
         HistoryBox->Text->Clear();
 
+<<<<<<< HEAD
         i=HistoryPos-1;
+=======
+        bool reverseOrder = HistoryBox->ReverseOrder();
+        bool show0K8KAddresses = HistoryBox->Show0K8KAddresses();
+        bool show8K16KAddresses = HistoryBox->Show8K16KAddresses();
+        bool show16K32KAddresses = HistoryBox->Show16K32KAddresses();
+        bool show32K48KAddresses = HistoryBox->Show32K48KAddresses();
+        bool show48K64KAddresses = HistoryBox->Show48K64KAddresses();
+
+        int i=HistoryPos-1;
+>>>>>>> update-1.2-to-1.5
         if (i == -1) i=historySize-1;
         while(i != HistoryPos)
         {
                 if (historyWrappedAround || (i < HistoryPos))
+<<<<<<< HEAD
 		 {
 		 	AnsiString instruction = Dbg->Disassemble(HistoryLog[i].Address, HistoryLog[i].Bytes);
 		 	HistoryBox->Text->Lines->Add(instruction);
 		 }
+=======
+		{
+                        int address = HistoryLog[i].Address;
+                        
+                        bool includeInstruction = (show0K8KAddresses   && (address <= 0x1FFF)) ||
+                                                  (show8K16KAddresses  && (address >= 0x2000) && (address <= 0x3FFF)) ||
+                                                  (show16K32KAddresses && (address >= 0x4000) && (address <= 0x7FFF)) ||
+                                                  (show32K48KAddresses && (address >= 0x8000) && (address <= 0xBFFF)) ||
+                                                  (show48K64KAddresses && (address >= 0xC000) && (address <= 0xFFFF));
+
+                        if (includeInstruction)
+                        {
+		 	        AnsiString instruction = Dbg->Disassemble(address, HistoryLog[i].Bytes);
+                                if (reverseOrder)
+                                {
+        		         	HistoryBox->Text->Lines->Insert(0, instruction);
+                                }
+                                else
+                                {
+        		         	HistoryBox->Text->Lines->Add(instruction);
+                                }
+                        }
+		}
+>>>>>>> update-1.2-to-1.5
 					
                 --i;
                 if (i==-1) i=historySize-1;
         }
+<<<<<<< HEAD
 		
         HistoryBox->Show();
+=======
+
+        HistoryBox->Text->Enabled = true;
+>>>>>>> update-1.2-to-1.5
 }
 //---------------------------------------------------------------------------
 
@@ -1210,49 +1372,65 @@ void __fastcall TDbg::MemoryClick(TObject *Sender)
 
 void __fastcall TDbg::WriteBrkBtnClick(TObject *Sender)
 {
-        EditValue->CentreOn(this);
+        SetBreakpoint->CentreOn(this);
 
         int Addr = 0;
-        if (EditValue->Edit2(Addr, 2))
+        BreakpointConditionType condition = Equal;
+        
+        if (SetBreakpoint->EditValue(Addr, condition))
         {
-                AddBreakPoint(Addr, true, BP_WR);
-        }                                      
+                AddBreakPoint(Addr, true, BP_WR, condition);
+        }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);                      
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::ReadBrkBtnClick(TObject *Sender)
 {
-        EditValue->CentreOn(this);
+        SetBreakpoint->CentreOn(this);
 
         int Addr = 0;
-        if (EditValue->Edit2(Addr, 2))
+        BreakpointConditionType condition = Equal;
+        
+        if (SetBreakpoint->EditValue(Addr, condition))
         {
-                AddBreakPoint(Addr, true, BP_RD);
+                AddBreakPoint(Addr, true, BP_RD, condition);
         }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::OutBrkBtnClick(TObject *Sender)
 {
-        EditValue->CentreOn(this);
+        SetBreakpoint->CentreOn(this);
 
         int Addr = 0;
-        if (EditValue->Edit2(Addr, 2))
+        BreakpointConditionType condition = Equal;
+
+        if (SetBreakpoint->EditValue(Addr, condition))
         {
-                AddBreakPoint(Addr, true, BP_OUT);
+                AddBreakPoint(Addr, true, BP_OUT, condition);
         }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::InBrkBtnClick(TObject *Sender)
 {
-        EditValue->CentreOn(this);
+        SetBreakpoint->CentreOn(this);
 
         int Addr = 0;
-        if (EditValue->Edit2(Addr, 2))
+        BreakpointConditionType condition = Equal;
+
+        if (SetBreakpoint->EditValue(Addr, condition))
         {
-                AddBreakPoint(Addr, true, BP_IN);
+                AddBreakPoint(Addr, true, BP_IN, condition);
         }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -1314,8 +1492,24 @@ void __fastcall TDbg::TStatesBrkBtnClick(TObject *Sender)
 
         if (ConfigureBreakpoint->EditValues(Addr, 2, Count))
         {
+<<<<<<< HEAD
                 AddBreakPoint(Addr, true, BP_TSTATES, Count);
         }
+=======
+                BreakpointConditionType condition = Equal;
+                AddBreakPoint(Addr, true, BP_TSTATES, condition, Count);
+        }
+
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
+      bool &CanSelect)
+{
+        if ((ARow + 1) >= BPList->RowCount)
+                CanSelect = false;
+>>>>>>> update-1.2-to-1.5
 }
 //---------------------------------------------------------------------------
 

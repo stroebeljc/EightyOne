@@ -1,7 +1,11 @@
 object TZX: TTZX
   Left = 100
   Top = 50
+<<<<<<< HEAD
   Width = 244
+=======
+  Width = 290
+>>>>>>> update-1.2-to-1.5
   Height = 300
   BorderStyle = bsSizeToolWin
   Caption = 'Tape'
@@ -22,14 +26,14 @@ object TZX: TTZX
   object Bevel1: TBevel
     Left = 6
     Top = 34
-    Width = 224
+    Width = 270
     Height = 200
     Anchors = [akLeft, akTop, akRight, akBottom]
   end
   object Table: TStringGrid
     Left = 10
     Top = 38
-    Width = 197
+    Width = 243
     Height = 191
     Anchors = [akLeft, akTop, akRight, akBottom]
     BorderStyle = bsNone
@@ -46,11 +50,11 @@ object TZX: TTZX
     OnDblClick = EditBlock1Click
     OnSelectCell = TableSelectCell
     ColWidths = (
-      163
+      181
       64)
   end
   object Panel1: TPanel
-    Left = 40
+    Left = 63
     Top = 241
     Width = 161
     Height = 25
@@ -260,7 +264,7 @@ object TZX: TTZX
     end
   end
   object ScrollBar1: TScrollBar
-    Left = 209
+    Left = 255
     Top = 39
     Width = 17
     Height = 190
@@ -274,13 +278,13 @@ object TZX: TTZX
   object Panel2: TPanel
     Left = 8
     Top = 4
-    Width = 224
+    Width = 270
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     BevelOuter = bvNone
     TabOrder = 0
     object AutoStartBtn: TOffice97Button
-      Left = 159
+      Left = 205
       Top = 0
       Width = 25
       Height = 25
@@ -314,7 +318,7 @@ object TZX: TTZX
       OnClick = AutoStartStopClick
     end
     object AutoLoadBtn: TOffice97Button
-      Left = 183
+      Left = 229
       Top = 0
       Width = 38
       Height = 25
@@ -350,7 +354,7 @@ object TZX: TTZX
       OnClick = AutoLoadonInsert1Click
     end
     object FlashLoadBtn: TOffice97Button
-      Left = 135
+      Left = 181
       Top = 0
       Width = 25
       Height = 25
@@ -485,7 +489,7 @@ object TZX: TTZX
       OnClick = SaveAs1Click
     end
     object SoundOn: TOffice97Button
-      Left = 109
+      Left = 155
       Top = 0
       Width = 27
       Height = 25

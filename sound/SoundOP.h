@@ -29,6 +29,7 @@
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
 #include <ExtCtrls.hpp>
+#include <IniFiles.hpp>
 //---------------------------------------------------------------------------
 class TSoundOutput : public TForm
 {
@@ -41,6 +42,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TSoundOutput(TComponent* Owner);
         void UpdateImage(unsigned char *data, int len);
+        void LoadSettings(TIniFile *ini);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSoundOutput *SoundOutput;

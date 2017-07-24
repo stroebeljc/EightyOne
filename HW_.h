@@ -143,6 +143,7 @@ __published:	// IDE-managed Components
         void __fastcall BrowseRomCartridgeClick(TObject *Sender);
         void __fastcall RomCartridgeBoxChange(TObject *Sender);
         void __fastcall ColourBoxChange(TObject *Sender);
+        void __fastcall RomBoxChange(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;

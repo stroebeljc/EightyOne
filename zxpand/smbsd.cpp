@@ -3,11 +3,11 @@
 
 #include "integer.h"
 #include "smbsd.h"
+#include "zx81config.h"
 
 #include <stdio.h>
 #include <direct.h>
 #include <string.h>
-
 
 BYTE globalData[256];
 BYTE sectorData[512];
@@ -58,7 +58,15 @@ void delayMillis(short x)
 
 void saveEEPROM(void)
 {
+<<<<<<< HEAD
    FILE* eep = fopen("nvram\\eeprom.bin","wb");
+=======
+   char file[256];
+   strcpy(file, zx81.cwd);
+   strcat(file, "NV_Memory\\zxpand-eeprom.bin");
+
+   FILE* eep = fopen(file,"wb");
+>>>>>>> update-1.2-to-1.5
    if (eep)
    {
       fwrite(eeprom, 1, 256, eep);
@@ -69,7 +77,15 @@ void saveEEPROM(void)
 
 void LoadEEPROM(void)
 {
+<<<<<<< HEAD
    FILE* eep = fopen("nvram\\eeprom.bin","rb");
+=======
+   char file[256];
+   strcpy(file, zx81.cwd);
+   strcat(file, "NV_Memory\\zxpand-eeprom.bin");
+
+   FILE* eep = fopen(file,"rb");
+>>>>>>> update-1.2-to-1.5
    if (eep)
    {
       fread(eeprom, 1, 256, eep);

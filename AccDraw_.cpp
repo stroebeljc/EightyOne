@@ -301,6 +301,11 @@ void DDAccurateInit(int resize)
         {
         case BORDERNONE:
                 WinL=BlWinL; WinR=BlWinR; WinT=BlWinT; WinB=BlWinB;
+                if ((zx81.machine == MACHINEZX80) || (zx81.machine == MACHINELAMBDA))
+                {
+                        WinL += 2;
+                        WinR += 2;
+                }
                 if (zx81.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERSMALL:
@@ -467,6 +472,11 @@ void GDIAccurateInit(int resize)
         {
         case BORDERNONE:
                 WinL=BlWinL; WinR=BlWinR; WinT=BlWinT; WinB=BlWinB;
+                if ((zx81.machine == MACHINEZX80) || (zx81.machine == MACHINELAMBDA))
+                {
+                        WinL += 2;
+                        WinR += 2;
+                }
                 if (zx81.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERSMALL:

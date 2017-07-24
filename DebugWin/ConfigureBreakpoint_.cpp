@@ -102,4 +102,9 @@ bool TConfigureBreakpoint::EditValues(int& address, int len, int& tStates)
         tStates = tvalTStates;
 
         return true;
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> update-1.2-to-1.5

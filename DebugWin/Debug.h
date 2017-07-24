@@ -43,6 +43,10 @@ struct breakpoint
         int Addr;
         bool Permanent;
         int Count;
+<<<<<<< HEAD
+=======
+        int Condition;
+>>>>>>> update-1.2-to-1.5
         
         // one of BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT, BP_STATES
         int Type;
@@ -294,6 +298,11 @@ __published:	// IDE-managed Components
         void __fastcall OutBrkBtnClick(TObject *Sender);
         void __fastcall InBrkBtnClick(TObject *Sender);
         void __fastcall TStatesBrkBtnClick(TObject *Sender);
+<<<<<<< HEAD
+=======
+        void __fastcall BPListSelectCell(TObject *Sender, int ACol,
+          int ARow, bool &CanSelect);
+>>>>>>> update-1.2-to-1.5
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);
@@ -314,6 +323,7 @@ private:	// User declarations
         void __fastcall DoEditReg(WORD&);
         void __fastcall DoEditReg(BYTE&);
 
+        void PopulateHistoryWindow();
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
@@ -328,7 +338,18 @@ public:		// User declarations
         bool PortInHit(int Addr);
         bool PortOutHit(int Addr);
 
+<<<<<<< HEAD
         bool AddBreakPoint(int Addr, bool Perm, int type, int Count = 1);
+=======
+        enum BreakpointConditionType
+        {
+                LessThan = 0,
+                Equal = 1,
+                GreaterThan = 2
+        };
+
+        bool AddBreakPoint(int Addr, bool Perm, int type, BreakpointConditionType Condition = Equal, int Count = 1);
+>>>>>>> update-1.2-to-1.5
         void DelBreakPoint(int Addr);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
@@ -341,7 +362,10 @@ public:		// User declarations
         int Hex2Dec(AnsiString num);
 
         LastIOAccess lastIOAccess[4];
-        int lastPortInAddr, lastPortOutAddr;     
+        int lastPortInAddr, lastPortOutAddr;
+
+        void ReloadHistoryWindow();
+        void ClearHistoryWindow();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

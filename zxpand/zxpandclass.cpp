@@ -14,6 +14,7 @@ BYTE mode;
 
 BYTE ring_error;
 
+
 void DelayMillis(char x)
 {
 }

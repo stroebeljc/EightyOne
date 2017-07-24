@@ -1,6 +1,11 @@
 object Dbg: TDbg
+<<<<<<< HEAD
   Left = 265
   Top = 106
+=======
+  Left = 188
+  Top = 114
+>>>>>>> update-1.2-to-1.5
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -965,7 +970,11 @@ object Dbg: TDbg
     end
     object AddrBrkBtn: TButton
       Left = 125
+<<<<<<< HEAD
       Top = 17
+=======
+      Top = 46
+>>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Address'
@@ -975,22 +984,27 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 2
       OnClick = AddrBrkBtnClick
     end
     object DelBrkBtn: TButton
       Left = 125
+<<<<<<< HEAD
       Top = 162
+=======
+      Top = 17
+>>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Delete'
+      Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 6
+      TabOrder = 1
       OnClick = DelBrkBtnClick
     end
     object BPList: TStringGrid
@@ -1007,10 +1021,15 @@ object Dbg: TDbg
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRowSelect]
       ScrollBars = ssVertical
       TabOrder = 0
+      OnSelectCell = BPListSelectCell
     end
     object WriteBrkBtn: TButton
       Left = 125
+<<<<<<< HEAD
       Top = 46
+=======
+      Top = 75
+>>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Write'
@@ -1020,12 +1039,16 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
       OnClick = WriteBrkBtnClick
     end
     object ReadBrkBtn: TButton
       Left = 125
+<<<<<<< HEAD
       Top = 75
+=======
+      Top = 104
+>>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Read'
@@ -1035,25 +1058,33 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       OnClick = ReadBrkBtnClick
     end
     object OutBrkBtn: TButton
       Left = 125
+<<<<<<< HEAD
       Top = 104
+=======
+      Top = 133
+>>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Out'
-      TabOrder = 4
+      TabOrder = 5
       OnClick = OutBrkBtnClick
     end
     object InBrkBtn: TButton
       Left = 125
+<<<<<<< HEAD
       Top = 133
+=======
+      Top = 162
+>>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'In'
-      TabOrder = 5
+      TabOrder = 6
       OnClick = InBrkBtnClick
     end
     object TStatesBrkBtn: TButton
@@ -1615,6 +1646,7 @@ object Dbg: TDbg
       Height = 17
       Caption = 'Continuous'
       Checked = True
+      Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

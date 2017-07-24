@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 *~*
 *.obj
 *.lib
-MMC_CARD/
+[Zz][Xx][Pp][Aa][Nn][Dd]_[Ss][Dd]_[Cc][Aa][Rr][Dd]/
+NV_MEMORY/
 *.exe
-EightyOne.tds
-*.bak
-=======
 *.~*
 *.obj
 *.bak
-MMC_CARD/
->>>>>>> update-1.2-to-1.5

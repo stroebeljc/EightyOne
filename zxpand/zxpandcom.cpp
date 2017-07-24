@@ -785,13 +785,10 @@ extern WORD globalAmount;
 extern BYTE globalIndex;
 extern BYTE globalDataPresent;
 
-<<<<<<< HEAD
 extern BYTE* near gdp;
 extern BYTE near mode;
 
 extern volatile BYTE near ring_error;
-=======
->>>>>>> update-1.2-to-1.5
 
 #define WILD_LEN  16
 char  WildPattern[WILD_LEN+1];
@@ -909,16 +906,10 @@ BYTE ascii2zx(char n)
 #define ZEDDY_LT 0x13
 #define ZEDDY_GT 0x12
 
-<<<<<<< HEAD
 
 static char ROM zx2ascii81[] = " ??????????\"?$:?()><=+-*/;,"             // 0..26 inclusive (indexed in zx->ascii conversion) - watch out for the \" escape sequence!
                                ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
                                "-()$;\0";                                 // zero-terminated additions for the valid filename test
-=======
-static char ROM zx2ascii81[] = " ??????????\"£$:?()><=+-*/;,"             // 0..26 inclusive (indexed in zx->ascii conversion) - watch out for the \" escape sequence!
-                             ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
-                             "-()$;\0";                                 // zero-terminated additions for the valid filename test
->>>>>>> update-1.2-to-1.5
 
 static char ROM zx2ascii80[] = "....";
 
@@ -974,14 +965,10 @@ static const rom char* SPACE = " ";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
-<<<<<<< HEAD
 //                                ---\-----========--------=====\===
-static const rom char* VERSION = "\"FFS MOGGY IS THAT BETTER?\" ;)";
+static const rom char* VERSION = "ZXPAND+ 1.6 \"TROLL\"";
 //static const rom char* VERSION = "-= RETRO COMPUTER MUSEUM =-";
 static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
-=======
-static const rom char* VERSION = "ZXPAND EO 1.0";
->>>>>>> update-1.2-to-1.5
 
 typedef const rom far char* RFC;
 
@@ -1415,7 +1402,6 @@ static char* fp_fnBak = (char*)(&globalData[128+32]);
 static char paramStore[64];
 
 
-<<<<<<< HEAD
 static unsigned char fileOpen(char*p, unsigned char mode)
 {
     char* token;
@@ -1532,47 +1518,6 @@ void comFileOpenRead(void)
 
     p = globalData;
     deZeddify(p);
-=======
-
-BYTE* cmdrPtr;
-
-void comFileOpenRead(void)
-{
-   cmdrPtr = 0;
-   res = fileOpen(FA_OPEN_EXISTING|FA_READ);
-   if (res != 0x40 && strcmp(globalData,"MENU") == 0)
-   {
-        start = defaultLoadAddr;
-        flags = 0;
-        cmdrPtr = cmdrData;
-        length = cmdrLen;
-        res = 0x40;
-   }
-   else if (0x40 == res)
-   {
-        get_fileinfo_special(&filinfo);
-
-        if (length == 0)
-        {
-                length = (WORD)filinfo.fsize;
-        }
-
-        // hack to make programs auto-disable ROM if read-only attribute is set
-        if (filinfo.fattrib & AM_RDO)
-        {
-                flags |= 1;
-        }
-   }
-
-   globalData[0] = length & 255;
-   globalData[1] = length / 256;
-   globalData[2] = start & 255;
-   globalData[3] = start / 256;
-   globalData[4] = flags & 255;
-   globalData[5] = flags / 256;
-
-   memset(&globalData[6], 0, 32-6);
->>>>>>> update-1.2-to-1.5
 
     paramStore[0] = 0;
     if ((param = strchr(p,':')) != NULL)
@@ -1735,7 +1680,6 @@ void comFileRead(void)
                 crc += b;
             }
 
-<<<<<<< HEAD
             while(serialAvailable() < 2);
             rxcrc = serialRead();
             rxcrc += 256 * serialRead();
@@ -1761,19 +1705,6 @@ void comFileRead(void)
 
     GOOUTPUTMODE;
     LATD = res;
-=======
-   if (cmdrPtr)
-   {
-        //memcpypgm2ram(globalData, cmdrPtr, globalAmount);
-        memcpy(globalData, cmdrPtr, globalAmount);
-        cmdrPtr += globalAmount;
-        LATD = 0x40;
-   }
-   else
-   {
-        LATD = 0x40 | f_read(&fil, globalData, globalAmount, &read);
-   }
->>>>>>> update-1.2-to-1.5
 }
 
 
@@ -1795,7 +1726,6 @@ void comFileWrite(void)
 
 void comFileClose(void)
 {
-<<<<<<< HEAD
     if (sb >= 0)
     {
         sb = -1;
@@ -1804,13 +1734,6 @@ void comFileClose(void)
         serialInit(12,0); // turn off rx irq
     }
     else LATD=0x40 | f_close(&fil);
-=======
-   if (cmdrPtr)
-   {
-        LATD = 0x40;
-   }
-   else LATD=0x40 | f_close(&fil);
->>>>>>> update-1.2-to-1.5
 }
 
 

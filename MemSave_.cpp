@@ -136,11 +136,7 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                 }
                 else
                 {
-<<<<<<< HEAD
-                        ShowMessage("Save failed");
-=======
                         ShowMessage("Memory save failed");
->>>>>>> update-1.2-to-1.5
                 }
         }
         else
@@ -177,11 +173,7 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                 }
                 else
                 {
-<<<<<<< HEAD
-                        ShowMessage("Load failed");
-=======
                         ShowMessage("Memory load failed");
->>>>>>> update-1.2-to-1.5
                 }
 
         }

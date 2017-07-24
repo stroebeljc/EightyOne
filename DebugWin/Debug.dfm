@@ -1,11 +1,6 @@
 object Dbg: TDbg
-<<<<<<< HEAD
-  Left = 265
-  Top = 106
-=======
   Left = 188
   Top = 114
->>>>>>> update-1.2-to-1.5
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -970,11 +965,7 @@ object Dbg: TDbg
     end
     object AddrBrkBtn: TButton
       Left = 125
-<<<<<<< HEAD
-      Top = 17
-=======
       Top = 46
->>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Address'
@@ -989,11 +980,7 @@ object Dbg: TDbg
     end
     object DelBrkBtn: TButton
       Left = 125
-<<<<<<< HEAD
-      Top = 162
-=======
       Top = 17
->>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Delete'
@@ -1025,11 +1012,7 @@ object Dbg: TDbg
     end
     object WriteBrkBtn: TButton
       Left = 125
-<<<<<<< HEAD
-      Top = 46
-=======
       Top = 75
->>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Write'
@@ -1044,11 +1027,7 @@ object Dbg: TDbg
     end
     object ReadBrkBtn: TButton
       Left = 125
-<<<<<<< HEAD
-      Top = 75
-=======
       Top = 104
->>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'Read'
@@ -1063,24 +1042,13 @@ object Dbg: TDbg
     end
     object OutBrkBtn: TButton
       Left = 125
-<<<<<<< HEAD
-      Top = 104
-=======
       Top = 133
->>>>>>> update-1.2-to-1.5
-      Width = 53
-      Height = 25
       Caption = 'Out'
-      TabOrder = 5
       OnClick = OutBrkBtnClick
     end
     object InBrkBtn: TButton
       Left = 125
-<<<<<<< HEAD
-      Top = 133
-=======
       Top = 162
->>>>>>> update-1.2-to-1.5
       Width = 53
       Height = 25
       Caption = 'In'

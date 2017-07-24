@@ -8,11 +8,6 @@
                  }
 
                  spl->IncProgress("Symbol Browser"); Application->CreateForm(__classid(TSymbolBrowser), &SymbolBrowser);
-<<<<<<< HEAD
-                 spl->IncProgress("EditVal"); Application->CreateForm(__classid(TEditValue), &EditValue);
-                 spl->IncProgress("ConfigureBreakpoint"); Application->CreateForm(__classid(TConfigureBreakpoint), &ConfigureBreakpoint);
-=======
->>>>>>> update-1.2-to-1.5
                  spl->IncProgress("About Box"); Application->CreateForm(__classid(TAbout), &About);
                  spl->IncProgress("Keyboard"); Application->CreateForm(__classid(TKeyboard), &Keyboard);
                  spl->IncProgress("Speed"); Application->CreateForm(__classid(TSpeed), &Speed);

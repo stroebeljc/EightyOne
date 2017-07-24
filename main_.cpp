@@ -70,11 +70,8 @@
 #include "Spectra\Spectra.h"
 #include "Chroma\Chroma.h"
 #include "MemoryWindow.h"
-<<<<<<< HEAD
-=======
 #include "Hist.h"
 #include "MakeHDF.h"
->>>>>>> update-1.2-to-1.5
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -1905,15 +1902,6 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
 
 void MoveWindow(TForm* form, int& x, int& y)
 {
-<<<<<<< HEAD
-        if (!form->Visible)
-                return;
-
-        form->Left = x;
-        form->Top = y;
-        x += 40;
-        y += 40;
-=======
         form->Left = x;
         form->Top = y;
         form->BringToFront();
@@ -1923,22 +1911,15 @@ void MoveWindow(TForm* form, int& x, int& y)
                 x += 20;
                 y += 20;
         }
->>>>>>> update-1.2-to-1.5
 }
 
 void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
 {
-<<<<<<< HEAD
-        int l = (Screen->Width - Width) / 2;
-        int t = (Screen->Height - Height) / 2;
-        MoveWindow(this, l, t);
-=======
         int l = 0;
         int t = 0;
         MoveWindow(this, l, t);
         l = (this->Width / 2);
         t = (this->Height / 2);
->>>>>>> update-1.2-to-1.5
         MoveWindow(Dbg, l, t);
         MoveWindow(MemoryWindow, l, t);
         MoveWindow(SymbolBrowser, l, t);
@@ -1950,8 +1931,6 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(Keyboard, l, t);
         MoveWindow(FSSettings, l, t);
         MoveWindow(Printer, l, t);
-<<<<<<< HEAD
-=======
         MoveWindow(MidiForm, l, t);
         MoveWindow(MemSave, l, t);
         MoveWindow(SerialConfig, l, t);
@@ -1971,7 +1950,6 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
 void __fastcall TForm1::EnableSplashScreenClick(TObject *Sender)
 {
         EnableSplashScreen->Checked = !EnableSplashScreen->Checked;
->>>>>>> update-1.2-to-1.5
 }
 //---------------------------------------------------------------------------
 

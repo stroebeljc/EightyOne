@@ -143,9 +143,3 @@ bool __fastcall THistoryBox::Show48K64KAddresses()
 }
 //---------------------------------------------------------------------------
 
-void __fastcall THistoryBox::FormResize(TObject *Sender)
-{
-        Invalidate();        
-}
-//---------------------------------------------------------------------------
-

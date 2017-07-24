@@ -62,10 +62,7 @@ USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditData.cpp", EditDataForm);
 USEFORM("DebugWin\EditValue_.cpp", EditValue);
 USEFORM("DebugWin\ConfigureBreakpoint_.cpp", ConfigureBreakpoint);
-<<<<<<< HEAD
-=======
 USEFORM("DebugWin\SetBreakpoint_.cpp", SetBreakpoint);
->>>>>>> update-1.2-to-1.5
 USEFORM("FullScreen.cpp", FSSettings);
 USEUNIT("zx81config.cpp");
 USEUNIT("ace\ace.cpp");
@@ -130,11 +127,8 @@ USEUNIT("zxpand\smbsd.cpp");
 USEUNIT("zxpand\js.cpp");
 USEUNIT("zxpand\dirlib.cpp");
 USEUNIT("Chroma\Chroma.cpp");
-<<<<<<< HEAD
 USE("zxpand\zxpandcom.h", File);
-=======
 USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
->>>>>>> update-1.2-to-1.5
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
@@ -244,11 +238,8 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->CreateForm(__classid(TSymbolBrowser), &SymbolBrowser);
                  Application->CreateForm(__classid(TEditValue), &EditValue);
                  Application->CreateForm(__classid(TConfigureBreakpoint), &ConfigureBreakpoint);
-<<<<<<< HEAD
-=======
                  Application->CreateForm(__classid(TSetBreakpoint), &SetBreakpoint);
                  Application->CreateForm(__classid(TSearchSequence), &SearchSequence);
->>>>>>> update-1.2-to-1.5
                  #endif
 
                  Application->ProcessMessages();

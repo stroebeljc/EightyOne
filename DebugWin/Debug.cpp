@@ -33,11 +33,8 @@
 #include "main_.h"
 #include "EditValue_.h"
 #include "ConfigureBreakpoint_.h"
-<<<<<<< HEAD
-=======
 #include "SetBreakpoint_.h"
 #include "SearchSequence_.h"
->>>>>>> update-1.2-to-1.5
 #include "EditFlags.h"
 #include "memoryWindow.h"
 #include "symbolstore.h"
@@ -59,11 +56,7 @@ extern unsigned char shift_store;
 extern unsigned char memory[];
 extern int lastMemoryReadAddr, lastMemoryWriteAddr;
 
-<<<<<<< HEAD
-const int maxInstructionBytes = 8;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
-=======
 const int maxInstructionBytes = 4;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
->>>>>>> update-1.2-to-1.5
 
 struct InstructionEntry
 {
@@ -71,11 +64,7 @@ struct InstructionEntry
 	BYTE Bytes[maxInstructionBytes];
 };
 
-<<<<<<< HEAD
-const int historySize = 2048;
-=======
 const int historySize = 3000;
->>>>>>> update-1.2-to-1.5
 InstructionEntry HistoryLog[historySize];
 int HistoryPos=0;
 bool historyWrappedAround = false;
@@ -99,21 +88,6 @@ void DebugUpdate(void)
 
                 if (Dbg->EnableHistory->Checked)
                 {
-<<<<<<< HEAD
-		    	HistoryLog[HistoryPos].Address = i;
-
-		    	for (int i = 0; i < maxInstructionBytes; ++i)
-		    	{
-				// The instruction bytes must be saved in case these address locations are subsequently overwritten,
-			        // i.e. by self modifying code
-		        	HistoryLog[HistoryPos].Bytes[i] = getbyte(z80.pc.w + i);
-		    	}
-		    	++HistoryPos;
-                        if (HistoryPos==historySize)
-                        {
-                                HistoryPos=0;
-                                historyWrappedAround = true;
-=======
                         bool show0K8KAddresses = HistoryBox->Show0K8KAddresses();
                         bool show8K16KAddresses = HistoryBox->Show8K16KAddresses();
                         bool show16K32KAddresses = HistoryBox->Show16K32KAddresses();
@@ -141,7 +115,6 @@ void DebugUpdate(void)
                                         HistoryPos=0;
                                         historyWrappedAround = true;
                                 }
->>>>>>> update-1.2-to-1.5
                         }
                 }
 
@@ -206,10 +179,6 @@ void DebugUpdate(void)
                 Dbg->PortOutHit(lpo) ||
                 Dbg->TStatesBreakPointHit(z80.pc.w))
         {
-<<<<<<< HEAD
-                //zx81_stop=1;
-=======
->>>>>>> update-1.2-to-1.5
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
                 Dbg->RunStopClick(NULL);
@@ -232,11 +201,7 @@ void DebugUpdate(void)
         Dbg->SymApp->Enabled = symbolstore::fileLoaded();
 }
 //---------------------------------------------------------------------------
-<<<<<<< HEAD
-bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, int Count)
-=======
 bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, BreakpointConditionType Condition, int Count)
->>>>>>> update-1.2-to-1.5
 {
         // type 0 = execute
         // type 1 = mem read
@@ -245,10 +210,7 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, BreakpointConditionType 
         // type 4 = output
         // type 5 = T-states count
         const AnsiString types("xrwiot");
-<<<<<<< HEAD
-=======
         const AnsiString conditions("<=>");
->>>>>>> update-1.2-to-1.5
         const int maxBreakpoints = 99;
 
         if (Breakpoints == maxBreakpoints)
@@ -263,11 +225,7 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, BreakpointConditionType 
                         break;
                 }
 
-<<<<<<< HEAD
-                if (Breakpoint[i].Addr == Addr && Breakpoint[i].Type == Type)
-=======
                 if ((Breakpoint[i].Addr == Addr) && (Breakpoint[i].Type == Type) && (Breakpoint[i].Condition == Condition))
->>>>>>> update-1.2-to-1.5
                 {
                         // already exists
                         return false;
@@ -278,10 +236,7 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, BreakpointConditionType 
         Breakpoint[Breakpoints].Permanent=Perm;
         Breakpoint[Breakpoints].Type=Type;
         Breakpoint[Breakpoints].Count=Count;
-<<<<<<< HEAD
-=======
         Breakpoint[Breakpoints].Condition=Condition;
->>>>>>> update-1.2-to-1.5
         AnsiString t(types[Type + 1]);
         AnsiString c(conditions[Condition + 1]);
         AnsiString str;
@@ -362,11 +317,8 @@ bool TDbg::BPHit(int Addr, int Type, int& idx)
                                         BPList->Row=idx;
                                         return true;
                                 }
-<<<<<<< HEAD
-=======
 
                                 return false;
->>>>>>> update-1.2-to-1.5
                         }
                         else
                         {
@@ -752,13 +704,10 @@ void TDbg::EnableValues(bool enable)
         IOPort3Data->Enabled = enable;
 
         TStatesCount->Enabled = enable;
-<<<<<<< HEAD
-=======
 
         SpectraMode->Enabled = enable;
         ChromaColourMode->Enabled = enable;
         ZXCMode->Enabled = enable;
->>>>>>> update-1.2-to-1.5
 }
 
 void TDbg::DisableVals(void)
@@ -956,9 +905,6 @@ void TDbg::PopulateHistoryWindow()
         HistoryBox->Text->Enabled = false;
         HistoryBox->Text->Clear();
 
-<<<<<<< HEAD
-        i=HistoryPos-1;
-=======
         bool reverseOrder = HistoryBox->ReverseOrder();
         bool show0K8KAddresses = HistoryBox->Show0K8KAddresses();
         bool show8K16KAddresses = HistoryBox->Show8K16KAddresses();
@@ -967,17 +913,10 @@ void TDbg::PopulateHistoryWindow()
         bool show48K64KAddresses = HistoryBox->Show48K64KAddresses();
 
         int i=HistoryPos-1;
->>>>>>> update-1.2-to-1.5
         if (i == -1) i=historySize-1;
         while(i != HistoryPos)
         {
                 if (historyWrappedAround || (i < HistoryPos))
-<<<<<<< HEAD
-		 {
-		 	AnsiString instruction = Dbg->Disassemble(HistoryLog[i].Address, HistoryLog[i].Bytes);
-		 	HistoryBox->Text->Lines->Add(instruction);
-		 }
-=======
 		{
                         int address = HistoryLog[i].Address;
                         
@@ -1000,18 +939,12 @@ void TDbg::PopulateHistoryWindow()
                                 }
                         }
 		}
->>>>>>> update-1.2-to-1.5
 					
                 --i;
                 if (i==-1) i=historySize-1;
         }
-<<<<<<< HEAD
-		
-        HistoryBox->Show();
-=======
 
         HistoryBox->Text->Enabled = true;
->>>>>>> update-1.2-to-1.5
 }
 //---------------------------------------------------------------------------
 
@@ -1492,10 +1425,6 @@ void __fastcall TDbg::TStatesBrkBtnClick(TObject *Sender)
 
         if (ConfigureBreakpoint->EditValues(Addr, 2, Count))
         {
-<<<<<<< HEAD
-                AddBreakPoint(Addr, true, BP_TSTATES, Count);
-        }
-=======
                 BreakpointConditionType condition = Equal;
                 AddBreakPoint(Addr, true, BP_TSTATES, condition, Count);
         }
@@ -1509,7 +1438,6 @@ void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
 {
         if ((ARow + 1) >= BPList->RowCount)
                 CanSelect = false;
->>>>>>> update-1.2-to-1.5
 }
 //---------------------------------------------------------------------------
 

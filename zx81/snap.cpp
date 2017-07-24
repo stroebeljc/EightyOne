@@ -263,11 +263,7 @@ int load_snap(char *filename)
                 f=fopen(filename,"rb");
                 if (!f)
                 {
-<<<<<<< HEAD
-                        ShowMessage("Load failed.");
-=======
                         ShowMessage("Snapshot load failed.");
->>>>>>> update-1.2-to-1.5
                         return 0;
                 }
                 load_snap_ace(f);
@@ -467,11 +463,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1)
         {
-<<<<<<< HEAD
-                ShowMessage("Load failed.");
-=======
                 ShowMessage("ROM load failed.");
->>>>>>> update-1.2-to-1.5
                 return(errno);
         }
 
@@ -479,11 +471,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         {
                 int err=errno;
                 close(fptr);
-<<<<<<< HEAD
-                ShowMessage("Load failed.");
-=======
                 ShowMessage("ROM load failed.");
->>>>>>> update-1.2-to-1.5
                 return(err);
         }
 
@@ -513,11 +501,7 @@ int memory_load(char *filename, int address, int length)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1)
         {
-<<<<<<< HEAD
-                ShowMessage("Load failed.");
-=======
                 ShowMessage("ROM load failed.");
->>>>>>> update-1.2-to-1.5
                 return(errno);
         }
 
@@ -525,11 +509,7 @@ int memory_load(char *filename, int address, int length)
         {
                 int err=errno;
                 close(fptr);
-<<<<<<< HEAD
-                ShowMessage("Load failed.");
-=======
                 ShowMessage("ROM load failed.");
->>>>>>> update-1.2-to-1.5
                 return(err);
         }
 
@@ -555,11 +535,7 @@ int font_load(char *filename, char *address, int length)
         {
                 int err=errno;
                 close(fptr);
-<<<<<<< HEAD
-                ShowMessage("Load failed.");
-=======
                 ShowMessage("Font load failed.");
->>>>>>> update-1.2-to-1.5
                 return(err);
         }
 
@@ -568,3 +544,4 @@ int font_load(char *filename, char *address, int length)
         return(len);
 }
 
+` 

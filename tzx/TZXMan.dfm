@@ -1,11 +1,7 @@
 object TZX: TTZX
   Left = 100
   Top = 50
-<<<<<<< HEAD
-  Width = 244
-=======
   Width = 290
->>>>>>> update-1.2-to-1.5
   Height = 300
   BorderStyle = bsSizeToolWin
   Caption = 'Tape'

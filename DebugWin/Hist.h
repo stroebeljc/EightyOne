@@ -36,9 +36,6 @@ class THistoryBox : public TForm
 {
 __published:	// IDE-managed Components
         TRichEdit *Text;
-<<<<<<< HEAD
-        void __fastcall FormResize(TObject *Sender);
-=======
         TStatusBar *StatusBar1;
         TToolBar *ToolBar1;
         TToolButton *ToolButtonReload;
@@ -66,7 +63,6 @@ __published:	// IDE-managed Components
         void __fastcall ToolButton16K32KClick(TObject *Sender);
         void __fastcall ToolButton32K48KClick(TObject *Sender);
         void __fastcall ToolButton48K64KClick(TObject *Sender);
->>>>>>> update-1.2-to-1.5
 private:	// User declarations
         bool reverseOrder;
         bool show0K8KAddresses;

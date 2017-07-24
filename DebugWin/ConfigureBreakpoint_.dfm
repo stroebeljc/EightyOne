@@ -1,11 +1,6 @@
 object ConfigureBreakpoint: TConfigureBreakpoint
-<<<<<<< HEAD
-  Left = 284
-  Top = 258
-=======
   Left = 439
   Top = 126
->>>>>>> update-1.2-to-1.5
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'TStates Breakpoint'

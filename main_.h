@@ -149,10 +149,7 @@ __published:	// IDE-managed Components
         TMenuItem *ChromaColourEnable;
         TMenuItem *GatherWindows1;
         TMenuItem *N10;
-<<<<<<< HEAD
-=======
         TMenuItem *EnableSplashScreen;
->>>>>>> update-1.2-to-1.5
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -236,10 +233,7 @@ __published:	// IDE-managed Components
         void __fastcall SpectraColourEnableClick(TObject *Sender);
         void __fastcall ChromaColourEnableClick(TObject *Sender);
         void __fastcall GatherWindows1Click(TObject *Sender);
-<<<<<<< HEAD
-=======
         void __fastcall EnableSplashScreenClick(TObject *Sender);
->>>>>>> update-1.2-to-1.5
 private:	// User declarations
         int fps;
         bool startup;

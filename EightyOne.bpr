@@ -14,21 +14,12 @@
       tzx\TZXMan.obj tzx\tzxsave.obj tzx\tzxadd.obj tzx\tzxEditPause.obj 
       tzx\tzxEditArchive.obj tzx\tzxEditText.obj tzx\tzxEditHWInfo.obj 
       tzx\tzxEditData.obj DebugWin\EditValue_.obj 
-<<<<<<< HEAD
-      DebugWin\ConfigureBreakpoint_.obj FullScreen.obj zx81config.obj 
-      ace\ace.obj Spectrum\spec48.obj tzx\tzxEventGeneral.obj 
-      tzx\tzxEventMisc.obj tzx\tzxEditGeneral.obj HW_.obj Interface1.obj 
-      Spectrum\spec48snap.obj lib765\765drive.obj lib765\765dsk.obj 
-      lib765\765fdc.obj lib765\765ldsk.obj lib765\error.obj Plus3Drives.obj 
-      floppy.obj ide\ide.obj MakeHDF.obj 68k\68000.obj ql\ql.obj 
-=======
       DebugWin\ConfigureBreakpoint_.obj DebugWin\SetBreakpoint_.obj 
       FullScreen.obj zx81config.obj ace\ace.obj Spectrum\spec48.obj 
       tzx\tzxEventGeneral.obj tzx\tzxEventMisc.obj tzx\tzxEditGeneral.obj 
       HW_.obj Interface1.obj Spectrum\spec48snap.obj lib765\765drive.obj 
       lib765\765dsk.obj lib765\765fdc.obj lib765\765ldsk.obj lib765\error.obj 
       Plus3Drives.obj floppy.obj ide\ide.obj MakeHDF.obj 68k\68000.obj ql\ql.obj 
->>>>>>> update-1.2-to-1.5
       68k\op68kadd.obj 68k\op68ksub.obj 68k\op68karith.obj 68k\op68klogop.obj 
       68k\op68kmisc.obj 68k\op68kmove.obj 68k\op68kshift.obj 1772\1770disk.obj 
       1772\wd1770.obj sp0256.obj Parallel.obj sound\midi.obj midifrm.obj 
@@ -50,18 +41,11 @@
       zx97Config.dfm SerialPort.dfm tzx\TZXMan.dfm tzx\tzxEditPause.dfm 
       tzx\tzxEditArchive.dfm tzx\tzxEditText.dfm tzx\tzxEditHWInfo.dfm 
       tzx\tzxEditData.dfm DebugWin\EditValue_.dfm 
-<<<<<<< HEAD
-      DebugWin\ConfigureBreakpoint_.dfm FullScreen.dfm tzx\tzxEditGeneral.dfm 
-      HW_.dfm Interface1.dfm Plus3Drives.dfm MakeHDF.dfm Parallel.dfm 
-      midifrm.dfm ZipFile_.dfm Debug68k\debug68.dfm SplashScreen.dfm main_.dfm 
-      memoryWindow.dfm SymBrowse.dfm"/>
-=======
       DebugWin\ConfigureBreakpoint_.dfm DebugWin\SetBreakpoint_.dfm 
       FullScreen.dfm tzx\tzxEditGeneral.dfm HW_.dfm Interface1.dfm 
       Plus3Drives.dfm MakeHDF.dfm Parallel.dfm midifrm.dfm ZipFile_.dfm 
       Debug68k\debug68.dfm SplashScreen.dfm main_.dfm memoryWindow.dfm 
       SymBrowse.dfm DebugWin\SearchSequence_.dfm"/>
->>>>>>> update-1.2-to-1.5
     <LIBFILES value="ddraw.lib libdsk.lib zlib.lib"/>
     <LIBRARIES value="OfficeButton97.lib VCLX50.lib VCLDB50.lib THEMEMANAGERC5.lib 
       CPORTLIBCB5.lib AnimTimer.lib Vcl50.lib"/>
@@ -115,7 +99,7 @@
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=5
+MinorVer=5 
 Release=0
 Build=0
 Debug=0

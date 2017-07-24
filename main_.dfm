@@ -1,11 +1,6 @@
 object Form1: TForm1
-<<<<<<< HEAD
-  Left = 450
-  Top = 168
-=======
   Left = 240
   Top = 153
->>>>>>> update-1.2-to-1.5
   Width = 331
   Height = 318
   Caption = 'EightyOne'
@@ -198,14 +193,11 @@ object Form1: TForm1
         Caption = 'Gather Windows'
         OnClick = GatherWindows1Click
       end
-<<<<<<< HEAD
-=======
       object EnableSplashScreen: TMenuItem
         Caption = 'Show Splash Screen'
         Checked = True
         OnClick = EnableSplashScreenClick
       end
->>>>>>> update-1.2-to-1.5
     end
     object Control1: TMenuItem
       Caption = 'Control'

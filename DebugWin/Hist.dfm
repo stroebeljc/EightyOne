@@ -1,15 +1,8 @@
 object HistoryBox: THistoryBox
-<<<<<<< HEAD
-  Left = 313
-  Top = 196
-  Width = 483
-  Height = 383
-=======
   Left = 198
   Top = 115
   Width = 471
   Height = 431
->>>>>>> update-1.2-to-1.5
   BorderStyle = bsSizeToolWin
   Caption = 'CPU History'
   Color = clBtnFace
@@ -24,15 +17,9 @@ object HistoryBox: THistoryBox
   TextHeight = 13
   object Text: TRichEdit
     Left = 0
-<<<<<<< HEAD
-    Top = 0
-    Width = 475
-    Height = 348
-=======
     Top = 32
     Width = 466
     Height = 345
->>>>>>> update-1.2-to-1.5
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -51,8 +38,8 @@ object HistoryBox: THistoryBox
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 378
-    Width = 463
+    Top = 374
+    Width = 455
     Height = 19
     Panels = <>
     SimplePanel = False
@@ -60,7 +47,7 @@ object HistoryBox: THistoryBox
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 463
+    Width = 455
     Height = 25
     ButtonHeight = 21
     ButtonWidth = 48

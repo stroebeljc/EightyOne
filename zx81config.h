@@ -28,11 +28,7 @@
 
 #define EMUID           0x85
 #define MAJORVERSION    1
-<<<<<<< HEAD
-#define MINORVERSION    3
-=======
 #define MINORVERSION    5
->>>>>>> update-1.2-to-1.5
 //#define TESTVERSION     'x'
 
 #define SYNCTYPEH       1

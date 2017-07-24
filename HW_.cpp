@@ -773,10 +773,6 @@ void THW::SetupForZX81(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
-<<<<<<< HEAD
-        ZXpand->Enabled=true;
-=======
->>>>>>> update-1.2-to-1.5
 
         EnableRomCartridgeOption(true);
 

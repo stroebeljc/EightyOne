@@ -1,11 +1,6 @@
 object HW: THW
-<<<<<<< HEAD
-  Left = 75
-  Top = 182
-=======
   Left = 255
   Top = 117
->>>>>>> update-1.2-to-1.5
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'

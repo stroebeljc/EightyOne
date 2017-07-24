@@ -1,10 +1,10 @@
 object Dbg: TDbg
-  Left = 169
-  Top = 128
+  Left = 188
+  Top = 114
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
-  ClientHeight = 437
+  ClientHeight = 468
   ClientWidth = 567
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -528,7 +528,7 @@ object Dbg: TDbg
     Left = 4
     Top = 227
     Width = 367
-    Height = 206
+    Height = 238
     Caption = 'Program'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -699,10 +699,38 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
     end
+    object Disass10: TLabel
+      Left = 8
+      Top = 197
+      Width = 7
+      Height = 14
+      Caption = '"'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+    end
+    object Disass11: TLabel
+      Left = 8
+      Top = 213
+      Width = 7
+      Height = 14
+      Caption = '"'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+    end
   end
   object GroupBoxZX81: TGroupBox
     Left = 378
-    Top = 314
+    Top = 346
     Width = 185
     Height = 119
     Caption = 'Display Generation'
@@ -892,7 +920,7 @@ object Dbg: TDbg
     Left = 378
     Top = 3
     Width = 185
-    Height = 190
+    Height = 222
     Caption = 'Breakpoints'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -901,9 +929,43 @@ object Dbg: TDbg
     Font.Style = []
     ParentFont = False
     TabOrder = 3
+    object Label31: TLabel
+      Left = 9
+      Top = 196
+      Width = 63
+      Height = 14
+      Caption = 'T-States:'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnClick = Stack0Click
+      OnMouseDown = Stack0MouseDown
+    end
+    object TStatesCount: TLabel
+      Left = 78
+      Top = 196
+      Width = 44
+      Height = 14
+      AutoSize = False
+      Caption = '0'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Style = []
+      ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnClick = HL_Click
+      OnMouseDown = HL_MouseDown
+    end
     object AddrBrkBtn: TButton
       Left = 125
-      Top = 18
+      Top = 46
       Width = 53
       Height = 25
       Caption = 'Address'
@@ -913,29 +975,30 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 2
       OnClick = AddrBrkBtnClick
     end
     object DelBrkBtn: TButton
       Left = 125
-      Top = 153
+      Top = 17
       Width = 53
       Height = 25
       Caption = 'Delete'
+      Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 6
+      TabOrder = 1
       OnClick = DelBrkBtnClick
     end
     object BPList: TStringGrid
       Left = 8
       Top = 19
-      Width = 111
-      Height = 159
+      Width = 113
+      Height = 166
       ColCount = 1
       DefaultColWidth = 10
       DefaultRowHeight = 14
@@ -945,10 +1008,11 @@ object Dbg: TDbg
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRowSelect]
       ScrollBars = ssVertical
       TabOrder = 0
+      OnSelectCell = BPListSelectCell
     end
     object WriteBrkBtn: TButton
       Left = 125
-      Top = 45
+      Top = 75
       Width = 53
       Height = 25
       Caption = 'Write'
@@ -958,12 +1022,12 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
       OnClick = WriteBrkBtnClick
     end
     object ReadBrkBtn: TButton
       Left = 125
-      Top = 72
+      Top = 104
       Width = 53
       Height = 25
       Caption = 'Read'
@@ -973,26 +1037,41 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       OnClick = ReadBrkBtnClick
     end
     object OutBrkBtn: TButton
       Left = 125
-      Top = 99
+      Top = 133
       Width = 53
       Height = 25
       Caption = 'Out'
-      TabOrder = 4
+      TabOrder = 5
       OnClick = OutBrkBtnClick
     end
     object InBrkBtn: TButton
       Left = 125
-      Top = 126
+      Top = 162
       Width = 53
       Height = 25
       Caption = 'In'
-      TabOrder = 5
+      TabOrder = 6
       OnClick = InBrkBtnClick
+    end
+    object TStatesBrkBtn: TButton
+      Left = 125
+      Top = 191
+      Width = 53
+      Height = 25
+      Caption = 'TStates'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 7
+      OnClick = TStatesBrkBtnClick
     end
   end
   object GroupBox5: TGroupBox
@@ -1124,7 +1203,7 @@ object Dbg: TDbg
   end
   object GroupBoxAce: TGroupBox
     Left = 378
-    Top = 275
+    Top = 307
     Width = 185
     Height = 158
     Caption = 'Jupiter Ace Forth Stack'
@@ -1538,6 +1617,7 @@ object Dbg: TDbg
       Height = 17
       Caption = 'Continuous'
       Checked = True
+      Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -1584,7 +1664,7 @@ object Dbg: TDbg
   end
   object GroupBox3: TGroupBox
     Left = 378
-    Top = 195
+    Top = 227
     Width = 185
     Height = 78
     Caption = 'View'
@@ -1809,7 +1889,7 @@ object Dbg: TDbg
   end
   object GroupBoxChroma: TGroupBox
     Left = 378
-    Top = 275
+    Top = 307
     Width = 90
     Height = 36
     Caption = 'Chroma'
@@ -1850,7 +1930,7 @@ object Dbg: TDbg
   end
   object GroupBoxZXC: TGroupBox
     Left = 473
-    Top = 275
+    Top = 307
     Width = 90
     Height = 36
     Caption = 'ZXC'
@@ -1885,7 +1965,7 @@ object Dbg: TDbg
   end
   object GroupBoxSpectra: TGroupBox
     Left = 378
-    Top = 275
+    Top = 307
     Width = 90
     Height = 36
     Caption = 'Spectra'
@@ -1912,8 +1992,8 @@ object Dbg: TDbg
     end
   end
   object MemDumpPopup: TPopupMenu
-    Left = 538
-    Top = 187
+    Left = 234
+    Top = 211
     object MemDumpFromHere1: TMenuItem
       Caption = 'Show Memory'
       OnClick = MemDumpFromHere1Click

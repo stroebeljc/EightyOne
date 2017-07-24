@@ -1,6 +1,6 @@
 object MemoryWindow: TMemoryWindow
-  Left = 215
-  Top = 392
+  Left = 633
+  Top = 382
   Width = 580
   Height = 302
   HorzScrollBar.Visible = False
@@ -16,10 +16,12 @@ object MemoryWindow: TMemoryWindow
   Font.Height = -11
   Font.Name = 'Courier New'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   PopupMenu = PopupMenu1
   Scaled = False
   OnClick = FormClick
+  OnKeyDown = FormKeyDown
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
   OnPaint = FormPaint
@@ -106,9 +108,25 @@ object MemoryWindow: TMemoryWindow
     OnClick = ButtonLastChangeClick
     OnMouseMove = ButtonChangeMouseMove
   end
+  object IncDecAddress: TUpDown
+    Left = 0
+    Top = 0
+    Width = 30
+    Height = 17
+    Min = -32768
+    Max = 32767
+    Orientation = udHorizontal
+    ParentShowHint = False
+    Position = 0
+    ShowHint = False
+    TabOrder = 6
+    TabStop = True
+    Wrap = False
+    OnChangingEx = IncDecAddressChangingEx
+  end
   object PopupMenu1: TPopupMenu
     Left = 8
-    Top = 8
+    Top = 160
     object ViewBytes1: TMenuItem
       Caption = 'View Bytes'
       OnClick = ViewBytes1Click
@@ -123,8 +141,13 @@ object MemoryWindow: TMemoryWindow
       Caption = 'View Binary'
       OnClick = ViewBytes1Click
     end
-    object ViewTraditional1: TMenuItem
+    object ViewDecimal1: TMenuItem
       Tag = 3
+      Caption = 'View Decimal'
+      OnClick = ViewBytes1Click
+    end
+    object ViewTraditional1: TMenuItem
+      Tag = 4
       Caption = 'View Traditional'
       Checked = True
       OnClick = ViewBytes1Click
@@ -137,6 +160,10 @@ object MemoryWindow: TMemoryWindow
       Caption = 'Jump To'
       Enabled = False
       OnClick = JumpTo1Click
+    end
+    object Search1: TMenuItem
+      Caption = 'Find...'
+      OnClick = Search1Click
     end
   end
 end

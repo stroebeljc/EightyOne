@@ -98,6 +98,7 @@ __published:	// IDE-managed Components
         TComboBox *RomCartridgeBox;
         TEdit *RomCartridgeFileBox;
         TButton *BrowseRomCartridge;
+        TCheckBox *FloatingPointHardwareFix;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -142,6 +143,7 @@ __published:	// IDE-managed Components
         void __fastcall BrowseRomCartridgeClick(TObject *Sender);
         void __fastcall RomCartridgeBoxChange(TObject *Sender);
         void __fastcall ColourBoxChange(TObject *Sender);
+        void __fastcall RomBoxChange(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;

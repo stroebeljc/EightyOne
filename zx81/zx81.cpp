@@ -59,6 +59,8 @@ extern "C"
 
 ZXpand* zxpand = NULL;
 
+int memoryLoadToAddress(char *filename, void* destAddress, int length);
+
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
 extern void LogOutAccess(int address, BYTE data);
@@ -86,6 +88,7 @@ int rowcounter=0;
 int hsync_counter=207;
 int borrow=0;
 int tstates, frametstates;
+WORD tStatesCount;
 int configbyte=0;
 int setborder=0;
 int zx81_stop=0;
@@ -93,9 +96,9 @@ int LastInstruction;
 int MemotechMode=0;
 int HWidthCounter=0;
 
+BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
 BYTE font[1024];                //Allows for both non-inverted and inverted for the QS Chars Board 
-BYTE zxpfont[512];
 BYTE memhrg[1024];
 BYTE ZXKeyboard[8];
 BYTE ZX1541Mem[(8+32)*1024]; // ZX1541 has 8k EEPROM and 32k RAM
@@ -119,6 +122,7 @@ void zx81_initialise(void)
 {
         int i, romlen;
         z80_init();
+        tStatesCount = 0;
 
         directMemoryAccess = false;
         ResetLastIOAccesses();
@@ -131,16 +135,16 @@ void zx81_initialise(void)
         for(i=0;i<1024;i++) memhrg[i]=0;
 
         AnsiString romname = machine.CurRom;
+
+        // horrible cheesy hack
+        //  to prevent zxpand from interfering with - say - aszmic
+        if (romname.SubString(1,3).LowerCase() != "zx8")
+                zx81.zxpand = 0;
+
         if (zx81.zxpand)
         {
-                if (zx81.machine==MACHINEZX81)
-                {
-                        AnsiString fntname = machine.CurRom;
-                        fntname = StringReplace(fntname, ".rom", "-font.bin", TReplaceFlags() << rfIgnoreCase);
-                        font_load(fntname.c_str(),zxpfont,512);
-                }
-
-                romname = StringReplace(romname, ".rom", "-zxpand.rom", TReplaceFlags() << rfIgnoreCase);
+                AnsiString overlayName = romname.SubString(1,4) + "-zxpand.rom";
+                memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
         romlen=memory_load(romname.c_str(), 0, 65536);
         zx81.romcrc=CRC32Block(memory,romlen);
@@ -213,6 +217,8 @@ void zx81_initialise(void)
         d8251reset();
         z80_reset();
 
+        tStatesCount = 0;
+
         if (zxpand)
         {
                 delete(zxpand);
@@ -220,9 +226,7 @@ void zx81_initialise(void)
         }
         if (zx81.zxpand)
         {
-                AnsiString card = zx81.cwd;
-                card += "card.bin";
-                zxpand = new ZXpand(card.c_str());
+                zxpand = new ZXpand();
         }
 
         P3DriveMachineHasInitialised();
@@ -471,11 +475,13 @@ BYTE zx81_readbyte(int Address)
         }
 
         bool zxpandRamAccess = false;
+
         if (zx81.zxpand)
         {
-                int configData;
-                zxpand->GetConfig(configData);
-                bool configLow = ((configData & (1<<CFG_BIT_LOW)) != 0);
+                int zxpConfigData;
+                zxpand->GetConfig(zxpConfigData);
+
+                bool configLow = ((zxpConfigData & (1<<CFG_BIT_LOW)) != 0);
 
                 // ZXpand 8-16K RAM is not shadowed at 40-48K
                 zxpandRamAccess = (configLow && Address >= 0x2000 && Address < 0xA000) ||
@@ -492,7 +498,8 @@ BYTE zx81_readbyte(int Address)
         }
         else if (zx81.zxpand && zx81.machine==MACHINEZX81 && video && Address>=0x1E00 && Address<0x2000)
         {
-                data=zxpfont[Address-7680];
+                // CR  zxpand enables the ROM for character access
+                data=memory[Address];
         }
         else if ((zx81.chrgen == CHRGENQS) && (zx81.colour != COLOURCHROMA) && (Address >= 0x8400) && (Address < 0x8800))
         {
@@ -508,7 +515,22 @@ BYTE zx81_readbyte(int Address)
         }
         else if (Address <= zx81.ROMTOP)
         {
-                data=memory[Address];
+                // CR  reads from ROM whilst zxpand is disabled will return
+                // normal ROM content, else overlay ROM
+
+                if (zx81.zxpand && zx81.machine==MACHINEZX81)
+                {
+                        int zxpConfigData;
+                        zxpand->GetConfig(zxpConfigData);
+                        bool zxpandDisabled = zxpConfigData & (1<<CFG_BIT_DISABLED);
+
+                        if (!zxpandDisabled)
+                                data = zxpandROMOverlay[Address];
+                        else
+                                data=memory[Address];
+                }
+                else
+                        data=memory[Address];
         }
         else if ((Address & 0x7FFF) >= 0x4000)
         {
@@ -593,6 +615,21 @@ BYTE zx81_opcode_fetch(int Address)
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
                 data = zx81_readbyte(Address);
+
+                // The floating point hardware fix intercepts instruction opcode fetches from addresses
+                // matching %-0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
+                // The fix affects addresses $0335, $0735, $1335, $1735, $2335, $2735, $3335 and $3735,
+                // and upper locations $8335, $8735, $9335, $9735, $A335, $A735, $B335 and $B735 which
+                // can affect programs utilising the M1Not modification that allows code to run from the
+                // 32K-48K region.
+                if (((zx81.machine == MACHINEZX80) ||(zx81.machine == MACHINEZX81)) && zx81.FloatingPointHardwareFix)
+                {
+                        if ((Address & 0x4BFF) == 0x0335)
+                        {
+                                data &= 0xBF;
+                        }
+                }
+
                 noise |= data;
                 return(data);
         }
@@ -1039,6 +1076,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 HWidthCounter+=ts;
 
                 frametstates += ts;
+                tStatesCount += ts;
                 WavClockTick(ts, !HSYNC_generator);
                 if (zx81.zxprinter) ZXPrinterClockTick(ts);
                 if (spectrum.floppytype==FLOPPYZX1541) IECClockTick(ts);

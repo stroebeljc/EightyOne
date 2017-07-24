@@ -130,7 +130,8 @@ void TKeyboard::KbChange(void)
                 Keyboard->r470kb->Visible=true;
                 break;
 
-        case CRCZX81:
+        case CRCZX81_ED1:
+        case CRCZX81_ED2:
                 if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
                 else Keyboard->zx81kb->Visible=true;
                 break;

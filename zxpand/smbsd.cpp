@@ -3,11 +3,11 @@
 
 #include "integer.h"
 #include "smbsd.h"
+#include "zx81config.h"
 
 #include <stdio.h>
 #include <direct.h>
 #include <string.h>
-
 
 BYTE globalData[256];
 BYTE sectorData[512];
@@ -61,7 +61,11 @@ BYTE XFER_SPI(BYTE x)
 
 void saveEEPROM(void)
 {
-   FILE* eep = fopen("eeprom.bin","wb");
+   char file[256];
+   strcpy(file, zx81.cwd);
+   strcat(file, "NV_Memory\\zxpand-eeprom.bin");
+
+   FILE* eep = fopen(file,"wb");
    if (eep)
    {
       fwrite(eeprom, 1, 256, eep);
@@ -72,7 +76,11 @@ void saveEEPROM(void)
 
 void LoadEEPROM(void)
 {
-   FILE* eep = fopen("eeprom.bin","rb");
+   char file[256];
+   strcpy(file, zx81.cwd);
+   strcat(file, "NV_Memory\\zxpand-eeprom.bin");
+
+   FILE* eep = fopen(file,"rb");
    if (eep)
    {
       fread(eeprom, 1, 256, eep);

@@ -99,9 +99,7 @@ bool TTZXFile::EventGeneral(void)
                 if (TZXByte==TZX_BYTE_EMPTY)
                 {
                         DataLen--;
-                        TZXByte=data[0];
-                        data++;
-                        if (DataLen==-1 || (TZXByte!=0x80 && DataLen==0))
+                        if (DataLen==-1)
                         {
                                 EarState=0;
                                 TZXByte=TZX_BYTE_EMPTY;
@@ -111,6 +109,9 @@ bool TTZXFile::EventGeneral(void)
                                 EventNextBlock();
                                 return(true);
                         }
+
+                        TZXByte=data[0];
+                        data++;
                 }
         }
 

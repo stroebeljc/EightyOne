@@ -6,7 +6,7 @@ private:
         zxpand_t* _zxpand;
 
 public:
-        ZXpand(const char* cardImageFilename);
+        ZXpand();
         ~ZXpand();
 
         void Update(int millis);

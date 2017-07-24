@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <vcl.h>
 #include <fcntl.h>
 #include <io.h>
 #include <mem.h>
@@ -261,7 +261,11 @@ int load_snap(char *filename)
         if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
         {
                 f=fopen(filename,"rb");
-                if (!f) return(0);
+                if (!f)
+                {
+                        ShowMessage("Snapshot load failed.");
+                        return 0;
+                }
                 load_snap_ace(f);
         }
         else
@@ -299,7 +303,11 @@ int save_snap(char *filename)
         if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
         {
                 f=fopen(filename,"wb");
-                if (!f) return(0);
+                if (!f)
+                {
+                        ShowMessage("Save failed.");
+                        return(0);
+                }
 
                 memptr=0x2000;
                 memory[memptr]=0x01; memory[memptr+1]=0x80;
@@ -357,7 +365,7 @@ int save_snap(char *filename)
                 memory[memptr] = z80.iff2; memptr+=4;
                 memory[memptr] = z80.i; memptr+=4;
                 memory[memptr] = z80.r;
-                
+
                 Addr=0x2000;
 
                 while(Addr<32768)
@@ -387,7 +395,11 @@ int save_snap(char *filename)
         else
         {
                 f=fopen(filename,"wt");
-                if (!f) return(1);
+                if (!f)
+                {
+                        ShowMessage("Save failed.");
+                        return(0);
+                }
 
                 fprintf(f,"[CPU]\n");
                 fprintf(f,"PC %04X    SP  %04X\n", z80.pc.w,z80.sp.w);
@@ -431,6 +443,43 @@ int save_snap(char *filename)
         return(0);
 }
 
+int memoryLoadToAddress(char *filename, void* destAddress, int length)
+{
+        int fptr;
+        char file[256];
+        int len;
+
+        if (strchr(filename, '\\') || strchr(filename, '/'))
+        {
+                strcpy(file, filename);
+        }
+        else
+        {
+                strcpy(file, zx81.cwd);
+                strcat(file,"ROM\\");
+                strcat(file,filename);
+        }
+
+        fptr=open(file, O_RDONLY | O_BINARY);
+        if (fptr<1)
+        {
+                ShowMessage("ROM load failed.");
+                return(errno);
+        }
+
+        if ((len=read(fptr, destAddress, length))==-1)
+        {
+                int err=errno;
+                close(fptr);
+                ShowMessage("ROM load failed.");
+                return(err);
+        }
+
+        close(fptr);
+
+        return(len);
+}
+
 int memory_load(char *filename, int address, int length)
 {
         int fptr;
@@ -450,14 +499,17 @@ int memory_load(char *filename, int address, int length)
         }
 
         fptr=open(file, O_RDONLY | O_BINARY);
-        if (fptr<1) return(errno);
+        if (fptr<1)
+        {
+                ShowMessage("ROM load failed.");
+                return(errno);
+        }
 
         if ((len=read(fptr, memory+address, length))==-1)
         {
-                int err;
-
-                err=errno;
+                int err=errno;
                 close(fptr);
+                ShowMessage("ROM load failed.");
                 return(err);
         }
 
@@ -481,10 +533,9 @@ int font_load(char *filename, char *address, int length)
 
         if ((len=read(fptr, address, length))==-1)
         {
-                int err;
-
-                err=errno;
+                int err=errno;
                 close(fptr);
+                ShowMessage("Font load failed.");
                 return(err);
         }
 

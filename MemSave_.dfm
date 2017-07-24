@@ -1,6 +1,6 @@
 object MemSave: TMemSave
-  Left = 506
-  Top = 102
+  Left = 400
+  Top = 100
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'MemSave'

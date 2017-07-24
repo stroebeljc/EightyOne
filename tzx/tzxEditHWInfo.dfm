@@ -1,5 +1,5 @@
 object EditHWInfoForm: TEditHWInfoForm
-  Left = 518
+  Left = 418
   Top = 102
   BorderIcons = []
   BorderStyle = bsToolWindow

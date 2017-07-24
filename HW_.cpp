@@ -194,7 +194,11 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
 
         Artifacts->SelectRGBOutput((zx81.colour == COLOURCHROMA) || (zx81.colour == COLOURSPECTRA));
-        if (zx81.colour == COLOURSPECTRA) Artifacts->Visible = false;
+        if (zx81.colour == COLOURSPECTRA)
+        {
+                Form1->DisplayArt->Checked = false;
+                Artifacts->Visible = false;
+        }
         Form1->DisplayArt->Enabled = (zx81.colour != COLOURSPECTRA);
 
         zx81.chromaColourSwitchOn = (zx81.colour == COLOURCHROMA);
@@ -385,6 +389,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
         Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPEC48);
 
+        zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
+         
         zx81.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
         if (zx81.chrgen==CHRGENDK || zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
@@ -501,8 +507,12 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         machine.clockspeed=3250000;
         machine.tperscanline=207;
-        machine.scanlines=zx81.NTSC ? 262:312;
-        machine.tperframe= machine.tperscanline * machine.scanlines;
+        machine.scanlines=zx81.NTSC ? 262:310;
+        machine.tperframe = machine.tperscanline * machine.scanlines;
+        if (zx81.machine == MACHINEZX80)
+        {
+                machine.tperframe -= 3;
+        }
 
         if (zx81.machine==MACHINELAMBDA)
                 machine.tperscanline=208;
@@ -678,7 +688,6 @@ void __fastcall THW::OKClick(TObject *Sender)
         SymbolBrowser->RefreshContent();
 
         file = zx81.cwd;
-        if (file[file.Length()] != '\\') file += "\\";
         file += "ROM\\";
         file += machine.CurRom;
         file += ".cset.bmp";
@@ -718,6 +727,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         InitPatches(NewMachine);
 
         if (Sender) Close();
+
+        if (Dbg->Visible) Dbg->UpdateVals();
 }
 //---------------------------------------------------------------------------
 
@@ -748,7 +759,7 @@ void THW::SetupForZX81(void)
         SpecSEBtn->Down=false;
         QLBtn->Down=false;
 
-        ZXpand->Enabled=true;
+        FloatingPointHardwareFix->Enabled = false;
 
         EnableRomCartridgeOption(true);
 
@@ -862,6 +873,7 @@ void THW::SetupForSpectrum(void)
         SpecSEBtn->Down=false;
         QLBtn->Down=false;
 
+        FloatingPointHardwareFix->Enabled = false;
         ZXpand->Enabled=false;
 
         ResetRequired=true;
@@ -958,6 +970,7 @@ void THW::SetupForQL(void)
         AnsiString OldIDE;
         int i;
 
+        FloatingPointHardwareFix->Enabled = false;
         ZXpand->Enabled=false;
 
         EnableRomCartridgeOption(false);
@@ -1070,11 +1083,13 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
 {
         if (ZX80Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=true;
         ZX80Btn->Down=true;
         NewMachine=MACHINEZX80;
         NewMachineName=ZX80Btn->Caption;
         RomBox->Text = zx81.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        FloatingPointHardwareFix->Enabled = true;
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
 }
@@ -1084,11 +1099,13 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
 {
         //if (ZX81Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=true;
         ZX81Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=ZX81Btn->Caption;
         RomBox->Text = zx81.ROM81;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        FloatingPointHardwareFix->Enabled = true;
         NTSC->Checked=false;
         IDEBoxChange(NULL);
 }
@@ -1238,6 +1255,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
 {
         if (TS1000Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=false;
         TS1000Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=TS1000Btn->Caption;
@@ -1253,6 +1271,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
 {
         if (TS1500Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=false;
         TS1500Btn->Down=true;
         NewMachine=MACHINETS1500;
         NewMachineName=TS1500Btn->Caption;
@@ -1268,6 +1287,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
 {
         if (LambdaBtn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=false;
         LambdaBtn->Down=true;
         NewMachine=MACHINELAMBDA;
         NewMachineName=LambdaBtn->Caption;
@@ -1298,6 +1318,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
 {
         if (R470Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=false;
         R470Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=R470Btn->Caption;
@@ -1321,6 +1342,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
 {
         if (TK85Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=false;
         TK85Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=TK85Btn->Caption;
@@ -1386,17 +1408,29 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
-        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down
-                || Spec48Btn->Down || Spec128Btn->Down || QLBtn->Down)
-                        Machine->ActivePage=Sinclair;
+        FloatingPointHardwareFix->Enabled = false;
+
+        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || Spec128Btn->Down || QLBtn->Down)
+        {
+                Machine->ActivePage=Sinclair;
+                FloatingPointHardwareFix->Enabled = ZX81Btn->Down;
+        }
         else if (SpecP2Btn->Down || SpecP2aBtn->Down || SpecP3Btn->Down)
-                        Machine->ActivePage=Amstrad;
-        else if (TS1000Btn->Down || TS1500Btn->Down
-                || TC2048Btn->Down || TS2068Btn->Down)
-                        Machine->ActivePage=Timex;
+        {
+                Machine->ActivePage=Amstrad;
+        }
+        else if (TS1000Btn->Down || TS1500Btn->Down  || TC2048Btn->Down || TS2068Btn->Down)
+        {
+                Machine->ActivePage=Timex;
+        }
         else if (ZX97LEBtn->Down || SpecSEBtn->Down)
-                        Machine->ActivePage=HomeBrew;
-        else            Machine->ActivePage=Others;
+        {
+                Machine->ActivePage=HomeBrew;
+        }
+        else
+        {
+                Machine->ActivePage=Others;
+        }
 
         ResetRequired=false;
 }
@@ -1488,6 +1522,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         ini->WriteInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);
         ini->WriteInteger("HWARE","HDRIVE",IDEBox->ItemIndex);
+        ini->WriteBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
 
         Rom=zx81.ROM80; ini->WriteString("HWARE","ROM80",Rom);
         Rom=zx81.ROM81; ini->WriteString("HWARE","ROM81",Rom);
@@ -1512,7 +1547,7 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=zx81.ROMQL; ini->WriteString("HWARE","ROMQL",Rom);
 
         strcpy(FileName,zx81.cwd);
-        strcat(FileName,"nvram\\divide.nv");
+        strcat(FileName,"NV_Memory\\divide.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -1522,9 +1557,7 @@ void THW::SaveSettings(TIniFile *ini)
         }
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\')
-                FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\nvram\\zxcf.nv");
+        strcat(FileName,"NV_Memory\\zxcf.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -1534,9 +1567,7 @@ void THW::SaveSettings(TIniFile *ini)
         }
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\')
-                FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\nvram\\zx1541.nv");
+        strcat(FileName,"NV_Memory\\zx1541.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -1663,6 +1694,7 @@ void THW::LoadSettings(TIniFile *ini)
         WriteProtect->Checked=ini->ReadBool("HWARE","divIDEWP",WriteProtect->Checked);
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
+        FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
 
         Upload->Checked=ini->ReadBool("HWARE","ZXCFWP",Upload->Checked);
         ZXCFRAM->ItemIndex=ini->ReadInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);
@@ -1673,9 +1705,7 @@ void THW::LoadSettings(TIniFile *ini)
         uSpeech->Checked=ini->ReadBool("HWARE","uSpeech",uSpeech->Checked);
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\')
-                FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\nvram\\zxcf.nv");
+        strcat(FileName,"NV_Memory\\zxcf.nv");
 
         f=fopen(FileName,"rb");
         if (f)
@@ -1685,9 +1715,7 @@ void THW::LoadSettings(TIniFile *ini)
         }
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\')
-                FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\nvram\\divide.nv");
+        strcat(FileName,"NV_Memory\\divide.nv");
 
         f=fopen(FileName,"rb");
         if (f)
@@ -1697,9 +1725,7 @@ void THW::LoadSettings(TIniFile *ini)
         }
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\')
-                FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\nvram\\zx1541.nv");
+        strcat(FileName,"NV_Memory\\zx1541.nv");
 
         f=fopen(FileName,"rb");
         if (f)
@@ -1707,21 +1733,6 @@ void THW::LoadSettings(TIniFile *ini)
                 fread(ZX1541Mem, 1, 8192, f);
                 fclose(f);
         }
-
-        //else
-        //{
-        //        strcpy(FileName,zx81.cwd);
-        //        if (FileName[strlen(FileName)-1]=='\\')
-        //                FileName[strlen(FileName)-1]='\0';
-        //        strcat(FileName,"\\ROM\\divide.rom");
-        //
-        //        if ((f=fopen(FileName,"rb")))
-        //        {
-        //                fread(divIDEMem, 64, 16384, f);
-        //                fclose(f);
-        //        }
-        //}
-
 }
 
 void __fastcall THW::BrowseROMClick(TObject *Sender)
@@ -1729,7 +1740,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         AnsiString Path;
         char cPath[512];
 
-        Path= zx81.cwd;
+        Path = zx81.cwd;
         Path += "ROM";
 
         RomSelect->InitialDir = Path;
@@ -2122,6 +2133,12 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
 //---------------------------------------------------------------------------
 
 void __fastcall THW::ColourBoxChange(TObject *Sender)
+{
+        ResetRequired=true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         ResetRequired=true;
 }

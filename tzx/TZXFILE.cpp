@@ -129,7 +129,7 @@ void TTZXFile::EraseAll(void)
 void TTZXFile::NewTZX(void)
 {
         EraseAll();
-        AddTextBlock("Created with EightyOneTZX");
+        AddTextBlock("Created using the EightyOne emulator");
         //AddHWTypeBlock(0x00, 0x0c);
         CurBlock=1;
         AutoStart=true;

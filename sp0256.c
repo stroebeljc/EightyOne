@@ -21,8 +21,7 @@ void SP0256_Init(void)
         Phones=NULL;
 
         strcpy(FileName,zx81.cwd);
-        if (FileName[strlen(FileName)-1]=='\\') FileName[strlen(FileName)-1]='\0';
-        strcat(FileName,"\\rom\\sp0256.bin");
+        strcat(FileName,"ROM\\sp0256.bin");
 
         f=fopen(FileName,"rb");
         if (!f) return;

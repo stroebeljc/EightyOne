@@ -715,6 +715,24 @@ bool TTZXFile::LoadPFile(AnsiString FileName, bool Insert)
 
 bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)
 {
+        // T81 Format:
+        // 4 bytes ASCII  - "EO81"
+        //
+        // Program block:
+        // 32 bytes ASCII - Filename padded with '\0'
+        // 16 bytes ASCII - Length of bytes that follow as decimal string padded with '\0'
+        // ZX81 Filename  - EighyOne assumes absent if first byte is 0, 1 or 255, i.e. must be start of the program itself
+        // ZX80/1 Program - Equivalent to .O/.P file data
+        //
+        // Pause block:
+        // 32 bytes ASCII - "<Silence>" padded with '\0'
+        // 16 bytes ASCII - Length of silence as decimal string padded with '\0'
+        //
+        // Custom block:
+        // 32 bytes ASCII - "<...>" padded with '\0'
+        // 16 bytes ASCII - Length of bytes that follow as a decimal string padded with '\0'
+        // n bytes        - Application specific data
+
         char header[5];
         char fname[33], flen[17];
         unsigned char buffer1[65536+256], buffer2[65535+256];
@@ -744,10 +762,22 @@ bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)
 
                 length = atoi(flen);
 
-                if ( (strlen(fname)>32) || (length < 20) || (length > 65535) )
+                int fnameLen = strlen(fname);
+                if ( (fnameLen>32) || (length < 1) || (length > 65535) )
                         break;
 
-                if (!strcmp(fname,"<Silence>")) MoveBlock(AddPauseBlock(length), CurBlock++);
+                if ((fname[0] == '<') && fname[fnameLen - 1] == '>')
+                {
+                        if (!strcmp(fname,"<Silence>"))
+                        {
+                                MoveBlock(AddPauseBlock(length), CurBlock++);
+                        }
+                        else
+                        {
+                                // Skip over the unhandled block
+                                fread(buffer1, length, 1, fptr);
+                        }
+                }
                 else
                 {
                         fread(buffer1, length, 1, fptr);

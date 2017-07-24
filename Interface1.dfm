@@ -1,5 +1,5 @@
 object IF1: TIF1
-  Left = 1155
+  Left = 500
   Top = 141
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow

@@ -26,6 +26,7 @@
 
 #include "SoundOP.h"
 #include "main_.h"
+#include "zx81config.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -65,6 +66,11 @@ __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
         rect.Top=0; rect.Left=0;
         rect.Right=Image1->Width; rect.Bottom=Image1->Height;
         //ClearImage();
+
+        TIniFile *ini;
+        ini = new TIniFile(zx81.inipath);
+        LoadSettings(ini);
+        delete ini;
 }
 //---------------------------------------------------------------------------
 
@@ -81,4 +87,7 @@ void __fastcall TSoundOutput::FormClose(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-
+void TSoundOutput::LoadSettings(TIniFile *ini)
+{
+        if (Form1->SoundOutput1->Checked) Show();
+}

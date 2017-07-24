@@ -68,6 +68,9 @@
 #include "SymBrowse.h"
 #include "Spectra\Spectra.h"
 #include "Chroma\Chroma.h"
+#include "MemoryWindow.h"
+#include "Hist.h"
+#include "MakeHDF.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -125,7 +128,10 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 
         strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (zx81.cwd[strlen(zx81.cwd)-1]!='\\')
+        {
                 zx81.cwd[strlen(zx81.cwd)-1]='\\';
+                zx81.cwd[strlen(zx81.cwd)]='\0';
+        }
 
         strcpy(TEMP1, zx81.cwd);
         GetTempPath(256, zx81.temppath);
@@ -226,7 +232,8 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         Application->OnMessage = AppMessage;
 
         nosound=true;
-        strcpy(soundfile,zx81.cwd); strcat(soundfile,"nosound");
+        strcpy(soundfile,zx81.cwd);
+        strcat(soundfile,"nosound");
         if (access(soundfile,0)) nosound=false;
 
         ATA_Init();
@@ -594,6 +601,8 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         zx81_stop=1;
         z80_reset();
         sound_ay_reset();
+        InitialiseChroma();
+        DisableSpectra();
         if (machine.reset) machine.reset();
         zx81_stop=initialStopState;
         DebugUpdate();
@@ -1093,6 +1102,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         KeyboardMap1->Checked = ini->ReadBool("MAIN", "KeyMap", KeyboardMap1->Checked);
         TZXMan->Checked = ini->ReadBool("MAIN", "TZXManager", TZXMan->Checked);
         DiskDrives1->Checked=ini->ReadBool("MAIN", "DiskDrives", DiskDrives1->Checked);
+        SoundOutput1->Checked = ini->ReadBool("MAIN", "SoundOutput", SoundOutput1->Checked);
 
         InWaveLoader->Checked = ini->ReadBool("MAIN", "InWave", InWaveLoader->Checked);
         InTZXManager->Checked = ini->ReadBool("MAIN", "InTZX", InTZXManager->Checked);
@@ -1112,6 +1122,8 @@ void TForm1::LoadSettings(TIniFile *ini)
 
         SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+
+        EnableSplashScreen->Checked = ini->ReadBool("MAIN", "ShowSplash", EnableSplashScreen->Checked);
 
         if (None1->Checked) { zx81.bordersize=BORDERNONE; None1Click(NULL); }
         if (Small1->Checked) { zx81.bordersize=BORDERSMALL; Small1Click(NULL); }
@@ -1180,6 +1192,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "WavLoadBtn", WavLoadBtn->Checked);
         ini->WriteBool("MAIN", "TZXManager", TZXMan->Checked);
         ini->WriteBool("MAIN", "DiskDrives", DiskDrives1->Checked);
+        ini->WriteBool("MAIN", "SoundOutput", SoundOutput1->Checked);
 
         ini->WriteBool("MAIN", "KeyMap", KeyboardMap1->Checked);
         ini->WriteString("MAIN","LoadFile",OpenTape1->FileName);
@@ -1187,6 +1200,8 @@ void TForm1::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+
+        ini->WriteBool("MAIN", "ShowSplash", EnableSplashScreen->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);
@@ -1265,7 +1280,7 @@ void __fastcall TForm1::OutAudioOutClick(TObject *Sender)
 void __fastcall TForm1::SoundOutput1Click(TObject *Sender)
 {
         SoundOutput1->Checked = !SoundOutput1->Checked;
-   if (SoundOutput1->Checked) SoundOutput->Show();
+        if (SoundOutput1->Checked) SoundOutput->Show();
         else SoundOutput->Close();
 
 }
@@ -1537,7 +1552,7 @@ void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
 {
         AnsiString Path, Ext;
 
-        Path= zx81.cwd;
+        Path = zx81.cwd;
         Path += "Dock";
 
         OpenDock->InitialDir = Path;
@@ -1759,6 +1774,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         HW->OKClick(NULL);
         IF1->LoadSettings(ini);
         P3Drive->LoadSettings(ini);
+        SoundOutput->LoadSettings(ini);
 
         HardReset1Click(NULL);
 
@@ -1877,6 +1893,59 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
         {
                 DisableChroma();
         }
+}
+//---------------------------------------------------------------------------
+
+void MoveWindow(TForm* form, int& x, int& y)
+{
+        form->Left = x;
+        form->Top = y;
+        form->BringToFront();
+
+        if (form->Visible)
+        {
+                x += 20;
+                y += 20;
+        }
+}
+
+void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
+{
+        int l = 0;
+        int t = 0;
+        MoveWindow(this, l, t);
+        l = (this->Width / 2);
+        t = (this->Height / 2);
+        MoveWindow(Dbg, l, t);
+        MoveWindow(MemoryWindow, l, t);
+        MoveWindow(SymbolBrowser, l, t);
+        MoveWindow(SoundOutput, l, t);
+        MoveWindow(TZX, l, t);
+        MoveWindow(WavLoad, l, t);
+        MoveWindow(Speed, l, t);
+        MoveWindow(Artifacts, l, t);
+        MoveWindow(Keyboard, l, t);
+        MoveWindow(FSSettings, l, t);
+        MoveWindow(Printer, l, t);
+        MoveWindow(MidiForm, l, t);
+        MoveWindow(MemSave, l, t);
+        MoveWindow(SerialConfig, l, t);
+        MoveWindow(IF1, l, t);
+        MoveWindow(HistoryBox, l, t);
+        MoveWindow(ZX97Dialog, l, t);
+        MoveWindow(ParallelPort, l, t);
+        MoveWindow(Kb, l, t);
+        MoveWindow(ZipFile, l, t);
+        MoveWindow(P3Drive, l, t);
+        MoveWindow(CreateHDF, l, t);
+        MoveWindow(HW, l, t);
+        MoveWindow(Debug68k, l, t);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::EnableSplashScreenClick(TObject *Sender)
+{
+        EnableSplashScreen->Checked = !EnableSplashScreen->Checked;
 }
 //---------------------------------------------------------------------------
 

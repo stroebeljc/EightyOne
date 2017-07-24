@@ -21,14 +21,35 @@
 
 #include "symbolstore.h"
 
+static bool readFromMemory;
+static int instructionAddress;
+static BYTE* instructionBytesBuffer;
+
 BYTE GetMem(int Addr)
 {
-        if (zx81.machine==MACHINESPEC48
-                || zx81.machine==MACHINEACE
-                || Addr<zx81.m1not)
-                return(getbyte(Addr));
+	BYTE byteVal;
+
+        if (zx81.machine==MACHINESPEC48 || zx81.machine==MACHINEACE || Addr<zx81.m1not)
+	{
+                byteVal = readFromMemory ? getbyte(Addr) : instructionBytesBuffer[Addr - instructionAddress];
+	}
         else
-                return(getbyte(Addr&32767));
+        {
+	        if (readFromMemory)
+		{
+		        byteVal = getbyte(Addr&32767);
+			if ((byteVal & 0x40) != 0x40)
+			{
+			        byteVal = 0x00;		// All character codes are replaced by NOPs
+                        }
+		}
+		else
+		{
+			byteVal = instructionBytesBuffer[Addr - instructionAddress];
+		}
+        }
+
+	return byteVal;
 }
 
 // #define GetMem(Addr) (memory[(Addr)&32767])
@@ -45,8 +66,23 @@ AnsiString TDbg::StrRep(AnsiString Text, int Pos, int Len, AnsiString NewText)
 }
 
 
+AnsiString TDbg::Disassemble(int addr, BYTE* bytes)
+{
+	readFromMemory = false;
+	instructionAddress = addr;
+	instructionBytesBuffer = bytes;
+
+	return DisassembleAddress(&addr);
+}
 
 AnsiString TDbg::Disassemble(int *Ad)
+{
+	readFromMemory = true;
+
+	return DisassembleAddress(Ad);
+}
+
+AnsiString TDbg::DisassembleAddress(int* Ad)
 {
         int Addr = *Ad;
         int Opcode;

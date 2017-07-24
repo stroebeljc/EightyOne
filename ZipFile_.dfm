@@ -1,5 +1,5 @@
 object ZipFile: TZipFile
-  Left = 632
+  Left = 432
   Top = 113
   Width = 192
   Height = 248

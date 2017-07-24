@@ -12,14 +12,14 @@
 
 extern void SetRoot(const char*);
 
-ZXpand::ZXpand(const char* fn)
+ZXpand::ZXpand()
 {
    try
    {
       _zxpand = new zxpand_t;
       _zxpand->power_on_reset();
 
-      SetRoot("MMC_CARD");
+      SetRoot("ZXpand_SD_Card");
 
       LoadEEPROM();
       configByte = eeprom[4];

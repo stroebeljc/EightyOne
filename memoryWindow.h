@@ -11,7 +11,9 @@
 #include <Grids.hpp>
 #include <ExtCtrls.hpp>
 #include <Menus.hpp>
+#include "OffBtn.hpp"
 #include <set>
+#include <vector>
 //---------------------------------------------------------------------------
 
 static const int SBARWIDTH = 24;
@@ -20,7 +22,11 @@ class RowRenderer
 {
 public:
         RowRenderer() :
-                mBytesPerCell(1)
+                mLMargin(0),
+                mKern(0),
+                mCellWidth(1),
+                mBytesPerCell(1),
+                mDisplayCellsPerRow(1)
         {};
 
         virtual ~RowRenderer(){};
@@ -28,12 +34,14 @@ public:
         virtual void RenderRow(void) = 0;
         virtual void SetGeometry(int, TSize&) = 0;
 
-        bool ByteAtX(const int, int&);
+        virtual bool ByteAtX(const int, int&);
+        void RenderColumnHeadings(const TSize& charSize);
+        int BytesPerCell() { return mBytesPerCell; };
 
         // in
         std::set<int>::iterator mDirty;
         std::set<int>::iterator mLast;
-        int mAddress, mY;
+        int mAddress, mY, mSelectedAddress;
         HDC mCHDC;
 
         // out
@@ -41,15 +49,21 @@ public:
 
 protected:
         void SetGeometry(int, const TSize&, int);
-
-        void ChooseTextColour(void);
-        void AddressOut(void);
+        void ChooseTextColour();
+        void AddressOut();
+        void SetCharacterBackgroundColour(int xpos, int ypos, COLORREF paper, COLORREF ink);
 
         int mLMargin, mKern;
         int mCellWidth, mBytesPerCell;
 };
 
 class ByteRowRenderer : public RowRenderer
+{
+public:
+        virtual void RenderRow(void);
+        virtual void SetGeometry(int, TSize&);
+};
+class DecimalRowRenderer : public RowRenderer
 {
 public:
         virtual void RenderRow(void);
@@ -72,6 +86,7 @@ class TraditionalRowRenderer : public RowRenderer
 public:
         virtual void RenderRow(void);
         virtual void SetGeometry(int, TSize&);
+        virtual bool ByteAtX(const int, int&);
 };
 
 
@@ -91,6 +106,9 @@ __published:	// IDE-managed Components
         TButton *ButtonNextChange;
         TButton *ButtonLastChange;
         TMenuItem *ViewBinary1;
+        TUpDown *IncDecAddress;
+        TMenuItem *ViewDecimal1;
+        TMenuItem *Search1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall ScrollBar1Change(TObject *Sender);
@@ -109,6 +127,11 @@ __published:	// IDE-managed Components
         void __fastcall ButtonFirstChangeClick(TObject *Sender);
         void __fastcall ButtonNextChangeClick(TObject *Sender);
         void __fastcall ButtonLastChangeClick(TObject *Sender);
+        void __fastcall IncDecAddressChangingEx(TObject *Sender,
+          bool &AllowChange, short NewValue, TUpDownDirection Direction);
+        void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+        void __fastcall Search1Click(TObject *Sender);
 
 private:
        void __fastcall OnEraseBkgnd (TMessage msg);
@@ -121,10 +144,12 @@ private:
         bool __fastcall xyToAddress(int xIn, int yIn, int& address);
 
         void __fastcall SetSBButtonPosition(TButton* btn, int idx);
+		void __fastcall GlueButtonsToStatusBar();
 
         int mRows;
         int mBaseAddress;
-
+        bool ignoreScrollChange;
+        
         HWND mHWND;
         HBITMAP mOffscreenBitmap;
 
@@ -133,9 +158,17 @@ private:
 
         int mViewMode;
         TSize mCharSize;
+        int mHeadingHeight;
         RowRenderer* mRowRenderer;
 
+        int mSelectedAddress;
+        AnsiString mSearchText;
+
         void CreateBitmap(void);
+        bool FindSequence(std::vector<int>& bytes, int& addr);
+        bool FindMatch(int& addr, std::vector<int>& bytes);
+        void DoSearch();
+        void PerformSearch(std::vector<int>& bytes);
 
 public:		// User declarations
         __fastcall TMemoryWindow(TComponent* Owner);
@@ -143,7 +176,7 @@ public:		// User declarations
 
         __property int BaseAddress  = { write=SetBaseAddress };
 
-        enum { MWVM_BYTE, MWVM_WORD, MWVM_BINARY, MWVM_TRADITIONAL };
+        enum { MWVM_BYTE, MWVM_WORD, MWVM_BINARY, MWVM_DECIMAL, MWVM_TRADITIONAL };
 
         void __fastcall SetViewMode(int value);
 

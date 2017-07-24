@@ -1,5 +1,5 @@
 object P3Drive: TP3Drive
-  Left = 643
+  Left = 443
   Top = 43
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow

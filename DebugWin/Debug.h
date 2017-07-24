@@ -35,15 +35,17 @@
 
 enum
 {
-        BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT
+        BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT, BP_TSTATES
 };
 
 struct breakpoint
 {
         int Addr;
         bool Permanent;
-
-        // one of BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT
+        int Count;
+        int Condition;
+        
+        // one of BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT, BP_STATES
         int Type;
 };
 
@@ -222,6 +224,11 @@ __published:	// IDE-managed Components
         TLabel *Label25;
         TLabel *Label26;
         TLabel *Label30;
+        TLabel *Disass10;
+        TLabel *Disass11;
+        TButton *TStatesBrkBtn;
+        TLabel *Label31;
+        TLabel *TStatesCount;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -287,6 +294,9 @@ __published:	// IDE-managed Components
         void __fastcall ReadBrkBtnClick(TObject *Sender);
         void __fastcall OutBrkBtnClick(TObject *Sender);
         void __fastcall InBrkBtnClick(TObject *Sender);
+        void __fastcall TStatesBrkBtnClick(TObject *Sender);
+        void __fastcall BPListSelectCell(TObject *Sender, int ACol,
+          int ARow, bool &CanSelect);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);
@@ -307,6 +317,7 @@ private:	// User declarations
         void __fastcall DoEditReg(WORD&);
         void __fastcall DoEditReg(BYTE&);
 
+        void PopulateHistoryWindow();
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
@@ -314,16 +325,26 @@ public:		// User declarations
         void UpdateVals(void);
         bool DoNext;
 
+        bool TStatesBreakPointHit(int Addr);
         bool ExecBreakPointHit(int Addr);
         bool MemoryReadHit(int Addr);
         bool MemoryWriteHit(int Addr);
         bool PortInHit(int Addr);
         bool PortOutHit(int Addr);
 
-        bool AddBreakPoint(int Addr, bool Perm, int type);
+        enum BreakpointConditionType
+        {
+                LessThan = 0,
+                Equal = 1,
+                GreaterThan = 2
+        };
+
+        bool AddBreakPoint(int Addr, bool Perm, int type, BreakpointConditionType Condition = Equal, int Count = 1);
         void DelBreakPoint(int Addr);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
+        AnsiString DisassembleAddress(int* Ad);
+        AnsiString Disassemble(int addr, BYTE* bytes);
         AnsiString Disassemble(int *Ad);
         AnsiString Hex16(int value);
         AnsiString Hex8(int value);
@@ -331,7 +352,10 @@ public:		// User declarations
         int Hex2Dec(AnsiString num);
 
         LastIOAccess lastIOAccess[4];
-        int lastPortInAddr, lastPortOutAddr;     
+        int lastPortInAddr, lastPortOutAddr;
+
+        void ReloadHistoryWindow();
+        void ClearHistoryWindow();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

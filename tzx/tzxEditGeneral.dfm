@@ -1,7 +1,7 @@
 object EditGeneralForm: TEditGeneralForm
-  Left = 474
-  Top = 53
-  Width = 640
+  Left = 608
+  Top = 34
+  Width = 647
   Height = 663
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
@@ -20,14 +20,14 @@ object EditGeneralForm: TEditGeneralForm
   object Label4: TLabel
     Left = 143
     Top = 7
-    Width = 138
+    Width = 116
     Height = 13
     Caption = 'Pilot/Sync Symbol Table'
   end
   object Label5: TLabel
     Left = 143
     Top = 103
-    Width = 114
+    Width = 90
     Height = 13
     Caption = 'Data Symbol Table'
   end
@@ -42,14 +42,14 @@ object EditGeneralForm: TEditGeneralForm
   object Label8: TLabel
     Left = 7
     Top = 207
-    Width = 34
+    Width = 23
     Height = 13
     Caption = 'Data'
   end
   object Label9: TLabel
     Left = 295
     Top = 604
-    Width = 74
+    Width = 68
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Character Set:'
@@ -57,14 +57,14 @@ object EditGeneralForm: TEditGeneralForm
   object Label1: TLabel
     Left = 7
     Top = 7
-    Width = 98
+    Width = 75
     Height = 13
     Caption = 'Pilot/Sync Data'
   end
   object SymDefP: TMemo
     Left = 143
     Top = 23
-    Width = 479
+    Width = 486
     Height = 73
     Anchors = [akLeft, akTop, akRight]
     Lines.Strings = (
@@ -76,7 +76,7 @@ object EditGeneralForm: TEditGeneralForm
   object SymDefD: TMemo
     Left = 143
     Top = 119
-    Width = 479
+    Width = 486
     Height = 81
     Anchors = [akLeft, akTop, akRight]
     Lines.Strings = (
@@ -95,7 +95,7 @@ object EditGeneralForm: TEditGeneralForm
     Text = 'Pause'
   end
   object OK: TButton
-    Left = 551
+    Left = 550
     Top = 597
     Width = 74
     Height = 25
@@ -108,7 +108,7 @@ object EditGeneralForm: TEditGeneralForm
   object Data: TMemo
     Left = 7
     Top = 223
-    Width = 616
+    Width = 623
     Height = 362
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
@@ -152,7 +152,12 @@ object EditGeneralForm: TEditGeneralForm
     Top = 597
     Width = 75
     Height = 25
-    Caption = 'Button1'
+    Caption = 'Save P'
     TabOrder = 7
+    OnClick = Button1Click
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 200
+    Top = 592
   end
 end

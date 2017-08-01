@@ -37,17 +37,19 @@ TEditGeneralForm *EditGeneralForm;
 __fastcall TEditGeneralForm::TEditGeneralForm(TComponent* Owner)
         : TForm(Owner)
 {
+        Button1->Visible = zx81.machine == MACHINEZX81;
 }
 //---------------------------------------------------------------------------
 void __fastcall TEditGeneralForm::OKClick(TObject *Sender)
 {
         Close();
 }
+
+unsigned char ZXCharSet[]=" ..........\"£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
+
 //---------------------------------------------------------------------------
 void TEditGeneralForm::DecodeData(int BlockNo)
 {
-
-        unsigned char ZXCharSet[]=" ..........\"£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
         unsigned char c;
 
         AnsiString text1, text2;
@@ -135,8 +137,7 @@ void TEditGeneralForm::DecodeData(int BlockNo)
 
         PRLE->Lines->Text=text1;
 
-        int nx = 0;
-        byte pbuffer[65536];
+        nx = 0;
 
         text1="0000: ";
         text2=": ";
@@ -182,20 +183,6 @@ void TEditGeneralForm::DecodeData(int BlockNo)
                 text1 += text2;
         }
 
-        byte *px = pbuffer;
-        AnsiString fn;
-        while(1)
-        {
-                fn += (char)ZXCharSet[(*px) & 127];
-                if (*px > 128) break;
-                ++px;
-        }
-        FILE* pee = fopen((fn+".p").c_str(), "wb");
-        if (pee)
-        {
-                fwrite(pbuffer, 1, nx, pee);
-                fclose(pee);
-        }
 
         Data->Lines->Text = text1;
 }
@@ -227,4 +214,34 @@ void __fastcall TEditGeneralForm::CharSetChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TEditGeneralForm::Button1Click(TObject *Sender)
+{
+        byte *px = pbuffer;
+        AnsiString fn;
+        // extract the original filename from the first few bytes of the tape
+        while(1)
+        {
+                fn += (char)ZXCharSet[(*px) & 127];
+                if (*px > 128) break;
+                ++px;
+        }
+
+        SaveDialog1->FileName = fn + ".p";
+        if (SaveDialog1->Execute())
+        {
+                AnsiString fulfn = SaveDialog1->FileName;
+                FILE* pee = fopen(fulfn.c_str(), "wb");
+                if (pee)
+                {
+                        fwrite(pbuffer, 1, nx, pee);
+                        fclose(pee);
+                }
+                else
+                {
+                        ShowMessage("P file saving failed: '"+fulfn+"'");
+                }
+        }
+}
+//---------------------------------------------------------------------------
 

@@ -63,6 +63,8 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length);
 
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
+extern AnsiString getMachineRoot(AnsiString fullRomName);
+
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
 extern void ResetLastIOAccesses();
@@ -143,8 +145,8 @@ void zx81_initialise(void)
 
         if (zx81.zxpand)
         {
-                AnsiString shortRom = romname.SubString(1,4);
-                AnsiString overlayName = shortRom + ".zxpand.rom";
+                AnsiString romRoot = getMachineRoot(romname);
+                AnsiString overlayName = romRoot + ".zxpand.rom";
                 memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
         romlen=memory_load(romname.c_str(), 0, 65536);

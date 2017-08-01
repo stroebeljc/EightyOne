@@ -2,7 +2,7 @@ object EditGeneralForm: TEditGeneralForm
   Left = 474
   Top = 53
   Width = 640
-  Height = 664
+  Height = 663
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = 'Edit General Data Block'
@@ -20,20 +20,20 @@ object EditGeneralForm: TEditGeneralForm
   object Label4: TLabel
     Left = 143
     Top = 7
-    Width = 116
+    Width = 138
     Height = 13
     Caption = 'Pilot/Sync Symbol Table'
   end
   object Label5: TLabel
     Left = 143
     Top = 103
-    Width = 90
+    Width = 114
     Height = 13
     Caption = 'Data Symbol Table'
   end
   object Label7: TLabel
     Left = 6
-    Top = 605
+    Top = 604
     Width = 33
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -42,14 +42,14 @@ object EditGeneralForm: TEditGeneralForm
   object Label8: TLabel
     Left = 7
     Top = 207
-    Width = 23
+    Width = 34
     Height = 13
     Caption = 'Data'
   end
   object Label9: TLabel
     Left = 295
-    Top = 605
-    Width = 68
+    Top = 604
+    Width = 74
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Character Set:'
@@ -57,7 +57,7 @@ object EditGeneralForm: TEditGeneralForm
   object Label1: TLabel
     Left = 7
     Top = 7
-    Width = 75
+    Width = 98
     Height = 13
     Caption = 'Pilot/Sync Data'
   end
@@ -87,7 +87,7 @@ object EditGeneralForm: TEditGeneralForm
   end
   object Pause: TEdit
     Left = 46
-    Top = 601
+    Top = 600
     Width = 144
     Height = 21
     Anchors = [akLeft, akBottom]
@@ -96,7 +96,7 @@ object EditGeneralForm: TEditGeneralForm
   end
   object OK: TButton
     Left = 551
-    Top = 598
+    Top = 597
     Width = 74
     Height = 25
     Anchors = [akRight, akBottom]
@@ -109,7 +109,7 @@ object EditGeneralForm: TEditGeneralForm
     Left = 7
     Top = 223
     Width = 616
-    Height = 363
+    Height = 362
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -125,7 +125,7 @@ object EditGeneralForm: TEditGeneralForm
   end
   object CharSet: TComboBox
     Left = 369
-    Top = 601
+    Top = 600
     Width = 88
     Height = 21
     Style = csDropDownList

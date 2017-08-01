@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 240
   Top = 153
   Width = 331
-  Height = 318
+  Height = 203
   Caption = 'EightyOne'
   Color = clBtnFace
   Constraints.MinHeight = 128
@@ -27,8 +27,8 @@ object Form1: TForm1
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 241
-    Width = 315
+    Top = 130
+    Width = 323
     Height = 19
     Panels = <
       item

@@ -249,10 +249,6 @@ bool TDbg::AddBreakPoint(int Addr, bool Perm, int Type, BreakpointConditionType 
         {
                 str = t + c + "$" + Hex16(Addr) + " T=" + Count;
         }
-        else if (t == "t")
-        {
-                str = t + " $" + Hex16(Addr) + " T=" + Count;
-        }
         else
         {
                 str = t + c + "$" + Hex16(Addr);

@@ -147,7 +147,6 @@ void zx81_initialise(void)
                 AnsiString overlayName = shortRom + ".zxpand.rom";
                 memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
         }
-
         romlen=memory_load(romname.c_str(), 0, 65536);
         zx81.romcrc=CRC32Block(memory,romlen);
 

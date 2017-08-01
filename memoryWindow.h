@@ -145,6 +145,7 @@ private:
 
         void __fastcall SetSBButtonPosition(TButton* btn, int idx);
 		void __fastcall GlueButtonsToStatusBar();
+
         int mRows;
         int mBaseAddress;
         bool ignoreScrollChange;

@@ -1043,7 +1043,10 @@ object Dbg: TDbg
     object OutBrkBtn: TButton
       Left = 125
       Top = 133
+      Width = 53
+      Height = 25
       Caption = 'Out'
+      TabOrder = 5
       OnClick = OutBrkBtnClick
     end
     object InBrkBtn: TButton

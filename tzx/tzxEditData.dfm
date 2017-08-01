@@ -2,7 +2,7 @@ object EditDataForm: TEditDataForm
   Left = 305
   Top = 172
   Width = 632
-  Height = 450
+  Height = 322
   BorderIcons = []
   BorderStyle = bsSizeToolWin
   Caption = 'Edit Data Block'
@@ -83,7 +83,7 @@ object EditDataForm: TEditDataForm
   end
   object Label10: TLabel
     Left = 8
-    Top = 391
+    Top = 263
     Width = 68
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -123,7 +123,7 @@ object EditDataForm: TEditDataForm
   end
   object OK: TButton
     Left = 544
-    Top = 384
+    Top = 256
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -136,7 +136,7 @@ object EditDataForm: TEditDataForm
     Left = 8
     Top = 120
     Width = 609
-    Height = 257
+    Height = 129
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -184,7 +184,7 @@ object EditDataForm: TEditDataForm
   end
   object CharSet: TComboBox
     Left = 88
-    Top = 387
+    Top = 259
     Width = 89
     Height = 21
     Style = csDropDownList

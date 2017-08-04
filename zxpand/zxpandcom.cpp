@@ -208,7 +208,7 @@ static const rom char* EIGHT40 =   "8-40K";
 static const rom char* SIXTEEN48 = "16-48K";
 
 //                                --------========--------========
-static const rom char* VERSION = "ZXPAND+ 1.07 \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ 1.09 \"MOGGY\"";
 static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
 
 typedef const rom far char* RFC;
@@ -776,12 +776,6 @@ void comFileOpenRead(void)
         if (length == 0)
         {
             length = (WORD)filinfo.fsize;
-        }
-
-        // hack to make programs auto-disable ROM if read-only attribute is set
-        if (filinfo.fattrib & AM_RDO)
-        {
-            flags |= 1;
         }
 
         globalData[6] = filinfo.fsize & 0xff;
@@ -1371,7 +1365,10 @@ void comParseBufferPlus(void)
         switch (noun)
         {
         case N_SERIAL: { // open serial [rate]
-            serialInit(12, 1);
+            // nnn = (32000000 / rate / 64) - 1
+            int rate = atoi(p) ? atoi(p) : 38400;
+            int spbrg = 32000000 / rate / 64 - 1;
+            serialInit(spbrg, 1);
         }
         break;
 

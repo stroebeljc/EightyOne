@@ -19,8 +19,6 @@
 #define RESETPRESSED() 0
 
 #define LEDPINSOUT()
-#define DelayMillis(x)
-
 
 extern unsigned char LEDs;
 

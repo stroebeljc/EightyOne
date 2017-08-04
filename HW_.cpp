@@ -692,10 +692,15 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         symbolstore::reset();
 
-        // WRONG WRONG WRONG - this is the wrong place to be using the rom name
         AnsiString file = zx81.cwd;
         file += "ROM\\";
         file += machine.CurRom;
+        if (!FileExists(file))
+        {
+                ShowMessage("ROM file for this system not found. Go to:\n\n"
+                "Options/Hardware/Advanced settings/ROM file.");
+        }
+
         file += ".sym";
         symbolstore::loadROMSymbols(file.c_str(), caserMunger);
         SymbolBrowser->RefreshContent();

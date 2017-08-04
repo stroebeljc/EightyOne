@@ -102,7 +102,7 @@ void load_config(void)
         strcpy(zx81.ROM80, "zx80.rom");
         strcpy(zx81.ROM81, "zx81.edition2.rom");
         strcpy(zx81.ROMACE, "ace.rom");
-        strcpy(zx81.ROMTS1000, "zx81edition2.rom");
+        strcpy(zx81.ROMTS1000, "zx81.edition2.rom");
         strcpy(zx81.ROMTS1500, "ts1500.rom");
         strcpy(zx81.ROMLAMBDA, "lambda.rom");
         strcpy(zx81.ROMPC8300, "8300.rom");

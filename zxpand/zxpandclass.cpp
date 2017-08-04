@@ -14,11 +14,6 @@ BYTE mode;
 
 BYTE ring_error;
 
-
-void DelayMillis(char x)
-{
-}
-
 extern void mapJS(unsigned char, unsigned char);
 
 void ringReset(void){}

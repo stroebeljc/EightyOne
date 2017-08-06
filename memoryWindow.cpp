@@ -828,7 +828,7 @@ void __fastcall TMemoryWindow::FormKeyDown(TObject *Sender, WORD &Key,
 //---------------------------------------------------------------------------
 bool TMemoryWindow::FindSequence(std::vector<int>& bytes, int& addr)
 {
-        bool found = false;
+        bool found;
 
         do
         {

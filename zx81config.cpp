@@ -31,7 +31,8 @@ TV tv;
 MACHINE machine;
 MOUSE mouse;
 
-int lastMemoryReadAddr, lastMemoryWriteAddr;
+int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
+int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 bool directMemoryAccess;
 
 void load_config(void)

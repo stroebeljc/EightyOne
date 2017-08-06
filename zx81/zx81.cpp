@@ -73,7 +73,8 @@ extern long noise;
 extern int SelectAYReg;
 
 extern bool directMemoryAccess;
-extern int lastMemoryReadAddr, lastMemoryWriteAddr;
+extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
+extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 
 static BYTE ReadInputPort(int Address, int *tstates);
 
@@ -250,7 +251,8 @@ void zx81_setbyte(int Address, int Data)
 
 void zx81_writebyte(int Address, int Data)
 {
-        lastMemoryWriteAddr = Address;
+        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
+        lastMemoryWriteAddrHi = Address;
 
         noise = (noise<<8) | Data;
 
@@ -414,7 +416,8 @@ BYTE zx81_getbyte(int Address)
 
 BYTE zx81_readbyte(int Address)
 {
-        lastMemoryReadAddr = Address;
+        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
+        lastMemoryReadAddrHi = Address;
 
         int data;
 

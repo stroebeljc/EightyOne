@@ -66,7 +66,8 @@ extern void DetermineSpectraDisplayBank();
 extern BYTE SpectraRAMRead(int bankOffset);
 
 extern bool directMemoryAccess;
-extern int lastMemoryReadAddr, lastMemoryWriteAddr;
+extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
+extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 
 extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
@@ -534,7 +535,8 @@ void spec48_writebyte(int Address, int Data)
 {
         register int SpecSETemp;
 
-        lastMemoryWriteAddr = Address;
+        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
+        lastMemoryWriteAddrHi = Address;
 
         if (Address>=32768 && spectrum.machine==SPECCY16) return;
 
@@ -649,7 +651,8 @@ BYTE spec48_readbyte(int Address)
         int data;
         register int SpecSETemp;
 
-        lastMemoryReadAddr = Address;
+        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
+        lastMemoryReadAddrHi = Address;
 
         if (Address<16384)
         {

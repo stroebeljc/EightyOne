@@ -218,7 +218,7 @@ BYTE jsmap[6];
 
 void mapJS(BYTE dirn, BYTE val)
 {
-    int q = 0;
+    int q;
 
     if (val == 0)
     {
@@ -278,7 +278,7 @@ void decodeJS(void)
 
 void zeddyHBT2asciiZ(unsigned char* buffer)
 {
-    unsigned char q = 0;
+    unsigned char q;
     do
     {
         q = *buffer;
@@ -905,7 +905,7 @@ void comFileRead(void)
             serialWrite(globalAmount&0xff);
 
             crc = 0;
-            for (read = 0; read < globalAmount; ++read)
+            for (read = 0; read < (UINT)globalAmount; ++read)
             {
                 while(!serialAvailable());
                 b = serialRead();

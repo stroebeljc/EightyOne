@@ -54,7 +54,8 @@ extern WORD tStatesCount;
 extern unsigned char shift_store;
 
 extern unsigned char memory[];
-extern int lastMemoryReadAddr, lastMemoryWriteAddr;
+extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
+extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 
 const int maxInstructionBytes = 4;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
 
@@ -161,10 +162,14 @@ void DebugUpdate(void)
         }
         if (Dbg->INTRetAddr!=-1) return;
 
-        int lmr = lastMemoryReadAddr;
-        lastMemoryReadAddr = -1;
-        int lmw = lastMemoryWriteAddr;
-        lastMemoryWriteAddr = -1;
+        int lmrl = lastMemoryReadAddrLo;
+        lastMemoryReadAddrLo = -1;
+        int lmrh = lastMemoryReadAddrHi;
+        lastMemoryReadAddrHi = -1;
+        int lmwl = lastMemoryWriteAddrLo;
+        lastMemoryWriteAddrLo = -1;
+        int lmwh = lastMemoryWriteAddrHi;
+        lastMemoryWriteAddrHi = -1;
         int lpi = Dbg->lastPortInAddr;
         Dbg->lastPortInAddr = -1;
         int lpo = Dbg->lastPortOutAddr;
@@ -173,8 +178,10 @@ void DebugUpdate(void)
         displayedTStatesCount = tStatesCount;
 
         if (Dbg->ExecBreakPointHit(z80.pc.w) ||
-                Dbg->MemoryReadHit(lmr) ||
-                Dbg->MemoryWriteHit(lmw) ||
+                Dbg->MemoryReadHit(lmrl) ||
+                Dbg->MemoryReadHit(lmrh) ||
+                Dbg->MemoryWriteHit(lmwl) ||
+                Dbg->MemoryWriteHit(lmwh) ||
                 Dbg->PortInHit(lpi) ||
                 Dbg->PortOutHit(lpo) ||
                 Dbg->TStatesBreakPointHit(z80.pc.w))

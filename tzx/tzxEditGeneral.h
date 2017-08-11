@@ -46,11 +46,11 @@ __published:	// IDE-managed Components
         TComboBox *CharSet;
         TMemo *PRLE;
         TLabel *Label1;
-        TButton *Button1;
+        TButton *ButtonSaveP;
         TSaveDialog *SaveDialog1;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CharSetChange(TObject *Sender);
-        void __fastcall Button1Click(TObject *Sender);
+        void __fastcall ButtonSavePClick(TObject *Sender);
 private:	// User declarations
         void DecodeData(int BlockNo);
         int Block;

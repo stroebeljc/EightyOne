@@ -129,6 +129,7 @@ USEUNIT("zxpand\dirlib.cpp");
 USEUNIT("Chroma\Chroma.cpp");
 USE("zxpand\zxpandcom.h", File);
 USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
+USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
@@ -240,6 +241,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->CreateForm(__classid(TConfigureBreakpoint), &ConfigureBreakpoint);
                  Application->CreateForm(__classid(TSetBreakpoint), &SetBreakpoint);
                  Application->CreateForm(__classid(TSearchSequence), &SearchSequence);
+                 Application->CreateForm(__classid(TLiveMemoryWindow), &LiveMemoryWindow);
                  #endif
 
                  Application->ProcessMessages();

@@ -698,7 +698,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (!FileExists(file))
         {
                 ShowMessage("ROM file for this system not found. Go to:\n\n"
-                "Options/Hardware/Advanced settings/ROM file.");
+                "Options > Hardware > Advanced Settings > ROM File.");
         }
 
         file += ".sym";

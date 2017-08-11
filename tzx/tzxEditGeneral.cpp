@@ -37,7 +37,7 @@ TEditGeneralForm *EditGeneralForm;
 __fastcall TEditGeneralForm::TEditGeneralForm(TComponent* Owner)
         : TForm(Owner)
 {
-        Button1->Visible = zx81.machine == MACHINEZX81;
+        ButtonSaveP->Visible = zx81.machine == MACHINEZX81;
 }
 //---------------------------------------------------------------------------
 void __fastcall TEditGeneralForm::OKClick(TObject *Sender)
@@ -215,7 +215,7 @@ void __fastcall TEditGeneralForm::CharSetChange(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TEditGeneralForm::Button1Click(TObject *Sender)
+void __fastcall TEditGeneralForm::ButtonSavePClick(TObject *Sender)
 {
         byte *px = pbuffer;
         AnsiString fn;

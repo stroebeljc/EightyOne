@@ -147,14 +147,14 @@ object EditGeneralForm: TEditGeneralForm
     ScrollBars = ssVertical
     TabOrder = 0
   end
-  object Button1: TButton
+  object ButtonSavep: TButton
     Left = 466
     Top = 597
     Width = 75
     Height = 25
     Caption = 'Save P'
     TabOrder = 7
-    OnClick = Button1Click
+    OnClick = ButtonSavepClick
   end
   object SaveDialog1: TSaveDialog
     Left = 200

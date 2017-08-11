@@ -27,6 +27,7 @@
 #include "tzxEditGeneral.h"
 #include "tzxfile.h"
 #include "tzxman.h"
+#include "utils.h"
 extern TTZXFile TZXFile;
 
 //---------------------------------------------------------------------------
@@ -37,7 +38,6 @@ TEditGeneralForm *EditGeneralForm;
 __fastcall TEditGeneralForm::TEditGeneralForm(TComponent* Owner)
         : TForm(Owner)
 {
-        ButtonSavep->Visible = zx81.machine == MACHINEZX81;
 }
 //---------------------------------------------------------------------------
 void __fastcall TEditGeneralForm::OKClick(TObject *Sender)
@@ -45,7 +45,15 @@ void __fastcall TEditGeneralForm::OKClick(TObject *Sender)
         Close();
 }
 
-unsigned char ZXCharSet[]=" ..........\"£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
+unsigned char ZX81CharSet[]=" ..........\"£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
+unsigned char ZX80CharSet[]=" \"..........£$:?()-+*/=><;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
+
+enum Index
+{
+        zx80Index = 0,
+        zx81Index = 1,
+        asciiIndex = 2
+};
 
 //---------------------------------------------------------------------------
 void TEditGeneralForm::DecodeData(int BlockNo)
@@ -152,14 +160,14 @@ void TEditGeneralForm::DecodeData(int BlockNo)
                 text1 += IntToHex(c, 2);
                 text1 += " ";
 
-                if (CharSet->ItemIndex)
+                if (CharSet->ItemIndex == asciiIndex)
                 {
                         if (c<32 || c>=128) c='.';
                 }
                 else
                 {
                         if (c>=128) c-=128;
-                        c=ZXCharSet[c];
+                        c = (zx81.machine == MACHINEZX81) ? ZX81CharSet[c] : ZX80CharSet[c];
                 }
 
                 text2 += (char) c;
@@ -215,23 +223,71 @@ void __fastcall TEditGeneralForm::CharSetChange(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TEditGeneralForm::ButtonSavepClick(TObject *Sender)
+void __fastcall TEditGeneralForm::ButtonSaveClick(TObject *Sender)
+{
+        if (zx81.machine == MACHINEZX81)
+        {
+                SaveZX81File();
+        }
+        else
+        {
+                SaveZX80File();
+        }
+}
+
+void __fastcall TEditGeneralForm::SaveZX81File()
 {
         byte *px = pbuffer;
         AnsiString fn;
         // extract the original filename from the first few bytes of the tape
         while(1)
         {
-                fn += (char)ZXCharSet[(*px) & 127];
+                fn += (char)ZX81CharSet[(*px) & 127];
                 if (*px > 128) break;
                 ++px;
         }
 
-        SaveDialog1->FileName = fn + ".p";
+        SaveDialog1->Filter = "ZX81 Nameless Program (*.p)|*.p|ZX81 Named Program (*.p81)|*.p81";
+        SaveDialog1->FileName = fn;
         if (SaveDialog1->Execute())
         {
-                AnsiString fulfn = SaveDialog1->FileName;
-                FILE* pee = fopen(fulfn.c_str(), "wb");
+                int filterIndex = SaveDialog1->FilterIndex;
+                AnsiString filename = SaveDialog1->FileName;
+                AnsiString extension = FileNameGetExt(filename);
+                if (filterIndex == 1)
+                {
+                        if (extension!=".P") filename += ".p";
+                        px++;
+                }
+                else
+                {
+                        if (extension!=".P81") filename += ".p81";
+                        px=pbuffer;
+                }
+                FILE* pee = fopen(filename.c_str(), "wb");
+                if (pee)
+                {
+                        fwrite(px, 1, nx, pee);
+                        fclose(pee);
+                }
+                else
+                {
+                        ShowMessage("File saving failed: '" + filename + "'");
+                }
+        }
+}
+
+void __fastcall TEditGeneralForm::SaveZX80File()
+{
+        SaveDialog1->Filter = "ZX80 Program (*.o)|*.o";
+        SaveDialog1->FileName = "";
+        if (SaveDialog1->Execute())
+        {
+                AnsiString filename = SaveDialog1->FileName;
+                AnsiString extension = FileNameGetExt(filename);
+                if (extension!=".O") filename += ".o";
+
+                FILE* pee = fopen(filename.c_str(), "wb");
                 if (pee)
                 {
                         fwrite(pbuffer, 1, nx, pee);
@@ -239,8 +295,30 @@ void __fastcall TEditGeneralForm::ButtonSavepClick(TObject *Sender)
                 }
                 else
                 {
-                        ShowMessage("P file saving failed: '"+fulfn+"'");
+                        ShowMessage("File saving failed: '" + filename + "'");
                 }
+        }
+}
+
+//---------------------------------------------------------------------------
+
+
+void __fastcall TEditGeneralForm::FormShow(TObject *Sender)
+{
+        ButtonSave->Visible = (zx81.machine == MACHINEZX81) || (zx81.machine == MACHINEZX80);
+        switch (zx81.machine)
+        {
+                case MACHINEZX80:
+                        CharSet->ItemIndex = zx80Index;
+                        break;
+
+                 case MACHINEZX81:
+                        CharSet->ItemIndex = zx81Index;
+                        break;
+
+                 default:
+                        CharSet->ItemIndex = asciiIndex;
+                        break;
         }
 }
 //---------------------------------------------------------------------------

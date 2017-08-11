@@ -55,6 +55,7 @@ __published:	// IDE-managed Components
         TComboBox *CharSet;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CharSetChange(TObject *Sender);
+        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
         void DecodeData(int BlockNo);
         int Block;

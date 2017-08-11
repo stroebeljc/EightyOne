@@ -1,6 +1,6 @@
 object EditDataForm: TEditDataForm
-  Left = 305
-  Top = 172
+  Left = 139
+  Top = 517
   Width = 632
   Height = 322
   BorderIcons = []
@@ -16,6 +16,7 @@ object EditDataForm: TEditDataForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel
@@ -193,6 +194,7 @@ object EditDataForm: TEditDataForm
     TabOrder = 9
     OnChange = CharSetChange
     Items.Strings = (
+      'ZX80'
       'ZX81'
       'ASCII')
   end

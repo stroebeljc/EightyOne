@@ -46,13 +46,16 @@ __published:	// IDE-managed Components
         TComboBox *CharSet;
         TMemo *PRLE;
         TLabel *Label1;
-        TButton *ButtonSavep;
+        TButton *ButtonSave;
         TSaveDialog *SaveDialog1;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CharSetChange(TObject *Sender);
-        void __fastcall ButtonSavepClick(TObject *Sender);
+        void __fastcall ButtonSaveClick(TObject *Sender);
+        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
         void DecodeData(int BlockNo);
+        void __fastcall SaveZX81File();
+        void __fastcall SaveZX80File();
         int Block;
 
         int nx;

@@ -1,6 +1,6 @@
 object EditGeneralForm: TEditGeneralForm
-  Left = 608
-  Top = 34
+  Left = 233
+  Top = 24
   Width = 647
   Height = 663
   BorderIcons = [biSystemMenu]
@@ -15,6 +15,7 @@ object EditGeneralForm: TEditGeneralForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Label4: TLabel
@@ -102,7 +103,7 @@ object EditGeneralForm: TEditGeneralForm
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 6
+    TabOrder = 7
     OnClick = OKClick
   end
   object Data: TMemo
@@ -134,6 +135,7 @@ object EditGeneralForm: TEditGeneralForm
     TabOrder = 5
     OnChange = CharSetChange
     Items.Strings = (
+      'ZX80'
       'ZX81'
       'ASCII')
   end
@@ -147,14 +149,14 @@ object EditGeneralForm: TEditGeneralForm
     ScrollBars = ssVertical
     TabOrder = 0
   end
-  object ButtonSavep: TButton
+  object ButtonSave: TButton
     Left = 466
     Top = 597
     Width = 75
     Height = 25
-    Caption = 'Save P'
-    TabOrder = 7
-    OnClick = ButtonSavepClick
+    Caption = 'Save...'
+    TabOrder = 6
+    OnClick = ButtonSaveClick
   end
   object SaveDialog1: TSaveDialog
     Left = 200

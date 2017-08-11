@@ -34,6 +34,15 @@ extern TTZXFile TZXFile;
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TEditDataForm *EditDataForm;
+
+
+enum Index
+{
+        zx80Index = 0,
+        zx81Index = 1,
+        asciiIndex = 2
+};
+
 //---------------------------------------------------------------------------
 __fastcall TEditDataForm::TEditDataForm(TComponent* Owner)
         : TForm(Owner)
@@ -47,7 +56,8 @@ void __fastcall TEditDataForm::OKClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void TEditDataForm::DecodeData(int BlockNo)
 {
-        unsigned char ZXCharSet[]=" ..........\"£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
+        unsigned char ZX81CharSet[]=" ..........\"£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
+        unsigned char ZX80CharSet[]=" \"..........£$:?()-+*/=><;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ................................................................";
         unsigned char c;
 
         AnsiString text1, text2;
@@ -119,14 +129,14 @@ void TEditDataForm::DecodeData(int BlockNo)
                 text1 += IntToHex(c, 2);
                 text1 += " ";
 
-                if (CharSet->ItemIndex)
+                if (CharSet->ItemIndex == asciiIndex)
                 {
                         if (c<32 || c>=128) c='.';
                 }
                 else
                 {
                         if (c>=128) c-=128;
-                        c=ZXCharSet[c];
+                        c = (zx81.machine == MACHINEZX81) ? ZX81CharSet[c] : ZX80CharSet[c];
                 }
 
                 text2 += (char) c;
@@ -184,6 +194,25 @@ void TEditDataForm::Go(int BlockNo, int Mx, int My)
 void __fastcall TEditDataForm::CharSetChange(TObject *Sender)
 {
         DecodeData(Block);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TEditDataForm::FormShow(TObject *Sender)
+{
+        switch (zx81.machine)
+        {
+                case MACHINEZX80:
+                        CharSet->ItemIndex = zx80Index;
+                        break;
+
+                 case MACHINEZX81:
+                        CharSet->ItemIndex = zx81Index;
+                        break;
+
+                 default:
+                        CharSet->ItemIndex = asciiIndex;
+                        break;
+        }
 }
 //---------------------------------------------------------------------------
 

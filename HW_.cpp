@@ -892,6 +892,7 @@ void THW::SetupForSpectrum(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
+        ZXpand->Checked=false;
         ZXpand->Enabled=false;
 
         ResetRequired=true;
@@ -989,6 +990,7 @@ void THW::SetupForQL(void)
         int i;
 
         FloatingPointHardwareFix->Enabled = false;
+        ZXpand->Checked=false;
         ZXpand->Enabled=false;
 
         EnableRomCartridgeOption(false);
@@ -1273,7 +1275,6 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
 {
         if (TS1000Btn->Down) return;
         SetupForZX81();
-        ZXpand->Enabled=false;
         TS1000Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=TS1000Btn->Caption;
@@ -1289,6 +1290,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
 {
         if (TS1500Btn->Down) return;
         SetupForZX81();
+        ZXpand->Checked=false;
         ZXpand->Enabled=false;
         TS1500Btn->Down=true;
         NewMachine=MACHINETS1500;
@@ -1305,6 +1307,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
 {
         if (LambdaBtn->Down) return;
         SetupForZX81();
+        ZXpand->Checked=false;
         ZXpand->Enabled=false;
         LambdaBtn->Down=true;
         NewMachine=MACHINELAMBDA;
@@ -1336,6 +1339,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
 {
         if (R470Btn->Down) return;
         SetupForZX81();
+        ZXpand->Checked=false;
         ZXpand->Enabled=false;
         R470Btn->Down=true;
         NewMachine=MACHINEZX81;
@@ -1360,6 +1364,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
 {
         if (TK85Btn->Down) return;
         SetupForZX81();
+        ZXpand->Checked=false;
         ZXpand->Enabled=false;
         TK85Btn->Down=true;
         NewMachine=MACHINEZX81;
@@ -1413,6 +1418,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         RamPackBox->Items->Add("96k");
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
+        ZXpand->Checked=false;
         ZXpand->Enabled = false;
 }
 //---------------------------------------------------------------------------

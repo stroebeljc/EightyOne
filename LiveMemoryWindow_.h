@@ -16,8 +16,13 @@ __published:	// IDE-managed Components
         TMainMenu *MainMenu1;
         TMenuItem *Re1;
         TMenuItem *Reset1;
+        TMenuItem *View1;
+        TMenuItem *Reads1;
+        TMenuItem *Writes1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall Reset1Click(TObject *Sender);
+        void __fastcall Reads1Click(TObject *Sender);
+        void __fastcall Writes1Click(TObject *Sender);
 private:	// User declarations
         void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
 

@@ -33,49 +33,48 @@ void __fastcall TLiveMemoryWindow::Reset()
 void __fastcall TLiveMemoryWindow::Write(int address)
 {
         if (!Visible) return;
+        if (!Writes1->Checked) return;
 
         _writes[address]=255;
-        ++_count;
-        if (_count == 1000)
-        {
-                _count = 0;
-                Update();
-                Invalidate();
-        }
+        Update();
 }
 
 //---------------------------------------------------------------------------
 void __fastcall TLiveMemoryWindow::Read(int address)
 {
         if (!Visible) return;
+        if (!Reads1->Checked) return;
 
         _reads[address]=255;
-        ++_count;
-        if (_count == 1000)
-        {
-                _count = 0;
-                Update();
-                Invalidate();
-        }
+        Update();
 }
 
 //---------------------------------------------------------------------------
 void __fastcall TLiveMemoryWindow::Update(void)
 {
+        int maxCount = (Reads1->Checked ? 500 : 0) +
+                        (Writes1->Checked ? 500 : 0);
+
+        ++_count;
+        if (_count < maxCount) return;
+
+        _count = 0;
         for(int i = 0; i < 65536; ++i)
         {
                 if (_writes[i]!=0)
                 {
                         --_writes[i];
-                        _pbits[i].rgbRed = _writes[i];
+                        _pbits[i].rgbBlue = _writes[i];
                         _pbits[i].rgbGreen = 128;
                 }
                 if (_reads[i]!=0)
                 {
                         --_reads[i];
-                        _pbits[i].rgbBlue = _reads[i];
+                        _pbits[i].rgbRed = _reads[i];
                 }
         }
+
+        Invalidate();
 }
 
 //---------------------------------------------------------------------------
@@ -96,7 +95,23 @@ void __fastcall TLiveMemoryWindow::FormPaint(TObject *Sender)
 void __fastcall TLiveMemoryWindow::Reset1Click(TObject *Sender)
 {
         Reset();
-        Invalidate();        
+        Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TLiveMemoryWindow::Reads1Click(TObject *Sender)
+{
+        Reads1->Checked = !Reads1->Checked;
+        Reset();
+        Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TLiveMemoryWindow::Writes1Click(TObject *Sender)
+{
+        Writes1->Checked = !Writes1->Checked;
+        Reset();
+        Invalidate();
 }
 //---------------------------------------------------------------------------
 

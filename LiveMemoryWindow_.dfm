@@ -19,10 +19,23 @@ object LiveMemoryWindow: TLiveMemoryWindow
     Left = 16
     Top = 24
     object Re1: TMenuItem
-      Caption = 'Data'
+      Caption = 'Edit'
       object Reset1: TMenuItem
         Caption = 'Reset'
         OnClick = Reset1Click
+      end
+    end
+    object View1: TMenuItem
+      Caption = 'View'
+      object Reads1: TMenuItem
+        Caption = 'Reads'
+        Checked = True
+        OnClick = Reads1Click
+      end
+      object Writes1: TMenuItem
+        Caption = 'Writes'
+        Checked = True
+        OnClick = Writes1Click
       end
     end
   end

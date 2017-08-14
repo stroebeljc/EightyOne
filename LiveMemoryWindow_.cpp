@@ -5,6 +5,7 @@
 #pragma hdrstop
 
 #include "LiveMemoryWindow_.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -13,20 +14,19 @@ TLiveMemoryWindow *LiveMemoryWindow;
 __fastcall TLiveMemoryWindow::TLiveMemoryWindow(TComponent* Owner)
         : TForm(Owner)
 {
-        BITMAPINFOHEADER bmphdr = {sizeof(bmphdr),256,-256,1,32,BI_RGB,0,0,0,0,0};
+        BITMAPINFOHEADER bmphdr = {sizeof(bmphdr), 256, -256, 1, 32, BI_RGB,
+                0,0,0,0,0};
+
         _hdib = CreateDIBSection (Canvas->Handle, (BITMAPINFO*)&bmphdr,
                 DIB_RGB_COLORS, (VOID**)&_pbits, NULL, 0);
 
-        memset((void*)_pbits, 0, sizeof(RGBQUAD) * 65536);
+        Reset();
 }
 
-void DrawBitmap (HDC hdc, HBITMAP hbmp, int x, int y, int w, int h)
+//---------------------------------------------------------------------------
+void __fastcall TLiveMemoryWindow::Reset()
 {
-        HDC hdcMem = CreateCompatibleDC (hdc);
-        HBITMAP hbmpOld = (HBITMAP)SelectObject (hdcMem, hbmp);
-        BitBlt (hdc, x, y, w, h, hdcMem, 0, 0, SRCCOPY);
-        SelectObject (hdcMem, hbmpOld);
-        DeleteDC (hdcMem);
+        memset((void*)_pbits, 0, sizeof(RGBQUAD) * 65536);
 }
 
 //---------------------------------------------------------------------------
@@ -68,6 +68,7 @@ void __fastcall TLiveMemoryWindow::Update(void)
                 {
                         --_writes[i];
                         _pbits[i].rgbRed = _writes[i];
+                        _pbits[i].rgbGreen = 128;
                 }
                 if (_reads[i]!=0)
                 {
@@ -78,10 +79,24 @@ void __fastcall TLiveMemoryWindow::Update(void)
 }
 
 //---------------------------------------------------------------------------
+void __fastcall TLiveMemoryWindow::WMEraseBkgnd(TWMEraseBkgnd &Message)
+{
+}
 
+//---------------------------------------------------------------------------
 void __fastcall TLiveMemoryWindow::FormPaint(TObject *Sender)
 {
-        DrawBitmap (Canvas->Handle, _hdib, 8, 8, 256, 256);
+        HDC hdcMem = CreateCompatibleDC (Canvas->Handle);
+        HBITMAP hbmpOld = (HBITMAP)SelectObject (hdcMem, _hdib);
+        BitBlt (Canvas->Handle, 0, 0, 256, 256, hdcMem, 0, 0, SRCCOPY);
+        SelectObject (hdcMem, hbmpOld);
+        DeleteDC (hdcMem);
+}
+
+void __fastcall TLiveMemoryWindow::Reset1Click(TObject *Sender)
+{
+        Reset();
+        Invalidate();        
 }
 //---------------------------------------------------------------------------
 

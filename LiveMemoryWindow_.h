@@ -8,12 +8,19 @@
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
 #include <ExtCtrls.hpp>
+#include <Menus.hpp>
 //---------------------------------------------------------------------------
 class TLiveMemoryWindow : public TForm
 {
 __published:	// IDE-managed Components
+        TMainMenu *MainMenu1;
+        TMenuItem *Re1;
+        TMenuItem *Reset1;
         void __fastcall FormPaint(TObject *Sender);
+        void __fastcall Reset1Click(TObject *Sender);
 private:	// User declarations
+        void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
+
         RGBQUAD* _pbits;
         HBITMAP _hdib;
         BYTE _writes[65536];
@@ -22,9 +29,14 @@ private:	// User declarations
 
 public:		// User declarations
         __fastcall TLiveMemoryWindow(TComponent* Owner);
+        void __fastcall Reset();
         void __fastcall Write(int address);
         void __fastcall Read(int address);
         void __fastcall Update(void);
+
+BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_ERASEBKGND,TWMEraseBkgnd,WMEraseBkgnd)
+END_MESSAGE_MAP(TForm)
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TLiveMemoryWindow *LiveMemoryWindow;

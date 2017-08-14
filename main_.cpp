@@ -1317,6 +1317,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         sound_ay_reset();
         zx81_stop=initialStopState;
         DebugUpdate();
+        LiveMemoryWindow->Reset();
 }
 //---------------------------------------------------------------------------
 

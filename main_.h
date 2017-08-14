@@ -150,6 +150,7 @@ __published:	// IDE-managed Components
         TMenuItem *GatherWindows1;
         TMenuItem *N10;
         TMenuItem *EnableSplashScreen;
+        TMenuItem *LiveMemoryOverview;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -234,6 +235,7 @@ __published:	// IDE-managed Components
         void __fastcall ChromaColourEnableClick(TObject *Sender);
         void __fastcall GatherWindows1Click(TObject *Sender);
         void __fastcall EnableSplashScreenClick(TObject *Sender);
+        void __fastcall LiveMemoryOverviewClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

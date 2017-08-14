@@ -71,6 +71,7 @@ void __fastcall TLiveMemoryWindow::Update(void)
                 {
                         --_reads[i];
                         _pbits[i].rgbRed = _reads[i];
+                        _pbits[i].rgbGreen = 128;
                 }
         }
 

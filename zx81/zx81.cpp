@@ -420,6 +420,8 @@ BYTE zx81_readbyte(int Address)
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
         lastMemoryReadAddrHi = Address;
 
+        LiveMemoryWindow->Read(Address);
+
         int data;
 
         // A ROM cartridge has highest precedence over the 0K-16K region, which it

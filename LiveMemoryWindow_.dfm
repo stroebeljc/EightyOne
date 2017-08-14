@@ -1,6 +1,6 @@
 object LiveMemoryWindow: TLiveMemoryWindow
-  Left = 298
-  Top = 162
+  Left = 1069
+  Top = 323
   Width = 289
   Height = 312
   Caption = 'LiveMemoryWindow'
@@ -11,6 +11,7 @@ object LiveMemoryWindow: TLiveMemoryWindow
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnPaint = FormPaint
   PixelsPerInch = 96
   TextHeight = 13
 end

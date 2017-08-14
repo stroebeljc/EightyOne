@@ -1,9 +1,10 @@
 object LiveMemoryWindow: TLiveMemoryWindow
-  Left = 197
-  Top = 126
-  Width = 272
-  Height = 294
-  Caption = 'LiveMemoryWindow'
+  Left = 245
+  Top = 127
+  BorderStyle = bsSingle
+  Caption = 'Live Memory'
+  ClientHeight = 275
+  ClientWidth = 256
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,9 +13,22 @@ object LiveMemoryWindow: TLiveMemoryWindow
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnMouseMove = FormMouseMove
   OnPaint = FormPaint
   PixelsPerInch = 96
   TextHeight = 13
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 256
+    Width = 256
+    Height = 19
+    Panels = <
+      item
+        Text = '$0000'
+        Width = 50
+      end>
+    SimplePanel = False
+  end
   object MainMenu1: TMainMenu
     Left = 16
     Top = 24
@@ -36,6 +50,11 @@ object LiveMemoryWindow: TLiveMemoryWindow
         Caption = 'Writes'
         Checked = True
         OnClick = Writes1Click
+      end
+      object Touches1: TMenuItem
+        Caption = 'Touches'
+        Checked = True
+        OnClick = Touches1Click
       end
     end
   end

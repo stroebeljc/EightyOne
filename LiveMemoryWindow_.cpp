@@ -55,23 +55,25 @@ void __fastcall TLiveMemoryWindow::Update(void)
         int maxCount = (Reads1->Checked ? 500 : 0) +
                         (Writes1->Checked ? 500 : 0);
 
+        int touchCol = Touches1->Checked ? 128 : 0;
+
         ++_count;
         if (_count < maxCount) return;
 
         _count = 0;
         for(int i = 0; i < 65536; ++i)
         {
-                if (_writes[i]!=0)
+                if (_writes[i])
                 {
                         --_writes[i];
                         _pbits[i].rgbBlue = _writes[i];
-                        _pbits[i].rgbGreen = 128;
+                        _pbits[i].rgbGreen = touchCol;
                 }
-                if (_reads[i]!=0)
+                if (_reads[i])
                 {
                         --_reads[i];
                         _pbits[i].rgbRed = _reads[i];
-                        _pbits[i].rgbGreen = 128;
+                        _pbits[i].rgbGreen = touchCol;
                 }
         }
 
@@ -113,6 +115,24 @@ void __fastcall TLiveMemoryWindow::Writes1Click(TObject *Sender)
         Writes1->Checked = !Writes1->Checked;
         Reset();
         Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TLiveMemoryWindow::Touches1Click(TObject *Sender)
+{
+        Touches1->Checked = !Touches1->Checked;
+        Reset();
+        Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TLiveMemoryWindow::FormMouseMove(TObject *Sender,
+      TShiftState Shift, int X, int Y)
+{
+        int n = X + 256 * Y;
+        if (n > 0xffff) n = 0xffff;
+
+        StatusBar1->Panels->Items[0]->Text = Format("$%0.4x", ARRAYOFCONST((n)));
 }
 //---------------------------------------------------------------------------
 

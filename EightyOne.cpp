@@ -129,6 +129,7 @@ USEUNIT("zxpand\dirlib.cpp");
 USEUNIT("Chroma\Chroma.cpp");
 USE("zxpand\zxpandcom.h", File);
 USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
+USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
@@ -203,44 +204,6 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->Title = "EightyOne";
 
                  #include "splashImpl.cpp"
-                 #if 0
-                 Application->CreateForm(__classid(TForm1), &Form1);
-                 Application->CreateForm(__classid(TAbout), &About);
-                 Application->CreateForm(__classid(TKeyboard), &Keyboard);
-                 Application->CreateForm(__classid(TSpeed), &Speed);
-                 Application->CreateForm(__classid(TKb), &Kb);
-                 Application->CreateForm(__classid(TWavLoad), &WavLoad);
-                 Application->CreateForm(__classid(TDbg), &Dbg);
-                 Application->CreateForm(__classid(TMemoryWindow), &MemoryWindow);
-                 Application->CreateForm(__classid(TPrinter), &Printer);
-                 Application->CreateForm(__classid(TArtifacts), &Artifacts);
-                 Application->CreateForm(__classid(TSoundOutput), &SoundOutput);
-                 Application->CreateForm(__classid(THistoryBox), &HistoryBox);
-                 Application->CreateForm(__classid(TMemSave), &MemSave);
-                 Application->CreateForm(__classid(TZX97Dialog), &ZX97Dialog);
-                 Application->CreateForm(__classid(TSerialConfig), &SerialConfig);
-                 Application->CreateForm(__classid(TTZX), &TZX);
-                 Application->CreateForm(__classid(TEditPauseForm), &EditPauseForm);
-                 Application->CreateForm(__classid(TEditArchiveInfo), &EditArchiveInfo);
-                 Application->CreateForm(__classid(TEditTextForm), &EditTextForm);
-                 Application->CreateForm(__classid(TEditHWInfoForm), &EditHWInfoForm);
-                 Application->CreateForm(__classid(TEditDataForm), &EditDataForm);
-                 Application->CreateForm(__classid(TFSSettings), &FSSettings);
-                 Application->CreateForm(__classid(TEditGeneralForm), &EditGeneralForm);
-                 Application->CreateForm(__classid(TIF1), &IF1);
-                 Application->CreateForm(__classid(TP3Drive), &P3Drive);
-                 Application->CreateForm(__classid(TCreateHDF), &CreateHDF);
-                 Application->CreateForm(__classid(THW), &HW);
-                 Application->CreateForm(__classid(TParallelPort), &ParallelPort);
-                 Application->CreateForm(__classid(TMidiForm), &MidiForm);
-                 Application->CreateForm(__classid(TZipFile), &ZipFile);
-                 Application->CreateForm(__classid(TDebug68k), &Debug68k);
-                 Application->CreateForm(__classid(TSymbolBrowser), &SymbolBrowser);
-                 Application->CreateForm(__classid(TEditValue), &EditValue);
-                 Application->CreateForm(__classid(TConfigureBreakpoint), &ConfigureBreakpoint);
-                 Application->CreateForm(__classid(TSetBreakpoint), &SetBreakpoint);
-                 Application->CreateForm(__classid(TSearchSequence), &SearchSequence);
-                 #endif
 
                  Application->ProcessMessages();
                  delete spl;

@@ -30,7 +30,7 @@
       zxpand\ZXpand-emu.obj zxpand\zxpandclass.obj zxpand\zxpandcore.obj 
       zxpand\diskio.obj zxpand\ff.obj zxpand\wildcard.obj zxpand\zxpandcom.obj 
       zxpand\smbsd.obj zxpand\js.obj zxpand\dirlib.obj Chroma\Chroma.obj 
-      DebugWin\SearchSequence_.obj"/>
+      DebugWin\SearchSequence_.obj LiveMemoryWindow_.obj"/>
     <RESFILES value="EightyOne.res WinXP.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -45,7 +45,7 @@
       FullScreen.dfm tzx\tzxEditGeneral.dfm HW_.dfm Interface1.dfm 
       Plus3Drives.dfm MakeHDF.dfm Parallel.dfm midifrm.dfm ZipFile_.dfm 
       Debug68k\debug68.dfm SplashScreen.dfm main_.dfm memoryWindow.dfm 
-      SymBrowse.dfm DebugWin\SearchSequence_.dfm"/>
+      SymBrowse.dfm DebugWin\SearchSequence_.dfm LiveMemoryWindow_.dfm"/>
     <LIBFILES value="ddraw.lib libdsk.lib zlib.lib"/>
     <LIBRARIES value="OfficeButton97.lib VCLX50.lib VCLDB50.lib THEMEMANAGERC5.lib 
       CPORTLIBCB5.lib AnimTimer.lib Vcl50.lib"/>

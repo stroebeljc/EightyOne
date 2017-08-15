@@ -1,6 +1,6 @@
 object Artifacts: TArtifacts
-  Left = 453
-  Top = 104
+  Left = 1305
+  Top = 194
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'TV Emulation'

@@ -42,4 +42,6 @@
                  spl->IncProgress("Parallel Port"); Application->CreateForm(__classid(TParallelPort), &ParallelPort);
                  spl->IncProgress("Midi"); Application->CreateForm(__classid(TMidiForm), &MidiForm);
                  spl->IncProgress("ZIP Support"); Application->CreateForm(__classid(TZipFile), &ZipFile);
+                 spl->IncProgress("Live Memory"); Application->CreateForm(__classid(TLiveMemoryWindow), &LiveMemoryWindow);
+
                  spl->Close();

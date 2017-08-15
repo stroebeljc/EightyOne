@@ -42,6 +42,7 @@
 #include "zxpand\ZXpand_emu.h"
 #include "RomCartridge\IF2RomCartridge.h"
 #include "Chroma\Chroma.h"
+#include "LiveMemoryWindow_.h"
 
 #define VBLANKCOLOUR (0*16)
 
@@ -283,8 +284,8 @@ void zx81_writebyte(int Address, int Data)
         if (zx81.colour==COLOURLAMBDA && Address>=8192 && Address<16384)
         {
                 Address = (Address&1023)+8192;
-                memory[Address]=Data;
-                return;
+
+                goto writeMem;
         }
 
         // ZX97 has various bank switched modes - check out the website for details
@@ -318,8 +319,7 @@ void zx81_writebyte(int Address, int Data)
         if ((zx81.chrgen == CHRGENQS) && (zx81.colour != COLOURCHROMA) && (Address >= 0x8400) && (Address < 0x8800))
         {
                 font[Address-0x8400]=Data;
-                memory[Address] = Data;
-                return;
+                goto writeMem;
         }
 
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
@@ -352,8 +352,7 @@ void zx81_writebyte(int Address, int Data)
                 if ((configLow && (Address >= 0x2000 && Address < 0xA000)) ||
                     (!configLow && (Address >= 0x4000 && Address < 0xC000)))
                 {
-                        memory[Address] = Data;
-                        return;
+                goto writeMem;
                 }
         }
         
@@ -395,6 +394,8 @@ void zx81_writebyte(int Address, int Data)
         if (Address>8191 && Address<16384 && zx81.shadowROM && zx81.protectROM) return;
         if (Address>8191 && Address<16384 && !zx81.RAM816k) return;
 
+writeMem:
+        LiveMemoryWindow->Write(Address);
         memory[Address]=Data;
 }
 
@@ -418,6 +419,8 @@ BYTE zx81_readbyte(int Address)
 {
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
         lastMemoryReadAddrHi = Address;
+
+        LiveMemoryWindow->Read(Address);
 
         int data;
 

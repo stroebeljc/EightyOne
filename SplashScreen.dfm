@@ -1,6 +1,6 @@
 object Splash: TSplash
-  Left = 253
-  Top = 172
+  Left = 729
+  Top = 321
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Splash'

@@ -71,6 +71,7 @@
 #include "MemoryWindow.h"
 #include "Hist.h"
 #include "MakeHDF.h"
+#include "LiveMemoryWindow_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -1316,6 +1317,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         sound_ay_reset();
         zx81_stop=initialStopState;
         DebugUpdate();
+        LiveMemoryWindow->Reset();
 }
 //---------------------------------------------------------------------------
 
@@ -1946,6 +1948,13 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
 void __fastcall TForm1::EnableSplashScreenClick(TObject *Sender)
 {
         EnableSplashScreen->Checked = !EnableSplashScreen->Checked;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
+{
+        LiveMemoryWindow->Show();
 }
 //---------------------------------------------------------------------------
 

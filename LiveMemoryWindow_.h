@@ -36,7 +36,6 @@ private:	// User declarations
         HBITMAP _hdib;
         BYTE _writes[65536];
         BYTE _reads[65536];
-        BYTE _cacheline[256];
         int _count;
 
 public:		// User declarations

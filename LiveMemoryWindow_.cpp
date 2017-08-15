@@ -37,8 +37,6 @@ void __fastcall TLiveMemoryWindow::Write(unsigned short address)
         if (!Visible) return;
         if (!Writes1->Checked) return;
 
-        _cacheline[address/256] = 1;
-
         _writes[address]=255;
         Update();
 }

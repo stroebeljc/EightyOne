@@ -27,6 +27,8 @@ __fastcall TLiveMemoryWindow::TLiveMemoryWindow(TComponent* Owner)
 void __fastcall TLiveMemoryWindow::Reset()
 {
         memset((void*)_pbits, 0, sizeof(RGBQUAD) * 65536);
+        memset(_reads, 0, 65536);
+        memset(_writes, 0, 65536);
 }
 
 //---------------------------------------------------------------------------
@@ -52,15 +54,14 @@ void __fastcall TLiveMemoryWindow::Read(int address)
 //---------------------------------------------------------------------------
 void __fastcall TLiveMemoryWindow::Update(void)
 {
-        int maxCount = (Reads1->Checked ? 500 : 0) +
-                        (Writes1->Checked ? 500 : 0);
-
         int touchCol = Touches1->Checked ? 128 : 0;
 
+        // should really be time based, not access count based
         ++_count;
-        if (_count < maxCount) return;
+        if (_count < 1000) return;
 
         _count = 0;
+
         for(int i = 0; i < 65536; ++i)
         {
                 if (_writes[i])

@@ -52,7 +52,7 @@ object LiveMemoryWindow: TLiveMemoryWindow
         OnClick = Writes1Click
       end
       object Touches1: TMenuItem
-        Caption = 'Touches'
+        Caption = 'Mark Touched'
         Checked = True
         OnClick = Touches1Click
       end

@@ -32,17 +32,19 @@ void __fastcall TLiveMemoryWindow::Reset()
 }
 
 //---------------------------------------------------------------------------
-void __fastcall TLiveMemoryWindow::Write(int address)
+void __fastcall TLiveMemoryWindow::Write(unsigned short address)
 {
         if (!Visible) return;
         if (!Writes1->Checked) return;
+
+        _cacheline[address/256] = 1;
 
         _writes[address]=255;
         Update();
 }
 
 //---------------------------------------------------------------------------
-void __fastcall TLiveMemoryWindow::Read(int address)
+void __fastcall TLiveMemoryWindow::Read(unsigned short address)
 {
         if (!Visible) return;
         if (!Reads1->Checked) return;

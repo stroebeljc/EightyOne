@@ -692,29 +692,29 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         symbolstore::reset();
 
-        AnsiString file = zx81.cwd;
-        file += "ROM\\";
-        file += machine.CurRom;
-        if (!FileExists(file))
+        AnsiString romBase = zx81.cwd;
+        romBase += "ROM\\";
+
+        AnsiString rom = romBase + machine.CurRom;
+        if (!FileExists(rom))
         {
                 ShowMessage("ROM file for this system not found. Go to:\n\n"
                 "Options > Hardware > Advanced Settings > ROM File.");
         }
 
-        file += ".sym";
-        symbolstore::loadROMSymbols(file.c_str(), caserMunger);
+        AnsiString sym = romBase;
+        sym += ChangeFileExt(machine.CurRom, ".sym");
+        symbolstore::loadROMSymbols(sym.c_str(), caserMunger);
         SymbolBrowser->RefreshContent();
 
-        file = zx81.cwd;
-        file += "ROM\\";
-        file += getMachineRoot(machine.CurRom);
-        file += ".rom.cset.bmp";
+        AnsiString bmp = romBase;
+        bmp += ChangeFileExt(machine.CurRom, ".bmp");
         delete (Graphics::TBitmap*)machine.cset;
         machine.cset = NULL;
-        if (FileExists(file))
+        if (FileExists(bmp))
         {
                 Graphics::TBitmap* cset = new Graphics::TBitmap;
-                cset->LoadFromFile(file);
+                cset->LoadFromFile(bmp);
                 machine.cset = cset;
         }
 

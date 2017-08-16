@@ -15,7 +15,7 @@ TLiveMemoryWindow *LiveMemoryWindow;
 __fastcall TLiveMemoryWindow::TLiveMemoryWindow(TComponent* Owner)
         : TForm(Owner)
 {
-        BITMAPINFOHEADER bmphdr = {sizeof(bmphdr), 512, -256, 1, 32, BI_RGB,
+        BITMAPINFOHEADER bmphdr = {sizeof(bmphdr), 256, -256, 1, 32, BI_RGB,
                 0,0,0,0,0};
 
         _hdib = CreateDIBSection (Canvas->Handle, (BITMAPINFO*)&bmphdr,
@@ -140,12 +140,12 @@ void __fastcall TLiveMemoryWindow::FormMouseMove(TObject *Sender,
       TShiftState Shift, int X, int Y)
 {
         // coordinates can 'leak' past the control bounds >:(
-        X &= 511;
-        Y &= 255;
+        if (X > 511) X = 511;
+        if (Y > 255) Y = 255;
 
         unsigned short yScale = 64 / (_memEnd - _memStart);
 
-        unsigned short n = X + 256 * (Y / yScale);
+        unsigned short n = (X / 2) + 256 * (Y / yScale);
         n += _memStart * 1024;
 
         StatusBar1->Panels->Items[0]->Text = Format("$%0.4x",

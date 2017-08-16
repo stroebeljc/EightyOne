@@ -39,20 +39,6 @@ object LiveMemoryWindow: TLiveMemoryWindow
       end>
     SimplePanel = False
   end
-  object TrackBar1: TTrackBar
-    Left = 152
-    Top = 272
-    Width = 150
-    Height = 45
-    Orientation = trHorizontal
-    Frequency = 1
-    Position = 0
-    SelEnd = 0
-    SelStart = 0
-    TabOrder = 1
-    TickMarks = tmBottomRight
-    TickStyle = tsAuto
-  end
   object MainMenu1: TMainMenu
     Left = 16
     Top = 24

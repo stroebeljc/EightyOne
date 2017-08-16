@@ -22,6 +22,13 @@ __published:	// IDE-managed Components
         TMenuItem *Writes1;
         TMenuItem *Touches1;
         TStatusBar *StatusBar1;
+        TTrackBar *TrackBar1;
+        TMenuItem *Zoom1;
+        TMenuItem *ROM1;
+        TMenuItem *N816K1;
+        TMenuItem *N1632K1;
+        TMenuItem *WholeMemory1;
+        TMenuItem *N848K1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall Reset1Click(TObject *Sender);
         void __fastcall Reads1Click(TObject *Sender);
@@ -29,6 +36,7 @@ __published:	// IDE-managed Components
         void __fastcall Touches1Click(TObject *Sender);
         void __fastcall FormMouseMove(TObject *Sender, TShiftState Shift,
           int X, int Y);
+        void __fastcall ROM1Click(TObject *Sender);
 private:	// User declarations
         void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
 
@@ -37,6 +45,7 @@ private:	// User declarations
         BYTE _writes[65536];
         BYTE _reads[65536];
         int _count;
+        int _memStart, _memEnd;
 
 public:		// User declarations
         __fastcall TLiveMemoryWindow(TComponent* Owner);

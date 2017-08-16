@@ -11,27 +11,31 @@
 #pragma resource "*.dfm"
 TLiveMemoryWindow *LiveMemoryWindow;
 //---------------------------------------------------------------------------
+
 __fastcall TLiveMemoryWindow::TLiveMemoryWindow(TComponent* Owner)
         : TForm(Owner)
 {
-        BITMAPINFOHEADER bmphdr = {sizeof(bmphdr), 256, -256, 1, 32, BI_RGB,
+        BITMAPINFOHEADER bmphdr = {sizeof(bmphdr), 512, -256, 1, 32, BI_RGB,
                 0,0,0,0,0};
 
         _hdib = CreateDIBSection (Canvas->Handle, (BITMAPINFO*)&bmphdr,
                 DIB_RGB_COLORS, (VOID**)&_pbits, NULL, 0);
 
+        _memStart = 0;
+        _memEnd = 64;
+
         Reset();
 }
-
 //---------------------------------------------------------------------------
+
 void __fastcall TLiveMemoryWindow::Reset()
 {
         memset((void*)_pbits, 0, sizeof(RGBQUAD) * 65536);
         memset(_reads, 0, 65536);
         memset(_writes, 0, 65536);
 }
-
 //---------------------------------------------------------------------------
+
 void __fastcall TLiveMemoryWindow::Write(unsigned short address)
 {
         if (!Visible) return;
@@ -40,8 +44,8 @@ void __fastcall TLiveMemoryWindow::Write(unsigned short address)
         _writes[address]=255;
         Update();
 }
-
 //---------------------------------------------------------------------------
+
 void __fastcall TLiveMemoryWindow::Read(unsigned short address)
 {
         if (!Visible) return;
@@ -50,8 +54,8 @@ void __fastcall TLiveMemoryWindow::Read(unsigned short address)
         _reads[address]=255;
         Update();
 }
-
 //---------------------------------------------------------------------------
+
 void __fastcall TLiveMemoryWindow::Update(void)
 {
         int touchCol = Touches1->Checked ? 128 : 0;
@@ -80,21 +84,26 @@ void __fastcall TLiveMemoryWindow::Update(void)
 
         Invalidate();
 }
-
 //---------------------------------------------------------------------------
+
 void __fastcall TLiveMemoryWindow::WMEraseBkgnd(TWMEraseBkgnd &Message)
 {
 }
-
 //---------------------------------------------------------------------------
+
 void __fastcall TLiveMemoryWindow::FormPaint(TObject *Sender)
 {
         HDC hdcMem = CreateCompatibleDC (Canvas->Handle);
         HBITMAP hbmpOld = (HBITMAP)SelectObject (hdcMem, _hdib);
-        BitBlt (Canvas->Handle, 0, 0, 256, 256, hdcMem, 0, 0, SRCCOPY);
+
+        StretchBlt (Canvas->Handle, 0, 0, 512, 256,
+                hdcMem, 0, _memStart * 4, 256, (_memEnd - _memStart) * 4,
+                        SRCCOPY);
+
         SelectObject (hdcMem, hbmpOld);
         DeleteDC (hdcMem);
 }
+//---------------------------------------------------------------------------
 
 void __fastcall TLiveMemoryWindow::Reset1Click(TObject *Sender)
 {
@@ -130,10 +139,33 @@ void __fastcall TLiveMemoryWindow::Touches1Click(TObject *Sender)
 void __fastcall TLiveMemoryWindow::FormMouseMove(TObject *Sender,
       TShiftState Shift, int X, int Y)
 {
-        int n = X + 256 * Y;
-        if (n > 0xffff) n = 0xffff;
+        // coordinates can 'leak' past the control bounds >:(
+        X &= 511;
+        Y &= 255;
 
-        StatusBar1->Panels->Items[0]->Text = Format("$%0.4x", ARRAYOFCONST((n)));
+        unsigned short yScale = 64 / (_memEnd - _memStart);
+
+        unsigned short n = X + 256 * (Y / yScale);
+        n += _memStart * 1024;
+
+        StatusBar1->Panels->Items[0]->Text = Format("$%0.4x",
+                ARRAYOFCONST((n)));
+
+        Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TLiveMemoryWindow::ROM1Click(TObject *Sender)
+{
+        TMenuItem* sender = static_cast<TMenuItem*>(Sender);
+
+        _memStart = sender->Tag & 0xff;
+        _memEnd = sender->Tag / 256;
+
+        StatusBar1->Panels->Items[1]->Text = Format("%d - %dK",
+                ARRAYOFCONST((_memStart, _memEnd)));
+
+        Invalidate();
 }
 //---------------------------------------------------------------------------
 

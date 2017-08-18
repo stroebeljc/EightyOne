@@ -9,7 +9,7 @@
 #include <direct.h>
 #include <string.h>
 
-BYTE globalData[256];
+BYTE globalData[512];
 BYTE sectorData[512];
 BYTE windowData[512];
 
@@ -31,7 +31,7 @@ BYTE P_ROMBK0;
 
 BYTE LATD = 0xff;
 
-WORD globalAmount;
+unsigned short globalAmount;
 BYTE globalIndex;
 
 BYTE LEDs;

@@ -9,7 +9,7 @@
 
 #include <usart.h>
 
-extern BYTE globalIndex;
+extern WORD globalIndex;
 extern WORD globalAmount;
 extern void delayMillis(short);
 extern void decodeJS(void);
@@ -27,11 +27,11 @@ extern BYTE* near gdp;
 
 extern BYTE dirFlags;
 
-BYTE lastJSCVal = 0;
-
-void (*worker)(void) = NULL;
-
 extern void puthexUSART(int n);
+
+
+BYTE lastJSCVal = 0;
+void (*worker)(void) = NULL;
 
 void zx_process_write(void)
 {
@@ -41,12 +41,6 @@ void zx_process_write(void)
 
    worker = NULL;
    mode = 1; // 1nput (0utput)
-
-   //serialWrite('C');
-   //puthexUSART(PORTA & 0x07);
-   //serialWrite(':');
-   //puthexUSART(PORTD);
-   //serialWrite(' ');
 
    // port a holds the latched address
    //
@@ -107,6 +101,7 @@ void zx_process_write(void)
          //
          globalData[globalIndex] = PORTD;
          ++globalIndex;
+         globalIndex &= 511;
       }
       break;
 

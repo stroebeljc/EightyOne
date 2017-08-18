@@ -1,7 +1,7 @@
 
 // global data and definitions for both atommc2 and zxpand implementations
 
-extern unsigned char globalData[256];
+extern unsigned char globalData[512];
 extern unsigned char sectorData[512];
 extern unsigned char windowData[512];
 

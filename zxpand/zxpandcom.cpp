@@ -11,34 +11,12 @@
 #include <stdio.h>
 #include <usart.h>
 
-static BYTE res;
+//                                --------========--------========
+static const rom char* VERSION = "ZXPAND+ 1.10 \"MOGGY\"";
 
-static DIR dir;
-static FIL fil;
-static FILINFO filinfo;
-static FATFS fatfs;
-
-static int sb;
-
-extern BYTE windowData[];
-
-extern WORD globalAmount;
-extern BYTE globalIndex;
-extern BYTE globalDataPresent;
-
-extern BYTE* near gdp;
-extern BYTE near mode;
-
-extern volatile BYTE near ring_error;
-
-#define WILD_LEN  16
-char  WildPattern[WILD_LEN+1];
 
 // use only immediately after open
 extern void get_fileinfo_special(FILINFO *);
-
-char defaultExtension;
-WORD defaultLoadAddr;
 
 extern void mem_cpy (void* dst, const void* src, int cnt);
 extern char chk_chr (const rom char* str, char chr);
@@ -55,6 +33,33 @@ extern void serialClose(void);
 extern void serialHex(BYTE);
 
 extern void delayMillis(short);
+
+
+extern BYTE windowData[];
+
+extern WORD globalAmount;
+extern WORD globalIndex;
+extern BYTE globalDataPresent;
+
+extern BYTE* near gdp;
+extern BYTE near mode;
+
+extern volatile BYTE near ring_error;
+
+
+static BYTE res;
+static DIR dir;
+static FIL fil;
+static FILINFO filinfo;
+static FATFS fatfs;
+
+static int sb;
+
+#define WILD_LEN  16
+char  WildPattern[WILD_LEN+1];
+
+char defaultExtension;
+WORD defaultLoadAddr;
 
 #define GOOUTPUTMODE {gdp = globalData; mode = 0;}
 
@@ -147,7 +152,6 @@ BYTE ascii2zx(char n)
 #define ZEDDY_LT 0x13
 #define ZEDDY_GT 0x12
 
-
 static char ROM zx2ascii81[] = " ??????????\"?$:?()><=+-*/;,"             // 0..26 inclusive (indexed in zx->ascii conversion) - watch out for the \" escape sequence!
                                ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
                                "-()$;\0";                                 // zero-terminated additions for the valid filename test
@@ -155,13 +159,10 @@ static char ROM zx2ascii81[] = " ??????????\"?$:?()><=+-*/;,"             // 0..
 static char ROM zx2ascii80[] = "....";
 
 char ROM* zx2ascii = zx2ascii81;
-// TODO: have ZX80 mode switch
-
 
 // dot onwards, and on to the filename test additions
 //
-static const ROM char* validfns = &zx2ascii81[24];
-
+static const rom char* validfns = &zx2ascii81[24];
 
 /* zx80 tokens are present in character strings:
 
@@ -205,10 +206,9 @@ static const rom char* SEPARATOR = "=";
 static const rom char* SPACE = " ";
 static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
-static const rom char* SIXTEEN48 = "16-48K";
+static const char rom* SIXTEEN48 = "16-48K";
 
-//                                --------========--------========
-static const rom char* VERSION = "ZXPAND+ 1.09 \"MOGGY\"";
+//                                  --------========--------========
 static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
 
 typedef const rom far char* RFC;
@@ -643,6 +643,8 @@ static char* fp_fnBak = (char*)(&globalData[128+32]);
 static char paramStore[64];
 
 
+int bigReadMode = 0;
+
 static unsigned char fileOpen(char*p, unsigned char mode)
 {
     char* token;
@@ -682,6 +684,8 @@ static unsigned char fileOpen(char*p, unsigned char mode)
     length = 0;
     flags = 0;
 
+    bigReadMode = 0;
+
     // parse optional parameters
     //
     while ((token = strtokpgmram((char*)NULL, (RFC)SEMICOL)) != NULL)
@@ -692,6 +696,10 @@ static unsigned char fileOpen(char*p, unsigned char mode)
             if (*token == 'X')
             {
                 flags |= 1;
+            }
+            else if (*token == 'E')
+            {
+                bigReadMode = 1;
             }
         }
         else
@@ -890,7 +898,7 @@ void comFileRead(void)
 
     if (globalAmount == 0)
     {
-        globalAmount = 256;
+        globalAmount = bigReadMode ? 512 : 256;
     }
 
     if (sb >= 0)
@@ -905,7 +913,7 @@ void comFileRead(void)
             serialWrite(globalAmount&0xff);
 
             crc = 0;
-            for (read = 0; read < (UINT)globalAmount; ++read)
+            for (read = 0; read < (unsigned)globalAmount; ++read)
             {
                 while(!serialAvailable());
                 b = serialRead();

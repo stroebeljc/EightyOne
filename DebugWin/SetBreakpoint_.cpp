@@ -5,6 +5,7 @@
 
 #include "SetBreakpoint_.h"
 #include "symbolstore.h"
+#include "z80.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -75,6 +76,33 @@ bool TSetBreakpoint::EditValue(int& address, TDbg::BreakpointConditionType& cond
         if (addressValue[1] == '$')
         {
                 addressValue = "0x" + addressValue.SubString(2, addressValue.Length() - 1);
+        }
+
+        // z80 qualifiers
+        //
+        if (CompareText(addressValue, "PC") == 0)
+        {
+                addressValue = z80.pc.w;
+        }
+        else if (CompareText(addressValue, "HL") == 0)
+        {
+                addressValue = z80.hl.w;
+        }
+        else if (CompareText(addressValue, "DE") == 0)
+        {
+                addressValue = z80.de.w;
+        }
+        else if (CompareText(addressValue, "BC") == 0)
+        {
+                addressValue = z80.bc.w;
+        }
+        else if (CompareText(addressValue, "IX") == 0)
+        {
+                addressValue = z80.ix.w;
+        }
+        else if (CompareText(addressValue, "IY") == 0)
+        {
+                addressValue = z80.iy.w;
         }
 
         // which allows us to use a ninja converter.

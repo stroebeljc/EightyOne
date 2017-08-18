@@ -4,6 +4,8 @@
 
 #include "ConfigureBreakpoint_.h"
 #include "symbolstore.h"
+#include "z80.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -73,6 +75,11 @@ bool TConfigureBreakpoint::EditValues(int& address, int len, int& tStates)
         if (addressValue[1] == '$')
         {
                 addressValue = "0x" + addressValue.SubString(2, addressValue.Length() - 1);
+        }
+
+        if (addressValue == "PC")
+        {
+                addressValue = z80.pc.w;
         }
 
         // which allows us to use a ninja converter.

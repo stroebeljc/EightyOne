@@ -1,6 +1,6 @@
 object ConfigureBreakpoint: TConfigureBreakpoint
-  Left = 439
-  Top = 126
+  Left = 289
+  Top = 128
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'TStates Breakpoint'

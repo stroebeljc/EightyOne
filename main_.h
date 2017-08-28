@@ -124,7 +124,6 @@ __published:	// IDE-managed Components
         TMenuItem *DiskDrives1;
         TImageList *ImageList1;
         TMenuItem *GenerateNMI1;
-        TMenuItem *N501;
         TMenuItem *Control1;
         TMenuItem *N5;
         TMenuItem *Config1;
@@ -236,6 +235,7 @@ __published:	// IDE-managed Components
         void __fastcall GatherWindows1Click(TObject *Sender);
         void __fastcall EnableSplashScreenClick(TObject *Sender);
         void __fastcall LiveMemoryOverviewClick(TObject *Sender);
+        void __fastcall Tools1Click(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

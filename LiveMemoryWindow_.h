@@ -28,6 +28,7 @@ __published:	// IDE-managed Components
         TMenuItem *N1632K1;
         TMenuItem *N848K1;
         TMenuItem *WholeMemory1;
+        TMenuItem *N032;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall Reset1Click(TObject *Sender);
         void __fastcall Reads1Click(TObject *Sender);

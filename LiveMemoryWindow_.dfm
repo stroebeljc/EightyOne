@@ -1,6 +1,7 @@
 object LiveMemoryWindow: TLiveMemoryWindow
-  Left = 172
-  Top = 219
+  Left = 383
+  Top = 248
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Live Memory'
   ClientHeight = 275
@@ -43,10 +44,14 @@ object LiveMemoryWindow: TLiveMemoryWindow
     Left = 16
     Top = 24
     object Re1: TMenuItem
-      Caption = '&Edit'
+      Caption = '&Display'
       object Reset1: TMenuItem
         Caption = '&Reset'
         OnClick = Reset1Click
+      end
+      object Touches1: TMenuItem
+        Caption = '&Show Touched Bytes'
+        OnClick = Touches1Click
       end
     end
     object View1: TMenuItem
@@ -61,22 +66,21 @@ object LiveMemoryWindow: TLiveMemoryWindow
         Checked = True
         OnClick = Writes1Click
       end
-      object Touches1: TMenuItem
-        Caption = '&Mark Touched'
-        Checked = True
-        OnClick = Touches1Click
-      end
     end
     object Zoom1: TMenuItem
-      Caption = '&Zoom'
+      Caption = '&Range'
       object ROM1: TMenuItem
         Tag = 2048
-        Caption = '&ROM'
+        Caption = '0 - 8K'
         OnClick = ROM1Click
       end
-      object N1632K1: TMenuItem
-        Tag = 8208
-        Caption = '16 - 32K'
+      object N032: TMenuItem
+        Tag = 32768
+        Caption = '0 - 32K'
+      end
+      object WholeMemory1: TMenuItem
+        Tag = 16384
+        Caption = '0 - 64K'
         OnClick = ROM1Click
       end
       object N816K1: TMenuItem
@@ -89,9 +93,9 @@ object LiveMemoryWindow: TLiveMemoryWindow
         Caption = '8 - 48K'
         OnClick = ROM1Click
       end
-      object WholeMemory1: TMenuItem
-        Tag = 16384
-        Caption = '&Whole Memory'
+      object N1632K1: TMenuItem
+        Tag = 8208
+        Caption = '16 - 32K'
         OnClick = ROM1Click
       end
     end

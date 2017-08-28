@@ -136,6 +136,11 @@ void __fastcall TLiveMemoryWindow::Touches1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 void __fastcall TLiveMemoryWindow::FormMouseMove(TObject *Sender,
       TShiftState Shift, int X, int Y)
 {
@@ -143,13 +148,11 @@ void __fastcall TLiveMemoryWindow::FormMouseMove(TObject *Sender,
         if (X > 511) X = 511;
         if (Y > 255) Y = 255;
 
-        unsigned short yScale = 64 / (_memEnd - _memStart);
-
-        unsigned short n = (X / 2) + 256 * (Y / yScale);
-        n += _memStart * 1024;
+        long my = map(Y, 0, 256, _memStart * 4, _memEnd * 4 - 1);
+        unsigned short addr = my * 256 + X;
 
         StatusBar1->Panels->Items[0]->Text = Format("$%0.4x",
-                ARRAYOFCONST((n)));
+                ARRAYOFCONST((addr)));
 
         Invalidate();
 }

@@ -29,6 +29,7 @@
 #include "SymBrowse.h"
 #include "Chroma\Chroma.h"
 #include "Spectra\Spectra.h"
+#include "LiveMemoryWindow_.h"
 
 extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
@@ -162,6 +163,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
 
         zx81.zxpand = 0;
+
+        if (NewMachine != zx81.machine && LiveMemoryWindow && LiveMemoryWindow->Visible)
+                LiveMemoryWindow->Close();
+
 
         strcpy(zx81.machinename, Name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = Name;

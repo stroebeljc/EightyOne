@@ -127,11 +127,6 @@ object Form1: TForm1
       Caption = 'View'
       object Zoom1: TMenuItem
         Caption = 'Zoom'
-        object N501: TMenuItem
-          Caption = '50%'
-          ShortCut = 16500
-          OnClick = N501Click
-        end
         object N1001: TMenuItem
           Caption = '100%'
           Checked = True
@@ -388,6 +383,7 @@ object Form1: TForm1
     end
     object Tools1: TMenuItem
       Caption = 'Tools'
+      OnClick = Tools1Click
       object LiveMemoryOverview: TMenuItem
         Caption = 'Live Memory View...'
         ShortCut = 16500

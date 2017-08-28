@@ -283,7 +283,6 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 
         if (StatusBar1->Visible) ch -= StatusBar1->Height;
 
-        N501->Checked=false;
         N1001->Checked=false;
         N2001->Checked=false;
         N4001->Checked=false;
@@ -291,8 +290,6 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 
         if (cw==BaseWidth && ch==BaseHeight)
                 N1001->Checked=true;
-        else if (cw==(BaseWidth/2) && ch==(BaseHeight/2))
-                N501->Checked=true;
         else if (cw==(BaseWidth*2) && ch==(BaseHeight*2))
                 N2001->Checked=true;
         else if (cw==(BaseWidth*4) && ch==(BaseHeight*4))
@@ -361,7 +358,6 @@ void __fastcall TForm1::KeyboardMap1Click(TObject *Sender)
 void __fastcall TForm1::N1001Click(TObject *Sender)
 {
         N1001->Checked=true;
-        N501->Checked=false;
         N2001->Checked=false;
         N4001->Checked=false;
         UserDefined1->Checked=false;
@@ -374,7 +370,6 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
 void __fastcall TForm1::N501Click(TObject *Sender)
 {
         N1001->Checked=false;
-        N501->Checked=true;
         N2001->Checked=false;
         N4001->Checked=false;
         UserDefined1->Checked=false;
@@ -388,7 +383,6 @@ void __fastcall TForm1::N501Click(TObject *Sender)
 void __fastcall TForm1::N2001Click(TObject *Sender)
 {
         N1001->Checked=false;
-        N501->Checked=false;
         N2001->Checked=true;
         N4001->Checked=false;
         UserDefined1->Checked=false;
@@ -402,7 +396,6 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
 void __fastcall TForm1::N4001Click(TObject *Sender)
 {
         N1001->Checked=false;
-        N501->Checked=false;
         N2001->Checked=false;
         N4001->Checked=true;
         UserDefined1->Checked=false;
@@ -416,7 +409,6 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
 void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 {
         N1001->Checked=false;
-        N501->Checked=false;
         N2001->Checked=false;
         N4001->Checked=false;
         UserDefined1->Checked=true;
@@ -1162,7 +1154,6 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteInteger("MAIN","RenderMode", RenderMode);
 
         ini->WriteBool("MAIN","N1001",N1001->Checked);
-        ini->WriteBool("MAIN","N501",N501->Checked);
         ini->WriteBool("MAIN","N2001",N2001->Checked);
         ini->WriteBool("MAIN","N4001",N4001->Checked);
         ini->WriteBool("MAIN","UserDefined",UserDefined1->Checked);
@@ -1942,6 +1933,7 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(CreateHDF, l, t);
         MoveWindow(HW, l, t);
         MoveWindow(Debug68k, l, t);
+        MoveWindow(LiveMemoryWindow, l, t);
 }
 //---------------------------------------------------------------------------
 
@@ -1955,6 +1947,14 @@ void __fastcall TForm1::EnableSplashScreenClick(TObject *Sender)
 void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
 {
         LiveMemoryWindow->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Tools1Click(TObject *Sender)
+{
+        LiveMemoryOverview->Enabled = zx81.machine == MACHINEZX81 ||
+                zx81.machine == MACHINEZX80 ||
+                zx81.machine == MACHINETS1500;
 }
 //---------------------------------------------------------------------------
 

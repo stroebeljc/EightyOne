@@ -374,8 +374,7 @@ void __fastcall TArtifacts::AdvEffectsClick(TObject *Sender)
                 tv.Interlaced=0;
                 tv.DotCrawl=0;
 
-                if (Form1->N501->Checked) Form1->N1001Click(NULL);
-                else if (Form1->N1001->Checked) Form1->N2001Click(NULL);
+                if (Form1->N1001->Checked) Form1->N2001Click(NULL);
                 else if (Form1->N2001->Checked) Form1->N4001Click(NULL);
                 //else { Form1->ClientWidth *=2; Form1->ClientHeight *=2; }
         }

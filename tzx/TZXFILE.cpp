@@ -487,8 +487,21 @@ AnsiString TTZXFile::GetFName(int BlockNo)
                 }
 
                 if (c==0) Name += " ";
-                if (c>=28 && c<=37) Name += (char)((c-28)+('0'));
-                if (c>=38 && c<=63) Name += (char)((c-38)+('A'));
+                else if (c==12) Name += "£";
+                else if (c==13) Name += "$";
+                else if (c==16) Name += "(";
+                else if (c==17) Name += ")";
+                else if (c==18) Name += ">";
+                else if (c==19) Name += "<";
+                else if (c==20) Name += "=";
+                else if (c==21) Name += "+";
+                else if (c==22) Name += "-";
+                else if (c==25) Name += ";";
+                else if (c==26) Name += ",";
+                else if (c==27) Name += ".";
+                else if (c>=28 && c<=37) Name += (char)((c-28)+('0'));
+                else if (c>=38 && c<=63) Name += (char)((c-38)+('A'));
+                else Name += "#";
                 i--;
         } while(i && !end);
 

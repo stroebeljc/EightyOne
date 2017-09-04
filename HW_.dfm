@@ -1286,8 +1286,7 @@ object HW: THW
           'None'
           'WRX'
           'G007'
-          'Memotech'
-          ' ')
+          'Memotech')
       end
       object KMouse: TCheckBox
         Left = 200

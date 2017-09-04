@@ -1932,6 +1932,10 @@ void __fastcall THW::SoundCardBoxChange(TObject *Sender)
 void __fastcall THW::ChrGenBoxChange(TObject *Sender)
 {
         ResetRequired=true;
+        if (ChrGenBox->ItemIndex != 0)
+        {
+                HiResBox->ItemIndex = 0;
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -1939,6 +1943,10 @@ void __fastcall THW::HiResBoxChange(TObject *Sender)
 {
         if (HiResBox->Items->Strings[HiResBox->ItemIndex]=="G007") EnableLowRAM->Checked=true;
         if (HiResBox->Items->Strings[HiResBox->ItemIndex]=="Memotech") ProtectROM->Checked=true;
+        if (HiResBox->ItemIndex != 0)
+        {
+                ChrGenBox->ItemIndex = 0;
+        }
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------

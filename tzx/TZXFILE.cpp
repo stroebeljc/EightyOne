@@ -501,7 +501,6 @@ AnsiString TTZXFile::GetFName(int BlockNo)
                 else if (c==27) Name += ".";
                 else if (c>=28 && c<=37) Name += (char)((c-28)+('0'));
                 else if (c>=38 && c<=63) Name += (char)((c-38)+('A'));
-                else Name += "#";
                 i--;
         } while(i && !end);
 

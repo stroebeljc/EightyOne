@@ -155,7 +155,8 @@ void zx81_initialise(void)
         zx81.romcrc=CRC32Block(memory,romlen);
 
         if (zx81.extfont) font_load("lmbfnt.rom",font,512);
-        if (zx81.chrgen==CHRGENDK) romlen+=memory_load("dkchr.rom",8192,65536);
+        if ((zx81.chrgen==CHRGENDK) && ((zx81.colour != COLOURCHROMA) || (zx81.colour == COLOURCHROMA && !zx81.RAM816k)))
+                romlen+=memory_load("dkchr.rom",8192,4096);
 
         if (romlen<8192)
                 for(i=0;i<romlen;i++)

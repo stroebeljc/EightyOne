@@ -99,17 +99,23 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                 // Check for a write to the Chroma's 8K-16K RAM
                 else if (zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
                 {
-                        memory[Address] = Data;
-                        memory[Address + 0x8000] = Data;
-                        memory[Address + 0xA000] = Data;
-                        if ((Address >= 0x2400) && (Address < 0x2800)) memory[Address + 0x6000] = Data;
-                        writeHandled = true;
+                        if (zx81.chrgen != CHRGENDK)
+                        {
+                                memory[Address] = Data;
+                                memory[Address + 0x8000] = Data;
+                                memory[Address + 0xA000] = Data;
+                                if ((Address >= 0x2400) && (Address < 0x2800)) memory[Address + 0x6000] = Data;
+                                writeHandled = true;
+                        }
                 }
                 // Check for a write to Chroma's 48K-64K colour RAM
                 else if (zx81.chromaColourSwitchOn && (Address >= 0xC000))
                 {
                         memory[Address] = Data;
-                        if (Address < 0xE000) memory[Address - 0xA000] = Data;
+                        if ((Address < 0xE000) && (zx81.chrgen != CHRGENDK))
+                        {
+                                memory[Address - 0xA000] = Data;
+                        }
                         if ((Address >= 0xC400) && (Address < 0x8800)) memory[Address - 0x4000] = Data;
                         writeHandled = true;
                 }

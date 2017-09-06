@@ -130,7 +130,7 @@ bool ReadRomCartridge(int Address, BYTE* Data)
                         readStatus = ReadRomCartridgeZXC4(Address, Data);
                         break;
                 }
-}
+        }
         return readStatus;
 }
 

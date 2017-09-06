@@ -416,7 +416,9 @@ void __fastcall THW::OKClick(TObject *Sender)
          
         zx81.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
-        if (zx81.chrgen==CHRGENDK || zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
+        if ((zx81.chrgen==CHRGENDK) && ((zx81.colour != COLOURCHROMA) || (zx81.colour == COLOURCHROMA && !zx81.RAM816k)))
+                zx81.maxireg=56;
+        else if (zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
         else zx81.maxireg=32;
         if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
 

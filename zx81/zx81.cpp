@@ -267,6 +267,7 @@ void zx81_writebyte(int Address, int Data)
                 BYTE data;
                 if (ReadRomCartridge(Address, (BYTE*)&data))
                 {
+                        LiveMemoryWindow->Write(Address);
                         return;
                 }
         }
@@ -314,6 +315,7 @@ void zx81_writebyte(int Address, int Data)
         // which it ensures by masking out the MREQ line
         if (ChromaRAMWrite(Address, Data, memory, font))
         {
+                LiveMemoryWindow->Write(Address);
                 return;
         }
 

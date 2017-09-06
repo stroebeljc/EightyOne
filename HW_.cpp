@@ -164,15 +164,9 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         zx81.zxpand = 0;
 
-        if (LiveMemoryWindow)
-        {
-                if (NewMachine != zx81.machine && NewMachine == MACHINEQL && LiveMemoryWindow->Visible)
-                {
-                        LiveMemoryWindow->Close();
-                }
+        if (NewMachine != zx81.machine && LiveMemoryWindow && LiveMemoryWindow->Visible)
+                LiveMemoryWindow->Close();
 
-                LiveMemoryWindow->Reset();
-        }
 
         strcpy(zx81.machinename, Name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = Name;
@@ -416,9 +410,7 @@ void __fastcall THW::OKClick(TObject *Sender)
          
         zx81.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
-        if ((zx81.chrgen==CHRGENDK) && ((zx81.colour != COLOURCHROMA) || (zx81.colour == COLOURCHROMA && !zx81.RAM816k)))
-                zx81.maxireg=56;
-        else if (zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
+        if (zx81.chrgen==CHRGENDK || zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
         else zx81.maxireg=32;
         if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
 
@@ -1940,10 +1932,6 @@ void __fastcall THW::SoundCardBoxChange(TObject *Sender)
 void __fastcall THW::ChrGenBoxChange(TObject *Sender)
 {
         ResetRequired=true;
-        if (ChrGenBox->ItemIndex != 0)
-        {
-                HiResBox->ItemIndex = 0;
-        }
 }
 //---------------------------------------------------------------------------
 
@@ -1951,10 +1939,6 @@ void __fastcall THW::HiResBoxChange(TObject *Sender)
 {
         if (HiResBox->Items->Strings[HiResBox->ItemIndex]=="G007") EnableLowRAM->Checked=true;
         if (HiResBox->Items->Strings[HiResBox->ItemIndex]=="Memotech") ProtectROM->Checked=true;
-        if (HiResBox->ItemIndex != 0)
-        {
-                ChrGenBox->ItemIndex = 0;
-        }
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------

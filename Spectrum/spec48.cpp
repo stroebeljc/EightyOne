@@ -1660,7 +1660,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                         colour = ((shift_register&128)?ink2:paper2);
                                         }
                                         
-                                        if (fts<3584)
+                                        if (fts >= (machine.scanlines-4)*machine.tperscanline)
                                                 colour=VBLANKCOLOUR;
 
                                         altcolour=colour;
@@ -1722,7 +1722,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 Sy++;
                 if (Sy>=machine.scanlines)
                 {
-                        fts =0;//-= machine.tperframe;
+                        fts =0; //-= machine.tperframe;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_valid = SYNCTYPEV;
                         Sy=0;

@@ -1,8 +1,8 @@
 object LiveMemoryWindow: TLiveMemoryWindow
-  Left = 383
-  Top = 248
+  Left = 393
+  Top = 153
   BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  BorderStyle = bsToolWindow
   Caption = 'Live Memory'
   ClientHeight = 275
   ClientWidth = 512
@@ -14,6 +14,7 @@ object LiveMemoryWindow: TLiveMemoryWindow
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnClose = FormClose
   OnMouseMove = FormMouseMove
   OnPaint = FormPaint
   PixelsPerInch = 96
@@ -75,8 +76,9 @@ object LiveMemoryWindow: TLiveMemoryWindow
         OnClick = ROM1Click
       end
       object N032: TMenuItem
-        Tag = 32768
+        Tag = 8192
         Caption = '0 - 32K'
+        OnClick = ROM1Click
       end
       object WholeMemory1: TMenuItem
         Tag = 16384

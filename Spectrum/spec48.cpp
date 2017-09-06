@@ -47,6 +47,7 @@
 #include "rzx.h"
 #include "RomCartridge\IF2RomCartridge.h"
 #include "Spectra\Spectra.h"
+#include "LiveMemoryWindow_.h"
 
 #define VBLANKCOLOUR (0*16)
 
@@ -538,6 +539,8 @@ void spec48_writebyte(int Address, int Data)
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
         lastMemoryWriteAddrHi = Address;
 
+        LiveMemoryWindow->Write(Address);
+
         if (Address>=32768 && spectrum.machine==SPECCY16) return;
 
         if (Address<16384)
@@ -653,6 +656,8 @@ BYTE spec48_readbyte(int Address)
 
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
         lastMemoryReadAddrHi = Address;
+
+        LiveMemoryWindow->Read(Address);
 
         if (Address<16384)
         {

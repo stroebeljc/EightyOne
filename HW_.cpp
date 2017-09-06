@@ -164,9 +164,15 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         zx81.zxpand = 0;
 
-        if (NewMachine != zx81.machine && LiveMemoryWindow && LiveMemoryWindow->Visible)
-                LiveMemoryWindow->Close();
+        if (LiveMemoryWindow)
+        {
+                if (NewMachine != zx81.machine && NewMachine == MACHINEQL && LiveMemoryWindow->Visible)
+                {
+                        LiveMemoryWindow->Close();
+                }
 
+                LiveMemoryWindow->Reset();
+        }
 
         strcpy(zx81.machinename, Name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = Name;

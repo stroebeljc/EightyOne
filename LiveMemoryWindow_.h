@@ -37,6 +37,7 @@ __published:	// IDE-managed Components
         void __fastcall FormMouseMove(TObject *Sender, TShiftState Shift,
           int X, int Y);
         void __fastcall ROM1Click(TObject *Sender);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
         void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
 

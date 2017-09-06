@@ -256,6 +256,8 @@ void zx81_writebyte(int Address, int Data)
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
         lastMemoryWriteAddrHi = Address;
 
+        LiveMemoryWindow->Write(Address);
+
         noise = (noise<<8) | Data;
 
         // A ROM cartridge has highest precedence over the 0K-16K region, which it
@@ -398,7 +400,6 @@ void zx81_writebyte(int Address, int Data)
         if (Address>8191 && Address<16384 && !zx81.RAM816k) return;
 
 writeMem:
-        LiveMemoryWindow->Write(Address);
         memory[Address]=Data;
 }
 

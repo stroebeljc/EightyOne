@@ -5,6 +5,7 @@
 #pragma hdrstop
 
 #include "LiveMemoryWindow_.h"
+#include "main_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -169,6 +170,14 @@ void __fastcall TLiveMemoryWindow::ROM1Click(TObject *Sender)
                 ARRAYOFCONST((_memStart, _memEnd)));
 
         Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TLiveMemoryWindow::FormClose(TObject *Sender,
+      TCloseAction &Action)
+{
+        // ugh
+        Form1->LiveMemoryOverview->Checked=false;
 }
 //---------------------------------------------------------------------------
 

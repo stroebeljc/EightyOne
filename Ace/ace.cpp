@@ -36,6 +36,7 @@
 #include "rompatch.h"
 #include "tzxman.h"
 #include "ide.h"
+#include "LiveMemoryWindow_.h"
 
 #define BASE 0
 #define HBLANKCOLOUR (BASE+0*16)
@@ -97,6 +98,8 @@ void ace_writebyte(int Address, int Data)
 {
         //noise = (noise<<8) | Data;
 
+        LiveMemoryWindow->Write(Address);
+
         if (zx81.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
@@ -123,9 +126,12 @@ void ace_writebyte(int Address, int Data)
         memory[Address]=Data;
 }
 
+
 BYTE ace_readbyte(int Address)
 {
         int data;
+
+        LiveMemoryWindow->Read(Address);
 
         if (Address>=0x2000 && Address<=0x23ff) Address += 0x400;
         if (Address>=0x2800 && Address<=0x2bff) Address += 0x400;

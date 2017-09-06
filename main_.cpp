@@ -1946,15 +1946,22 @@ void __fastcall TForm1::EnableSplashScreenClick(TObject *Sender)
 
 void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
 {
-        LiveMemoryWindow->Show();
+        LiveMemoryOverview->Checked = !LiveMemoryOverview->Checked;
+        if (LiveMemoryOverview->Checked)
+        {
+                LiveMemoryWindow->Show();
+        }
+        else
+        {
+                LiveMemoryWindow->Hide();
+        }
 }
+
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Tools1Click(TObject *Sender)
 {
-        LiveMemoryOverview->Enabled = zx81.machine == MACHINEZX81 ||
-                zx81.machine == MACHINEZX80 ||
-                zx81.machine == MACHINETS1500;
+        LiveMemoryOverview->Enabled = zx81.machine != MACHINEQL;
 }
 //---------------------------------------------------------------------------
 

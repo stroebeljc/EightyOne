@@ -111,9 +111,9 @@ void load_config(void)
         strcpy(zx81.ROM97LE, "zx97.rom");
         strcpy(zx81.ROMR470, "ringo470.rom");
         strcpy(zx81.ROMSP48, "spec48.rom");
-        strcpy(zx81.ROMSP128, "spec128.rom");
-        strcpy(zx81.ROMSPP2, "specp2.rom");
-        strcpy(zx81.ROMSPP3, "specp3.rom");
+        strcpy(zx81.ROMSP128, "spec128.english.rom");
+        strcpy(zx81.ROMSPP2, "specp2.english.rom");
+        strcpy(zx81.ROMSPP3, "specp3.english.rom");
         strcpy(zx81.ROMSPP3E, "specp3e.rom");
         strcpy(zx81.ROMSPP3ECF, "specp3ecf.rom");
         strcpy(zx81.ROMTC2048, "tc2048.rom");

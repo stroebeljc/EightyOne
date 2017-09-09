@@ -1606,14 +1606,14 @@ object HW: THW
       object RomBox: TEdit
         Left = 128
         Top = 16
-        Width = 161
+        Width = 185
         Height = 21
         TabOrder = 0
         Text = 'RomBox'
         OnChange = RomBoxChange
       end
       object BrowseROM: TButton
-        Left = 290
+        Left = 314
         Top = 16
         Width = 19
         Height = 21

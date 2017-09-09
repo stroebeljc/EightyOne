@@ -1283,7 +1283,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         TS1000Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=TS1000Btn->Caption;
-        RomBox->Text = zx81.ROM81;
+        RomBox->Text = zx81.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<1) RamPackBox->ItemIndex=1;
         NTSC->Checked=true;

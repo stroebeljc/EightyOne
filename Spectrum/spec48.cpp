@@ -373,9 +373,9 @@ void spec48_initialise(void)
         if (spectrum.floppytype==FLOPPYIF1)
         {
                 if (IF1->RomEdition->Text == "Edition 2")
-                        romlen=memory_load("specif1_2.rom",0,65536);
+                        romlen=memory_load("specif1.edition2.rom",0,65536);
                 else
-                        romlen=memory_load("specif1_1.rom",0,65536);
+                        romlen=memory_load("specif1.edition1.rom",0,65536);
 
                 memcpy(SpecMem+32768,memory,romlen);
                 if (romlen<=8192) memcpy(SpecMem+32768+8192,memory,romlen);

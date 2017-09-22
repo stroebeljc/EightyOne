@@ -211,7 +211,6 @@ FRESULT f_open (
       }
    }
 
-   // CR  fix the fstat bug so that the read-only-forces-overlay-off works,
    // use stat(name,...) instead of fstat(handle,...)
    
    const char* fullNme = createFullPath(path);
@@ -228,14 +227,7 @@ FRESULT f_open (
    }
 
    fp->fsize = stats.st_size;
-   if (!(stats.st_mode & _S_IWRITE))
-   {
-      fp->flag = AM_RDO;
-   }
-   else
-   {
-      fp->flag = 0;
-   }
+   fp->flag = 0;
 
    SetHandle(fp, handle);
    return FR_OK;

@@ -5,7 +5,7 @@
 
 void serialInit(int x, int y) {}
 int serialAvailable(void) { return 0; }
-int serialCopy(void) { return 0; }
+int serialCopy(unsigned char *) { return 0; }
 void serialWrite(BYTE b) {}
 void serialHex(BYTE b) {}
 void serialClose(void) {}

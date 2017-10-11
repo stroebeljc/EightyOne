@@ -11,9 +11,34 @@
 #include <stdio.h>
 #include <usart.h>
 
-//                                --------========--------========
-static const rom char* VERSION = "ZXPAND+ 1.10 \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ 1.12 \"MOGGY\"";
 
+static BYTE res;
+
+static DIR dir;
+static FIL fil;
+static FILINFO filinfo;
+static FATFS fatfs;
+
+static int sb;
+
+#define WILD_LEN  16
+static char  WildPattern[WILD_LEN+1];
+
+char defaultExtension;
+WORD defaultLoadAddr;
+
+
+extern BYTE windowData[];
+
+extern WORD globalAmount;
+extern WORD globalIndex;
+extern BYTE globalDataPresent;
+
+extern BYTE* near gdp;
+extern BYTE near mode;
+
+extern volatile BYTE near ring_error;
 
 // use only immediately after open
 extern void get_fileinfo_special(FILINFO *);
@@ -31,37 +56,11 @@ extern void serialPrint(char*);
 extern void serialInit(int, int);
 extern void serialClose(void);
 extern void serialHex(BYTE);
+extern int serialCopy(BYTE*);
 
 extern void delayMillis(short);
 
-
-extern BYTE windowData[];
-
-extern WORD globalAmount;
-extern WORD globalIndex;
-extern BYTE globalDataPresent;
-
-extern BYTE* near gdp;
-extern BYTE near mode;
-
-extern volatile BYTE near ring_error;
-
-
-static BYTE res;
-static DIR dir;
-static FIL fil;
-static FILINFO filinfo;
-static FATFS fatfs;
-
-static int sb;
-
-#define WILD_LEN  16
-char  WildPattern[WILD_LEN+1];
-
-char defaultExtension;
-WORD defaultLoadAddr;
-
-#define GOOUTPUTMODE {gdp = globalData; mode = 0;}
+#define GOOUTPUTMODE {gdp = (BYTE*)globalData; mode = 0;}
 
 
 /*
@@ -208,7 +207,7 @@ static const rom char* SEMICOL = ";";
 static const rom char* EIGHT40 =   "8-40K";
 static const char rom* SIXTEEN48 = "16-48K";
 
-//                                  --------========--------========
+//                                --------========--------========
 static const rom char* MOREMSG = "\nPRESS break OR ANY OTHER KEY";
 
 typedef const rom far char* RFC;
@@ -276,9 +275,9 @@ void decodeJS(void)
     }
 }
 
-void zeddyHBT2asciiZ(unsigned char* buffer)
+void zeddyHBT2asciiZ(char* buf)
 {
-    unsigned char q;
+    BYTE q, *buffer = (BYTE*)buf;
     do
     {
         q = *buffer;
@@ -302,11 +301,13 @@ void zeddyHBT2asciiZ(unsigned char* buffer)
     }
     while (q < 128);
     *buffer = 0;
+
 }
 
-void deZeddify(unsigned char* buffer)
+void deZeddify(char* p)
 {
-    unsigned char q;
+    BYTE q;
+    BYTE* buffer = (BYTE*)p;
     while (*buffer)
     {
         q = *buffer;
@@ -332,8 +333,9 @@ void deZeddify(unsigned char* buffer)
 
 
 
-void zeddify(BYTE* buffer)
+void zeddify(char* buf)
 {
+    BYTE* buffer = (BYTE*)buf;
     while (*buffer)
     {
         *buffer = ascii2zx(*buffer);
@@ -344,8 +346,9 @@ void zeddify(BYTE* buffer)
 }
 
 
-void zeddifyUpper(BYTE* buffer)
+void zeddifyUpper(char* buf)
 {
+    BYTE* buffer = (BYTE*)buf;
     while (*buffer)
     {
         *buffer = ascii2zx(toupper(*buffer));
@@ -358,7 +361,7 @@ void zeddifyUpper(BYTE* buffer)
 
 
 // check that the supplied ascii filename only consists of alphanums slash and dot.
-char isValidFN(unsigned char* buffer)
+char isValidFN(char* buffer)
 {
     while (*buffer)
     {
@@ -660,7 +663,7 @@ static unsigned char fileOpen(char*p, unsigned char mode)
         autogenext = 0;
     }
 
-    if (!isValidFN((unsigned char*)p))
+    if (!isValidFN(p))
     {
         return 0x40 + FR_INVALID_NAME;
     }
@@ -995,7 +998,7 @@ void comFileRename(void)
         token = strtokpgmram((char*)NULL, (RFC)SEMICOL);
         if (NULL != token)
         {
-            if (isValidFN(globalData) && isValidFN((BYTE*)token))
+            if (isValidFN(globalData) && isValidFN(token))
             {
                 ret = 0x40 | f_rename((const XCHAR*)&globalData[0], (const XCHAR*)token);
             }
@@ -1222,20 +1225,20 @@ void comParseBuffer(void)
         }
         else
         {
-            unsigned char* p = &globalData[0];
+            char* p = &globalData[0];
             *p = 1;
             ++p;
             if ((fsConfig & 3) == 1)
             {
-                strcpypgm2ram((char*)p, (RFC)"BAK");
+                strcpypgm2ram(p, (RFC)"BAK");
             }
             else if ((fsConfig & 3) == 2)
             {
-                strcpypgm2ram((char*)p, (RFC)"OVR");
+                strcpypgm2ram(p, (RFC)"OVR");
             }
             else
             {
-                strcpypgm2ram((char*)p, (RFC)"ERR");
+                strcpypgm2ram(p, (RFC)"ERR");
             }
             zeddify(p);
             p+= 3;
@@ -1332,6 +1335,13 @@ int identifyToken(char** p, rom far char** tokens)
     return -1;
 }
 
+
+void InitRetBlk(char* p)
+{
+    zxpandRetblk.address = atoi(p+1);
+    zxpandRetblk.op = 2;             // executable
+}
+
 /*
 ED 5B 3F 40  ld de,(16447) ; data ptr
 2A 3E 40     ld hl,(16446) ; l = len, h = unused
@@ -1363,7 +1373,9 @@ void comParseBufferPlus(void)
         LATD = 0x4a;
         return;
     }
-
+    
+    zxpandRetblk.retval = 0x40;      // all good unless otherwise specified
+    
     globalData[0] = 0; // no-op
     noun = identifyToken(&p, streams);
 
@@ -1374,9 +1386,9 @@ void comParseBufferPlus(void)
         {
         case N_SERIAL: { // open serial [rate]
             // nnn = (32000000 / rate / 64) - 1
-            int rate = atoi(p) ? atoi(p) : 38400;
-            int spbrg = 32000000 / rate / 64 - 1;
-            serialInit(spbrg, 1);
+            long rate = atol(p) ? atol(p) : 38400;
+            long spbrg = 32000000 / rate / 64 - 1;
+            serialInit((int)spbrg, 1);
         }
         break;
 
@@ -1427,16 +1439,11 @@ void comParseBufferPlus(void)
             if (*p =='*')
             {
                 // PUT SER *30000 123
-                char* ap = p + 1;
                 char* lp =  nextToken(p);
-
-                int address = atoi(ap);
                 int len = atoi(lp);
 
-                zxpandRetblk.op = 2;             // executable
-                zxpandRetblk.retval = 0x40;      // all good
+                InitRetBlk(p); // fill in retblk address
                 zxpandRetblk.len = len;          // 0 = 256
-                zxpandRetblk.address = address;  // memory ptr
 
                 zxpandContinuation = 16 * noun + verb;
 
@@ -1470,10 +1477,7 @@ void comParseBufferPlus(void)
             if (*p =='*')
             {
                 // GET CAT *30000
-                char* ap = p + 1;
-                zxpandRetblk.op = 2;                // exec data
-                zxpandRetblk.retval = 0x40;
-                zxpandRetblk.address = (short)atoi(ap);    // memory ptr
+                InitRetBlk(p);
 
                 memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
                 globalData[5+8] = 0; // now it's memget ;)
@@ -1490,6 +1494,29 @@ void comParseBufferPlus(void)
         }
         break;
 
+        case N_SERIAL: {
+            int o = 32;
+            zxpandRetblk.retval = 0x40;
+            if (*p =='*')
+            {
+                // GET SER *30000
+                InitRetBlk(p);
+
+                memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
+                globalData[5+8] = 0; // now it's memget ;)
+            }
+            else
+            {
+                zxpandRetblk.op = 1;             // string data
+                zxpandRetblk.address = 16449;    // memory ptr
+                o = 5;
+            }
+// todo: add BINARY switch
+			zxpandRetblk.len = serialCopy((BYTE*)(&globalData[o]));
+            memcpy(globalData, (void*)&zxpandRetblk, 5);
+        }
+        break;
+
         case N_PARAM: {
             int o = 32;
             zxpandRetblk.retval = 0x40;
@@ -1497,9 +1524,7 @@ void comParseBufferPlus(void)
             if (*p =='*')
             {
                 // GET PARM *30000
-                char* ap = p + 1;
-                zxpandRetblk.op = 2;                // exec data
-                zxpandRetblk.address = (short)atoi(ap);    // memory ptr
+                InitRetBlk(p);
 
                 memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
                 globalData[5+8] = 0; // now it's memget ;)

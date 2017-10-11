@@ -86,8 +86,15 @@ void LoadEEPROM(void)
    else
    {
       memset(eeprom, 255, 256);
+      eep = fopen(file,"wb");
+      if (eep != NULL)
+      {
+        fwrite(eeprom, 1, 256, eep);
+        fclose(eep);
+      }
    }
 }
+
 void WriteEEPROM(BYTE address, BYTE val)
 {
     eeprom[address] = val;

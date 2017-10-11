@@ -15,9 +15,10 @@ extern void delayMillis(short);
 extern void decodeJS(void);
 
 extern int serialAvailable(void);
-extern int serialCopy(void);
-extern void zeddify(BYTE* buffer);
+extern int serialCopy(BYTE*);
 extern void serialWrite(BYTE);
+
+extern void zeddify(char* buffer);
 
 extern char defaultExtension;
 extern WORD defaultLoadAddr;
@@ -55,7 +56,7 @@ void zx_process_write(void)
             // initialise the output latch with the 1st globalbuffer byte,
             // set the read index to the next byte to be read
             //
-            gdp = globalData;
+            gdp = (BYTE*)globalData;
             LATD = *gdp;
             ++gdp;
             mode = 0;
@@ -63,7 +64,7 @@ void zx_process_write(void)
          else if (PORTD == 42)
          {
             BYTE near gdi = 0;
-			   gdp = globalData;
+			   gdp = (BYTE*)globalData;
 
 			   do
 			   {
@@ -196,11 +197,8 @@ void zx_process_write(void)
          // PORTD = 0 means read 256 bytes.
          //
          globalAmount = PORTD;
-         //worker = COM_FileRead;
-         COM_FileRead();
-
-         gdp = globalData;
-         mode = 0;
+         worker = COM_FileRead;
+         //COM_FileRead();
       }
       break;
 
@@ -281,7 +279,7 @@ void zx_process_write(void)
                  ++k;
                  ++i;
                }
-               gdp = globalData;
+               gdp = (BYTE*)globalData;
                mode = 0;
              }
              break;
@@ -382,9 +380,18 @@ void zx_process_write(void)
              case 0xc2:
              {
                // get serial bytes - careful if there's more than 127...
-               int n = serialCopy();
+               int n = serialCopy((BYTE*)globalData);
                globalData[n] = 0;
                zeddify(globalData);
+               gdp = (BYTE*)globalData;
+               mode = 0;
+               LATD = n;
+             }
+             break;
+             case 0xc3:
+             {
+               // get serial bytes binary - careful if there's more than 127...
+               int n = serialCopy((BYTE*)globalData);
                gdp = globalData;
                mode = 0;
                LATD = n;

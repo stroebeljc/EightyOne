@@ -18,6 +18,8 @@
 #include <fcntl.h>
 #include <SYS\Stat.h>
 
+extern loadFileSymbolsProxy(const char*);
+
 struct stat stats;
 
 extern int dirOpen(const char* path);
@@ -228,6 +230,8 @@ FRESULT f_open (
 
    fp->fsize = stats.st_size;
    fp->flag = 0;
+
+   loadFileSymbolsProxy(fullNme);
 
    SetHandle(fp, handle);
    return FR_OK;

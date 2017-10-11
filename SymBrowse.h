@@ -20,6 +20,7 @@ __published:	// IDE-managed Components
           TPoint &MousePos, bool &Handled);
         void __fastcall ShowMemory1Click(TObject *Sender);
         void __fastcall AddBreakpoint1Click(TObject *Sender);
+        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TSymbolBrowser(TComponent* Owner);

@@ -12,12 +12,13 @@ object SymbolBrowser: TSymbolBrowser
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 383
-    Width = 274
+    Top = 372
+    Width = 266
     Height = 19
     Panels = <>
     SimplePanel = False

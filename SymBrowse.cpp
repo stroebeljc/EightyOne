@@ -23,28 +23,19 @@ __fastcall TSymbolBrowser::TSymbolBrowser(TComponent* Owner)
 
 void __fastcall TSymbolBrowser::RefreshContent(void)
 {
-        bool wasShowing = Showing;
-        if (wasShowing)
-        {
-                Hide();
-        }
-
         ListBox1->Items->Clear();
 
         symbolstore::beginenumeration();
         AnsiString sym;
+        char type;
         int val;
-        while(symbolstore::enumerate(sym, val))
+        while(symbolstore::enumerate(sym, val, type))
         {
                 sym = "    " + sym + "                       ";
                 sym.SetLength(24);
+                sym[1] = type;
                 sym += IntToHex(val, 4);
                 ListBox1->Items->Add(sym);
-        }
-
-        if (wasShowing)
-        {
-                Show();
         }
 }
 
@@ -62,8 +53,7 @@ void __fastcall TSymbolBrowser::ListBox1ContextPopup(TObject *Sender,
         if (item < ListBox1->Items->Count)
         {
                 ListBox1->ItemIndex=item;
-                AnsiString sym(ListBox1->Items->Strings[item]);
-                sym.SetLength(24);
+                AnsiString sym(ListBox1->Items->Strings[item].SubString(5,20));
                 symbolstore::symbolToAddress(sym.Trim(), Dbg->MemDumpFromHere1->Tag);
         }
 
@@ -82,6 +72,12 @@ void __fastcall TSymbolBrowser::AddBreakpoint1Click(TObject *Sender)
 {
         TMenuItem* mi = (TMenuItem*)Sender;
         Dbg->AddBreakPoint(Dbg->AddBreak1->Tag, true, mi->Tag);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSymbolBrowser::FormShow(TObject *Sender)
+{
+        RefreshContent();
 }
 //---------------------------------------------------------------------------
 

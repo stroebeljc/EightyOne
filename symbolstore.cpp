@@ -16,6 +16,33 @@ static SYM2VAL romS2V;
 static VAL2SYM fileV2S;
 static SYM2VAL fileS2V;
 
+void nosgbMunger(AnsiString& val, AnsiString& name)
+{
+        AnsiString tempVal = val;
+        int wspos = tempVal.LastDelimiter(":");
+        if (wspos == 0)
+        {
+                return;
+        }
+
+        AnsiString actualVal(tempVal.SubString(wspos + 1, tempVal.Length() - wspos));
+
+        val = name;
+        name = actualVal;
+}
+
+void loadFileSymbolsProxy(const char* path)
+{
+        AnsiString pp = AnsiString(path).LowerCase();
+        if (pp.Length() < 3) return;
+
+        AnsiString ppp = pp.SubString(pp.Length() - 1, 2);
+        if (ppp != ".p") return;
+
+        pp += ".sym";
+        symbolstore::loadFileSymbols(pp.c_str(), nosgbMunger);
+}
+
 static bool splitline(const char* input, AnsiString& symOut, AnsiString& valOut)
 {
         AnsiString sym(input);
@@ -195,16 +222,19 @@ bool symbolstore::symbolToAddress(const AnsiString& sym, int& val)
 // NOT THREAD SAFE! actually - none of it is :P
 //
 static SYM2VAL::iterator nasty;
+static char type;
 
 void symbolstore::beginenumeration(void)
 {
         nasty = romS2V.begin();
+        type = 'r';
 }
 
-bool symbolstore::enumerate(AnsiString& sym, int& val)
+bool symbolstore::enumerate(AnsiString& sym, int& val, char& storetype)
 {
         if (nasty == romS2V.end())
         {
+                type = 'p';
                 nasty = fileS2V.begin();
         }
         if (nasty == fileS2V.end())
@@ -214,6 +244,8 @@ bool symbolstore::enumerate(AnsiString& sym, int& val)
 
         sym = nasty->first;
         val = nasty->second;
+        storetype = type;
+
         ++nasty;
 
         return true;

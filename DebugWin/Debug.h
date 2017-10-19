@@ -174,7 +174,6 @@ __published:	// IDE-managed Components
         TPopupMenu *MemDumpPopup;
         TMenuItem *MemDumpFromHere1;
         TLabel *Label8;
-        TMenuItem *AddBreak1;
         TMenuItem *OnExecute1;
         TMenuItem *OnRead1;
         TMenuItem *OnWrite1;
@@ -297,6 +296,7 @@ __published:	// IDE-managed Components
         void __fastcall TStatesBrkBtnClick(TObject *Sender);
         void __fastcall BPListSelectCell(TObject *Sender, int ACol,
           int ARow, bool &CanSelect);
+        void __fastcall GroupBox5Click(TObject *Sender);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);

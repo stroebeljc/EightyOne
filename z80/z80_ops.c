@@ -43,6 +43,13 @@ static void z80_ddfdcbxx(BYTE opcode3, WORD tempaddr);
 
 unsigned short RZXCounter=0;
 
+
+void SetSP(int i)
+{
+        //spBase = i;
+}
+
+
 /* Execute Z80 opcodes until the next event */
 int z80_do_opcode()
 {
@@ -277,6 +284,7 @@ int z80_do_opcode()
       SPL=readbyte(PC++);
       contend( PC, 3 );
       SPH=readbyte(PC++);
+      SetSP(SP);
       break;
     case 0x32:		/* LD (nnnn),A */
       contend( PC, 3 );
@@ -291,6 +299,7 @@ int z80_do_opcode()
     case 0x33:		/* INC SP */
       tstates += 2;
       SP++;
+      SetSP(SP);
       break;
     case 0x34:		/* INC (HL) */
       contend( HL, 4 );
@@ -340,6 +349,7 @@ int z80_do_opcode()
     case 0x3b:		/* DEC SP */
       tstates += 2;
       SP--;
+      SetSP(SP);
       break;
     case 0x3c:		/* INC A */
       INC(A);
@@ -1087,6 +1097,7 @@ int z80_do_opcode()
     case 0xf9:		/* LD SP,HL */
       tstates += 2;
       SP=HL;
+      SetSP(HL);
       break;
     case 0xfa:		/* JP M,nnnn */
       contend( PC, 3 ); contend( PC+1, 3 );

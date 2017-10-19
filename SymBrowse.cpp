@@ -16,7 +16,7 @@ __fastcall TSymbolBrowser::TSymbolBrowser(TComponent* Owner)
         : TForm(Owner)
 {
         ListBox1->Width=ClientWidth;
-        ListBox1->Height=ClientHeight-StatusBar1->Height;
+        ListBox1->Height=ClientHeight;
 }
 //---------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ void __fastcall TSymbolBrowser::ListBox1ContextPopup(TObject *Sender,
                 symbolstore::symbolToAddress(sym.Trim(), Dbg->MemDumpFromHere1->Tag);
         }
 
-        Dbg->AddBreak1->Tag = Dbg->MemDumpFromHere1->Tag;
+        Dbg->MemDumpPopup->Tag = Dbg->MemDumpFromHere1->Tag;
 }
 //---------------------------------------------------------------------------
 
@@ -68,16 +68,28 @@ void __fastcall TSymbolBrowser::ShowMemory1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TSymbolBrowser::AddBreakpoint1Click(TObject *Sender)
-{
-        TMenuItem* mi = (TMenuItem*)Sender;
-        Dbg->AddBreakPoint(Dbg->AddBreak1->Tag, true, mi->Tag);
-}
-//---------------------------------------------------------------------------
-
 void __fastcall TSymbolBrowser::FormShow(TObject *Sender)
 {
         RefreshContent();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSymbolBrowser::ListBox1KeyPress(TObject *Sender,
+      char &Key)
+{
+        int startidx = ListBox1->ItemIndex + 1;
+
+        for (int i = 0; i < ListBox1->Items->Count; ++i)
+        {
+                int idx = (startidx + i) % ListBox1->Items->Count;
+                AnsiString s = ListBox1->Items->Strings[idx];
+                char x = s[5];
+                if (x == (char)Key)
+                {
+                       ListBox1->ItemIndex = idx;
+                       return;
+                }
+        }
 }
 //---------------------------------------------------------------------------
 

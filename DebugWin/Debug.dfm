@@ -1087,6 +1087,7 @@ object Dbg: TDbg
     Font.Style = []
     ParentFont = False
     TabOrder = 4
+    OnClick = GroupBox5Click
     object Stack0: TLabel
       Left = 11
       Top = 16
@@ -1998,22 +1999,19 @@ object Dbg: TDbg
       Caption = 'Show Memory'
       OnClick = MemDumpFromHere1Click
     end
-    object AddBreak1: TMenuItem
-      Caption = 'Add Breakpoint'
-      object OnExecute1: TMenuItem
-        Caption = 'On Execute'
-        OnClick = AddBreak1Click
-      end
-      object OnRead1: TMenuItem
-        Tag = 1
-        Caption = 'On Read'
-        OnClick = AddBreak1Click
-      end
-      object OnWrite1: TMenuItem
-        Tag = 2
-        Caption = 'On Write'
-        OnClick = AddBreak1Click
-      end
+    object OnExecute1: TMenuItem
+      Caption = 'BP On Execute'
+      OnClick = AddBreak1Click
+    end
+    object OnRead1: TMenuItem
+      Tag = 1
+      Caption = 'BP On Read'
+      OnClick = AddBreak1Click
+    end
+    object OnWrite1: TMenuItem
+      Tag = 2
+      Caption = 'BP On Write'
+      OnClick = AddBreak1Click
     end
   end
 end

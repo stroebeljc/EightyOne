@@ -1,6 +1,6 @@
 object SymbolBrowser: TSymbolBrowser
-  Left = 339
-  Top = 143
+  Left = 337
+  Top = 132
   Width = 282
   Height = 429
   BorderStyle = bsSizeToolWin
@@ -15,19 +15,11 @@ object SymbolBrowser: TSymbolBrowser
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object StatusBar1: TStatusBar
-    Left = 0
-    Top = 372
-    Width = 266
-    Height = 19
-    Panels = <>
-    SimplePanel = False
-  end
   object ListBox1: TListBox
     Left = 0
     Top = 0
     Width = 274
-    Height = 380
+    Height = 393
     Anchors = [akLeft, akTop, akRight, akBottom]
     BiDiMode = bdRightToLeft
     Font.Charset = ANSI_CHARSET
@@ -40,7 +32,8 @@ object SymbolBrowser: TSymbolBrowser
     ParentFont = False
     PopupMenu = Dbg.MemDumpPopup
     Sorted = True
-    TabOrder = 1
+    TabOrder = 0
     OnContextPopup = ListBox1ContextPopup
+    OnKeyPress = ListBox1KeyPress
   end
 end

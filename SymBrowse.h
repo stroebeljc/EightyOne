@@ -14,13 +14,12 @@
 class TSymbolBrowser : public TForm
 {
 __published:	// IDE-managed Components
-        TStatusBar *StatusBar1;
         TListBox *ListBox1;
         void __fastcall ListBox1ContextPopup(TObject *Sender,
           TPoint &MousePos, bool &Handled);
         void __fastcall ShowMemory1Click(TObject *Sender);
-        void __fastcall AddBreakpoint1Click(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
+        void __fastcall ListBox1KeyPress(TObject *Sender, char &Key);
 private:	// User declarations
 public:		// User declarations
         __fastcall TSymbolBrowser(TComponent* Owner);

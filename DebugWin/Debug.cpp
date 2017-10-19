@@ -75,11 +75,21 @@ int recentHistoryPos=0;
 
 WORD displayedTStatesCount;
 
+;int cacheMaxStack = 0;
+
 void DebugUpdate(void)
 {
         static int NMISaveSingleStep=-1, INTSaveSingleStep=-1;
         static int lastpc;
         int i;
+
+//        int sp = z80.sp.w;
+//        int maxb = 0x8000 - sp;
+//        if (sp && maxb > cacheMaxStack)
+//        {
+//                cacheMaxStack = maxb;
+//               Dbg->GroupBox5->Caption = AnsiString(cacheMaxStack);
+//       }
 
         i=z80.pc.w;
         if (lastpc!=z80.pc.w)
@@ -1172,7 +1182,7 @@ void __fastcall TDbg::F_Click(TObject *Sender)
 void TDbg::SetMenuContent(int memloc)
 {
      MemDumpFromHere1->Tag = memloc;
-     AddBreak1->Tag = memloc;
+     MemDumpPopup->Tag = memloc;
 }
 //---------------------------------------------------------------------------
 
@@ -1265,7 +1275,8 @@ void __fastcall TDbg::MemDumpFromHere1Click(TObject *Sender)
 void __fastcall TDbg::AddBreak1Click(TObject *Sender)
 {
         TMenuItem* mi = (TMenuItem*)Sender;
-        AddBreakPoint(AddBreak1->Tag, true, mi->Tag);
+        AddBreakPoint(MemDumpPopup->Tag, true, mi->Tag);
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -1318,7 +1329,7 @@ void __fastcall TDbg::WriteBrkBtnClick(TObject *Sender)
                 AddBreakPoint(Addr, true, BP_WR, condition);
         }
 
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);                      
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -1441,6 +1452,13 @@ void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
 {
         if ((ARow + 1) >= BPList->RowCount)
                 CanSelect = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::GroupBox5Click(TObject *Sender)
+{
+//        cacheMaxStack = 0;
+//        GroupBox5->Caption = AnsiString(cacheMaxStack);
 }
 //---------------------------------------------------------------------------
 

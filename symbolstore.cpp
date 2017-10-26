@@ -16,9 +16,9 @@ static SYM2VAL romS2V;
 static VAL2SYM fileV2S;
 static SYM2VAL fileS2V;
 
-void nosgbMunger(AnsiString& val, AnsiString& name)
+void splitnosval(AnsiString& inval, AnsiString& outval)
 {
-        AnsiString tempVal = val;
+        AnsiString tempVal = inval;
         int wspos = tempVal.LastDelimiter(":");
         if (wspos == 0)
         {
@@ -27,8 +27,7 @@ void nosgbMunger(AnsiString& val, AnsiString& name)
 
         AnsiString actualVal(tempVal.SubString(wspos + 1, tempVal.Length() - wspos));
 
-        val = name;
-        name = actualVal;
+        outval = actualVal;
 }
 
 void loadFileSymbolsProxy(const char* path)
@@ -40,7 +39,7 @@ void loadFileSymbolsProxy(const char* path)
         if (ppp != ".p") return;
 
         pp += ".sym";
-        symbolstore::loadFileSymbols(pp.c_str(), nosgbMunger);
+        symbolstore::loadFileSymbols(pp.c_str());
 }
 
 static bool splitline(const char* input, AnsiString& symOut, AnsiString& valOut)
@@ -136,7 +135,7 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v, symbol
 
         while(fgets(buf, 128, symfile))
         {
-                if (!splitline(buf, sym, val))
+                if (!splitline(buf, val, sym))
                 {
                         continue;
                 }
@@ -145,6 +144,8 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v, symbol
                 {
                         munger(sym, val);
                 }
+
+                splitnosval(val, val);
 
                 val = "0x" + val.Trim();
                 int v = StrToInt(val);

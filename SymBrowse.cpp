@@ -32,7 +32,7 @@ void __fastcall TSymbolBrowser::RefreshContent(void)
         while(symbolstore::enumerate(sym, val, type))
         {
                 sym = "    " + sym + "                       ";
-                sym.SetLength(24);
+                sym.SetLength(28);
                 sym[1] = type;
                 sym += IntToHex(val, 4);
                 ListBox1->Items->Add(sym);
@@ -53,7 +53,7 @@ void __fastcall TSymbolBrowser::ListBox1ContextPopup(TObject *Sender,
         if (item < ListBox1->Items->Count)
         {
                 ListBox1->ItemIndex=item;
-                AnsiString sym(ListBox1->Items->Strings[item].SubString(5,20));
+                AnsiString sym(ListBox1->Items->Strings[item].SubString(5,24));
                 symbolstore::symbolToAddress(sym.Trim(), Dbg->MemDumpFromHere1->Tag);
         }
 

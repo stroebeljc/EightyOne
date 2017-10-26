@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 188
-  Top = 114
+  Left = 463
+  Top = 132
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -600,6 +600,8 @@ object Dbg: TDbg
       Font.Style = []
       ParentColor = False
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass4: TLabel
       Left = 8
@@ -614,6 +616,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass5: TLabel
       Left = 8
@@ -628,6 +632,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass6: TLabel
       Left = 8
@@ -642,6 +648,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass7: TLabel
       Left = 8
@@ -656,6 +664,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass8: TLabel
       Left = 8
@@ -670,6 +680,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass9: TLabel
       Left = 8
@@ -684,6 +696,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Label8: TLabel
       Left = 8
@@ -712,6 +726,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
     object Disass11: TLabel
       Left = 8
@@ -726,6 +742,8 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      PopupMenu = MemDumpPopup
+      OnMouseDown = Disass3MouseDown
     end
   end
   object GroupBoxZX81: TGroupBox

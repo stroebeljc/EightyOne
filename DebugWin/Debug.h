@@ -297,6 +297,8 @@ __published:	// IDE-managed Components
         void __fastcall BPListSelectCell(TObject *Sender, int ACol,
           int ARow, bool &CanSelect);
         void __fastcall GroupBox5Click(TObject *Sender);
+        void __fastcall Disass3MouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);

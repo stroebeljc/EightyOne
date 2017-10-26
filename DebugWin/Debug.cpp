@@ -1462,3 +1462,15 @@ void __fastcall TDbg::GroupBox5Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+
+
+void __fastcall TDbg::Disass3MouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+        AnsiString t = ((TLabel*)Sender)->Caption;
+        AnsiString t2 = t.SubString(13,5);
+        SetMenuContent(StrToInt(t2));
+}
+//---------------------------------------------------------------------------
+

@@ -1,6 +1,6 @@
 object SymbolBrowser: TSymbolBrowser
-  Left = 337
-  Top = 132
+  Left = 329
+  Top = 130
   Width = 282
   Height = 429
   BorderStyle = bsSizeToolWin
@@ -34,6 +34,7 @@ object SymbolBrowser: TSymbolBrowser
     Sorted = True
     TabOrder = 0
     OnContextPopup = ListBox1ContextPopup
+    OnDblClick = ListBox1DblClick
     OnKeyPress = ListBox1KeyPress
   end
 end

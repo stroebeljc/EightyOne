@@ -75,21 +75,11 @@ int recentHistoryPos=0;
 
 WORD displayedTStatesCount;
 
-;int cacheMaxStack = 0;
-
 void DebugUpdate(void)
 {
         static int NMISaveSingleStep=-1, INTSaveSingleStep=-1;
         static int lastpc;
         int i;
-
-//        int sp = z80.sp.w;
-//        int maxb = 0x8000 - sp;
-//        if (sp && maxb > cacheMaxStack)
-//        {
-//                cacheMaxStack = maxb;
-//               Dbg->GroupBox5->Caption = AnsiString(cacheMaxStack);
-//       }
 
         i=z80.pc.w;
         if (lastpc!=z80.pc.w)

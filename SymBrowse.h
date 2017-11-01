@@ -20,6 +20,7 @@ __published:	// IDE-managed Components
         void __fastcall ShowMemory1Click(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ListBox1KeyPress(TObject *Sender, char &Key);
+        void __fastcall ListBox1DblClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TSymbolBrowser(TComponent* Owner);

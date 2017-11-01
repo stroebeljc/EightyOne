@@ -28,7 +28,7 @@
 
 #define EMUID           0x85
 #define MAJORVERSION    1
-#define MINORVERSION    7
+#define MINORVERSION    8
 //#define TESTVERSION     'x'
 
 #define SYNCTYPEH       1

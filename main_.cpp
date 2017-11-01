@@ -88,6 +88,7 @@ extern void SpecStartUp(void);
 extern BYTE spec48_getbyte(int Address);
 extern void spec48_LoadRZX(char *FileName);
 extern int AccurateDraw(SCANLINE *Line);
+extern loadFileSymbolsProxy(const char*);
 
 extern bool ShowSplash;
 
@@ -942,6 +943,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                                   || Ext==".81" || Ext==".80" || Ext==".P81")
                         {
                                 TZX->LoadFile(Filename, false);
+                                loadFileSymbolsProxy(Filename.c_str());
                                 TZX->UpdateTable(true);
                         }
                         else if (Ext==".MDR" || Ext==".MDV" || Ext==".HDF"

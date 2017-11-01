@@ -93,3 +93,13 @@ void __fastcall TSymbolBrowser::ListBox1KeyPress(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TSymbolBrowser::ListBox1DblClick(TObject *Sender)
+{
+        int addr, item = ListBox1->ItemIndex;
+        AnsiString sym(ListBox1->Items->Strings[item].SubString(5,24));
+        symbolstore::symbolToAddress(sym.Trim(), addr);
+        Dbg->AddBreakPoint(addr, true, BP_EXE);
+        Dbg->DelBrkBtn->Enabled = true;
+}
+//---------------------------------------------------------------------------
+

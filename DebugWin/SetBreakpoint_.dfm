@@ -1,10 +1,10 @@
 object SetBreakpoint: TSetBreakpoint
-  Left = 475
-  Top = 261
+  Left = 467
+  Top = 135
   BorderStyle = bsToolWindow
   Caption = 'Address Breakpoint'
-  ClientHeight = 105
-  ClientWidth = 179
+  ClientHeight = 106
+  ClientWidth = 298
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -30,7 +30,7 @@ object SetBreakpoint: TSetBreakpoint
     Caption = 'Condition:'
   end
   object OK: TButton
-    Left = 8
+    Left = 72
     Top = 72
     Width = 75
     Height = 25
@@ -40,7 +40,7 @@ object SetBreakpoint: TSetBreakpoint
     OnClick = OKClick
   end
   object Cancel: TButton
-    Left = 96
+    Left = 160
     Top = 72
     Width = 75
     Height = 25
@@ -66,6 +66,7 @@ object SetBreakpoint: TSetBreakpoint
     Checked = True
     TabOrder = 4
     TabStop = True
+    OnClick = RadioButtonClick
   end
   object RadioButtonLessThan: TRadioButton
     Left = 64
@@ -74,6 +75,7 @@ object SetBreakpoint: TSetBreakpoint
     Height = 17
     Caption = '<'
     TabOrder = 3
+    OnClick = RadioButtonClick
   end
   object RadioButtonGreaterThan: TRadioButton
     Left = 144
@@ -82,5 +84,24 @@ object SetBreakpoint: TSetBreakpoint
     Height = 17
     Caption = '>'
     TabOrder = 5
+    OnClick = RadioButtonClick
+  end
+  object RadioButtonInRange: TRadioButton
+    Left = 184
+    Top = 43
+    Width = 73
+    Height = 17
+    Caption = '> range <'
+    TabOrder = 6
+    OnClick = RadioButtonClick
+  end
+  object EditAddressHi: TEdit
+    Left = 184
+    Top = 8
+    Width = 105
+    Height = 21
+    MaxLength = 5
+    TabOrder = 7
+    Text = '0'
   end
 end

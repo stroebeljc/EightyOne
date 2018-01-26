@@ -18,13 +18,13 @@ __fastcall TSetBreakpoint::TSetBreakpoint(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TSetBreakpoint::CancelClick(TObject *Sender)
 {
-        cancelled=true;
-        Close();               
+        Close();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetBreakpoint::OKClick(TObject *Sender)
 {
-        Close();        
+        cancelled = false;
+        Close();
 }
 //---------------------------------------------------------------------------
 void __fastcall TSetBreakpoint::FormKeyPress(TObject *Sender, char &Key)
@@ -44,28 +44,8 @@ void TSetBreakpoint::CentreOn(TForm* parent)
 }
 //---------------------------------------------------------------------------
 
-bool TSetBreakpoint::EditValue(int& address, TDbg::BreakpointConditionType& condition)
+bool SanitiseAddress(String addressValue, int& addr)
 {
-        cancelled=false;
-
-        EditAddress->Text = "$" + IntToHex(address, 4);
-        if (condition == TDbg::LessThan) RadioButtonLessThan->Checked = true;
-        else if (condition == TDbg::Equal) RadioButtonEqual->Checked = true;
-        else if (condition == TDbg::GreaterThan) RadioButtonGreaterThan->Checked = true;
-
-        ActiveControl = EditAddress;
-        EditAddress->SelectAll();
-
-        ShowModal();
-
-        AnsiString addressValue = EditAddress->Text.Trim();
-
-        if (cancelled || (addressValue.Length() == 0))
-        {
-                return false;
-        }
-
-        int addr;
         if (symbolstore::symbolToAddress(addressValue, addr))
         {
                 addressValue = "0x" + IntToHex(addr, 4);
@@ -109,18 +89,74 @@ bool TSetBreakpoint::EditValue(int& address, TDbg::BreakpointConditionType& cond
         // suddenly 0xABCD, $ABCD, 01234 [octal] and decimal are all valid.
         //
         char* endPtr;
-        int tvalAddress = int(strtol(addressValue.c_str(), &endPtr, 0));
-        if (*endPtr != 0)
+        addr = int(strtol(addressValue.c_str(), &endPtr, 0));
+
+        return *endPtr == 0;
+}
+
+
+bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
+{
+        UpdateRBStates();
+
+        EditAddress->Text = "$" + IntToHex(bp.Addr, 4);
+        EditAddressHi->Text = "0";
+
+        if (bp.Condition == LessThan) RadioButtonLessThan->Checked = true;
+        else if (bp.Condition == Equal) RadioButtonEqual->Checked = true;
+        else if (bp.Condition == GreaterThan) RadioButtonGreaterThan->Checked = true;
+        else if (bp.Condition == InRange)
         {
-                // and we know when the user entered junk...
+                EditAddressHi->Text = "$" + IntToHex(bp.AddrHi, 4);
+                RadioButtonInRange->Checked = true;
+        }
+
+        ActiveControl = EditAddress;
+        EditAddress->SelectAll();
+
+        // OK button resets this. Every other way of closing the dialog is a cancel
+        cancelled = true;
+        ShowModal();
+
+        AnsiString addressValue = EditAddress->Text.Trim();
+        AnsiString addressValueHi = EditAddressHi->Text.Trim();
+
+        if (cancelled ||
+                addressValue.Length() == 0 ||
+                (bp.Condition == InRange && addressValue.Length() == 0))
+        {
                 return false;
         }
 
-        address = tvalAddress;
+        if (!SanitiseAddress(addressValue, bp.Addr))
+                return false;
+        if (!SanitiseAddress(addressValueHi,bp.AddrHi))
+                return false;
 
-        if (RadioButtonLessThan->Checked) condition = TDbg::LessThan;
-        else if (RadioButtonEqual->Checked) condition = TDbg::Equal;
-        else if (RadioButtonGreaterThan->Checked) condition = TDbg::GreaterThan;
+        if (bp.Addr > bp.AddrHi)
+        {
+                int temp = bp.Addr;
+                bp.Addr = bp.AddrHi;
+                bp.AddrHi = temp;
+        }
+
+        if (RadioButtonLessThan->Checked) bp.Condition = LessThan;
+        else if (RadioButtonEqual->Checked) bp.Condition = Equal;
+        else if (RadioButtonGreaterThan->Checked) bp.Condition = GreaterThan;
+        else if (RadioButtonInRange->Checked) bp.Condition = InRange;
 
         return true;
 }
+
+void __fastcall TSetBreakpoint::UpdateRBStates()
+{
+        EditAddressHi->Enabled = RadioButtonInRange->Checked;
+        EditAddressHi->Visible = RadioButtonInRange->Checked;
+}
+
+void __fastcall TSetBreakpoint::RadioButtonClick(TObject *Sender)
+{
+        UpdateRBStates();
+}
+//---------------------------------------------------------------------------
+

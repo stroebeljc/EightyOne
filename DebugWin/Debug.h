@@ -31,23 +31,9 @@
 #include <Grids.hpp>
 #include <IniFiles.hpp>
 #include <Menus.hpp>
+#include "breakpoint.h"
+
 //---------------------------------------------------------------------------
-
-enum
-{
-        BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT, BP_TSTATES
-};
-
-struct breakpoint
-{
-        int Addr;
-        bool Permanent;
-        int Count;
-        int Condition;
-        
-        // one of BP_EXE, BP_RD, BP_WR, BP_IN, BP_OUT, BP_STATES
-        int Type;
-};
 
 enum IODirection
 {
@@ -334,14 +320,8 @@ public:		// User declarations
         bool PortInHit(int Addr);
         bool PortOutHit(int Addr);
 
-        enum BreakpointConditionType
-        {
-                LessThan = 0,
-                Equal = 1,
-                GreaterThan = 2
-        };
-
-        bool AddBreakPoint(int Addr, bool Perm, int type, BreakpointConditionType Condition = Equal, int Count = 1);
+        //bool AddBreakPoint(int Addr, bool Perm, int type, BreakpointConditionType Condition = Equal, int Count = 1);
+        bool AddBreakPoint(struct breakpoint& bp);
         void DelBreakPoint(int Addr);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

@@ -33,7 +33,7 @@ private:	// User declarations
 
 public:		// User declarations
         __fastcall TSetBreakpoint(TComponent* Owner);
-        bool EditValue(int& address, BreakpointConditionType& condition);
+        bool EditValue(int& address, BreakpointCondition& condition);
         bool EditBreakpoint(struct breakpoint& bp);
         void CentreOn(TForm* parent);
 };

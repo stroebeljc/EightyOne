@@ -1,6 +1,8 @@
 #ifndef __breakpoint_h
 #define __breakpoint_h
 
+#include "zx81config.h"
+
 enum BreakpointType
 {
         BP_EXE,
@@ -32,22 +34,23 @@ struct breakpoint
                 Count = 1;
         }
 
-        bool hit(int Addr, BreakpointType type)
+        bool hit(int curAddr, BreakpointType reqType)
         {
-                if (type != Type) return false;
+                if (Type != reqType) return false;
+
                 switch (Condition)
                 {
                         case Equal:
-                                return false;
+                                return curAddr == Addr;
 
                         case LessThan:
-                                return false;
+                                return curAddr < Addr;
 
                         case GreaterThan:
-                                return false;
-                                
+                                return curAddr > Addr && curAddr < zx81.RAMTOP;
+
                         case InRange:
-                                return false;
+                                return curAddr >= Addr && AddrHi > curAddr;
                 }
 
                 return false;

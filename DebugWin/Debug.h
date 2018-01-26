@@ -294,8 +294,6 @@ private:	// User declarations
 
         struct breakpoint Breakpoint[99];
         int Breakpoints;
-        bool BPHit(int Addr, int Type, int& idx);
-        void DelTempBreakPoints(void);
 
         // default values are evil. never ever use them >:)
         void SetLabelInfo(TLabel* label, int value, int valueWidth = 4);
@@ -315,10 +313,8 @@ public:		// User declarations
 
         bool TStatesBreakPointHit(int Addr);
         bool ExecBreakPointHit(int Addr);
-        bool MemoryReadHit(int Addr);
-        bool MemoryWriteHit(int Addr);
-        bool PortInHit(int Addr);
-        bool PortOutHit(int Addr);
+        breakpoint* BPHit(int Addr, int Type);
+        void DelTempBreakPoints(void);
 
         //bool AddBreakPoint(int Addr, bool Perm, int type, BreakpointConditionType Condition = Equal, int Count = 1);
         bool AddBreakPoint(struct breakpoint& bp);

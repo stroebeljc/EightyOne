@@ -178,13 +178,13 @@ void DebugUpdate(void)
         displayedTStatesCount = tStatesCount;
 
         if (Dbg->ExecBreakPointHit(z80.pc.w) ||
-                (lmrl != -1 && Dbg->MemoryReadHit(lmrl)) ||
-                (lmrh != -1 && Dbg->MemoryReadHit(lmrh)) ||
-                (lmwl != -1 && Dbg->MemoryWriteHit(lmwl)) ||
-                (lmwh != -1 && Dbg->MemoryWriteHit(lmwh)) ||
-                (lpi != -1 && Dbg->PortInHit(lpi)) ||
-                (lpo != -1 && Dbg->PortOutHit(lpo)) ||
-                Dbg->TStatesBreakPointHit(z80.pc.w))
+                (lmrl != -1 && Dbg->BPHit(lmrl, BP_RD)) ||
+                (lmrh != -1 && Dbg->BPHit(lmrh, BP_RD)) ||
+                (lmwl != -1 && Dbg->BPHit(lmwl, BP_WR)) ||
+                (lmwh != -1 && Dbg->BPHit(lmwh, BP_WR)) ||
+                (lpi  != -1 && Dbg->BPHit(lpi & 0xff, BP_IN)) ||
+                (lpo  != -1 && Dbg->BPHit(lpo & 0xff, BP_OUT)) ||
+                Dbg->BPHit(z80.pc.w, BP_TSTATES))
         {
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
@@ -303,46 +303,33 @@ void TDbg::DelBreakPoint(int Addr)
         }
 }
 
-bool TDbg::BPHit(int Addr, int Type, int& idx)
+breakpoint* TDbg::BPHit(int Addr, int Type)
 {
-        for (idx = 0; idx < Breakpoints; ++idx)
+        for (int idx = 0; idx < Breakpoints; ++idx)
         {
-                if (Breakpoint[idx].hit(Addr, Type))
+                if (Breakpoint[idx].hit(Addr, (BreakpointType)Type))
                 {
                         if (Type == BP_TSTATES)
                         {
                                 tStatesCount = 0;
 
-                                if (displayedTStatesCount != Breakpoint[idx].Count)
-                                {
-                                        BPList->Row=idx;
-                                        return true;
-                                }
+                                if (displayedTStatesCount == Breakpoint[idx].Count)
+                                        return NULL;
+                        }
 
-                                return false;
-                        }
-                        else
-                        {
-                                BPList->Row=idx;
-                                return true;
-                        }
+                        BPList->Row=idx;
+                        return &Breakpoint[idx];
                 }
         }
 
-        return false;
+        return NULL;
 }
 
-bool TDbg::TStatesBreakPointHit(int Addr)
-{
-        int idx;
-        return BPHit(Addr, BP_TSTATES, idx);
-}
 
 bool TDbg::ExecBreakPointHit(int Addr)
 {
-        int idx;
-        bool hit = BPHit(Addr, BP_EXE, idx);
-        if (hit && !Breakpoint[idx].Permanent)
+        breakpoint* hit = BPHit(Addr, BP_EXE);
+        if (hit && !hit->Permanent)
         {
                 DelBreakPoint(Addr);
         }
@@ -350,35 +337,12 @@ bool TDbg::ExecBreakPointHit(int Addr)
         return hit;
 }
 
-bool TDbg::MemoryReadHit(int Addr)
-{
-        int idx;
-        return BPHit(Addr, BP_RD, idx);
-}
-
-bool TDbg::MemoryWriteHit(int Addr)
-{
-        int idx;
-        return BPHit(Addr, BP_WR, idx);
-}
-
-bool TDbg::PortInHit(int Addr)
-{
-        int idx;
-        return BPHit(Addr & 0xff, BP_IN, idx);
-}
-
-bool TDbg::PortOutHit(int Addr)
-{
-        int idx;
-        return BPHit(Addr & 0xff, BP_OUT, idx);
-}
-
 void TDbg::DelTempBreakPoints(void)
 {
         int i;
         for(i=0; i<Breakpoints; i++)
-                if (!Breakpoint[i].Permanent) DelBreakPoint(Breakpoint[i].Addr);
+                if (!Breakpoint[i].Permanent)
+                        DelBreakPoint(Breakpoint[i].Addr);
 }
 //---------------------------------------------------------------------------
 int TDbg::Hex2Dec(AnsiString num)

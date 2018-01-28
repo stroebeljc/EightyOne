@@ -50,7 +50,7 @@ TDbg *Dbg;
 // re-calculate breakpoints if symbols change???
 
 extern int frametstates, rowcounter, RasterY, HSYNC_generator, NMI_generator;
-extern WORD tStatesCount;
+extern int tStatesCount;
 extern unsigned char shift_store;
 
 extern unsigned char memory[];
@@ -73,7 +73,7 @@ bool historyWrappedAround = false;
 int recentHistory[4];
 int recentHistoryPos=0;
 
-WORD displayedTStatesCount;
+int displayedTStatesCount;
 
 void DebugUpdate(void)
 {
@@ -131,8 +131,7 @@ void DebugUpdate(void)
         {
                 zx81.single_step=INTSaveSingleStep;
                 INTSaveSingleStep=-1;
-        }
-
+        }         
 
         if (z80.pc.w==0x66 && Dbg->SkipNMIBtn->Checked
                 && Dbg->NMIRetAddr==-1 && Dbg->Continuous->Checked)
@@ -559,7 +558,14 @@ void TDbg::UpdateVals(void)
         Interrupts->Caption = z80.iff1 ? "Enabled":"Disabled" ;
         IM->Caption = z80.im;
 
-        TStatesCount->Caption = displayedTStatesCount;
+        if (displayedTStatesCount < 1000000)
+        {
+                TStatesCount->Caption = displayedTStatesCount;
+        }
+        else
+        {
+                TStatesCount->Caption = "999999";
+        }
 
         MemoryWindow->UpdateChanges();
 

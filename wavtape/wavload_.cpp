@@ -250,16 +250,30 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
 
                 if (SoundOn->Down) sound_beeper(MicState);
 
-                if (MicState == lastbit) count ++;// (zx81.machine==MACHINEACE)?1:3;
-                else count=0;
+                if (MicState == lastbit)
+                        count ++;// (zx81.machine==MACHINEACE)?1:3;
+                else
+                        count=0;
                 //count=0;
                 //if (count<12) level = MicState ? 128-curve[count] : 128+curve[count];
                 //else level = ((level-128)/3)+128;
 
                 //level = MicState ? 64 : 192;
 
-                if (count<128) level = level = MicState ? 128-96 : 128+96;
-                else level = (((level-128)*9)/(10))+128;
+                const int zx81PulseWidth = 6;
+                const int midLevel = 128;
+                bool limitPulseWidth = (zx81.machine == MACHINEZX80) || (zx81.machine == MACHINEZX81) || (zx81.machine == MACHINETS1500);
+
+                if (count < 128)
+                {
+                        level = MicState ? midLevel-96 : midLevel+96;
+                        if (limitPulseWidth && (count > zx81PulseWidth))
+                        {
+                                level = midLevel;
+                        }
+                }
+                else
+                        level = (((level-midLevel)*9)/(10))+midLevel;
 
                 Wav.SetSample(TapePos, level);
                 lastbit=MicState;
@@ -276,7 +290,7 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
         if (ScreenCounter<1083333) return;
 
         ScreenCounter=0;
-        ScrollBar->Max=Wav.NoSamples;
+        ScrollBar->Max=(Wav.NoSamples - ScrollBar->Width) >= 0 ? Wav.NoSamples - ScrollBar->Width : Wav.NoSamples;
         ScrollBar->Position = TapePos;
         UpdateImage();    Application->ProcessMessages();
         if (Playing) DoCaption("Playing");
@@ -861,6 +875,16 @@ void __fastcall TWavLoad::RecordBtnClick(TObject *Sender)
 
 void __fastcall TWavLoad::StopBtnClick(TObject *Sender)
 {
+        if (Recording)
+        {
+                ScrollBar->Max = Wav.NoSamples;
+                ScrollBar->Position = (Wav.NoSamples - ScrollBar->Width >= 0) ? Wav.NoSamples - ScrollBar->Width : Wav.NoSamples;
+        }
+        else
+        {
+                ScrollBar->Position = TapePos;
+        }
+
         Playing=false;
         Recording=false;
 
@@ -870,7 +894,6 @@ void __fastcall TWavLoad::StopBtnClick(TObject *Sender)
         StopBtn->Down=true;
         RecordBtn->Down=false;
 
-        ScrollBar->Position = TapePos;
         UpdateImage();
         DoCaption("Stopped");
 }

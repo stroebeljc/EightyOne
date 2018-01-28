@@ -1,6 +1,6 @@
 object SymbolBrowser: TSymbolBrowser
-  Left = 329
-  Top = 130
+  Left = 337
+  Top = 132
   Width = 282
   Height = 429
   BorderStyle = bsSizeToolWin

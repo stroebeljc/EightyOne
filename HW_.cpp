@@ -373,6 +373,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 RomCartridgeCapacity = 0;
                 RomCartridgeFileBox->Enabled = false;
                 BrowseRomCartridge->Enabled = false;
+                RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
        }
         else
         {
@@ -1116,7 +1117,6 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
         IDEBoxChange(NULL);
-        EnableRomCartridgeOption(false);
 }
 //---------------------------------------------------------------------------
 

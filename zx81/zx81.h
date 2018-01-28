@@ -54,7 +54,7 @@ extern BYTE zx81_readport(int Address, int *tstates);
 extern int zx81_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
 extern int framepos, NMI_generator, HSYNC_generator, frametstates;
-extern WORD tStatesCount;
+extern int tStatesCount;
 extern int zx81_stop;
 extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();

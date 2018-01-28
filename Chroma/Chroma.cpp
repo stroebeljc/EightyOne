@@ -40,19 +40,28 @@ The interface provides the following facilities:
 Full details on the interface can be found at www.fruitcake.plus.com
 */
 
+const BYTE idleDataBus80 = 0x40;
+const BYTE idleDataBus81 = 0xFF;
+
 const int chromaIoPort = 0x7FEF;
 const BYTE colourModeMask = 0x10;
 const BYTE colourEnabledMask = 0x20;
+const BYTE colourPresentMask81 = 0x20;
+const BYTE colourPresentMask80 = 0x22;
+const BYTE colourPresentValue81 = 0x00;
+const BYTE colourPresentValue80 = 0x02;
 const BYTE colourInkMask = 0x0F;
 const BYTE colourPaperMask = 0xF0;
-
-const BYTE idleDataBus = 0xFF;
 
 const int colourBlack = 0;
 const int colourBrightWhite = 15;
 
 int chromaInk = colourBlack;
 int chromaPaper = colourBrightWhite;
+
+static BYTE idleDataBus;
+static BYTE colourPresentMask;
+static BYTE colourPresentValue;
 
 void DisableChroma()
 {
@@ -61,6 +70,19 @@ void DisableChroma()
 
 void InitialiseChroma()
 {
+        if (zx81.machine==MACHINEZX80)
+        {
+                idleDataBus = idleDataBus80;
+                colourPresentMask = colourPresentMask80;
+                colourPresentValue = colourPresentValue80;
+        }
+        else
+        {
+                idleDataBus = idleDataBus81;
+                colourPresentMask = colourPresentMask81;
+                colourPresentValue = colourPresentValue81;
+        }
+
         DisableChroma();
 }
 
@@ -195,7 +217,7 @@ bool ChromaIORead(int Address, BYTE* pData)
         {
                 if ((Address == chromaIoPort) && zx81.chromaColourSwitchOn)
                 {
-                        *pData = idleDataBus & ~colourEnabledMask;
+                        *pData = (idleDataBus & ~colourPresentMask) | colourPresentValue;
                         readHandled = true;
                 }
         }

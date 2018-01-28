@@ -37,8 +37,14 @@ const int zxc3Write = 0x08;
 const int zxc3PageOut = 0x10;
 const int zxc3Locked = 0x20;
 
-const int zxcLowerControlLimit = 0x2000;
-const int zxcUpperControlBase = 0x3FC0;
+int zxcStartAddressRangeFull = 0x0000;
+int zxcEndAddressRangeFullWrite = 0x4000;
+int zxcEndAddressRangeFullRead = 0x4000;
+int zxcBaseAddressRangeWindow = 0x10000;
+int zxcStartAddressRangeWindow = 0x10000;
+int zxcEndAddressRangeWindow = 0x10000;
+int zxcLowerControlLimit = 0x2000;
+int zxcUpperControlBase = 0x3FC0;
 const int zxcUpperControlMask = 0x003F;
 const int zxcLowerControlMask = 0x1FFF;
 
@@ -54,11 +60,12 @@ const int zxc4BankSetShift = 3;
 
 const BYTE idleDataBus = 0xFF;
 
-BYTE ReadRomCartridgeSinclair(int Address);
-bool ReadRomCartridgeZXC2(int Address, BYTE* Data);
-bool ReadRomCartridgeZXC3(int Address, BYTE* Data);
-bool ReadRomCartridgeZXC4(int Address, BYTE* Data);
-BYTE ReadRomCartridgeBank(int bank, int Address);
+BYTE AccessRomCartridgeSinclair(int Address);
+bool AccessRomCartridgeZXC2(int Address, BYTE* Data);
+bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess);
+bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess);
+BYTE AccessRomCartridgeBank(int bank, int Address);
+bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess);
 
 extern bool directMemoryAccess;
 
@@ -68,6 +75,29 @@ void InitialiseRomCartridge()
         zx81.zxcInterface1BankPagedIn = false;
         zx81.zxcCassetteBankPagedIn = false;
         zx81.zxcLowerControlAccessSelected = false;
+
+        if (zx81.machine == MACHINEZX80)
+        {
+                zxcStartAddressRangeFull = 0xC000;
+                zxcEndAddressRangeFullWrite = 0xFFFF;
+                zxcEndAddressRangeFullRead = 0xFFBF;
+                zxcBaseAddressRangeWindow = 0x4000;
+                zxcStartAddressRangeWindow = 0x7F80;
+                zxcEndAddressRangeWindow = 0x7FBF;
+                zxcLowerControlLimit = 0xE000;
+                zxcUpperControlBase = 0xFFC0;
+        }
+        else
+        {
+                zxcStartAddressRangeFull = 0x0000;
+                zxcEndAddressRangeFullWrite = 0x3FFF;
+                zxcEndAddressRangeFullRead = 0x3FFF;
+                zxcBaseAddressRangeWindow = 0x10000;
+                zxcStartAddressRangeWindow = 0x10000;   // Place outside the memory map
+                zxcEndAddressRangeWindow = 0x10000;
+                zxcLowerControlLimit = 0x2000;
+                zxcUpperControlBase = 0x3FC0;
+        }
 }
 
 bool LoadRomCartridgeFile(char *filename)
@@ -105,42 +135,63 @@ bool LoadRomCartridgeFile(char *filename)
         return true;
 }
 
+bool WriteRomCartridge(int Address, BYTE* Data)
+{
+        const bool writeAccess = true;
+        return AccessRomCartridge(Address, Data, writeAccess);
+}
+
 bool ReadRomCartridge(int Address, BYTE* Data)
+{
+        const bool writeAccess = false;
+        return AccessRomCartridge(Address, Data, writeAccess);
+}
+
+bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
 {
         bool readStatus = false;
 
-        if (Address < 0x4000)
+        bool romBankAccess = ((Address >= zxcStartAddressRangeFull) && (Address <= zxcEndAddressRangeFullWrite) && writeAccess) ||
+                             ((Address >= zxcStartAddressRangeFull) && (Address <= zxcEndAddressRangeFullRead) && !writeAccess);
+        bool windowRead = (Address >= zxcStartAddressRangeWindow) && (Address <= zxcEndAddressRangeWindow) && !writeAccess;
+
+        if (windowRead)
+        {
+                Address += (zxcStartAddressRangeFull - zxcBaseAddressRangeWindow);
+        }
+
+        if (romBankAccess || windowRead)
         {
                 switch (zx81.romCartridge)
                 {
                 case ROMCARTRIDGESINCLAIR:
-                        *Data = ReadRomCartridgeSinclair(Address);
+                        *Data = AccessRomCartridgeSinclair(Address);
                         readStatus = true;
                         break;
 
                 case ROMCARTRIDGEZXC2:
-                        readStatus = ReadRomCartridgeZXC2(Address, Data);
+                        readStatus = AccessRomCartridgeZXC2(Address, Data);
                         break;
 
                 case ROMCARTRIDGEZXC3:
-                        readStatus = ReadRomCartridgeZXC3(Address, Data);
+                        readStatus = AccessRomCartridgeZXC3(Address, Data, writeAccess);
                         break;
 
                 case ROMCARTRIDGEZXC4:
-                        readStatus = ReadRomCartridgeZXC4(Address, Data);
+                        readStatus = AccessRomCartridgeZXC4(Address, Data, writeAccess);
                         break;
                 }
         }
         return readStatus;
 }
 
-static inline BYTE ReadRomCartridgeSinclair(int Address)
+static inline BYTE AccessRomCartridgeSinclair(int Address)
 {
         const int bank = 0;
-        return ReadRomCartridgeBank(bank, Address);
+        return AccessRomCartridgeBank(bank, Address);
 }
 
-static inline bool ReadRomCartridgeZXC2(int Address, BYTE* Data)
+static inline bool AccessRomCartridgeZXC2(int Address, BYTE* Data)
 {
         bool dataRead = true;
 
@@ -156,17 +207,17 @@ static inline bool ReadRomCartridgeZXC2(int Address, BYTE* Data)
         else
         {
                 int bank = (zx81.zxcPaging & zxc2Bank);
-                *Data = ReadRomCartridgeBank(bank, Address);
+                *Data = AccessRomCartridgeBank(bank, Address);
         }
 
         return dataRead;
 }
 
-static inline bool ReadRomCartridgeZXC3(int Address, BYTE* Data)
+static inline bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess)
 {
         bool dataRead = true;
 
-        if (!directMemoryAccess && (Address >= zxcUpperControlBase) && !(zx81.zxcPaging & zxc3Locked))
+        if (!directMemoryAccess && (Address >= zxcUpperControlBase) && !(zx81.zxcPaging & zxc3Locked) && ((zx81.machine != MACHINEZX80) || writeAccess))
         {
                 zx81.zxcPaging = (Address & zxcUpperControlMask);
                 *Data = idleDataBus;
@@ -185,21 +236,21 @@ static inline bool ReadRomCartridgeZXC3(int Address, BYTE* Data)
                 else
                 {
                         int bank = (zx81.zxcPaging & zxc3Bank);
-                        *Data = ReadRomCartridgeBank(bank, Address);
+                        *Data = AccessRomCartridgeBank(bank, Address);
                 }
         }
         
         return dataRead;
 }
 
-static inline bool ReadRomCartridgeZXC4(int Address, BYTE* Data)
+static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess)
 {
         bool dataRead = true;
         bool controlAccessLocked = (zx81.zxcPaging & zxc4Locked);
-        bool upperControlAccess = (!directMemoryAccess && !controlAccessLocked || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn) &&
-                                   !zx81.zxcLowerControlAccessSelected && (Address >= zxcUpperControlBase);
-        bool lowerControlAccess = (!directMemoryAccess && !controlAccessLocked || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn) &&
-                                   zx81.zxcLowerControlAccessSelected && (Address < zxcLowerControlLimit);
+        bool upperControlAccess = ((!directMemoryAccess && !controlAccessLocked) || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn) &&
+                                   !zx81.zxcLowerControlAccessSelected && (Address >= zxcUpperControlBase) && ((zx81.machine != MACHINEZX80) || writeAccess);
+        bool lowerControlAccess = ((!directMemoryAccess && !controlAccessLocked) || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn) &&
+                                   zx81.zxcLowerControlAccessSelected && (Address < zxcLowerControlLimit) && ((zx81.machine != MACHINEZX80) || !(zx81.zxcPaging & zxc4PageOut));
 
         if (upperControlAccess)
         {
@@ -257,7 +308,7 @@ static inline bool ReadRomCartridgeZXC4(int Address, BYTE* Data)
                                 }
 
                                 int bank = (((zx81.zxcPaging & zxc4BankSet) >> zxc4BankSetShift) | readBank);
-                                *Data = ReadRomCartridgeBank(bank, Address);
+                                *Data = AccessRomCartridgeBank(bank, Address);
                         }
                 }
                 else
@@ -295,7 +346,7 @@ static inline bool ReadRomCartridgeZXC4(int Address, BYTE* Data)
         return dataRead;
 }
 
-static inline BYTE ReadRomCartridgeBank(int bank, int Address)
+static inline BYTE AccessRomCartridgeBank(int bank, int Address)
 {
-        return RomCartridgeMemory[(bank << 14) + Address];
+        return RomCartridgeMemory[(bank << 14) + (Address - zxcStartAddressRangeFull)];
 }

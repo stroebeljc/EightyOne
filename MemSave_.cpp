@@ -112,7 +112,6 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                 else len=atoi(LenStr.c_str());
         }
         if (addr<0 || addr>65535) return;
-//        if (len == 0) return; not neccesary, is done two lines lower in save part, disturbes loading PAUL
 
         if (Save->Caption=="Save File...")
         {
@@ -122,14 +121,11 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
                 f=fopen(FileName.c_str(), "wb");
                 if (f)
                 {
-                        char *p = memory+addr;
                         int i=0;
 
                         while(len--)
                         {
-                                if (zx81.machine==MACHINESPEC48)
-                                        fputc(spec48_getbyte(addr+i),f);
-                                else    fputc(p[i], f);
+                                fputc(getbyte(addr+i),f);
                                 i++;
                         }
                         fclose(f);

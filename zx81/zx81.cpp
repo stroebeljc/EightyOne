@@ -79,7 +79,7 @@ extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 
 static BYTE ReadInputPort(int Address, int *tstates);
 
-const BYTE idleDataBus = 0xFF;
+static BYTE idleDataBus = 0xFF;
 
 const int colourBlack = 0;
 const int colourBrightWhite = 15;
@@ -92,7 +92,7 @@ int rowcounter=0;
 int hsync_counter=207;
 int borrow=0;
 int tstates, frametstates;
-WORD tStatesCount;
+int tStatesCount;
 int configbyte=0;
 int setborder=0;
 int zx81_stop=0;
@@ -131,6 +131,15 @@ void zx81_initialise(void)
         directMemoryAccess = false;
         ResetLastIOAccesses();
         InitialiseRomCartridge();
+
+        if (zx81.machine == MACHINEZX80)
+        {
+                idleDataBus = 0x40;
+        }
+        else
+        {
+                idleDataBus = 0xFF;
+        }
 
         InitialiseChroma();
 
@@ -267,7 +276,7 @@ void zx81_writebyte(int Address, int Data)
         if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
         {
                 BYTE data;
-                if (ReadRomCartridge(Address, (BYTE*)&data))
+                if (WriteRomCartridge(Address, (BYTE*)&data))
                 {
                         LiveMemoryWindow->Write(Address);
                         return;

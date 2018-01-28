@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 463
-  Top = 132
+  Left = 1010
+  Top = 158
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'

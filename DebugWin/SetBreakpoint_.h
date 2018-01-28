@@ -21,14 +21,20 @@ __published:	// IDE-managed Components
         TRadioButton *RadioButtonLessThan;
         TRadioButton *RadioButtonGreaterThan;
         TLabel *Label2;
+        TRadioButton *RadioButtonInRange;
+        TEdit *EditAddressHi;
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
+        void __fastcall RadioButtonClick(TObject *Sender);
 private:	// User declarations
         bool cancelled;
+        void __fastcall UpdateRBStates();
+
 public:		// User declarations
         __fastcall TSetBreakpoint(TComponent* Owner);
-        bool EditValue(int& address, TDbg::BreakpointConditionType& condition);
+        bool EditValue(int& address, BreakpointCondition& condition);
+        bool EditBreakpoint(struct breakpoint& bp);
         void CentreOn(TForm* parent);
 };
 //---------------------------------------------------------------------------

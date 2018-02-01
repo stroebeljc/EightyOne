@@ -133,7 +133,7 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
         if (!SanitiseAddress(addressValueHi,bp.AddrHi))
                 return false;
 
-        if (bp.Addr > bp.AddrHi)
+        if (bp.Condition == InRange && bp.Addr > bp.AddrHi)
         {
                 int temp = bp.Addr;
                 bp.Addr = bp.AddrHi;

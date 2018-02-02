@@ -43,5 +43,6 @@
                  spl->IncProgress("Midi"); Application->CreateForm(__classid(TMidiForm), &MidiForm);
                  spl->IncProgress("ZIP Support"); Application->CreateForm(__classid(TZipFile), &ZipFile);
                  spl->IncProgress("Live Memory"); Application->CreateForm(__classid(TLiveMemoryWindow), &LiveMemoryWindow);
+                 spl->IncProgress("Profiler"); Application->CreateForm(__classid(TProfiler), &Profiler);
 
                  spl->Close();

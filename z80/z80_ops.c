@@ -1144,7 +1144,8 @@ int z80_do_opcode()
 
     R = R & 127;
 
-    return(tstates);
+    z80.tstates = tstates;
+    return tstates;
 }
 
 

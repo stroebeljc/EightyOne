@@ -130,6 +130,8 @@ USEUNIT("Chroma\Chroma.cpp");
 USE("zxpand\zxpandcom.h", File);
 USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
 USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
+USEFORM("DebugWin\Profiler.cpp", Profiler);
+USEFORM("DebugWin\ProfSampEdit.cpp", ProfileSampleEdit);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

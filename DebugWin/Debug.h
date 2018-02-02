@@ -214,6 +214,7 @@ __published:	// IDE-managed Components
         TButton *TStatesBrkBtn;
         TLabel *Label31;
         TLabel *TStatesCount;
+        TButton *ButtonProfiler;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -285,6 +286,7 @@ __published:	// IDE-managed Components
         void __fastcall GroupBox5Click(TObject *Sender);
         void __fastcall Disass3MouseDown(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall ButtonProfilerClick(TObject *Sender);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);

@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 1010
-  Top = 158
+  Left = 930
+  Top = 146
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -1778,6 +1778,21 @@ object Dbg: TDbg
       ParentFont = False
       TabOrder = 3
       OnClick = SymbolsClick
+    end
+    object ButtonProfiler: TButton
+      Left = 66
+      Top = 48
+      Width = 53
+      Height = 21
+      Caption = 'Profiler'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      OnClick = ButtonProfilerClick
     end
   end
   object IOPorts: TGroupBox

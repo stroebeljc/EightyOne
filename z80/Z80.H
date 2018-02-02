@@ -59,6 +59,7 @@ typedef struct {
   regpair sp,pc;
   BYTE iff1,iff2,im;
   int halted;
+  int tstates;
 } processor;
 
 extern void z80_init(void);

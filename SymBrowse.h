@@ -22,6 +22,9 @@ __published:	// IDE-managed Components
         void __fastcall ListBox1KeyPress(TObject *Sender, char &Key);
         void __fastcall ListBox1DblClick(TObject *Sender);
 private:	// User declarations
+        AnsiString _searchString;
+        DWORD _lastTick;
+
 public:		// User declarations
         __fastcall TSymbolBrowser(TComponent* Owner);
 

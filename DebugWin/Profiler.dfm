@@ -1,6 +1,6 @@
 object Profiler: TProfiler
-  Left = 214
-  Top = 306
+  Left = 89
+  Top = 266
   Width = 349
   Height = 358
   Caption = 'Profiler'
@@ -31,6 +31,7 @@ object Profiler: TProfiler
     Anchors = [akRight, akBottom]
     Caption = 'Delete'
     TabOrder = 1
+    OnClick = ButtonDeleteClick
   end
   object ListViewProfileSamples: TListView
     Left = 8

@@ -201,7 +201,7 @@ void DebugUpdate(void)
                 zx81.single_step = Dbg->Continuous->Checked ? 1 : 0;
         }
 
-       /////// profilerUpdate();
+        Profiler->DebugTick(&z80);
 
         if (Dbg->Continuous->Checked==true && Dbg->Visible==true)
                 Dbg->UpdateVals();
@@ -594,6 +594,8 @@ void TDbg::UpdateVals(void)
                 StepOver->Enabled = true;
                 EnableVals();
                 DelTempBreakPoints();
+
+                Profiler->Refresh();
         }
         else
         {

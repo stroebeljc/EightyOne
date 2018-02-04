@@ -4,7 +4,7 @@
 class AddressResolver
 {
 public:
-        bool Validate(AnsiString addrString, int& address)
+        static bool Validate(AnsiString addrString, int& address)
         {
                 AnsiString addressValue = addrString.Trim();
 

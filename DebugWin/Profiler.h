@@ -9,73 +9,9 @@
 #include <Forms.hpp>
 #include <ComCtrls.hpp>
 #include <vector>
+#include <z80.h>
+
 //---------------------------------------------------------------------------
-class ProfileDetail
-{
-public:
-        static const int waiting = 0;
-        static const int counting = 1;
-        static const int done = 2;
-
-        ProfileDetail(int start, int end) {
-                _start = start;
-                _end = end;
-                Reset();
-        }
-
-        void Reset()
-        {
-                _ts = 0;
-                _state = waiting;
-        }
-
-        int Update(int addr, int t) {
-                if (addr == _start) {
-                        Reset();
-                        _state = counting;
-                }
-
-                if (_state == counting) {
-                        _ts += t;
-                        if (_ts > _max)
-                                _max = _ts;
-                }
-
-                if (addr == _end) {
-                        _state = done;
-                }
-
-                return _state;
-        }
-
-        int Start() {
-                return _start;
-        }
-
-        int End() {
-                return _end;
-        }
-
-        int Min() {
-                return min(_max, *std::min_element(history.begin(), history.end()));
-        }
-
-        int Max() {
-                return max(_max, *std::max_element(history.begin(), history.end()));
-        }
-
-        int SampleCount() {
-                return history.size();
-        }
-
-private:
-        int _start, _end;
-        int _ts, _max;
-        int _state;
-
-        std::vector<int> history;
-};
-
 class TProfiler : public TForm
 {
 __published:	// IDE-managed Components
@@ -87,14 +23,16 @@ __published:	// IDE-managed Components
         void __fastcall ButtonNewClick(TObject *Sender);
         void __fastcall ButtonEditClick(TObject *Sender);
         void __fastcall ButtonResetClick(TObject *Sender);
+        void __fastcall ButtonDeleteClick(TObject *Sender);
 private:	// User declarations
-        std::vector<ProfileDetail> _profileDetails;
-        void __fastcall UpdateItem(TListItem* item, AnsiString tag, ProfileDetail& pd);
+        std::vector<class ProfileDetail> _profileDetails;
+        void __fastcall UpdateItem(TListItem* item, AnsiString tag, class ProfileDetail& pd);
 
 public:		// User declarations
         __fastcall TProfiler(TComponent* Owner);
 
-        void __fastcall UpdateProfileDetails(int, int);
+        void __fastcall DebugTick(processor* z80);
+        void __fastcall Refresh();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TProfiler *Profiler;

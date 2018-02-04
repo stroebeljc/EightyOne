@@ -170,6 +170,8 @@ bool symbolstore::loadFileSymbols(const char* filename, symbolstore::SYMBOLMUNGE
 
 bool symbolstore::addressToSymbol(const int addr, AnsiString& result)
 {
+        if (addr == 0) return false;  // zero is always 0
+
         VAL2SYM::iterator it = fileV2S.find(addr);
         if (it != fileV2S.end())
         {

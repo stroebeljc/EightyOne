@@ -1,6 +1,6 @@
 object ProfileSampleEdit: TProfileSampleEdit
-  Left = 360
-  Top = 450
+  Left = 108
+  Top = 235
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Profile Sample'

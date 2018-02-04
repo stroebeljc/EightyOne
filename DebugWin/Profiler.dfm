@@ -1,8 +1,8 @@
 object Profiler: TProfiler
-  Left = 89
-  Top = 266
-  Width = 349
-  Height = 358
+  Left = 250
+  Top = 255
+  Width = 459
+  Height = 359
   Caption = 'Profiler'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,21 +14,21 @@ object Profiler: TProfiler
   PixelsPerInch = 96
   TextHeight = 13
   object ButtonNew: TButton
-    Left = 8
-    Top = 291
+    Left = 4
+    Top = 292
     Width = 75
     Height = 25
-    Anchors = [akRight, akBottom]
+    Anchors = [akLeft, akBottom]
     Caption = 'New'
     TabOrder = 0
     OnClick = ButtonNewClick
   end
   object ButtonDelete: TButton
-    Left = 248
-    Top = 291
+    Left = 244
+    Top = 292
     Width = 75
     Height = 25
-    Anchors = [akRight, akBottom]
+    Anchors = [akLeft, akBottom]
     Caption = 'Delete'
     TabOrder = 1
     OnClick = ButtonDeleteClick
@@ -36,12 +36,13 @@ object Profiler: TProfiler
   object ListViewProfileSamples: TListView
     Left = 8
     Top = 8
-    Width = 315
-    Height = 276
+    Width = 425
+    Height = 277
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
       item
         Caption = 'Tag'
+        Width = 100
       end
       item
         Caption = 'Start'
@@ -50,10 +51,16 @@ object Profiler: TProfiler
         Caption = 'End'
       end
       item
-        Caption = 'Max'
+        Caption = 'Min T'
+        Width = 60
+      end
+      item
+        Caption = 'Max T'
+        Width = 60
       end
       item
         Caption = 'Samples'
+        Width = 100
       end>
     ColumnClick = False
     GridLines = True
@@ -62,21 +69,21 @@ object Profiler: TProfiler
     ViewStyle = vsReport
   end
   object ButtonEdit: TButton
-    Left = 88
-    Top = 291
+    Left = 84
+    Top = 292
     Width = 75
     Height = 25
-    Anchors = [akRight, akBottom]
+    Anchors = [akLeft, akBottom]
     Caption = 'Edit'
     TabOrder = 3
     OnClick = ButtonEditClick
   end
   object ButtonReset: TButton
-    Left = 168
-    Top = 291
+    Left = 164
+    Top = 292
     Width = 75
     Height = 25
-    Anchors = [akRight, akBottom]
+    Anchors = [akLeft, akBottom]
     Caption = 'Reset'
     TabOrder = 4
     OnClick = ButtonResetClick

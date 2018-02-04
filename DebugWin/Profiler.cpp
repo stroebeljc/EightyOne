@@ -23,10 +23,11 @@ __fastcall TProfiler::TProfiler(TComponent* Owner)
 void __fastcall TProfiler::UpdateItem(TListItem* item, AnsiString tag, ProfileDetail& pd)
 {
         item->Caption = tag;
-        item->SubItems->Strings[0] = symbolstore::addressToSymbolOrHex(pd._start);
-        item->SubItems->Strings[1] = symbolstore::addressToSymbolOrHex(pd._end);
-        item->SubItems->Strings[2] = pd.Max();
-        item->SubItems->Strings[3] = pd.SampleCount();
+        item->SubItems->Strings[START] = symbolstore::addressToSymbolOrHex(pd._start);
+        item->SubItems->Strings[END] = symbolstore::addressToSymbolOrHex(pd._end);
+        item->SubItems->Strings[MIN] = pd.Min();
+        item->SubItems->Strings[MAX] = pd.Max();
+        item->SubItems->Strings[COUNT] = pd.SampleCount();
 }
 
 void __fastcall TProfiler::ButtonNewClick(TObject *Sender)
@@ -38,6 +39,7 @@ void __fastcall TProfiler::ButtonNewClick(TObject *Sender)
                 _profileDetails.push_back(pd);
 
                 TListItem* newItem = ListViewProfileSamples->Items->Add();
+                newItem->SubItems->Add("0");
                 newItem->SubItems->Add("0");
                 newItem->SubItems->Add("0");
                 newItem->SubItems->Add("0");

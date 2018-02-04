@@ -28,6 +28,12 @@ private:	// User declarations
         std::vector<class ProfileDetail> _profileDetails;
         void __fastcall UpdateItem(TListItem* item, AnsiString tag, class ProfileDetail& pd);
 
+        const int START = 0;
+        const int END = 1;
+        const int MIN = 2;
+        const int MAX = 3;
+        const int COUNT = 4;
+
 public:		// User declarations
         __fastcall TProfiler(TComponent* Owner);
 

@@ -8,6 +8,8 @@
 #include "SymbolStore.h"
 #include "AddressResolver.h"
 #include "ProfileDetail.h"
+#include "SymBrowse.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -35,7 +37,8 @@ bool __fastcall TProfileSampleEdit::EditValues(AnsiString tag, ProfileDetail& pd
 
         ShowModal();
 
-        if (_cancelled) return false;
+        if (_cancelled)
+                return false;
 
         int start, end;
         if (!AddressResolver::Validate(EditStart->Text, start) ||
@@ -44,6 +47,12 @@ bool __fastcall TProfileSampleEdit::EditValues(AnsiString tag, ProfileDetail& pd
         pd._start = start;
         pd._end = end;
         return true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfileSampleEdit::EditDblClick(TObject *Sender)
+{
+        SymbolBrowser->Show();
 }
 //---------------------------------------------------------------------------
 

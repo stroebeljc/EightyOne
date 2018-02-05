@@ -54,6 +54,7 @@ object ProfileSampleEdit: TProfileSampleEdit
     Height = 21
     TabOrder = 1
     Text = 'EditStart'
+    OnDblClick = EditDblClick
   end
   object EditEnd: TEdit
     Left = 48

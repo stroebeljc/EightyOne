@@ -19,6 +19,7 @@ __published:	// IDE-managed Components
         TEdit *EditEnd;
         TButton *ButtonOK;
         void __fastcall ButtonOKClick(TObject *Sender);
+        void __fastcall EditDblClick(TObject *Sender);
 private:	// User declarations
         bool _cancelled;
 public:		// User declarations

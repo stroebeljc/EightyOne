@@ -9,6 +9,12 @@
 #include "symbolstore.h"
 #include "z80.h"
 
+static const int START = 0;
+static const int END = 1;
+static const int MIN = 2;
+static const int MAX = 3;
+static const int COUNT = 4;
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

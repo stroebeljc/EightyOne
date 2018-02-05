@@ -378,7 +378,7 @@ object About: TAbout
     Top = 40
     Width = 151
     Height = 13
-    Caption = '© 2003-2017 Michael D Wynne'
+    Caption = '© 2003-2018 Michael D Wynne'
   end
   object Label2: TLabel
     Left = 8

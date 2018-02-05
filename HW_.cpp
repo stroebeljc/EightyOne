@@ -701,7 +701,12 @@ void __fastcall THW::OKClick(TObject *Sender)
         AnsiString romBase = zx81.cwd;
         romBase += "ROM\\";
 
-        AnsiString rom = romBase + machine.CurRom;
+        AnsiString rom = machine.CurRom;
+
+        if (!FileExists(rom))
+        {
+                rom = romBase + machine.CurRom;
+        }
         if (!FileExists(rom))
         {
                 ShowMessage("ROM file for this system not found. Go to:\n\n"

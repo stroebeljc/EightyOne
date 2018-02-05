@@ -1,6 +1,6 @@
 object ProfileSampleEdit: TProfileSampleEdit
-  Left = 109
-  Top = 236
+  Left = 516
+  Top = 422
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Profile Sample'
@@ -13,6 +13,7 @@ object ProfileSampleEdit: TProfileSampleEdit
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

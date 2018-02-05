@@ -1,10 +1,12 @@
 object Profiler: TProfiler
-  Left = 250
-  Top = 255
-  Width = 459
-  Height = 359
+  Left = 454
+  Top = 338
+  Width = 458
+  Height = 189
   Caption = 'Profiler'
   Color = clBtnFace
+  Constraints.MinHeight = 189
+  Constraints.MinWidth = 458
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -15,7 +17,7 @@ object Profiler: TProfiler
   TextHeight = 13
   object ButtonNew: TButton
     Left = 4
-    Top = 292
+    Top = 122
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -25,7 +27,7 @@ object Profiler: TProfiler
   end
   object ButtonDelete: TButton
     Left = 244
-    Top = 292
+    Top = 122
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -36,8 +38,8 @@ object Profiler: TProfiler
   object ListViewProfileSamples: TListView
     Left = 8
     Top = 8
-    Width = 425
-    Height = 277
+    Width = 424
+    Height = 107
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
       item
@@ -70,7 +72,7 @@ object Profiler: TProfiler
   end
   object ButtonEdit: TButton
     Left = 84
-    Top = 292
+    Top = 122
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -80,12 +82,22 @@ object Profiler: TProfiler
   end
   object ButtonReset: TButton
     Left = 164
-    Top = 292
+    Top = 122
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Reset'
     TabOrder = 4
     OnClick = ButtonResetClick
+  end
+  object ButtonRefresh: TButton
+    Left = 359
+    Top = 122
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Refresh'
+    TabOrder = 5
+    OnClick = ButtonRefreshClick
   end
 end

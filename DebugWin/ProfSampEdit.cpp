@@ -22,37 +22,47 @@ __fastcall TProfileSampleEdit::TProfileSampleEdit(TComponent* Owner) :
 
 void __fastcall TProfileSampleEdit::ButtonOKClick(TObject *Sender)
 {
-        _cancelled = false;
+        int start, end;
+        if (!AddressResolver::Validate(EditStart->Text, start) ||
+                !AddressResolver::Validate(EditEnd->Text, end)) return;
+
+        _pd->_start = start;
+        _pd->_end = end;
+
+        _valid = true;
+
         Close();
 }
 //---------------------------------------------------------------------------
 
-bool __fastcall TProfileSampleEdit::EditValues(AnsiString tag, ProfileDetail& pd)
+void __fastcall TProfileSampleEdit::EditValues(AnsiString tag,
+        ProfileDetail* pd,
+                void (*completion)(bool, AnsiString))
 {
-        _cancelled = true;
+        _pd = pd;
+        _completion = completion;
 
         EditTag->Text = tag;
-        EditStart->Text = symbolstore::addressToSymbolOrHex(pd._start);
-        EditEnd->Text = symbolstore::addressToSymbolOrHex(pd._end);
+        EditStart->Text = symbolstore::addressToSymbolOrHex(pd->_start);
+        EditEnd->Text = symbolstore::addressToSymbolOrHex(pd->_end);
 
-        ShowModal();
+        // hope for the best...
+        _valid = false;
 
-        if (_cancelled)
-                return false;
-
-        int start, end;
-        if (!AddressResolver::Validate(EditStart->Text, start) ||
-                !AddressResolver::Validate(EditEnd->Text, end)) return false;
-
-        pd._start = start;
-        pd._end = end;
-        return true;
+        Show();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TProfileSampleEdit::EditDblClick(TObject *Sender)
 {
         SymbolBrowser->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfileSampleEdit::FormClose(TObject *Sender,
+      TCloseAction &Action)
+{
+        _completion(_valid, EditTag->Text);
 }
 //---------------------------------------------------------------------------
 

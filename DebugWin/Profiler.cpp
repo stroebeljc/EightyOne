@@ -23,39 +23,35 @@ TProfiler *Profiler;
 __fastcall TProfiler::TProfiler(TComponent* Owner)
         : TForm(Owner)
 {
+        _pse = new TProfileSampleEdit(this);
 }
 //---------------------------------------------------------------------------
-
+void __fastcall TProfiler::EnableButtons(bool enabled)
+{
+        ButtonNew->Enabled = enabled;
+        ButtonDelete->Enabled = enabled;
+        ButtonEdit->Enabled = enabled;
+        ButtonReset->Enabled = enabled;
+}
+//---------------------------------------------------------------------------
 void __fastcall TProfiler::UpdateItem(TListItem* item, AnsiString tag, ProfileDetail& pd)
 {
         item->Caption = tag;
         item->SubItems->Strings[START] = symbolstore::addressToSymbolOrHex(pd._start);
         item->SubItems->Strings[END] = symbolstore::addressToSymbolOrHex(pd._end);
-        item->SubItems->Strings[MIN] = pd.Min();
-        item->SubItems->Strings[MAX] = pd.Max();
+        item->SubItems->Strings[MIN] = pd.Min() == INT_MAX ? "--" : IntToStr(pd.Min()).c_str();
+        item->SubItems->Strings[MAX] = pd.Max() == INT_MIN ? "--" : IntToStr(pd.Max()).c_str();
         item->SubItems->Strings[COUNT] = pd.SampleCount();
 }
+//---------------------------------------------------------------------------
 
 void __fastcall TProfiler::ButtonNewClick(TObject *Sender)
 {
-        TProfileSampleEdit* pse = new TProfileSampleEdit(this);
+        EnableButtons(false);
 
-        ProfileDetail pd(0, 0);
-        if (pse->EditValues("", pd)) {
-                _profileDetails.push_back(pd);
-
-                TListItem* newItem = ListViewProfileSamples->Items->Add();
-                newItem->SubItems->Add("0");
-                newItem->SubItems->Add("0");
-                newItem->SubItems->Add("0");
-                newItem->SubItems->Add("0");
-                newItem->SubItems->Add("0");
-                UpdateItem(newItem, pse->EditTag->Text, pd);
-        }
-
-        delete(pse);
+        _newPD = new ProfileDetail(0, 0);
+        _pse->EditValues("", _newPD, &SampleEditComplete);
 }
-
 //---------------------------------------------------------------------------
 
 void __fastcall TProfiler::ButtonEditClick(TObject *Sender)
@@ -63,14 +59,9 @@ void __fastcall TProfiler::ButtonEditClick(TObject *Sender)
         TListItem* editItem = ListViewProfileSamples->Selected;
         if (!editItem) return;
 
-        TProfileSampleEdit* pse = new TProfileSampleEdit(this);
-        ProfileDetail pd = _profileDetails[editItem->Index];
-        if (pse->EditValues(editItem->Caption, pd)) {
-                _profileDetails[editItem->Index] = pd;
-                UpdateItem(editItem, pse->EditTag->Text, pd);
-        }
+        EnableButtons(false);
 
-        delete pse;
+        _pse->EditValues(editItem->Caption, &_profileDetails[editItem->Index], &SampleEditComplete);
 }
 //---------------------------------------------------------------------------
 
@@ -103,6 +94,40 @@ void __fastcall TProfiler::DebugTick(processor* z80)
                 _profileDetails[i].Update(z80->pc.w, z80->tstates);
         }
 }
+//---------------------------------------------------------------------------
+
+void __fastcall TProfiler::SampleEditCompleteImpl(bool valid, AnsiString tag)
+{
+        EnableButtons(true);
+
+        if (!valid) {
+                delete(_newPD);
+                _newPD = NULL;
+                return;
+        }
+
+        if (_newPD)
+        {
+                _profileDetails.push_back(*_newPD);
+
+                TListItem* newItem = ListViewProfileSamples->Items->Add();
+                newItem->Caption = tag;
+                newItem->SubItems->Add("0");
+                newItem->SubItems->Add("0");
+                newItem->SubItems->Add("0");
+                newItem->SubItems->Add("0");
+                newItem->SubItems->Add("0");
+
+                _newPD = NULL;
+        }
+
+        Refresh();
+}
+
+void TProfiler::SampleEditComplete(bool valid, AnsiString tag)
+{
+        Profiler->SampleEditCompleteImpl(valid, tag);
+}
 
 //---------------------------------------------------------------------------
 
@@ -113,4 +138,11 @@ void __fastcall TProfiler::Refresh()
                 UpdateItem(item, item->Caption, _profileDetails[i]);
         }
 }
+
+
+void __fastcall TProfiler::ButtonRefreshClick(TObject *Sender)
+{
+        Refresh();
+}
+//---------------------------------------------------------------------------
 

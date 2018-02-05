@@ -15,23 +15,34 @@
 class TProfiler : public TForm
 {
 __published:	// IDE-managed Components
+        TListView *ListViewProfileSamples;
         TButton *ButtonNew;
         TButton *ButtonDelete;
-        TListView *ListViewProfileSamples;
         TButton *ButtonEdit;
         TButton *ButtonReset;
+        TButton *ButtonRefresh;
         void __fastcall ButtonNewClick(TObject *Sender);
         void __fastcall ButtonEditClick(TObject *Sender);
         void __fastcall ButtonResetClick(TObject *Sender);
         void __fastcall ButtonDeleteClick(TObject *Sender);
+        void __fastcall ButtonRefreshClick(TObject *Sender);
 private:	// User declarations
-        std::vector<class ProfileDetail> _profileDetails;
         void __fastcall UpdateItem(TListItem* item, AnsiString tag, class ProfileDetail& pd);
+        void __fastcall SampleEditCompleteImpl(bool valid, AnsiString tag);
+        void __fastcall EnableButtons(bool enabled);
+
+        std::vector<class ProfileDetail> _profileDetails;
+
+        class ProfileDetail* _newPD;
+        class TProfileSampleEdit* _pse;
 
 public:		// User declarations
         __fastcall TProfiler(TComponent* Owner);
 
+        static void SampleEditComplete(bool valid, AnsiString tag);
+
         void __fastcall DebugTick(processor* z80);
+
         void __fastcall Refresh();
 };
 //---------------------------------------------------------------------------

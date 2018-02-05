@@ -40,7 +40,7 @@ public:
                                 _max = _ts;
                 }
 
-                if (addr == _end) {
+                if (addr == _end && _state == counting) {
                         _state = waiting;
                         _history.push_back(_max);
                 }
@@ -54,7 +54,7 @@ public:
         }
 
         int Max() {
-                if (_history.empty()) return 0;
+                if (_history.empty()) return INT_MIN;
                 return max(_max, *std::max_element(_history.begin(), _history.end()));
         }
 

@@ -20,12 +20,16 @@ __published:	// IDE-managed Components
         TButton *ButtonOK;
         void __fastcall ButtonOKClick(TObject *Sender);
         void __fastcall EditDblClick(TObject *Sender);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
-        bool _cancelled;
+        bool _valid;
+        class ProfileDetail* _pd;
+        void (*_completion)(bool, AnsiString);
+
 public:		// User declarations
         __fastcall TProfileSampleEdit(TComponent* Owner);
 
-        bool __fastcall EditValues(AnsiString tag, class ProfileDetail& pd);
+        void __fastcall EditValues(AnsiString tag, ProfileDetail* pd, void(*)(bool, AnsiString));
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TProfileSampleEdit *ProfileSampleEdit;

@@ -1,6 +1,6 @@
 object Profiler: TProfiler
-  Left = 454
-  Top = 338
+  Left = 511
+  Top = 217
   Width = 458
   Height = 189
   Caption = 'Profiler'
@@ -18,7 +18,7 @@ object Profiler: TProfiler
   object ButtonNew: TButton
     Left = 4
     Top = 122
-    Width = 75
+    Width = 53
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'New'
@@ -26,9 +26,9 @@ object Profiler: TProfiler
     OnClick = ButtonNewClick
   end
   object ButtonDelete: TButton
-    Left = 244
+    Left = 196
     Top = 122
-    Width = 75
+    Width = 53
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Delete'
@@ -71,9 +71,9 @@ object Profiler: TProfiler
     ViewStyle = vsReport
   end
   object ButtonEdit: TButton
-    Left = 84
+    Left = 68
     Top = 122
-    Width = 75
+    Width = 53
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Edit'
@@ -81,9 +81,9 @@ object Profiler: TProfiler
     OnClick = ButtonEditClick
   end
   object ButtonReset: TButton
-    Left = 164
+    Left = 132
     Top = 122
-    Width = 75
+    Width = 53
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Reset'
@@ -91,13 +91,22 @@ object Profiler: TProfiler
     OnClick = ButtonResetClick
   end
   object ButtonRefresh: TButton
-    Left = 359
+    Left = 312
     Top = 122
-    Width = 75
+    Width = 53
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Refresh'
     TabOrder = 5
     OnClick = ButtonRefreshClick
+  end
+  object ButtonPlot: TButton
+    Left = 376
+    Top = 122
+    Width = 53
+    Height = 25
+    Caption = 'Plot'
+    TabOrder = 6
+    OnClick = ButtonPlotClick
   end
 end

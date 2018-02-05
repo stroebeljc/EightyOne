@@ -62,6 +62,9 @@ public:
                 return _history.size();
         }
 
+        int Sample(size_t idx) {
+                return idx < _history.size() ? _history[idx] : 0;
+        }
 private:
         int _ts, _max;
         int _state;

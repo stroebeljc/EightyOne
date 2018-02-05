@@ -21,11 +21,13 @@ __published:	// IDE-managed Components
         TButton *ButtonEdit;
         TButton *ButtonReset;
         TButton *ButtonRefresh;
+        TButton *ButtonPlot;
         void __fastcall ButtonNewClick(TObject *Sender);
         void __fastcall ButtonEditClick(TObject *Sender);
         void __fastcall ButtonResetClick(TObject *Sender);
         void __fastcall ButtonDeleteClick(TObject *Sender);
         void __fastcall ButtonRefreshClick(TObject *Sender);
+        void __fastcall ButtonPlotClick(TObject *Sender);
 private:	// User declarations
         void __fastcall UpdateItem(TListItem* item, AnsiString tag, class ProfileDetail& pd);
         void __fastcall SampleEditCompleteImpl(bool valid, AnsiString tag);

@@ -31,7 +31,7 @@
       zxpand\diskio.obj zxpand\ff.obj zxpand\wildcard.obj zxpand\zxpandcom.obj 
       zxpand\smbsd.obj zxpand\js.obj zxpand\dirlib.obj Chroma\Chroma.obj 
       DebugWin\SearchSequence_.obj LiveMemoryWindow_.obj DebugWin\Profiler.obj 
-      DebugWin\ProfSampEdit.obj"/>
+      DebugWin\ProfSampEdit.obj DebugWin\ProfilePlot_.obj"/>
     <RESFILES value="EightyOne.res WinXP.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -47,7 +47,7 @@
       Plus3Drives.dfm MakeHDF.dfm Parallel.dfm midifrm.dfm ZipFile_.dfm 
       Debug68k\debug68.dfm SplashScreen.dfm main_.dfm memoryWindow.dfm 
       SymBrowse.dfm DebugWin\SearchSequence_.dfm LiveMemoryWindow_.dfm 
-      DebugWin\Profiler.dfm DebugWin\ProfSampEdit.dfm"/>
+      DebugWin\Profiler.dfm DebugWin\ProfSampEdit.dfm DebugWin\ProfilePlot_.dfm"/>
     <LIBFILES value="ddraw.lib libdsk.lib zlib.lib"/>
     <LIBRARIES value="OfficeButton97.lib VCLX50.lib VCLDB50.lib THEMEMANAGERC5.lib 
       CPORTLIBCB5.lib AnimTimer.lib Vcl50.lib"/>
@@ -101,7 +101,7 @@
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=8
+MinorVer=9
 Release=0
 Build=0
 Debug=0
@@ -115,7 +115,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Michael D Wynne
 FileDescription=EightyOne Emulator
-FileVersion=1.8.0.0
+FileVersion=1.9.0.0
 InternalName=
 LegalCopyright=Michael D Wynne
 LegalTrademarks=

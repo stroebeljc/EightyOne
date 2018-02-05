@@ -6,6 +6,7 @@
 #include "Profiler.h"
 #include "ProfSampEdit.h"
 #include "ProfileDetail.h"
+#include "ProfilePlot_.h"
 #include "symbolstore.h"
 #include "z80.h"
 
@@ -143,6 +144,15 @@ void __fastcall TProfiler::Refresh()
 void __fastcall TProfiler::ButtonRefreshClick(TObject *Sender)
 {
         Refresh();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfiler::ButtonPlotClick(TObject *Sender)
+{
+        TListItem* selected = ListViewProfileSamples->Selected;
+        if (!selected) return;
+
+        ProfilePlot->PlotTGraph(&_profileDetails[selected->Index]);
 }
 //---------------------------------------------------------------------------
 

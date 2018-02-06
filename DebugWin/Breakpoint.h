@@ -47,7 +47,7 @@ struct breakpoint
                                 return curAddr < Addr;
 
                         case GreaterThan:
-                                return curAddr > Addr && curAddr < zx81.RAMTOP;
+                                return curAddr > Addr && curAddr <= zx81.RAMTOP;
 
                         case InRange:
                                 return curAddr >= Addr && AddrHi > curAddr;

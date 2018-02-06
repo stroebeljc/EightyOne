@@ -64,7 +64,7 @@ object SetBreakpoint: TSetBreakpoint
     Height = 17
     Caption = '='
     Checked = True
-    TabOrder = 4
+    TabOrder = 5
     TabStop = True
     OnClick = RadioButtonClick
   end
@@ -74,7 +74,7 @@ object SetBreakpoint: TSetBreakpoint
     Width = 25
     Height = 17
     Caption = '<'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = RadioButtonClick
   end
   object RadioButtonGreaterThan: TRadioButton
@@ -83,7 +83,7 @@ object SetBreakpoint: TSetBreakpoint
     Width = 25
     Height = 17
     Caption = '>'
-    TabOrder = 5
+    TabOrder = 6
     OnClick = RadioButtonClick
   end
   object RadioButtonInRange: TRadioButton
@@ -92,7 +92,7 @@ object SetBreakpoint: TSetBreakpoint
     Width = 73
     Height = 17
     Caption = '> range <'
-    TabOrder = 6
+    TabOrder = 7
     OnClick = RadioButtonClick
   end
   object EditAddressHi: TEdit
@@ -101,7 +101,7 @@ object SetBreakpoint: TSetBreakpoint
     Width = 105
     Height = 21
     MaxLength = 5
-    TabOrder = 7
+    TabOrder = 3
     Text = '0'
   end
 end

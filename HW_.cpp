@@ -419,7 +419,12 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
         else Form1->AnimTimer1->Interval=20;
 
-        if (RamPackBox->Items->Strings[RamPackBox->ItemIndex]=="96k")
+        if ((NewMachine == MACHINESPEC48) || (NewMachine != MACHINEQL))
+        {
+                zx81.RAMTOP = 65535;
+                zx81.ace96k=0;
+        }
+        else if (RamPackBox->Items->Strings[RamPackBox->ItemIndex]=="96k")
         {
                 zx81.RAMTOP = 65535;
                 zx81.ace96k=1;

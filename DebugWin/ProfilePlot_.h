@@ -11,9 +11,13 @@
 class TProfilePlot : public TForm
 {
 __published:	// IDE-managed Components
+        TScrollBar *ScrollBarHorizontal;
         void __fastcall FormPaint(TObject *Sender);
+        void __fastcall FormResize(TObject *Sender);
+        void __fastcall ScrollBarHorizontalChange(TObject *Sender);
 private:	// User declarations
         class ProfileDetail* _pd;
+        void InitScrollbar();
 public:		// User declarations
         __fastcall TProfilePlot(TComponent* Owner);
 

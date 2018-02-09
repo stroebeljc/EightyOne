@@ -1,8 +1,8 @@
 object ProfilePlot: TProfilePlot
-  Left = 472
-  Top = 211
-  Width = 603
-  Height = 302
+  Left = 469
+  Top = 156
+  Width = 700
+  Height = 415
   Caption = 'Profile Plot'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +12,17 @@ object ProfilePlot: TProfilePlot
   Font.Style = []
   OldCreateOrder = False
   OnPaint = FormPaint
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
+  object ScrollBarHorizontal: TScrollBar
+    Left = 0
+    Top = 360
+    Width = 684
+    Height = 17
+    Align = alBottom
+    PageSize = 0
+    TabOrder = 0
+    OnChange = ScrollBarHorizontalChange
+  end
 end

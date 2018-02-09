@@ -100,7 +100,7 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
         UpdateRBStates();
 
         EditAddress->Text = "$" + IntToHex(bp.Addr, 4);
-        EditAddressHi->Text = "0";
+        EditAddressHi->Text = "$0000";
 
         if (bp.Condition == LessThan) RadioButtonLessThan->Checked = true;
         else if (bp.Condition == Equal) RadioButtonEqual->Checked = true;

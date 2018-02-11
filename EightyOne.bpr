@@ -13,8 +13,7 @@
       tzx\tzxevent.obj tzx\tzxEventTurbo.obj tzx\tzxfile.obj tzx\tzxload.obj 
       tzx\TZXMan.obj tzx\tzxsave.obj tzx\tzxadd.obj tzx\tzxEditPause.obj 
       tzx\tzxEditArchive.obj tzx\tzxEditText.obj tzx\tzxEditHWInfo.obj 
-      tzx\tzxEditData.obj DebugWin\EditValue_.obj 
-      DebugWin\ConfigureBreakpoint_.obj DebugWin\SetBreakpoint_.obj 
+      tzx\tzxEditData.obj DebugWin\EditValue_.obj DebugWin\SetBreakpoint_.obj 
       FullScreen.obj zx81config.obj ace\ace.obj Spectrum\spec48.obj 
       tzx\tzxEventGeneral.obj tzx\tzxEventMisc.obj tzx\tzxEditGeneral.obj 
       HW_.obj Interface1.obj Spectrum\spec48snap.obj lib765\765drive.obj 
@@ -40,8 +39,7 @@
       Artifacts_.dfm sound\SoundOP.dfm DebugWin\Hist.dfm MemSave_.dfm 
       zx97Config.dfm SerialPort.dfm tzx\TZXMan.dfm tzx\tzxEditPause.dfm 
       tzx\tzxEditArchive.dfm tzx\tzxEditText.dfm tzx\tzxEditHWInfo.dfm 
-      tzx\tzxEditData.dfm DebugWin\EditValue_.dfm 
-      DebugWin\ConfigureBreakpoint_.dfm DebugWin\SetBreakpoint_.dfm 
+      tzx\tzxEditData.dfm DebugWin\EditValue_.dfm DebugWin\SetBreakpoint_.dfm 
       FullScreen.dfm tzx\tzxEditGeneral.dfm HW_.dfm Interface1.dfm 
       Plus3Drives.dfm MakeHDF.dfm Parallel.dfm midifrm.dfm ZipFile_.dfm 
       Debug68k\debug68.dfm SplashScreen.dfm main_.dfm memoryWindow.dfm 

@@ -61,7 +61,6 @@ USEFORM("tzx\tzxEditText.cpp", EditTextForm);
 USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditData.cpp", EditDataForm);
 USEFORM("DebugWin\EditValue_.cpp", EditValue);
-USEFORM("DebugWin\ConfigureBreakpoint_.cpp", ConfigureBreakpoint);
 USEFORM("DebugWin\SetBreakpoint_.cpp", SetBreakpoint);
 USEFORM("FullScreen.cpp", FSSettings);
 USEUNIT("zx81config.cpp");

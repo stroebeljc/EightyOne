@@ -69,6 +69,8 @@ extern int ACEMICState, ACETopBorder, ACELeftBorder;
 extern int TZXEventCounter;
 extern void TZXWriteByte(unsigned char Byte);
 
+extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
+extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 
 void ace_initialise(void)
 {
@@ -96,6 +98,9 @@ void ace_initialise(void)
 
 void ace_writebyte(int Address, int Data)
 {
+        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
+        lastMemoryWriteAddrHi = Address;
+
         //noise = (noise<<8) | Data;
 
         LiveMemoryWindow->Write(Address);
@@ -126,8 +131,7 @@ void ace_writebyte(int Address, int Data)
         memory[Address]=Data;
 }
 
-
-BYTE ace_readbyte(int Address)
+BYTE ace_ReadByte(int Address)
 {
         int data;
 
@@ -147,9 +151,17 @@ BYTE ace_readbyte(int Address)
         return(data);
 }
 
+BYTE ace_readbyte(int Address)
+{
+        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
+        lastMemoryReadAddrHi = Address;
+
+        return ace_ReadByte(Address);
+}
+
 BYTE ace_opcode_fetch(int Address)
 {
-        return(ace_readbyte(Address));
+        return(ace_ReadByte(Address));
 }
 
 void ace_writeport(int Address, int Data, int *tstates)

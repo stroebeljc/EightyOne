@@ -1,11 +1,11 @@
 object ConfigureBreakpoint: TConfigureBreakpoint
-  Left = 289
-  Top = 128
-  BorderIcons = [biHelp]
+  Left = 281
+  Top = 380
+  BorderIcons = [biSystemMenu, biMinimize, biMaximize, biHelp]
   BorderStyle = bsToolWindow
-  Caption = 'TStates Breakpoint'
-  ClientHeight = 105
-  ClientWidth = 179
+  Caption = 'Set '#39'T-States'#39' Breakpoint'
+  ClientHeight = 90
+  ClientWidth = 194
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,22 +17,29 @@ object ConfigureBreakpoint: TConfigureBreakpoint
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 8
-    Top = 12
+    Left = 64
+    Top = 8
     Width = 41
     Height = 13
     Caption = 'Address:'
   end
   object Label2: TLabel
-    Left = 8
-    Top = 44
-    Width = 40
+    Left = 128
+    Top = 8
+    Width = 43
     Height = 13
-    Caption = 'T-States'
+    Caption = 'T-States:'
+  end
+  object Label3: TLabel
+    Left = 8
+    Top = 8
+    Width = 47
+    Height = 13
+    Caption = 'Condition:'
   end
   object OK: TButton
-    Left = 8
-    Top = 72
+    Left = 16
+    Top = 56
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -41,8 +48,8 @@ object ConfigureBreakpoint: TConfigureBreakpoint
     OnClick = OKClick
   end
   object Cancel: TButton
-    Left = 96
-    Top = 72
+    Left = 104
+    Top = 56
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -50,21 +57,43 @@ object ConfigureBreakpoint: TConfigureBreakpoint
     OnClick = CancelClick
   end
   object EditAddress: TEdit
-    Left = 56
-    Top = 8
-    Width = 113
+    Left = 64
+    Top = 24
+    Width = 57
     Height = 21
     MaxLength = 5
     TabOrder = 0
     Text = '0'
   end
   object EditTStates: TEdit
-    Left = 56
-    Top = 40
-    Width = 113
+    Left = 128
+    Top = 24
+    Width = 57
     Height = 21
     MaxLength = 5
     TabOrder = 1
     Text = '0'
+  end
+  object BreakCondition: TComboBox
+    Left = 8
+    Top = 24
+    Width = 49
+    Height = 21
+    Style = csDropDownList
+    DropDownCount = 5
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ItemHeight = 13
+    ParentFont = False
+    TabOrder = 4
+    Items.Strings = (
+      '='
+      '<'
+      '>'
+      '<>'
+      '-->')
   end
 end

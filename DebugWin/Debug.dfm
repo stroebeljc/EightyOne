@@ -986,7 +986,7 @@ object Dbg: TDbg
       Top = 46
       Width = 53
       Height = 25
-      Caption = 'Address'
+      Caption = 'Execute'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -1016,7 +1016,7 @@ object Dbg: TDbg
       Left = 8
       Top = 19
       Width = 113
-      Height = 166
+      Height = 167
       ColCount = 1
       DefaultColWidth = 10
       DefaultRowHeight = 14
@@ -1081,7 +1081,7 @@ object Dbg: TDbg
       Top = 191
       Width = 53
       Height = 25
-      Caption = 'TStates'
+      Caption = 'T-States'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

@@ -17,6 +17,8 @@ __published:	// IDE-managed Components
         TEdit *EditAddress;
         TLabel *Label2;
         TEdit *EditTStates;
+        TLabel *Label3;
+        TComboBox *BreakCondition;
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CancelClick(TObject *Sender);

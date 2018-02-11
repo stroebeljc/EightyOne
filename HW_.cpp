@@ -419,7 +419,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
         else Form1->AnimTimer1->Interval=20;
 
-        if ((NewMachine == MACHINESPEC48) || (NewMachine != MACHINEQL))
+        if ((NewMachine == MACHINESPEC48) || (NewMachine == MACHINEQL))
         {
                 zx81.RAMTOP = 65535;
                 zx81.ace96k=0;
@@ -583,7 +583,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.setbyte = spec48_setbyte;
                 machine.readbyte = spec48_readbyte;
                 machine.getbyte = spec48_getbyte;
-                machine.opcode_fetch = spec48_readbyte;
+                machine.opcode_fetch = spec48_opcode_fetch;
                 machine.readport = spec48_readport;
                 machine.writeport = spec48_writeport;
                 machine.contendmem = spec48_contend;

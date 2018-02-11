@@ -247,24 +247,11 @@ void zx81_initialise(void)
         P3DriveMachineHasInitialised();
 }
 
-// void zx81_writebyte(int Address, int Data)
-//
 // Stores the supplied byte in memory,
 // taking into account memory mapped devices and RAM/ROM shadows.
 
-// Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
-void zx81_setbyte(int Address, int Data)
+void zx81_WriteByte(int Address, int Data)
 {
-        directMemoryAccess = true;
-        zx81_writebyte(Address, Data);
-        directMemoryAccess = false;
-}
-
-void zx81_writebyte(int Address, int Data)
-{
-        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
-        lastMemoryWriteAddrHi = Address;
-
         LiveMemoryWindow->Write(Address);
 
         noise = (noise<<8) | Data;
@@ -412,27 +399,30 @@ writeMem:
         memory[Address]=Data;
 }
 
+// Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+void zx81_setbyte(int Address, int Data)
+{
+        directMemoryAccess = true;
+        zx81_WriteByte(Address, Data);
+        directMemoryAccess = false;
+}
+
+void zx81_writebyte(int Address, int Data)
+{
+        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
+        lastMemoryWriteAddrHi = Address;
+
+        zx81_WriteByte(Address, Data);
+}
+
 // BYTE zx81_readbyte(int Address)
 //
 // Given an Address, zx81_readbyte returns the byte which is stored at that address
 // taking into account memory mapped devices and RAM/ROM shadows.
 int video = 0;
 
-// Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
-BYTE zx81_getbyte(int Address)
+BYTE zx81_ReadByte(int Address)
 {
-        directMemoryAccess = true;
-        BYTE b = zx81_readbyte(Address);
-        directMemoryAccess = false;
-
-        return b;
-}
-
-BYTE zx81_readbyte(int Address)
-{
-        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
-        lastMemoryReadAddrHi = Address;
-
         LiveMemoryWindow->Read(Address);
 
         int data;
@@ -595,6 +585,29 @@ BYTE zx81_readbyte(int Address)
         return(data);
 }
 
+// Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+BYTE zx81_getbyte(int Address)
+{
+        directMemoryAccess = true;
+        BYTE b = zx81_ReadByte(Address);
+        directMemoryAccess = false;
+
+        return b;
+}
+
+BYTE zx81_readOpcodeByte(int Address)
+{
+        return zx81_ReadByte(Address);
+}
+
+BYTE zx81_readbyte(int Address)
+{
+        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
+        lastMemoryReadAddrHi = Address;
+
+        return zx81_ReadByte(Address);
+}
+
 // BYTE opcode_fetch(int Address)
 //
 // Given an address, opcode fetch returns the byte at that memory address,
@@ -636,7 +649,7 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
-                data = zx81_readbyte(Address);
+                data = zx81_readOpcodeByte(Address);
 
                 // The floating point hardware fix intercepts instruction opcode fetches from addresses
                 // matching %-0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
@@ -661,7 +674,7 @@ BYTE zx81_opcode_fetch(int Address)
         // because it makes it impossible to place the display file in the
         // 48-64k region if a 64k RAM Pack is used.  How does the real
         // Hardware work?
-        data = zx81_readbyte((Address>=49152)?Address&32767:Address);
+        data = zx81_readOpcodeByte((Address>=49152)?Address&32767:Address);
         opcode=data;
         bit6=opcode&64;
 
@@ -682,7 +695,7 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 FetchChromaColour(Address, data, rowcounter, memory);
 
-                data=zx81_readbyte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
+                data=zx81_readOpcodeByte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
                 update=1;
         }
         else if ((z80.i&1) && MemotechMode)
@@ -744,7 +757,7 @@ BYTE zx81_opcode_fetch(int Address)
                         else
                         {
                                 video = 1;
-                                data=zx81_readbyte(((z80.i&254)<<8) + (data<<3) | rowcounter);
+                                data=zx81_readOpcodeByte(((z80.i&254)<<8) + (data<<3) | rowcounter);
                                 video = 0;
                         }
                 }
@@ -769,7 +782,7 @@ BYTE zx81_opcode_fetch(int Address)
                         // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
                         // Ink = bits 0-2, Paper = bits 4-6
 
-                        c=zx81_readbyte((Address&1023)+8192);
+                        c=zx81_readOpcodeByte((Address&1023)+8192);
 
                         ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                         c = (c >> 4);

@@ -181,8 +181,8 @@ void DebugUpdate(void)
                 (lmrh != -1 && Dbg->BPHit(lmrh, BP_RD)) ||
                 (lmwl != -1 && Dbg->BPHit(lmwl, BP_WR)) ||
                 (lmwh != -1 && Dbg->BPHit(lmwh, BP_WR)) ||
-                (lpi  != -1 && Dbg->BPHit(lpi & 0xff, BP_IN)) ||
-                (lpo  != -1 && Dbg->BPHit(lpo & 0xff, BP_OUT)) ||
+                (lpi  != -1 && Dbg->BPHit(lpi, BP_IN)) ||
+                (lpo  != -1 && Dbg->BPHit(lpo, BP_OUT)) ||
                 Dbg->BPHit(z80.pc.w, BP_TSTATES))
         {
                 Dbg->DoNext=false;
@@ -216,7 +216,7 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         // type 4 = output
         // type 5 = T-states count
         const AnsiString types("xrwiot");
-        const AnsiString conditions("<=>~");
+        const AnsiString conditions("=<>!=");
         const int maxBreakpoints = 99;
 
         if (Breakpoints == maxBreakpoints)
@@ -232,10 +232,12 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
                 }
 
                 if ((Breakpoint[i].Addr == bp.Addr) && (Breakpoint[i].Type == bp.Type)
-                        && (Breakpoint[i].Condition == bp.Condition))
+                         && (Breakpoint[i].Condition == bp.Condition))
                 {
+                        DelBreakPoint(Breakpoint[i].Addr);
+                        break;
                         // already exists
-                        return false;
+                        //return false;
                 }
         }
 
@@ -245,13 +247,13 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         AnsiString c(conditions[bp.Condition + 1]);
         AnsiString str;
 
-        if (t == "x")
+        if (t == "x" && bp.Condition != Range && bp.Mask == 0xFFFF)
         {
                 str = t + c + symbolstore::addressToSymbolOrHex(bp.Addr);
-                if (bp.Condition == InRange)
-                {
-                        str += "-" + symbolstore::addressToSymbolOrHex(bp.AddrHi);
-                }
+//                if (bp.Condition == Range)
+//                {
+//                        str += "-" + symbolstore::addressToSymbolOrHex(bp.AddrArg);
+//                }
         }
         else if (t == "t")
         {
@@ -260,9 +262,13 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         else
         {
                 str = t + c + "$" + Hex16(bp.Addr);
-                if (bp.Condition == InRange)
+                if (bp.Condition == Range)
                 {
-                        str += "-$" + Hex16(bp.AddrHi);
+                        str += " - $" + Hex16(bp.EndAddr);
+                }
+                else if (bp.Mask != 0xFFFF)
+                {
+                        str += " &=$" + Hex16(bp.Mask);
                 }
         }
 
@@ -786,6 +792,8 @@ void __fastcall TDbg::StepOverClick(TObject *Sender)
 void __fastcall TDbg::AddrBrkBtnClick(TObject *Sender)
 {
         SetBreakpoint->CentreOn(this);
+        AnsiString title = "Set 'Execute' Breakpoint";
+        SetBreakpoint->SetTitle(title);
 
         breakpoint bp(0, BP_EXE);
         if (SetBreakpoint->EditBreakpoint(bp))
@@ -804,7 +812,7 @@ void __fastcall TDbg::DelBrkBtnClick(TObject *Sender)
 
         if ((BPList->RowCount > 1) && ((BPList->Row + 1) >= BPList->RowCount))
         {
-                BPList->Row -= 1; 
+                BPList->Row -= 1;
         }
 
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
@@ -1278,6 +1286,8 @@ void __fastcall TDbg::MemoryClick(TObject *Sender)
 void __fastcall TDbg::WriteBrkBtnClick(TObject *Sender)
 {
         SetBreakpoint->CentreOn(this);
+        AnsiString title = "Set 'Write' Breakpoint";
+        SetBreakpoint->SetTitle(title);
 
         breakpoint bp(0, BP_WR);
         if (SetBreakpoint->EditBreakpoint(bp))
@@ -1292,6 +1302,8 @@ void __fastcall TDbg::WriteBrkBtnClick(TObject *Sender)
 void __fastcall TDbg::ReadBrkBtnClick(TObject *Sender)
 {
         SetBreakpoint->CentreOn(this);
+        AnsiString title = "Set 'Read' Breakpoint";
+        SetBreakpoint->SetTitle(title);
 
         breakpoint bp(0, BP_RD);
         if (SetBreakpoint->EditBreakpoint(bp))
@@ -1306,6 +1318,8 @@ void __fastcall TDbg::ReadBrkBtnClick(TObject *Sender)
 void __fastcall TDbg::OutBrkBtnClick(TObject *Sender)
 {
         SetBreakpoint->CentreOn(this);
+        AnsiString title = "Set 'Out' Breakpoint";
+        SetBreakpoint->SetTitle(title);
 
         breakpoint bp(0, BP_OUT);
         if (SetBreakpoint->EditBreakpoint(bp))
@@ -1320,6 +1334,8 @@ void __fastcall TDbg::OutBrkBtnClick(TObject *Sender)
 void __fastcall TDbg::InBrkBtnClick(TObject *Sender)
 {
         SetBreakpoint->CentreOn(this);
+        AnsiString title = "Set 'In' Breakpoint";
+        SetBreakpoint->SetTitle(title);
 
         breakpoint bp(0, BP_IN);
         if (SetBreakpoint->EditBreakpoint(bp))
@@ -1372,7 +1388,9 @@ void LogOutAccess(int address, BYTE data)
 
 void __fastcall TDbg::TStatesBrkBtnClick(TObject *Sender)
 {
-        ConfigureBreakpoint->CentreOn(this);
+        SetBreakpoint->CentreOn(this);
+        AnsiString title = "Set 'T-States' Breakpoint";
+        SetBreakpoint->SetTitle(title);
 
         int Addr = 0;
         int Count = 0;
@@ -1387,10 +1405,11 @@ void __fastcall TDbg::TStatesBrkBtnClick(TObject *Sender)
                 }
         }               
 
-        if (ConfigureBreakpoint->EditValues(Addr, 2, Count))
+        if (SetBreakpoint->EditTSetBreakpoint(Addr, 2, Count))
         {
                 breakpoint bp(Addr, BP_TSTATES);
                 bp.Count = Count;
+                bp.Condition = Equal;
                 AddBreakPoint(bp);
         }
 

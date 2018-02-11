@@ -9,6 +9,8 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+
+/*
 TConfigureBreakpoint *ConfigureBreakpoint;
 //---------------------------------------------------------------------------
 __fastcall TConfigureBreakpoint::TConfigureBreakpoint(TComponent* Owner)
@@ -100,7 +102,7 @@ bool TConfigureBreakpoint::EditValues(int& address, int len, int& tStates)
                 return false;
         }
 
-        if (tvalTStates > 65535)
+        if (tvalTStates > 999999)
         {
                 return false;
         }
@@ -110,4 +112,4 @@ bool TConfigureBreakpoint::EditValues(int& address, int len, int& tStates)
 
         return true;
 }
-
+*/

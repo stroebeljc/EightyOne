@@ -43,6 +43,11 @@ void TSetBreakpoint::CentreOn(TForm* parent)
         Left = parent->Left + (parent->Width - Width) /2;
 }
 //---------------------------------------------------------------------------
+void TSetBreakpoint::SetTitle(AnsiString& title)
+{
+        Text = title;
+}
+//---------------------------------------------------------------------------
 
 bool SanitiseAddress(String addressValue, int& addr)
 {
@@ -97,19 +102,20 @@ bool SanitiseAddress(String addressValue, int& addr)
 
 bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
 {
+        BreakCondition->Enabled = true;
+
         UpdateRBStates();
 
+        BreakCondition->ItemIndex = Equal;
         EditAddress->Text = "$" + IntToHex(bp.Addr, 4);
-        EditAddressHi->Text = "$0000";
 
-        if (bp.Condition == LessThan) RadioButtonLessThan->Checked = true;
-        else if (bp.Condition == Equal) RadioButtonEqual->Checked = true;
-        else if (bp.Condition == GreaterThan) RadioButtonGreaterThan->Checked = true;
-        else if (bp.Condition == InRange)
-        {
-                EditAddressHi->Text = "$" + IntToHex(bp.AddrHi, 4);
-                RadioButtonInRange->Checked = true;
-        }
+        if (bp.Condition == LessThan) BreakCondition->Text = "<";
+        else if (bp.Condition == Equal) BreakCondition->Text = "=";
+        else if (bp.Condition == GreaterThan) BreakCondition->Text = ">";
+        else if (bp.Condition == Range) BreakCondition->Text = "-->";
+        else if (bp.Condition == NotEqual) BreakCondition->Text = "<>";
+
+        EditAddressArgument->Text = "$" + IntToHex(bp.Argument, 4);
 
         ActiveControl = EditAddress;
         EditAddress->SelectAll();
@@ -119,42 +125,126 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
         ShowModal();
 
         AnsiString addressValue = EditAddress->Text.Trim();
-        AnsiString addressValueHi = EditAddressHi->Text.Trim();
+        AnsiString addressValueHi = EditAddressArgument->Text.Trim();
 
         if (cancelled ||
                 addressValue.Length() == 0 ||
-                (bp.Condition == InRange && addressValue.Length() == 0))
+                (bp.Condition == Range && addressValue.Length() == 0))
         {
                 return false;
         }
 
         if (!SanitiseAddress(addressValue, bp.Addr))
                 return false;
-        if (!SanitiseAddress(addressValueHi,bp.AddrHi))
+        if (!SanitiseAddress(addressValueHi, bp.Argument))
                 return false;
 
-        if (bp.Condition == InRange && bp.Addr > bp.AddrHi)
+         if (bp.Condition == Range && bp.Addr > bp.EndAddr)
         {
                 int temp = bp.Addr;
-                bp.Addr = bp.AddrHi;
-                bp.AddrHi = temp;
+                bp.Addr = bp.EndAddr;
+                bp.EndAddr = temp;
         }
 
-        if (RadioButtonLessThan->Checked) bp.Condition = LessThan;
-        else if (RadioButtonEqual->Checked) bp.Condition = Equal;
-        else if (RadioButtonGreaterThan->Checked) bp.Condition = GreaterThan;
-        else if (RadioButtonInRange->Checked) bp.Condition = InRange;
+        if (BreakCondition->Text == "<") bp.Condition = LessThan;
+        else if (BreakCondition->Text == "=") bp.Condition = Equal;
+        else if (BreakCondition->Text == ">") bp.Condition = GreaterThan;
+        else if (BreakCondition->Text == "-->") bp.Condition = Range;
+        else if (BreakCondition->Text == "<>") bp.Condition = NotEqual;
+
+        return true;
+}
+
+//---------------------------------------------------------------------------#
+bool TSetBreakpoint::EditTSetBreakpoint(int& address, int len, int& tStates)
+{
+        cancelled=false;
+
+	BreakCondition->ItemIndex = Equal;
+        BreakCondition->Enabled = false;
+
+        BreakAddress->Caption = "Address:";
+        BreakAddressArgument->Caption = "T-States:";
+
+        EditAddress->Text = "$" + IntToHex(address, len*2);
+        EditAddressArgument->Text = tStates;
+
+        ActiveControl = EditAddress;
+        EditAddress->SelectAll();
+
+        ShowModal();
+
+        AnsiString addressValue = EditAddress->Text.Trim();
+        AnsiString tStatesValue = EditAddressArgument->Text.Trim();
+
+        if (cancelled || (addressValue.Length() == 0) || (tStatesValue.Length() == 0))
+        {
+                return false;
+        }
+
+        int addr;
+        if (symbolstore::symbolToAddress(addressValue, addr))
+        {
+                addressValue = "0x" + IntToHex(addr, 4);
+        }
+
+        // replace the zx-world hex identifier with the standard c library one.
+        //
+        if (addressValue[1] == '$')
+        {
+                addressValue = "0x" + addressValue.SubString(2, addressValue.Length() - 1);
+        }
+
+        if (addressValue == "PC")
+        {
+                addressValue = z80.pc.w;
+        }
+
+        // which allows us to use a ninja converter.
+        // suddenly 0xABCD, $ABCD, 01234 [octal] and decimal are all valid.
+        //
+        char* endPtr;
+        int tvalAddress = int(strtol(addressValue.c_str(), &endPtr, 0));
+        if (*endPtr != 0)
+        {
+                // and we know when the user entered junk...
+                return false;
+        }
+
+        int tvalTStates = int(strtol(tStatesValue.c_str(), &endPtr, 0));
+        if (*endPtr != 0)
+        {
+                // and we know when the user entered junk...
+                return false;
+        }
+
+        if (tvalTStates > 999999)
+        {
+                return false;
+        }
+
+        address = tvalAddress;
+        tStates = tvalTStates;
 
         return true;
 }
 
 void __fastcall TSetBreakpoint::UpdateRBStates()
 {
-        EditAddressHi->Enabled = RadioButtonInRange->Checked;
-        EditAddressHi->Visible = RadioButtonInRange->Checked;
+        if (BreakCondition->Text == "-->")
+        {
+                BreakAddress->Caption = "From:";
+                BreakAddressArgument->Caption = "To:";
+        }
+        else
+        {
+                BreakAddress->Caption = "Address:";
+                BreakAddressArgument->Caption = "Mask:";
+        }
 }
+//---------------------------------------------------------------------------
 
-void __fastcall TSetBreakpoint::RadioButtonClick(TObject *Sender)
+void __fastcall TSetBreakpoint::BreakConditionChange(TObject *Sender)
 {
         UpdateRBStates();
 }

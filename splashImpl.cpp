@@ -16,7 +16,6 @@
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TDbg), &Dbg);
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TMemoryWindow), &MemoryWindow);
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TEditValue), &EditValue);
-                 spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TConfigureBreakpoint), &ConfigureBreakpoint);
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TSetBreakpoint), &SetBreakpoint);
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TSearchSequence), &SearchSequence);
                  spl->IncProgress("68k Debugger"); Application->CreateForm(__classid(TDebug68k), &Debug68k);

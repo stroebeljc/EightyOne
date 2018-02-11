@@ -70,9 +70,9 @@ int z80_do_opcode()
       break;
     case 0x01:		/* LD BC,nnnn */
       contend( PC, 3 );
-      C=readbyte(PC++);
+      C=getbyte(PC++);
       contend( PC, 3 );
-      B=readbyte(PC++);
+      B=getbyte(PC++);
       break;
     case 0x02:		/* LD (BC),A */
       contend( BC, 3 );
@@ -90,7 +90,7 @@ int z80_do_opcode()
       break;
     case 0x06:		/* LD B,nn */
       contend( PC, 3 );
-      B=readbyte(PC++);
+      B=getbyte(PC++);
       break;
     case 0x07:		/* RLCA */
       A = ( A << 1 ) | ( A >> 7 );
@@ -121,7 +121,7 @@ int z80_do_opcode()
       break;
     case 0x0e:		/* LD C,nn */
       contend( PC, 3 );
-      C=readbyte(PC++);
+      C=getbyte(PC++);
       break;
     case 0x0f:		/* RRCA */
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) | ( A & FLAG_C );
@@ -137,9 +137,9 @@ int z80_do_opcode()
       break;
     case 0x11:		/* LD DE,nnnn */
       contend( PC, 3 );
-      E=readbyte(PC++);
+      E=getbyte(PC++);
       contend( PC, 3 );
-      D=readbyte(PC++);
+      D=getbyte(PC++);
       break;
     case 0x12:		/* LD (DE),A */
       contend( DE, 3 );
@@ -157,7 +157,7 @@ int z80_do_opcode()
       break;
     case 0x16:		/* LD D,nn */
       contend( PC, 3 );
-      D=readbyte(PC++);
+      D=getbyte(PC++);
       break;
     case 0x17:		/* RLA */
       {
@@ -191,7 +191,7 @@ int z80_do_opcode()
       break;
     case 0x1e:		/* LD E,nn */
       contend( PC, 3 );
-      E=readbyte(PC++);
+      E=getbyte(PC++);
       break;
     case 0x1f:		/* RRA */
       {
@@ -208,9 +208,9 @@ int z80_do_opcode()
       break;
     case 0x21:		/* LD HL,nnnn */
       contend( PC, 3 );
-      L=readbyte(PC++);
+      L=getbyte(PC++);
       contend( PC, 3 );
-      H=readbyte(PC++);
+      H=getbyte(PC++);
       break;
     case 0x22:		/* LD (nnnn),HL */
       LD16_NNRR(L,H);
@@ -227,7 +227,7 @@ int z80_do_opcode()
       break;
     case 0x26:		/* LD H,nn */
       contend( PC, 3 );
-      H=readbyte(PC++);
+      H=getbyte(PC++);
       break;
     case 0x27:		/* DAA */
       {
@@ -267,7 +267,7 @@ int z80_do_opcode()
       break;
     case 0x2e:		/* LD L,nn */
       contend( PC, 3 );
-      L=readbyte(PC++);
+      L=getbyte(PC++);
       break;
     case 0x2f:		/* CPL */
       A ^= 0xff;
@@ -281,17 +281,17 @@ int z80_do_opcode()
       break;
     case 0x31:		/* LD SP,nnnn */
       contend( PC, 3 );
-      SPL=readbyte(PC++);
+      SPL=getbyte(PC++);
       contend( PC, 3 );
-      SPH=readbyte(PC++);
+      SPH=getbyte(PC++);
       SetSP(SP);
       break;
     case 0x32:		/* LD (nnnn),A */
       contend( PC, 3 );
       {
-	WORD wordtemp=readbyte(PC++);
+	WORD wordtemp=getbyte(PC++);
 	contend( PC, 3 );
-	wordtemp|=readbyte(PC++) << 8;
+	wordtemp|=getbyte(PC++) << 8;
 	contend( wordtemp, 3 );
 	writebyte(wordtemp,A);
       }
@@ -321,7 +321,7 @@ int z80_do_opcode()
       break;
     case 0x36:		/* LD (HL),nn */
       contend( PC, 3 ); contend( HL, 3 );
-      writebyte(HL,readbyte(PC++));
+      writebyte(HL,getbyte(PC++));
       break;
     case 0x37:		/* SCF */
       F &= ~( FLAG_N | FLAG_H );
@@ -339,9 +339,9 @@ int z80_do_opcode()
       {
 	WORD wordtemp;
 	contend( PC, 3 );
-	wordtemp = readbyte(PC++);
+	wordtemp = getbyte(PC++);
 	contend( PC, 3 );
-	wordtemp|= ( readbyte(PC++) << 8 );
+	wordtemp|= ( getbyte(PC++) << 8 );
 	contend( wordtemp, 3 );
 	A=readbyte(wordtemp);
       }
@@ -359,7 +359,7 @@ int z80_do_opcode()
       break;
     case 0x3e:		/* LD A,nn */
       contend( PC, 3 );
-      A=readbyte(PC++);
+      A=getbyte(PC++);
       break;
     case 0x3f:		/* CCF */
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
@@ -817,7 +817,7 @@ int z80_do_opcode()
     case 0xc6:		/* ADD A,nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	ADD(bytetemp);
       }
       break;
@@ -862,7 +862,7 @@ int z80_do_opcode()
     case 0xce:		/* ADC A,nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	ADC(bytetemp);
       }
       break;
@@ -886,7 +886,7 @@ int z80_do_opcode()
       {
 	WORD outtemp;
 	contend( PC, 4 );
-	outtemp = readbyte( PC++ ) + ( A << 8 );
+	outtemp = getbyte( PC++ ) + ( A << 8 );
 	OUT( outtemp , A);
         //tstates += 1;
       }
@@ -903,7 +903,7 @@ int z80_do_opcode()
     case 0xd6:		/* SUB nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	SUB(bytetemp);
       }
       break;
@@ -931,7 +931,7 @@ int z80_do_opcode()
       {
 	WORD intemp;
 	contend( PC, 4 );
-	intemp = readbyte( PC++ ) + ( A << 8 );
+	intemp = getbyte( PC++ ) + ( A << 8 );
 	contend_io( intemp, 3 );
         A=readport( intemp, &tstates );
       }
@@ -962,7 +962,7 @@ int z80_do_opcode()
     case 0xde:		/* SBC A,nn */
       contend( PC,3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	SBC(bytetemp);
       }
       break;
@@ -1003,7 +1003,7 @@ int z80_do_opcode()
     case 0xe6:		/* AND nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	AND(bytetemp);
       }
       break;
@@ -1047,7 +1047,7 @@ int z80_do_opcode()
     case 0xee:		/* XOR A,nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	XOR(bytetemp);
       }
       break;
@@ -1082,7 +1082,7 @@ int z80_do_opcode()
     case 0xf6:		/* OR nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	OR(bytetemp);
       }
       break;
@@ -1132,7 +1132,7 @@ int z80_do_opcode()
     case 0xfe:		/* CP nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=readbyte(PC++);
+	BYTE bytetemp=getbyte(PC++);
 	CP(bytetemp);
       }
       break;

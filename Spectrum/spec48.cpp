@@ -524,20 +524,9 @@ void SPECLoadCheck(void)
         return;
 }
 
-// Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
-void spec48_setbyte(int Address, int Data)
-{
-        directMemoryAccess = true;
-        spec48_writebyte(Address, Data);
-        directMemoryAccess = false;
-}
-
-void spec48_writebyte(int Address, int Data)
+void spec48_WriteByte(int Address, int Data)
 {
         register int SpecSETemp;
-
-        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
-        lastMemoryWriteAddrHi = Address;
 
         LiveMemoryWindow->Write(Address);
 
@@ -639,23 +628,27 @@ void spec48_writebyte(int Address, int Data)
         noise = (noise<<8) | Data;
 }
 
-// Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
-BYTE spec48_getbyte(int Address)
+// Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+void spec48_setbyte(int Address, int Data)
 {
         directMemoryAccess = true;
-        BYTE b = spec48_readbyte(Address);
+        spec48_WriteByte(Address, Data);
         directMemoryAccess = false;
-        
-        return b;
 }
 
-BYTE spec48_readbyte(int Address)
+void spec48_writebyte(int Address, int Data)
+{
+
+        lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
+        lastMemoryWriteAddrHi = Address;
+
+        spec48_WriteByte(Address, Data);
+}
+
+BYTE spec48_ReadByte(int Address)
 {
         int data;
         register int SpecSETemp;
-
-        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
-        lastMemoryReadAddrHi = Address;
 
         LiveMemoryWindow->Read(Address);
 
@@ -747,9 +740,27 @@ BYTE spec48_readbyte(int Address)
         return(data);
 }
 
+// Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+BYTE spec48_getbyte(int Address)
+{
+        directMemoryAccess = true;
+        BYTE b = spec48_ReadByte(Address);
+        directMemoryAccess = false;
+
+        return b;
+}
+
+BYTE spec48_readbyte(int Address)
+{
+        lastMemoryReadAddrLo = lastMemoryReadAddrHi;
+        lastMemoryReadAddrHi = Address;
+
+        return spec48_ReadByte(Address);
+}
+
 BYTE spec48_opcode_fetch(int Address)
 {
-        return(spec48_readbyte(Address));
+        return(spec48_ReadByte(Address));
 }
 
 void spec48_writeport(int Address, int Data, int *tstates)

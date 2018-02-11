@@ -8475,7 +8475,7 @@ object Splash: TSplash
   object Action: TLabel
     Left = 208
     Top = 234
-    Width = 137
+    Width = 169
     Height = 13
     AutoSize = False
     Caption = ' '
@@ -8489,9 +8489,9 @@ object Splash: TSplash
     ParentFont = False
   end
   object Progress: TProgressBar
-    Left = 352
+    Left = 384
     Top = 232
-    Width = 148
+    Width = 116
     Height = 17
     Min = 0
     Max = 100

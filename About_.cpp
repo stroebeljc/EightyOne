@@ -71,7 +71,9 @@ void __fastcall TAbout::Button1Click(TObject *Sender)
 
 void __fastcall TAbout::Label15Click(TObject *Sender)
 {
-        ShellExecute(0,NULL, "http://www.chuntey.com/eightyone/", NULL, NULL, SW_SHOW);
+        //  Original = http://www.chuntey.com/eightyone/
+        
+        ShellExecute(0,NULL, "https://sourceforge.net/projects/eightyone-sinclair-emulator/", NULL, NULL, SW_SHOW);
 }
 //---------------------------------------------------------------------------
 

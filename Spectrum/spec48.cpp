@@ -1431,6 +1431,11 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         if (clean_exit)
         {
                 int bpaper = (zx81.colour != COLOURSPECTRA) ? paper*16 : paper;
+                if (fts >= (machine.scanlines-4)*machine.tperscanline)
+                {
+                        bpaper=VBLANKCOLOUR;
+                }
+
                 add_blank(CurScanLine, borrow*scale,bpaper);
                 PBaseColour=paper;
                 sts=0;

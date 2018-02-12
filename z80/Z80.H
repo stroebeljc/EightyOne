@@ -69,13 +69,6 @@ extern int z80_nmi( int ts );
 
 extern int z80_do_opcode(void);
 
-//extern void writebyte(int Address, int Data);
-//extern BYTE readbyte(int Address);
-//extern BYTE readbyte_internal(int Address);
-//extern BYTE opcode_fetch(int Address);
-//extern void writeport(int Address, int Data);
-//extern BYTE readport(int Address);
-
 extern void debug(int data);
 
 extern processor z80;

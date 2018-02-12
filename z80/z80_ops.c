@@ -57,7 +57,7 @@ int z80_do_opcode()
 
      tstates=0;
 
-    /* Do the instruction fetch; readbyte_internal used here to avoid
+    /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */
 
     contend( PC, 4 ); R++; RZXCounter--;
@@ -70,9 +70,9 @@ int z80_do_opcode()
       break;
     case 0x01:		/* LD BC,nnnn */
       contend( PC, 3 );
-      C=getbyte(PC++);
+      C=opcode_fetch(PC++);
       contend( PC, 3 );
-      B=getbyte(PC++);
+      B=opcode_fetch(PC++);
       break;
     case 0x02:		/* LD (BC),A */
       contend( BC, 3 );
@@ -90,7 +90,7 @@ int z80_do_opcode()
       break;
     case 0x06:		/* LD B,nn */
       contend( PC, 3 );
-      B=getbyte(PC++);
+      B=opcode_fetch(PC++);
       break;
     case 0x07:		/* RLCA */
       A = ( A << 1 ) | ( A >> 7 );
@@ -121,7 +121,7 @@ int z80_do_opcode()
       break;
     case 0x0e:		/* LD C,nn */
       contend( PC, 3 );
-      C=getbyte(PC++);
+      C=opcode_fetch(PC++);
       break;
     case 0x0f:		/* RRCA */
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) | ( A & FLAG_C );
@@ -137,9 +137,9 @@ int z80_do_opcode()
       break;
     case 0x11:		/* LD DE,nnnn */
       contend( PC, 3 );
-      E=getbyte(PC++);
+      E=opcode_fetch(PC++);
       contend( PC, 3 );
-      D=getbyte(PC++);
+      D=opcode_fetch(PC++);
       break;
     case 0x12:		/* LD (DE),A */
       contend( DE, 3 );
@@ -157,7 +157,7 @@ int z80_do_opcode()
       break;
     case 0x16:		/* LD D,nn */
       contend( PC, 3 );
-      D=getbyte(PC++);
+      D=opcode_fetch(PC++);
       break;
     case 0x17:		/* RLA */
       {
@@ -191,7 +191,7 @@ int z80_do_opcode()
       break;
     case 0x1e:		/* LD E,nn */
       contend( PC, 3 );
-      E=getbyte(PC++);
+      E=opcode_fetch(PC++);
       break;
     case 0x1f:		/* RRA */
       {
@@ -208,9 +208,9 @@ int z80_do_opcode()
       break;
     case 0x21:		/* LD HL,nnnn */
       contend( PC, 3 );
-      L=getbyte(PC++);
+      L=opcode_fetch(PC++);
       contend( PC, 3 );
-      H=getbyte(PC++);
+      H=opcode_fetch(PC++);
       break;
     case 0x22:		/* LD (nnnn),HL */
       LD16_NNRR(L,H);
@@ -227,7 +227,7 @@ int z80_do_opcode()
       break;
     case 0x26:		/* LD H,nn */
       contend( PC, 3 );
-      H=getbyte(PC++);
+      H=opcode_fetch(PC++);
       break;
     case 0x27:		/* DAA */
       {
@@ -267,7 +267,7 @@ int z80_do_opcode()
       break;
     case 0x2e:		/* LD L,nn */
       contend( PC, 3 );
-      L=getbyte(PC++);
+      L=opcode_fetch(PC++);
       break;
     case 0x2f:		/* CPL */
       A ^= 0xff;
@@ -281,17 +281,17 @@ int z80_do_opcode()
       break;
     case 0x31:		/* LD SP,nnnn */
       contend( PC, 3 );
-      SPL=getbyte(PC++);
+      SPL=opcode_fetch(PC++);
       contend( PC, 3 );
-      SPH=getbyte(PC++);
+      SPH=opcode_fetch(PC++);
       SetSP(SP);
       break;
     case 0x32:		/* LD (nnnn),A */
       contend( PC, 3 );
       {
-	WORD wordtemp=getbyte(PC++);
+	WORD wordtemp=opcode_fetch(PC++);
 	contend( PC, 3 );
-	wordtemp|=getbyte(PC++) << 8;
+	wordtemp|=opcode_fetch(PC++) << 8;
 	contend( wordtemp, 3 );
 	writebyte(wordtemp,A);
       }
@@ -321,7 +321,7 @@ int z80_do_opcode()
       break;
     case 0x36:		/* LD (HL),nn */
       contend( PC, 3 ); contend( HL, 3 );
-      writebyte(HL,getbyte(PC++));
+      writebyte(HL,opcode_fetch(PC++));
       break;
     case 0x37:		/* SCF */
       F &= ~( FLAG_N | FLAG_H );
@@ -339,9 +339,9 @@ int z80_do_opcode()
       {
 	WORD wordtemp;
 	contend( PC, 3 );
-	wordtemp = getbyte(PC++);
+	wordtemp = opcode_fetch(PC++);
 	contend( PC, 3 );
-	wordtemp|= ( getbyte(PC++) << 8 );
+	wordtemp|= ( opcode_fetch(PC++) << 8 );
 	contend( wordtemp, 3 );
 	A=readbyte(wordtemp);
       }
@@ -359,7 +359,7 @@ int z80_do_opcode()
       break;
     case 0x3e:		/* LD A,nn */
       contend( PC, 3 );
-      A=getbyte(PC++);
+      A=opcode_fetch(PC++);
       break;
     case 0x3f:		/* CCF */
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
@@ -817,7 +817,7 @@ int z80_do_opcode()
     case 0xc6:		/* ADD A,nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	ADD(bytetemp);
       }
       break;
@@ -862,7 +862,7 @@ int z80_do_opcode()
     case 0xce:		/* ADC A,nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	ADC(bytetemp);
       }
       break;
@@ -886,7 +886,7 @@ int z80_do_opcode()
       {
 	WORD outtemp;
 	contend( PC, 4 );
-	outtemp = getbyte( PC++ ) + ( A << 8 );
+	outtemp = opcode_fetch( PC++ ) + ( A << 8 );
 	OUT( outtemp , A);
         //tstates += 1;
       }
@@ -903,7 +903,7 @@ int z80_do_opcode()
     case 0xd6:		/* SUB nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	SUB(bytetemp);
       }
       break;
@@ -931,7 +931,7 @@ int z80_do_opcode()
       {
 	WORD intemp;
 	contend( PC, 4 );
-	intemp = getbyte( PC++ ) + ( A << 8 );
+	intemp = opcode_fetch( PC++ ) + ( A << 8 );
 	contend_io( intemp, 3 );
         A=readport( intemp, &tstates );
       }
@@ -962,7 +962,7 @@ int z80_do_opcode()
     case 0xde:		/* SBC A,nn */
       contend( PC,3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	SBC(bytetemp);
       }
       break;
@@ -1003,7 +1003,7 @@ int z80_do_opcode()
     case 0xe6:		/* AND nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	AND(bytetemp);
       }
       break;
@@ -1047,7 +1047,7 @@ int z80_do_opcode()
     case 0xee:		/* XOR A,nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	XOR(bytetemp);
       }
       break;
@@ -1082,7 +1082,7 @@ int z80_do_opcode()
     case 0xf6:		/* OR nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	OR(bytetemp);
       }
       break;
@@ -1132,7 +1132,7 @@ int z80_do_opcode()
     case 0xfe:		/* CP nn */
       contend( PC, 3 );
       {
-	BYTE bytetemp=getbyte(PC++);
+	BYTE bytetemp=opcode_fetch(PC++);
 	CP(bytetemp);
       }
       break;

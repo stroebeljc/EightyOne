@@ -151,6 +151,7 @@ BYTE ace_ReadByte(int Address)
         return(data);
 }
 
+// Called by emulated program
 BYTE ace_readbyte(int Address)
 {
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
@@ -159,6 +160,13 @@ BYTE ace_readbyte(int Address)
         return ace_ReadByte(Address);
 }
 
+// Called by Z80 instruction operand fetches
+BYTE ace_readoperandbyte(int Address)
+{
+        return ace_ReadByte(Address);
+}
+
+// Called by Z80 instruction opcode fetches
 BYTE ace_opcode_fetch(int Address)
 {
         return(ace_ReadByte(Address));

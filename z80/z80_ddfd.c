@@ -42,9 +42,9 @@ break;
 
 case 0x21:		/* LD REGISTER,nnnn */
 contend( PC, 3 );
-REGISTERL=getbyte(PC++);
+REGISTERL=opcode_fetch(PC++);
 contend( PC, 3 );
-REGISTERH=getbyte(PC++);
+REGISTERH=opcode_fetch(PC++);
 break;
 
 case 0x22:		/* LD (nnnn),REGISTER */
@@ -66,7 +66,7 @@ break;
 
 case 0x26:		/* LD REGISTERH,nn */
 contend( PC, 3 );
-REGISTERH=getbyte(PC++);
+REGISTERH=opcode_fetch(PC++);
 break;
 
 case 0x29:		/* ADD REGISTER,REGISTER */
@@ -92,13 +92,13 @@ break;
 
 case 0x2e:		/* LD REGISTERL,nn */
 contend( PC, 3 );
-REGISTERL=getbyte(PC++);
+REGISTERL=opcode_fetch(PC++);
 break;
 
 case 0x34:		/* INC (REGISTER+dd) */
 tstates += 15;		/* FIXME: how is this contended? */
 {
-  WORD wordtemp=REGISTER+(SBYTE)getbyte(PC++);
+  WORD wordtemp=REGISTER+(SBYTE)opcode_fetch(PC++);
   BYTE bytetemp=readbyte(wordtemp);
   INC(bytetemp);
   writebyte(wordtemp,bytetemp);
@@ -108,7 +108,7 @@ break;
 case 0x35:		/* DEC (REGISTER+dd) */
 tstates += 15;		/* FIXME: how is this contended? */
 {
-  WORD wordtemp=REGISTER+(SBYTE)getbyte(PC++);
+  WORD wordtemp=REGISTER+(SBYTE)opcode_fetch(PC++);
   BYTE bytetemp=readbyte(wordtemp);
   DEC(bytetemp);
   writebyte(wordtemp,bytetemp);
@@ -118,8 +118,8 @@ break;
 case 0x36:		/* LD (REGISTER+dd),nn */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  WORD wordtemp=REGISTER+(SBYTE)getbyte(PC++);
-  writebyte(wordtemp,getbyte(PC++));
+  WORD wordtemp=REGISTER+(SBYTE)opcode_fetch(PC++);
+  writebyte(wordtemp,opcode_fetch(PC++));
 }
 break;
 
@@ -137,7 +137,7 @@ break;
 
 case 0x46:		/* LD B,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-B=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+B=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x4c:		/* LD C,REGISTERH */
@@ -150,7 +150,7 @@ break;
 
 case 0x4e:		/* LD C,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-C=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+C=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x54:		/* LD D,REGISTERH */
@@ -163,7 +163,7 @@ break;
 
 case 0x56:		/* LD D,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-D=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+D=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x5c:		/* LD E,REGISTERH */
@@ -176,7 +176,7 @@ break;
 
 case 0x5e:		/* LD E,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-E=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+E=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x60:		/* LD REGISTERH,B */
@@ -204,7 +204,7 @@ break;
 
 case 0x66:		/* LD H,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-H=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+H=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x67:		/* LD REGISTERH,A */
@@ -236,7 +236,7 @@ break;
 
 case 0x6e:		/* LD L,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-L=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+L=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x6f:		/* LD REGISTERL,A */
@@ -245,37 +245,37 @@ break;
 
 case 0x70:		/* LD (REGISTER+dd),B */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), B);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), B);
 break;
 
 case 0x71:		/* LD (REGISTER+dd),C */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), C);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), C);
 break;
 
 case 0x72:		/* LD (REGISTER+dd),D */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), D);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), D);
 break;
 
 case 0x73:		/* LD (REGISTER+dd),E */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), E);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), E);
 break;
 
 case 0x74:		/* LD (REGISTER+dd),H */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), H);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), H);
 break;
 
 case 0x75:		/* LD (REGISTER+dd),L */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), L);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), L);
 break;
 
 case 0x77:		/* LD (REGISTER+dd),A */
 tstates += 11;		/* FIXME: how is this contended? */
-writebyte( REGISTER + (SBYTE)getbyte(PC++), A);
+writebyte( REGISTER + (SBYTE)opcode_fetch(PC++), A);
 break;
 
 case 0x7c:		/* LD A,REGISTERH */
@@ -288,7 +288,7 @@ break;
 
 case 0x7e:		/* LD A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
-A=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+A=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
 break;
 
 case 0x84:		/* ADD A,REGISTERH */
@@ -302,7 +302,7 @@ break;
 case 0x86:		/* ADD A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   ADD(bytetemp);
 }
 break;
@@ -318,7 +318,7 @@ break;
 case 0x8e:		/* ADC A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   ADC(bytetemp);
 }
 break;
@@ -334,7 +334,7 @@ break;
 case 0x96:		/* SUB A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   SUB(bytetemp);
 }
 break;
@@ -350,7 +350,7 @@ break;
 case 0x9e:		/* SBC A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   SBC(bytetemp);
 }
 break;
@@ -366,7 +366,7 @@ break;
 case 0xa6:		/* AND A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   AND(bytetemp);
 }
 break;
@@ -382,7 +382,7 @@ break;
 case 0xae:		/* XOR A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   XOR(bytetemp);
 }
 break;
@@ -398,7 +398,7 @@ break;
 case 0xb6:		/* OR A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   OR(bytetemp);
 }
 break;
@@ -414,7 +414,7 @@ break;
 case 0xbe:		/* CP A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 {
-  BYTE bytetemp=readbyte( REGISTER + (SBYTE)getbyte(PC++) );
+  BYTE bytetemp=readbyte( REGISTER + (SBYTE)opcode_fetch(PC++) );
   CP(bytetemp);
 }
 break;

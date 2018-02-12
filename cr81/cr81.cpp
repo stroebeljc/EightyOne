@@ -59,6 +59,10 @@ BYTE cr81_getbyte(int Address)
         return 0;
 }
 
+BYTE cr81_getopcodebyte(int Address)
+{
+        return 0;
+}
 BYTE cr81_opcode_fetch(int Address)
 {
         return 0;

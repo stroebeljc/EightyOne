@@ -56,6 +56,7 @@ extern int spec48_do_scanline(SCANLINE *CurScanLine);
 extern void spec48_writebyte(int Address, int Data);
 extern void spec48_setbyte(int Address, int Data);
 extern BYTE spec48_readbyte(int Address);
+extern BYTE spec48_readoperandbyte(int Address);
 extern BYTE spec48_getbyte(int Address);
 extern BYTE spec48_opcode_fetch(int Address);
 extern void spec48_writeport(int Address, int Data, int *tstates);

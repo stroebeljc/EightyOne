@@ -47,7 +47,7 @@ extern void zx81_initialise(void);
 extern void zx81_writebyte(int Address, int Data);
 extern void zx81_setbyte(int Address, int Data);
 extern BYTE zx81_readbyte(int Address);
-extern BYTE zx81_readOpcodeByte(int Address);
+extern BYTE zx81_readoperandbyte(int Address);
 extern BYTE zx81_getbyte(int Address);
 extern BYTE zx81_opcode_fetch(int Address);
 extern void zx81_writeport(int Address, int Data, int *tstates);

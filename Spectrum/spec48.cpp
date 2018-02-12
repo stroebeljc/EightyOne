@@ -741,6 +741,7 @@ BYTE spec48_ReadByte(int Address)
 }
 
 // Read from memory without accidentally invoking the ZXC ROM cartridge paging mechanism
+// Called by debugger routines
 BYTE spec48_getbyte(int Address)
 {
         directMemoryAccess = true;
@@ -750,6 +751,7 @@ BYTE spec48_getbyte(int Address)
         return b;
 }
 
+// Called by emulated program
 BYTE spec48_readbyte(int Address)
 {
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
@@ -758,6 +760,13 @@ BYTE spec48_readbyte(int Address)
         return spec48_ReadByte(Address);
 }
 
+// Called by Z80 instruction operand fetches
+BYTE spec48_readoperandbyte(int Address)
+{
+        return spec48_ReadByte(Address);
+}
+
+// Called by Z80 instruction opcode fetches
 BYTE spec48_opcode_fetch(int Address)
 {
         return(spec48_ReadByte(Address));
@@ -1421,7 +1430,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
         if (clean_exit)
         {
-                add_blank(CurScanLine, borrow*scale,paper*16);
+                int bpaper = (zx81.colour != COLOURSPECTRA) ? paper*16 : paper;
+                add_blank(CurScanLine, borrow*scale,bpaper);
                 PBaseColour=paper;
                 sts=0;
                 delay=SPECLeftBorder - borrow*2;

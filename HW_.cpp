@@ -548,6 +548,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.writebyte = ace_writebyte;
                 machine.setbyte = ace_writebyte;
                 machine.readbyte = ace_readbyte;
+                machine.readoperandbyte = ace_readoperandbyte;
                 machine.getbyte = ace_readbyte;
                 machine.opcode_fetch = ace_opcode_fetch;
                 machine.readport = ace_readport;
@@ -565,6 +566,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.writebyte = ql_writebyte;
                 machine.setbyte = ql_writebyte;
                 machine.readbyte = ql_readbyte;
+                machine.readoperandbyte = ql_readbyte;
                 machine.getbyte = ql_readbyte;
                 machine.opcode_fetch = ql_opcode_fetch;
                 machine.readport = ql_readport;
@@ -582,6 +584,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.writebyte = spec48_writebyte;
                 machine.setbyte = spec48_setbyte;
                 machine.readbyte = spec48_readbyte;
+                machine.readoperandbyte = spec48_readoperandbyte;
                 machine.getbyte = spec48_getbyte;
                 machine.opcode_fetch = spec48_opcode_fetch;
                 machine.readport = spec48_readport;
@@ -635,6 +638,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.writebyte = zx81_writebyteProxy;
                 machine.setbyte = zx81_setbyte;
                 machine.readbyte = zx81_readbyte;
+                machine.readoperandbyte = zx81_readoperandbyte;
                 machine.getbyte = zx81_getbyte;
                 machine.opcode_fetch = zx81_opcode_fetch;
                 machine.readport = zx81_readport;

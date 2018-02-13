@@ -15,10 +15,11 @@ enum BreakpointType
 
 enum BreakpointCondition
 {
-        LessThan,
         Equal,
+        LessThan,
         GreaterThan,
-        InRange
+        NotEqual,
+        Range
 };
 
 struct breakpoint
@@ -27,41 +28,50 @@ struct breakpoint
         breakpoint(int addr, BreakpointType type)
         {
                 Addr = addr;
-                AddrHi = addr;
+                Argument = 0xFFFF;
                 Type = type;
                 Condition = Equal;
                 Permanent = true;
-                Count = 1;
         }
 
         bool hit(int curAddr, BreakpointType reqType)
         {
                 if (Type != reqType) return false;
 
+                int maskedCurAddr = (reqType == BP_TSTATES) ? curAddr : (curAddr & Mask);
+
                 switch (Condition)
                 {
                         case Equal:
-                                return curAddr == Addr;
+                                return maskedCurAddr == Addr;
 
                         case LessThan:
-                                return curAddr < Addr;
+                                return maskedCurAddr < Addr;
 
                         case GreaterThan:
-                                return curAddr > Addr && curAddr <= zx81.RAMTOP;
+                                return (maskedCurAddr > Addr) && (maskedCurAddr <= zx81.RAMTOP);
 
-                        case InRange:
-                                return curAddr >= Addr && AddrHi > curAddr;
+                        case Range:
+                                return (curAddr >= Addr) && (curAddr <= EndAddr);
+
+                        case NotEqual:
+                                return maskedCurAddr != Addr;
                 }
 
                 return false;
         }
 
         int Addr;
-        int AddrHi;
+        union
+        {
+                int Argument;
+                int EndAddr;
+                int Count;
+                int Mask;
+        };
         BreakpointType Type;
         BreakpointCondition Condition;
         bool Permanent;
-        int Count;
 };
 
 #endif // __breakpoint_h

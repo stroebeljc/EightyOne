@@ -48,6 +48,7 @@ extern "C" void zx81_initialise(void);
 extern "C" int zx81_do_scanline(SCANLINE *CurScanLine);
 extern "C" void zx81_writebyte(int Address, int Data);
 extern "C" BYTE zx81_readbyte(int Address);
+extern "C" BYTE zx81_readoperandbyte(int Address);
 extern "C" BYTE zx81_opcode_fetch(int Address);
 extern "C" void zx81_writeport(int Address, int Data, int *tstates);
 extern "C" BYTE zx81_readport(int Address, int *tstates);

@@ -28,6 +28,7 @@ extern void ql_initialise(void);
 extern int ql_do_scanline(SCANLINE *CurScanLine);
 extern "C" void ql_writebyte(int Address, int Data);
 extern "C" BYTE ql_readbyte(int Address);
+extern "C" BYTE ql_readoperandbyte(int Address);
 extern BYTE ql_opcode_fetch(int Address);
 extern void ql_writeport(int Address, int Data, int *tstates);
 extern BYTE ql_readport(int Address, int *tstates);

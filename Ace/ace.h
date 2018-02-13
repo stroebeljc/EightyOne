@@ -46,6 +46,7 @@ extern void ace_initialise(void);
 extern int ace_do_scanline(SCANLINE *CurScanLine);
 extern void ace_writebyte(int Address, int Data);
 extern BYTE ace_readbyte(int Address);
+extern BYTE ace_readoperandbyte(int Address);
 extern BYTE ace_opcode_fetch(int Address);
 extern void ace_writeport(int Address, int Data, int *tstates);
 extern BYTE ace_readport(int Address, int *tstates);

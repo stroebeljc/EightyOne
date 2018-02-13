@@ -280,6 +280,7 @@ typedef struct
         void (*writebyte)(int Address, int Data);
         void (*setbyte)(int Address, int Data);
         BYTE (*readbyte)(int Address);
+        BYTE (*readoperandbyte)(int Address);
         BYTE (*getbyte)(int Address);
         BYTE (*opcode_fetch)(int Address);
         void (*writeport)(int Address, int Data, int *tstates);
@@ -317,6 +318,7 @@ extern void load_config();
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))
+#define readoperandbyte(Addr) (machine.readoperandbyte(Addr))
 #define getbyte(Addr) (machine.getbyte(Addr))
 #define writebyte(Addr,Data) (machine.writebyte(Addr,Data))
 #define setbyte(Addr,Data) (machine.setbyte(Addr,Data))

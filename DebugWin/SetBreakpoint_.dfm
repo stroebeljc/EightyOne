@@ -1,10 +1,10 @@
 object SetBreakpoint: TSetBreakpoint
-  Left = 467
-  Top = 135
+  Left = 282
+  Top = 254
   BorderStyle = bsToolWindow
-  Caption = 'Address Breakpoint'
-  ClientHeight = 106
-  ClientWidth = 298
+  Caption = 'Set '#39'Execute'#39' Breakpoint'
+  ClientHeight = 90
+  ClientWidth = 194
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,93 +15,85 @@ object SetBreakpoint: TSetBreakpoint
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 8
-    Top = 12
+  object BreakAddress: TLabel
+    Left = 64
+    Top = 8
     Width = 41
     Height = 13
     Caption = 'Address:'
   end
   object Label2: TLabel
     Left = 8
-    Top = 44
+    Top = 8
     Width = 47
     Height = 13
     Caption = 'Condition:'
   end
+  object BreakAddressArgument: TLabel
+    Left = 128
+    Top = 8
+    Width = 29
+    Height = 13
+    Caption = 'Mask:'
+  end
   object OK: TButton
-    Left = 72
-    Top = 72
+    Left = 16
+    Top = 56
     Width = 75
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 2
     OnClick = OKClick
   end
   object Cancel: TButton
-    Left = 160
-    Top = 72
+    Left = 104
+    Top = 56
     Width = 75
     Height = 25
     Caption = 'Cancel'
-    TabOrder = 1
+    TabOrder = 3
     OnClick = CancelClick
   end
   object EditAddress: TEdit
     Left = 64
-    Top = 8
-    Width = 105
+    Top = 24
+    Width = 57
     Height = 21
-    MaxLength = 5
-    TabOrder = 2
+    MaxLength = 7
+    TabOrder = 0
     Text = '0'
   end
-  object RadioButtonEqual: TRadioButton
-    Left = 104
-    Top = 43
-    Width = 25
-    Height = 17
-    Caption = '='
-    Checked = True
-    TabOrder = 5
-    TabStop = True
-    OnClick = RadioButtonClick
+  object EditAddressArgument: TEdit
+    Left = 128
+    Top = 24
+    Width = 57
+    Height = 21
+    MaxLength = 7
+    TabOrder = 1
+    Text = '0'
   end
-  object RadioButtonLessThan: TRadioButton
-    Left = 64
-    Top = 43
-    Width = 25
-    Height = 17
-    Caption = '<'
+  object BreakCondition: TComboBox
+    Left = 8
+    Top = 24
+    Width = 49
+    Height = 21
+    Style = csDropDownList
+    DropDownCount = 5
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ItemHeight = 13
+    ParentFont = False
     TabOrder = 4
-    OnClick = RadioButtonClick
-  end
-  object RadioButtonGreaterThan: TRadioButton
-    Left = 144
-    Top = 43
-    Width = 25
-    Height = 17
-    Caption = '>'
-    TabOrder = 6
-    OnClick = RadioButtonClick
-  end
-  object RadioButtonInRange: TRadioButton
-    Left = 184
-    Top = 43
-    Width = 73
-    Height = 17
-    Caption = '> range <'
-    TabOrder = 7
-    OnClick = RadioButtonClick
-  end
-  object EditAddressHi: TEdit
-    Left = 184
-    Top = 8
-    Width = 105
-    Height = 21
-    MaxLength = 5
-    TabOrder = 3
-    Text = '0'
+    OnChange = BreakConditionChange
+    Items.Strings = (
+      '='
+      '<'
+      '>'
+      '<>'
+      '-->')
   end
 end

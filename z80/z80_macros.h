@@ -175,9 +175,9 @@
 #define CALL()\
 {\
   BYTE calltempl, calltemph;\
-  calltempl=readbyte(PC++);\
+  calltempl=readoperandbyte(PC++);\
   contend( PC, 1 );\
-  calltemph=readbyte(PC++);\
+  calltemph=readoperandbyte(PC++);\
   PUSH16(PCL,PCH);\
   PCL=calltempl; PCH=calltemph;\
 }
@@ -229,9 +229,9 @@ break
 {\
   WORD ldtemp;\
   contend( PC, 3 );\
-  ldtemp=readbyte(PC++);\
+  ldtemp=readoperandbyte(PC++);\
   contend( PC, 3 );\
-  ldtemp|=readbyte(PC++) << 8;\
+  ldtemp|=readoperandbyte(PC++) << 8;\
   contend( ldtemp, 3 );\
   writebyte(ldtemp++,(regl));\
   contend( ldtemp, 3 );\
@@ -242,9 +242,9 @@ break
 {\
   WORD ldtemp;\
   contend( PC, 3 );\
-  ldtemp=readbyte(PC++);\
+  ldtemp=readoperandbyte(PC++);\
   contend( PC, 3 );\
-  ldtemp|=readbyte(PC++) << 8;\
+  ldtemp|=readoperandbyte(PC++) << 8;\
   contend( ldtemp, 3 );\
   (regl)=readbyte(ldtemp++);\
   contend( ldtemp, 3 );\
@@ -254,15 +254,15 @@ break
 #define JP()\
 {\
   WORD jptemp=PC;\
-  PCL=readbyte(jptemp++);\
-  PCH=readbyte(jptemp);\
+  PCL=readoperandbyte(jptemp++);\
+  PCH=readoperandbyte(jptemp);\
 }
 
 #define JR()\
 {\
   contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 );\
   contend( PC, 1 );\
-  PC+=(SBYTE)readbyte(PC);\
+  PC+=(SBYTE)readoperandbyte(PC);\
 }
 
 #define OR(value)\

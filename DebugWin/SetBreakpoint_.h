@@ -15,25 +15,24 @@ class TSetBreakpoint : public TForm
 __published:	// IDE-managed Components
         TButton *OK;
         TButton *Cancel;
-        TLabel *Label1;
+        TLabel *BreakAddress;
         TEdit *EditAddress;
-        TRadioButton *RadioButtonEqual;
-        TRadioButton *RadioButtonLessThan;
-        TRadioButton *RadioButtonGreaterThan;
         TLabel *Label2;
-        TRadioButton *RadioButtonInRange;
-        TEdit *EditAddressHi;
+        TEdit *EditAddressArgument;
+        TLabel *BreakAddressArgument;
+        TComboBox *BreakCondition;
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
-        void __fastcall RadioButtonClick(TObject *Sender);
+        void __fastcall BreakConditionChange(TObject *Sender);
 private:	// User declarations
         bool cancelled;
         void __fastcall UpdateRBStates();
 
 public:		// User declarations
         __fastcall TSetBreakpoint(TComponent* Owner);
-        bool EditValue(int& address, BreakpointCondition& condition);
+        void SetTitle(AnsiString& title);
+        bool EditTSetBreakpoint(int& address, int len, int& tStates);
         bool EditBreakpoint(struct breakpoint& bp);
         void CentreOn(TForm* parent);
 };

@@ -50,25 +50,60 @@ void TEditValue::CentreOn(TForm* parent)
 {
         Top = parent->Top + (parent->Height - Height) /2;
         Left = parent->Left + (parent->Width - Width) /2;
-}
-
+}                          
 
 // returns true or false depending on whether the gathering of a value was
 // succesful. The data is both passed in and returned in value. This is
 // unchanged in the case when gathering fails.
 //
-bool TEditValue::Edit2(int& value,int len)
+bool TEditValue::Edit2(int& value, int len, char format)
 {
         AnsiString NewVal;
 
+        maxValue = (1 << (8*len)) - 1;
+
         cancelled=false;
-        EditVal->Text = "$" + IntToHex(value, len*2);
+        if (format == '$')
+        {
+                EditVal->Text = "$" + IntToHex(value, len*2);
+        }
+        else if (format == '%')
+        {
+                EditVal->Text = "%" + IntToBin(value, len*8);
+        }
+        else
+        {
+                EditVal->Text = IntToDec(value);
+        }
 
         ActiveControl = EditVal;
         EditVal->SelectAll();
         ShowModal();
 
-        AnsiString result = EditVal->Text.Trim();
+        return Translate(EditVal->Text, value);
+}
+
+AnsiString TEditValue::IntToDec(int value)
+{
+        return Format("%d", ARRAYOFCONST((value)));
+}
+
+AnsiString TEditValue::IntToBin(int value, int digits)
+{
+        char arry[16] = {0};
+        
+        for (int i = digits - 1; i >= 0; --i)
+        {
+                arry[i] = (value & 1) + '0';
+                value >>= 1;
+        }
+
+        return AnsiString(arry);
+}
+
+bool TEditValue::Translate(AnsiString text, int& value)
+{
+        AnsiString result = text.Trim();
 
         if (cancelled || result.Length() == 0)
         {
@@ -81,19 +116,35 @@ bool TEditValue::Edit2(int& value,int len)
                 result = "0x" + IntToHex(addr, 4);
         }
 
+        bool hex = (result[1] == '$');
+        bool binary = (result[1] == '%');
+
         // replace the zx-world hex identifier with the standard c library one.
         //
-        if (result[1] == '$')
+        if (hex)
         {
                 result = "0x" + result.SubString(2, result.Length() - 1);
         }
+        else if (binary)
+        {
+                result = result.SubString(2, result.Length() - 1);
+        }
 
-
-        // which allows us to use a ninja converter.
-        // suddenly 0xABCD, $ABCD, 01234 [octal] and decimal are all valid.
-        //
         char* endPtr;
-        int tval = int(strtol(result.c_str(), &endPtr, 0));
+        int tval;
+        if (hex)
+        {
+                tval = int(strtol(result.c_str(), &endPtr, 16));
+        }
+        else if (binary)
+        {
+                tval = int(strtol(result.c_str(), &endPtr, 2));
+        }
+        else
+        {
+                tval = int(strtol(result.c_str(), &endPtr, 10));
+        }
+
         if (*endPtr != 0)
         {
                 // and we know when the user entered junk...
@@ -101,7 +152,8 @@ bool TEditValue::Edit2(int& value,int len)
         }
 
         value = tval;
-        return true;
+
+        return (value <= maxValue);
 }
 
 void __fastcall TEditValue::FormKeyPress(TObject *Sender, char &Key)
@@ -111,6 +163,16 @@ void __fastcall TEditValue::FormKeyPress(TObject *Sender, char &Key)
                 cancelled = true;
                 Close();
         }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TEditValue::EditValChange(TObject *Sender)
+{
+        int value;
+        bool valid = Translate(EditVal->Text, value);
+        EditVal->Font->Color = valid ? clWindowText : clRed;
+
+        OK->Enabled = valid;
 }
 //---------------------------------------------------------------------------
 

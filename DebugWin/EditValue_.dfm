@@ -1,6 +1,6 @@
 object EditValue: TEditValue
-  Left = 285
-  Top = 149
+  Left = 188
+  Top = 117
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'Edit Value'
@@ -28,8 +28,10 @@ object EditValue: TEditValue
     Top = 8
     Width = 121
     Height = 21
+    MaxLength = 17
     TabOrder = 0
     Text = '0'
+    OnChange = EditValChange
     OnKeyPress = FormKeyPress
   end
   object OK: TButton

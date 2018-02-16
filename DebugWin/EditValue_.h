@@ -18,11 +18,16 @@ __published:	// IDE-managed Components
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
+        void __fastcall EditValChange(TObject *Sender);
 private:	// User declarations
         bool cancelled;
+        bool Translate(AnsiString str, int& value);
+        AnsiString IntToBin(int Value, int digits);
+        AnsiString IntToDec(int value);
+        int maxValue;
 public:		// User declarations
         __fastcall TEditValue(TComponent* Owner);
-        bool Edit2(int& value,int len);
+        bool Edit2(int& value, int len, char format = '$');
         void CentreOn(TForm* parent);
 };
 //---------------------------------------------------------------------------

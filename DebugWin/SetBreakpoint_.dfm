@@ -1,6 +1,6 @@
 object SetBreakpoint: TSetBreakpoint
-  Left = 282
-  Top = 254
+  Left = 202
+  Top = 192
   BorderStyle = bsToolWindow
   Caption = 'Set '#39'Execute'#39' Breakpoint'
   ClientHeight = 90
@@ -60,18 +60,20 @@ object SetBreakpoint: TSetBreakpoint
     Top = 24
     Width = 57
     Height = 21
-    MaxLength = 7
+    MaxLength = 5
     TabOrder = 0
     Text = '0'
+    OnChange = EditAddressChange
   end
   object EditAddressArgument: TEdit
     Left = 128
     Top = 24
     Width = 57
     Height = 21
-    MaxLength = 7
+    MaxLength = 5
     TabOrder = 1
     Text = '0'
+    OnChange = EditAddressArgumentChange
   end
   object BreakCondition: TComboBox
     Left = 8

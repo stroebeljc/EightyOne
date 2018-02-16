@@ -49,16 +49,23 @@ void TSetBreakpoint::SetTitle(AnsiString& title)
 }
 //---------------------------------------------------------------------------
 
-bool SanitiseAddress(String addressValue, int& addr)
+bool SanitiseAddress(String addressValue, int& addr, int maxValue)
 {
+        if (addressValue.Length()  == 0)
+        {
+                return false;
+        }
+
         if (symbolstore::symbolToAddress(addressValue, addr))
         {
                 addressValue = "0x" + IntToHex(addr, 4);
         }
 
+        bool hex = (addressValue[1] == '$');
+
         // replace the zx-world hex identifier with the standard c library one.
         //
-        if (addressValue[1] == '$')
+        if (hex)
         {
                 addressValue = "0x" + addressValue.SubString(2, addressValue.Length() - 1);
         }
@@ -90,13 +97,17 @@ bool SanitiseAddress(String addressValue, int& addr)
                 addressValue = z80.iy.w;
         }
 
-        // which allows us to use a ninja converter.
-        // suddenly 0xABCD, $ABCD, 01234 [octal] and decimal are all valid.
-        //
         char* endPtr;
-        addr = int(strtol(addressValue.c_str(), &endPtr, 0));
+        if (hex)
+        {
+                addr = int(strtol(addressValue.c_str(), &endPtr, 16));
+        }
+        else
+        {
+                addr = int(strtol(addressValue.c_str(), &endPtr, 10));
+        }
 
-        return *endPtr == 0;
+        return (*endPtr == 0) && (addr <= maxValue);
 }
 
 
@@ -108,6 +119,7 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
 
         BreakCondition->ItemIndex = Equal;
         EditAddress->Text = "$" + IntToHex(bp.Addr, 4);
+        EditAddressArgument->MaxLength = 5;
 
         if (bp.Condition == LessThan) BreakCondition->Text = "<";
         else if (bp.Condition == Equal) BreakCondition->Text = "=";
@@ -134,9 +146,9 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
                 return false;
         }
 
-        if (!SanitiseAddress(addressValue, bp.Addr))
+        if (!SanitiseAddress(addressValue, bp.Addr, 65535))
                 return false;
-        if (!SanitiseAddress(addressValueHi, bp.Argument))
+        if (!SanitiseAddress(addressValueHi, bp.Argument, 65535))
                 return false;
 
          if (bp.Condition == Range && bp.Addr > bp.EndAddr)
@@ -167,6 +179,7 @@ bool TSetBreakpoint::EditTSetBreakpoint(int& address, int len, int& tStates)
         BreakAddressArgument->Caption = "T-States:";
 
         EditAddress->Text = "$" + IntToHex(address, len*2);
+        EditAddressArgument->MaxLength = 6;
         EditAddressArgument->Text = tStates;
 
         ActiveControl = EditAddress;
@@ -182,15 +195,28 @@ bool TSetBreakpoint::EditTSetBreakpoint(int& address, int len, int& tStates)
                 return false;
         }
 
-        int addr;
+        if (!SanitiseAddress(addressValue, address, 65535))
+                return false;
+        if (!SanitiseAddress(tStatesValue, tStates, 999999))
+                return false;
+
+
+/*        int addr;
         if (symbolstore::symbolToAddress(addressValue, addr))
         {
                 addressValue = "0x" + IntToHex(addr, 4);
         }
 
+        if (addressValue.Length()  == 0)
+        {
+                return false;
+        }
+
+        bool hex = (addressValue[1] == '$');
+
         // replace the zx-world hex identifier with the standard c library one.
         //
-        if (addressValue[1] == '$')
+        if (hex)
         {
                 addressValue = "0x" + addressValue.SubString(2, addressValue.Length() - 1);
         }
@@ -200,12 +226,18 @@ bool TSetBreakpoint::EditTSetBreakpoint(int& address, int len, int& tStates)
                 addressValue = z80.pc.w;
         }
 
-        // which allows us to use a ninja converter.
-        // suddenly 0xABCD, $ABCD, 01234 [octal] and decimal are all valid.
-        //
         char* endPtr;
-        int tvalAddress = int(strtol(addressValue.c_str(), &endPtr, 0));
-        if (*endPtr != 0)
+        int tvalAddress;
+        if (hex)
+        {
+                tvalAddress = int(strtol(addressValue.c_str(), &endPtr, 16));
+        }
+        else
+        {
+                tvalAddress = int(strtol(addressValue.c_str(), &endPtr, 10));
+        }
+
+        if ((*endPtr != 0) || (tvalAddress > 999999))
         {
                 // and we know when the user entered junk...
                 return false;
@@ -225,6 +257,7 @@ bool TSetBreakpoint::EditTSetBreakpoint(int& address, int len, int& tStates)
 
         address = tvalAddress;
         tStates = tvalTStates;
+            */
 
         return true;
 }
@@ -247,6 +280,37 @@ void __fastcall TSetBreakpoint::UpdateRBStates()
 void __fastcall TSetBreakpoint::BreakConditionChange(TObject *Sender)
 {
         UpdateRBStates();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSetBreakpoint::EditAddressArgumentChange(TObject *Sender)
+{
+        bool valid;
+
+        if (BreakAddressArgument->Caption == "T-States:")
+        {
+                int value;
+                valid = SanitiseAddress(EditAddressArgument->Text, value, 999999);
+        }
+        else
+        {
+                int value;
+                valid = SanitiseAddress(EditAddressArgument->Text, value, 65535);
+        }
+
+        EditAddressArgument->Font->Color = valid ? clWindowText : clRed;
+
+        OK->Enabled = (EditAddress->Font->Color == clWindowText) && (EditAddressArgument->Font->Color == clWindowText);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TSetBreakpoint::EditAddressChange(TObject *Sender)
+{
+        int value;
+        bool valid = SanitiseAddress(EditAddress->Text, value, 65535);
+        EditAddress->Font->Color = valid ? clWindowText : clRed;
+
+        OK->Enabled = (EditAddress->Font->Color == clWindowText) && (EditAddressArgument->Font->Color == clWindowText);
 }
 //---------------------------------------------------------------------------
 

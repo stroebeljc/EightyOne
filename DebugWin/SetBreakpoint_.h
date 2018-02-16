@@ -25,6 +25,8 @@ __published:	// IDE-managed Components
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
         void __fastcall BreakConditionChange(TObject *Sender);
+        void __fastcall EditAddressArgumentChange(TObject *Sender);
+        void __fastcall EditAddressChange(TObject *Sender);
 private:	// User declarations
         bool cancelled;
         void __fastcall UpdateRBStates();

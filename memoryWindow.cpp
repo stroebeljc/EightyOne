@@ -601,7 +601,7 @@ void __fastcall TMemoryWindow::SetAddress1Click(TObject *Sender)
         EditValue->CentreOn(this);
 
         int v = SetAddress1->Tag;
-        if (EditValue->Edit2(v,2))
+        if (EditValue->Edit2(v, 2))
         {
                 SetBaseAddress(v);
         }
@@ -637,10 +637,20 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                 EditValue->Top = Mouse->CursorPos.y;
                 EditValue->Left = Mouse->CursorPos.x;
 
+                char format = '$';
+                if (mViewMode == MWVM_BINARY)
+                {
+                        format = '%';
+                }
+                else if (mViewMode == MWVM_DECIMAL)
+                {
+                        format = '0';
+                }
+
                 if (mViewMode != MWVM_WORD)
                 {
                         int n = getbyte(address);
-                        if (EditValue->Edit2(n,1))
+                        if (EditValue->Edit2(n, 1, format))
                         {
                                 setbyte(address,n);
                                 UpdateChanges();  // CR  refresh after edit
@@ -649,7 +659,7 @@ void __fastcall TMemoryWindow::FormClick(TObject *Sender)
                 else
                 {
                         int n = getbyte(address) + 256 * getbyte(address + 1);
-                        if (EditValue->Edit2(n,2))
+                        if (EditValue->Edit2(n, 2, format))
                         {
                                 setbyte(address, n & 255);
                                 setbyte(address+1, n >> 8);

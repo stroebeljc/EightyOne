@@ -338,7 +338,11 @@ bool TDbg::ExecBreakPointHit(int Addr)
         {
                 if (!hit->Permanent)
                 {
-                        if ((StepOverStack + stepOverStackChange) == z80.sp.w)
+                        int expectedStack = StepOverStack + stepOverStackChange;
+                        if (expectedStack < 0) expectedStack += 65536;
+                        if (expectedStack > 65535) expectedStack -= 65536;
+
+                        if (expectedStack == z80.sp.w)
                         {
                                 DelBreakPoint(Addr);
                         }

@@ -99,6 +99,7 @@ void TKeyboard::KbChange(void)
         Keyboard->r470kb->Visible=false;
         Keyboard->r470kb->Visible=false;
         Keyboard->spec48kb->Visible=false;
+        Keyboard->spec128kb->Visible=false;
 
         switch(zx81.romcrc)
         {
@@ -167,7 +168,14 @@ void TKeyboard::KbChange(void)
                         Keyboard->lambdakb->Visible=true;
                         break;
                 case MACHINESPEC48:
-                        Keyboard->spec48kb->Visible=true;
+                        if (spectrum.machine == SPECCY128)
+                        {
+                                Keyboard->spec128kb->Visible=true;
+                        }
+                        else
+                        {
+                                Keyboard->spec48kb->Visible=true;
+                        }
                         break;
                 }
         }

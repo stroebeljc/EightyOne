@@ -49,13 +49,16 @@ void SetSP(int i)
         //spBase = i;
 }
 
+int stepOverStackChange;
 
 /* Execute Z80 opcodes until the next event */
 int z80_do_opcode()
 {
     BYTE opcode;
 
-     tstates=0;
+    tstates=0;
+
+    stepOverStackChange = 0;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */

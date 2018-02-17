@@ -329,15 +329,22 @@ breakpoint* TDbg::BPHit(int Addr, int Type)
         return NULL;
 }
 
+extern int stepOverStackChange;
 
 bool TDbg::ExecBreakPointHit(int Addr)
 {
         breakpoint* hit = BPHit(Addr, BP_EXE);
-        if (hit && !hit->Permanent)
+        if (hit)
         {
-                DelBreakPoint(Addr);
+                if (!hit->Permanent)
+                {
+                        if ((StepOverStack + stepOverStackChange) == z80.sp.w)
+                        {
+                                DelBreakPoint(Addr);
+                        }
+                }
         }
-
+        
         return hit;
 }
 
@@ -512,6 +519,7 @@ void TDbg::UpdateVals(void)
         i=z80.pc.w;
         Disass3->Caption = (Disassemble(&i) + "                ").SetLength(50);
         StepOverAddr=i;
+        StepOverStack=z80.sp.w;
         Disass4->Caption = Disassemble(&i);
         Disass5->Caption = Disassemble(&i);
         Disass6->Caption = Disassemble(&i);

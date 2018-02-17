@@ -465,8 +465,6 @@ object Artifacts: TArtifacts
     Width = 73
     Height = 17
     Caption = 'Enabled'
-    Checked = True
-    State = cbChecked
     TabOrder = 8
     OnClick = ArtEnabledClick
   end
@@ -515,8 +513,6 @@ object Artifacts: TArtifacts
     Width = 97
     Height = 17
     Caption = 'Simple Ghosting'
-    Checked = True
-    State = cbChecked
     TabOrder = 10
     OnClick = SimpleGhostingClick
   end

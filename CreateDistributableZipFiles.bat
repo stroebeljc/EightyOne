@@ -55,6 +55,10 @@ if not exist "%TestFolder%" goto :ErrorFolderNotFound
 set TestFolder=%ComponentsFolder%\Theme Manager
 if not exist "%TestFolder%" goto :ErrorFolderNotFound
 
+rem ---- Check EightyOne executable exists
+
+if not exist "%SourceFolder%\EightyOne.exe" goto :ErrorExecutableNotFound
+
 rem ---- Query whether the release history file has been updated
 
 set /p answer="Have you remembered to update the 'Release history.txt' file? (Y/N) "
@@ -153,6 +157,10 @@ goto :end
 :ErrorFolderNotFound
 echo Could not find folder:
 echo %TestFolder%
+goto :ErrorCreationAborted
+
+:ErrorExecutableNotFound
+echo Could not find EightyOne.exe
 goto :ErrorCreationAborted
 
 :InvalidVersionNumber

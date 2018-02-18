@@ -1,0 +1,718 @@
+﻿Please Note:  If Upgrading from an earlier version of EightyOne, you may have
+to delete the file EightyOne.ini for the new version to operate correctly.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Version 1.9 - 17/02/2018 (by Paul Farrow)
+* Bug fixes:
+  - Wav Loader window did not contain all of the waveform after saving.
+  - Saving of wav files for the ZX80 now works.
+  - The T-states breakpoint counter no longer wraps back to 0 after 65535 but continues
+    until 999999, making it easier to see if a ZX80 frame is taking too long.
+  - Changed the default value present on the data bus for the ZX80.
+  - The 'ROM file not found' dialog would appear after selecting a ROM file from a folder
+    outside the default ROM folder.
+  - Read breakpoint conditions were not working correctly.
+  - Corrected disassembly display of SBC instructions.
+  - Fixed Spectrum border corruption when Spectra mode enabled and full frame displayed.
+  - Fixed Spectrum border during vsync period when full frame displayed.
+* Enhancements:
+  - Wav Loader now shows the end of the waveform after saving from a ZX80 or ZX81 when
+    auto stop/start is enabled (previously it would show beyond the end of the waveform).
+  - Wav Loader now displays the waveform while saving (previously it was always showing
+    beyond the end of the waveform).
+  - When saving to the Wav Loader from a ZX80, ZX81 or TS1500, the output now drops back
+    to the zero level when there is no activity to better represent the waveform that
+    would get saved to a cassette.
+  - Support for ZXC ROM cartridges provided by the Chroma 80 interface.
+  - Added a 'range' option to breakpoints (by SirMorris).
+  - Added a 'mask' option to breakpoints.
+  - Added a 'not equal' condition to breakpoints.
+  - Added support for binary input for memory edits.
+  - Removed support for octal entry on memory edit and breakpoint dialogs.
+  - TV emulation display artifacts are now disabled by default.
+  - Added Keyboard layout image for the Spectrum 128.
+  - All windows gathered at start up to ensure they are visible if an existing ini file
+    could not be found.
+  - Added recursive support for the Step Over debugging facility.
+
+Version 1.8 - 05/11/2017 (by SirMorris)
+* Bug fixes:
+  - Breakpoints added using the memory / breakpoint menu can now be deleted.
+  - ZXpand EEPROM content is now persisted as long as NV_Memory folder exists.
+  - Fixed the 'ZXpand saved files have their R/O flag set' bug.
+* Enhancements:
+  - When using ZXpand emulation or dragging & dropping a .P file onto the UI a file with a
+    .sym extension matching that of the selected program will be loaded in the symbol browser.
+  - Right clicking a symbol in the Symbol Browser or a line of disassembly in the debug window
+    will open the memory / breakpoint menu.
+  - Double-clicking a symbol in the browser will add an executable breakpoint at its address.
+  - Added the ability to also use NO$GMB format symbol files: pppp:aaaa XXXXXX where pppp is the
+    page address (typically 0), aaaa is the CPU address and XXXXXX is the symbol name.
+  - Symbol files (.sym) may be loaded into the Symbol Browser by dragging & dropping onto the UI.
+
+Version 1.7 - 09/09/2017 (by SirMorris and Paul Farrow)
+* Bug fixes:
+  - TZX Manager window now displays punctuation characters in ZX81 file names.
+  - Vertical sync period is no longer visible for a Spectrum when in large border mode.
+  - Removed blank entry that appeared in the Character Generator selection list under
+    the Hardware configuration window.
+  - The ROM loaded for the TS1000 when selected in the Hardware window was incorrect.
+  - Improved emulation of the interaction between the Chroma interface and the dk'tronics
+    Graphics ROM.
+* Enhancements:
+  - Addition of the Live Memory View for 8-bit machines, which allows monitoring the
+    processor's memory accesses in real-time. It tracks bytes of memory which have been
+    touched, either by read, write or both.
+  - The debugger now allows the use of 'PC', 'HL', 'BC', 'DE', 'IX' and 'IY' in the
+    breakpoint address entry field.
+  - Integrated ZXpand V1.10 firmware changes.
+  - Renamed ZXpand ROM overlay file for the ZX81.
+  - Simplified the naming convention of character set bitmap files used by the debugger.
+  - Added character set bitmap files for the TS1500, Spectrum +2, Spectrum +3, TK85,
+    Jupiter Ace, Lambda 8300, Ringo R470, TC2048 and TS2068.
+  - Renamed the Spectrum +3 ROM to include the version number, with the default now
+    version 4.1.
+  - Included ROMs: Spectrum 128 Spanish, Spectrum +2 Spanish and French, Spectrum +3
+    Spanish, Spectrum +3 English versions 4.0 and 4.1.
+
+Version 1.6 - 11/08/2017 (by SirMorris and Paul Farrow)
+* Bug fixes:
+  - Breakpoints now trigger on both addresses of a 16-bit memory read or write.
+* Enhancements:
+  - Updated ZXpand emulation to use the ROM and firmware of the ZXpand+ model.
+    AY sound is not automatically selected.
+  - ROM files have been renamed to follow a consistent scheme:
+    [system].[modifier](.[modifier]...)
+  - A Save option has been added to the TZX Edit General Data Block window to allow
+    saving of ZX80 and ZX81 programs.
+  - The character representations of the data shown in the TZX General Data Block
+    window can now be viewed using the ZX80 character set.
+
+Version 1.5 - 17/06/2017 (by Paul Farrow)
+* Bug fixes:
+  - The Chroma colour mode is now disabled upon a soft reset.
+  - The SPECTRA colour mode is now disabled upon a soft reset.
+  - The ZX81 keyboard image is now deliberately selected using the edition 1 ZX81 ROM.
+  - TV Emulation window visibility corrected if SPECTRA selected.
+  - Greys out the displayed Chroma mode in the Debug Window when running continuously.
+  - Greys out the displayed SPECTRA mode in the Debug Window when running continuously.
+  - Greys out the displayed ZXC mode in the Debug Window when running continuously.
+  - The Debug Window to now refreshed if it is open when a new hardware configuration
+    is selected.
+  - If no border was selected then the ZX80 and Lambda 8300 would appear shifted to
+    the right by 2 pixels.
+  - Displays the correct value in the debug Memory Window while in Word mode when
+    address $FFFF is selected.
+* Enhancements:
+  - Added fine tune control of the scrolling in the debug Memory Window.
+  - Enhanced the debug Memory Window to highlight the location value and corresponding
+    character when hovered over with the mouse.
+  - Added an option to the debug Memory Window to allow the display to show decimal values.
+  - Added a search facility to the debug Memory Window.
+  - Enhanced the debug breakpoint facility to allow conditional matches (less-than,
+    equal-to, greater-than).
+  - The 'Delete' breakpoint button in the Debug Window is now greyed out if there are no
+    entries present.
+  - Highlight in breakpoint entry list adjusted when a new breakpoint is added or an
+    existing one removed.
+  - The state of the 'Continuous' setting in the Debug Window is now saved as part of the
+    configuration settings.
+
+Version 1.4 - 30/05/2017 (by Paul Farrow and SirMorris)
+* Bug fixes:
+  - Repaired ZXpand support, which was broken following the introduction of the edition 1 ZX81 ROM.
+  - Repaired TS1000 support, which was broken following the introduction of the edition 1 ZX81 ROM.
+  - The Memory window now refreshes after an edit is made.
+  - Re-instated FatTest.vhd for use with the MWCFIDE drive option (which was missing since version 1.0a).
+* Enhancements:
+  - Added a facility to reverse the listing order in the History window.
+  - Added facilities to filter the contents of the History window based on address range.
+  - Memory edits are no longer allowed while the debugger is in free running mode.
+  - Renamed 'nvram' subfolder as 'NV_Memory'.
+  - Renamed 'eeprom.bin' as 'zxpand-eeprom.bin'.
+  - ZXpand 'zxpand-eeprom.bin' file now accessed in the 'NV_Memory' subfolder.
+  - Removed obsolete ZXpand card.bin file access.
+  - Renamed MMC_Card subfolder to ZXpand_SD_Card.
+  - Removed obsolete files from the ROM subfolder.
+
+Version 1.3 - 07/05/2017 (by Paul Farrow and SirMorris)
+* Bug fixes:
+  - The Flash Load mechanism would not load certain programs, e.g. Software Farm's Bouncing Bert.
+  - The ZXpand "read only file" problem where the ROM shadow is disabled after loading.
+  - The vertical scrollbar shown in the History window was too far over and so was only partially
+    visible.
+  - Changed how the ZXpand ROM overlay works, which fixed a few problems with demos.
+  - Locked the positions of the "Previous/Next Change" buttons within the status bar of the
+    Memory window when resizing the window using the grip control.
+  - Now correctly displays the address in the Memory window when in 'Word' view mode.
+  - The tape block to wav file conversion did not always occur correctly.
+  - Changed the number of T-states assumed per frame for the ZX81 and ZX80.
+  - File default extension was sometimes .P instead of .O when saving in ZX80 mode.
+  - Greys out the I/O area and Display Generation T-States count within the Debug window while
+    free running.
+  - The ZX Interface 1 RS232 baud rate is now calculated based on machine clock rate rather than
+    hard-coded to 3.5MHz.
+  - Fixed the alignment of Spectrum characters shown in the Memory window when in 'Traditional'
+    view mode.
+* Enhancements:
+  - ZXpand banner text changed to "ZXPAND EO x.y" to avoid user confusion with the real hardware
+    version number.
+  - T81 format enhanced to tolerate new block types, specifically the block introduced by the
+    81-libretro emulator.
+  - Inclusion of edition 1 ZX81 ROM.
+  - Included support for the ZX81 edition 1 ROM floating point hardware fix.
+  - The disassembler now handles instructions above $8000 on a ZX80/81 where bit 6 of the opcode
+    is set.
+  - Improved the performance of the History capture feature under the Debug window.
+  - Increased history storage to 3000 instructions (was 2000).
+  - The History window is now refreshed when it gets resized by the user.
+  - Added Clear and Reload options to the History window.
+  - The Memory window now displays offset numbers as column headings.
+  - The Memory window now displays the address in the status bar when hovering the mouse cursor
+    over the Sinclair characters when in 'Traditional' view mode.
+  - The Memory and Symbol buttons in the Debug window now toggle the visibility of their
+    respective windows.
+  - The scrolling mechanism of the Memory window has been enhanced to provide more logical
+    behaviour.
+  - The Tape Manager used to insert a description block with text "Created with EightyOneTZX".
+    This has been changed to "Created using the EightyOne emulator".
+  - Added a feature to the Debug window to allow the user to specify the number of T-states that
+    are expected to have elapsed between consecutive hits of a specified address, useful for
+    verifying timing of flicker-free ZX80 programs.
+  - Warn users when file/memory/snap load/save fails.
+  - Default position of all windows set to be within typical monitor bounds.
+  - Added 'Gather Windows' option to View menu to reposition all dialogs to ensure they appear
+    within the monitor bounds.
+  - Added 'Enable Splash Screen' option to the View menu.
+  - SoundOutput visible status now saved in configuration file.
+
+Version 1.2 - 30/11/2015 (by Paul Farrow)
+* Bug fixes to:
+  - Words were incorrectly displayed for the stack in debugging window
+  - Labels no longer displayed for read, write, input and output breakpoints
+  - Writing to Chroma QS Character RAM ignored unless QS Character mode enabled
+  - Last IO accesses
+* Alteration to Memory Window scrolling
+
+Version 1.1 - 25/11/2015
+ZXpand emulation source code lost: http://www.sinclairzxworld.com/viewtopic.php?f=3&t=1477
+* Reconstructed ZXpand support (by SirMorris)
+* Added support for (by Paul Farrow):
+  - Chroma colour interface (see www.fruitcake.plus.com for details of the interface)
+  - Spectra colour interface (see www.fruitcake.plus.com for details of the interface)
+  - IF2, ZXC2, ZXC3, ZXC4 ROM cartridges (details available at www.fruitcake.plus.com)
+  - P81 file format
+* Bug fixes to (by Paul Farrow):
+  - Jupiter Ace file save
+  - Loading multiple ZX80 files
+  - T81 file support for ZX80
+  - Breakpoint at $0000 can now be hit upon a reset
+  - Corrected disassembly mnemonics
+  - Resolved lock up when reaching the end of playing a wav file
+  - Lambda colour scheme sequence
+  - QS Character Board memory size
+  - Non-existent memory access
+  - ComPort component updated
+* Enhancements to debugger window (by Paul Farrow):
+  - Controls for breakpoints on memory and IO reads and writes
+  - Displays last accessed IO ports
+  - Displays Spectra, Chroma and ZXC status modes
+  - Increased history storage to 2000 instructions (was 1000)
+
+Version 1.0a Patch X3.7 - 17/10/2012 (by SirMorris)
+http://www.sinclairzxworld.com/viewtopic.php?f=3&t=982
+* Changed the way that the zxpand emulation works
+  - card.bin no longer required
+  - all files in folder MMC_CARD are now treated
+    as the sd card image.
+
+Version 1.0a Patch X3.5 - 13/01/2012 (by SirMorris)
+* Improved ZXpand support for zx81 (see hardware menu)
+  - overlay disable is now implemented
+  - ZXpand Joystick support works
+  - use a real joystick attached to PC or keypad
+    in num-lock mode. Keypad 0 is fire, the cursor keys are the directions.
+* ZXpand support for zx80
+  - mostly working
+* Debug window no longer defaults to 'Continuous'
+
+Version 1.0a Patch X3 15/07/2011 (by SirMorris)
+http://www.sinclairzxworld.com/viewtopic.php?f=3&t=477
+Changes by SirMorris - charlie@eightybits.co.uk
+* Added mostly complete ZXpand support for zx81 (see hardware menu)
+  - overlay disable / memory map options aren't implemented)
+* Added preliminary ZXpand support for zx80
+  - not yet working to any usable degree
+* Fixed coarse tuning on AY
+  - sounds play a lot better but still produce occasional noisy glitch
+
+Version 1.0a Patch - 20/5/2011 (by SirMorris)
+http://www.sinclairzxworld.com/viewtopic.php?f=3&t=477&start=8
+File: zxpand_emu.zip
+* ZXpand emulation DLL update
+* Requires previous patch to have been applied
+
+Version 1.0a Patch - 10/5/2011 (by SirMorris)
+http://www.sinclairzxworld.com/viewtopic.php?f=3&t=477&start=5
+File: eo-zx80-zxpand.zip
+* Beginnings of ZX80 support
+
+Version 1.0a Patch - 07/5/2011 (by SirMorris)
+http://www.sinclairzxworld.com/viewtopic.php?f=3&t=477&start=7
+File: eo-zxpand-patch.zip
+* ZXpand V3 ROM
+* Test card image
+
+Version 1.0a 28/05/08
+http://www.sinclairzxworld.com/viewtopic.php?f=3&t=33
+Added Memory Browser (SirMorris)
+Added Symbols to Debugger (SirMorris)
+Fixed bug in OUTD/OUTIR instructions (MW)
+Fixed bug with NMI occasionally triggering twice (MW)
+
+Version 1.0 10/03/08
+Vista Compatible
+
+Version 0.52 24/8/07
+Added ZX81 Larken disk support. Preliminary support for ZX1541 (Only memory and IEC
+interface coded, still have to emulate the 1541 itself). Fixed a bug which caused
+the emulator to crash if the workstation was locked/suspended/hibernated.  This
+may (but only may!) help with Vista compatability.
+
+Version 0.51 21/7/07
+Updated libdsk and lib765 to latest versions. Removed really nasty hack to support
+Aszmic ROM and replaced it with a more devious hack.
+
+Version 0.50 8/7/07
+Configuration files are now saved in Application Data folder. Added support for
+vertical hold in TV emulation. Support for Right shift as Symbol Shift. Lots of 
+fixes/several new bugs.
+
+Version 0.43e 30/12/06
+Fixed bug with CTRL key in Jupiter ACE emulation. Added support for TZX 1.20
+specification.  Previous 1.20Beta TZX files will automatically be updated on saving.
+Better emulation of ACF interface, though not working properly yet. Added support for 
+ZIP compressed tape/disk images, snapshots etc. Fixed several bugs in TZX->Wav 
+conversion. Fixed bug loading/saving .ACE snapshots of machines with 51k RAM.
+
+Version 0.43d 10/11/06
+Fixed bug in ATA command 0x91.  Added upload jumper to divIDE. Added PlusD/Disciple/
+Opus/+3 Printer port support. Added Currah uSpeech support. Fixed bug in Port 0xfe on
+Timex machines. Added Midi support for +2/2A/3 machines (mute the AY chip to hear
+the demo tzx). Changed TC2048/Spec SE timing to match 48k spectrum.
+
+Version 0.43c 24/11/06
+Fixed bug in the +2A/+3 specific memory models. Read/Write support for all WD177x 
+type disk interfaces. Opus Discovery support.
+Updated Ace CF interface to latest version of hardware. Fixed dialogues not displaying
+correctly when windows is using large fonts. Fixed (again) reversed up/down keys on
+the ACE. Fixed limit of 500 blocks per TZX file.
+
+Version 0.43b - 11/11/06
+Added support for Piters 16 bit IDE interface. Added Disciple & +D Floppy interface.
+Fixed a bug in +2A/+3 paging. Preliminary support for QL emulation (Does nothing
+useful at the moment). If EightyOne finds FDC765.DLL available, it uses that
+instead of lib765 (more compatible for protected +3 disks).
+
+Version 0.43a - 01/11/06
+Added support for Piters 8 bit IDE interface.  Added ability to select ROM files
+from other than the ROM directory.
+
+Version 0.43
+Added ZX81/ASCII character view in TZX file viewer
+Added ability to save screenshots as .bmp files
+Readded feature to convert a block from wave->TZX, though this only works for
+zx81 style blocks (atm).
+Added ACE 96k Ram Pack
+Fixed bug in Memotech Hi-Res emulation and added Memotech magic button
+Fixed a couple of bugs in Timex graphics modex
+Piters CF interface now appears working :)
+Added Write Protect to Windows formatted drives. Changed default CHS for USB
+connected drives.
+Added ability to write to real hard drives/flash cards under divIDE/ZXCF/etc.
+Rearranged the Hardware dialogue.  Added Jupiter ACE CF interface.
+GDI is back!  You can now select which render method looks/works best for your
+system.  Reduced the size of the border slightly in "small border".  The new
+size fits a PC screen better in Fullscreen mode. Fixed a bug where you couldn't
+load files from ZXCF on a 48k machine.  Added Multiface and Spectrum SE emulation.
+Fixed 1Mbyte only config on ZXCF interface.
+
+Version 0.42Z
+Fixed a bug in the DirectX library I was using where the program would
+crash on certain versions of Windows combined with certain versions
+of DirectX (It worked fine with Win98 DX7 & 8 but not Win98 DX9, whereas
+it worked fine on XP using DX9).  The application has now been tested
+by myself using:
+
+Windows 98SE, DirectX 7.0
+Windows ME, DirectX 7.1
+Windows ME, DirectX 9.0C
+Windows XP, Direct 9.0B
+Debian Linux, Wine 0.9.11 (using 'nosound' option).
+
+Version 0.42Y
+Rewritten MicroDrive code so FORMAT now works.  Modified custom controls so
+EightyOne should be fully skinnable under XP. Fixed a polarity bug in ZX81
+emulation when saving to a wav file.  Rewritten display code using directX
+giving a huge speed boost.  Added another Jupiter ACE sound board.
+
+Version 0.42X
+Fixed Window resizing problems.  Fixed Drag 'n drop of Spectrum snapshot files.
+Moved Reset/NMI/Pause controls to separate menu.  Added ability to save/load
+multiple configuration files.  Added Interface 1 RS232 & Microdrive support.
+
+Version 0.42W
+Kempston Mouse, Plus3E, ZXCF and divIDE support added. Battery backed RAM 
+images moved from the ROM folder to NVRAM.
+
+Version 0.42V
+Added Spectrum +3 disk drive emulation (Thanks to John Elliot for his excelent
+lib765 & libdsk).  The emulator now saves the state of the status bar on exit.
+
+Version 0.42U
+Fixed FLASH attribute not working.  Fixed Wave AutoStart/Stop in ACE emulation.
+Renamed "Options->Tape->Source/Destination->TZX Manager" to "Tape Manager".
+Fixed several bugs preventing EightyOne running smoothly under Windows 98.
+Implemented loading/Saving of SNA/Z80 snapshot files.  Fixed timing error in
+TC2048 emulation.  Saving memory blocks now works on Spectrum based machines
+(Including spectrum .scr files).  Implemented support for Timex .dck files.
+
+Version 0.42T
+Fixed Ace up/down keys being reversed. Added ability for the Spectrum to save to
+TZX.  Implemented Tap/TXZ support for the Jupiter Ace. Added support for Timex
+TC2048/TS2068 machines.  Tightening up of the TV emulation timing stopped Manic
+Miner from displaying properly - now fixed. Fixed Lambda Display problems on a
+32 bit desktop.  Fixed bug where EightyOne would not start up correctly if the
+last time it was closed the debugger was left open.
+
+Version 0.42S
+Fixed a bug with Inverse Video Selection  Converted the Wave Loader form to match 
+the style of the TZX form (Fixing several bugs in the process).  The Wav Loader 
+is now resizable too. Slight improved (though not perfect) 48k memory contention.
+Redesigned the Hardware dialogue with icons and everything!
+
+Version 0.42R
+Added more colour options to the Artifacts box. Improved TZX handling.  Removed 
+the Tape Manager, since all functionality now exists in TZX.  Lambda now has 
+sound support (Thanks to Burnttoy for working it out). Preliminary support for 
+Lambda .a83 files (read only at the moment).  Expect lots of bugs in this release
+(Especialy the load/save code) but please, don't let that stop you reporting them.
+
+Version 0.42Q
+Added Spectrum TZX with preliminary acceleration.  Fixed bug where window
+contents were not being updated on the ZX81 if in FAST mode. Fixed Sound output
+in ACE mode. Changed ghosting for Spectrum so that it accomodates the brightness
+attribute.
+
+Version 0.42P 25/02/06
+Fixed DDCBxxxx and FDCBxxxx opcodes being displayed incorrectly in the debugger.
+
+Version 0.42O 24/02/06
+Fixed a bug where scanlines on ZX81/Ace in non-advanced display mode were always
+very dark. Made a start on contention, though it isn't correct yet.
+
+Version 0.42N 24/02/06
+Added proper Interlaced video support and improper dot crawl emulation for
+spectrum emulation.  Fixed upper and lower border Spectrum border emulation.
+Loading wave and csw now works on the Spectrum.  Added 16k, 128k, +2 and
++2A support.
+
+Version 0.42M 18/02/06
+Fixed Jupiter ACE screen corruption, and rewrote the core to allow the nice
+video actifacts to work on the ACE. Added the ability to select the display mode 
+when switching to Full Screen. Also, I think I've gone completely insane and
+added something I really shouldn't have.  Welcome to ZX Spectrum emulation ;)
+Just don't expect LOAD/SAVE/Sound/Anything at all work, there isn't a proper
+keymap (yet) but it's something else to play with.
+
+Version 0.42L 16/02/06
+Started commenting the source :-)
+More control over the picture in the Artifacts dialogue.
+Replaced Play/record/etc. text buttons in TZX/Wave dialogue with icons.  Fixed
+several bugs which were causing the TZX manager to crash. Fixed the 
+File->Open/Save/New in the main window so you can open any tape format 
+(T81/p/o/tzx/wav) without having to open the relevant window. Tidied up the Memory 
+block save/load dialog. Added context menu to the tape manager.
+
+Version 0.42K 12/02/06
+Fixed the loss of Window size on exit/restart of EightyOne and also when changing
+between PAL/NTSC mode. Added Scanlines/Brightness controls to the Display Artifacts
+Dialog.
+
+Version 0.42J 11/02/06
+You can now click on any value in the Debug window and modify its contents.
+Fixed ZX80 loading .o files (again).
+Added the facility for the emulated ZX81 to detect the environment it is running in.
+See detect.p for an example and the help file for the complete details (eventually).
+It appears that the COM port enumeration is also causing some trouble.  To disable 
+COM port detection, create a file called "nocomport" in the same directory as 
+EightyOne.exe (The contents of this file are irrelevent, merely its existance).
+Likewise, you can disable sound by creating the fine nosound in the same directory
+as eightyone.exe
+
+Version 0.42I 05/02/06
+I thought there would be stuff that got broken with the new core and I was right.  It
+appeared that almost every pseudo-Hires game stopped displaying correctly - oops. Fixed
+now.
+
+Version 0.42H 02/02/06
+More improvements to the Core, plus a new option in the View menu.  You can now select the
+amount of border that is displayed around the display.
+
+Version 0.42G 01/02/06
+Major changes to the core emulation so that the Calodox Rezurrection demo will work (Great
+demo guys!).  It basicly involved removing all the hacks and rewriting the core how it
+should have been written in the first place.  No doubt this will introduce piles of new
+bugs, but hey...
+
+Version 0.42F 15/01/06
+Added Wilfs CHR$16 extended character set and QuickSilva graphics board (Also included is 
+a couple of QS games that make use of the board - Asteroids and Scramble). Fixed a bug
+where 1 extra byte was saved at the end of a .p file (Thanks to Simon Holdsworth)
+
+Version 0.42E 05/01/06
+Preliminary TZX tape format support, still very buggy though.  Fun feature - emulated RAM 
+Pack wobble (Press Ctrl-F12 for chuntey on demand). New hardware, DK'Tronics Graphics ROM 
+(Thanks to Simon Holdsworth for dumping this).
+
+Version 0.42a 11/09/05
+Added TS2050 Serial port. Preliminary support for ACE AY circuit (Clock frequency is
+probably very wrong at the moment though).
+
+Version 0.42 09/09/05
+Fixed several bugs introduced with the new ROM Handling.  Preliminary support for ZX97/Lite.
+Added ACE colour board from ETI magazine. Fixed another bug in the keyboard handler.
+
+Version 0.41 02/09/05
+Preliminary Lambda Colour support.  Rom intercepts added to Lambda emulation to support the 
+Tape Manager. Fixed Loading/Saving of Zx80 files (Zx80 files are awkward because the Zx80 
+doesn't use filenames).  Added keyboard maps for Zx80/Lambda (Maybe these should be ROM
+dependant instead of machine dependant?). ACE now supports loading and saving to .t81 files
+(seemless conversion between .tap next on the todo list). Added support for M1NOT. Fixed a 
+bug where if non-standard video was being produced (Primarily during load/save), the number 
+of T-states being executed per 20/16ms timer tick was incorrect.  This was the cause of the
+counter in the wavloader appearing to run slow.  WavLoader autostart/stop works again for 
+everything except the Ace.  You can now Select TapeManager/WavLoader for Tape source and 
+TapeManager/WavLoader/AudioOut for Destination (Audio In comming soon).
+Tape loading/Saving interception is now done on a per ROM basis instead of per machine.  This
+means if you fire up a ZX81 with the Lambda ROM, it'll use the Lambda intercepts instead of
+the ZX81.  If you load an unknown ROM, tape manager will be disabled.  Fixed RAM Shadows so 
+that Tree4th & H4th work (again).  Added the ability to load/save blocks of memory to file.
+
+Version 0.40 28/8/05
+AY emulation now appears to work, though it does sound a little off-key?
+
+Version 0.39 27/8/05
+Fixed two errors in the keyboard scaning code relating to the Shift key [Note - how does 
+this affect Symbol shift in ACE emulation?].  Rewritten Display code to speed emulator 
+up on slower machines.  Work in progress helpfile added [Note - it's BIG, maybe a 
+separate download?]. Removed some unneeded options from the Hardware dialogue. Fixed 
+memory accesses to non-existant RAM. Ram pack selection for the Jupiter ACE should work 
+now.  Rearranged the Menus.  Redesigned the Wave loader dialogue.
+
+Version 0.38 23/8/05
+Memotech & G007 HRG are now fully working.  Frameskipping supported for slower systems.  
+I've rearranged the Hardware dialogue to fit the extra options in.  I'm currently working 
+on AY emulation and the help file (at last!).  PLEASE NOTE: The roms have been moved into 
+a separate ROM subdirectory so they're not cluttering the place up.  If you normally just 
+extract the new exe from the archive, please move your roms manually, else EightyOne 
+won't work!
+
+Version 0.37 17/8/05
+Preliminary release.  Menus rearranged. Support for AY emulation and Beeper/loading noise 
+though it sounds pretty rough.  Preliminary support for Memotech/G007 Hi-res cards.  G007 
+doesn't work at all at the moment.  Memotech emulation works for the demo:
+
+LET V=19000
+RAND USR 8619
+
+But that's about all...
+
+Version 0.36c 14/8/05
+Improved timing. Lambda emulation now appears correct-ish.  Support for .ace snapshots.
+
+Version 0.36 7/8/05
+Whoooaaa! 9 Months without a release.  Sorry about that - Been stuck without a desktop PC 
+for quite a while and the laptop isn't really up to dev work.  Changes?  Erm, some... It 
+looks like I fiddled around with the Tape dialog sometime around November last year.  I 
+think I changed the Wav->Tap conversion routime to something a little more reliable.  
+Snapshot loading/saving should work again.  There's a few changes to the display timing as 
+well.
+
+Version 0.35 29/11/04
+Fixed a bug in the ROM selection box.  Added Preliminary support for the Lambda ZX81 clone.
+
+Version 0.34 19/11/04
+Complete support for the TS1500 ROM.  Note, the TS1500 only supports 16k of RAM.  EightyOne 
+will not stop you from selecting a TS1500 with less RAM, however it defaults to 16k and the 
+ROM will crash with less memory. The TS1500 also defaults to NTSC mode.
+
+Version 0.33 15/11/04
+Moved the display artifacts to it's own dialog with finer control.  Hopefully fixed a bug 
+which caused EightyOne to crash sometimes when exiting.
+
+Version 0.32 14/11/04
+Fixed the NTSC display. The window shrinks vertically now so it doesn't display the 
+vertical retrace.  Added a new feature (at the request of Andre), Display Artifacts.
+
+Version 0.31 11/11/04
+Tidied up the Tape Manager (it's now resizable!). Fixed a bug in the interupt generation code.  
+This solves a problem where the display would get shifted left or right depending on the code 
+used to create it.  H-Forth and TreeForth ROMs now work correctly (They need to be configured 
+in a certain way - ROM patches off, 16k of RAM and Shadow RAM on).
+
+Version 0.30 26/10/04
+Few more changes.  You can now convert both ways, wav<>(t81,p).
+
+Version 0.29 20/09/04
+Lots of changes.  Converting wave files now preserves the silence between files.  EightyOne 
+now loads/saves ZX80 .O files.  Lots of small changes throughout the code to tidy a few things 
+up.
+
+Version 0.28 19/09/04
+Whahey! Two releases in one day (Is that good or bad?).  Tidied the code up a bit.  Fixed a 
+few bugs here and there... nothing substantial.  A few things I should have done months ago.  
+EightyOne now compiles with only 4 warnings.
+
+Version 0.27 19/09/04
+Interim Release.  Preliminary support for converting .wav files to .p/.81.  Should work for 
+fairly clean samples but no guarantees for poor quality files.  Conversion the other way 
+comming soon.
+
+Version 0.26 23/08/04
+Fixed a couple of bugs in the Wav loader.  The sample display was upside down.  EightyOne 
+should now load more wav files now too.
+
+Version 0.25 4/1/04
+Nothing exciting I'm afraid.  I finally got my lazy ass busy and wrote the code to save/load 
+all the setting... It should hopefully remember things like window positions, default 
+directories now.
+
+Version 0.24 - 1/1/04
+Happy New Year!
+OK, I finally got round to fixing the full screen code - mostly. A bit of tidying here and 
+there, nothing much.  Still, we're back developing it again.
+
+Version 0.23 - 29/12/03
+Wow! Been a couple of months since the last update (Been bust starting my own company and such).
+Not many changes, the printer has one or two fixes.  You can now save files on a >32k machine and 
+there's a new option for Inverse Video.  Also changes the timers so it should work more smoothly.
+
+Version 0.22 - 10/10/03
+Proper support for 16k ROMs as well as <=8k. The Snap file has more information in it now, 
+though remains compatible with the version used in 0.21.  You can now drag not only .p/.t81 
+but also .wav and .z81 files onto EightyOne.  The Tape Manager and Wav Loader also display 
+the current filename in the window title.  There's also more granular control over the 
+emulation speed (It's still a logarithmic scale though).
+
+Version 0.21 - 6/10/03
+The Snap file format has changed to something a bit more robust, portable and extensible.  Also, 
+it's now possible to hack the snap files in notepad or whatever if you so wish. You can now drag 
+tape files onto the emulator window and they'll automaticly be inserted.
+
+Version 0.20 - 4/10/03
+Removed the Memotech option from the Hardware dialog until I can figure it out.  Instead, there's 
+an option to select or deselect True-hires mode.  Enabled, WRX true hires mode works whereas 
+disabled, you can use alternate character sets defined in the 8192-16383 memory range.
+
+Version 0.19 - 4/10/03
+Tidied up the Hardware dialog box.  Also the Maxdemo now works :)   - The timing was fine, 
+however I'd forgotten to treat the second memory fetch of an EDxx instruction as an M1 cycle.  
+oops.
+
+Version 0.18 - 2/10/03
+1/2 the time, switching between machines wouldn't work properly - fixed this time (hopefully). 
+EightyOne finally has its own icon (Thanks to Paul Collins). I renamed the sliders on the 
+Printer Control.  Added some functionality to the Fast 'n Dirty Mode so that a lot of true 
+hi-res games now work as well as in Accurate mode.  Nothing much today...
+
+Version 0.17 - 1/10/03
+Small change to the timing again.  HR-Chess display the left-hand quote around the input now.  
+Not many more features I want to do now... maybe saving to wav files. Oh, and I've still to 
+code saving its config (Still putting it off).
+Other changed include the NMI/INT skip in the debugger now kind of working (There appears to be 
+a bug if you try and turn on/off the continuous display while it's executing code).  Another 
+small change is the little blue blob that scans across the screen when continuous display is 
+enabled - it represents the position of the TVs electron beam.  Oh, and the debugger doesn't 
+work well with interlace display turned on because of the way the display is generated.
+
+Version 0.16 - 30/9/03
+OK, the debugger seemed to break a lot of other things too. It now has breakpoints though. 
+Jupiter Ace emulation is working again, as is the ZX Printer.  There's few setting you can 
+choose from for the printer too - they select the horizontal and vertical speed of the 
+"carriage".  In fact, moving these about while the ZX81 is printing can produce very realistic 
+looking ZX Printer output ;-)  There's a small change in the IM2 timing - ZX-tricator displays 
+better now.
+
+Version 0.15 - 30/9/03
+It appears that ZX80 emulation got broken somewhere - fixed now.  Also a small change to the 
+way ports are handled.  The game "intruder", a space invaders clone (Actually an interesting 
+little program.  It was written for the ZX80 and is the only "interactive" flicker free zx80 
+game I know of) now works properly.
+
+Version 0.14 - 28/9/03
+Todays new feature? - A Debug window.  It's not much use yet until I add something like 
+breakpoints or skipping the NMI.  At the moment you end up "debugging" the screen generation 
+50% of the time.  Still, it's a start.
+
+Version 0.13 - 27/9/03
+Whoops, looks like I left some debug code enabled in last nights release. Whenever you loaded 
+a file, it'd stop with a D/0 error afterwards.  Anyway, I've finished off the Wav Loader - it 
+doesn't seem quite as prone to the chuntey now and should handle 8/16 bit/mono/stereo samples.  
+There was a fairly hefty memory leak too where it would forget to release the sample buffer 
+when you loaded a new wav file.  
+
+Version 0.12 - 27/9/03
+Added Wav Player.
+You can now load a program directly from a wav recording. I've also split the load/save rom 
+patch into two separate options, so if you just enable the save patch, you can load a wav file 
+then save it out to a .p or .T81.
+
+To load a wav file, do the following:
+
+	1. Go to "Hardware" and ensure the LOAD patch is disabled.
+	2. Open up the Wav Loader Window
+	3. In the Wav Loader, Click on "Open" and select your wav file.
+	   At the moment, only 8bit mono files are supported (Any sample rate
+	   though).
+	4. You can move about the wav file with the slider.  Position the red bar
+	   before the start of the program.
+	5. On the ZX81, enter LOAD ""
+	6. Press "Play" in the Wav Loader.
+	7. If the wind is right and you've crossed all the right fingers,
+	   the program will now load into EightyOne.
+
+If you're having problems with noise, try adjusting the Threshold - That's the green
+bar.  Anything below it is ignored as noise.
+
+A sample wav file to play with can be found at
+
+http://www.chuntey.com/eightyone/byter.zip
+
+I've also hopefully fixed the problem where EightyOne would sometimes not boot the machine 
+properly after a hardware change.
+
+Version 0.11 - 25/9/03
+Minor Changes.
+Changed Rendering engine slightly.  The first line of Pseudo Hi-res games no longer appears 
+corrupt. ZX80 screen appears too far to the right now though... Another look and a lot of things 
+appear too far right. grrrr.
+
+Added fps counter.
+
+Added a ROM file selector to the hardware 
+Dialog, however it will only let you select rom files in the same directory as the emulator.  I 
+really do need to add the code that loads/saves the current config on startup/shutdown.
+
+Fixed small bug where keys like , . ; ' # etc wouldn't work until after shift had been pressed 
+and released.
+
+Version 0.1 - 24/9/03
+First Public Release.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dedicated to Abbey, 1998-2008.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

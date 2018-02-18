@@ -1,0 +1,1 @@
+Non-volatile, e.g. battery back RAM, images are stored in this directory.

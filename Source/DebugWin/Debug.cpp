@@ -541,7 +541,7 @@ void TDbg::UpdateVals(void)
         Interrupts->Caption = z80.iff1 ? "Enabled":"Disabled" ;
         IM->Caption = z80.im;
 
-        if (displayedTStatesCount < 1000000)
+        if ((displayedTStatesCount >= 0) && (displayedTStatesCount < 1000000))
         {
                 TStatesCount->Caption = displayedTStatesCount;
         }

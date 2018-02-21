@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 930
-  Top = 146
+  Left = 228
+  Top = 221
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -1696,7 +1696,7 @@ object Dbg: TDbg
     TabOrder = 7
     object SymRom: TLabel
       Left = 125
-      Top = 52
+      Top = 53
       Width = 25
       Height = 13
       Caption = 'ROM'
@@ -1709,7 +1709,7 @@ object Dbg: TDbg
     end
     object SymApp: TLabel
       Left = 157
-      Top = 52
+      Top = 53
       Width = 21
       Height = 13
       Caption = 'APP'
@@ -1722,7 +1722,7 @@ object Dbg: TDbg
     end
     object EnableHistory: TCheckBox
       Left = 8
-      Top = 52
+      Top = 53
       Width = 57
       Height = 17
       Caption = 'Enable'
@@ -1736,7 +1736,7 @@ object Dbg: TDbg
     end
     object History: TButton
       Left = 7
-      Top = 20
+      Top = 17
       Width = 53
       Height = 25
       Caption = 'History'
@@ -1751,7 +1751,7 @@ object Dbg: TDbg
     end
     object Memory: TButton
       Left = 66
-      Top = 20
+      Top = 17
       Width = 53
       Height = 25
       Caption = 'Memory'
@@ -1766,7 +1766,7 @@ object Dbg: TDbg
     end
     object Symbols: TButton
       Left = 125
-      Top = 20
+      Top = 17
       Width = 53
       Height = 25
       Caption = 'Symbols'
@@ -1781,9 +1781,9 @@ object Dbg: TDbg
     end
     object ButtonProfiler: TButton
       Left = 66
-      Top = 48
+      Top = 46
       Width = 53
-      Height = 21
+      Height = 25
       Caption = 'Profiler'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText

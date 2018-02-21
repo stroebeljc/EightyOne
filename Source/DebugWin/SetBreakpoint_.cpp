@@ -115,9 +115,10 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
 {
         BreakCondition->Enabled = true;
 
+        BreakCondition->ItemIndex = Equal;
+
         UpdateRBStates();
 
-        BreakCondition->ItemIndex = Equal;
         EditAddress->Text = "$" + IntToHex(bp.Addr, 4);
         EditAddressArgument->MaxLength = 5;
 

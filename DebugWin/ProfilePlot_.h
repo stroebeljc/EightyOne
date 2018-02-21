@@ -15,12 +15,13 @@ __published:	// IDE-managed Components
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall ScrollBarHorizontalChange(TObject *Sender);
+        void __fastcall FormMouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
 private:	// User declarations
         class ProfileDetail* _pd;
         void InitScrollbar();
+        int _mouseX;
 public:		// User declarations
         __fastcall TProfilePlot(TComponent* Owner);
-
         void __fastcall PlotTGraph(class ProfileDetail* pd);
 };
 //---------------------------------------------------------------------------

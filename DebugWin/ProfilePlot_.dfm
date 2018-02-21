@@ -1,6 +1,6 @@
 object ProfilePlot: TProfilePlot
-  Left = 469
-  Top = 156
+  Left = 344
+  Top = 146
   Width = 700
   Height = 415
   Caption = 'Profile Plot'
@@ -11,6 +11,7 @@ object ProfilePlot: TProfilePlot
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnMouseMove = FormMouseMove
   OnPaint = FormPaint
   OnResize = FormResize
   PixelsPerInch = 96

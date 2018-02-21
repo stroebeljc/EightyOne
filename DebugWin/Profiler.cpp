@@ -75,6 +75,7 @@ void __fastcall TProfiler::ButtonResetClick(TObject *Sender)
         ProfileDetail& detail = _profileDetails[idx];
         detail.Reset();
         UpdateItem(selected, selected->Caption, detail);
+        ProfilePlot->Refresh();
 }
 //---------------------------------------------------------------------------
 
@@ -82,6 +83,8 @@ void __fastcall TProfiler::ButtonDeleteClick(TObject *Sender)
 {
         TListItem* selected = ListViewProfileSamples->Selected;
         if (!selected) return;
+
+        ProfilePlot->Close();
 
         int idx = selected->Index;
         ListViewProfileSamples->Items->Delete(idx);
@@ -138,6 +141,7 @@ void __fastcall TProfiler::Refresh()
                 TListItem* item = ListViewProfileSamples->Items->Item[i];
                 UpdateItem(item, item->Caption, _profileDetails[i]);
         }
+        ProfilePlot->Refresh();
 }
 
 

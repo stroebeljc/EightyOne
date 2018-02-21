@@ -50,12 +50,12 @@ public:
 
         int Min() {
                 if (_history.empty()) return INT_MAX;
-                return min(_max, *std::min_element(_history.begin(), _history.end()));
+                return *std::min_element(_history.begin(), _history.end());
         }
 
         int Max() {
                 if (_history.empty()) return INT_MIN;
-                return max(_max, *std::max_element(_history.begin(), _history.end()));
+                return *std::max_element(_history.begin(), _history.end());
         }
 
         int SampleCount() {

@@ -35,16 +35,30 @@ void __fastcall TProfilePlot::FormPaint(TObject *Sender)
                 Canvas->LineTo(i, ClientHeight - (int)(sam * scale));
         }
 
-        AnsiString min = "MIN T = "; min += _pd->Min();
-        AnsiString max = "MAX T = "; max += _pd->Max();
+        AnsiString min = "MIN T = ";
+        AnsiString max = "MAX T = ";
+        if (_pd->SampleCount()) {
+                min += _pd->Min();
+                max += _pd->Max();
+        }
+        else {
+                min += "---";
+                max += "---";
+        }
 
         Canvas->TextOutA(8,  8, max);
         Canvas->TextOutA(8, 24, min);
+
+        if(_mouseX + ScrollBarHorizontal->Position < _pd->SampleCount()) {
+                Canvas->TextOutA(8, 40, _pd->Sample(_mouseX + ScrollBarHorizontal->Position));
+        }
 }
 //---------------------------------------------------------------------------
 
 void TProfilePlot::InitScrollbar()
 {
+        if (_pd == NULL) return;
+
         ScrollBarHorizontal->Min = 0;
         bool visible = _pd->SampleCount() > ClientWidth;
         ScrollBarHorizontal->Visible = visible;
@@ -72,6 +86,27 @@ void __fastcall TProfilePlot::FormResize(TObject *Sender)
 void __fastcall TProfilePlot::ScrollBarHorizontalChange(TObject *Sender)
 {
         Refresh();
+}
+
+
+void __fastcall TProfilePlot::FormMouseMove(TObject *Sender,
+      TShiftState Shift, int X, int Y)
+{
+        TPoint coords;
+        coords.x = X;
+        coords.y = Y;
+        ScreenToClient(coords);
+        _mouseX = coords.x + ScrollBarHorizontal->Position;
+        TRect invreg;
+        invreg.left = 8;
+        invreg.top = 40;
+        invreg.right = 108;
+        invreg.bottom = 56;
+        int ax = _mouseX + ScrollBarHorizontal->Position;
+        if(ax > 0 && ax < _pd->SampleCount()) {
+                InvalidateRect(this, &invreg, false);
+                Refresh();
+        }
 }
 //---------------------------------------------------------------------------
 

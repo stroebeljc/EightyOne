@@ -38,6 +38,8 @@
 #include "memoryWindow.h"
 #include "symbolstore.h"
 #include "SymBrowse.h"
+#include "Profiler.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -197,6 +199,8 @@ void DebugUpdate(void)
                 Dbg->UpdateVals();
                 zx81.single_step = Dbg->Continuous->Checked ? 1 : 0;
         }
+
+        Profiler->DebugTick(&z80);
 
         if (Dbg->Continuous->Checked==true && Dbg->Visible==true)
                 Dbg->UpdateVals();
@@ -607,6 +611,8 @@ void TDbg::UpdateVals(void)
                 StepOver->Enabled = true;
                 EnableVals();
                 DelTempBreakPoints();
+
+                Profiler->Refresh();
         }
         else
         {
@@ -1452,6 +1458,12 @@ void __fastcall TDbg::Disass3MouseDown(TObject *Sender,
         AnsiString t = ((TLabel*)Sender)->Caption;
         AnsiString t2 = t.SubString(13,5);
         SetMenuContent(StrToInt(t2));
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::ButtonProfilerClick(TObject *Sender)
+{
+        Profiler->Show();
 }
 //---------------------------------------------------------------------------
 

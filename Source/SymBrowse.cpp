@@ -3,10 +3,13 @@
 #include <vcl.h>
 #pragma hdrstop
 
+#include <Clipbrd.hpp>
+
 #include "SymBrowse.h"
 #include "symbolstore.h"
 #include "MemoryWindow.h"
 #include "Debug.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -77,14 +80,31 @@ void __fastcall TSymbolBrowser::FormShow(TObject *Sender)
 void __fastcall TSymbolBrowser::ListBox1KeyPress(TObject *Sender,
       char &Key)
 {
+        int isPrintable = isprint(Key);
+
+        long timeSinceLastPress = GetTickCount() - _lastTick;
+        if (timeSinceLastPress > 500 || !isPrintable) {
+                _searchString = "";
+        }
+        _lastTick = GetTickCount();
+
+        if (!isPrintable) {
+                if (0x03 == Key) {
+                        // ctrl-c ... copy string to clipboard
+                        AnsiString x = ListBox1->Items->Strings[ListBox1->ItemIndex].SubString(5,24).Trim();
+                        Clipboard()->SetTextBuf(x.c_str());
+                }
+                return;
+        }
+
+        _searchString += Key;
         int startidx = ListBox1->ItemIndex + 1;
 
         for (int i = 0; i < ListBox1->Items->Count; ++i)
         {
                 int idx = (startidx + i) % ListBox1->Items->Count;
-                AnsiString s = ListBox1->Items->Strings[idx];
-                char x = s[5];
-                if (x == (char)Key)
+                AnsiString x = ListBox1->Items->Strings[idx].SubString(5,_searchString.Length());
+                if (x.AnsiCompareIC(_searchString) == 0)
                 {
                        ListBox1->ItemIndex = idx;
                        return;

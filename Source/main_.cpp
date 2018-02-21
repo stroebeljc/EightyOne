@@ -72,6 +72,8 @@
 #include "Hist.h"
 #include "MakeHDF.h"
 #include "LiveMemoryWindow_.h"
+#include "ProfilePlot_.h"
+#include "Profiler.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -1938,6 +1940,8 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(HW, l, t);
         MoveWindow(Debug68k, l, t);
         MoveWindow(LiveMemoryWindow, l, t);
+        MoveWindow(ProfilePlot, l, t);
+        MoveWindow(Profiler, l, t);
 }
 //---------------------------------------------------------------------------
 

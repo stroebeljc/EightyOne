@@ -1,10 +1,10 @@
 object LiveMemoryWindow: TLiveMemoryWindow
-  Left = 393
-  Top = 153
+  Left = 291
+  Top = 175
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Live Memory'
-  ClientHeight = 275
+  ClientHeight = 292
   ClientWidth = 512
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object LiveMemoryWindow: TLiveMemoryWindow
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 256
+    Top = 273
     Width = 512
     Height = 19
     Panels = <

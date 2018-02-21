@@ -50,6 +50,6 @@ namespace symbolstore
         //
         void beginenumeration(void);
         bool enumerate(AnsiString& sym, int& addr, char& type);
-}
+};
 
 #endif // _symbolstore_h_

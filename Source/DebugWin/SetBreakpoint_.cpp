@@ -219,7 +219,7 @@ void TSetBreakpoint::ConfigureBreakpointFields(struct breakpoint& bp)
         }
         else
         {
-                BreakValue->Text = "$" + IntToHex(bp.Value, GetBreakValueMaxDigits(bp.Type, bp.RegisterId));
+                BreakValue->Text = "$" + IntToHex(bp.Value, GetBreakValueMaxDigits(bp.Type, bp.ConditionAddr, bp.RegisterId));
         }
 
         if (BreakAddress->Visible)
@@ -273,7 +273,7 @@ bool TSetBreakpoint::GetBreakpointFields(struct breakpoint& bp)
         }
 
         breakValue = BreakValue->Text.Trim();
-        GetBreakValueLimits((BreakpointType)BreakType->ItemIndex, (RegisterType)RegisterList->ItemIndex, lowerLimit, upperLimit);
+        GetBreakValueLimits((BreakpointType)BreakType->ItemIndex, (BreakpointCondition)BreakConditionAddr->ItemIndex, (RegisterType)RegisterList->ItemIndex, lowerLimit, upperLimit);
 
         bool symbolLookUp = (BreakType->ItemIndex == BP_EXE);
         if (!SanitiseEditBox(breakValue, value, lowerLimit, upperLimit, symbolLookUp))
@@ -389,7 +389,7 @@ void TSetBreakpoint::BreakTypeChangeExe()
 
 void TSetBreakpoint::BreakTypeChangeRdWrInOut()
 {
-        SetConditionList(BreakConditionAddr, "=,<>,<=,>=");
+        SetConditionList(BreakConditionAddr, "=,<>,<=,>=,->");
         SetEditBox(BreakAddress, "$0000");
         SetConditionList(BreakConditionValue, "=,<>,<=,>=");
         BreakConditionValue->ItemIndex = GreaterThanEquals;
@@ -457,6 +457,8 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
         {
                 case Range:
                         SetEditBoxLabels("Addr Start", "Addr End");
+                        SetConditionList(BreakConditionValue, "...");
+                        SetEditBox(BreakValue, "$FFFF");
                         break;
 
                 case Equal:
@@ -476,7 +478,9 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
                                 case BP_IN:
                                 case BP_OUT:
                                         SetEditBoxLabels("Address", "Value");
+                                        SetConditionList(BreakConditionValue, "=,<>,<=,>=,->");
                                         BreakConditionValue->ItemIndex = GreaterThanEquals;
+                                        SetEditBox(BreakValue, "$00");
                                         break;
 
                                 case BP_MEMORY:
@@ -518,7 +522,7 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
 
 void __fastcall TSetBreakpoint::RegisterListChange(TObject *Sender)
 {
-        int maxDigits = GetBreakValueMaxDigits((BreakpointType)BreakType->ItemIndex, (RegisterType)RegisterList->ItemIndex);
+        int maxDigits = GetBreakValueMaxDigits((BreakpointType)BreakType->ItemIndex, (BreakpointCondition)BreakConditionAddr->ItemIndex, (RegisterType)RegisterList->ItemIndex);
         if ((BreakValue->MaxLength - 1) > maxDigits)
         {
                 SetEditBox(BreakValue, "$00");
@@ -573,29 +577,25 @@ void TSetBreakpoint::ValidateBreakValue()
 {
         int lowerLimit;
         int upperLimit;
-        GetBreakValueLimits((BreakpointType)BreakType->ItemIndex, (RegisterType)RegisterList->ItemIndex, lowerLimit, upperLimit);
+        GetBreakValueLimits((BreakpointType)BreakType->ItemIndex, (BreakpointCondition)BreakConditionAddr->ItemIndex, (RegisterType)RegisterList->ItemIndex, lowerLimit, upperLimit);
 
         int value;
         bool valid = SanitiseEditBox(BreakValue->Text, value, lowerLimit, upperLimit);
 
         if (valid)
         {
-                if ((BreakType->ItemIndex == BP_EXE) && (BreakConditionAddr->ItemIndex == Range))
+                if (BreakConditionAddr->ItemIndex == Range)
                 {
                         GetBreakAddressLimits((BreakpointType)BreakType->ItemIndex, lowerLimit, upperLimit);
 
                         int addr;
-                        bool symbolLookUp = true;
+                        bool symbolLookUp = (BreakType->ItemIndex == BP_EXE);
                         valid = SanitiseEditBox(BreakAddress->Text, addr, lowerLimit, upperLimit, symbolLookUp);
 
                         if (valid)
                         {
                                 valid = (addr < value);
                         }
-                }
-                else if (BreakType->ItemIndex == BP_TSTATES)
-                {
-                        valid = (value >= 4);
                 }
         }
 
@@ -627,7 +627,7 @@ int TSetBreakpoint::GetBreakAddressMaxDigits(BreakpointType type)
 }
 //---------------------------------------------------------------------------
 
-int TSetBreakpoint::GetBreakValueMaxDigits(BreakpointType type, RegisterType registerIndex)
+int TSetBreakpoint::GetBreakValueMaxDigits(BreakpointType type, BreakpointCondition condition, RegisterType registerIndex)
 {
         int limit;
 
@@ -640,9 +640,19 @@ int TSetBreakpoint::GetBreakValueMaxDigits(BreakpointType type, RegisterType reg
                 case BP_RD:
                 case BP_WR:
                 case BP_IN:
+                case BP_OUT:
+                        if (condition == Range)
+                        {
+                                limit = 4;
+                        }
+                        else
+                        {
+                                limit = 2;
+                        }
+                        break;
+
                 case BP_INL:
                 case BP_INH:
-                case BP_OUT:
                 case BP_OUTL:
                 case BP_OUTH:
                         limit = 2;
@@ -703,7 +713,7 @@ void TSetBreakpoint::GetBreakAddressLimits(BreakpointType type, int& lowerLimit,
 
 //---------------------------------------------------------------------------
 
-void TSetBreakpoint::GetBreakValueLimits(BreakpointType type, RegisterType registerIndex, int& lowerLimit, int& upperLimit)
+void TSetBreakpoint::GetBreakValueLimits(BreakpointType type, BreakpointCondition condition, RegisterType registerIndex, int& lowerLimit, int& upperLimit)
 {
         lowerLimit = 0;
         
@@ -734,6 +744,18 @@ void TSetBreakpoint::GetBreakValueLimits(BreakpointType type, RegisterType regis
 
                 case BP_IN:
                 case BP_OUT:
+                case BP_RD:
+                case BP_WR:
+                        if (condition == Range)
+                        {
+                                upperLimit = 0xFFFF;
+                        }
+                        else
+                        {
+                                upperLimit = 0xFF;
+                        }
+                        break;
+
                 case BP_INL:
                 case BP_INH:
                 case BP_OUTH:

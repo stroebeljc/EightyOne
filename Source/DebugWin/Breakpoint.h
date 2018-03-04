@@ -150,7 +150,7 @@ struct breakpoint
                                 break;
                 }
 
-                if (match && (Value != -1))
+                if (match && (Value != -1) && (ConditionAddr != Range))
                 {
                         switch (ConditionValue)
                         {

@@ -43,9 +43,9 @@ private:	// User declarations
         void ValidateBreakAddress();
         void ValidateBreakValue();
         void GetBreakAddressLimits(BreakpointType type, int& lowerLimit, int& upperLimit);
-        void GetBreakValueLimits(BreakpointType type, RegisterType registerIndex, int& lowerLimit, int& upperLimit);
+        void GetBreakValueLimits(BreakpointType type, BreakpointCondition condition, RegisterType registerIndex, int& lowerLimit, int& upperLimit);
         int GetBreakAddressMaxDigits(BreakpointType type);
-        int GetBreakValueMaxDigits(BreakpointType type, RegisterType registerIndex);
+        int GetBreakValueMaxDigits(BreakpointType type, BreakpointCondition condition, RegisterType registerIndex);
         void ConfigureBreakpointFields(struct breakpoint& bp);
         bool GetBreakpointFields(struct breakpoint& bp);
         void BreakTypeChangeExe();

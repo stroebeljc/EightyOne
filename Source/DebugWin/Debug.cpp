@@ -413,9 +413,18 @@ AnsiString TDbg::ConstructHighIOBreakpointText(AnsiString type, breakpoint* cons
 AnsiString TDbg::ConstructRdWrInOutMemBreakpointText(AnsiString type, breakpoint* const bp)
 {
         AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString cv = GetConditionValue(bp->ConditionValue);
-        AnsiString str = type + ca + "$" + Hex16(bp->Addr) + cv + "$" + Hex8(bp->Value);
+        AnsiString str = type + ca + "$" + Hex16(bp->Addr);
 
+        if (bp->ConditionAddr == Range)
+        {
+                str += "...$" + Hex16(bp->EndAddr);
+        }
+        else
+        {
+                AnsiString cv = GetConditionValue(bp->ConditionValue);
+                str += cv + "$" + Hex8(bp->Value);
+        }
+        
         return str;
 }
 

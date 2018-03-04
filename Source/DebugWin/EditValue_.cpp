@@ -123,10 +123,18 @@ bool TEditValue::Translate(AnsiString text, int& value)
         //
         if (hex)
         {
+                if (result.Length() == 1)
+                {
+                        return false;
+                }
                 result = "0x" + result.SubString(2, result.Length() - 1);
         }
         else if (binary)
         {
+                if (result.Length() == 1)
+                {
+                        return false;
+                }
                 result = result.SubString(2, result.Length() - 1);
         }
 

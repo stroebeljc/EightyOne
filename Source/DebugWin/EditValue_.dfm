@@ -28,6 +28,7 @@ object EditValue: TEditValue
     Top = 8
     Width = 121
     Height = 21
+    CharCase = ecUpperCase
     MaxLength = 17
     TabOrder = 0
     Text = '0'

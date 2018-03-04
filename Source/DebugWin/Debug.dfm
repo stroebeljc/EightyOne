@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 228
-  Top = 221
+  Left = 190
+  Top = 335
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -536,7 +536,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 5
     object Disass0: TLabel
       Left = 8
       Top = 37
@@ -758,7 +758,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 10
     object Label39: TLabel
       Left = 5
       Top = 18
@@ -946,13 +946,13 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 3
+    TabOrder = 2
     object Label31: TLabel
       Left = 9
-      Top = 196
-      Width = 63
+      Top = 16
+      Width = 105
       Height = 14
-      Caption = 'T-States:'
+      Caption = 'T-States Count:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -964,9 +964,9 @@ object Dbg: TDbg
       OnMouseDown = Stack0MouseDown
     end
     object TStatesCount: TLabel
-      Left = 78
-      Top = 196
-      Width = 44
+      Left = 120
+      Top = 16
+      Width = 57
       Height = 14
       AutoSize = False
       Caption = '0'
@@ -981,24 +981,24 @@ object Dbg: TDbg
       OnClick = HL_Click
       OnMouseDown = HL_MouseDown
     end
-    object AddrBrkBtn: TButton
-      Left = 125
-      Top = 46
+    object AddBrkBtn: TButton
+      Left = 8
+      Top = 189
       Width = 53
       Height = 25
-      Caption = 'Execute'
+      Caption = 'Add'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
-      OnClick = AddrBrkBtnClick
+      TabOrder = 0
+      OnClick = AddBrkBtnClick
     end
     object DelBrkBtn: TButton
-      Left = 125
-      Top = 17
+      Left = 66
+      Top = 189
       Width = 53
       Height = 25
       Caption = 'Delete'
@@ -1013,10 +1013,10 @@ object Dbg: TDbg
       OnClick = DelBrkBtnClick
     end
     object BPList: TStringGrid
-      Left = 8
-      Top = 19
-      Width = 113
-      Height = 167
+      Left = 7
+      Top = 36
+      Width = 170
+      Height = 145
       ColCount = 1
       DefaultColWidth = 10
       DefaultRowHeight = 14
@@ -1025,71 +1025,24 @@ object Dbg: TDbg
       FixedRows = 0
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRowSelect]
       ScrollBars = ssVertical
-      TabOrder = 0
+      TabOrder = 3
       OnSelectCell = BPListSelectCell
     end
-    object WriteBrkBtn: TButton
-      Left = 125
-      Top = 75
+    object EditBrkBtn: TButton
+      Left = 124
+      Top = 189
       Width = 53
       Height = 25
-      Caption = 'Write'
+      Caption = 'Edit'
+      Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
-      OnClick = WriteBrkBtnClick
-    end
-    object ReadBrkBtn: TButton
-      Left = 125
-      Top = 104
-      Width = 53
-      Height = 25
-      Caption = 'Read'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 4
-      OnClick = ReadBrkBtnClick
-    end
-    object OutBrkBtn: TButton
-      Left = 125
-      Top = 133
-      Width = 53
-      Height = 25
-      Caption = 'Out'
-      TabOrder = 5
-      OnClick = OutBrkBtnClick
-    end
-    object InBrkBtn: TButton
-      Left = 125
-      Top = 162
-      Width = 53
-      Height = 25
-      Caption = 'In'
-      TabOrder = 6
-      OnClick = InBrkBtnClick
-    end
-    object TStatesBrkBtn: TButton
-      Left = 125
-      Top = 191
-      Width = 53
-      Height = 25
-      Caption = 'T-States'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 7
-      OnClick = TStatesBrkBtnClick
+      TabOrder = 2
+      OnClick = EditBrkBtnClick
     end
   end
   object GroupBox5: TGroupBox
@@ -1104,7 +1057,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 1
     OnClick = GroupBox5Click
     object Stack0: TLabel
       Left = 11
@@ -1232,7 +1185,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 5
+    TabOrder = 7
     object AceStk0: TLabel
       Left = 43
       Top = 20
@@ -1578,7 +1531,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 6
+    TabOrder = 3
     object SingleStep: TButton
       Left = 12
       Top = 21
@@ -1693,10 +1646,10 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 7
+    TabOrder = 6
     object SymRom: TLabel
       Left = 125
-      Top = 53
+      Top = 52
       Width = 25
       Height = 13
       Caption = 'ROM'
@@ -1709,7 +1662,7 @@ object Dbg: TDbg
     end
     object SymApp: TLabel
       Left = 157
-      Top = 53
+      Top = 52
       Width = 21
       Height = 13
       Caption = 'APP'
@@ -1722,7 +1675,7 @@ object Dbg: TDbg
     end
     object EnableHistory: TCheckBox
       Left = 8
-      Top = 53
+      Top = 51
       Width = 57
       Height = 17
       Caption = 'Enable'
@@ -1807,7 +1760,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 8
+    TabOrder = 4
     object IOPort0Address: TLabel
       Left = 38
       Top = 16
@@ -1933,7 +1886,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 9
+    TabOrder = 11
     object ChromaColourModeLabel: TLabel
       Left = 14
       Top = 15
@@ -1974,7 +1927,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 10
+    TabOrder = 9
     object ZXCModeLabel: TLabel
       Left = 14
       Top = 15
@@ -2009,7 +1962,7 @@ object Dbg: TDbg
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
-    TabOrder = 11
+    TabOrder = 8
     object SpectraModeLabel: TLabel
       Left = 14
       Top = 15

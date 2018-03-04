@@ -71,6 +71,8 @@ extern void TZXWriteByte(unsigned char Byte);
 
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
+extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
+extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 void ace_initialise(void)
 {
@@ -100,6 +102,9 @@ void ace_writebyte(int Address, int Data)
 {
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
         lastMemoryWriteAddrHi = Address;
+
+        lastMemoryWriteValueLo = lastMemoryWriteValueHi;
+        lastMemoryWriteValueHi = Data;
 
         //noise = (noise<<8) | Data;
 
@@ -157,7 +162,12 @@ BYTE ace_readbyte(int Address)
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
         lastMemoryReadAddrHi = Address;
 
-        return ace_ReadByte(Address);
+        BYTE byte = ace_ReadByte(Address);
+
+        lastMemoryReadValueLo = lastMemoryReadValueHi;
+        lastMemoryReadValueHi = byte;
+
+        return byte;
 }
 
 // Called by Z80 instruction operand fetches

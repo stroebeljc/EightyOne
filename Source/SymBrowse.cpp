@@ -120,7 +120,6 @@ void __fastcall TSymbolBrowser::ListBox1DblClick(TObject *Sender)
         symbolstore::symbolToAddress(sym.Trim(), addr);
         breakpoint bp(addr, BP_EXE);
         Dbg->AddBreakPoint(bp);
-        Dbg->DelBrkBtn->Enabled = true;
 }
 //---------------------------------------------------------------------------
 

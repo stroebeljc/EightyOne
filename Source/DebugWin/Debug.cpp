@@ -57,6 +57,8 @@ extern unsigned char shift_store;
 extern unsigned char memory[];
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
+extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
+extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 const int maxInstructionBytes = 4;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
 
@@ -162,35 +164,14 @@ void DebugUpdate(void)
         }
         if (Dbg->INTRetAddr!=-1) return;
 
-        int lmrl = lastMemoryReadAddrLo;
-        lastMemoryReadAddrLo = -1;
-        int lmrh = lastMemoryReadAddrHi;
-        lastMemoryReadAddrHi = -1;
-        int lmwl = lastMemoryWriteAddrLo;
-        lastMemoryWriteAddrLo = -1;
-        int lmwh = lastMemoryWriteAddrHi;
-        lastMemoryWriteAddrHi = -1;
-        int lpi = Dbg->lastPortInAddr;
-        Dbg->lastPortInAddr = -1;
-        int lpo = Dbg->lastPortOutAddr;
-        Dbg->lastPortOutAddr = -1;
-
         displayedTStatesCount = tStatesCount;
 
-        if (Dbg->ExecBreakPointHit(z80.pc.w) ||
-                (lmrl != -1 && Dbg->BPHit(lmrl, BP_RD)) ||
-                (lmrh != -1 && Dbg->BPHit(lmrh, BP_RD)) ||
-                (lmwl != -1 && Dbg->BPHit(lmwl, BP_WR)) ||
-                (lmwh != -1 && Dbg->BPHit(lmwh, BP_WR)) ||
-                (lpi  != -1 && Dbg->BPHit(lpi, BP_IN)) ||
-                (lpo  != -1 && Dbg->BPHit(lpo, BP_OUT)) ||
-                Dbg->BPHit(z80.pc.w, BP_TSTATES))
+        if (Dbg->BreakPointHit())
         {
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
                 Dbg->RunStopClick(NULL);
-        }
-
+        }            
 
         if (Dbg->DoNext)
         {
@@ -212,14 +193,6 @@ void DebugUpdate(void)
 
 bool TDbg::AddBreakPoint(struct breakpoint& bp)
 {
-        // type 0 = execute
-        // type 1 = mem read
-        // type 2 = mem write
-        // type 3 = input
-        // type 4 = output
-        // type 5 = T-states count
-        const AnsiString types("xrwiot");
-        const AnsiString conditions("=<>!=");
         const int maxBreakpoints = 99;
 
         if (Breakpoints == maxBreakpoints)
@@ -228,119 +201,326 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         int i;
         for(i=0; i<Breakpoints; i++)
         {
-                if ((bp.Type == BP_TSTATES) && (Breakpoint[i].Type == BP_TSTATES))
+                bool existingBreakpoint;
+
+                switch (bp.Type)
                 {
-                        DelBreakPoint(Breakpoint[i].Addr);
-                        break;
+                        case BP_TSTATES:
+                                existingBreakpoint = (Breakpoint[i].Type == bp.Type);
+                                break;
+
+                        case BP_REGISTER:
+                                existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
+                                                     (Breakpoint[i].RegisterId == bp.RegisterId) &&
+                                                     (Breakpoint[i].ConditionValue == bp.ConditionValue) &&
+                                                     (Breakpoint[i].Value == bp.Value);
+                                break;
+
+                        case BP_FLAG:
+                                existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
+                                                     (Breakpoint[i].FlagId == bp.FlagId);
+                                break;
+
+                        case BP_MEMORY:
+                                existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
+                                                     (Breakpoint[i].Addr == bp.Addr) &&
+                                                     (Breakpoint[i].ConditionValue == bp.ConditionValue) &&
+                                                     (Breakpoint[i].Value == bp.Value);
+                                break;
+
+                        case BP_RD:
+                        case BP_WR:
+                        case BP_EXE:
+                        case BP_OUTL:
+                        case BP_OUTH:
+                        case BP_INL:
+                        case BP_INH:
+                                existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
+                                                     (Breakpoint[i].ConditionAddr == bp.ConditionAddr) &&
+                                                     (Breakpoint[i].Addr == bp.Addr) &&
+                                                     (Breakpoint[i].ConditionValue == bp.ConditionValue) &&
+                                                     (Breakpoint[i].Value == bp.Value);
+                                break;
                 }
 
-                if ((Breakpoint[i].Addr == bp.Addr) && (Breakpoint[i].Type == bp.Type)
-                         && (Breakpoint[i].Condition == bp.Condition))
+                if (existingBreakpoint)
                 {
-                        DelBreakPoint(Breakpoint[i].Addr);
+                        DelBreakPoint(i);
                         break;
-                        // already exists
-                        //return false;
                 }
         }
 
         Breakpoint[Breakpoints] = bp;
 
-        AnsiString t(types[bp.Type + 1]);
-        AnsiString c(conditions[bp.Condition + 1]);
-        AnsiString str;
+        AnsiString str = GetBreakpointText(&bp);
 
-        if (t == "x" && bp.Condition != Range && bp.Mask == 0xFFFF)
-        {
-                str = t + c + symbolstore::addressToSymbolOrHex(bp.Addr);
-//                if (bp.Condition == Range)
-//                {
-//                        str += "-" + symbolstore::addressToSymbolOrHex(bp.AddrArg);
-//                }
-        }
-        else if (t == "t")
-        {
-                str = t + c + "$" + Hex16(bp.Addr) + " T=" + bp.Count;
-        }
-        else
-        {
-                str = t + c + "$" + Hex16(bp.Addr);
-                if (bp.Condition == Range)
-                {
-                        str += " - $" + Hex16(bp.EndAddr);
-                }
-                else if (bp.Mask != 0xFFFF)
-                {
-                        str += " &=$" + Hex16(bp.Mask);
-                }
-        }
-
-        if (bp.Permanent)
-        {
-                BPList->Cells[0][Breakpoints] = str;
-        }
-        else
-        {
-                BPList->Cells[0][Breakpoints] = "("+str+")";
-        }
+        BPList->Cells[0][Breakpoints] = str;
 
         Breakpoints++;
         BPList->RowCount++;
         if (BPList->RowCount > 1)
                 BPList->Row = BPList->RowCount - 2;
 
+        AddBrkBtn->Enabled = (Breakpoints < maxBreakpoints);
+        DelBrkBtn->Enabled = true;
+        EditBrkBtn->Enabled = true;
+
         return true;
 }
 
-void TDbg::DelBreakPoint(int Addr)
+AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
 {
-        int i;
-        for(i=0; i<Breakpoints; i++)
+        AnsiString str;
+                        
+        switch (bp->Type)
         {
-                if ((Breakpoint[i].Addr == Addr) || (i==Addr-100000))
+                case BP_EXE:
+                        str = ConstructExeBreakpointText(bp);
+                        break;
+
+                case BP_RD:
+                        str = ConstructRdWrInOutMemBreakpointText("RD ", bp);
+                        break;
+
+                case BP_WR:
+                        str = ConstructRdWrInOutMemBreakpointText("WR ", bp);
+                        break;
+
+                case BP_IN:
+                        str = ConstructRdWrInOutMemBreakpointText("IN ", bp);
+                        break;
+
+                case BP_OUT:
+                        str = ConstructRdWrInOutMemBreakpointText("OUT", bp);
+                        break;
+
+                case BP_MEMORY:
+                        str = ConstructRdWrInOutMemBreakpointText("MEM", bp);
+                        break;
+
+                case BP_INL:
+                        str = ConstructLowIOBreakpointText("IN ", bp);
+                        break;
+
+                case BP_INH:
+                        str = ConstructHighIOBreakpointText("IN ", bp);
+                        break;
+
+                case BP_OUTL:
+                        str = ConstructLowIOBreakpointText("OUT", bp);
+                        break;
+
+                case BP_OUTH:
+                        str = ConstructHighIOBreakpointText("OUT", bp);
+                        break;
+
+                case BP_TSTATES:
+                        str = ConstructTStatesBreakpointText(bp);
+                        break;
+
+                case BP_REGISTER:
+                        str = ConstructRegisterBreakpointText(bp);
+                        break;
+
+                case BP_FLAG:
+                        str = ConstructFlagBreakpointText(bp);
+                        break;
+        }
+
+        if (!bp->Permanent)
+        {
+                str = "{" + str + "}";
+        }
+
+        return str;
+}
+
+static AnsiString GetConditionAddr(BreakpointCondition condition)
+{
+        const AnsiString conditions[] = { " = ", " <>", " <=", " >=", " ->" };
+
+        return conditions[condition];
+}
+
+static AnsiString GetConditionValue(BreakpointCondition condition)
+{
+        const AnsiString conditions[] = { " = ", " <>", " <=", " >=", "..." };
+
+        return conditions[condition];
+}
+
+AnsiString TDbg::ConstructTStatesBreakpointText(breakpoint* const bp)
+{
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString str = "CLK" + ca + "$" + Hex16(bp->Addr) + " <>" + bp->TStates;
+        return str;
+}
+
+static AnsiString Pad(AnsiString string)
+{
+        AnsiString paddedString = string + "    ";
+        return paddedString.SubString(1, 5);
+}
+
+AnsiString TDbg::ConstructFlagBreakpointText(breakpoint* const bp)
+{
+        AnsiString FlagNames[] = {"C", "N", "P/V", "Bit3", "H", "Bit5", "Z", "S"};
+
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString cv = GetConditionValue(bp->ConditionValue);
+        AnsiString str = "FLG" + ca + Pad(FlagNames[bp->FlagId]) + cv + bp->Value;
+
+        return str;
+}
+
+AnsiString TDbg::ConstructRegisterBreakpointText(breakpoint* const bp)
+{
+        AnsiString RegisterNames[] = {"BC", "DE", "HL", "IX", "IY", "PC", "SP", "BC'", "DE'", "HL'",
+                                      "A", "B", "C", "D", "E", "H", "L", "I", "R", "IXh", "IXl", "IYh", "IYl",
+                                      "A'", "B'", "C'", "D'", "E'", "H'", "L'"};
+
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString cv = GetConditionValue(bp->ConditionValue);
+        AnsiString str = "REG" + ca + Pad(RegisterNames[bp->RegisterId]) + cv + "$";
+        if (bp->RegisterId >= RegA)
+        {
+                str += Hex8(bp->Value);
+        }
+        else
+        {
+                str += Hex16(bp->Value);
+        }
+
+        return str;
+}
+
+AnsiString TDbg::ConstructLowIOBreakpointText(AnsiString type, breakpoint* const bp)
+{
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString cv = GetConditionValue(bp->ConditionValue);
+        AnsiString str = type + ca + "$xx" + Hex8(bp->Addr) + cv + "$" + Hex8(bp->Value);
+        return str;
+}
+
+AnsiString TDbg::ConstructHighIOBreakpointText(AnsiString type, breakpoint* const bp)
+{
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString cv = GetConditionValue(bp->ConditionValue);
+        AnsiString str = type + ca + "$" + Hex8(bp->Addr >> 8) + "xx" + cv + "$" + Hex8(bp->Value);
+        return str;
+}
+
+AnsiString TDbg::ConstructRdWrInOutMemBreakpointText(AnsiString type, breakpoint* const bp)
+{
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString cv = GetConditionValue(bp->ConditionValue);
+        AnsiString str = type + ca + "$" + Hex16(bp->Addr) + cv + "$" + Hex8(bp->Value);
+
+        return str;
+}
+
+AnsiString TDbg::ConstructExeBreakpointText(breakpoint* const bp)
+{
+        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
+        AnsiString str = "EXE" + ca + "$" + Hex16(bp->Addr);
+
+        if (bp->ConditionAddr == Range)
+        {
+                str += "...$" + Hex16(bp->EndAddr);
+        }
+        else
+        {
+                AnsiString symbol;
+                if (symbolstore::addressToSymbol(bp->Addr, symbol))
                 {
-                        int j;
-                        for(j=i; j<Breakpoints;j++)
-                        {
-                                Breakpoint[j] = Breakpoint[j+1];
-                                BPList->Cells[0][j] = BPList->Cells[0][j+1];
-                        }
-                        Breakpoints--;
-                        BPList->RowCount--;
+                        str += " " + symbol;
                 }
+        }
+
+        return str;
+}
+
+void TDbg::DelBreakPoint(int index)
+{
+        int j;
+        for(j=index; j<Breakpoints;j++)
+        {
+                Breakpoint[j] = Breakpoint[j+1];
+                BPList->Cells[0][j] = BPList->Cells[0][j+1];
+        }
+        Breakpoints--;
+        BPList->RowCount--;
+
+        if ((BPList->Row > 0) && ((BPList->Row + 1) >= BPList->RowCount))
+        {
+                BPList->Row--;
         }
 }
 
-breakpoint* TDbg::BPHit(int Addr, int Type)
+bool TDbg::BreakPointHit()
 {
+        int lmrl = lastMemoryReadAddrLo;
+        int lmrlv = lastMemoryReadValueLo;
+        lastMemoryReadAddrLo = -1;
+
+        int lmrh = lastMemoryReadAddrHi;
+        int lmrhv = lastMemoryReadValueHi;
+        lastMemoryReadAddrHi = -1;
+
+        int lmwl = lastMemoryWriteAddrLo;
+        int lmwlv = lastMemoryWriteValueLo;
+        lastMemoryWriteAddrLo = -1;
+
+        int lmwh = lastMemoryWriteAddrHi;
+        int lmwhv = lastMemoryWriteValueHi;
+        lastMemoryWriteAddrHi = -1;
+
+        int lpi = Dbg->lastPortInAddr;
+        int lpiv = Dbg->lastPortInValue;
+        Dbg->lastPortInAddr = -1;
+
+        int lpo = Dbg->lastPortOutAddr;
+        int lpov = Dbg->lastPortOutValue;
+        Dbg->lastPortOutAddr = -1;
+
         for (int idx = 0; idx < Breakpoints; ++idx)
         {
-                if (Breakpoint[idx].hit(Addr, (BreakpointType)Type))
-                {
-                        if (Type == BP_TSTATES)
+		breakpoint* bp = &Breakpoint[idx];
+
+		if (Dbg->BPExeHit(z80.pc.w, bp, idx) ||   
+                    Dbg->BPInOutHit(BP_IN, lpi, lpiv, bp) ||
+                    Dbg->BPInOutHit(BP_INL, lpi, lpiv, bp) ||
+                    Dbg->BPInOutHit(BP_INH, lpi, lpiv, bp) ||
+                    Dbg->BPInOutHit(BP_OUT, lpo, lpov, bp) ||
+                    Dbg->BPInOutHit(BP_OUTL, lpo, lpov, bp) ||
+                    Dbg->BPInOutHit(BP_OUTH, lpo, lpov, bp) ||
+                    Dbg->BPReadWriteHit(BP_WR, lmwh, lmwhv, bp) ||
+                    Dbg->BPReadWriteHit(BP_WR, lmwl, lmwlv, bp) ||
+                    Dbg->BPReadWriteHit(BP_RD, lmrh, lmrhv, bp) ||
+                    Dbg->BPReadWriteHit(BP_RD, lmrl, lmrlv, bp) ||
+                    Dbg->BPRegisterValueHit(bp) ||
+                    Dbg->BPFlagValueHit(bp) ||
+                    Dbg->BPMemoryValueHit(bp) ||
+                    Dbg->BPClockHit(z80.pc.w, bp))
+		{
+                        if (bp->Permanent)
                         {
-                                tStatesCount = 0;
-
-                                if (displayedTStatesCount == Breakpoint[idx].Count)
-                                        return NULL;
+                                BPList->Row = idx;
                         }
+			return true;
+		}
+	}
 
-                        BPList->Row=idx;
-                        return &Breakpoint[idx];
-                }
-        }
-
-        return NULL;
+	return false;
 }
 
 extern int stepOverStackChange;
 
-bool TDbg::ExecBreakPointHit(int Addr)
+bool TDbg::BPExeHit(int addr, breakpoint* const bp, int idx)
 {
-        breakpoint* hit = BPHit(Addr, BP_EXE);
-        if (hit)
-        {
-                if (!hit->Permanent)
+        if (bp->HitExe(BP_EXE, addr))
+	{
+                if (!bp->Permanent)
                 {
                         int expectedStack = StepOverStack + stepOverStackChange;
                         if (expectedStack < 0) expectedStack += 65536;
@@ -348,12 +528,279 @@ bool TDbg::ExecBreakPointHit(int Addr)
 
                         if (expectedStack == z80.sp.w)
                         {
-                                DelBreakPoint(Addr);
+                                DelBreakPoint(idx);
                         }
                 }
+
+                return true;
+        }
+
+        return false;
+}
+
+bool TDbg::BPInOutHit(BreakpointType type, int addr, int value, breakpoint* const bp)
+{
+        if (addr == -1)
+        {
+                return false;
+        }
+
+        switch (type)
+        {
+                case BP_INL:
+                case BP_OUTL:
+                        addr = addr & 0x00FF;
+                        break;
+
+                case BP_INH:
+                case BP_OUTH:
+                        addr = addr & 0xFF00;
+                        break;
+        }
+
+        if (bp->HitRdWrInOut(type, addr, value))
+	{
+                return true;
+        }
+
+	return false;        
+}
+
+bool TDbg::BPReadWriteHit(BreakpointType type, int addr, int value, breakpoint* const bp)
+{
+	if ((addr != -1) && bp->HitRdWrInOut(type, addr, value))
+	{
+		return true;
+	}
+
+        return false;
+}
+
+bool TDbg::BPClockHit(int addr, breakpoint* const bp)
+{
+        if (bp->Type != BP_TSTATES)
+        {
+                return false;
+        }
+
+      	if (addr == bp->Addr)
+	{
+        	tStatesCount = 0;
+
+		if (displayedTStatesCount != bp->TStates)
+		{
+                	return true;
+	        }
+	}
+
+        return false;
+}
+
+
+bool TDbg::BPFlagValueHit(breakpoint* const bp)
+{
+        if (bp->Type != BP_FLAG)
+        {
+                return false;
+        }
+
+        BYTE regF = z80.af.b.l;
+        int mask = (1 << bp->FlagId);
+
+        switch (bp->ConditionValue)
+        {
+                case Equal:
+                        return ((regF & mask) == bp->Value);
+
+                case NotEqual:
+                        return ((regF & mask) != bp->Value);
         }
         
-        return hit;
+        return false;
+}
+
+bool TDbg::BPMemoryValueHit(breakpoint* const bp)
+{
+        if (bp->Type != BP_MEMORY)
+        {
+                return false;
+        }
+
+        BYTE value = getbyte(bp->Addr);
+
+        switch (bp->ConditionValue)
+        {
+                case Equal:
+                        return (value == bp->Value);
+
+                case LessThanEquals:
+                        return (value <= bp->Value);
+
+                case GreaterThanEquals:
+                        return (value >= bp->Value);
+
+                case NotEqual:
+                        return (value != bp->Value);
+        }
+        
+        return false;
+}
+
+bool TDbg::BPRegisterValueHit(breakpoint* const bp)
+{
+        if (bp->Type != BP_REGISTER)
+        {
+                return false;
+        }
+
+        int value = getRegisterValue(bp->RegisterId);
+
+        switch (bp->ConditionValue)
+        {
+                case Equal:
+                        return (value == bp->Value);
+
+                case LessThanEquals:
+                        return (value <= bp->Value);
+
+                case GreaterThanEquals:
+                        return (value >= bp->Value);
+
+                case NotEqual:
+                        return (value != bp->Value);
+        }
+
+        return false;
+}
+
+int TDbg::getRegisterValue(int registerIndex)
+{
+        int value;
+
+        switch (registerIndex)
+        {
+		case RegA:
+                        value = z80.af.b.h;
+			break;
+
+		case RegB:
+                        value = z80.bc.b.h;
+			break;
+
+		case RegC:
+                        value = z80.bc.b.l;
+			break;
+
+		case RegD:
+                        value = z80.de.b.h;
+			break;
+
+		case RegE:
+                        value = z80.de.b.l;
+			break;
+
+		case RegH:
+                        value = z80.hl.b.h;
+			break;
+
+		case RegL:
+                        value = z80.hl.b.l;
+			break;
+
+		case RegI:
+                        value = z80.i;
+			break;
+
+		case RegR:
+                        value = z80.r;
+			break;
+
+		case RegIXh:
+                        value = z80.ix.b.h;
+			break;
+
+		case RegIXl:
+                        value = z80.ix.b.l;
+			break;
+
+		case RegIYh:
+                        value = z80.iy.b.h;
+			break;
+
+		case RegIYl:
+                        value = z80.iy.b.l;
+			break;
+
+		case RegAltA:
+                        value = z80.af_.b.h;
+			break;
+
+		case RegAltB:
+                        value = z80.bc_.b.h;
+			break;
+
+		case RegAltC:
+                        value = z80.bc_.b.l;
+			break;
+
+		case RegAltD:
+                        value = z80.de_.b.h;
+			break;
+
+		case RegAltE:
+                        value = z80.de_.b.l;
+			break;
+
+		case RegAltH:
+                        value = z80.hl_.b.h;
+			break;
+
+		case RegAltL:
+                        value = z80.hl_.b.l;
+			break;
+
+		case RegBC:
+                        value = z80.bc.w;
+			break;
+
+		case RegDE:
+                        value = z80.de.w;
+			break;
+
+		case RegHL:
+                        value = z80.hl.w;
+			break;
+
+		case RegIX:
+                        value = z80.ix.w;
+			break;
+
+		case RegIY:
+                        value = z80.iy.w;
+			break;
+
+		case RegPC:
+                        value = z80.pc.w;
+			break;
+
+		case RegSP:
+                        value = z80.sp.w;
+			break;
+	
+		case RegAltBC:
+                        value = z80.bc_.w;
+			break;
+
+		case RegAltDE:
+                        value = z80.de_.w;
+			break;
+
+		case RegAltHL:
+                        value = z80.hl_.w;
+			break;
+        }
+
+        return value;
 }
 
 void TDbg::DelTempBreakPoints(void)
@@ -361,7 +808,7 @@ void TDbg::DelTempBreakPoints(void)
         int i;
         for(i=0; i<Breakpoints; i++)
                 if (!Breakpoint[i].Permanent)
-                        DelBreakPoint(Breakpoint[i].Addr);
+                        DelBreakPoint(i);
 }
 //---------------------------------------------------------------------------
 int TDbg::Hex2Dec(AnsiString num)
@@ -805,12 +1252,9 @@ void __fastcall TDbg::StepOverClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-void __fastcall TDbg::AddrBrkBtnClick(TObject *Sender)
+void __fastcall TDbg::AddBrkBtnClick(TObject *Sender)
 {
         SetBreakpoint->CentreOn(this);
-        AnsiString title = "Set 'Execute' Breakpoint";
-        SetBreakpoint->SetTitle(title);
 
         breakpoint bp(0, BP_EXE);
         if (SetBreakpoint->EditBreakpoint(bp))
@@ -819,13 +1263,14 @@ void __fastcall TDbg::AddrBrkBtnClick(TObject *Sender)
         }
 
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::DelBrkBtnClick(TObject *Sender)
 {
         if (BPList->Row < (BPList->RowCount-1))
-                DelBreakPoint(BPList->Row + 100000);
+                DelBreakPoint(BPList->Row);
 
         if ((BPList->RowCount > 1) && ((BPList->Row + 1) >= BPList->RowCount))
         {
@@ -833,6 +1278,7 @@ void __fastcall TDbg::DelBrkBtnClick(TObject *Sender)
         }
 
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
                                                 
@@ -1260,6 +1706,7 @@ void __fastcall TDbg::AddBreak1Click(TObject *Sender)
         breakpoint bp(MemDumpPopup->Tag, (BreakpointType)mi->Tag);
         AddBreakPoint(bp);
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -1300,67 +1747,20 @@ void __fastcall TDbg::MemoryClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TDbg::WriteBrkBtnClick(TObject *Sender)
+void __fastcall TDbg::EditBrkBtnClick(TObject *Sender)
 {
-        SetBreakpoint->CentreOn(this);
-        AnsiString title = "Set 'Write' Breakpoint";
-        SetBreakpoint->SetTitle(title);
+       SetBreakpoint->CentreOn(this);
 
-        breakpoint bp(0, BP_WR);
+        int idx = BPList->Row;
+        breakpoint bp = Breakpoint[idx];
+        
         if (SetBreakpoint->EditBreakpoint(bp))
         {
-                AddBreakPoint(bp);
+                Breakpoint[idx] = bp;
+
+                AnsiString str = GetBreakpointText(&bp);
+                BPList->Rows[idx]->Text = str;
         }
-
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TDbg::ReadBrkBtnClick(TObject *Sender)
-{
-        SetBreakpoint->CentreOn(this);
-        AnsiString title = "Set 'Read' Breakpoint";
-        SetBreakpoint->SetTitle(title);
-
-        breakpoint bp(0, BP_RD);
-        if (SetBreakpoint->EditBreakpoint(bp))
-        {
-                AddBreakPoint(bp);
-        }
-
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TDbg::OutBrkBtnClick(TObject *Sender)
-{
-        SetBreakpoint->CentreOn(this);
-        AnsiString title = "Set 'Out' Breakpoint";
-        SetBreakpoint->SetTitle(title);
-
-        breakpoint bp(0, BP_OUT);
-        if (SetBreakpoint->EditBreakpoint(bp))
-        {
-                AddBreakPoint(bp);
-        }
-
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TDbg::InBrkBtnClick(TObject *Sender)
-{
-        SetBreakpoint->CentreOn(this);
-        AnsiString title = "Set 'In' Breakpoint";
-        SetBreakpoint->SetTitle(title);
-
-        breakpoint bp(0, BP_IN);
-        if (SetBreakpoint->EditBreakpoint(bp))
-        {
-                AddBreakPoint(bp);
-        }
-
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -1376,6 +1776,7 @@ void ResetLastIOAccesses()
 void LogInAccess(int address, BYTE data)
 {
         Dbg->lastPortInAddr = address;
+        Dbg->lastPortInValue = data;
 
         for (int i = 2; i >= 0; i--)
         {
@@ -1391,6 +1792,7 @@ void LogInAccess(int address, BYTE data)
 void LogOutAccess(int address, BYTE data)
 {
         Dbg->lastPortOutAddr = address;
+        Dbg->lastPortOutValue = data;
 
         for (int i = 2; i >= 0; i--)
         {
@@ -1400,37 +1802,6 @@ void LogOutAccess(int address, BYTE data)
         Dbg->lastIOAccess[0].direction = IO_OUT;
         Dbg->lastIOAccess[0].address = address;
         Dbg->lastIOAccess[0].data = data;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TDbg::TStatesBrkBtnClick(TObject *Sender)
-{
-        SetBreakpoint->CentreOn(this);
-        AnsiString title = "Set 'T-States' Breakpoint";
-        SetBreakpoint->SetTitle(title);
-
-        int Addr = 0;
-        int Count = 0;
-
-        for (int idx = 0; idx < Breakpoints; ++idx)
-        {
-                if (Breakpoint[idx].Type == BP_TSTATES)
-                {
-                        Addr = Breakpoint[idx].Addr;
-                        Count = Breakpoint[idx].Count;
-                        break;
-                }
-        }               
-
-        if (SetBreakpoint->EditTSetBreakpoint(Addr, 2, Count))
-        {
-                breakpoint bp(Addr, BP_TSTATES);
-                bp.Count = Count;
-                bp.Condition = Equal;
-                AddBreakPoint(bp);
-        }
-
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -1448,9 +1819,6 @@ void __fastcall TDbg::GroupBox5Click(TObject *Sender)
 //        GroupBox5->Caption = AnsiString(cacheMaxStack);
 }
 //---------------------------------------------------------------------------
-
-
-
 
 void __fastcall TDbg::Disass3MouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)

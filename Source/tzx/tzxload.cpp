@@ -705,12 +705,60 @@ bool TTZXFile::LoadPFile(AnsiString FileName, bool Insert)
 
         len=fread(tempdata+fnamelen, 1, 65536, f);
 
+        ValidateFile(FileName, tempdata, len);
+
         MoveBlock(AddGeneralBlock(tempdata, len+fnamelen), CurBlock);
         Tape[CurBlock].Pause=3000;
 
         fclose(f);
         GroupCount();
         return(true);
+}
+
+void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
+{
+        AnsiString Extension = FileNameGetExt(FileName);
+
+        if (Extension == ".A83") return;        // TO DO - Add support for this format
+
+        char* program = tempdata;
+        int startSystemVariables;
+        int elineOffset;
+
+        if (Extension == ".P" || Extension == ".P81" || Extension == ".81")
+        {
+                while ((len > 0) && (((unsigned char)(program[0]) & 128) == 0))
+                {
+                        program++;
+                        len--;
+                }
+                program++;
+                len--;
+                
+                startSystemVariables = 0x4009;
+                elineOffset = 0x4014 - startSystemVariables;
+        }
+        else if (Extension == ".O" || Extension == ".80")
+        {
+                startSystemVariables = 0x4000;
+                elineOffset = 0x400A - startSystemVariables;
+        }
+
+        unsigned char lowByte = program[elineOffset];
+        unsigned char highByte = program[elineOffset + 1];
+
+        int eline = (highByte << 8) + lowByte;
+        int expectedLen = eline - startSystemVariables;
+
+        if (expectedLen != len)
+        {
+                AnsiString msg;
+                int surplusBytes = len - expectedLen;
+                bool includesSurplusBytes = surplusBytes > 1;
+                msg = "The file contains " + IntToStr(surplusBytes) + " byte" + (includesSurplusBytes ? "s" : "") + " more than expected. Th" + (includesSurplusBytes ? "ese" : "is") + " will be ignored.";
+
+                Application->MessageBox(msg.c_str(), "File size warning", MB_OK);
+        }
 }
 
 bool TTZXFile::LoadT81File(AnsiString FileName, bool Insert)

@@ -294,6 +294,7 @@ private:
         int LoopBlockStart, LoopBlockCounter;
         bool BlockInProgress;
 
+        void ValidateFile(AnsiString FileName, char* tempdata, int len);
         bool LoadT81File(AnsiString FileName, bool Insert);
         bool LoadPFile(AnsiString FileName, bool Insert);
         bool LoadTAPFile(AnsiString FileName, bool Insert);

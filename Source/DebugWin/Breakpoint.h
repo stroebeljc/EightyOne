@@ -3,23 +3,77 @@
 
 #include "zx81config.h"
 
+//If this order is changed then adjust the order in the Type list on the breakpoint dialog
 enum BreakpointType
 {
-        BP_EXE,
+        BP_EXE = 0,
         BP_RD,
         BP_WR,
-        BP_IN,
         BP_OUT,
-        BP_TSTATES
+        BP_OUTH,
+        BP_OUTL,
+        BP_IN,
+        BP_INH,
+        BP_INL,
+        BP_TSTATES,
+        BP_MEMORY,
+        BP_REGISTER,
+        BP_FLAG
 };
 
 enum BreakpointCondition
 {
-        Equal,
-        LessThan,
-        GreaterThan,
+        Equal = 0,
         NotEqual,
+        LessThanEquals,
+        GreaterThanEquals,
         Range
+};
+
+enum RegisterType
+{
+        RegBC,
+        RegDE,
+        RegHL,
+        RegIX,
+        RegIY,
+        RegPC,
+        RegSP,
+        RegAltBC,
+        RegAltDE,
+        RegAltHL,
+        RegA,
+        RegB,
+        RegC,
+        RegD,
+        RegE,
+        RegH,
+        RegL,
+        RegI,
+        RegR,
+        RegIXh,
+        RegIXl,
+        RegIYh,
+        RegIYl,
+        RegAltA,
+        RegAltB,
+        RegAltC,
+        RegAltD,
+        RegAltE,
+        RegAltH,
+        RegAltL
+};
+
+enum FlagType
+{
+        Carry = 0,
+        AddSubtract,
+        ParityOverflow,
+        Bit3,
+        HalfCarry,
+        Bit5,
+        Zero,
+        Sign
 };
 
 struct breakpoint
@@ -27,50 +81,115 @@ struct breakpoint
         breakpoint(){}
         breakpoint(int addr, BreakpointType type)
         {
-                Addr = addr;
-                Argument = 0xFFFF;
                 Type = type;
-                Condition = Equal;
+                ConditionAddr = Equal;
+                Addr = addr;
+                ConditionValue = GreaterThanEquals;
+                Value = addr;
                 Permanent = true;
         }
 
-        bool hit(int curAddr, BreakpointType reqType)
+        bool HitExe(BreakpointType reqType, int curAddr)
         {
                 if (Type != reqType) return false;
 
-                int maskedCurAddr = (reqType == BP_TSTATES) ? curAddr : (curAddr & Mask);
+                bool addrMatch = false;
 
-                switch (Condition)
+                switch (ConditionAddr)
                 {
                         case Equal:
-                                return maskedCurAddr == Addr;
+                                addrMatch = (curAddr == Addr);
+                                break;
 
-                        case LessThan:
-                                return maskedCurAddr < Addr;
+                        case LessThanEquals:
+                                addrMatch = (curAddr <= Addr);
+                                break;
 
-                        case GreaterThan:
-                                return (maskedCurAddr > Addr) && (maskedCurAddr <= zx81.RAMTOP);
+                        case GreaterThanEquals:
+                                addrMatch = (curAddr >= Addr) && (curAddr <= zx81.RAMTOP);
+                                break;
 
                         case Range:
-                                return (curAddr >= Addr) && (curAddr <= EndAddr);
+                                addrMatch = (curAddr >= Addr) && (curAddr <= EndAddr);
+                                break;
 
                         case NotEqual:
-                                return maskedCurAddr != Addr;
+                                addrMatch = (curAddr != Addr);
+                                break;
                 }
 
-                return false;
+                return addrMatch;
         }
 
-        int Addr;
+        bool HitRdWrInOut(BreakpointType reqType, int curAddr, int curValue)
+        {
+                if (Type != reqType) return false;
+
+                bool match = false;
+
+                switch (ConditionAddr)
+                {
+                        case Equal:
+                                match = (curAddr == Addr);
+                                break;
+
+                        case LessThanEquals:
+                                match = (curAddr <= Addr);
+                                break;
+
+                        case GreaterThanEquals:
+                                match = (curAddr >= Addr);
+                                break;
+
+                        case Range:
+                                match = (curAddr >= Addr) && (curAddr <= EndAddr);
+                                break;
+
+                        case NotEqual:
+                                match = (curAddr != Addr);
+                                break;
+                }
+
+                if (match && (Value != -1))
+                {
+                        switch (ConditionValue)
+                        {
+                                case Equal:
+                                        match = (curValue == Value);
+                                        break;
+
+                                case LessThanEquals:
+                                        match = (curValue <= Value);
+                                        break;
+
+                                case GreaterThanEquals:
+                                        match = (curValue >= Value);
+                                        break;
+
+                                case NotEqual:
+                                        match = (curValue != Value);
+                                        break;
+                        }
+                }
+
+                return match;
+        }
+
+        BreakpointType Type;
+        BreakpointCondition ConditionAddr;
         union
         {
-                int Argument;
-                int EndAddr;
-                int Count;
-                int Mask;
+                int Addr;
+                RegisterType RegisterId;
+                FlagType FlagId;
         };
-        BreakpointType Type;
-        BreakpointCondition Condition;
+        BreakpointCondition ConditionValue;
+        union
+        {
+                int Value;
+                int EndAddr;
+                int TStates;
+        };
         bool Permanent;
 };
 

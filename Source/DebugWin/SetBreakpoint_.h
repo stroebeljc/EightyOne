@@ -15,26 +15,53 @@ class TSetBreakpoint : public TForm
 __published:	// IDE-managed Components
         TButton *OK;
         TButton *Cancel;
-        TLabel *BreakAddress;
-        TEdit *EditAddress;
-        TLabel *Label2;
-        TEdit *EditAddressArgument;
-        TLabel *BreakAddressArgument;
-        TComboBox *BreakCondition;
+        TLabel *LabelBreakAddress;
+        TEdit *BreakAddress;
+        TLabel *LabelConditionValue;
+        TEdit *BreakValue;
+        TLabel *LabelBreakValue;
+        TComboBox *BreakConditionAddr;
+        TLabel *LabelType;
+        TComboBox *BreakType;
+        TComboBox *RegisterList;
+        TComboBox *FlagList;
+        TComboBox *BreakConditionValue;
+        TLabel *LabelConditionAddr;
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
-        void __fastcall BreakConditionChange(TObject *Sender);
-        void __fastcall EditAddressArgumentChange(TObject *Sender);
-        void __fastcall EditAddressChange(TObject *Sender);
+        void __fastcall BreakConditionAddrChange(TObject *Sender);
+        void __fastcall BreakValueChange(TObject *Sender);
+        void __fastcall BreakAddressChange(TObject *Sender);
+        void __fastcall BreakTypeChange(TObject *Sender);
+        void __fastcall RegisterListChange(TObject *Sender);
+
 private:	// User declarations
         bool cancelled;
-        void __fastcall UpdateRBStates();
+        bool Register16Bit(RegisterType registerIndex);
+        void EnableOkButton();
+        void ValidateBreakAddress();
+        void ValidateBreakValue();
+        void GetBreakAddressLimits(BreakpointType type, int& lowerLimit, int& upperLimit);
+        void GetBreakValueLimits(BreakpointType type, RegisterType registerIndex, int& lowerLimit, int& upperLimit);
+        int GetBreakAddressMaxDigits(BreakpointType type);
+        int GetBreakValueMaxDigits(BreakpointType type, RegisterType registerIndex);
+        void ConfigureBreakpointFields(struct breakpoint& bp);
+        bool GetBreakpointFields(struct breakpoint& bp);
+        void BreakTypeChangeExe();
+        void BreakTypeChangeRdWrInOut();
+        void BreakTypeChangeInOutByte();
+        void BreakTypeChangeRegister();
+        void BreakTypeChangeFlag();
+        void BreakTypeChangeMem();
+        void BreakTypeChangeTStates();
+        void SetConditionList(TComboBox* const conditionList, AnsiString conditions);
+        void SetEditBox(TEdit* const editBox, AnsiString defaultText);
+        void SetEditBoxLabels(AnsiString breakAddressLabel, AnsiString breakValueLabel);
 
 public:		// User declarations
         __fastcall TSetBreakpoint(TComponent* Owner);
         void SetTitle(AnsiString& title);
-        bool EditTSetBreakpoint(int& address, int len, int& tStates);
         bool EditBreakpoint(struct breakpoint& bp);
         void CentreOn(TForm* parent);
 };

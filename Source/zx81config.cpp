@@ -32,19 +32,25 @@ MACHINE machine;
 MOUSE mouse;
 
 int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
+int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
+int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 bool directMemoryAccess;
+
+extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 
 void load_config(void)
 {
+        int versionNumberMajor;
+        int versionNumberMinor;
+        int versionNumberPart3;
+        int versionNumberPart4;
+        GetVersionNumber(versionNumberMajor, versionNumberMinor, versionNumberPart3, versionNumberPart4);
+        
         zx81.emuid=EMUID;
-        zx81.major=MAJORVERSION;
-        zx81.minor=MINORVERSION;
-#ifdef TESTVERSION
-        zx81.testver=1+TESTVERSION-'A';
-#else
-        zx81.testver=0;
-#endif
+        zx81.major=versionNumberMajor;
+        zx81.minor=versionNumberMinor;
+        zx81.testver=versionNumberPart3;
 
         zx81.machine=MACHINEZX81;
         zx81.shadowROM=0;

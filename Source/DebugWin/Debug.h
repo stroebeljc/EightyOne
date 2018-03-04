@@ -125,7 +125,7 @@ __published:	// IDE-managed Components
         TLabel *Stack4;
         TLabel *Stack5;
         TLabel *Stack6;
-        TButton *AddrBrkBtn;
+        TButton *AddBrkBtn;
         TButton *DelBrkBtn;
         TStringGrid *BPList;
         TLabel *Label27;
@@ -163,8 +163,7 @@ __published:	// IDE-managed Components
         TMenuItem *OnExecute1;
         TMenuItem *OnRead1;
         TMenuItem *OnWrite1;
-        TButton *WriteBrkBtn;
-        TButton *ReadBrkBtn;
+        TButton *EditBrkBtn;
         TGroupBox *Execute;
         TButton *SingleStep;
         TButton *StepOver;
@@ -180,8 +179,6 @@ __published:	// IDE-managed Components
         TButton *Symbols;
         TLabel *SymRom;
         TLabel *SymApp;
-        TButton *OutBrkBtn;
-        TButton *InBrkBtn;
         TLabel *IOPort0Address;
         TLabel *IOPort2Address;
         TLabel *IOPort1Address;
@@ -211,7 +208,6 @@ __published:	// IDE-managed Components
         TLabel *Label30;
         TLabel *Disass10;
         TLabel *Disass11;
-        TButton *TStatesBrkBtn;
         TLabel *Label31;
         TLabel *TStatesCount;
         TButton *ButtonProfiler;
@@ -272,15 +268,11 @@ __published:	// IDE-managed Components
           TShiftState Shift, int X, int Y);
         void __fastcall AceStk0Click(TObject *Sender);
         void __fastcall AceStkVal0Click(TObject *Sender);
-        void __fastcall AddrBrkBtnClick(TObject *Sender);
+        void __fastcall AddBrkBtnClick(TObject *Sender);
         void __fastcall SymbolsClick(TObject *Sender);
         void __fastcall AddBreak1Click(TObject *Sender);
         void __fastcall MemoryClick(TObject *Sender);
-        void __fastcall WriteBrkBtnClick(TObject *Sender);
-        void __fastcall ReadBrkBtnClick(TObject *Sender);
-        void __fastcall OutBrkBtnClick(TObject *Sender);
-        void __fastcall InBrkBtnClick(TObject *Sender);
-        void __fastcall TStatesBrkBtnClick(TObject *Sender);
+        void __fastcall EditBrkBtnClick(TObject *Sender);
         void __fastcall BPListSelectCell(TObject *Sender, int ACol,
           int ARow, bool &CanSelect);
         void __fastcall GroupBox5Click(TObject *Sender);
@@ -307,6 +299,22 @@ private:	// User declarations
         void __fastcall DoEditReg(BYTE&);
 
         void PopulateHistoryWindow();
+        int getRegisterValue(int registerIndex);
+        AnsiString ConstructRegisterBreakpointText(breakpoint* const bp);
+        AnsiString ConstructExeBreakpointText(breakpoint* const bp);
+        AnsiString ConstructTStatesBreakpointText(breakpoint* const bp);
+        AnsiString ConstructFlagBreakpointText(breakpoint* const bp);
+        AnsiString ConstructLowIOBreakpointText(AnsiString type, breakpoint* const bp);
+        AnsiString ConstructHighIOBreakpointText(AnsiString type, breakpoint* const bp);
+        AnsiString ConstructRdWrInOutMemBreakpointText(AnsiString type, breakpoint* const bp);
+        AnsiString GetBreakpointText(breakpoint* const bp);
+
+        bool BPInOutHit(BreakpointType type, int addr, int value, breakpoint* const bp);
+        bool BPClockHit(int addr, breakpoint* const bp);
+        bool BPReadWriteHit(BreakpointType type, int addr, int value, breakpoint* const bp);
+        bool BPFlagValueHit(breakpoint* const bp);
+        bool BPMemoryValueHit(breakpoint* const bp);
+        bool BPRegisterValueHit(breakpoint* const bp);
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
@@ -315,13 +323,12 @@ public:		// User declarations
         bool DoNext;
 
         bool TStatesBreakPointHit(int Addr);
-        bool ExecBreakPointHit(int Addr);
-        breakpoint* BPHit(int Addr, int Type);
         void DelTempBreakPoints(void);
+        bool BreakPointHit();
+        bool BPExeHit(int addr, breakpoint* const bp, int idx);
 
-        //bool AddBreakPoint(int Addr, bool Perm, int type, BreakpointConditionType Condition = Equal, int Count = 1);
         bool AddBreakPoint(struct breakpoint& bp);
-        void DelBreakPoint(int Addr);
+        void DelBreakPoint(int index);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         AnsiString DisassembleAddress(int* Ad);
@@ -334,6 +341,7 @@ public:		// User declarations
 
         LastIOAccess lastIOAccess[4];
         int lastPortInAddr, lastPortOutAddr;
+        int lastPortInValue, lastPortOutValue;
 
         void ReloadHistoryWindow();
         void ClearHistoryWindow();

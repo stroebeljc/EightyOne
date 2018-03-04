@@ -31,6 +31,7 @@
 #include <ExtCtrls.hpp>
 #include <Graphics.hpp>
 //---------------------------------------------------------------------------
+
 class TAbout : public TForm
 {
 __published:	// IDE-managed Components
@@ -62,6 +63,7 @@ __published:	// IDE-managed Components
         void __fastcall Label15MouseUp(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
 private:	// User declarations
+
 public:		// User declarations
         __fastcall TAbout(TComponent* Owner);
 };

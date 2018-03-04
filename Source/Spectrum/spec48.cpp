@@ -69,6 +69,8 @@ extern BYTE SpectraRAMRead(int bankOffset);
 extern bool directMemoryAccess;
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
+extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
+extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
@@ -136,8 +138,8 @@ BYTE ContendArray[80000];
 RZX_EMULINFO  RZXemulinfo =
 {
    "EightyOne",
-   MAJORVERSION,
-   MINORVERSION,
+   0,
+   0,
    NULL, 0, 0
 } ;
 
@@ -179,11 +181,22 @@ rzx_u32 RZXcallback(int Msg, void *data)
         return(0);
 }
 
+extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
+
 void SpecStartUp(void)
 {
         memset(&PlusDDrives[0], 0, sizeof(wd1770_drive));
         memset(&PlusDDrives[1], 0, sizeof(wd1770_drive));
         LoadFDC765DLL();
+
+        int versionNumberMajor;
+        int versionNumberMinor;
+        int versionNumberPart3;
+        int versionNumberPart4;
+        GetVersionNumber(versionNumberMajor, versionNumberMinor, versionNumberPart3, versionNumberPart4);
+
+        RZXemulinfo.ver_major = versionNumberMajor;
+        RZXemulinfo.ver_minor = versionNumberMinor;
         RZXError=rzx_init(&RZXemulinfo, RZXcallback);
 }
 
@@ -642,6 +655,9 @@ void spec48_writebyte(int Address, int Data)
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
         lastMemoryWriteAddrHi = Address;
 
+        lastMemoryWriteValueLo = lastMemoryWriteValueHi;
+        lastMemoryWriteValueHi = Data;
+
         spec48_WriteByte(Address, Data);
 }
 
@@ -757,7 +773,12 @@ BYTE spec48_readbyte(int Address)
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
         lastMemoryReadAddrHi = Address;
 
-        return spec48_ReadByte(Address);
+        BYTE byte = spec48_ReadByte(Address);
+
+        lastMemoryReadValueLo = lastMemoryReadValueHi;
+        lastMemoryReadValueHi = byte;
+
+        return byte;
 }
 
 // Called by Z80 instruction operand fetches

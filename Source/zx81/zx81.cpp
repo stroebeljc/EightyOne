@@ -76,6 +76,8 @@ extern int SelectAYReg;
 extern bool directMemoryAccess;
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
+extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
+extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 static BYTE ReadInputPort(int Address, int *tstates);
 
@@ -412,6 +414,9 @@ void zx81_writebyte(int Address, int Data)
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
         lastMemoryWriteAddrHi = Address;
 
+        lastMemoryWriteValueLo = lastMemoryWriteValueHi;
+        lastMemoryWriteValueHi = Data;
+
         zx81_WriteByte(Address, Data);
 }
 
@@ -608,7 +613,12 @@ BYTE zx81_readbyte(int Address)
         lastMemoryReadAddrLo = lastMemoryReadAddrHi;
         lastMemoryReadAddrHi = Address;
 
-        return zx81_ReadByte(Address);
+        BYTE byte = zx81_ReadByte(Address);
+
+        lastMemoryReadValueLo = lastMemoryReadValueHi;
+        lastMemoryReadValueHi = byte;
+
+        return byte;
 }
 
 // BYTE opcode_fetch(int Address)

@@ -724,19 +724,30 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
         char* program = tempdata;
         int startSystemVariables;
         int elineOffset;
+        AnsiString msg;
 
         if (Extension == ".P" || Extension == ".P81" || Extension == ".81")
         {
-                while ((len > 0) && (((unsigned char)(program[0]) & 128) == 0))
+                int length = len;
+
+                while ((length > 0) && ((unsigned char)(program[0]) & 128) == 0)
                 {
                         program++;
-                        len--;
+                        length--;
                 }
-                program++;
-                len--;
-                
+
                 startSystemVariables = 0x4009;
                 elineOffset = 0x4014 - startSystemVariables;
+
+                if (length < (elineOffset + 2))
+                {
+                        msg = "The start of the program data found not be found.";
+                        Application->MessageBox(msg.c_str(), "File integrity error", MB_OK);
+                        return;
+                }
+
+                program++;
+
         }
         else if (Extension == ".O" || Extension == ".80")
         {
@@ -752,7 +763,6 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
 
         if (expectedLen != len)
         {
-                AnsiString msg;
                 int surplusBytes = len - expectedLen;
                 bool includesSurplusBytes = surplusBytes > 1;
                 msg = "The file contains " + IntToStr(surplusBytes) + " byte" + (includesSurplusBytes ? "s" : "") + " more than expected. Th" + (includesSurplusBytes ? "ese" : "is") + " will be ignored.";

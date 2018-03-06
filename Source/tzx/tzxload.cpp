@@ -761,11 +761,11 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
         int eline = (highByte << 8) + lowByte;
         int expectedLen = eline - startSystemVariables;
 
-        if (expectedLen != len)
+        if (expectedLen < len)
         {
                 int surplusBytes = len - expectedLen;
                 bool includesSurplusBytes = surplusBytes > 1;
-                msg = "The file contains " + IntToStr(surplusBytes) + " byte" + (includesSurplusBytes ? "s" : "") + " more than expected. Th" + (includesSurplusBytes ? "ese" : "is") + " will be ignored.";
+                msg = "The file contains " + IntToStr(surplusBytes) + " byte" + (includesSurplusBytes ? "s" : "") + " more than specifed by ELINE. Th" + (includesSurplusBytes ? "ese" : "is") + " will be ignored.";
 
                 Application->MessageBox(msg.c_str(), "File size warning", MB_OK);
         }

@@ -153,7 +153,7 @@ BYTE ascii2zx(char n)
 
 static char ROM zx2ascii81[] = " ??????????\"?$:?()><=+-*/;,"             // 0..26 inclusive (indexed in zx->ascii conversion) - watch out for the \" escape sequence!
                                ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
-                               "-()$;\0";                                 // zero-terminated additions for the valid filename test
+                               "-()$;\x7e\0";                                 // zero-terminated additions for the valid filename test
 
 static char ROM zx2ascii80[] = "....";
 
@@ -663,6 +663,14 @@ static unsigned char fileOpen(char*p, unsigned char mode)
         autogenext = 0;
     }
 
+    // change ** (translates as ',') for 0x7e, to support short LFN forms
+    {
+        if (p[6] == ',' /*216 and 127 */)
+        {
+            p[6] = 0x7e;
+        }
+    }
+
     if (!isValidFN(p))
     {
         return 0x40 + FR_INVALID_NAME;
@@ -673,14 +681,6 @@ static unsigned char fileOpen(char*p, unsigned char mode)
     {
         // no filename specified
         return 0x40 + FR_INVALID_NAME;
-    }
-
-    // change $ for 0x7e, to support short LFN forms
-    {
-        if (p[6] == '$')
-        {
-            p[6] = 0x7e;
-        }
     }
 
     start = defaultLoadAddr;

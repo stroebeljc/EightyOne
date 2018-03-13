@@ -62,7 +62,7 @@
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="tlink32"/>
-    <USERDEFINES value=""/>
+    <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="EightyOne.cpp"/>
     <INCLUDEPATH value="ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;&quot;..\Components\Office Button 97\OffBtn97&quot;;&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot;;&quot;..\Components\ComPort Library&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot;"/>
@@ -80,13 +80,14 @@
       -I&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot; 
       -I&quot;..\Components\ComPort Library&quot; 
       -I&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot; 
-      -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp -boa"/>
-    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -RT- -X- -a8 -6 -b- -k- -vi -c -tW 
-      -tWM"/>
-    <PFLAGS value="-$Y- -$L- -$I- -$D- -$C- -v -JPHNE -M"/>
+      -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp 
+      -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -RT- -X- -r- -a8 -6 -b- -k -y -v 
+      -vi- -c -tW -tWM"/>
+    <PFLAGS value="-$Y+ -$W -$O- -$I- -$C- -v -JPHNE -M"/>
     <RFLAGS value=""/>
-    <AFLAGS value="/mx /w2 /zn"/>
-    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn"/>
+    <AFLAGS value="/mx /w2 /zi"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn -v"/>
   </OPTIONS>
   <LINKER>
     <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
@@ -123,8 +124,8 @@ Comments=
 
 [HistoryLists\hlIncludePath]
 Count=30
-Item0=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
-Item1=ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
+Item0=ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
+Item1=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
 Item2=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
 Item3=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
 Item4=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\CBuilder;..\Components\Theme Manager\Source
@@ -156,8 +157,8 @@ Item29=ql\;IECBus;ql;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C
 
 [HistoryLists\hlLibraryPath]
 Count=30
-Item0=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library
-Item1=ql;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library
+Item0=ql;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library
+Item1=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library
 Item2=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\ComPort Library
 Item3=ql\;ql;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97;..\Components\ComPort Library
 Item4=ql\;Chroma;ql;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97;..\Components\ComPort Library

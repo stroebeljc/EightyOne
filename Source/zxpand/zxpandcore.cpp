@@ -122,7 +122,7 @@ void zx_process_write(void)
          {
             // get next directory entry
             //
-            gDS.compatibleMode = PORTD;
+            gDS.compatibleMode = PORTD == 255;
             worker = COM_DirectoryRead;
          }
       }

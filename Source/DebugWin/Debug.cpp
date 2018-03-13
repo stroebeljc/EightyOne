@@ -523,25 +523,22 @@ bool TDbg::BreakPointHit()
 	return false;
 }
 
-extern int stepOverStackChange;
-
 bool TDbg::BPExeHit(int addr, breakpoint* const bp, int idx)
 {
         if (bp->HitExe(BP_EXE, addr))
 	{
-                if (!bp->Permanent)
+                if (bp->Permanent)
                 {
-                        int expectedStack = StepOverStack + stepOverStackChange;
-                        if (expectedStack < 0) expectedStack += 65536;
-                        if (expectedStack > 65535) expectedStack -= 65536;
-
-                        if (expectedStack == z80.sp.w)
+                        return true;
+                }
+                else
+                {
+                        if (StepOverStack == z80.sp.w)
                         {
                                 DelBreakPoint(idx);
+                                return true;
                         }
                 }
-
-                return true;
         }
 
         return false;

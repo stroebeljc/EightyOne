@@ -6,13 +6,14 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 Version 1.10 - ##/##/2018 (by SirMorris and Paul Farrow)
 * Bug fixes:
   - Sound is now switched upon a Hard Reset.
+  - ZXpand SEEK bug has been fixed.
 * Enhancements:
   - A warning is displayed if surplus bytes are found at the end of ZX80 and ZX81 program files.
   - Removed the 'mask' option from the breakpoint mechanism.
   - Added separate word and byte Input and Ouput breakpoint types.
   - Added Register, Flag and Memory breakpoint types.
   - Added the ability to break on a read, write, input or output value as well as its address.
-  - Added a Profiler tool which provides ####
+  - Added a Profiler tool which provides some visibility into the T-state timing of machine code.
 
 Version 1.9 - 17/02/2018 (by Paul Farrow)
 * Bug fixes:

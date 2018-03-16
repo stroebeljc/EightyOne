@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <usart.h>
 
-static const rom char* VERSION = "ZXPAND+ 1.12 \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ 1.13 \"MOGGY\"";
 
 static BYTE res;
 
@@ -153,7 +153,7 @@ BYTE ascii2zx(char n)
 
 static char ROM zx2ascii81[] = " ??????????\"?$:?()><=+-*/;,"             // 0..26 inclusive (indexed in zx->ascii conversion) - watch out for the \" escape sequence!
                                ".0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"    // 27-63 inclusive (indexed in zx->ascii conversion)
-                               "-()$;\0";                                 // zero-terminated additions for the valid filename test
+                               "-()$;\x7e\0";                                 // zero-terminated additions for the valid filename test
 
 static char ROM zx2ascii80[] = "....";
 
@@ -429,19 +429,22 @@ void GetWildcard(char* p)
         WildPattern[0]='*';
         WildPattern[1]=0;
     }
-
-    //log0("GetWildcard() globalData=%s WildPattern=%s\n",(const char*)globalData,WildPattern);
 }
 
 
 
+dirState_t gDS;
 
-static int dirstate;
-BYTE dirFlags = 0xff;
 
-BYTE directoryOpen(char* p)
+BYTE directoryOpen(char* p, dirState_t* ds)
 {
     char ret = 0x40 + FR_INVALID_NAME;
+
+    if (ds) {
+        ds->pass = 0;
+        ds->compatibleMode = 0;
+        ds->cachedDir = NULL;
+    }
 
     filinfo.fattrib = 0; // normal dir mode
 
@@ -471,10 +474,9 @@ BYTE directoryOpen(char* p)
         GetWildcard(p);
         if (isValidFN(p))
         {
-            dirstate = 0; // reading dirs
-
-            memcpy((void*)(p + 64), (void*)p, 64);
-            ret = 0x40 + f_opendir(&dir, (const char*)&p[64]);
+            ds->cachedDir = globalData + 64;
+            memcpy(ds->cachedDir, (void*)p, 64);
+            ret = 0x40 + f_opendir(&dir, (const char*)p);
         }
     }
 
@@ -485,50 +487,44 @@ void comDirectoryOpen(void)
 {
     deZeddify(globalData);
 
-    LATD = directoryOpen(globalData);
+    LATD = directoryOpen(globalData, &gDS);
 }
 
 
-int directoryStat(char* g)
+int directoryStat(dirState_t* ds)
 {
     char *p;
     int Match, count = 0;
 
-    while (1)
-    {
+    while (1) {
         res = f_readdir(&dir, &filinfo);
-        if (res != FR_OK)
-        {
+        if (res != FR_OK) {
             return count;
         }
 
         p = &filinfo.fname[0];
-        if (*p == '.' && *(p+1) == 0) continue;
+        if (*p == '.' && *(p+1) == 0)
+            continue;
 
-        if (!*p)
-        {
-            f_opendir(&dir, (const char*)&globalData[64]);
-
-            ++dirstate;
-            if (dirstate == 1) continue;
-
-            return count;
-        }
+        if (!*p) {
+            ++ds->pass;
+            directoryOpen(ds->cachedDir, NULL);
+            return count + directoryStat(ds);
+         }
 
         // need to do this test first
         if (filinfo.fattrib & AM_HID) continue;
-        if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
-        if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
+        if ((filinfo.fattrib & AM_DIR) == AM_DIR && ds->pass == 1) continue;
+        if ((filinfo.fattrib & AM_DIR) == 0      && ds->pass == 0) continue;
 
-        if (wildcmp(WildPattern,p))
-        {
+        if (wildcmp(WildPattern,p)) {
             ++count;
         }
     }
 }
 
 
-BYTE directoryRead(char* g)
+BYTE directoryRead(char* g, dirState_t* ds)
 {
     char *p;
     char* originalG = g;
@@ -556,10 +552,10 @@ BYTE directoryRead(char* g)
         if (!*p)
         {
             // done a loop, need to go again?
-            if (dirstate == 0)
+            if (ds->pass == 0)
             {
-                dirstate = 1;
-                f_opendir(&dir, (const char*)&globalData[64]);
+                ++ds->pass;
+                f_opendir(&dir, (const char*)(ds->cachedDir));
                 continue;
             }
             // com function only returns status code
@@ -568,8 +564,8 @@ BYTE directoryRead(char* g)
 
         // need to do this test first
         if (filinfo.fattrib & AM_HID) continue;
-        if ((filinfo.fattrib & AM_DIR) == AM_DIR && dirstate == 1) continue;
-        if ((filinfo.fattrib & AM_DIR) == 0      && dirstate == 0) continue;
+        if ((filinfo.fattrib & AM_DIR) == AM_DIR && ds->pass == 1) continue;
+        if ((filinfo.fattrib & AM_DIR) == 0      && ds->pass == 0) continue;
 
         Match=wildcmp(WildPattern,p);
 
@@ -577,14 +573,14 @@ BYTE directoryRead(char* g)
         {
             if (filinfo.fattrib & AM_DIR)
             {
-                if (dirFlags == 0xff)
+                if (ds->compatibleMode)
                     g += sprintf(g, (rom far char*)"<%s>", p);
                 else
                     g += sprintf(g, (rom far char*)"%s/", p);
             }
             else
             {
-                if (dirFlags == 0xff)
+                if (ds->compatibleMode)
                 {
                     g += sprintf(g, (rom far char*)"%s", p);
                 }
@@ -602,7 +598,7 @@ BYTE directoryRead(char* g)
             zxpandRetblk.len = (BYTE)(g - originalG);
             zeddifyUpper(originalG);
 
-            if (dirFlags == 0xff)
+            if (ds->compatibleMode)
             {
                 // classic compatibility mode - 0 terminated
                 *g = 0;
@@ -632,7 +628,7 @@ BYTE directoryRead(char* g)
 void comDirectoryRead(void)
 {
     GOOUTPUTMODE;
-    LATD = directoryRead(globalData);
+    LATD = directoryRead(globalData, &gDS);
 }
 
 
@@ -663,6 +659,14 @@ static unsigned char fileOpen(char*p, unsigned char mode)
         autogenext = 0;
     }
 
+    // change ** for 0x7e, to support short LFN forms
+    {
+        if (p[6] == 120 /*216 and 127 */)
+        {
+            p[6] = 0x7e;
+        }
+    }
+
     if (!isValidFN(p))
     {
         return 0x40 + FR_INVALID_NAME;
@@ -673,14 +677,6 @@ static unsigned char fileOpen(char*p, unsigned char mode)
     {
         // no filename specified
         return 0x40 + FR_INVALID_NAME;
-    }
-
-    // change $ for 0x7e, to support short LFN forms
-    {
-        if (p[6] == '$')
-        {
-            p[6] = 0x7e;
-        }
     }
 
     start = defaultLoadAddr;
@@ -1355,6 +1351,11 @@ int zxpandContinuation;
 void midiPitchBendReset(int i);
 void midiSoundOff(int i, int type);
 
+BYTE far gmReset[] = {
+    0xF0,0x7E,0x7F,0x09,0x01,0xF7
+};
+
+
 // buffer of form "VERB STREAMID PARAM PARAM,..."
 //
 void comParseBufferPlus(void)
@@ -1404,13 +1405,17 @@ void comParseBufferPlus(void)
 
         case N_CAT: { // open catalog, get item count
             int count = 0;
-            zxpandRetblk.op = 0;
-            zxpandRetblk.retval = directoryOpen(p);
 
-            if (0x40 == zxpandRetblk.retval)
-            {
-                count = directoryStat(p);
+            dirState_t ds;
+
+            zxpandRetblk.op = 0;
+            zxpandRetblk.retval = directoryOpen(p, &ds);
+
+            if (0x40 == zxpandRetblk.retval) {
+                count = directoryStat(&ds);
             }
+
+            directoryOpen(p, &gDS);
 
             zxpandRetblk.len = 2;          // 0 = 256
             zxpandRetblk.address = 16449;  // memory ptr
@@ -1434,8 +1439,8 @@ void comParseBufferPlus(void)
     case V_PUT: {
         switch (noun)
         {
-        case 0:    // ser & mid
-        case 1: {
+        case N_SERIAL:
+        case N_MIDI: {
             if (*p =='*')
             {
                 // PUT SER *30000 123
@@ -1481,13 +1486,13 @@ void comParseBufferPlus(void)
 
                 memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
                 globalData[5+8] = 0; // now it's memget ;)
-                directoryRead(&globalData[32]);
+                directoryRead(&globalData[32], &gDS);
             }
             else
             {
                 zxpandRetblk.op = 1;             // string data
                 zxpandRetblk.address = 16449;    // memory ptr
-                zxpandRetblk.retval = directoryRead(&globalData[5]);
+                zxpandRetblk.retval = directoryRead(&globalData[5], &gDS);
             }
 
             memcpy(globalData, (void*)&zxpandRetblk, 5);
@@ -1555,20 +1560,14 @@ void comParseBufferPlus(void)
     case V_CLOSE: {
         switch (noun)
         {
-        case 0:
+        case N_SERIAL:
             serialClose();
             break;
 
-        case 1: {
+        case N_MIDI: {
             int i;
-            for(i = 0; i < 16; ++i)
-            {
-                midiSoundOff(i, 120);
-                midiSoundOff(i, 121);
-                midiSoundOff(i, 123);
-                midiPitchBendReset(i);
-            }
-
+            for(i = 0; i < sizeof(gmReset); ++i)
+                serialWrite(gmReset[i]);
             serialClose();
         }
         break;
@@ -1583,13 +1582,13 @@ void comParseBufferPlus(void)
     }
     break;
 
-    case 4: {
+    case V_DELETE: {
         // delete
         retcode = 0x40 | f_unlink(p);
     }
     break;
 
-    case 5: {
+    case V_RENAME: {
         // rename
         char* q = nextToken(p);
         retcode = 0x40 | f_rename(p, q);
@@ -1616,25 +1615,4 @@ void comZXpandContinuation(void)
     }
 
     LATD = 0x40;
-}
-
-void midiSoundOff(int i, int type)
-{
-    serialWrite(0xb0|i);
-    serialWrite(type);
-    serialWrite(0);
-}
-
-BYTE far resetti[] =
-{
-    0xff,0x00,0x40,
-    0xff,0x64,0x00,0x65,0x00,0x06,0x02,0x64,0x7f,0x65,0x7f
-};
-    
-void midiPitchBendReset(int i)
-{
-    resetti[0] = 0xe0 | i;
-    resetti[3] = 0xb0 | i;
-    for(i = 0; i < 14; ++i)
-        serialWrite(resetti[i]);
 }

@@ -41,3 +41,11 @@ typedef void (*WORKERFN)(void);
 extern WORKERFN fnPtr;
 extern int delay;
 
+typedef struct
+{
+        int compatibleMode;
+        int pass;
+        char *cachedDir;
+}
+dirState_t;
+

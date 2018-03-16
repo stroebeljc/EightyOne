@@ -238,12 +238,13 @@ FRESULT f_open (
 }
 
 
-FRESULT f_lseek (FIL *fp,
-   DWORD pos)
-   {
-        lseek(GetHandle(fp), SEEK_SET, pos);
-        return cvtERRNO();
-   }
+FRESULT f_lseek (FIL *fp, DWORD pos)
+{
+        if (lseek(GetHandle(fp), pos, SEEK_SET) == -1) {
+                return cvtERRNO();
+        }
+        return 0;
+}
 
 
 /*-----------------------------------------------------------------------*/

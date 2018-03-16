@@ -1,3 +1,4 @@
+ls
 *~*
 *.obj
 *.lib
@@ -9,3 +10,5 @@ NV_MEMORY/
 *.obj
 *.bak
 *.str
+Components/
+Output Files/

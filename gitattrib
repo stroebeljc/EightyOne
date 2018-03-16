@@ -1,0 +1,17 @@
+* binary
+
+*.bpf text
+*.def text
+*.gcc text
+*.c text
+*.TXT text
+*.dfm text
+*.H text
+*.h text
+*.bor text
+*.cpp text
+*.asm text
+*.sym text
+*.bpg text
+*.msc text
+*.txt text

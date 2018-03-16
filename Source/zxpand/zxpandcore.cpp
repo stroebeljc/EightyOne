@@ -26,7 +26,7 @@ extern WORD defaultLoadAddr;
 extern BYTE near mode;
 extern BYTE* near gdp;
 
-extern BYTE dirFlags;
+extern dirState_t gDS;
 
 extern void puthexUSART(int n);
 
@@ -122,7 +122,7 @@ void zx_process_write(void)
          {
             // get next directory entry
             //
-            dirFlags = PORTD;
+            gDS.compatibleMode = PORTD == 255;
             worker = COM_DirectoryRead;
          }
       }
@@ -392,7 +392,7 @@ void zx_process_write(void)
              {
                // get serial bytes binary - careful if there's more than 127...
                int n = serialCopy((BYTE*)globalData);
-               gdp = globalData;
+               gdp = (BYTE *near)globalData;
                mode = 0;
                LATD = n;
              }

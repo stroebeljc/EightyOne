@@ -40,6 +40,7 @@
 
 TTZXFile TZXFile;
 
+extern loadFileSymbolsProxy(const char*);
 extern int AutoLoadCount;
 int FlashLoadable;
 
@@ -234,9 +235,17 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
 
         TZXFile.Stop(false);
         if (OpenDialog->Execute())
-                for(i=0;i < OpenDialog->Files->Count; i++)
+                for(i=0; i < OpenDialog->Files->Count; i++)
                 {
-                        LoadFile(OpenDialog->Files->Strings[i] , insert);
+                        AnsiString filename = OpenDialog->Files->Strings[i];
+                        LoadFile(filename, insert);
+                        AnsiString Ext = GetExt(filename);
+                        if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
+                                  || Ext==".P" || Ext==".O" || Ext==".A83"
+                                  || Ext==".81" || Ext==".80" || Ext==".P81")
+                        {
+                                loadFileSymbolsProxy(filename.c_str());
+                        }
                         insert=true;
                         TZXFile.CurBlock=TZXFile.Blocks;
                 }

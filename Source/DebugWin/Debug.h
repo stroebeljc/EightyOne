@@ -292,8 +292,6 @@ private:	// User declarations
         // default values are evil. never ever use them >:)
         void SetLabelInfo(TLabel* label, int value, int valueWidth = 4);
 
-        int StepOverAddr;
-        int StepOverStack;
         void __fastcall DoEditStack(int);
         void __fastcall DoEditReg(WORD&);
         void __fastcall DoEditReg(BYTE&);

@@ -267,6 +267,7 @@ break;
 
 case 0x7b:	/* LD SP,(nnnn) */
 LD16_RRNN(SPL,SPH);
+StepOverStackChange = SP - StepOverStack;
 break;
 
 case 0xa0:	/* LDI */

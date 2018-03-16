@@ -78,6 +78,11 @@ int recentHistoryPos=0;
 
 int displayedTStatesCount;
 
+int StepOverStack;
+int StepOverStackChange;
+int StepOverInstructionSize;
+int StepOverAddr;
+
 void DebugUpdate(void)
 {
         static int NMISaveSingleStep=-1, INTSaveSingleStep=-1;
@@ -527,13 +532,23 @@ bool TDbg::BPExeHit(int addr, breakpoint* const bp, int idx)
 {
         if (bp->HitExe(BP_EXE, addr))
 	{
+                breakpoint* lastBP = &Breakpoint[Breakpoints - 1];
+
                 if (bp->Permanent)
                 {
-                        return true;
+                        if (lastBP->Permanent ||
+                           (!lastBP->Permanent && (((lastBP->Addr - bp->Addr) != StepOverInstructionSize) || (bp->ConditionAddr != Equal))))
+                        {
+                                return true;
+                        }
                 }
                 else
                 {
-                        if (StepOverStack == z80.sp.w)
+                        int expectedStack = StepOverStack + StepOverStackChange;
+                        if (expectedStack < 0) expectedStack += 65536;
+                        if (expectedStack > 65535) expectedStack -= 65536;
+
+                        if (!bp->Permanent && (expectedStack == z80.sp.w))
                         {
                                 DelBreakPoint(idx);
                                 return true;
@@ -977,10 +992,13 @@ void TDbg::UpdateVals(void)
         Disass1->Caption = Disassemble(&i);
         i = recentHistory[(recentHistoryPos+2)&3];
         Disass2->Caption = Disassemble(&i);
+        int stepOverStartAddr=i;
         i=z80.pc.w;
         Disass3->Caption = (Disassemble(&i) + "                ").SetLength(50);
-        StepOverAddr=i;
+        StepOverAddr = i;
         StepOverStack=z80.sp.w;
+        StepOverInstructionSize = StepOverAddr - stepOverStartAddr;
+        StepOverStackChange = 0;
         Disass4->Caption = Disassemble(&i);
         Disass5->Caption = Disassemble(&i);
         Disass6->Caption = Disassemble(&i);

@@ -24,6 +24,9 @@
 
 */
 
+extern int StepOverStackChange;
+extern int StepOverStack;
+
 #include "config.h"
 #include "zx81config.h"
 
@@ -43,10 +46,11 @@ static void z80_ddfdcbxx(BYTE opcode3, WORD tempaddr);
 
 unsigned short RZXCounter=0;
 
-
 void SetSP(int i)
 {
         //spBase = i;
+
+        StepOverStackChange = i - StepOverStack;
 }
 
 /* Execute Z80 opcodes until the next event */

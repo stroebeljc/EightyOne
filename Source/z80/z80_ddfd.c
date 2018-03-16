@@ -470,6 +470,7 @@ break;
 case 0xf9:		/* LD SP,REGISTER */
 tstates += 2;
 SP=REGISTER;
+StepOverStackChange = SP - StepOverStack;
 break;
 
 default:		/* Instruction did not involve H or L, so backtrack

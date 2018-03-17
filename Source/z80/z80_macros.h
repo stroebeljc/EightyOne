@@ -283,7 +283,6 @@ break
   (regl)=readbyte(SP++);\
   contend( SP, 3 );\
   (regh)=readbyte(SP++);\
-  StepOverStackChange += 2;\
 }
 
 #define PUSH16(regl,regh)\
@@ -292,7 +291,6 @@ break
   writebyte(SP,(regh));\
   SP--; contend( SP, 3 );\
   writebyte(SP,(regl));\
-  StepOverStackChange -= 2;\
 }
 
 #define RET()\

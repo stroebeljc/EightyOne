@@ -313,6 +313,7 @@ private:	// User declarations
         bool BPFlagValueHit(breakpoint* const bp);
         bool BPMemoryValueHit(breakpoint* const bp);
         bool BPRegisterValueHit(breakpoint* const bp);
+        bool IsStepOverInstruction(int Addr);
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);

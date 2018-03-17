@@ -580,7 +580,7 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         case 0xcc: StrText="CALL Z,nnnn"; break;
         case 0xcd: StrText="CALL nnnn"; break;
         case 0xce: StrText="ADC A,nn"; break;
-        case 0xcf: StrText="RST 8"; break;
+        case 0xcf: StrText="RST 08"; break;
         case 0xd0: StrText="RET NC"; break;
         case 0xd1: StrText="POP DE"; break;
         case 0xd2: StrText="JP NC,nnnn"; break;

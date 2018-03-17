@@ -39,6 +39,7 @@
 #include "symbolstore.h"
 #include "SymBrowse.h"
 #include "Profiler.h"
+#include "DbgDissassem.cpp"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -79,9 +80,9 @@ int recentHistoryPos=0;
 int displayedTStatesCount;
 
 int StepOverStack;
-int StepOverStackChange;
 int StepOverInstructionSize;
 int StepOverAddr;
+bool StepOverInstruction;
 
 void DebugUpdate(void)
 {
@@ -544,11 +545,7 @@ bool TDbg::BPExeHit(int addr, breakpoint* const bp, int idx)
                 }
                 else
                 {
-                        int expectedStack = StepOverStack + StepOverStackChange;
-                        if (expectedStack < 0) expectedStack += 65536;
-                        if (expectedStack > 65535) expectedStack -= 65536;
-
-                        if (!bp->Permanent && (expectedStack == z80.sp.w))
+                        if (!bp->Permanent && (StepOverStack == z80.sp.w))
                         {
                                 DelBreakPoint(idx);
                                 return true;
@@ -992,13 +989,13 @@ void TDbg::UpdateVals(void)
         Disass1->Caption = Disassemble(&i);
         i = recentHistory[(recentHistoryPos+2)&3];
         Disass2->Caption = Disassemble(&i);
-        int stepOverStartAddr=i;
         i=z80.pc.w;
+        int stepOverStartAddr=i;
+        StepOverInstruction = IsStepOverInstruction(i);
         Disass3->Caption = (Disassemble(&i) + "                ").SetLength(50);
         StepOverAddr = i;
         StepOverStack=z80.sp.w;
         StepOverInstructionSize = StepOverAddr - stepOverStartAddr;
-        StepOverStackChange = 0;
         Disass4->Caption = Disassemble(&i);
         Disass5->Caption = Disassemble(&i);
         Disass6->Caption = Disassemble(&i);
@@ -1093,6 +1090,70 @@ void TDbg::UpdateVals(void)
                 if (!Continuous->Checked) DisableVals();
         }
 
+}
+//---------------------------------------------------------------------------
+
+bool TDbg::IsStepOverInstruction(int Addr)
+{
+	bool stepOverInstruction = false;
+
+        int Opcode;
+        
+        Opcode = GetMem(Addr);
+        Addr++;
+
+        if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE || zx81.machine==MACHINESPEC48))
+        {
+		Opcode=-1;
+	}
+
+        switch(Opcode)
+        {
+        case 0x10: // DJNZ fz
+        case 0x76: // HALT
+        case 0xc4: // CALL NZ,nnnn
+        case 0xc7: // RST 00
+        case 0xcc: // CALL Z,nnnn
+        case 0xcd: // CALL nnnn
+        case 0xcf: // RST 08
+        case 0xd4: // CALL NC,nnnn
+        case 0xd7: // RST 10
+        case 0xdc: // CALL C,nnnn
+        case 0xdf: // RST 18
+        case 0xe4: // CALL PO,nnnn
+        case 0xe7: // RST 20
+        case 0xec: // CALL PE,nnnn
+        case 0xef: // RST 28
+        case 0xf4: // CALL P,nnnn
+        case 0xf7: // RST 30
+        case 0xfc: // CALL M,nnnn
+        case 0xff: // RST 38
+		stepOverInstruction = true;
+		break;
+        case 0xed:
+                Opcode = GetMem(Addr);
+                if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE || zx81.machine==MACHINESPEC48))
+                {
+			Opcode=-1;
+		}
+ 
+                switch(Opcode)
+                {
+                case 0xb0:	// LDIR
+                case 0xb1:	// CPIR
+                case 0xb2:	// INIR
+                case 0xb3:	// OTIR
+                case 0xb8:	// LDDR
+                case 0xb9:	// CPDR
+                case 0xba:	// INDR
+                case 0xbb:	// OTDR
+			stepOverInstruction = true;
+                        break;
+                }
+                break;
+        }
+	
+	return stepOverInstruction;
 }
 //---------------------------------------------------------------------------
 void TDbg::EnableValues(bool enable)
@@ -1263,11 +1324,14 @@ void __fastcall TDbg::SingleStepClick(TObject *Sender)
         DoNext=true;
 }
 //---------------------------------------------------------------------------
-#include "DbgDissassem.cpp"
-
-
 void __fastcall TDbg::StepOverClick(TObject *Sender)
 {
+        if (!StepOverInstruction)
+        {
+                SingleStepClick(Sender);
+                return;
+        }
+
         MemoryWindow->ClearChanges();
         breakpoint bp(StepOverAddr, BP_EXE);
         bp.Permanent = false;

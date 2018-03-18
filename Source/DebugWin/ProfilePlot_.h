@@ -7,11 +7,13 @@
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
+#include <ComCtrls.hpp>
 //---------------------------------------------------------------------------
 class TProfilePlot : public TForm
 {
 __published:	// IDE-managed Components
         TScrollBar *ScrollBarHorizontal;
+        TStatusBar *StatusBar1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall ScrollBarHorizontalChange(TObject *Sender);

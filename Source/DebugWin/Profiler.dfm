@@ -1,8 +1,9 @@
 object Profiler: TProfiler
-  Left = 511
-  Top = 217
+  Left = 301
+  Top = 221
   Width = 458
   Height = 189
+  BorderStyle = bsSizeToolWin
   Caption = 'Profiler'
   Color = clBtnFace
   Constraints.MinHeight = 189
@@ -22,7 +23,7 @@ object Profiler: TProfiler
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'New'
-    TabOrder = 0
+    TabOrder = 1
     OnClick = ButtonNewClick
   end
   object ButtonDelete: TButton
@@ -32,7 +33,7 @@ object Profiler: TProfiler
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Delete'
-    TabOrder = 1
+    TabOrder = 4
     OnClick = ButtonDeleteClick
   end
   object ListViewProfileSamples: TListView
@@ -67,7 +68,7 @@ object Profiler: TProfiler
     ColumnClick = False
     GridLines = True
     RowSelect = True
-    TabOrder = 2
+    TabOrder = 0
     ViewStyle = vsReport
   end
   object ButtonEdit: TButton
@@ -77,7 +78,7 @@ object Profiler: TProfiler
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Edit'
-    TabOrder = 3
+    TabOrder = 2
     OnClick = ButtonEditClick
   end
   object ButtonReset: TButton
@@ -87,7 +88,7 @@ object Profiler: TProfiler
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Reset'
-    TabOrder = 4
+    TabOrder = 3
     OnClick = ButtonResetClick
   end
   object ButtonRefresh: TButton
@@ -105,6 +106,7 @@ object Profiler: TProfiler
     Top = 122
     Width = 53
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Plot'
     TabOrder = 6
     OnClick = ButtonPlotClick

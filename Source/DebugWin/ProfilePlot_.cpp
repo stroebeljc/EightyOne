@@ -21,36 +21,25 @@ __fastcall TProfilePlot::TProfilePlot(TComponent* Owner)
 
 void __fastcall TProfilePlot::FormPaint(TObject *Sender)
 {
-        if (_pd == NULL) return;
+        if (_pd == NULL || _pd->SampleCount() == 0) return;
 
-        double scale = (double)ClientHeight / (double)(_pd->Max() - _pd->Min());
+        int min = _pd->Min() - 100;
+        int max = _pd->Max() + 100;
+        if (min < 0) min = 0;
+        int range = max - min;
+
+        double scale = (double)ClientHeight / (double)range;
 
         Canvas->Pen->Color = clBlue;
         Canvas->MoveTo(0, ClientHeight - (int)((double)_pd->Sample(0) * scale));
 
-        int sbBase = ScrollBarHorizontal->Position;
+        int sbBase = ScrollBarHorizontal->Enabled ? ScrollBarHorizontal->Position : 0;
+        int mini = ClientWidth;
+        if (_pd->SampleCount() < mini) mini = _pd->SampleCount();
 
-        for (int i = 0; i < min(ClientWidth, _pd->SampleCount()); ++i) {
+        for (int i = 0; i < mini; ++i) {
                 double sam = _pd->Sample(i + sbBase) - _pd->Min();
                 Canvas->LineTo(i, ClientHeight - (int)(sam * scale));
-        }
-
-        AnsiString min = "MIN T = ";
-        AnsiString max = "MAX T = ";
-        if (_pd->SampleCount()) {
-                min += _pd->Min();
-                max += _pd->Max();
-        }
-        else {
-                min += "---";
-                max += "---";
-        }
-
-        Canvas->TextOutA(8,  8, max);
-        Canvas->TextOutA(8, 24, min);
-
-        if(_mouseX + ScrollBarHorizontal->Position < _pd->SampleCount()) {
-                Canvas->TextOutA(8, 40, _pd->Sample(_mouseX + ScrollBarHorizontal->Position));
         }
 }
 //---------------------------------------------------------------------------
@@ -60,11 +49,10 @@ void TProfilePlot::InitScrollbar()
         if (_pd == NULL) return;
 
         ScrollBarHorizontal->Min = 0;
-        bool visible = _pd->SampleCount() > ClientWidth;
-        ScrollBarHorizontal->Visible = visible;
-        if (visible) {
-                ScrollBarHorizontal->Max = _pd->SampleCount() - ClientWidth;
-        }
+        bool enabled = _pd->SampleCount() > ClientWidth;
+        ScrollBarHorizontal->Enabled = enabled;
+        ScrollBarHorizontal->Max = _pd->SampleCount() - ClientWidth;
+        ScrollBarHorizontal->Position = 0;
 }
 //---------------------------------------------------------------------------
 
@@ -72,6 +60,16 @@ void __fastcall TProfilePlot::PlotTGraph(ProfileDetail* pd)
 {
         _pd = pd;
         InitScrollbar();
+
+        AnsiString minmax = "Min: ---- Max: ----";
+        if (_pd) {
+                minmax = "Min: ";
+                minmax += _pd->Min();
+                minmax += "Max: ";
+                minmax += _pd->Max();
+        }
+        StatusBar1->Panels->Items[0]->Text = minmax;
+
         Show();
 }
 //---------------------------------------------------------------------------
@@ -96,17 +94,22 @@ void __fastcall TProfilePlot::FormMouseMove(TObject *Sender,
         coords.x = X;
         coords.y = Y;
         ScreenToClient(coords);
-        _mouseX = coords.x + ScrollBarHorizontal->Position;
-        TRect invreg;
-        invreg.left = 8;
-        invreg.top = 40;
-        invreg.right = 108;
-        invreg.bottom = 56;
-        int ax = _mouseX + ScrollBarHorizontal->Position;
-        if(ax > 0 && ax < _pd->SampleCount()) {
-                InvalidateRect(this, &invreg, false);
-                Refresh();
+        int sample = coords.x;
+        if (ScrollBarHorizontal->Enabled) {
+                sample += ScrollBarHorizontal->Position;
         }
+
+        AnsiString cur = "Current: ----";
+        AnsiString sam = "Sample: ----";
+
+        if (_pd) {
+                cur = "Current: ";
+                cur += _pd->Sample(sample);
+                sam = "Sample: ";
+                sam += sample;
+        }
+        StatusBar1->Panels->Items[1]->Text = sam;
+        StatusBar1->Panels->Items[2]->Text = cur;
 }
 //---------------------------------------------------------------------------
 

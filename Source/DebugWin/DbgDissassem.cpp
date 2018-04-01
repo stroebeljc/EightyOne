@@ -999,8 +999,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
                 case 0x6c:
                 case 0x74:
                 case 0x7c:	StrText="NEG"; break;
+                case 0x4d:      StrText="RETI"; break;
                 case 0x45:
-                case 0x4d:
                 case 0x55:
                 case 0x5d:
                 case 0x65:

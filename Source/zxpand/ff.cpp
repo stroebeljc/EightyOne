@@ -243,7 +243,7 @@ FRESULT f_lseek (FIL *fp, DWORD pos)
         if (lseek(GetHandle(fp), pos, SEEK_SET) == -1) {
                 return cvtERRNO();
         }
-        return 0;
+        return FR_OK;
 }
 
 

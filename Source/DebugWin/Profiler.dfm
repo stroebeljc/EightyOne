@@ -17,7 +17,7 @@ object Profiler: TProfiler
   PixelsPerInch = 96
   TextHeight = 13
   object ButtonNew: TButton
-    Left = 4
+    Left = 8
     Top = 122
     Width = 53
     Height = 25
@@ -27,7 +27,7 @@ object Profiler: TProfiler
     OnClick = ButtonNewClick
   end
   object ButtonDelete: TButton
-    Left = 196
+    Left = 200
     Top = 122
     Width = 53
     Height = 25
@@ -39,7 +39,7 @@ object Profiler: TProfiler
   object ListViewProfileSamples: TListView
     Left = 8
     Top = 8
-    Width = 424
+    Width = 433
     Height = 107
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
@@ -72,7 +72,7 @@ object Profiler: TProfiler
     ViewStyle = vsReport
   end
   object ButtonEdit: TButton
-    Left = 68
+    Left = 72
     Top = 122
     Width = 53
     Height = 25
@@ -82,7 +82,7 @@ object Profiler: TProfiler
     OnClick = ButtonEditClick
   end
   object ButtonReset: TButton
-    Left = 132
+    Left = 136
     Top = 122
     Width = 53
     Height = 25
@@ -92,7 +92,7 @@ object Profiler: TProfiler
     OnClick = ButtonResetClick
   end
   object ButtonRefresh: TButton
-    Left = 312
+    Left = 324
     Top = 122
     Width = 53
     Height = 25
@@ -102,7 +102,7 @@ object Profiler: TProfiler
     OnClick = ButtonRefreshClick
   end
   object ButtonPlot: TButton
-    Left = 376
+    Left = 388
     Top = 122
     Width = 53
     Height = 25

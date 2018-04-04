@@ -50,6 +50,9 @@ BYTE sz53_table[0x100]; /* The S, Z, 5 and 3 bits of the lookup value */
 BYTE parity_table[0x100]; /* The parity of the lookup value */
 BYTE sz53p_table[0x100]; /* OR the above two tables together */
 
+extern int StackChange;
+extern int StepOutRequested;
+
 /* This is what everything acts on! */
 processor z80;
 
@@ -95,6 +98,8 @@ void z80_reset( void )
         SP=PC=0;
         IFF1=IFF2=IM=0;
         z80.halted=0;
+        StackChange=0;
+        StepOutRequested=0;
 }
 
 /* Process a z80 maskable interrupt */
@@ -117,15 +122,17 @@ int z80_interrupt( /*int ts*/ )
 
                 switch(IM)
                 {
-                case 0: PC = 0x0038; return(13);
-                case 1: PC = 0x0038; return(13);
+                case 0: PC = 0x0038; StackChange+=2; return(13);
+                case 1: PC = 0x0038; StackChange+=2; return(13);
                 case 2:
 	        {
 	                WORD inttemp=(0x100*I)+0xff;
 	                PCL = readbyte(inttemp++); PCH = readbyte(inttemp);
-	                return(19);
+	                StackChange+=2;
+                        return(19);
 	        }
-                default: return(12);
+                default:
+                        return(12);
                 }
         }
         return(0);
@@ -136,6 +143,7 @@ int z80_nmi( int ts )
 {
         int waitstates=0;
 
+        StackChange+=2;
         IFF1 = 0;
 
         if (z80.halted)

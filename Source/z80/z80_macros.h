@@ -283,6 +283,8 @@ break
   (regl)=readbyte(SP++);\
   contend( SP, 3 );\
   (regh)=readbyte(SP++);\
+  StackChange -= 2;\
+  if (StackChange < 0) StackChange = 0;\
 }
 
 #define PUSH16(regl,regh)\
@@ -291,11 +293,17 @@ break
   writebyte(SP,(regh));\
   SP--; contend( SP, 3 );\
   writebyte(SP,(regl));\
+  StackChange += 2;\
 }
 
 #define RET()\
 {\
-  POP16(PCL,PCH);\
+  contend( SP, 3 );\
+  (PCL)=readbyte(SP++);\
+  contend( SP, 3 );\
+  (PCH)=readbyte(SP++);\
+  StackChange -= 2;\
+  RetExecuted = 1;\
 }
 
 #define RL(value)\

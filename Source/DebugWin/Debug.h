@@ -211,6 +211,7 @@ __published:	// IDE-managed Components
         TLabel *Label31;
         TLabel *TStatesCount;
         TButton *ButtonProfiler;
+        TButton *StepOut;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -279,6 +280,9 @@ __published:	// IDE-managed Components
         void __fastcall Disass3MouseDown(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall ButtonProfilerClick(TObject *Sender);
+        void __fastcall StepOutClick(TObject *Sender);
+        void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
+          TShiftState Shift);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);

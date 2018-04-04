@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 190
-  Top = 335
+  Left = 160
+  Top = 358
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -12,8 +12,10 @@ object Dbg: TDbg
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -1533,11 +1535,12 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 3
     object SingleStep: TButton
-      Left = 12
+      Left = 10
       Top = 21
-      Width = 65
+      Width = 50
       Height = 25
-      Caption = 'Single Step'
+      Hint = 'Shift+F5'
+      Caption = 'Step'
       Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1546,15 +1549,18 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 0
       OnClick = SingleStepClick
     end
     object StepOver: TButton
-      Left = 87
+      Left = 66
       Top = 21
-      Width = 65
+      Width = 50
       Height = 25
-      Caption = 'Step Over'
+      Hint = 'Shift+F6'
+      Caption = 'Over'
       Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1563,14 +1569,17 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
       OnClick = StepOverClick
     end
     object RunStop: TButton
-      Left = 162
+      Left = 178
       Top = 21
-      Width = 65
+      Width = 50
       Height = 25
+      Hint = 'Shift+F8'
       Caption = 'Stop'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1579,7 +1588,9 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
       OnClick = RunStopClick
     end
     object Continuous: TCheckBox
@@ -1598,11 +1609,11 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       State = cbChecked
-      TabOrder = 5
+      TabOrder = 6
       OnClick = ContinuousClick
     end
     object SkipNMIBtn: TCheckBox
-      Left = 11
+      Left = 10
       Top = 56
       Width = 65
       Height = 17
@@ -1614,11 +1625,11 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       OnClick = SkipNMIBtnClick
     end
     object SkipINTBtn: TCheckBox
-      Left = 83
+      Left = 84
       Top = 56
       Width = 65
       Height = 17
@@ -1630,8 +1641,26 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 5
       OnClick = SkipINTBtnClick
+    end
+    object StepOut: TButton
+      Left = 122
+      Top = 21
+      Width = 50
+      Height = 25
+      Hint = 'Shift+F7'
+      Caption = 'Out'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnClick = StepOutClick
     end
   end
   object GroupBox3: TGroupBox

@@ -43,6 +43,9 @@ static void z80_ddfdcbxx(BYTE opcode3, WORD tempaddr);
 
 unsigned short RZXCounter=0;
 
+extern int RetExecuted;
+extern int StackChange;
+
 void SetSP(int i)
 {
         //spBase = i;
@@ -54,6 +57,7 @@ int z80_do_opcode()
     BYTE opcode;
 
     tstates=0;
+    RetExecuted = 0;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */
@@ -283,6 +287,7 @@ int z80_do_opcode()
       contend( PC, 3 );
       SPH=opcode_fetch(PC++);
       SetSP(SP);
+      StackChange=0;
       break;
     case 0x32:		/* LD (nnnn),A */
       contend( PC, 3 );
@@ -298,6 +303,7 @@ int z80_do_opcode()
       tstates += 2;
       SP++;
       SetSP(SP);
+      StackChange--;
       break;
     case 0x34:		/* INC (HL) */
       contend( HL, 4 );
@@ -348,6 +354,7 @@ int z80_do_opcode()
       tstates += 2;
       SP--;
       SetSP(SP);
+      StackChange++;
       break;
     case 0x3c:		/* INC A */
       INC(A);
@@ -1096,6 +1103,7 @@ int z80_do_opcode()
       tstates += 2;
       SP=HL;
       SetSP(HL);
+      StackChange=0;
       break;
     case 0xfa:		/* JP M,nnnn */
       contend( PC, 3 ); contend( PC+1, 3 );

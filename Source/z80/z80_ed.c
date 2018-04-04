@@ -58,8 +58,9 @@ case 0x7c:	/* NEG */
 }
 break;
 
+case 0x4d:      /* RETI */
+
 case 0x45:
-case 0x4d:
 case 0x55:
 case 0x5d:
 case 0x65:
@@ -267,6 +268,7 @@ break;
 
 case 0x7b:	/* LD SP,(nnnn) */
 LD16_RRNN(SPL,SPH);
+StackChange=0;
 break;
 
 case 0xa0:	/* LDI */

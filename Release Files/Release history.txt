@@ -16,6 +16,9 @@ Version 1.10 - ##/##/2018 (by SirMorris and Paul Farrow)
   - Added the ability to break on a read, write, input or output value as well as its address.
   - Added a Profiler tool which provides some visibility into the T-state timing of machine code.
   - Symbol file now loaded when opening a program via the Tape Manager's File->Open option.
+  - Added a Step Out facility to the debugger.
+  - Added keyboard shortcuts for the debugger Step In (Shift+F5), Step Over (Shift+F6),
+    Step Out (Shift+F7) and Run/Stop (Shift+F8) buttons.
 
 Version 1.9 - 17/02/2018 (by Paul Farrow)
 * Bug fixes:

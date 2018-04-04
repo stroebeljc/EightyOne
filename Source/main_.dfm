@@ -152,11 +152,11 @@ object Form1: TForm1
       object BorderSize1: TMenuItem
         Caption = 'Border Size'
         object None1: TMenuItem
-          Caption = 'None         (256x192)'
+          Caption = 'None          (256x192)'
           OnClick = None1Click
         end
         object Small1: TMenuItem
-          Caption = 'Small         (264x200)'
+          Caption = 'Small          (264x200)'
           OnClick = Small1Click
         end
         object Normal1: TMenuItem
@@ -165,7 +165,7 @@ object Form1: TForm1
           OnClick = Normal1Click
         end
         object Large1: TMenuItem
-          Caption = 'Large        (400x300)'
+          Caption = 'Large          (400x300)'
           OnClick = Large1Click
         end
         object FullImage1: TMenuItem

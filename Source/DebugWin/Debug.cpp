@@ -83,6 +83,9 @@ int StepOverStack;
 int StepOverInstructionSize;
 int StepOverAddr;
 bool StepOverInstruction;
+int StepOutRequested;
+int RetExecuted;
+int StackChange;
 
 void DebugUpdate(void)
 {
@@ -172,12 +175,13 @@ void DebugUpdate(void)
 
         displayedTStatesCount = tStatesCount;
 
-        if (Dbg->BreakPointHit())
+        if (Dbg->BreakPointHit() || (RetExecuted && StepOutRequested && (StackChange < 0)))
         {
+                StepOutRequested = 0;
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
                 Dbg->RunStopClick(NULL);
-        }            
+        }
 
         if (Dbg->DoNext)
         {
@@ -502,7 +506,7 @@ bool TDbg::BreakPointHit()
         {
 		breakpoint* bp = &Breakpoint[idx];
 
-		if (Dbg->BPExeHit(z80.pc.w, bp, idx) ||   
+		if (Dbg->BPExeHit(z80.pc.w, bp, idx) ||
                     Dbg->BPInOutHit(BP_IN, lpi, lpiv, bp) ||
                     Dbg->BPInOutHit(BP_INL, lpi, lpiv, bp) ||
                     Dbg->BPInOutHit(BP_INH, lpi, lpiv, bp) ||
@@ -996,6 +1000,7 @@ void TDbg::UpdateVals(void)
         StepOverAddr = i;
         StepOverStack=z80.sp.w;
         StepOverInstructionSize = StepOverAddr - stepOverStartAddr;
+        StepOutRequested = 0;
         Disass4->Caption = Disassemble(&i);
         Disass5->Caption = Disassemble(&i);
         Disass6->Caption = Disassemble(&i);
@@ -1077,6 +1082,7 @@ void TDbg::UpdateVals(void)
                 RunStop->Caption = "Run";
                 SingleStep->Enabled = true;
                 StepOver->Enabled = true;
+                StepOut->Enabled = true;
                 EnableVals();
                 DelTempBreakPoints();
 
@@ -1087,6 +1093,7 @@ void TDbg::UpdateVals(void)
                 RunStop->Caption = "Stop";
                 SingleStep->Enabled = false;
                 StepOver->Enabled = false;
+                StepOut->Enabled = false;
                 if (!Continuous->Checked) DisableVals();
         }
 
@@ -1276,6 +1283,8 @@ void __fastcall TDbg::RunStopClick(TObject *Sender)
                 MemoryWindow->ClearChanges();
         }
         UpdateVals();
+        StepOutRequested = 0;
+        StackChange = 0;
 }
 //---------------------------------------------------------------------------
 
@@ -1284,6 +1293,7 @@ void __fastcall TDbg::FormClose(TObject *Sender, TCloseAction &Action)
         zx81.single_step=0;
         Form1->DebugWin->Checked=false;
         zx81_stop=0;
+        StepOutRequested = 0;
 }
 //---------------------------------------------------------------------------
 
@@ -1321,6 +1331,7 @@ void __fastcall TDbg::SingleStepClick(TObject *Sender)
         MemoryWindow->ClearChanges();
         zx81_stop=0;
         zx81.single_step=1;
+        StackChange = 0;
         DoNext=true;
 }
 //---------------------------------------------------------------------------
@@ -1920,6 +1931,41 @@ void __fastcall TDbg::Disass3MouseDown(TObject *Sender,
 void __fastcall TDbg::ButtonProfilerClick(TObject *Sender)
 {
         Profiler->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::StepOutClick(TObject *Sender)
+{
+        RunStopClick(NULL);
+
+        StepOutRequested = 1;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::FormKeyDown(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+        if (Shift.Contains(ssShift) && (Key == VK_F8))
+        {
+                RunStopClick(Sender);
+        }
+        else if (zx81_stop && Shift.Contains(ssShift))
+        {
+                switch(Key)
+                {
+                case VK_F5:
+                        SingleStepClick(Sender);
+                        break;
+
+                case VK_F6:
+                        StepOverClick(Sender);
+                        break;
+
+                case VK_F7:
+                        StepOutClick(Sender);
+                        break;
+                }
+        }
 }
 //---------------------------------------------------------------------------
 

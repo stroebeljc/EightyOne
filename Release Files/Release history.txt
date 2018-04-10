@@ -7,7 +7,8 @@ Version 1.10 - ##/##/2018 (by SirMorris and Paul Farrow)
 * Bug fixes:
   - Sound is now switched off upon a Hard Reset.
   - ZXpand SEEK bug has been fixed.
-  - Bug fix to the recursive support of the Step Over debugging facility.
+  - Fixed recursive support of the Step Over debugging facility.
+  - Dixed length validation of P81 files.
 * Enhancements:
   - A warning is displayed if surplus bytes are found at the end of ZX80 and ZX81 program files.
   - Removed the 'mask' option from the breakpoint mechanism.

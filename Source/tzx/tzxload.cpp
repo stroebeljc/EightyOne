@@ -726,10 +726,10 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
         int elineOffset;
         AnsiString msg;
 
+        int length = len;
+
         if (Extension == ".P" || Extension == ".P81" || Extension == ".81")
         {
-                int length = len;
-
                 while ((length > 0) && ((unsigned char)(program[0]) & 128) == 0)
                 {
                         program++;
@@ -747,7 +747,7 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
                 }
 
                 program++;
-
+                length--;
         }
         else if (Extension == ".O" || Extension == ".80")
         {
@@ -761,9 +761,9 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
         int eline = (highByte << 8) + lowByte;
         int expectedLen = eline - startSystemVariables;
 
-        if (expectedLen < len)
+        if (expectedLen < length)
         {
-                int surplusBytes = len - expectedLen;
+                int surplusBytes = length - expectedLen;
                 bool includesSurplusBytes = surplusBytes > 1;
                 msg = "The file contains " + IntToStr(surplusBytes) + " byte" + (includesSurplusBytes ? "s" : "") + " more than specifed by ELINE. Th" + (includesSurplusBytes ? "ese" : "is") + " will be ignored.";
 

@@ -13,7 +13,7 @@ Version 1.10 - 23/04/2018 (by Paul Farrow and SirMorris)
   - A warning is displayed if surplus bytes are found at the end of ZX80 and ZX81 program
     files.
   - Removed the 'mask' option from the breakpoint mechanism.
-  - Added separate word and byte Input and Ouput breakpoint types.
+  - Added separate word and byte Input and Output breakpoint types.
   - Added Register, Flag and Memory breakpoint types.
   - Added the ability to break on a read, write, input or output value as well as its
     address.

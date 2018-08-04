@@ -46,12 +46,20 @@ __published:	// IDE-managed Components
         TImage *ts1000kb;
         TImage *spec48kb;
         TImage *spec128kb;
+        TImage *ts2068kb;
+        TImage *ts2048kb;
+        TImage *spec16kb;
+        TImage *zx81zxpandkb;
+        TImage *zx80zxpandkb;
+        TImage *specPlus2kb;
+        TImage *specPlus3kb;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
         void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
+        void __fastcall KeyboardDblClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TKeyboard(TComponent* Owner);

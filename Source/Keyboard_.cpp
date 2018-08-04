@@ -90,6 +90,8 @@ void TKeyboard::KbChange(void)
 {
         Keyboard->zx80kb->Visible=false;
         Keyboard->zx81kb->Visible=false;
+        Keyboard->zx80zxpandkb->Visible=false;
+        Keyboard->zx81zxpandkb->Visible=false;
         Keyboard->acekb->Visible=false;
         Keyboard->ts1500kb->Visible=false;
         Keyboard->ts1000kb->Visible=false;
@@ -97,9 +99,13 @@ void TKeyboard::KbChange(void)
         Keyboard->tk85kb->Visible=false;
         Keyboard->zx97kb->Visible=false;
         Keyboard->r470kb->Visible=false;
-        Keyboard->r470kb->Visible=false;
+        Keyboard->spec16kb->Visible=false;
         Keyboard->spec48kb->Visible=false;
         Keyboard->spec128kb->Visible=false;
+        Keyboard->ts2048kb->Visible=false;
+        Keyboard->ts2068kb->Visible=false;
+        Keyboard->specPlus2kb->Visible=false;
+        Keyboard->specPlus3kb->Visible=false;
 
         switch(zx81.romcrc)
         {
@@ -112,7 +118,8 @@ void TKeyboard::KbChange(void)
                 break;
 
         case CRCZX80:
-                Keyboard->zx80kb->Visible=true;
+                if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
+                else Keyboard->zx80kb->Visible=true;
                 break;
 
         case CRCLAMBDA:
@@ -134,28 +141,35 @@ void TKeyboard::KbChange(void)
         case CRCZX81_ED1:
         case CRCZX81_ED2:
                 if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
+                else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                 else Keyboard->zx81kb->Visible=true;
                 break;
 
         case CRCSP48:
         case CRCSP81:
-                Keyboard->spec48kb->Visible=true;
+                if (spectrum.machine == SPECCY16)
+                        Keyboard->spec16kb->Visible=true;
+                else
+                        Keyboard->spec48kb->Visible=true;
                 break;
         case CRCH4TH:
         case CRCSG81:
         case CRCTREE4TH:
         case CRC8300:
         case CRCASZMIC:
-                Keyboard->zx81kb->Visible=true;
+                if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
+                else Keyboard->zx81kb->Visible=true;
                 break;
         default:
                 switch(zx81.machine)
                 {
                 case MACHINEZX80:
-                        Keyboard->zx80kb->Visible=true;
+                        if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
+                        else Keyboard->zx80kb->Visible=true;
                         break;
                 case MACHINEZX81:
                         if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
+                        else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                         else Keyboard->zx81kb->Visible=true;
                         break;
                 case MACHINEACE:
@@ -168,18 +182,75 @@ void TKeyboard::KbChange(void)
                         Keyboard->lambdakb->Visible=true;
                         break;
                 case MACHINESPEC48:
-                        if (spectrum.machine == SPECCY128)
+                        switch (spectrum.machine)
                         {
+                        case SPECCY128:
                                 Keyboard->spec128kb->Visible=true;
-                        }
-                        else
-                        {
+                                break;
+                        case SPECCYTC2048:
+                                Keyboard->ts2048kb->Visible=true;
+                                break;
+                        case SPECCYTS2068:
+                                Keyboard->ts2068kb->Visible=true;
+                                break;
+                        case SPECCY16:
+                                Keyboard->spec16kb->Visible=true;
+                                break;
+                        case SPECCYPLUS2:
+                                Keyboard->specPlus2kb->Visible=true;
+                                break;
+
+                        case SPECCYPLUS2A:
+                        case SPECCYPLUS3:
+                                Keyboard->specPlus3kb->Visible=true;
+                                break;
+
+                        default:
                                 Keyboard->spec48kb->Visible=true;
+                                break;
                         }
                         break;
                 }
         }
 }
 
+void SetKeyboardSize(TImage* image, bool large)
+{
+        if (large)
+        {
+                image->Width = image->Width * 2;
+                image->Height = image->Height * 2;
+        }
+        else
+        {
+                image->Width = image->Width / 2;
+                image->Height = image->Height / 2;
+        }
+}
 
+void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
+{
+        const int normalWidth = 505;
+        bool large = (((TImage*)Sender)->Width == normalWidth);
+
+        SetKeyboardSize(r470kb, large);
+        SetKeyboardSize(zx80zxpandkb, large);
+        SetKeyboardSize(zx81zxpandkb, large);
+        SetKeyboardSize(zx80kb, large);
+        SetKeyboardSize(zx81kb, large);
+        SetKeyboardSize(acekb, large);
+        SetKeyboardSize(ts1500kb, large);
+        SetKeyboardSize(lambdakb, large);
+        SetKeyboardSize(tk85kb, large);
+        SetKeyboardSize(zx97kb, large);
+        SetKeyboardSize(ts1000kb, large);
+        SetKeyboardSize(spec48kb, large);
+        SetKeyboardSize(spec128kb, large);
+        SetKeyboardSize(ts2068kb, large);
+        SetKeyboardSize(ts2048kb, large);
+        SetKeyboardSize(spec16kb, large);
+        SetKeyboardSize(specPlus2kb, large);
+        SetKeyboardSize(specPlus3kb, large);        
+}
+//---------------------------------------------------------------------------
 

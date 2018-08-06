@@ -158,9 +158,13 @@ void zx81_initialise(void)
 
         if (zx81.zxpand)
         {
-                AnsiString romRoot = getMachineRoot(romname);
+                AnsiString romRoot = LowerCase(getMachineRoot(romname));
                 AnsiString overlayName = romRoot + ".zxpand.ovl";
-                memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
+                if (romRoot == "zx81") {
+                        memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
+                } else if (romRoot == "zx80") {
+                        romname = overlayName;
+                }
         }
         romlen=memory_load(romname.c_str(), 0, 65536);
         zx81.romcrc=CRC32Block(memory,romlen);

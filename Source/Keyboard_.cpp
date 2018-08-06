@@ -92,6 +92,7 @@ void TKeyboard::KbChange(void)
         Keyboard->zx81kb->Visible=false;
         Keyboard->zx80zxpandkb->Visible=false;
         Keyboard->zx81zxpandkb->Visible=false;
+        Keyboard->ts1000zxpandkb->Visible=false;
         Keyboard->acekb->Visible=false;
         Keyboard->ts1500kb->Visible=false;
         Keyboard->ts1000kb->Visible=false;
@@ -140,7 +141,8 @@ void TKeyboard::KbChange(void)
 
         case CRCZX81_ED1:
         case CRCZX81_ED2:
-                if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
+                if (zx81.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
+                else if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
                 else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                 else Keyboard->zx81kb->Visible=true;
                 break;
@@ -168,7 +170,8 @@ void TKeyboard::KbChange(void)
                         else Keyboard->zx80kb->Visible=true;
                         break;
                 case MACHINEZX81:
-                        if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
+                        if (zx81.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
+                        else if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
                         else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                         else Keyboard->zx81kb->Visible=true;
                         break;
@@ -236,6 +239,7 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
         SetKeyboardSize(r470kb, large);
         SetKeyboardSize(zx80zxpandkb, large);
         SetKeyboardSize(zx81zxpandkb, large);
+        SetKeyboardSize(ts1000zxpandkb, large);
         SetKeyboardSize(zx80kb, large);
         SetKeyboardSize(zx81kb, large);
         SetKeyboardSize(acekb, large);

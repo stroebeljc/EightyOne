@@ -3,6 +3,20 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.11 - 06/08/2018 (by Paul Farrow and SirMorris)
+* Bug fixes:
+  - ZXpand support now works for the ZX80.
+* Enhancements:
+  - Added keyboard images for:
+    - TS2068
+    - TC2048
+    - Spectrum 16K
+    - Spectrum +2
+    - Spectrum +2A/+3
+    - TS1000 wuth ZXpand+
+    - ZX81 with ZXpand+
+    - ZX80 with ZXpand
+
 Version 1.10 - 23/04/2018 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Sound is now switched off upon a Hard Reset.

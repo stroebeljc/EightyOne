@@ -53,6 +53,7 @@ __published:	// IDE-managed Components
         TImage *zx80zxpandkb;
         TImage *specPlus2kb;
         TImage *specPlus3kb;
+        TImage *ts1000zxpandkb;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);

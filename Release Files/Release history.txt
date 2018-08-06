@@ -16,6 +16,7 @@ Version 1.11 - 06/08/2018 (by Paul Farrow and SirMorris)
     - TS1000 with ZXpand+
     - ZX81 with ZXpand+
     - ZX80 with ZXpand
+  - Double clicking the keyboard image window toggles between double and normal size.
 
 Version 1.10 - 23/04/2018 (by Paul Farrow and SirMorris)
 * Bug fixes:

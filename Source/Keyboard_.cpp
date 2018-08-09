@@ -25,6 +25,7 @@
 #pragma hdrstop
 
 #include "Keyboard_.h"
+#include "KeyboardFunctions_.h"
 #include "main_.h"
 #include "zx81config.h"
 //---------------------------------------------------------------------------
@@ -45,6 +46,7 @@ __fastcall TKeyboard::TKeyboard(TComponent* Owner)
 void __fastcall TKeyboard::FormClose(TObject *Sender, TCloseAction &Action)
 {
         Form1->KeyboardMap1->Checked=false;
+        KeyboardFunctions->Visible = false;
 }
 //---------------------------------------------------------------------------
 
@@ -52,8 +54,6 @@ void TKeyboard::LoadSettings(TIniFile *ini)
 {
         Top = ini->ReadInteger("KBMAP","Top",Top);
         Left = ini->ReadInteger("KBMAP","Left",Left);
-        //Height = ini->ReadInteger("KBMAP","Height",Height);
-        //Width = ini->ReadInteger("KBMAP","Width",Width);
 
         if (Form1->KeyboardMap1->Checked) Show();
 }
@@ -62,8 +62,6 @@ void TKeyboard::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("KBMAP","Top",Top);
         ini->WriteInteger("KBMAP","Left",Left);
-        //ini->WriteInteger("KBMAP","Height",Height);
-        //ini->WriteInteger("KBMAP","Width",Width);
 }
 
 void __fastcall TKeyboard::FormKeyDown(TObject *Sender, WORD &Key,
@@ -76,7 +74,6 @@ void __fastcall TKeyboard::FormKeyDown(TObject *Sender, WORD &Key,
 void __fastcall TKeyboard::FormKeyPress(TObject *Sender, char &Key)
 {
         Form1->FormKeyPress(Sender, Key);
-
 }
 //---------------------------------------------------------------------------
 
@@ -108,6 +105,8 @@ void TKeyboard::KbChange(void)
         Keyboard->specPlus2kb->Visible=false;
         Keyboard->specPlus3kb->Visible=false;
 
+        KeyboardFunctions->Visible=false;
+
         switch(zx81.romcrc)
         {
         case CRCACE:
@@ -121,6 +120,7 @@ void TKeyboard::KbChange(void)
         case CRCZX80:
                 if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
                 else Keyboard->zx80kb->Visible=true;
+                KeyboardFunctions->Visible = Keyboard->Visible;
                 break;
 
         case CRCLAMBDA:
@@ -168,6 +168,7 @@ void TKeyboard::KbChange(void)
                 case MACHINEZX80:
                         if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
                         else Keyboard->zx80kb->Visible=true;
+                        KeyboardFunctions->Visible = Keyboard->Visible;
                         break;
                 case MACHINEZX81:
                         if (zx81.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
@@ -215,6 +216,9 @@ void TKeyboard::KbChange(void)
                         break;
                 }
         }
+
+        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
+        KeyboardFunctions->Top = Keyboard->Top;
 }
 
 void SetKeyboardSize(TImage* image, bool large)
@@ -234,7 +238,7 @@ void SetKeyboardSize(TImage* image, bool large)
 void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
 {
         const int normalWidth = 505;
-        bool large = (((TImage*)Sender)->Width == normalWidth);
+        bool large = (zx81kb->Width == normalWidth);
 
         SetKeyboardSize(r470kb, large);
         SetKeyboardSize(zx80zxpandkb, large);
@@ -254,7 +258,34 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
         SetKeyboardSize(ts2048kb, large);
         SetKeyboardSize(spec16kb, large);
         SetKeyboardSize(specPlus2kb, large);
-        SetKeyboardSize(specPlus3kb, large);        
+        SetKeyboardSize(specPlus3kb, large);
+
+        SetKeyboardSize(KeyboardFunctions->zx80IntegralFunctions, large);
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TKeyboard::FormStartDock(TObject *Sender,
+      TDragDockObject *&DragObject)
+{
+        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
+        KeyboardFunctions->Top = Keyboard->Top;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyboard::FormEndDock(TObject *Sender, TObject *Target,
+      int X, int Y)
+{
+        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
+        KeyboardFunctions->Top = Keyboard->Top;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyboard::FormResize(TObject *Sender)
+{
+        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
+        KeyboardFunctions->Top = Keyboard->Top;
+}
+//---------------------------------------------------------------------------
+
+
 

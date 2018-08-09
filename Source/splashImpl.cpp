@@ -9,6 +9,7 @@
 
                  spl->IncProgress("Symbol Browser"); Application->CreateForm(__classid(TSymbolBrowser), &SymbolBrowser);
                  spl->IncProgress("About Box"); Application->CreateForm(__classid(TAbout), &About);
+                 spl->IncProgress("Keyboard"); Application->CreateForm(__classid(TKeyboardFunctions), &KeyboardFunctions);
                  spl->IncProgress("Keyboard"); Application->CreateForm(__classid(TKeyboard), &Keyboard);
                  spl->IncProgress("Speed"); Application->CreateForm(__classid(TSpeed), &Speed);
                  spl->IncProgress("Keyboard Helper"); Application->CreateForm(__classid(TKb), &Kb);

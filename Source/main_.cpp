@@ -351,6 +351,7 @@ void __fastcall TForm1::KeyboardMap1Click(TObject *Sender)
         {
                 PCAllKeysUp();
                 Keyboard->Show();
+                Keyboard->KbChange();
                 KeyboardMap1->Checked=true;
         }
         else
@@ -1925,6 +1926,7 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(Speed, l, t);
         MoveWindow(Artifacts, l, t);
         MoveWindow(Keyboard, l, t);
+        Keyboard->KbChange();
         MoveWindow(FSSettings, l, t);
         MoveWindow(Printer, l, t);
         MoveWindow(MidiForm, l, t);

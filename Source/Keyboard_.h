@@ -61,6 +61,11 @@ __published:	// IDE-managed Components
         void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
         void __fastcall KeyboardDblClick(TObject *Sender);
+        void __fastcall FormStartDock(TObject *Sender,
+          TDragDockObject *&DragObject);
+        void __fastcall FormEndDock(TObject *Sender, TObject *Target,
+          int X, int Y);
+        void __fastcall FormResize(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TKeyboard(TComponent* Owner);

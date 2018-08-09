@@ -132,6 +132,7 @@ USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
 USEFORM("DebugWin\Profiler.cpp", Profiler);
 USEFORM("DebugWin\ProfSampEdit.cpp", ProfileSampleEdit);
 USEFORM("DebugWin\ProfilePlot_.cpp", ProfilePlot);
+USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

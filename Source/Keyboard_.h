@@ -73,6 +73,7 @@ public:		// User declarations
         void SaveSettings(TIniFile *ini);
         void KbChange(void);
 
+        static const int FunctionsOffset = 20;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TKeyboard *Keyboard;

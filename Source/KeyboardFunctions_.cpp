@@ -9,6 +9,7 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TKeyboardFunctions *KeyboardFunctions;
+
 //---------------------------------------------------------------------------
 __fastcall TKeyboardFunctions::TKeyboardFunctions(TComponent* Owner)
         : TForm(Owner)
@@ -18,7 +19,7 @@ __fastcall TKeyboardFunctions::TKeyboardFunctions(TComponent* Owner)
 void __fastcall TKeyboardFunctions::FormStartDock(TObject *Sender,
       TDragDockObject *&DragObject)
 {
-        Keyboard->Left = KeyboardFunctions->Left - Keyboard->Width;
+        Keyboard->Left = KeyboardFunctions->Left - Keyboard->Width - Keyboard->FunctionsOffset;
         Keyboard->Top = KeyboardFunctions->Top;
 }
 //---------------------------------------------------------------------------
@@ -26,20 +27,18 @@ void __fastcall TKeyboardFunctions::FormStartDock(TObject *Sender,
 void __fastcall TKeyboardFunctions::FormEndDock(TObject *Sender,
       TObject *Target, int X, int Y)
 {
-        Keyboard->Left = KeyboardFunctions->Left - Keyboard->Width;
+        Keyboard->Left = KeyboardFunctions->Left - Keyboard->Width - Keyboard->FunctionsOffset;
         Keyboard->Top = KeyboardFunctions->Top;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TKeyboardFunctions::FormResize(TObject *Sender)
 {
-        Keyboard->Left = KeyboardFunctions->Left - Keyboard->Width;
-        Keyboard->Top = KeyboardFunctions->Top;
-
+        Keyboard->Left = KeyboardFunctions->Left - Keyboard->Width - Keyboard->FunctionsOffset;
+        Keyboard->Top = KeyboardFunctions->Top;   
 }
 //---------------------------------------------------------------------------
-
-
+                     
 void __fastcall TKeyboardFunctions::zx80IntegralFunctionsDblClick(
       TObject *Sender)
 {

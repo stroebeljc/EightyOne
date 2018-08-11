@@ -32,6 +32,13 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TKeyboard *Keyboard;
+
+void PositionKeyboardFunctions()
+{
+        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width + Keyboard->FunctionsOffset;
+        KeyboardFunctions->Top = Keyboard->Top;
+}
+
 //---------------------------------------------------------------------------
 __fastcall TKeyboard::TKeyboard(TComponent* Owner)
         : TForm(Owner)
@@ -106,7 +113,8 @@ void TKeyboard::KbChange(void)
         Keyboard->specPlus3kb->Visible=false;
 
         KeyboardFunctions->Visible=false;
-
+        Keyboard->DragKind = dkDrag;
+        
         switch(zx81.romcrc)
         {
         case CRCACE:
@@ -121,6 +129,7 @@ void TKeyboard::KbChange(void)
                 if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
                 else Keyboard->zx80kb->Visible=true;
                 KeyboardFunctions->Visible = Keyboard->Visible;
+                Keyboard->DragKind = dkDock;
                 break;
 
         case CRCLAMBDA:
@@ -169,6 +178,7 @@ void TKeyboard::KbChange(void)
                         if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
                         else Keyboard->zx80kb->Visible=true;
                         KeyboardFunctions->Visible = Keyboard->Visible;
+                        Keyboard->DragKind = dkDock;
                         break;
                 case MACHINEZX81:
                         if (zx81.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
@@ -217,8 +227,7 @@ void TKeyboard::KbChange(void)
                 }
         }
 
-        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
-        KeyboardFunctions->Top = Keyboard->Top;
+        PositionKeyboardFunctions();
 }
 
 void SetKeyboardSize(TImage* image, bool large)
@@ -267,25 +276,23 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
 void __fastcall TKeyboard::FormStartDock(TObject *Sender,
       TDragDockObject *&DragObject)
 {
-        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
-        KeyboardFunctions->Top = Keyboard->Top;
+        PositionKeyboardFunctions();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TKeyboard::FormEndDock(TObject *Sender, TObject *Target,
       int X, int Y)
 {
-        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
-        KeyboardFunctions->Top = Keyboard->Top;
+        PositionKeyboardFunctions();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TKeyboard::FormResize(TObject *Sender)
 {
-        KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width;
-        KeyboardFunctions->Top = Keyboard->Top;
+        PositionKeyboardFunctions();
 }
 //---------------------------------------------------------------------------
+
 
 
 

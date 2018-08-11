@@ -167,7 +167,6 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (NewMachine != zx81.machine && LiveMemoryWindow && LiveMemoryWindow->Visible)
                 LiveMemoryWindow->Close();
 
-
         strcpy(zx81.machinename, Name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = Name;
 
@@ -248,6 +247,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 else if (TK85Btn->Down) strcpy(zx81.ROMTK85, machine.CurRom);
                 else strcpy(zx81.ROM81, machine.CurRom);
                 zx81.zxpand = (ZXpand->Checked == true);
+                ZXpand->Caption = "ZXpand+";
                 break;
 
         case MACHINEACE:
@@ -801,6 +801,8 @@ void THW::SetupForZX81(void)
 
         EnableRomCartridgeOption(true);
 
+        ZXpand->Caption = "ZXpand+";
+
         //FloppyDrives->TabVisible=false;
 
         OldFloppy=FDC->Items->Strings[FDC->ItemIndex];
@@ -914,6 +916,7 @@ void THW::SetupForSpectrum(void)
         FloatingPointHardwareFix->Enabled = false;
         ZXpand->Checked=false;
         ZXpand->Enabled=false;
+        ZXpand->Caption = "ZXpand+";
 
         ResetRequired=true;
 
@@ -1012,6 +1015,7 @@ void THW::SetupForQL(void)
         FloatingPointHardwareFix->Enabled = false;
         ZXpand->Checked=false;
         ZXpand->Enabled=false;
+        ZXpand->Caption = "ZXpand+";
 
         EnableRomCartridgeOption(false);
 
@@ -1124,6 +1128,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         if (ZX80Btn->Down) return;
         SetupForZX81();
         ZXpand->Enabled=true;
+        ZXpand->Caption = "ZXpand";
         ZX80Btn->Down=true;
         NewMachine=MACHINEZX80;
         NewMachineName=ZX80Btn->Caption;

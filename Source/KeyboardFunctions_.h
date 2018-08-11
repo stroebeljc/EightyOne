@@ -14,15 +14,15 @@ class TKeyboardFunctions : public TForm
 {
 __published:	// IDE-managed Components
         TImage *zx80IntegralFunctions;
-        void __fastcall FormStartDock(TObject *Sender,
-          TDragDockObject *&DragObject);
-        void __fastcall FormEndDock(TObject *Sender, TObject *Target,
-          int X, int Y);
-        void __fastcall FormResize(TObject *Sender);
+        TTimer *Tracker;
         void __fastcall zx80IntegralFunctionsDblClick(TObject *Sender);
+        void __fastcall TrackerTimer(TObject *Sender);
 private:	// User declarations
+        int keyboardLeft;
+        int keyboardTop;
 public:		// User declarations
         __fastcall TKeyboardFunctions(TComponent* Owner);
+        void __fastcall EnableTimer(bool enable);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TKeyboardFunctions *KeyboardFunctions;

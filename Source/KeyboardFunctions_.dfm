@@ -8,17 +8,12 @@ object KeyboardFunctions: TKeyboardFunctions
   ClientHeight = 54
   ClientWidth = 130
   Color = clBtnFace
-  DragKind = dkDock
-  DragMode = dmAutomatic
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  OnEndDock = FormEndDock
-  OnResize = FormResize
-  OnStartDock = FormStartDock
   PixelsPerInch = 96
   TextHeight = 13
   object zx80IntegralFunctions: TImage
@@ -286,5 +281,12 @@ object KeyboardFunctions: TKeyboardFunctions
       0000000000000000000000000000000000000000000000000000}
     Stretch = True
     OnDblClick = zx80IntegralFunctionsDblClick
+  end
+  object Tracker: TTimer
+    Enabled = False
+    Interval = 25
+    OnTimer = TrackerTimer
+    Left = 96
+    Top = 24
   end
 end

@@ -3,13 +3,14 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.12 - 11/08/2018 (by Paul Farrow)
+Version 1.12 - 14/08/2018 (by Paul Farrow)
 * Bug fixes:
-  - ZX80 keyboard image
-  - TC2048 keyboard image
-  - TC2068 keyboard image
+  - Corrections to TC2048 keyboard image.
+  - Corrections to TC2068 keyboard image.
 * Enhancements:
   - Added a window to display the ZX80 Integral Functions next to its keyboard image.
+  - Refinement to ZX80 keyboard image.
+  - Refinement to ZX80 with ZXpand keyboard image.
 
 Version 1.11 - 06/08/2018 (by Paul Farrow and SirMorris)
 * Bug fixes:

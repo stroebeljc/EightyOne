@@ -437,7 +437,7 @@ void spec_save_sna(char *fname)
         fputc(z80.sp.b.l,f); fputc(z80.sp.b.h,f);
 
         fputc(z80.im,f);
-        fputc(SPECBorder,f);
+        fputc((SPECBorder & 0x07),f);
 
         for(i=0;i<49152;i++) fputc(spec48_getbyte(16384+i),f);
 
@@ -530,7 +530,7 @@ void spec_save_z80(char *fname)
 
         i=0;
         if (z80.r7) i |= 1;
-        i |= (SPECBorder<<1);
+        i |= ((SPECBorder & 0x07)<<1);
         fputc(i,f);
         fputc(z80.de.b.l,f); fputc(z80.de.b.h,f);
         fputc(z80.bc_.b.l,f); fputc(z80.bc_.b.h,f);

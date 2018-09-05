@@ -3,6 +3,12 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.13 - ??/??/20?? (by Paul Farrow and ??)
+* Bug fixes:
+  - Only the lower 3 bits of the border value are saved in Spectrum .Z80 and .SNA snapshots.
+* Enhancements:
+  - ??
+
 Version 1.12 - 14/08/2018 (by Paul Farrow)
 * Bug fixes:
   - Corrections to TC2048 keyboard image.

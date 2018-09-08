@@ -100,6 +100,32 @@ void InitialiseRomCartridge()
         }
 }
 
+bool RomCartridgePagedIn()
+{
+        bool pageIn = false;
+
+        switch (zx81.romCartridge)
+        {
+        case ROMCARTRIDGESINCLAIR:
+                pageIn = true;
+                break;
+
+        case ROMCARTRIDGEZXC2:
+                pageIn = ((zx81.zxcPaging & zxc2PageOut) == 0);
+                break;
+
+        case ROMCARTRIDGEZXC3:
+                pageIn = ((zx81.zxcPaging & zxc3PageOut) == 0);
+                break;
+
+        case ROMCARTRIDGEZXC4:
+                pageIn = ((zx81.zxcPaging & zxc4PageOut) == 0);
+                break;
+        }
+
+        return pageIn;
+}
+
 bool LoadRomCartridgeFile(char *filename)
 {
         memset(RomCartridgeMemory, 0xFF, sizeof(RomCartridgeMemory));

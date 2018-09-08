@@ -25,6 +25,7 @@
 extern int RomCartridgeCapacity;
 
 void InitialiseRomCartridge();
+bool RomCartridgePagedIn();
 bool LoadRomCartridgeFile(char *filename);
 bool WriteRomCartridge(int Address, BYTE* Data);
 bool ReadRomCartridge(int Address, BYTE* Data);

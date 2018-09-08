@@ -1480,7 +1480,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                              || (SPECBlk[0]==1 && spectrum.machine>SPECCYTS2068 && spectrum.machine<SPECCYPLUS2A)
                              || (SPECBlk[0]==3 && spectrum.machine>SPECCYPLUS2) ))
                 {
-                        if (FlashSaveable() && !PlusDPaged && (zx81.romCartridge == ROMCARTRIDGENONE))
+                        if (FlashSaveable() && !PlusDPaged && !RomCartridgePagedIn())
                         {
                                 if (LastPC==0x04D0) z80.hl.w=0x0102;
                                 if (LastPC==0x0525)

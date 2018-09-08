@@ -1310,7 +1310,6 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         rzx_close();
         zx81_stop=1;
         z80_reset();
-        sound_end();
         AccurateInit(false);
         machine.initialise();
         sound_ay_reset();

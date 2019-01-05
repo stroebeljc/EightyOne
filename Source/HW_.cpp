@@ -30,6 +30,12 @@
 #include "Chroma\Chroma.h"
 #include "Spectra\Spectra.h"
 #include "LiveMemoryWindow_.h"
+#include "BasicLister\BasicLister_.h"
+#include "BasicLister\IBasicLister.h"
+#include "zx81\zx81BasicLister.h"
+#include "zx81\zx80BasicLister.h"
+#include "spectrum\spec48BasicLister.h"
+#include "spectrum\spec128BasicLister.h"
 
 extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
@@ -235,17 +241,32 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->SpectraColourEnable->Checked = zx81.spectraColourSwitchOn;
         Form1->SpectraColourEnable->Visible = (NewMachine == MACHINESPEC48) && ((NewSpec != SPECCYTC2048) && (NewSpec != SPECCYTS2068) && (NewSpec != SPECCYSE));
 
+        Form1->BasicListerOption->Enabled = false;
+        BasicLister->SetBasicLister(NULL);
+
         switch(NewMachine)
         {
         case MACHINEZX80:
                 strcpy(zx81.ROM80, machine.CurRom);
                 zx81.zxpand = (ZXpand->Checked == true);
+                CreateBasicLister();
                 break;
 
         case MACHINEZX81:
-                if (R470Btn->Down) strcpy(zx81.ROMR470, machine.CurRom);
-                else if (TK85Btn->Down) strcpy(zx81.ROMTK85, machine.CurRom);
-                else strcpy(zx81.ROM81, machine.CurRom);
+                if (R470Btn->Down)
+                {
+                        strcpy(zx81.ROMR470, machine.CurRom);
+                }
+                else if (TK85Btn->Down)
+                {
+                        strcpy(zx81.ROMTK85, machine.CurRom);
+                        CreateBasicLister();
+                }
+                else
+                {
+                        strcpy(zx81.ROM81, machine.CurRom);
+                        CreateBasicLister();
+                }
                 zx81.zxpand = (ZXpand->Checked == true);
                 ZXpand->Caption = "ZXpand+";
                 break;
@@ -257,6 +278,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINETS1500:
                 strcpy(zx81.ROMTS1500, machine.CurRom);
                 zx81.zxpand = (ZXpand->Checked == true);
+                CreateBasicLister();
                 break;
 
         case MACHINELAMBDA:
@@ -286,6 +308,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(zx81.ROMZX16BIT, machine.CurRom);
                         else strcpy(zx81.ROMSP48, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        CreateBasicLister();
                         break;
 
                 case SPECCY48:
@@ -296,6 +319,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(zx81.ROMZX16BIT, machine.CurRom);
                         else strcpy(zx81.ROMSP48, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        CreateBasicLister();
                         break;
 
                 case SPECCYTC2048:
@@ -326,6 +350,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(zx81.ROMZX16BIT, machine.CurRom);
                         else strcpy(zx81.ROMSP128, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        CreateBasicLister();
                         break;
 
                 case SPECCYPLUS2:
@@ -333,6 +358,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         spectrum.ROMBanks=1;
                         strcpy(zx81.ROMSPP2, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        CreateBasicLister();
                         break;
 
                 case SPECCYPLUS2A:
@@ -344,6 +370,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                                 strcpy(zx81.ROMSPP3E, machine.CurRom);
                         else strcpy(zx81.ROMSPP3, machine.CurRom);
                         spectrum.MFVersion=MFPLUS3;
+                        CreateBasicLister();
                         break;
 
                 case SPECCYPLUS3:
@@ -354,6 +381,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
                                 strcpy(zx81.ROMSPP3E, machine.CurRom);
                         spectrum.MFVersion=MFPLUS3;
+                        CreateBasicLister();
                         break;
 
                 case SPECCYSE:
@@ -364,6 +392,11 @@ void __fastcall THW::OKClick(TObject *Sender)
                         break;
                 }
                 break;
+        }
+
+        if (!BasicLister->ListerAvailable() && BasicLister->Visible)
+        {
+                BasicLister->Close();
         }
 
         zx81.romCartridge = RomCartridgeBox->ItemIndex;
@@ -431,7 +464,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
         else
         {
-                zx81.RAMTOP = (1 << (RamPackBox->ItemIndex + 10)) +16383;
+                zx81.RAMTOP = (1 << (RamPackBox->ItemIndex + 10)) + 16383;
                 if (RamPackBox->ItemIndex == 6) zx81.RAMTOP = 65535;
                 if (zx81.machine==MACHINEACE && RamPackBox->ItemIndex==0) zx81.RAMTOP=16383;
                 zx81.ace96k=0;
@@ -768,6 +801,42 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         if (Dbg->Visible) Dbg->UpdateVals();
 }
+//---------------------------------------------------------------------------
+
+void THW::CreateBasicLister()
+{
+        if (!strcmp(machine.CurRom, "zx80.rom"))
+        {
+                BasicLister->SetBasicLister(new zx80BasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
+                 !strcmp(machine.CurRom, "zx81.edition2.rom") ||
+                 !strcmp(machine.CurRom, "ts1500.rom") ||
+                 !strcmp(machine.CurRom, "tk85.rom"))
+        {
+                BasicLister->SetBasicLister(new zx81BasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "spec48.rom"))
+        {
+                BasicLister->SetBasicLister(new spec48BasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "spec128.rom") ||
+                 !strcmp(machine.CurRom, "spec128.spanish.rom") ||
+                 !strcmp(machine.CurRom, "specp2.rom") ||
+                 !strcmp(machine.CurRom, "specp3.version4_0.rom") ||
+                 !strcmp(machine.CurRom, "specp3.version4_1.rom") ||
+                 !strcmp(machine.CurRom, "specp2.french.rom") ||
+                 !strcmp(machine.CurRom, "specp2.spanish.rom") ||
+                 !strcmp(machine.CurRom, "specp3.spanish.rom"))
+        {
+                BasicLister->SetBasicLister(new spec128BasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+}
+
 //---------------------------------------------------------------------------
 
 void THW::SetupForZX81(void)

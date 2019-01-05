@@ -74,6 +74,7 @@
 #include "LiveMemoryWindow_.h"
 #include "ProfilePlot_.h"
 #include "Profiler.h"
+#include "BasicLister/BasicLister_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -250,7 +251,8 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         Application->OnDeactivate=FormDeactivate;
 
         ini = new TIniFile(zx81.inipath);
-        ShowSplash=ini->ReadBool("MAIN","ShowSplash", ShowSplash);
+        ShowSplash = ini->ReadBool("MAIN","ShowSplash", ShowSplash);
+        EnableSplashScreen->Checked = ShowSplash;
         RenderMode=ini->ReadInteger("MAIN","RenderMode", RENDERGDI);
 
         if (!RenderInit())
@@ -282,24 +284,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
 void __fastcall TForm1::FormResize(TObject *Sender)
 {
-        int cw=ClientWidth, ch=ClientHeight;
-
         extern void RecalcWinSize(void);
-
-        if (StatusBar1->Visible) ch -= StatusBar1->Height;
-
-        N1001->Checked=false;
-        N2001->Checked=false;
-        N4001->Checked=false;
-        UserDefined1->Checked=false;
-
-        if (cw==BaseWidth && ch==BaseHeight)
-                N1001->Checked=true;
-        else if (cw==(BaseWidth*2) && ch==(BaseHeight*2))
-                N2001->Checked=true;
-        else if (cw==(BaseWidth*4) && ch==(BaseHeight*4))
-                N4001->Checked=true;
-        else UserDefined1->Checked=true;
 
         RecalcWinSize();
 
@@ -370,19 +355,17 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
 
         ClientWidth=BaseWidth;
         ClientHeight=BaseHeight;
-        if (StatusBar1->Visible) ClientHeight += StatusBar1->Height;
-}
-//---------------------------------------------------------------------------
-void __fastcall TForm1::N501Click(TObject *Sender)
-{
-        N1001->Checked=false;
-        N2001->Checked=false;
-        N4001->Checked=false;
-        UserDefined1->Checked=false;
-
-        ClientWidth=BaseWidth/2;
-        ClientHeight=BaseHeight/2;
-        if (StatusBar1->Visible) ClientHeight += StatusBar1->Height;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Repaint();
+        }
+        StatusBar1->SizeGrip = false;
+        BorderStyle = bsSingle;
+        TBorderIcons newBorderIcons = BorderIcons;
+        newBorderIcons >> biMinimize;
+        newBorderIcons >> biMaximize;
+        BorderIcons = newBorderIcons;
 }
 //-----------------------------------------------------------------------
 
@@ -395,7 +378,17 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
 
         ClientWidth=BaseWidth*2;
         ClientHeight=BaseHeight*2;
-        if (StatusBar1->Visible) ClientHeight += StatusBar1->Height;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Repaint();
+        }
+        StatusBar1->SizeGrip = false;
+        BorderStyle = bsSingle;
+        TBorderIcons newBorderIcons = BorderIcons;
+        newBorderIcons >> biMinimize;
+        newBorderIcons >> biMaximize;
+        BorderIcons = newBorderIcons;
 }
 //---------------------------------------------------------------------------
 
@@ -408,7 +401,17 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
 
         ClientWidth=BaseWidth*4;
         ClientHeight=BaseHeight*4;
-        if (StatusBar1->Visible) ClientHeight += StatusBar1->Height;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Repaint();
+        }
+        StatusBar1->SizeGrip = false;
+        BorderStyle = bsSingle;
+        TBorderIcons newBorderIcons = BorderIcons;
+        newBorderIcons >> biMinimize;
+        newBorderIcons >> biMaximize;
+        BorderIcons = newBorderIcons;
 }
 //---------------------------------------------------------------------------
 
@@ -418,6 +421,13 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
         N2001->Checked=false;
         N4001->Checked=false;
         UserDefined1->Checked=true;
+        
+        StatusBar1->SizeGrip = true;
+        TBorderIcons newBorderIcons = BorderIcons;
+        newBorderIcons << biMinimize;
+        newBorderIcons << biMaximize;
+        BorderIcons = newBorderIcons;
+        BorderStyle = bsSizeable;
 }
 //---------------------------------------------------------------------------
 
@@ -1057,7 +1067,6 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
         if (!zx81_stop) borrow=j;
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
 void VideoThread(void)
 {
@@ -1103,6 +1112,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         TZXMan->Checked = ini->ReadBool("MAIN", "TZXManager", TZXMan->Checked);
         DiskDrives1->Checked=ini->ReadBool("MAIN", "DiskDrives", DiskDrives1->Checked);
         SoundOutput1->Checked = ini->ReadBool("MAIN", "SoundOutput", SoundOutput1->Checked);
+        BasicListerOption->Checked = ini->ReadBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
         InWaveLoader->Checked = ini->ReadBool("MAIN", "InWave", InWaveLoader->Checked);
         InTZXManager->Checked = ini->ReadBool("MAIN", "InTZX", InTZXManager->Checked);
@@ -1123,8 +1133,6 @@ void TForm1::LoadSettings(TIniFile *ini)
         SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
 
-        EnableSplashScreen->Checked = ini->ReadBool("MAIN", "ShowSplash", EnableSplashScreen->Checked);
-
         if (None1->Checked) { zx81.bordersize=BORDERNONE; None1Click(NULL); }
         if (Small1->Checked) { zx81.bordersize=BORDERSMALL; Small1Click(NULL); }
         if (Normal1->Checked) { zx81.bordersize=BORDERNORMAL; Normal1Click(NULL); }
@@ -1138,7 +1146,6 @@ void TForm1::LoadSettings(TIniFile *ini)
         AccurateInit(true);
 
         if (ini->ReadBool("MAIN","N1001",N1001->Checked)) N1001Click(NULL);
-        if (ini->ReadBool("MAIN","N501",N1001->Checked)) N501Click(NULL);
         if (ini->ReadBool("MAIN","N2001",N2001->Checked)) N2001Click(NULL);
         if (ini->ReadBool("MAIN","N4001",N4001->Checked)) N4001Click(NULL);
         if (ini->ReadBool("MAIN","UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
@@ -1146,8 +1153,23 @@ void TForm1::LoadSettings(TIniFile *ini)
 
         Top = ini->ReadInteger("MAIN","Top",0);
         Left = ini->ReadInteger("MAIN","Left",0);
-        StartUpHeight = ini->ReadInteger("MAIN","Height",0);
-        StartUpWidth = ini->ReadInteger("MAIN","Width",0);
+
+        // The start up height and width are transferred to the real height and width on the first timer event.
+        // The height and width are also restoted to these values after changing the configuration.
+        if (UserDefined1->Checked)
+        {
+                StartUpHeight = ini->ReadInteger("MAIN","Height",0);
+                StartUpWidth = ini->ReadInteger("MAIN","Width",0);
+        }
+        else
+        {
+                StartUpHeight = Height;
+                StartUpWidth = Width;
+        }
+
+        // Always default to the 100% to begin with, before changing to real dimensions upon the next timer event
+        ClientHeight = BaseHeight + (StatusBar1->Visible ? StatusBar1->Height : 0);
+        ClientWidth = BaseWidth;
 }
 
 void TForm1::SaveSettings(TIniFile *ini)
@@ -1157,7 +1179,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteInteger("MAIN","Height",Height);
         ini->WriteInteger("MAIN","Width",Width);
 
-        ini->WriteBool("MAIN","ShowSplash", ShowSplash);
+        ini->WriteBool("MAIN", "ShowSplash", ShowSplash);
         ini->WriteInteger("MAIN","RenderMode", RenderMode);
 
         ini->WriteBool("MAIN","N1001",N1001->Checked);
@@ -1189,18 +1211,17 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "DebugWin", DebugWin->Checked);
         ini->WriteBool("MAIN", "ViewPrinter", ViewPrinter->Checked);
         ini->WriteBool("MAIN", "WavLoadBtn", WavLoadBtn->Checked);
+        ini->WriteBool("MAIN", "KeyMap", KeyboardMap1->Checked);
         ini->WriteBool("MAIN", "TZXManager", TZXMan->Checked);
         ini->WriteBool("MAIN", "DiskDrives", DiskDrives1->Checked);
         ini->WriteBool("MAIN", "SoundOutput", SoundOutput1->Checked);
+        ini->WriteBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
-        ini->WriteBool("MAIN", "KeyMap", KeyboardMap1->Checked);
         ini->WriteString("MAIN","LoadFile",OpenTape1->FileName);
         ini->WriteInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
 
         ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
-
-        ini->WriteBool("MAIN", "ShowSplash", EnableSplashScreen->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);
@@ -1218,6 +1239,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         IF1->SaveSettings(ini);
         ParallelPort->SaveSettings(ini);
         MidiForm->SaveSettings(ini);
+        BasicLister->SaveSettings(ini);
 }
 
 void __fastcall TForm1::DisplayArtClick(TObject *Sender)
@@ -1637,11 +1659,13 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
                 TRect R;
 
                 R=Rect;
+                R.Top += 1;
                 R.Right -= 1;
+                R.Bottom -= 2;
                 StatusBar->Canvas->Brush->Color = clBtnFace;
                 StatusBar->Canvas->FillRect(R);
                 if (spectrum.drivebusy!=-1)
-                        StatusBar->Canvas->Draw( R.Left, R.Top+3, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                        StatusBar->Canvas->Draw( R.Left, R.Top+1, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
         }
 }
 //---------------------------------------------------------------------------
@@ -1731,7 +1755,6 @@ void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 {
         TIniFile *ini;
@@ -1784,8 +1807,6 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         delete ini;
 }
 //---------------------------------------------------------------------------
-
-
 
 void __fastcall TForm1::MemotechResetClick(TObject *Sender)
 {
@@ -1944,15 +1965,16 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(LiveMemoryWindow, l, t);
         MoveWindow(ProfilePlot, l, t);
         MoveWindow(Profiler, l, t);
+        MoveWindow(BasicLister, l, t);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::EnableSplashScreenClick(TObject *Sender)
 {
         EnableSplashScreen->Checked = !EnableSplashScreen->Checked;
+        ShowSplash = EnableSplashScreen->Checked;
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
 {
@@ -1980,6 +2002,20 @@ void __fastcall TForm1::FormShow(TObject *Sender)
         if (!iniFileExists)
         {
                 GatherWindows1Click(this);
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
+{
+        BasicListerOption->Checked = !BasicListerOption->Checked;
+        if (BasicListerOption->Checked)
+        {
+                BasicLister->Show();
+        }
+        else
+        {
+                BasicLister->Close();
         }
 }
 //---------------------------------------------------------------------------

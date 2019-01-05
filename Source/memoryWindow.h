@@ -132,6 +132,8 @@ __published:	// IDE-managed Components
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
         void __fastcall Search1Click(TObject *Sender);
+        void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
+          int WheelDelta, TPoint &MousePos, bool &Handled);
 
 private:
        void __fastcall OnEraseBkgnd (TMessage msg);

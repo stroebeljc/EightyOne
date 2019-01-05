@@ -133,6 +133,12 @@ USEFORM("DebugWin\Profiler.cpp", Profiler);
 USEFORM("DebugWin\ProfSampEdit.cpp", ProfileSampleEdit);
 USEFORM("DebugWin\ProfilePlot_.cpp", ProfilePlot);
 USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
+USEUNIT("zx81\zx81BasicLister.cpp");
+USEFORM("BasicLister\BasicLister_.cpp", BasicLister);
+USEUNIT("zx81\zx80BasicLister.cpp");
+USEUNIT("BasicLister\IBasicLister.cpp");
+USEUNIT("Spectrum\spec128BasicLister.cpp");
+USEUNIT("Spectrum\spec48BasicLister.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

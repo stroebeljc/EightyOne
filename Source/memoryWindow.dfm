@@ -24,16 +24,17 @@ object MemoryWindow: TMemoryWindow
   OnKeyDown = FormKeyDown
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
+  OnMouseWheel = FormMouseWheel
   OnPaint = FormPaint
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 14
   object ScrollBar1: TScrollBar
-    Left = 547
+    Left = 555
     Top = 0
     Width = 17
-    Height = 245
+    Height = 249
     Align = alRight
     Kind = sbVertical
     LargeChange = 8
@@ -44,8 +45,8 @@ object MemoryWindow: TMemoryWindow
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 245
-    Width = 564
+    Top = 249
+    Width = 572
     Height = 19
     Panels = <
       item

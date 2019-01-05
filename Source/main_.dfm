@@ -1,9 +1,10 @@
 object Form1: TForm1
-  Left = 240
-  Top = 153
-  Width = 331
-  Height = 203
+  Left = 198
+  Top = 126
+  BorderStyle = bsSingle
   Caption = 'EightyOne'
+  ClientHeight = 255
+  ClientWidth = 323
   Color = clBtnFace
   Constraints.MinHeight = 128
   Constraints.MinWidth = 128
@@ -14,6 +15,7 @@ object Form1: TForm1
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
@@ -28,7 +30,7 @@ object Form1: TForm1
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 130
+    Top = 236
     Width = 323
     Height = 19
     Panels = <
@@ -50,6 +52,7 @@ object Form1: TForm1
         Width = 50
       end>
     SimplePanel = False
+    SizeGrip = False
     OnDrawPanel = StatusBar1DrawPanel
   end
   object MainMenu1: TMainMenu
@@ -377,10 +380,6 @@ object Form1: TForm1
         Visible = False
         OnClick = DBG1Click
       end
-      object DBG2: TMenuItem
-        Caption = 'Debug Opt 2'
-        Visible = False
-      end
     end
     object Tools1: TMenuItem
       Caption = 'Tools'
@@ -414,6 +413,10 @@ object Form1: TForm1
         Caption = 'Wav Loader...'
         ShortCut = 16505
         OnClick = WavLoadBtnClick
+      end
+      object BasicListerOption: TMenuItem
+        Caption = 'BASIC Listing...'
+        OnClick = BasicListerOptionClick
       end
     end
     object Help1: TMenuItem

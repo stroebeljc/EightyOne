@@ -24,6 +24,7 @@
                  spl->IncProgress("TV Emulation"); Application->CreateForm(__classid(TArtifacts), &Artifacts);
                  spl->IncProgress("Sound"); Application->CreateForm(__classid(TSoundOutput), &SoundOutput);
                  spl->IncProgress("CPU History"); Application->CreateForm(__classid(THistoryBox), &HistoryBox);
+                 spl->IncProgress("Basic Lister"); Application->CreateForm(__classid(TBasicLister), &BasicLister);
                  spl->IncProgress("Memory Manager"); Application->CreateForm(__classid(TMemSave), &MemSave);
                  spl->IncProgress("ZX97"); Application->CreateForm(__classid(TZX97Dialog), &ZX97Dialog);
                  spl->IncProgress("Serial Port"); Application->CreateForm(__classid(TSerialConfig), &SerialConfig);
@@ -38,12 +39,14 @@
                  spl->IncProgress("ZX Interface 1"); Application->CreateForm(__classid(TIF1), &IF1);
                  spl->IncProgress("P3 Floppy"); Application->CreateForm(__classid(TP3Drive), &P3Drive);
                  spl->IncProgress("HDF Support"); Application->CreateForm(__classid(TCreateHDF), &CreateHDF);
-                 spl->IncProgress("Machine Emulation"); Application->CreateForm(__classid(THW), &HW);
                  spl->IncProgress("Parallel Port"); Application->CreateForm(__classid(TParallelPort), &ParallelPort);
                  spl->IncProgress("Midi"); Application->CreateForm(__classid(TMidiForm), &MidiForm);
                  spl->IncProgress("ZIP Support"); Application->CreateForm(__classid(TZipFile), &ZipFile);
                  spl->IncProgress("Live Memory"); Application->CreateForm(__classid(TLiveMemoryWindow), &LiveMemoryWindow);
                  spl->IncProgress("Profiler"); Application->CreateForm(__classid(TProfiler), &Profiler);
                  spl->IncProgress("Profiler"); Application->CreateForm(__classid(TProfilePlot), &ProfilePlot);
+
+                 // Always do this last
+                 spl->IncProgress("Machine Emulation"); Application->CreateForm(__classid(THW), &HW);
 
                  spl->Close();

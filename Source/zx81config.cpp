@@ -155,7 +155,7 @@ void load_config(void)
         spectrum.drivebtype=DRIVE3INCHSS;
         spectrum.driveaimg[0]='\0';
         spectrum.drivebimg[0]='\0';
-        spectrum.drivebusy=0;
+        spectrum.drivebusy=-1;
         spectrum.kmouse=0;
         spectrum.HDType=HDNONE;
         spectrum.WriteProtectJumper=0;

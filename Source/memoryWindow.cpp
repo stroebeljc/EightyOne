@@ -406,11 +406,11 @@ void RowRenderer::SetCharacterBackgroundColour(int xpos, int ypos, COLORREF pape
                 {
                         if (GetPixel(mCHDC, xpos + bx, ypos + by) == RGB(255,255,255))
                         {
-                                SetPixel(mCHDC, xpos + bx, ypos + by, paper);
+                                SetPixelV(mCHDC, xpos + bx, ypos + by, paper);
                         }
                         else
                         {
-                                SetPixel(mCHDC, xpos + bx, ypos + by, ink);
+                                SetPixelV(mCHDC, xpos + bx, ypos + by, ink);
                         }
                 }
         }
@@ -905,6 +905,28 @@ void TMemoryWindow::PerformSearch(std::vector<int>& bytes)
 void __fastcall TMemoryWindow::Search1Click(TObject *Sender)
 {
          DoSearch();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMemoryWindow::FormMouseWheel(TObject *Sender,
+      TShiftState Shift, int WheelDelta, TPoint &MousePos, bool &Handled)
+{
+        int currentPos = ScrollBar1->Position;
+        int newPos = currentPos - (ScrollBar1->SmallChange * (WheelDelta / 120));
+
+        if (newPos < ScrollBar1->Min)
+        {
+                newPos = ScrollBar1->Min;
+        }
+
+        if (newPos > ScrollBar1->Max)
+        {
+                newPos = ScrollBar1->Max;
+        }
+
+        ScrollBar1->Position = newPos;
+
+        Handled = true;
 }
 //---------------------------------------------------------------------------
 

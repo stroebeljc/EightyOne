@@ -84,7 +84,6 @@ __published:	// IDE-managed Components
         TMenuItem *InverseVideo;
         TMenuItem *DisplayArt;
         TMenuItem *DBG1;
-        TMenuItem *DBG2;
         TMenuItem *Tape2;
         TMenuItem *Source1;
         TMenuItem *Destination1;
@@ -150,6 +149,7 @@ __published:	// IDE-managed Components
         TMenuItem *N10;
         TMenuItem *EnableSplashScreen;
         TMenuItem *LiveMemoryOverview;
+        TMenuItem *BasicListerOption;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -221,7 +221,6 @@ __published:	// IDE-managed Components
         void __fastcall FormMouseUp(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
         void __fastcall GenerateNMI1Click(TObject *Sender);
-        void __fastcall N501Click(TObject *Sender);
         void __fastcall SaveCurrentConfigClick(TObject *Sender);
         void __fastcall ConfigItem1Click(TObject *Sender);
         void __fastcall MemotechResetClick(TObject *Sender);
@@ -237,6 +236,7 @@ __published:	// IDE-managed Components
         void __fastcall LiveMemoryOverviewClick(TObject *Sender);
         void __fastcall Tools1Click(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
+        void __fastcall BasicListerOptionClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

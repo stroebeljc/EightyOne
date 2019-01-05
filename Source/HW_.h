@@ -153,6 +153,8 @@ private:	// User declarations
         void SetupForQL(void);
         void EnableRomCartridgeOption(bool enable);
         bool ResetRequired;
+        void CreateBasicLister();
+        
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

@@ -2,7 +2,7 @@ object SoundOutput: TSoundOutput
   Left = 466
   Top = 112
   BorderStyle = bsToolWindow
-  Caption = 'SoundOutput'
+  Caption = 'Sound Output'
   ClientHeight = 128
   ClientWidth = 441
   Color = clBtnFace

@@ -25,6 +25,8 @@ class zx81BasicLister : public IBasicLister
 {
 public:
         zx81BasicLister();
+        virtual AnsiString GetMachineName();
+        virtual AnsiString GetBasicFileExtension();
 
 private:
         static const int Space = 0;

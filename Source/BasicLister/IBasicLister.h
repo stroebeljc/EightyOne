@@ -75,6 +75,8 @@ public:
         virtual void SetLines(std::vector<LineInfo>* linesInfo);
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }
+        virtual AnsiString GetMachineName() { return ""; }
+        virtual AnsiString GetBasicFileExtension() { return "txt"; }
 
 protected:
         COLORREF mInk;
@@ -96,7 +98,7 @@ protected:
         virtual void InitialiseColours() { }
         virtual inline bool CustomColoursSupported() { return false; }
         virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
-        
+
         int GetKeywordLength(int code);
 
         std::string mKeyword[256];

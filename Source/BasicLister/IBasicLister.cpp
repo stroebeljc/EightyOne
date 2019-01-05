@@ -404,7 +404,8 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo)
 {
         AnsiString lineText = "";
 
-        lineText += FormatLineNumber(lineInfo.lineNumber);
+        AnsiString lineNumber = FormatLineNumber(lineInfo.lineNumber);
+        lineText += lineNumber.SubString(2, 4); 
 
         int address = lineInfo.addressContent;
         int lengthRemaining = lineInfo.contentLength;
@@ -475,12 +476,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         {
                 zxCharacter = mKeyword[c].c_str();
 
-                bool characterIsSpace = (mKeyword[c] == " ");
-
-                if (!characterIsSpace)
-                {
-                        lastKeywordEndedWithSpace = false;
-                }
+                lastKeywordEndedWithSpace = false;
         }
 
         return characterAvailable;

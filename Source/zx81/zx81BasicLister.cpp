@@ -26,10 +26,12 @@ zx81BasicLister::zx81BasicLister()
 std::string zx81BasicLister::GetKeywords()
 {
         // Graphics encoded in accordance with ZXText2P: http://freestuff.grok.co.uk/zxtext2p/index.html
-        std::string keywords = " ¦\\' ¦\\ '¦\\''¦\\. ¦\\: ¦\\.'¦\\:'¦\\##¦\\,,¦\\~~¦\"¦£¦$¦:¦?¦(¦)¦>¦<¦=¦+¦-¦*¦/¦;¦,¦.¦0¦1¦2¦3¦4¦5¦6¦7¦8¦9¦A¦B¦C¦D¦E¦F¦G¦H¦I¦J¦K¦L¦M¦N¦O¦P¦Q¦R¦S¦T¦U¦V¦W¦X¦Y¦Z¦"
-                               "RND¦INKEY$¦PI¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦?¦"
+        std::string keywords = " ¦\\' ¦\\ '¦\\''¦\\. ¦\\: ¦\\.'¦\\:'¦\\##¦\\,,¦\\~~¦\"¦£¦$¦:¦?¦(¦)¦>¦<¦=¦+¦-¦*¦/¦;¦,¦.¦0¦1¦2¦3¦4¦5¦6¦7¦8¦9¦"
+                               "A¦B¦C¦D¦E¦F¦G¦H¦I¦J¦K¦L¦M¦N¦O¦P¦Q¦R¦S¦T¦U¦V¦W¦X¦Y¦Z¦RND¦INKEY$¦PI¦"
+                               "\\43¦\\44¦\\45¦\\46¦\\47¦\\48¦\\49¦\\4A¦\\4B¦\\4C¦\\4D¦\\4E¦\\4F¦\\50¦\\51¦\\52¦\\53¦\\54¦\\55¦\\56¦\\57¦\\58¦\\59¦\\5A¦\\5B¦\\5C¦\\5D¦\\5E¦\\5F¦"
+                               "\\60¦\\61¦\\62¦\\63¦\\64¦\\65¦\\66¦\\67¦\\68¦\\69¦\\6A¦\\6B¦\\6C¦\\6D¦\\6E¦\\6F¦\\70¦\\71¦\\72¦\\73¦\\74¦\\75¦\\76¦\\77¦\\78¦\\79¦\\7A¦\\7B¦\\7C¦\\7D¦\\7E¦\\7F¦"
                                "% ¦\\.:¦\\:.¦\\..¦\\':¦\\ :¦\\'.¦\\ .¦\\@@¦\\;;¦\\!!¦\"¦%£¦%$¦%:¦%?¦%(¦%)¦%>¦%<¦%=¦%+¦%-¦%*¦%/¦%;¦%,¦%.¦%0¦%1¦%2¦%3¦%4¦%5¦%6¦%7¦%8¦%9¦%A¦%B¦%C¦%D¦%E¦%F¦%G¦%H¦%I¦%J¦%K¦%L¦%M¦%N¦%O¦%P¦%Q¦%R¦%S¦%T¦%U¦%V¦%W¦%X¦%Y¦%Z¦"
-                               "\"\"¦AT ¦TAB ¦?¦CODE ¦VAL ¦LEN ¦SIN ¦COS ¦TAN ¦ASN ¦ACS ¦ATN ¦LN ¦EXP ¦INT ¦SQR ¦SGN ¦ABS ¦PEEK ¦USR ¦STR$ ¦CHR$ ¦NOT ¦**¦ OR ¦ AND ¦<=¦>=¦<>¦ THEN ¦ TO ¦ STEP ¦ LPRINT ¦ LLIST ¦ STOP ¦ SLOW ¦ FAST ¦ NEW ¦ SCROLL ¦ CONT ¦ DIM ¦ REM ¦ FOR ¦ GOTO ¦ GOSUB ¦ INPUT ¦ LOAD ¦ LIST ¦ LET ¦ PAUSE ¦ NEXT ¦ POKE ¦ PRINT ¦ PLOT ¦ RUN ¦ SAVE ¦ RAND ¦ IF ¦ CLS ¦ UNPLOT ¦ CLEAR ¦ RETURN ¦ COPY ¦";
+                               "\"\"¦AT ¦TAB ¦\\C3¦CODE ¦VAL ¦LEN ¦SIN ¦COS ¦TAN ¦ASN ¦ACS ¦ATN ¦LN ¦EXP ¦INT ¦SQR ¦SGN ¦ABS ¦PEEK ¦USR ¦STR$ ¦CHR$ ¦NOT ¦**¦ OR ¦ AND ¦<=¦>=¦<>¦ THEN ¦ TO ¦ STEP ¦ LPRINT ¦ LLIST ¦ STOP ¦ SLOW ¦ FAST ¦ NEW ¦ SCROLL ¦ CONT ¦ DIM ¦ REM ¦ FOR ¦ GOTO ¦ GOSUB ¦ INPUT ¦ LOAD ¦ LIST ¦ LET ¦ PAUSE ¦ NEXT ¦ POKE ¦ PRINT ¦ PLOT ¦ RUN ¦ SAVE ¦ RAND ¦ IF ¦ CLS ¦ UNPLOT ¦ CLEAR ¦ RETURN ¦ COPY ¦";
 
         return keywords;
 }
@@ -102,5 +104,15 @@ int zx81BasicLister::GetFloatingPointNumberCode()
 int zx81BasicLister::GetLineEndingCode()
 {
         return Newline;
+}
+
+AnsiString zx81BasicLister::GetMachineName()
+{
+        return "ZX81";
+}
+
+AnsiString zx81BasicLister::GetBasicFileExtension()
+{
+        return "b81";
 }
 

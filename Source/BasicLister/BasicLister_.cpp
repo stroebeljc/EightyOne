@@ -522,13 +522,29 @@ void TBasicLister::SaveListingToFile()
                 return;
         }
 
-        SaveDialog->Filter = "Text File (*.txt)|*.txt|Bitmap File (*.bmp)|*.bmp";
+        LoadProgram();
+
+        bool programLoaded = (ProgramSize() > 0);
+        if (!programLoaded)
+        {
+                Application->MessageBox("There is no BASIC program loaded.","Save BASIC Listing", MB_OK);
+                return;
+        }
+
+        AnsiString machineName = mBasicLister->GetMachineName();
+        AnsiString basicFileExtension = mBasicLister->GetBasicFileExtension();
+
+        SaveDialog->Filter = machineName + " BASIC File (*." + basicFileExtension + ")|*." + basicFileExtension + "|Bitmap File (*.bmp)|*.bmp";
+        SaveDialog->DefaultExt = basicFileExtension;
         SaveDialog->FilterIndex = mLastFilterIndex;
         SaveDialog->FileName = "";
         SaveDialog->Options << ofOverwritePrompt;
         SaveDialog->Title = "Save BASIC Listing";
 
-        if (!SaveDialog->Execute()) return;
+        if (!SaveDialog->Execute())
+        {
+                return;
+        }
 
         mLastFilterIndex = SaveDialog->FilterIndex;
 

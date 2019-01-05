@@ -49,7 +49,7 @@ spec128BasicLister::spec128BasicLister()
 
 std::string spec128BasicLister::GetKeywords()
 {
-        // Graphics encoding based upon scheme used by ZXText2P: http://freestuff.grok.co.uk/zxtext2p/index.html
+        // Graphics encoding based upon the scheme used by ZXText2P: http://freestuff.grok.co.uk/zxtext2p/index.html
         // Instead of being prefixed with '\', the prefix '¬' is used since '\' is a symbol present in the ZX Spectrum
         // character set. UDGs are prefixed with '¬_' followed by the letter. Embedded control codes are prefixed by '¬'
         // followed by the value of control code as a two digit hexadecimal number.
@@ -173,3 +173,12 @@ COLORREF spec128BasicLister::GetDefaultPaperColour()
         return mColours[7];
 }
 
+AnsiString spec128BasicLister::GetMachineName()
+{
+        return "Spectrum";
+}
+
+AnsiString spec128BasicLister::GetBasicFileExtension()
+{
+        return "b82";
+}

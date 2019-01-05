@@ -27,6 +27,8 @@ public:
         spec48BasicLister();
         virtual COLORREF GetPaperColour();
         virtual COLORREF GetInkColour();
+        virtual AnsiString GetMachineName();
+        virtual AnsiString GetBasicFileExtension();
 
 private:
         static const int Return = 13;

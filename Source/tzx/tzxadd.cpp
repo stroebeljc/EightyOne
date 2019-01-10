@@ -151,8 +151,7 @@ int TTZXFile::AddArchiveBlock(char *str)
         Tape[Blocks].BlockID=TZX_BLOCK_ARCHIVE;
         Tape[Blocks].Data.Data=p;
         Tape[Blocks].Head.Archive.NoStrings=1;
-        return(Blocks++);
-
+        return(Blocks++);      
 }
 
 

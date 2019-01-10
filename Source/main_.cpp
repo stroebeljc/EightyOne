@@ -503,7 +503,10 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                 || Extension == ".P81"
                 || Extension == ".80"
                 || Extension == ".O"
-                || Extension == ".A83" )
+                || Extension == ".A83"
+                || Extension == ".B80"
+                || Extension == ".B81"
+                || Extension == ".B82")
         {
                         TZX->StopBtnClick(NULL);
                         TZX->OpenDialog->FileName = Filename;
@@ -511,12 +514,13 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                         TZX->UpdateTable(true);
                         InTZXManagerClick(NULL);
                         OutTZXManagerClick(NULL);
+
+                        loadFileSymbolsProxy(Filename.c_str());
         }
 
         zx81_stop=false;
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
 {
@@ -2019,4 +2023,5 @@ void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+
 

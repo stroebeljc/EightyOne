@@ -31,7 +31,6 @@ struct LineInfo
         int lineNumber;
         int address;
         int addressContent;
-        int command;
         int lineLength;
         int contentLength;
         int displayLength;
@@ -58,7 +57,7 @@ private:
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
         void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
         void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, int c);
-        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter);
+        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsText);
         AnsiString FormatLineNumber(int lineNumber);
         COLORREF GetBackgroundColour();
 
@@ -71,7 +70,7 @@ public:
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
         virtual void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        virtual AnsiString RenderLineAsText(LineInfo& lineInfo);
+        virtual AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsText);
         virtual void SetLines(std::vector<LineInfo>* linesInfo);
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }
@@ -98,6 +97,7 @@ protected:
         virtual void InitialiseColours() { }
         virtual inline bool CustomColoursSupported() { return false; }
         virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
+        virtual bool RemContainsMachineCode(int address, int lengthRemaining) { return false; }
 
         int GetKeywordLength(int code);
 

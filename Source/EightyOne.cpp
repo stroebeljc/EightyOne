@@ -139,6 +139,9 @@ USEUNIT("zx81\zx80BasicLister.cpp");
 USEUNIT("BasicLister\IBasicLister.cpp");
 USEUNIT("Spectrum\spec128BasicLister.cpp");
 USEUNIT("Spectrum\spec48BasicLister.cpp");
+USEUNIT("zx81\zx81BasicLoader.cpp");
+USEUNIT("zx81\zx80BasicLoader.cpp");
+USEUNIT("BasicLoader\IBasicLoader.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

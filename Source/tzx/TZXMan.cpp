@@ -33,6 +33,9 @@
 #include "Wavload_.h"
 #include "zx81config.h"
 #include "ZipFile_.h"
+#include "BasicLoader/BasicLoader.h"
+#include "zx81/zx80BasicLoader.h"
+#include "zx81/zx81BasicLoader.h"
 
 #ifndef edt1
 #define edt1 0x480
@@ -211,8 +214,35 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 Extension = FileNameGetExt(Filename);
         }
 
+        if ((Extension == ".B80") || (Extension == ".B81"))
+        {
+                IBasicLoader* loader = NULL;
 
-        if (!TZXFile.LoadFile(Filename, Insert)) return;
+                if (Extension == ".B80")
+                {
+                        loader = new zx80BasicLoader();
+                }
+                else if (Extension == ".B81")
+                {
+                        loader = new zx81BasicLoader();
+                }
+                else if (Extension == ".B82")
+                {
+//                        loader = new spectrumBasicLoader();
+                }
+
+                bool tokeniseRemContents = false;
+                bool tokeniseStrings = false;
+                loader->LoadBasicFile(Filename, tokeniseRemContents, tokeniseStrings);
+                int programLength = loader->ProgramLength();
+                if (programLength > 0)
+                {
+                        TZXFile.LoadFileData(Filename, loader->ProgramData(), programLength, Insert);
+                }
+                delete loader;
+                if (programLength == 0) return;
+        }
+        else if (!TZXFile.LoadFile(Filename, Insert)) return;
 
         //UpdateTable();
         //Table->Row=1;
@@ -242,7 +272,8 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
                         AnsiString Ext = GetExt(filename);
                         if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
-                                  || Ext==".81" || Ext==".80" || Ext==".P81")
+                                  || Ext==".81" || Ext==".80" || Ext==".P81"
+                                  || Ext==".B80" || Ext==".B81" || Ext==".B82")
                         {
                                 loadFileSymbolsProxy(filename.c_str());
                         }

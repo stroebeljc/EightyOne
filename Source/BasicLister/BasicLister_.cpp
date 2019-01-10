@@ -23,7 +23,6 @@
 
 #include "BasicLister_.h"
 #include "zx81config.h"
-#include "zx81\zx81BasicLister.h"
 #include "main_.h"
 #include <iostream>
 #include <fstream>
@@ -509,9 +508,7 @@ void __fastcall TBasicLister::FormClose(TObject *Sender,
                     
 void __fastcall TBasicLister::ToolButtonSaveAsClick(TObject *Sender)
 {
-        DisableButtons();
         SaveListingToFile();
-        EnableButtons();
 }
 //---------------------------------------------------------------------------
 
@@ -527,7 +524,7 @@ void TBasicLister::SaveListingToFile()
         bool programLoaded = (ProgramSize() > 0);
         if (!programLoaded)
         {
-                Application->MessageBox("There is no BASIC program loaded.","Save BASIC Listing", MB_OK);
+                Application->MessageBox("There is no BASIC program loaded.", "Save BASIC Listing", MB_OK);
                 return;
         }
 
@@ -550,11 +547,13 @@ void TBasicLister::SaveListingToFile()
 
         if (SaveDialog->FilterIndex == 1)
         {
+                const bool outputRemTokensAsText = false;
+                
                 std::ofstream ofs;
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, outputRemTokensAsText);
                         ofs << lineText.c_str() << '\n';
                 }
 
@@ -570,7 +569,7 @@ void TBasicLister::SaveListingToFile()
                 tempBitmap->SaveToFile(SaveDialog->FileName);
                 tempBitmap->ReleaseHandle();
                 delete tempBitmap;
-                
+
                 HighlightEntry(highlightIndex);
         }
 }
@@ -603,6 +602,8 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 
         HighlightEntry(highlightIndex);
 
+        EnableButtons();
+        
         if (scrollPos <= ScrollBar->Max)
         {
                 ScrollBar->Position = scrollPos;

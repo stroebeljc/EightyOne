@@ -26,6 +26,7 @@ zx80BasicLister::zx80BasicLister()
 std::string zx80BasicLister::GetKeywords()
 {
         // Graphics encoded in accordance with ZXText2P: http://freestuff.grok.co.uk/zxtext2p/index.html
+        //Non-printable characters encoded as '\' followed by a 2 digit hexadecimal value representing the character code.
         std::string keywords = " ¦\"¦\\: ¦\\..¦\\' ¦\\ '¦\\. ¦\\ .¦\\.'¦\\##¦\\,,¦\\~~¦£¦$¦:¦?¦(¦)¦-¦+¦*¦/¦=¦>¦<¦;¦,¦.¦0¦1¦2¦3¦4¦5¦6¦7¦8¦9¦A¦B¦C¦D¦E¦F¦G¦H¦I¦J¦K¦L¦M¦N¦O¦P¦Q¦R¦S¦T¦U¦V¦W¦X¦Y¦Z¦"
                                "\\40¦\\41¦\\42¦\\43¦\\44¦\\45¦\\46¦\\47¦\\48¦\\49¦\\4A¦\\4B¦\\4C¦\\4D¦\\4E¦\\4F¦\\50¦\\51¦\\52¦\\53¦\\54¦\\55¦\\56¦\\57¦\\58¦\\59¦\\5A¦\\5B¦\\5C¦\\5D¦\\5E¦\\5F¦"
                                "\\60¦\\61¦\\62¦\\63¦\\64¦\\65¦\\66¦\\67¦\\68¦\\69¦\\6A¦\\6B¦\\6C¦\\6D¦\\6E¦\\6F¦\\70¦\\71¦\\72¦\\73¦\\74¦\\75¦\\76¦\\77¦\\78¦\\79¦\\7A¦\\7B¦\\7C¦\\7D¦\\7E¦\\7F¦"
@@ -80,11 +81,6 @@ bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         {
                 b = getbyte((*address)++);
                 
-                if (length == 0)
-                {
-                        lineInfo.command = b;
-                }
-
                 endOfLine = (b == Newline);
                 
                 if (!endOfLine)
@@ -167,4 +163,29 @@ AnsiString zx80BasicLister::GetBasicFileExtension()
 {
         return "b80";
 }
+
+bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining)
+{
+        bool containsMachineCode = false;
+
+        bool endOfLine = (lengthRemaining == 0);
+
+        while (!endOfLine)
+        {
+                int c = getbyte(address);
+                address++;
+                lengthRemaining--;
+                endOfLine = (lengthRemaining == 0);
+
+                if (c == 0x01 || (c >= 0x40 && c < 0x80 && !(c == 0x76 && endOfLine)) || (c >= 0xC0 && c <= 0xD3) || c == 0xD5 ||
+                    c == 0xD6 || c == 0xDB || c == 0xE0 || c == 0xE1 || c >= 0xE6)
+                {
+                        containsMachineCode = true;
+                        break;
+                }
+        }
+
+        return containsMachineCode;
+}
+
 

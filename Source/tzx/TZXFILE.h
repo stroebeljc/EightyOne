@@ -376,12 +376,14 @@ private:
         bool EventStop48k(void);
         void StopNow(bool Error);
 
-
         unsigned char ReadByte(FILE *f);
         unsigned unsigned short ReadWord(FILE *f);
         unsigned int ReadDWord(FILE *f);
         unsigned int Read3Bytes(FILE *f);
         void ReadBytes(FILE *f, int len, void *buf);
+
+        void LoadOFileData(unsigned char* programData, int length, bool Insert);
+        void LoadPFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert);
 
 public:
         struct TZXBlock Tape[TZX_MAX_BLOCKS];
@@ -394,6 +396,7 @@ public:
         bool Playing;
         bool Stopping;
 
+        void LoadFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert);
         bool LoadFile(AnsiString FileName, bool Insert);
         bool SaveFile(AnsiString FileName);
         void EraseBlock(int BlockNo);

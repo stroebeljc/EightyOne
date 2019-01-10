@@ -48,7 +48,7 @@ object EditGeneralForm: TEditGeneralForm
     Caption = 'Data'
   end
   object Label9: TLabel
-    Left = 295
+    Left = 207
     Top = 604
     Width = 68
     Height = 13
@@ -125,7 +125,7 @@ object EditGeneralForm: TEditGeneralForm
     TabOrder = 3
   end
   object CharSet: TComboBox
-    Left = 369
+    Left = 281
     Top = 600
     Width = 88
     Height = 21
@@ -154,12 +154,13 @@ object EditGeneralForm: TEditGeneralForm
     Top = 597
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Save...'
     TabOrder = 6
     OnClick = ButtonSaveClick
   end
   object SaveDialog1: TSaveDialog
-    Left = 200
+    Left = 416
     Top = 592
   end
 end

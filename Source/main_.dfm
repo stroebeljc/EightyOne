@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 198
-  Top = 126
+  Left = 191
+  Top = 182
   BorderStyle = bsSingle
   Caption = 'EightyOne'
   ClientHeight = 255
@@ -459,11 +459,12 @@ object Form1: TForm1
   end
   object OpenTape1: TOpenDialog
     Filter = 
-      'All ZX Files (TZX,WAV,TAP,T81,P,O,A83)|*.tzx;*.wav;*.csw;*.tap;*' +
-      '.t81;*.p;*.o;*.81;*.80;*.a83;*.zip|Tape Files (T81, P, O,A83)|*.' +
-      'tap;*.t81;*.p;*.o;*.81;*.80;*.a83|TZX Files (TZX)|*.tzx|TAP File' +
-      's (TAP)|*.tap|Wave Files (WAV)|*.wav;*.csw|Compressed Files|*.zi' +
-      'p'
+      'All ZX Files (TZX,WAV,TAP,T81,P,O,A83,B80,B81,B82)|*.tzx;*.wav;*' +
+      '.csw;*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83;*.b80;*.b81;*.b82;*.zip' +
+      '|Tape Files (T81,P,O,A83)|*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83|TZ' +
+      'X Files (TZX)|*.tzx|TAP Files (TAP)|*.tap|Wave Files (WAV,CSW)|*' +
+      '.wav;*.csw|BASIC Listing Files (B80,B81,B82)|*.b80;*.b81;*.b82|C' +
+      'ompressed Files (ZIP)|*.zip'
     Left = 32
     Top = 40
   end

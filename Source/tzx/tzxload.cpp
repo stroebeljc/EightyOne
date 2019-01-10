@@ -715,6 +715,52 @@ bool TTZXFile::LoadPFile(AnsiString FileName, bool Insert)
         return(true);
 }
 
+void TTZXFile::LoadFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert)
+{
+        AnsiString Extension = FileNameGetExt(FileName);
+
+        if (Extension == ".B80")
+        {
+                LoadOFileData(programData, length, Insert);
+        }
+        else if (Extension == ".B81")
+        {
+                LoadPFileData(FileName.c_str(), programData, length, Insert);
+        }
+        else if (Extension == ".B82")
+        {
+                //LoadTapFileData(FileName.c_str(), programData, length, Insert);
+        }
+}
+
+void TTZXFile::LoadOFileData(unsigned char* programData, int length, bool Insert)
+{
+        if (!Insert) NewTZX();
+
+        MoveBlock(AddGeneralBlock((char*)programData, length), CurBlock);
+        Tape[CurBlock].Pause=3000;
+
+        GroupCount();
+}
+
+void TTZXFile::LoadPFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert)
+{
+        if (!Insert) NewTZX();
+
+        int fnamelen;
+        char tempdata[65536+256];
+        
+        ConvertASCIIZX81(RemoveExt(RemovePath(FileName)), tempdata);
+        fnamelen = ZX81Strlen(tempdata);
+
+        memcpy(tempdata+fnamelen, (char*)programData, length);
+
+        MoveBlock(AddGeneralBlock(tempdata, length+fnamelen), CurBlock);
+        Tape[CurBlock].Pause=3000;
+
+        GroupCount();
+}
+
 void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
 {
         AnsiString Extension = FileNameGetExt(FileName);
@@ -741,7 +787,7 @@ void TTZXFile::ValidateFile(AnsiString FileName, char* tempdata, int len)
 
                 if (length < (elineOffset + 2))
                 {
-                        msg = "The start of the program data found not be found.";
+                        msg = "The start of the program data could not be found.";
                         Application->MessageBox(msg.c_str(), "File integrity error", MB_OK);
                         return;
                 }

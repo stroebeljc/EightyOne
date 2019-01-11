@@ -57,7 +57,8 @@ protected:
         virtual void OutputLine(int lineNumber, int& address, unsigned char* pPos) {}
         virtual void OutputStartOfProgramData(int& addressOffset) {}
         virtual void OutputEndOfProgramData(int& addressOffset) {}
-
+        virtual bool SupportUppercaseOnly() { return true; }
+        
 private:
         unsigned char ConvertFromHexChars(unsigned char chr1, unsigned char chr2);
         unsigned char ConvertFromHexChar(unsigned char chr);

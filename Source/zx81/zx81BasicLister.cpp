@@ -116,7 +116,7 @@ AnsiString zx81BasicLister::GetBasicFileExtension()
         return "b81";
 }                           
 
-bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining)
+bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes)
 {
         bool containsMachineCode = false;
 
@@ -129,12 +129,16 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining)
                 lengthRemaining--;
                 endOfLine = (lengthRemaining == 0);
 
-                if ((c >= 0x40 && c < 0x80 && !(c == 0x76 && endOfLine)) || c >= 0xC0)
+                if ((c >= 0x43 && c < 0x80 && !(c == 0x76 && endOfLine)) || (c == 0xC3))
                 {
                         containsMachineCode = true;
                         break;
                 }
-
+                else if (outputRemTokensAsCharacterCodes && ((c >= 0x40 && c <= 0x42) || (c >= 0xC0 && c != 0xC3)))
+                {
+                        containsMachineCode = true;
+                        break;
+                }
         }
 
         return containsMachineCode;

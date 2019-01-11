@@ -395,7 +395,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, int c)
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsText)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes)
 {
         AnsiString lineText = "";
 
@@ -411,7 +411,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
 
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsText))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes))
                 {
                         lineText += zxCharacter;
                 }
@@ -421,7 +421,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsText)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes)
 {
         bool characterAvailable = false;
 
@@ -455,13 +455,10 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         }
         else if ((length = GetKeywordLength(c)) > 1)
         {
-                if (!outputRemTokensAsText)
+                bool remCommand = (mKeyword[c] == " REM ");
+                if (remCommand)
                 {
-                        bool remCommand = (mKeyword[c] == " REM ");
-                        if (remCommand)
-                        {
-                                outputLineAsControlCodes = RemContainsMachineCode(address, lengthRemaining);
-                        }
+                        outputLineAsControlCodes = RemContainsMachineCode(address, lengthRemaining, outputRemTokensAsCharacterCodes);
                 }
 
                 bool keywordStartsWithSpace = (mKeyword[c][0] == ' ');

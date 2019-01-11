@@ -19,6 +19,7 @@
 #include "BasicLoader/IBasicLoader.h"
 #include <fstream>
 #include <sstream>
+#include <cctype>
 
 void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings)
 {
@@ -90,6 +91,14 @@ int IBasicLoader::ProgramLength()
 
 void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings)
 {
+        if (SupportUppercaseOnly())
+        {
+                for (string::iterator c = line.begin(); c != line.end(); ++c)
+                {
+                        *c = toupper(*c);
+                }
+        }
+
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
         strcpy((char*)mLineBuffer, line.c_str());
 

@@ -36,6 +36,7 @@
 #include "BasicLoader/BasicLoader.h"
 #include "zx81/zx80BasicLoader.h"
 #include "zx81/zx81BasicLoader.h"
+#include "BasicLoaderOptions_.h"
 
 #ifndef edt1
 #define edt1 0x480
@@ -231,8 +232,11 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
 //                        loader = new spectrumBasicLoader();
                 }
 
-                bool tokeniseRemContents = false;
-                bool tokeniseStrings = false;
+                LoadBasicListingOptionsForm->ShowModal();
+
+                bool tokeniseRemContents = LoadBasicListingOptionsForm->GetTokeniseRemContents();
+                bool tokeniseStrings = LoadBasicListingOptionsForm->GetTokeniseStringContents();
+
                 loader->LoadBasicFile(Filename, tokeniseRemContents, tokeniseStrings);
                 int programLength = loader->ProgramLength();
                 if (programLength > 0)

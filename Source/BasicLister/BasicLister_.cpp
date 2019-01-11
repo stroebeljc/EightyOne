@@ -26,6 +26,7 @@
 #include "main_.h"
 #include <iostream>
 #include <fstream>
+#include "BasicListerOptions_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -384,7 +385,7 @@ void TBasicLister::DisableButtons()
 {
         ToolButtonRefresh->Enabled = false;
         ToolButtonDeselect->Enabled = false;
-        ToolButtonSaveAs->Enabled = false;
+        ToolButtonSave->Enabled = false;
         ToolButtonLineEnds->Enabled = false;
 
         ScrollBar->Enabled = false;
@@ -395,7 +396,7 @@ void TBasicLister::EnableButtons()
         ToolButtonRefresh->Enabled = true;
         ToolButtonDeselect->Enabled = (mLastHighlightedEntryIndex != -1);
         bool programLoaded = (ProgramSize() > 0);
-        ToolButtonSaveAs->Enabled = programLoaded;
+        ToolButtonSave->Enabled = programLoaded;
         ToolButtonLineEnds->Enabled = programLoaded;
 
         ScrollBar->Enabled = (mProgramDisplayRows > DisplayableRows);
@@ -506,7 +507,7 @@ void __fastcall TBasicLister::FormClose(TObject *Sender,
 }
 //---------------------------------------------------------------------------
                     
-void __fastcall TBasicLister::ToolButtonSaveAsClick(TObject *Sender)
+void __fastcall TBasicLister::ToolButtonSaveClick(TObject *Sender)
 {
         SaveListingToFile();
 }
@@ -547,13 +548,20 @@ void TBasicLister::SaveListingToFile()
 
         if (SaveDialog->FilterIndex == 1)
         {
-                const bool outputRemTokensAsText = false;
+                SaveBasicListingOptionsForm->Top = BasicLister->Top + ((BasicLister->Height - SaveBasicListingOptionsForm->Height) / 2);
+                if (SaveBasicListingOptionsForm->Top < 0) SaveBasicListingOptionsForm->Top = 0;
+                SaveBasicListingOptionsForm->Left = BasicLister->Left + ((BasicLister->Width - SaveBasicListingOptionsForm->Width) / 2);
+                if (SaveBasicListingOptionsForm->Left < 0) SaveBasicListingOptionsForm->Left = 0;
                 
+                SaveBasicListingOptionsForm->ShowModal();
+
+                bool outputRemTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputTokensAsCharacterCodes();
+
                 std::ofstream ofs;
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, outputRemTokensAsText);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, outputRemTokensAsCharacterCodes);
                         ofs << lineText.c_str() << '\n';
                 }
 

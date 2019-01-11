@@ -46,7 +46,7 @@ __published:	// IDE-managed Components
         TToolButton *ToolButton1;
         TToolButton *ToolButtonDeselect;
         TToolButton *ToolButton3;
-        TToolButton *ToolButtonSaveAs;
+        TToolButton *ToolButtonSave;
         TToolButton *ToolButton4;
         TSaveDialog *SaveDialog;
         TToolButton *ToolButtonLineEnds;
@@ -61,7 +61,7 @@ __published:	// IDE-managed Components
           int WheelDelta, TPoint &MousePos, bool &Handled);
         void __fastcall ToolButtonDeselectClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
-        void __fastcall ToolButtonSaveAsClick(TObject *Sender);
+        void __fastcall ToolButtonSaveClick(TObject *Sender);
         void __fastcall ToolButtonLineEndsClick(TObject *Sender);
 
 private:	// User declarations

@@ -25,6 +25,8 @@
                  spl->IncProgress("Sound"); Application->CreateForm(__classid(TSoundOutput), &SoundOutput);
                  spl->IncProgress("CPU History"); Application->CreateForm(__classid(THistoryBox), &HistoryBox);
                  spl->IncProgress("Basic Lister"); Application->CreateForm(__classid(TBasicLister), &BasicLister);
+                 spl->IncProgress("Basic Loader"); Application->CreateForm(__classid(TLoadBasicListingOptionsForm), &LoadBasicListingOptionsForm);
+                 spl->IncProgress("Basic Loader"); Application->CreateForm(__classid(TSaveBasicListingOptionsForm), &SaveBasicListingOptionsForm);
                  spl->IncProgress("Memory Manager"); Application->CreateForm(__classid(TMemSave), &MemSave);
                  spl->IncProgress("ZX97"); Application->CreateForm(__classid(TZX97Dialog), &ZX97Dialog);
                  spl->IncProgress("Serial Port"); Application->CreateForm(__classid(TSerialConfig), &SerialConfig);

@@ -47,6 +47,6 @@ private:
         virtual inline int GetFloatingPointNumberCode();
         virtual inline int GetLineEndingCode();
         virtual std::string GetKeywords();
-        virtual bool RemContainsMachineCode(int address, int lengthRemaining);
+        virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
 };
 

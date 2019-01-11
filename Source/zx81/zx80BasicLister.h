@@ -42,6 +42,6 @@ private:
         virtual inline int GetLineEndingCode();
         virtual std::string GetKeywords();
         virtual bool ExtractLineDetails(int* address, LineInfo& lineInfo);
-        virtual bool RemContainsMachineCode(int address, int lengthRemaining);
+        virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
 };
 

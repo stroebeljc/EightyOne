@@ -164,7 +164,7 @@ AnsiString zx80BasicLister::GetBasicFileExtension()
         return "b80";
 }
 
-bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining)
+bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes)
 {
         bool containsMachineCode = false;
 
@@ -177,8 +177,13 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining)
                 lengthRemaining--;
                 endOfLine = (lengthRemaining == 0);
 
-                if (c == 0x01 || (c >= 0x40 && c < 0x80 && !(c == 0x76 && endOfLine)) || (c >= 0xC0 && c <= 0xD3) || c == 0xD5 ||
-                    c == 0xD6 || c == 0xDB || c == 0xE0 || c == 0xE1 || c >= 0xE6)
+                if ((c >= 0x40 && c < 0x80 && !(c == 0x76 && endOfLine)) || (c >= 0xC0 && c <= 0xD3) ||
+                     c == 0xF1 || c == 0xF2 || c == 0xF5 || c == 0xFF || (c >= 0x10 && c <= 0x1A))
+                {
+                        containsMachineCode = true;
+                        break;
+                }
+                else if (outputRemTokensAsCharacterCodes && ( c == 0xD5 || c == 0xD6 || c == 0xDB || (c >= 0xE0 && c <= 0xE2) || c >= 0xE6))
                 {
                         containsMachineCode = true;
                         break;

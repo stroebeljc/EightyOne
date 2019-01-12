@@ -395,7 +395,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, int c)
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputPoundAsCharacterCode)
 {
         AnsiString lineText = "";
 
@@ -411,7 +411,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
 
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputPoundAsCharacterCode))
                 {
                         lineText += zxCharacter;
                 }
@@ -421,7 +421,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputPoundAsCharacterCode)
 {
         bool characterAvailable = false;
 
@@ -448,10 +448,11 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
 
         int length;
         
-        if (outputLineAsControlCodes)
+        if (outputLineAsControlCodes || ((mKeyword[c] == "£") && outputPoundAsCharacterCode))
         {
-                zxCharacter = '\\';
-                zxCharacter += UpperCase(IntToHex(c, 2));
+                zxCharacter = "\\" + UpperCase(IntToHex(c, 2));
+
+                lastKeywordEndedWithSpace = false;
         }
         else if ((length = GetKeywordLength(c)) > 1)
         {

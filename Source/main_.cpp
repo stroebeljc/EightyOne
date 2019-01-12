@@ -75,6 +75,8 @@
 #include "ProfilePlot_.h"
 #include "Profiler.h"
 #include "BasicLister/BasicLister_.h"
+#include "BasicLister/BasicListerOptions_.h"
+#include "BasicLoader/BasicLoaderOptions_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -940,7 +942,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip;*.b80;*.b81;*.b82");
                                 if (Filename=="") return;
                                 Ext = FileNameGetExt(Filename);
                         }
@@ -959,7 +961,8 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                         else if (Ext==".SNA") spec_load_sna(Filename.c_str());
                         else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
-                                  || Ext==".81" || Ext==".80" || Ext==".P81")
+                                  || Ext==".81" || Ext==".80" || Ext==".P81"
+                                  || Ext==".B80" || Ext==".B81" || Ext==".B82")
                         {
                                 TZX->LoadFile(Filename, false);
                                 loadFileSymbolsProxy(Filename.c_str());
@@ -1244,6 +1247,8 @@ void TForm1::SaveSettings(TIniFile *ini)
         ParallelPort->SaveSettings(ini);
         MidiForm->SaveSettings(ini);
         BasicLister->SaveSettings(ini);
+        LoadBasicListingOptionsForm->SaveSettings(ini);
+        SaveBasicListingOptionsForm->SaveSettings(ini);
 }
 
 void __fastcall TForm1::DisplayArtClick(TObject *Sender)
@@ -1802,6 +1807,8 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         IF1->LoadSettings(ini);
         P3Drive->LoadSettings(ini);
         SoundOutput->LoadSettings(ini);
+        LoadBasicListingOptionsForm->LoadSettings(ini);
+        SaveBasicListingOptionsForm->LoadSettings(ini);
 
         HardReset1Click(NULL);
 

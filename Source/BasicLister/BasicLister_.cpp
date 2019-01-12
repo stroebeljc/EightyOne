@@ -384,7 +384,7 @@ void TBasicLister::ConfigureStatusBar()
 void TBasicLister::DisableButtons()
 {
         ToolButtonRefresh->Enabled = false;
-        ToolButtonDeselect->Enabled = false;
+        ToolButtonSettings->Enabled = false;
         ToolButtonSave->Enabled = false;
         ToolButtonLineEnds->Enabled = false;
 
@@ -394,7 +394,7 @@ void TBasicLister::DisableButtons()
 void TBasicLister::EnableButtons()
 {
         ToolButtonRefresh->Enabled = true;
-        ToolButtonDeselect->Enabled = (mLastHighlightedEntryIndex != -1);
+        ToolButtonSettings->Enabled = true;
         bool programLoaded = (ProgramSize() > 0);
         ToolButtonSave->Enabled = programLoaded;
         ToolButtonLineEnds->Enabled = programLoaded;
@@ -490,16 +490,7 @@ void __fastcall TBasicLister::FormMouseWheel(TObject *Sender,
 }
 
 //---------------------------------------------------------------------------
-
-void __fastcall TBasicLister::ToolButtonDeselectClick(TObject *Sender)
-{
-        DisableButtons();
-        UnhighlightEntry(mLastHighlightedEntryIndex);
-        EnableButtons();
-}
-
-//---------------------------------------------------------------------------
-
+       
 void __fastcall TBasicLister::FormClose(TObject *Sender,
       TCloseAction &Action)
 {
@@ -548,20 +539,11 @@ void TBasicLister::SaveListingToFile()
 
         if (SaveDialog->FilterIndex == 1)
         {
-                SaveBasicListingOptionsForm->Top = BasicLister->Top + ((BasicLister->Height - SaveBasicListingOptionsForm->Height) / 2);
-                if (SaveBasicListingOptionsForm->Top < 0) SaveBasicListingOptionsForm->Top = 0;
-                SaveBasicListingOptionsForm->Left = BasicLister->Left + ((BasicLister->Width - SaveBasicListingOptionsForm->Width) / 2);
-                if (SaveBasicListingOptionsForm->Left < 0) SaveBasicListingOptionsForm->Left = 0;
-                
-                SaveBasicListingOptionsForm->ShowModal();
-
-                bool outputRemTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputTokensAsCharacterCodes();
-
                 std::ofstream ofs;
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, outputRemTokensAsCharacterCodes);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputPoundAsCharacterCode);
                         ofs << lineText.c_str() << '\n';
                 }
 
@@ -618,4 +600,15 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
+{
+        SaveBasicListingOptionsForm->Left = BasicLister->Left + (BasicLister->Width - SaveBasicListingOptionsForm->Width) / 2;
+        SaveBasicListingOptionsForm->Top = BasicLister->Top + (BasicLister->Height - SaveBasicListingOptionsForm->Height) / 2;
+
+        SaveBasicListingOptionsForm->ShowModal();
+
+        mOutputRemTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputTokensAsCharacterCodes();
+        mOutputPoundAsCharacterCode = SaveBasicListingOptionsForm->GetOutputPoundAsCharacterCode();
+}
 

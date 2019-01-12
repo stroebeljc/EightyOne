@@ -44,7 +44,7 @@ __published:	// IDE-managed Components
         TToolBar *ToolBar;
         TToolButton *ToolButtonRefresh;
         TToolButton *ToolButton1;
-        TToolButton *ToolButtonDeselect;
+        TToolButton *ToolButtonSettings;
         TToolButton *ToolButton3;
         TToolButton *ToolButtonSave;
         TToolButton *ToolButton4;
@@ -59,10 +59,10 @@ __published:	// IDE-managed Components
           TShiftState Shift, int X, int Y);
         void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
           int WheelDelta, TPoint &MousePos, bool &Handled);
-        void __fastcall ToolButtonDeselectClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall ToolButtonSaveClick(TObject *Sender);
         void __fastcall ToolButtonLineEndsClick(TObject *Sender);
+        void __fastcall ToolButtonSettingsClick(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;
@@ -76,7 +76,9 @@ private:	// User declarations
         int mBMHeight;
         int mProgramDisplayRows;
         std::vector<LineInfo>* mLines;
-
+        bool mOutputRemTokensAsCharacterCodes;
+        int mOutputPoundAsCharacterCode;
+        
         void ClearBitmap();
         void ConstructBitmap();
         bool ExtractLine(int* basicPos, int* displayLength);

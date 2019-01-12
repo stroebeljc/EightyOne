@@ -1,6 +1,6 @@
 object BasicLister: TBasicLister
-  Left = 361
-  Top = 409
+  Left = 192
+  Top = 144
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'BASIC Listing'
@@ -108,12 +108,12 @@ object BasicLister: TBasicLister
       ImageIndex = 1
       Style = tbsDivider
     end
-    object ToolButtonSave: TToolButton
+    object ToolButtonSettings: TToolButton
       Left = 62
       Top = 2
-      Caption = 'Save'
-      ImageIndex = 4
-      OnClick = ToolButtonSaveClick
+      Caption = 'Settings'
+      ImageIndex = 2
+      OnClick = ToolButtonSettingsClick
     end
     object ToolButton3: TToolButton
       Left = 116
@@ -123,12 +123,12 @@ object BasicLister: TBasicLister
       ImageIndex = 3
       Style = tbsDivider
     end
-    object ToolButtonDeselect: TToolButton
+    object ToolButtonSave: TToolButton
       Left = 124
       Top = 2
-      Caption = 'Deselect'
-      ImageIndex = 2
-      OnClick = ToolButtonDeselectClick
+      Caption = 'Save'
+      ImageIndex = 4
+      OnClick = ToolButtonSaveClick
     end
     object ToolButton4: TToolButton
       Left = 178

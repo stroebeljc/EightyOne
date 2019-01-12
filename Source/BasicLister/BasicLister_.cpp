@@ -27,6 +27,7 @@
 #include <iostream>
 #include <fstream>
 #include "BasicListerOptions_.h"
+#include "BasicListingFormatInfo_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -387,6 +388,7 @@ void TBasicLister::DisableButtons()
         ToolButtonSettings->Enabled = false;
         ToolButtonSave->Enabled = false;
         ToolButtonLineEnds->Enabled = false;
+        ToolButtonInfo->Enabled = false;
 
         ScrollBar->Enabled = false;
 }
@@ -398,6 +400,7 @@ void TBasicLister::EnableButtons()
         bool programLoaded = (ProgramSize() > 0);
         ToolButtonSave->Enabled = programLoaded;
         ToolButtonLineEnds->Enabled = programLoaded;
+        ToolButtonInfo->Enabled = true;
 
         ScrollBar->Enabled = (mProgramDisplayRows > DisplayableRows);
 }
@@ -543,7 +546,7 @@ void TBasicLister::SaveListingToFile()
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputPoundAsCharacterCode);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes);
                         ofs << lineText.c_str() << '\n';
                 }
 
@@ -603,12 +606,47 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 
 void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
 {
+        DisableButtons();
+
         SaveBasicListingOptionsForm->Left = BasicLister->Left + (BasicLister->Width - SaveBasicListingOptionsForm->Width) / 2;
         SaveBasicListingOptionsForm->Top = BasicLister->Top + (BasicLister->Height - SaveBasicListingOptionsForm->Height) / 2;
 
         SaveBasicListingOptionsForm->ShowModal();
 
         mOutputRemTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputTokensAsCharacterCodes();
-        mOutputPoundAsCharacterCode = SaveBasicListingOptionsForm->GetOutputPoundAsCharacterCode();
+        mOutputNonAsciiAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputNonAsciiAsCharacterCodes();
+
+        EnableButtons();
+}         
+
+void __fastcall TBasicLister::ToolButtonInfoClick(TObject *Sender)
+{
+        AnsiString machine = mBasicLister->GetMachineName();
+        if (machine == "ZX80")
+        {
+                BasicListingFormatInfoForm->SetActivePage(0);
+        }
+        else if (machine == "ZX81")
+        {
+                BasicListingFormatInfoForm->SetActivePage(1);
+        }
+        else if (machine == "Spectrum")
+        {
+                BasicListingFormatInfoForm->SetActivePage(2);
+        }
+        else
+        {
+                return;
+        }
+
+        BasicListingFormatInfoForm->Left = BasicLister->Left + (BasicLister->Width - BasicListingFormatInfoForm->Width) / 2;
+        BasicListingFormatInfoForm->Top = BasicLister->Top + (BasicLister->Height - BasicListingFormatInfoForm->Height) / 2;
+
+        DisableButtons();
+
+        BasicListingFormatInfoForm->ShowModal();
+
+        EnableButtons();
 }
+//---------------------------------------------------------------------------
 

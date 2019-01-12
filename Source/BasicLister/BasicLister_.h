@@ -51,6 +51,7 @@ __published:	// IDE-managed Components
         TSaveDialog *SaveDialog;
         TToolButton *ToolButtonLineEnds;
         TToolButton *ToolButton5;
+        TToolButton *ToolButtonInfo;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -63,6 +64,7 @@ __published:	// IDE-managed Components
         void __fastcall ToolButtonSaveClick(TObject *Sender);
         void __fastcall ToolButtonLineEndsClick(TObject *Sender);
         void __fastcall ToolButtonSettingsClick(TObject *Sender);
+        void __fastcall ToolButtonInfoClick(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;
@@ -77,7 +79,7 @@ private:	// User declarations
         int mProgramDisplayRows;
         std::vector<LineInfo>* mLines;
         bool mOutputRemTokensAsCharacterCodes;
-        int mOutputPoundAsCharacterCode;
+        int mOutputNonAsciiAsCharacterCodes;
         
         void ClearBitmap();
         void ConstructBitmap();

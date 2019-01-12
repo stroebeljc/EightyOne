@@ -395,7 +395,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, int c)
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputPoundAsCharacterCode)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes)
 {
         AnsiString lineText = "";
 
@@ -411,7 +411,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
 
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputPoundAsCharacterCode))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes))
                 {
                         lineText += zxCharacter;
                 }
@@ -421,7 +421,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputPoundAsCharacterCode)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes)
 {
         bool characterAvailable = false;
 
@@ -448,7 +448,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
 
         int length;
         
-        if (outputLineAsControlCodes || ((mKeyword[c] == "£") && outputPoundAsCharacterCode))
+        if (outputLineAsControlCodes || ((mKeyword[c] == "£") && outputNonAsciiAsCharacterCodes))
         {
                 zxCharacter = "\\" + UpperCase(IntToHex(c, 2));
 

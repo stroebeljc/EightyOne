@@ -1,11 +1,11 @@
-object BasicLister: TBasicLister
-  Left = 192
-  Top = 144
+object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
+  Left = 267
+  Top = 132
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
-  Caption = 'BASIC Listing'
-  ClientHeight = 324
-  ClientWidth = 274
+  Caption = 'Save Settings'
+  ClientHeight = 124
+  ClientWidth = 259
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -48,126 +48,59 @@ object BasicLister: TBasicLister
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000FFFF0000}
   OldCreateOrder = False
-  OnClose = FormClose
-  OnMouseDown = FormMouseDown
-  OnMouseWheel = FormMouseWheel
-  OnPaint = FormPaint
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object ScrollBar: TScrollBar
-    Left = 257
-    Top = 30
-    Width = 17
-    Height = 275
-    Align = alRight
-    Kind = sbVertical
-    PageSize = 0
-    TabOrder = 0
-    OnChange = ScrollBarChange
-  end
-  object StatusBar: TStatusBar
-    Left = 0
-    Top = 305
-    Width = 274
-    Height = 19
-    Panels = <
-      item
-        Width = 140
-      end
-      item
-        Width = 136
-      end>
-    SimplePanel = False
-    SizeGrip = False
-  end
-  object ToolBar: TToolBar
-    Left = 0
-    Top = 0
-    Width = 274
-    Height = 30
-    ButtonHeight = 21
-    ButtonWidth = 54
-    Caption = 'ToolBar'
-    EdgeBorders = [ebTop, ebBottom]
-    ShowCaptions = True
-    TabOrder = 2
-    Wrapable = False
-    object ToolButtonRefresh: TToolButton
-      Left = 0
-      Top = 2
-      AutoSize = True
-      Caption = ' Refresh '
-      ImageIndex = 0
-      OnClick = ToolButtonRefreshClick
-    end
-    object ToolButton1: TToolButton
-      Left = 54
-      Top = 2
-      Width = 8
-      Caption = 'ToolButton1'
-      ImageIndex = 1
-      Style = tbsDivider
-    end
-    object ToolButtonSettings: TToolButton
-      Left = 62
-      Top = 2
-      AutoSize = True
-      Caption = 'Settings'
-      ImageIndex = 2
-      OnClick = ToolButtonSettingsClick
-    end
-    object ToolButton3: TToolButton
-      Left = 111
-      Top = 2
-      Width = 8
-      Caption = 'ToolButton3'
-      ImageIndex = 3
-      Style = tbsDivider
-    end
-    object ToolButtonSave: TToolButton
-      Left = 119
-      Top = 2
-      Caption = 'Save'
-      ImageIndex = 4
-      OnClick = ToolButtonSaveClick
-    end
-    object ToolButton4: TToolButton
-      Left = 173
-      Top = 2
-      Width = 8
-      Caption = 'ToolButton4'
-      ImageIndex = 5
-      Style = tbsDivider
-    end
-    object ToolButtonLineEnds: TToolButton
-      Left = 181
-      Top = 2
-      AutoSize = True
-      Caption = 'Line Ends'
-      ImageIndex = 6
-      Style = tbsCheck
-      OnClick = ToolButtonLineEndsClick
-    end
-    object ToolButton5: TToolButton
-      Left = 239
-      Top = 2
-      Width = 6
-      Caption = 'ToolButton5'
-      ImageIndex = 7
-      Style = tbsDivider
-    end
-    object ToolButtonInfo: TToolButton
-      Left = 245
-      Top = 2
-      AutoSize = True
-      Caption = 'Info'
-      ImageIndex = 8
-      OnClick = ToolButtonInfoClick
-    end
-  end
-  object SaveDialog: TSaveDialog
+  object Label1: TLabel
     Left = 8
-    Top = 40
+    Top = 56
+    Width = 217
+    Height = 13
+    Caption = 'Output non-ASCII symbols as character codes'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 8
+    Width = 231
+    Height = 13
+    Caption = 'Configure how a BASIC program is saved as text:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
+  end
+  object Label3: TLabel
+    Left = 8
+    Top = 32
+    Width = 204
+    Height = 13
+    Caption = 'Output tokens in REMs as character codes'
+  end
+  object cboOutputAsCharacterCodes: TCheckBox
+    Left = 233
+    Top = 31
+    Width = 15
+    Height = 17
+    Alignment = taLeftJustify
+    TabOrder = 0
+  end
+  object btnOK: TButton
+    Left = 94
+    Top = 88
+    Width = 68
+    Height = 25
+    Caption = 'OK'
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object cboOutputNonAsciiAsCharacterCodes: TCheckBox
+    Left = 231
+    Top = 56
+    Width = 17
+    Height = 17
+    Alignment = taLeftJustify
+    TabOrder = 2
   end
 end

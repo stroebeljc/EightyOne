@@ -729,7 +729,7 @@ void TTZXFile::LoadFileData(AnsiString FileName, unsigned char* programData, int
         }
         else if (Extension == ".B82")
         {
-                //LoadTapFileData(FileName.c_str(), programData, length, Insert);
+                LoadTapFileData(FileName.c_str(), programData, length, Insert);
         }
 }
 
@@ -757,6 +757,29 @@ void TTZXFile::LoadPFileData(AnsiString FileName, unsigned char* programData, in
 
         MoveBlock(AddGeneralBlock(tempdata, length+fnamelen), CurBlock);
         Tape[CurBlock].Pause=3000;
+
+        GroupCount();
+}
+
+void TTZXFile::LoadTapFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert)
+{
+        if (!Insert) EraseAll();
+
+        int headerOffset = 0;
+        int headerLength = programData[headerOffset] + (programData[headerOffset+1] << 8);
+        headerOffset += 2;
+        unsigned char* headerStart = programData + headerOffset;
+        MoveBlock(AddROMBlock(headerStart, headerLength), CurBlock);
+        Tape[CurBlock].Pause=100;
+        CurBlock++;
+
+        int dataOffset = headerOffset + headerLength;
+        int dataLength = programData[dataOffset] + (programData[dataOffset+1] << 8);
+        dataOffset += 2;
+        unsigned char* dataStart = programData + dataOffset;
+        MoveBlock(AddROMBlock(dataStart, dataLength), CurBlock);
+        Tape[CurBlock].Pause=5000;
+        CurBlock++;
 
         GroupCount();
 }

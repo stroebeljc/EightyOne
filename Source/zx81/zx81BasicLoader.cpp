@@ -1,3 +1,21 @@
+/* EightyOne  - A Windows ZX80/81/clone emulator.
+ * Copyright (C) 2003-2019 Michael D Wynne
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 #include "zx81BasicLoader.h"
 #include <fstream>
 #include <map>
@@ -7,10 +25,10 @@
 
 using namespace std;
 
-void zx81BasicLoader::OutputStartOfProgramData(int& addressOffset)
+void zx81BasicLoader::OutputStartOfProgramData(AnsiString filename, int& addressOffset)
 {
         // Output the system variables
-        mProgramData[addressOffset++] = 0x00;   //VERSN
+        OutputByte(addressOffset, 0x00);        //VERSN
         OutputWord(addressOffset, 0x0000);      //E_PPC
         OutputWord(addressOffset, 0x0000);      //D_FILE
         OutputWord(addressOffset, 0x0000);      //DF_CC
@@ -21,27 +39,27 @@ void zx81BasicLoader::OutputStartOfProgramData(int& addressOffset)
         OutputWord(addressOffset, 0x0000);      //X_PTR
         OutputWord(addressOffset, 0x0000);      //STKBOT
         OutputWord(addressOffset, 0x0000);      //STKEND
-        mProgramData[addressOffset++] = 0x00;   //BERG
+        OutputByte(addressOffset, 0x00);        //BERG
         OutputWord(addressOffset, 0x405D);      //MEM
-        mProgramData[addressOffset++] = 0x00;   //SPARE1
-        mProgramData[addressOffset++] = 0x02;   //DF_SZ
+        OutputByte(addressOffset, 0x00);        //SPARE1
+        OutputByte(addressOffset, 0x02);        //DF_SZ
         OutputWord(addressOffset, 0x0000);      //S_TOP
         OutputWord(addressOffset, 0xFFFF);      //LAST_K
-        mProgramData[addressOffset++] = 0x00;   //DBOUNC
-        mProgramData[addressOffset++] = 0x37;   //MARGIN
+        OutputByte(addressOffset, 0x00);        //DBOUNC
+        OutputByte(addressOffset, 0x37);        //MARGIN
         OutputWord(addressOffset, 0x0000);      //NXTLIN
         OutputWord(addressOffset, 0x0000);      //OLDPPC
-        mProgramData[addressOffset++] = 0x00;   //FLAGX
+        OutputByte(addressOffset, 0x00);        //FLAGX
         OutputWord(addressOffset, 0x0000);      //STRLEN
         OutputWord(addressOffset, 0x0C8D);      //T_ADDR
         OutputWord(addressOffset, 0x0000);      //SEED
         OutputWord(addressOffset, 0xE6E0);      //FRAMES
         OutputWord(addressOffset, 0x0000);      //COORDS
-        mProgramData[addressOffset++] = 0xBC;   //PR_CC
+        OutputByte(addressOffset, 0xBC);        //PR_CC
         OutputWord(addressOffset, 0x1821);      //S_POSN
-        mProgramData[addressOffset++] = 0x40;   //CDFLAG
+        OutputByte(addressOffset, 0x40);        //CDFLAG
         addressOffset += 32;                    //PRBUFF
-        mProgramData[addressOffset++] = 0x76;   //PRBUFF
+        OutputByte(addressOffset, 0x76);        //PRBUFF
         addressOffset += 30;                    //MEMBOT
         OutputWord(addressOffset, 0x0000);      //SPARE
 }
@@ -53,13 +71,13 @@ void zx81BasicLoader::OutputEndOfProgramData(int& addressOffset)
         int dfileAddress = startOfRam + addressOffset;
         for (int d = 0; d < 25; d++)
         {
-                mProgramData[addressOffset++] = Newline;
+                OutputByte(addressOffset, Newline);
         }
 
         // Insert the variables area
         int varsAddress = startOfRam + addressOffset;
 
-        mProgramData[addressOffset++] = 0x80;
+        OutputByte(addressOffset, 0x80);
 
         int elineAddress = startOfRam + addressOffset;
 
@@ -82,15 +100,13 @@ void zx81BasicLoader::OutputEndOfProgramData(int& addressOffset)
         ChangeWord(nxtlinOffset, varsAddress);
 }
 
-void zx81BasicLoader::Tokenise()
+void zx81BasicLoader::ExtractTokens()
 {
         map<unsigned char, string> tokens;
 
-        tokens[125] = "RND";
-        tokens[126] = "INKEY$";
-        tokens[127] = "PI";
-
-        tokens[192] = "\"\"";
+        tokens[64] = "RND";
+        tokens[65] = "INKEY$";
+        tokens[66] = "PI";   
         tokens[193] = "AT ";
         tokens[194] = "TAB ";
         tokens[196] = "CODE ";
@@ -157,35 +173,27 @@ void zx81BasicLoader::Tokenise()
         DoTokenise(tokens);
 }
 
-void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset, unsigned char* pPos)
+void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset)
 {
-        mProgramData[addressOffset++] = lineNumber >> 8;
-        mProgramData[addressOffset++] = lineNumber & 0xFF;
+        int i = 0;
+
+        OutputByte(addressOffset, lineNumber >> 8);
+        OutputByte(addressOffset, lineNumber & 0xFF);
 
         int lineLengthOffset = addressOffset;
         addressOffset += 2;
         int commandOffset = addressOffset;
 
-        char* pMatch;
-        while ((pMatch = strstr((char*)pPos, "£")) != NULL)
-        {
-                *pMatch = PoundReplacement;
-        }          
-        while ((pMatch = strstr((char*)pPos, "#")) != NULL)
-        {
-                *pMatch = PoundReplacement;
-        }
-
         bool withinQuotes = false;
         bool withinRem = false;
 
-        while (*pPos != '\0')
+        while (mLineBuffer[i] != '\0')
         {
-                unsigned char chr = *pPos;
-
-                if (chr != 0x01)
+                if (mLineBufferPopulated[i])
                 {
-                        if (chr == '\"')
+                        unsigned char chr = mLineBufferOutput[i];
+                        
+                        if (chr == Quote)
                         {
                                 withinQuotes = !withinQuotes;
                         }
@@ -194,87 +202,23 @@ void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset, unsigned ch
                                 withinRem = true;
                         }
 
-                        if (chr == 0x7D)//RND
+                        if (!withinQuotes && !withinRem && StartOfNumber(i))
                         {
-                                mProgramData[addressOffset++] = Rnd;
-                        }
-                        else if (chr == 0x7E)//INKEY$
-                        {
-                                mProgramData[addressOffset++] = Inkey;
-                        }
-                        else if (chr == 0x7F)//PI
-                        {
-                                mProgramData[addressOffset++] = Pi;
-                        }
-                        else if (chr == PoundReplacement)
-                        {
-                                mProgramData[addressOffset++] = AsciiToZX('£');
-                        }
-                        else if (chr >= 0x80)
-                        {
-                                mProgramData[addressOffset++] = chr;
-                        }
-                        else if ((chr == '%') || (chr == '\\'))
-                        {
-                                mProgramData[addressOffset++] = DecodeCharacter(&pPos);
-                        }
-                        else if (!withinQuotes && !withinRem && StartOfNumber(pPos))
-                        {
-                                OutputEmbeddedNumber(&pPos, addressOffset);
+                                OutputEmbeddedNumber(i, addressOffset);
                         }
                         else
                         {
-                                mProgramData[addressOffset++] = AsciiToZX(chr);
+                                OutputByte(addressOffset, chr);
                         }
                 }
 
-                pPos++;
+                i++;
         }
 
-        mProgramData[addressOffset++] = Newline;
+        OutputByte(addressOffset, Newline);
 
         int lineLength = addressOffset - commandOffset;
         ChangeWord(lineLengthOffset, lineLength);
-}
-
-bool zx81BasicLoader::StartOfNumber(unsigned char* pPos)
-{
-        char chrPrev = pPos[-1];
-        char chr1 = pPos[0];
-        char chr2 = pPos[1];
-        char chr3 = pPos[2];
-
-        bool partOfVariableName = isalpha(chrPrev);
-        bool beginsWithDigit = isdigit(chr1);
-        bool plusMinusOrDecimal = (chr1 == '-' || chr1 == '+' || chr1 == '.') && isdigit(chr2);
-        bool plusMinusAndDecimal = (chr1 == '-' || chr1 == '+') && chr2 == '.' && isdigit(chr3);
-
-        return !partOfVariableName && (beginsWithDigit || plusMinusOrDecimal || plusMinusAndDecimal);
-}
-
-void zx81BasicLoader::OutputEmbeddedNumber(unsigned char** ppPos, int& addressOffset)
-{
-        char* pEnd;
-        double value = strtod((char*)*ppPos, &pEnd);
-
-        while (*ppPos < pEnd)
-        {
-                unsigned char chr = *(*ppPos);
-                mProgramData[addressOffset++] = AsciiToZX(chr);
-                (*ppPos)++;
-        }
-
-        while ((*(*ppPos) != '\0') && (*(*ppPos) == ' '))
-        {
-                mProgramData[addressOffset++] = Space;
-                (*ppPos)++;
-        }
-
-        (*ppPos)--;
-
-        mProgramData[addressOffset++] = Number;
-
-        OutputFloatingPointEncoding(value, addressOffset);
 }
 
 void zx81BasicLoader::OutputFloatingPointEncoding(double value, int& addressOffset)
@@ -307,11 +251,22 @@ void zx81BasicLoader::OutputFloatingPointEncoding(double value, int& addressOffs
                 }
         }
 
-        mProgramData[addressOffset++] = (unsigned char)exponent;
-        mProgramData[addressOffset++] = (unsigned char)(mantissa >> 24);
-        mProgramData[addressOffset++] = (unsigned char)(mantissa >> 16);
-        mProgramData[addressOffset++] = (unsigned char)(mantissa >> 8);
-        mProgramData[addressOffset++] = (unsigned char)(mantissa & 0xFF);
+        OutputByte(addressOffset, (unsigned char)exponent);
+        OutputByte(addressOffset, (unsigned char)(mantissa >> 24));
+        OutputByte(addressOffset, (unsigned char)(mantissa >> 16));
+        OutputByte(addressOffset, (unsigned char)(mantissa >> 8));
+        OutputByte(addressOffset, (unsigned char)(mantissa & 0xFF));
+}
+
+bool zx81BasicLoader::SingleEscapeSequence(unsigned char chr, unsigned char& zxChr)
+{
+        if (chr == '\"')
+        {
+                zxChr = DoubleQuote;
+                return true;
+        }
+
+        return false;
 }
 
 unsigned char zx81BasicLoader::DecodeGraphic(unsigned char chr1, unsigned char chr2)
@@ -443,10 +398,35 @@ unsigned char zx81BasicLoader::AsciiToZX(unsigned char ascii)
         return zxChr;
 }
                                       
-void zx81BasicLoader::ReplaceStrings()
+void zx81BasicLoader::ExtractInverseCharacters()
 {
-        const int Quote = '\"';
+        char* pPos = mLineBuffer;
 
+        while (*pPos != '\0')
+        {
+                if (*pPos == '%')
+                {
+                        *pPos = Blank;
+                        pPos++;
+
+                        int index = pPos - mLineBuffer;
+                        mLineBufferOutput[index] = 0x80 | AsciiToZX(*pPos);
+                        mLineBufferPopulated[index] = true;
+                        
+                        *pPos = Blank;
+                }
+
+                pPos++;
+        }
+}
+
+unsigned char zx81BasicLoader::GetEscapeCharacter()
+{
+        return '\\';
+}
+
+void zx81BasicLoader::ExtractDoubleQuoteCharacters()
+{
         int i = 0;
         bool withinQuote = false;
 
@@ -454,26 +434,29 @@ void zx81BasicLoader::ReplaceStrings()
         {
                 if (!withinQuote)
                 {
-                        if (mLineBuffer[i] == Quote)
+                        if (mLineBuffer[i] == '\"')
                         {
                                 withinQuote = true;
                         }
                 }
                 else
                 {
-                        mLineBufferDestringed[i] = ' ';
-
                         char chr1 = mLineBuffer[i];
-                        char chr2 = mLineBuffer[i + 1];
-
-                        if (chr1 == Quote)
+                        if (chr1 == '\0')
                         {
-                                if (chr2 == Quote)
+                                throw out_of_range("End quote missing");
+                        }
+
+                        if (chr1 == '\"')
+                        {
+                                if (mLineBuffer[i + 1] == '\"')
                                 {
-                                        mLineBuffer[i] = 0xC0;
+                                        mLineBuffer[i] = Blank;
+                                        mLineBufferOutput[i] = DoubleQuote;
+                                        mLineBufferPopulated[i] = true;
+
                                         i++;
                                         mLineBuffer[i] = Blank;
-                                        mLineBufferDestringed[i] = ' ';
                                 }
                                 else
                                 {
@@ -486,24 +469,7 @@ void zx81BasicLoader::ReplaceStrings()
         }
 }
 
-void IBasicLoader::ReplaceStrings()
+unsigned char zx81BasicLoader::GetEmbbededNumberMark()
 {
-        const int Quote = '\"';
-
-        char* pPos = mLineBufferDestringed;
-        bool withinQuote = false;
-
-        while (*pPos != '\0')
-        {
-                if (*pPos == Quote)
-                {
-                        withinQuote = !withinQuote;
-                }
-                else if (withinQuote)
-                {
-                        *pPos = ' '; 
-                }
-
-                pPos++;
-        }
+        return Number;
 }

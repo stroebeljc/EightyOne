@@ -141,6 +141,7 @@ USEUNIT("Spectrum\spec128BasicLister.cpp");
 USEUNIT("Spectrum\spec48BasicLister.cpp");
 USEUNIT("zx81\zx81BasicLoader.cpp");
 USEUNIT("zx81\zx80BasicLoader.cpp");
+USEUNIT("Spectrum\specBasicLoader.cpp");
 USEUNIT("BasicLoader\IBasicLoader.cpp");
 USEFORM("BasicLoader\BasicLoaderOptions_.cpp", LoadBasicListingOptionsForm);
 USEFORM("BasicLister\BasicListerOptions_.cpp", SaveBasicListingOptionsForm);

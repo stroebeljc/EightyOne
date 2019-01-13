@@ -1,3 +1,21 @@
+/* EightyOne  - A Windows ZX80/81/clone emulator.
+ * Copyright (C) 2003-2019 Michael D Wynne
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 #include "zx80BasicLoader.h"
 #include <fstream>
 #include <map>
@@ -7,11 +25,11 @@
 
 using namespace std;
 
-void zx80BasicLoader::OutputStartOfProgramData(int& addressOffset)
+void zx80BasicLoader::OutputStartOfProgramData(AnsiString filename, int& addressOffset)
 {
         // Output the system variables
-        mProgramData[addressOffset++] = 0xFF;   //ERR_NR
-        mProgramData[addressOffset++] = 0x80;   //FLAGS
+        OutputByte(addressOffset, 0xFF);        //ERR_NR
+        OutputByte(addressOffset, 0x80);        //FLAGS
         OutputWord(addressOffset, 0xFFFE);      //PPC
         OutputWord(addressOffset, 0x0000);      //P_PTR
         OutputWord(addressOffset, 0x0000);      //E_PPC
@@ -20,11 +38,11 @@ void zx80BasicLoader::OutputStartOfProgramData(int& addressOffset)
         OutputWord(addressOffset, 0x0000);      //D_FILE
         OutputWord(addressOffset, 0x0000);      //DF_EA
         OutputWord(addressOffset, 0x0000);      //DF_END
-        mProgramData[addressOffset++] = 0x02;   //DF_SZ
+        OutputByte(addressOffset, 0x02);        //DF_SZ
         OutputWord(addressOffset, 0x0000);      //S_TOP
         OutputWord(addressOffset, 0x0000);      //X_PTR
         OutputWord(addressOffset, 0x0000);      //OLDPPC
-        mProgramData[addressOffset++] = 0x00;   //FLAGX
+        OutputByte(addressOffset, 0x00);        //FLAGX
         OutputWord(addressOffset, 0x07B6);      //T_ADDR
         OutputWord(addressOffset, 0x0000);      //SEED
         OutputWord(addressOffset, 0x0000);      //FRAMES
@@ -40,7 +58,7 @@ void zx80BasicLoader::OutputEndOfProgramData(int& addressOffset)
         const int startOfRam = 16384;
         int varsAddress = startOfRam + addressOffset;
 
-        mProgramData[addressOffset++] = 0x80;
+        OutputByte(addressOffset, 0x80);
 
         int elineAddress = startOfRam + addressOffset;
 
@@ -61,7 +79,7 @@ void zx80BasicLoader::OutputEndOfProgramData(int& addressOffset)
         ChangeWord(destOffset, elineAddress);
 }
 
-void zx80BasicLoader::Tokenise()
+void zx80BasicLoader::ExtractTokens()
 {
         map<unsigned char, string> tokens;
 
@@ -97,49 +115,25 @@ void zx80BasicLoader::Tokenise()
         DoTokenise(tokens);
 }
 
-void zx80BasicLoader::OutputLine(int lineNumber, int& addressOffset, unsigned char* pPos)
+void zx80BasicLoader::OutputLine(int lineNumber, int& addressOffset)
 {
-        mProgramData[addressOffset++] = lineNumber >> 8;
-        mProgramData[addressOffset++] = lineNumber & 0xFF;
+        int i = 0;
 
-        char* pMatch;
-        while ((pMatch = strstr((char*)pPos, "£")) != NULL)
-        {
-                *pMatch = PoundReplacement;
-        }          
-        while ((pMatch = strstr((char*)pPos, "#")) != NULL)
-        {
-                *pMatch = PoundReplacement;
-        }
+        OutputByte(addressOffset, lineNumber >> 8);
+        OutputByte(addressOffset, lineNumber & 0xFF);
 
-        while (*pPos != '\0')
+        while (mLineBuffer[i] != '\0')
         {
-                unsigned char chr = *pPos;
-
-                if (chr != 0x01)
+                if (mLineBufferPopulated[i])
                 {
-                        if (chr == PoundReplacement)
-                        {
-                                mProgramData[addressOffset++] = AsciiToZX('£');
-                        }
-                        else if ((chr >= 0x80) && (chr <= 0xFE))
-                        {
-                                mProgramData[addressOffset++] = chr;
-                        }
-                        else if ((chr == '%') || (chr == '\\'))
-                        {
-                                mProgramData[addressOffset++] = DecodeCharacter(&pPos);
-                        }
-                        else
-                        {
-                                mProgramData[addressOffset++] = AsciiToZX(chr);
-                        }
+                        unsigned char chr = mLineBufferOutput[i];
+                        OutputByte(addressOffset, chr);
                 }
 
-                pPos++;
+                i++;
         }
 
-        mProgramData[addressOffset++] = Newline;
+        OutputByte(addressOffset, Newline);
 }
 
 unsigned char zx80BasicLoader::DecodeGraphic(unsigned char chr1, unsigned char chr2)
@@ -270,5 +264,31 @@ unsigned char zx80BasicLoader::AsciiToZX(unsigned char ascii)
 
         return zxChr;
 }
+                                                                                   
+void zx80BasicLoader::ExtractInverseCharacters()
+{
+        char* pPos = mLineBuffer;
 
+        while (*pPos != '\0')
+        {
+                if (*pPos == '%')
+                {
+                        *pPos = Blank;
+                        pPos++;
+
+                        int index = pPos - mLineBuffer;
+                        mLineBufferOutput[index] = 0x80 | AsciiToZX(*pPos);
+                        mLineBufferPopulated[index] = true;
+                        
+                        *pPos = Blank;
+                }
+
+                pPos++;
+        }
+}
+
+unsigned char zx80BasicLoader::GetEscapeCharacter()
+{
+        return '\\';
+}                 
 

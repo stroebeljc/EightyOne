@@ -36,6 +36,7 @@
 #include "BasicLoader/BasicLoader.h"
 #include "zx81/zx80BasicLoader.h"
 #include "zx81/zx81BasicLoader.h"
+#include "spectrum/specBasicLoader.h"
 #include "BasicLoaderOptions_.h"
 
 #ifndef edt1
@@ -215,7 +216,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 Extension = FileNameGetExt(Filename);
         }
 
-        if ((Extension == ".B80") || (Extension == ".B81"))
+        if ((Extension == ".B80") || (Extension == ".B81") || (Extension == ".B82"))
         {
                 IBasicLoader* loader = NULL;
 
@@ -229,7 +230,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 }
                 else if (Extension == ".B82")
                 {
-//                        loader = new spectrumBasicLoader();
+                        loader = new specBasicLoader();
                 }
 
                 LoadBasicListingOptionsForm->ShowModal();

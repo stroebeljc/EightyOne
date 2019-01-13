@@ -384,6 +384,7 @@ private:
 
         void LoadOFileData(unsigned char* programData, int length, bool Insert);
         void LoadPFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert);
+        void LoadTapFileData(AnsiString FileName, unsigned char* programData, int length, bool Insert);
 
 public:
         struct TZXBlock Tape[TZX_MAX_BLOCKS];

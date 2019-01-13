@@ -33,10 +33,12 @@ private:
         void OutputSystemVariables(int& addressOffset);
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2);
         virtual unsigned char AsciiToZX(unsigned char ascii);
-        virtual void Tokenise();
-        virtual void OutputLine(int lineNumber, int& address, unsigned char* pPos);
-        virtual void OutputStartOfProgramData(int& addressOffset);
+        virtual void ExtractTokens();
+        virtual void OutputLine(int lineNumber, int& addressOffset);
+        virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset);
         virtual void OutputEndOfProgramData(int& addressOffset);
+        virtual void ExtractInverseCharacters();
+        virtual unsigned char GetEscapeCharacter();
 };
 
 #endif

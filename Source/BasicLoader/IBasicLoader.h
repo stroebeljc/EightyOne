@@ -34,34 +34,52 @@ public:
 
 protected:
         static const unsigned char Blank = 0x01;
-        static const unsigned char PoundReplacement = 0xC3;
+        static const maxProgramLength = 49152;
+        static const maxLineLength = 16384;
 
         int mProgramLength;
-        unsigned char mLineBuffer[16384];
-        unsigned char mLineBufferDestringed[16384];
-        unsigned char mLineBufferTokenised[16384];
-        unsigned char mProgramData[16384];
+        unsigned char mLineBuffer[maxLineLength];
+        unsigned char mLineBufferDestringed[maxLineLength];
+        unsigned char mLineBufferOutput[maxLineLength];
+        bool mLineBufferPopulated[maxLineLength];
+        unsigned char mProgramData[maxProgramLength];
+        unsigned char mCharacterCodeEscape;
 
+        void OutputByte(int& addressOffset, unsigned char byte);
         void OutputWord(int& addressOffset, int word);
         void ChangeWord(int addressOffset, int word);
         void ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings);
-        void ReplaceRemContents();
+        void MaskOutRemContents();
         unsigned char* ExtractLineNumber(int& lineNumber);
-        unsigned char DecodeCharacter(unsigned char** ppPos);
         void DoTokenise(map<unsigned char, string> tokens);
+        bool StartOfNumber(int index);
+        unsigned char ConvertFromHexChars(unsigned char chr1, unsigned char chr2);
+        void ExtractEscapeCharacters();
+        void MaskOutStrings();
+        void ExtractSingleCharacters();
+        void OutputEmbeddedNumber(int& index, int& addressOffset);
 
-        virtual void ReplaceStrings();
+        virtual unsigned char DecodeCharacter(unsigned char** ppPos);
+
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2) { return '\0'; }
-        virtual unsigned char AsciiToZX(unsigned char ascii) { return '\0'; }
-        virtual void Tokenise() {}
-        virtual void OutputLine(int lineNumber, int& address, unsigned char* pPos) {}
-        virtual void OutputStartOfProgramData(int& addressOffset) {}
+        virtual unsigned char AsciiToZX(unsigned char ascii) { return ascii; }
+        virtual void ExtractTokens() {}
+        virtual void OutputLine(int lineNumber, int& address) {}
+        virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset) {}
         virtual void OutputEndOfProgramData(int& addressOffset) {}
         virtual bool SupportUppercaseOnly() { return true; }
-        
+        virtual bool SupportLineContinuations() { return true; }
+        virtual void ExtractInverseCharacters() {}
+        virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr) { return false; }
+        virtual unsigned char GetEscapeCharacter() { return '\0'; }
+        virtual void ExtractDoubleQuoteCharacters() {}
+        virtual bool SupportFloatingPointNumbers() { return false; }
+        virtual unsigned char GetEmbbededNumberMark() { return 0; }
+        virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}
+
 private:
-        unsigned char ConvertFromHexChars(unsigned char chr1, unsigned char chr2);
         unsigned char ConvertFromHexChar(unsigned char chr);
+        bool ReadLine(ifstream& basicFile, string& line);
 };
 
 #endif

@@ -35,13 +35,17 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
         memset(mProgramData, 0, sizeof(mProgramData));
 
         int addressOffset = 0x0000;
-        OutputStartOfProgramData(addressOffset);
+        OutputStartOfProgramData(filename, addressOffset);
 
-        string line;
+        mCharacterCodeEscape = GetEscapeCharacter();
+        
         int lineCount = 1;
+        string line;
 
-        while (getline(basicFile, line))
+        while (ReadLine(basicFile, line))
         {
+                line = line.substr(0, line.length()-1);
+                
                 try
                 {
                         size_t i = line.find_first_not_of(" \t");
@@ -51,7 +55,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                                 lineCount++;
                         }
                 }
-                catch (out_of_range& ex)
+                catch (exception& ex)
                 {
                         stringstream msg;
                         msg << "Unable to parse line " << lineCount << " - " << ex.what() << endl;
@@ -67,16 +71,51 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
         mProgramLength = addressOffset;
 }
 
+bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
+{
+        bool lineAvailable = (getline(basicFile, line) != NULL);
+        if (!lineAvailable)
+        {
+                return lineAvailable;
+        }
+
+        if (SupportLineContinuations())
+        {
+                while (line[line.length()-2] == '\\')
+                {
+                        string contLine;
+                        lineAvailable = (getline(basicFile, contLine) != NULL);
+                        if (!lineAvailable)
+                        {
+                                break;
+                        }
+
+                        line = line.substr(0, line.length()-2) + contLine;
+                }
+        }
+        
+        return lineAvailable;
+}
+
+void IBasicLoader::OutputByte(int& addressOffset, unsigned char byte)
+{
+        if (addressOffset >= maxProgramLength)
+        {
+                throw out_of_range("Program size too large");
+        }
+
+        mProgramData[addressOffset++] = byte;
+}
+
 void IBasicLoader::OutputWord(int& addressOffset, int word)
 {
-        mProgramData[addressOffset++] = word & 0xFF;
-        mProgramData[addressOffset++] = word >> 8;
+        OutputByte(addressOffset, word & 0xFF);
+        OutputByte(addressOffset, word >> 8);
 }
 
 void IBasicLoader::ChangeWord(int addressOffset, int word)
 {
-        mProgramData[addressOffset] = word & 0xFF;
-        mProgramData[addressOffset+1] = word >> 8;
+        OutputWord(addressOffset, word);
 }
 
 unsigned char* IBasicLoader::ProgramData()
@@ -102,37 +141,61 @@ void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRem
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
         strcpy((char*)mLineBuffer, line.c_str());
 
+        memset(mLineBufferOutput, 0, sizeof(mLineBufferOutput));
+        int i = strlen((char*)mLineBuffer);
+        memset(mLineBufferOutput, Blank, i);
+
+        memset(mLineBufferPopulated, false, sizeof(mLineBufferPopulated));
+
         int lineNumber;
         char* pPos = ExtractLineNumber(lineNumber);
-        memset(mLineBuffer, 0x01, pPos - mLineBuffer);
+        memset(mLineBuffer, Blank, pPos - mLineBuffer);
+
+        ExtractInverseCharacters();
+        ExtractEscapeCharacters();
+        ExtractDoubleQuoteCharacters();
 
         memset(mLineBufferDestringed, 0, sizeof(mLineBufferDestringed));
         strcpy((char*)mLineBufferDestringed, (char*)mLineBuffer);
 
+        // Append a space at the end of the line to ensure a token without a trailing space is detected
+        i = strlen((char*)mLineBufferDestringed);
+        mLineBufferDestringed[i] = ' ';
+
         if (!tokeniseStrings)
         {
-                ReplaceStrings();
+                MaskOutStrings();
         }
-
-        memset(mLineBufferTokenised, 0, sizeof(mLineBufferTokenised));
-        strcpy((char*)mLineBufferTokenised, (char*)mLineBufferDestringed);
-
-        // Append a space at the end of the line to ensure a token without a trailing space is detected
-        int e = strlen((char*)mLineBufferTokenised);
-        mLineBufferDestringed[e] = ' ';
-        mLineBufferTokenised[e] = Blank;
 
         if (!tokeniseRemContents)
         {
-                ReplaceRemContents();
+                MaskOutRemContents();
         }
 
-        Tokenise();          
+        ExtractTokens();
 
-        OutputLine(lineNumber, addressOffset, mLineBufferDestringed);
+        ExtractSingleCharacters();
+
+        OutputLine(lineNumber, addressOffset);
 }
 
-void IBasicLoader::ReplaceStrings()
+void IBasicLoader::ExtractSingleCharacters()
+{
+        int i = 0;
+
+        while (mLineBuffer[i] != '\0')
+        {
+                if (mLineBuffer[i] != Blank)
+                {
+                        mLineBufferOutput[i] = AsciiToZX(mLineBuffer[i]);
+                        mLineBufferPopulated[i] = true;
+                }
+
+                i++;
+        }
+}
+
+void IBasicLoader::MaskOutStrings()
 {
         const int Quote = '\"';
 
@@ -154,18 +217,16 @@ void IBasicLoader::ReplaceStrings()
         }
 }
 
-void IBasicLoader::ReplaceRemContents()
+void IBasicLoader::MaskOutRemContents()
 {
-        char* remToken = " REM ";
+        const char* const remToken = " REM ";
 
         unsigned char* pMatch = strstr((char*)mLineBufferDestringed, remToken);
-        if (pMatch == NULL)
+        if (pMatch != NULL)
         {
-                return;
+                char* pContents = pMatch + strlen(remToken);
+                memset(pContents, ' ', strlen(pContents));
         }
-
-        char* pContents = pMatch + strlen(remToken);
-        memset(pContents, ' ', strlen(pContents));
 }
 
 unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
@@ -182,33 +243,17 @@ unsigned char IBasicLoader::DecodeCharacter(unsigned char** ppPos)
         unsigned char zxChr;
 
         unsigned char* pPos = *ppPos;
+        
+        unsigned char chr1 = *(++pPos);
+        unsigned char chr2 = *(++pPos);
 
-        if (*pPos == '%')
+        if (isxdigit(chr1) && isxdigit(chr2))
         {
-                pPos++;
-
-                if (*pPos == PoundReplacement)
-                {
-                        zxChr = 0x80 | AsciiToZX('£');
-                }
-                else
-                {
-                        zxChr = 0x80 | AsciiToZX(*pPos);
-                }
+                zxChr = ConvertFromHexChars(chr1, chr2);
         }
-        else if (*pPos == '\\')
+        else
         {
-                unsigned char chr1 = *(++pPos);
-                unsigned char chr2 = *(++pPos);
-
-                if (isxdigit(chr1) && isxdigit(chr2))
-                {
-                        zxChr = ConvertFromHexChars(chr1, chr2);
-                }
-                else
-                {
-                        zxChr = DecodeGraphic(chr1, chr2);
-                }
+                zxChr = DecodeGraphic(chr1, chr2);
         }
 
         *ppPos = pPos;
@@ -216,8 +261,108 @@ unsigned char IBasicLoader::DecodeCharacter(unsigned char** ppPos)
         return zxChr;
 }
 
+bool IBasicLoader::StartOfNumber(int index)
+{
+        char chrPrev = mLineBuffer[index-1];
+        char chr1 = mLineBuffer[index];
+        char chr2 = mLineBuffer[index+1];
+        char chr3 = mLineBuffer[index+2];
+
+        bool partOfVariableName = isalpha(chrPrev);
+        bool beginsWithDigit = isdigit(chr1);
+        bool plusMinusOrDecimal = (chr1 == '-' || chr1 == '+' || chr1 == '.') && isdigit(chr2);
+        bool plusMinusAndDecimal = (chr1 == '-' || chr1 == '+') && chr2 == '.' && isdigit(chr3);
+
+        return !partOfVariableName && (beginsWithDigit || plusMinusOrDecimal || plusMinusAndDecimal);
+}
+
+void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
+{
+        char* pEnd;
+        double value = strtod((char*)(mLineBuffer + index), &pEnd);
+
+        while ((mLineBuffer + index) < pEnd)
+        {
+                unsigned char chr = mLineBufferOutput[index];
+                OutputByte(addressOffset, chr);
+                index++;
+        }
+
+        while ((mLineBuffer[index] != '\0') && (mLineBuffer[index] == ' '))
+        {
+                OutputByte(addressOffset, AsciiToZX(' '));
+                index++;
+        }
+
+        index--;
+
+        OutputByte(addressOffset, GetEmbbededNumberMark());
+
+        OutputFloatingPointEncoding(value, addressOffset);
+}
+
+void IBasicLoader::ExtractEscapeCharacters()
+{
+        unsigned char* pPos = mLineBuffer;
+
+        while (*pPos != '\0')
+        {
+                if (*pPos == mCharacterCodeEscape)
+                {
+                        *pPos = Blank;
+
+                        pPos++;
+                        unsigned char chr1 = *pPos;
+                        if (chr1 == '\0')
+                        {
+                                throw out_of_range("Escape sequence incomplete before line ending");
+                        }
+
+                        *pPos = Blank;
+
+                        unsigned char zxChr;
+
+                        if (!SingleEscapeSequence(chr1, zxChr))
+                        {
+                                pPos++;
+                                unsigned char chr2 = *pPos;
+                                if (chr2 == '\0')
+                                {
+                                        throw out_of_range("Escape sequence incomplete before line ending");
+                                }
+
+                                *pPos = Blank;
+
+                                if (isxdigit(chr1))
+                                {
+                                        zxChr = ConvertFromHexChars(chr1, chr2);
+                                }
+                                else
+                                {
+                                        zxChr = DecodeGraphic(chr1, chr2);
+                                }
+                        }
+                        
+                        int index = pPos - mLineBuffer;
+                        mLineBufferOutput[index] = zxChr;
+                        mLineBufferPopulated[index] = true;
+                }
+
+                pPos++;
+        }
+}
+
 unsigned char IBasicLoader::ConvertFromHexChars(unsigned char chr1, unsigned char chr2)
 {
+        if (!isxdigit(chr1) || !isxdigit(chr2))
+        {
+                ostringstream code;
+                code << chr1;
+                code << chr2;
+                string msg = "Invalid character Code: " + code.str();
+                throw out_of_range(msg.c_str());
+        }
+        
         int d1 = ConvertFromHexChar(chr1);
         int d2 = ConvertFromHexChar(chr2);
         return (d1 << 4) + d2;
@@ -274,22 +419,22 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
 
                                 for (int b = 0; b < lenToken; b++)
                                 {
-                                        mLineBufferTokenised[offset + b] = Blank;
+                                        mLineBuffer[offset + b] = Blank;
                                 }
 
-                                mLineBufferTokenised[offset + start] = tokenCode;
-                                mLineBufferDestringed[offset + start] = tokenCode;
+                                mLineBufferOutput[offset + start] = tokenCode;
+                                mLineBufferPopulated[offset + start] = true;
                         }
                 }
                 while (tokenFound);
         }
-
+ /*
         char* pBuffer = mLineBufferTokenised;
 
         while (*pBuffer != '\0')
         {
                 int offset = pBuffer - mLineBufferTokenised;
-                
+
                 if (*pBuffer == Blank)
                 {
                         mLineBufferDestringed[offset] = Blank;
@@ -300,7 +445,8 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 }
 
                 pBuffer++;
-        }           
+        }
+        */           
 }
 
 

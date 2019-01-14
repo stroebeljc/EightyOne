@@ -62,7 +62,7 @@ protected:
         unsigned char DecodeCharacter(unsigned char** ppPos);
 
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2) { return '\0'; }
-        virtual unsigned char AsciiToZX(unsigned char ascii) { return ascii; }
+        virtual unsigned char AsciiToZX(unsigned char ascii) { return '\0'; }
         virtual void ExtractTokens() {}
         virtual void OutputLine(int lineNumber, int& address) {}
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset) {}

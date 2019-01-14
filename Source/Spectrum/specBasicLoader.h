@@ -28,16 +28,14 @@ using namespace::std;
 class specBasicLoader : public IBasicLoader
 {
 private:
-  //      static const unsigned char Space = 0x20;
         static const unsigned char Return = 0x0D;
- //       static const unsigned char Pound = 0x60;
         static const unsigned char Number = 0x0E;
-  //      static const unsigned char Copyright = 0x7F;
+        static const unsigned char Pound = 0x60;
+        static const unsigned char Copyright = 0x7F;
         static const unsigned char Rem = 0xEA;
-  //      static const unsigned char Escape = 0x02;
 
         void OutputSystemVariables(int& addressOffset);
-        
+
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset);
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2);
         virtual void ExtractTokens();
@@ -48,6 +46,7 @@ private:
         virtual bool SupportLineContinuations();
         virtual unsigned char GetEscapeCharacter();
         virtual unsigned char GetEmbbededNumberMark();
-  };
+        virtual unsigned char AsciiToZX(unsigned char ascii);
+};
 
 #endif

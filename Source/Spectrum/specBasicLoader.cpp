@@ -361,3 +361,22 @@ unsigned char specBasicLoader::GetEmbbededNumberMark()
         return Number;
 }
 
+unsigned char specBasicLoader::AsciiToZX(unsigned char ascii)
+{
+        unsigned char zxChr;
+
+        switch ((char)ascii)
+        {
+                case '£':
+                        zxChr = Pound;
+                        break;
+                case '©':
+                        zxChr = Copyright;
+                        break;
+                default:
+                        zxChr = ascii;
+                        break;
+        }
+
+        return zxChr;
+}

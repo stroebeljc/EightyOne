@@ -239,8 +239,8 @@ void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)
 
 void specBasicLoader::OutputFloatingPointEncoding(double value, int& addressOffset)
 {                             
-        int exponent = 0;
-        unsigned long mantissa  = 0;
+        int exponent;
+        unsigned long mantissa;
 
         double absValue = (value < 0) ? -value : value;
 

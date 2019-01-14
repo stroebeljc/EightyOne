@@ -48,6 +48,8 @@ private:
         virtual unsigned char GetEscapeCharacter();
         virtual void ExtractDoubleQuoteCharacters();
         virtual unsigned char GetEmbbededNumberMark();
+        virtual bool SupportUppercaseOnly();
+        virtual bool SupportLineContinuations();
 };
 
 #endif

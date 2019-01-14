@@ -28,7 +28,7 @@ using namespace std;
 class IBasicLoader
 {
 public:
-        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings);
+        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
         unsigned char* ProgramData();
         int ProgramLength();
 
@@ -39,8 +39,9 @@ protected:
 
         int mProgramLength;
         unsigned char mLineBuffer[maxLineLength];
-        unsigned char mLineBufferDestringed[maxLineLength];
+        unsigned char mLineBufferTokenised[maxLineLength];
         unsigned char mLineBufferOutput[maxLineLength];
+        unsigned char mLineBufferStrings[maxLineLength];
         bool mLineBufferPopulated[maxLineLength];
         unsigned char mProgramData[maxProgramLength];
         unsigned char mCharacterCodeEscape;
@@ -48,18 +49,17 @@ protected:
         void OutputByte(int& addressOffset, unsigned char byte);
         void OutputWord(int& addressOffset, int word);
         void ChangeWord(int addressOffset, int word);
-        void ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings);
-        void MaskOutRemContents();
+        void ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
+        void MaskOutRemContents(unsigned char* buffer);
         unsigned char* ExtractLineNumber(int& lineNumber);
         void DoTokenise(map<unsigned char, string> tokens);
         bool StartOfNumber(int index);
         unsigned char ConvertFromHexChars(unsigned char chr1, unsigned char chr2);
         void ExtractEscapeCharacters();
-        void MaskOutStrings();
-        void ExtractSingleCharacters();
+        void MaskOutStrings(unsigned char* buffer);
+        void ExtractSingleCharacters(bool discardRedundantSpaces);
         void OutputEmbeddedNumber(int& index, int& addressOffset);
-
-        virtual unsigned char DecodeCharacter(unsigned char** ppPos);
+        unsigned char DecodeCharacter(unsigned char** ppPos);
 
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2) { return '\0'; }
         virtual unsigned char AsciiToZX(unsigned char ascii) { return ascii; }
@@ -67,8 +67,8 @@ protected:
         virtual void OutputLine(int lineNumber, int& address) {}
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset) {}
         virtual void OutputEndOfProgramData(int& addressOffset) {}
-        virtual bool SupportUppercaseOnly() { return true; }
-        virtual bool SupportLineContinuations() { return true; }
+        virtual bool SupportUppercaseOnly() { return false; }
+        virtual bool SupportLineContinuations() { return false; }
         virtual void ExtractInverseCharacters() {}
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr) { return false; }
         virtual unsigned char GetEscapeCharacter() { return '\0'; }

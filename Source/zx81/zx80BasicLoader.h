@@ -39,6 +39,8 @@ private:
         virtual void OutputEndOfProgramData(int& addressOffset);
         virtual void ExtractInverseCharacters();
         virtual unsigned char GetEscapeCharacter();
+        virtual bool SupportUppercaseOnly();
+        virtual bool SupportLineContinuations();
 };
 
 #endif

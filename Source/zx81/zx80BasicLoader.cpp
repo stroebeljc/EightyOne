@@ -292,3 +292,12 @@ unsigned char zx80BasicLoader::GetEscapeCharacter()
         return '\\';
 }                 
 
+bool zx80BasicLoader::SupportUppercaseOnly()
+{
+        return true;
+}
+
+bool zx80BasicLoader::SupportLineContinuations()
+{
+        return true;
+}

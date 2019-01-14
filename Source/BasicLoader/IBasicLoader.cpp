@@ -21,7 +21,7 @@
 #include <sstream>
 #include <cctype>
 
-void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings)
+void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
 {
         mProgramLength = 0;
 
@@ -51,7 +51,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         size_t i = line.find_first_not_of(" \t");
                         if ((i != string::npos) && (line[i] != '\0') && (line[i] != '#'))
                         {
-                                ProcessLine(line, addressOffset, tokeniseRemContents, tokeniseStrings);
+                                ProcessLine(line, addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces);
                                 lineCount++;
                         }
                 }
@@ -90,7 +90,7 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
                                 break;
                         }
 
-                        line = line.substr(0, line.length()-2) + contLine;
+                        line = line.substr(0, line.length()-2) + " " + contLine;
                 }
         }
         
@@ -128,7 +128,7 @@ int IBasicLoader::ProgramLength()
         return mProgramLength;
 }
 
-void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings)
+void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
 {
         if (SupportUppercaseOnly())
         {
@@ -155,37 +155,42 @@ void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRem
         ExtractEscapeCharacters();
         ExtractDoubleQuoteCharacters();
 
-        memset(mLineBufferDestringed, 0, sizeof(mLineBufferDestringed));
-        strcpy((char*)mLineBufferDestringed, (char*)mLineBuffer);
+        memset(mLineBufferTokenised, 0, sizeof(mLineBufferTokenised));
+        strcpy((char*)mLineBufferTokenised, (char*)mLineBuffer);
 
         // Append a space at the end of the line to ensure a token without a trailing space is detected
-        i = strlen((char*)mLineBufferDestringed);
-        mLineBufferDestringed[i] = ' ';
+        i = strlen((char*)mLineBufferTokenised);
+        mLineBufferTokenised[i] = ' ';
+
+        memset(mLineBufferStrings, 0, sizeof(mLineBufferStrings));
+        strcpy((char*)mLineBufferStrings, (char*)mLineBufferTokenised);
+        MaskOutStrings(mLineBufferStrings);
+        MaskOutRemContents(mLineBufferStrings);
 
         if (!tokeniseStrings)
         {
-                MaskOutStrings();
+                MaskOutStrings(mLineBufferTokenised);
         }
 
         if (!tokeniseRemContents)
         {
-                MaskOutRemContents();
+                MaskOutRemContents(mLineBufferTokenised);
         }
 
         ExtractTokens();
 
-        ExtractSingleCharacters();
+        ExtractSingleCharacters(discardRedundantSpaces);
 
         OutputLine(lineNumber, addressOffset);
 }
 
-void IBasicLoader::ExtractSingleCharacters()
+void IBasicLoader::ExtractSingleCharacters(bool discardRedundantSpaces)
 {
         int i = 0;
 
         while (mLineBuffer[i] != '\0')
         {
-                if (mLineBuffer[i] != Blank)
+                if (mLineBuffer[i] != Blank && (!discardRedundantSpaces || (discardRedundantSpaces && (mLineBuffer[i] != ' ' || mLineBufferStrings[i] != ' '))))
                 {
                         mLineBufferOutput[i] = AsciiToZX(mLineBuffer[i]);
                         mLineBufferPopulated[i] = true;
@@ -195,38 +200,92 @@ void IBasicLoader::ExtractSingleCharacters()
         }
 }
 
-void IBasicLoader::MaskOutStrings()
+void IBasicLoader::MaskOutStrings(unsigned char* buffer)
 {
-        const int Quote = '\"';
+        const char* const quote = "\"";
+        char* pQuote = strstr((char*)buffer, quote);
+        if (pQuote == NULL)
+        {
+                return;
+        }
 
-        char* pPos = mLineBufferDestringed;
+        const char* const rem = " REM ";
+        char* pRem = strstr((char*)buffer, rem);
+        if (pRem != NULL && pRem < pQuote)
+        {
+                return;
+        }
+
         bool withinQuote = false;
 
-        while (*pPos != '\0')
+        buffer = pQuote;
+
+        while (*buffer != '\0')
         {
-                if (*pPos == Quote)
+                if (*buffer == '\"')
                 {
                         withinQuote = !withinQuote;
                 }
                 else if (withinQuote)
                 {
-                        *pPos = ' '; 
+                        *buffer = Blank;
+                }
+                else
+                {
+                        pQuote = strstr((char*)buffer+1, quote);
+                        if (pQuote == NULL)
+                        {
+                                return;
+                        }
+
+                        pRem = strstr((char*)buffer+1, rem);
+                        if (pRem != NULL && pRem < pQuote)
+                        {
+                                return;
+                        }
                 }
 
-                pPos++;
+                buffer++;
         }
 }
 
-void IBasicLoader::MaskOutRemContents()
+void IBasicLoader::MaskOutRemContents(unsigned char* buffer)
 {
-        const char* const remToken = " REM ";
+        char* pPos = (char*)buffer;
+        bool remFound = false;
 
-        unsigned char* pMatch = strstr((char*)mLineBufferDestringed, remToken);
-        if (pMatch != NULL)
+        char* pRem;
+        const char* const rem = " REM ";
+
+        do
         {
-                char* pContents = pMatch + strlen(remToken);
-                memset(pContents, ' ', strlen(pContents));
+                pRem = strstr(pPos, rem);
+                if (pRem == NULL)
+                {
+                        return;
+                }
+
+                const char* const quote = "\"";
+                char* pQuote = strstr(pPos, quote);
+                if (pQuote != NULL && pQuote < pRem)
+                {
+                        pQuote = strstr(pQuote+1, quote);
+                        if (pQuote == NULL)
+                        {
+                                return;
+                        }
+
+                        pPos = pQuote + 1;
+                }
+                else
+                {
+                        remFound = true;
+                }
         }
+        while (!remFound);    
+        
+        char* pContents = pRem + strlen(rem);
+        memset(pContents, Blank, strlen(pContents));
 }
 
 unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
@@ -388,14 +447,14 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 unsigned char* pMatch;
                 bool tokenFound;
 
+                bool tokenBeginsWithSpace = (pToken[0] == ' ');
+                bool tokenEndsWithSpace = (pToken[lenToken-1] == ' ');
+                bool tokenBeginsWithAlpha = isalpha(pToken[0]);
+                bool tokenEndsWithAlpha = isalpha(pToken[lenToken-1]);
+
                 do
                 {
-                        bool tokenBeginsWithSpace = (pToken[0] == ' ');
-                        bool tokenEndsWithSpace = (pToken[lenToken-1] == ' ');
-                        bool tokenBeginsWithAlpha = isalpha(pToken[0]);
-                        bool tokenEndsWithAlpha = isalpha(pToken[lenToken-1]);
-                        
-                        pMatch = strstr((char*)mLineBufferDestringed, (char*)pToken);
+                        pMatch = strstr((char*)mLineBufferTokenised, (char*)pToken);
                         bool matchFound = (pMatch != NULL);
                         
                         bool startOk = matchFound && (tokenBeginsWithSpace || !tokenBeginsWithAlpha || (!tokenBeginsWithSpace && !isalpha(pMatch[-1])));
@@ -415,7 +474,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                                         *(pMatch + b) = Blank;
                                 }
 
-                                int offset = pMatch - mLineBufferDestringed;
+                                int offset = pMatch - mLineBufferTokenised;
 
                                 for (int b = 0; b < lenToken; b++)
                                 {
@@ -428,25 +487,6 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 }
                 while (tokenFound);
         }
- /*
-        char* pBuffer = mLineBufferTokenised;
-
-        while (*pBuffer != '\0')
-        {
-                int offset = pBuffer - mLineBufferTokenised;
-
-                if (*pBuffer == Blank)
-                {
-                        mLineBufferDestringed[offset] = Blank;
-                }
-                else if (mLineBufferDestringed[offset] == ' ')
-                {
-                        mLineBufferDestringed[offset] = mLineBuffer[offset];
-                }
-
-                pBuffer++;
-        }
-        */           
 }
 
 

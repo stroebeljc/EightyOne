@@ -35,7 +35,7 @@ public:
 protected:
         static const unsigned char Blank = 0x01;
         static const maxProgramLength = 49152;
-        static const maxLineLength = 16384;
+        static const maxLineLength = 16384 * 8;  // Allow 16384 of 8 character tokens 
 
         int mProgramLength;
         unsigned char mLineBuffer[maxLineLength];
@@ -68,13 +68,12 @@ protected:
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset) {}
         virtual void OutputEndOfProgramData(int& addressOffset) {}
         virtual bool SupportUppercaseOnly() { return false; }
-        virtual bool SupportLineContinuations() { return false; }
         virtual void ExtractInverseCharacters() {}
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr) { return false; }
         virtual unsigned char GetEscapeCharacter() { return '\0'; }
         virtual void ExtractDoubleQuoteCharacters() {}
         virtual bool SupportFloatingPointNumbers() { return false; }
-        virtual unsigned char GetEmbbededNumberMark() { return 0; }
+        virtual unsigned char GetEmbbededNumberMark() { return '\0'; }
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}
 
 private:

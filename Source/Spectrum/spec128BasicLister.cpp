@@ -86,12 +86,12 @@ int spec128BasicLister::GetProgramEndAddress()
         return getbyte(vars) + (getbyte(vars + 1) << 8);
 }
 
-int spec128BasicLister::GetFloatingPointNumberCode()
+unsigned char spec128BasicLister::GetFloatingPointNumberCode()
 {
         return Number;
 }
 
-int spec128BasicLister::GetLineEndingCode()
+unsigned char spec128BasicLister::GetLineEndingCode()
 {
         return Return;
 }
@@ -101,7 +101,7 @@ bool spec128BasicLister::SupportEmbeddedControlCodes()
         return true;
 }
 
-bool spec128BasicLister::IsEmbeddedControlCode(int code)
+bool spec128BasicLister::IsEmbeddedControlCode(unsigned char code)
 {
         bool controlCode = false;
 
@@ -122,12 +122,12 @@ bool spec128BasicLister::IsEmbeddedControlCode(int code)
         return controlCode;
 }
 
-int spec128BasicLister::GetEmbeddedControlCodeSize(int code)
+int spec128BasicLister::GetEmbeddedControlCodeSize(unsigned char code)
 {
         return (code == At) ? 2 : 1;
 }
 
-void spec128BasicLister::ProcessControlCode(int code, int arg1, int arg2)
+void spec128BasicLister::ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2)
 {
         switch (code)
         {
@@ -181,4 +181,9 @@ AnsiString spec128BasicLister::GetMachineName()
 AnsiString spec128BasicLister::GetBasicFileExtension()
 {
         return "b82";
+}
+
+unsigned char spec128BasicLister::GetEscapeCharacter()
+{
+        return Escape;
 }

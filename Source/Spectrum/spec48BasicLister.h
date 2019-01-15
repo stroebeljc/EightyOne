@@ -31,16 +31,17 @@ public:
         virtual AnsiString GetBasicFileExtension();
 
 private:
-        static const int Return = 13;
-        static const int Number = 14;
-        static const int Ink = 16;
-        static const int Paper = 17;
-        static const int Flash = 18;
-        static const int Bright = 19;
-        static const int Inverse = 20;
-        static const int Over = 21;
-        static const int At = 22;
-        static const int Tab = 23;
+        static const unsigned char Return = 13;
+        static const unsigned char Number = 14;
+        static const unsigned char Ink = 16;
+        static const unsigned char Paper = 17;
+        static const unsigned char Flash = 18;
+        static const unsigned char Bright = 19;
+        static const unsigned char Inverse = 20;
+        static const unsigned char Over = 21;
+        static const unsigned char At = 22;
+        static const unsigned char Tab = 23;
+        static const unsigned char Escape = '¬';
 
         int mInkValue;
         int mPaperValue;
@@ -50,15 +51,16 @@ private:
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
-        virtual int GetFloatingPointNumberCode();
-        virtual inline int GetLineEndingCode();
+        virtual unsigned char GetFloatingPointNumberCode();
+        virtual inline unsigned char GetLineEndingCode();
         virtual inline bool SupportEmbeddedControlCodes();
-        virtual inline bool IsEmbeddedControlCode(int code);
-        virtual inline int GetEmbeddedControlCodeSize(int code);
+        virtual inline bool IsEmbeddedControlCode(unsigned char code);
+        virtual inline int GetEmbeddedControlCodeSize(unsigned char code);
         virtual std::string GetKeywords();
-        virtual void ProcessControlCode(int code, int arg1, int arg2);
+        virtual void ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2);
         virtual void InitialiseColours();
         virtual bool CustomColoursSupported();
         virtual COLORREF GetDefaultPaperColour();
+        virtual unsigned char GetEscapeCharacter();
 };
 

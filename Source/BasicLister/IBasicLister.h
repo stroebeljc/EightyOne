@@ -52,12 +52,13 @@ private:
         int mLineEndingCode;
         bool mSupportsFloatingPointNumbers;
         bool mSupportEmbeddedControlCodes;
+        AnsiString mEscapeCharacter;
         
         void RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
         void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
-        void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, int c);
-        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes);
+        void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
+        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool& withinQuotes, bool& withinRem);
         AnsiString FormatLineNumber(int lineNumber);
         COLORREF GetBackgroundColour();
 
@@ -84,22 +85,23 @@ protected:
         virtual std::string GetKeywords() { return std::string(""); }
         virtual int GetProgramStartAddress() { return 65535; }
         virtual int GetProgramEndAddress() { return 65535; }
-        virtual inline int ConvertToZXCode(int code) { return code; }
+        virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }
         virtual inline bool SupportFloatingPointNumbers() { return true; }
-        virtual int GetFloatingPointNumberCode() { return 0; }
-        virtual int GetLineEndingCode() { return 0; }
+        virtual unsigned char GetFloatingPointNumberCode() { return 0; }
+        virtual unsigned char GetLineEndingCode() { return 0; }
         virtual int GetEmbeddedNumberSize() { return EmbeddedNumberSize; }
         virtual bool ExtractLineDetails(int* address, LineInfo& lineInfo);
         virtual inline bool SupportEmbeddedControlCodes() { return false; }
-        virtual bool IsEmbeddedControlCode(int code) { return false; }
-        virtual int GetEmbeddedControlCodeSize(int code) { return 0; }
-        virtual void ProcessControlCode(int code, int arg1, int arg2) {}
+        virtual bool IsEmbeddedControlCode(unsigned char code) { return false; }
+        virtual int GetEmbeddedControlCodeSize(unsigned char code) { return 0; }
+        virtual void ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2) {}
         virtual void InitialiseColours() { }
         virtual inline bool CustomColoursSupported() { return false; }
         virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
-
-        int GetKeywordLength(int code);
+        virtual unsigned char GetEscapeCharacter() { return '\0'; }
+        
+        int GetKeywordLength(unsigned char code);
 
         std::string mKeyword[256];
 };

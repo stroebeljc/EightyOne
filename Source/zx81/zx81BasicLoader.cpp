@@ -420,11 +420,6 @@ void zx81BasicLoader::ExtractInverseCharacters()
         }
 }
 
-unsigned char zx81BasicLoader::GetEscapeCharacter()
-{
-        return '\\';
-}
-
 void zx81BasicLoader::ExtractDoubleQuoteCharacters()
 {
         int i = 0;
@@ -469,6 +464,11 @@ void zx81BasicLoader::ExtractDoubleQuoteCharacters()
         }
 }
 
+unsigned char zx81BasicLoader::GetEscapeCharacter()
+{
+        return Escape;
+}
+
 unsigned char zx81BasicLoader::GetEmbbededNumberMark()
 {
         return Number;
@@ -478,10 +478,4 @@ bool zx81BasicLoader::SupportUppercaseOnly()
 {
         return true;
 }
-
-bool zx81BasicLoader::SupportLineContinuations()
-{
-        return true;
-}
-
 

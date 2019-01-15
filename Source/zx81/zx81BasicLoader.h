@@ -28,13 +28,13 @@ using namespace::std;
 class zx81BasicLoader : public IBasicLoader
 {
 private:
-        static const unsigned char Space = 0x00;
         static const unsigned char Quote = 0x0B;
         static const unsigned char Newline = 0x76;
         static const unsigned char Number = 0x7E;
         static const unsigned char DoubleQuote = 0xC0;
         static const unsigned char Rem = 0xEA;
-
+        static const unsigned char Escape = '\\';
+        
         void OutputSystemVariables(int& addressOffset);
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset);        
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2);
@@ -49,7 +49,6 @@ private:
         virtual void ExtractDoubleQuoteCharacters();
         virtual unsigned char GetEmbbededNumberMark();
         virtual bool SupportUppercaseOnly();
-        virtual bool SupportLineContinuations();
 };
 
 #endif

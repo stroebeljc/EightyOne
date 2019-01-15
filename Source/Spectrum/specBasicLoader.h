@@ -33,7 +33,8 @@ private:
         static const unsigned char Pound = 0x60;
         static const unsigned char Copyright = 0x7F;
         static const unsigned char Rem = 0xEA;
-
+        static const unsigned char Escape = 0xAC;
+        
         void OutputSystemVariables(int& addressOffset);
 
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset);
@@ -43,7 +44,6 @@ private:
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset);
         virtual void OutputEndOfProgramData(int& addressOffset);
         virtual bool SupportUppercaseOnly();
-        virtual bool SupportLineContinuations();
         virtual unsigned char GetEscapeCharacter();
         virtual unsigned char GetEmbbededNumberMark();
         virtual unsigned char AsciiToZX(unsigned char ascii);

@@ -55,7 +55,7 @@ IBasicLister::~IBasicLister()
 {
 }
 
-int IBasicLister::GetKeywordLength(int code)
+int IBasicLister::GetKeywordLength(unsigned char code)
 {
         int len;
 
@@ -147,7 +147,7 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         {
                 bool endOfLine = (c == (length - 1));
 
-                int b = getbyte((*address)++);
+                unsigned char b = (unsigned char)getbyte((*address)++);
 
                 if (mSupportsFloatingPointNumbers && (b == mFloatingPointNumberCode))
                 {
@@ -174,7 +174,7 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
                         lineInfo.displayLength += keywordLength;
 
                         bool keywordStartsWithSpace = (keywordLength > 1) && (mKeyword[b][0] == ' ');
-                        bool keywordEndsWithSpace = (keywordLength > 1) && (mKeyword[b].substr(keywordLength - 1, 1) == " ");
+                        bool keywordEndsWithSpace = (keywordLength > 1) && (mKeyword[b][keywordLength-1] == ' ');
 
                         if (lastKeywordEndedWithSpace && keywordStartsWithSpace)
                         {
@@ -266,14 +266,14 @@ void IBasicLister::RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int line
 
         for (signed int i = 2; i <= formattedLineNumber.Length(); i++)
         {
-                int c = ConvertToZXCode(formattedLineNumber[i]);
+                unsigned char c = ConvertToZXCode(formattedLineNumber[i]);
                 RenderCharacter(hdc, cshdc, x, y, c);
         }
 }
 
 void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace)
 {
-        int c = getbyte(address);
+        unsigned char c = (unsigned char)getbyte(address);
         address++;
         lengthRemaining--;
         bool endOfLine = (lengthRemaining == 0);
@@ -294,14 +294,14 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
         if (mSupportEmbeddedControlCodes && IsEmbeddedControlCode(c))
         {
-                int arg1 = getbyte(address);
+                unsigned char arg1 = (unsigned char)getbyte(address);
                 address++;
                 lengthRemaining--;
 
-                int arg2;
+                unsigned char arg2;
                 if (GetEmbeddedControlCodeSize(c) == 2)
                 {
-                        arg2 = getbyte(address);
+                        arg2 = (unsigned char)getbyte(address);
                         address++;
                         lengthRemaining--;
                 }
@@ -317,7 +317,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                 std::string kw = mKeyword[c];
 
                 bool keywordStartsWithSpace = (mKeyword[c][0] == ' ');
-                bool keywordEndsWithSpace = (mKeyword[c].substr(length - 1, 1) == " ");
+                bool keywordEndsWithSpace = (mKeyword[c][length-1] == ' ');
                 int startIndex = 0;
 
                 if (lastKeywordEndedWithSpace && keywordStartsWithSpace)
@@ -327,8 +327,8 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
                 for (int i = startIndex; i < length; i++)
                 {
-                        int code = mKeyword[c].at(i);
-                        int zxCode = ConvertToZXCode(code);
+                        unsigned char code = mKeyword[c].at(i);
+                        unsigned char zxCode = ConvertToZXCode(code);
                         RenderCharacter(hdc, cshdc, x, y, zxCode);
                 }
 
@@ -347,7 +347,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
         }
 }
 
-void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, int c)
+void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
 {
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
@@ -407,11 +407,15 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         bool lastKeywordEndedWithSpace = false;
         AnsiString zxCharacter;
 
+        mEscapeCharacter = AnsiChar(GetEscapeCharacter());
+
         bool outputLineAsControlCodes = false;
+        bool withinRem = false;
+        bool withinQuotes = false;
 
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, withinQuotes, withinRem))
                 {
                         lineText += zxCharacter;
                 }
@@ -421,11 +425,11 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool& withinQuotes, bool& withinRem)
 {
         bool characterAvailable = false;
 
-        int c = getbyte(address);
+        unsigned char c = (unsigned char)getbyte(address);
         address++;
         lengthRemaining--;
         bool endOfLine = (lengthRemaining == 0);
@@ -435,7 +439,18 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                 return characterAvailable;
         }
 
-        if (mSupportsFloatingPointNumbers && (c == mFloatingPointNumberCode))
+        bool remToken = (mKeyword[c] == " REM ");
+
+        if (!withinRem && mKeyword[c] == "\"")
+        {
+                withinQuotes = !withinQuotes;
+        }
+        else if (!withinQuotes && remToken)
+        {
+                withinRem = true;
+        }
+
+        if (!withinRem && mSupportsFloatingPointNumbers && (c == mFloatingPointNumberCode))
         {
                 address += mEmbeddedNumberSize;
                 lengthRemaining -= mEmbeddedNumberSize;
@@ -447,23 +462,23 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         characterAvailable = true;
 
         int length;
-        
-        if (outputLineAsControlCodes || ((mKeyword[c] == "£") && outputNonAsciiAsCharacterCodes))
+
+        if (outputLineAsControlCodes || (((mKeyword[c] == "£") || (mKeyword[c] == "©")) && outputNonAsciiAsCharacterCodes))
         {
-                zxCharacter = "\\" + UpperCase(IntToHex(c, 2));
+                zxCharacter = mEscapeCharacter;
+                zxCharacter += UpperCase(IntToHex(c, 2));
 
                 lastKeywordEndedWithSpace = false;
         }
         else if ((length = GetKeywordLength(c)) > 1)
         {
-                bool remCommand = (mKeyword[c] == " REM ");
-                if (remCommand)
+                if (!withinQuotes && withinRem)
                 {
                         outputLineAsControlCodes = RemContainsMachineCode(address, lengthRemaining, outputRemTokensAsCharacterCodes);
                 }
 
                 bool keywordStartsWithSpace = (mKeyword[c][0] == ' ');
-                bool keywordEndsWithSpace = (mKeyword[c].substr(length - 1, 1) == " ");
+                bool keywordEndsWithSpace = (mKeyword[c][length-1] == ' ');
                 int startIndex = 0;
 
                 if (lastKeywordEndedWithSpace && keywordStartsWithSpace)

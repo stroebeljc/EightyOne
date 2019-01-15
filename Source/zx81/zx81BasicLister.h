@@ -29,24 +29,26 @@ public:
         virtual AnsiString GetBasicFileExtension();
 
 private:
-        static const int Space = 0;
-        static const int Quote = 11;
-        static const int Dollar = 13;
-        static const int GreaterThan = 18;
-        static const int LessThan = 19;
-        static const int Equal = 20;
-        static const int Asterisk = 23;
-        static const int Number0 = 28;
-        static const int LetterA = 38;
-        static const int Newline = 118;
-        static const int Number = 126;
+        static const unsigned char Space = 0;
+        static const unsigned char Quote = 11;
+        static const unsigned char Dollar = 13;
+        static const unsigned char GreaterThan = 18;
+        static const unsigned char LessThan = 19;
+        static const unsigned char Equal = 20;
+        static const unsigned char Asterisk = 23;
+        static const unsigned char Number0 = 28;
+        static const unsigned char LetterA = 38;
+        static const unsigned char Newline = 118;
+        static const unsigned char Number = 126;
+        static const unsigned char Escape = '\\';
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
-        virtual int ConvertToZXCode(int code);
-        virtual inline int GetFloatingPointNumberCode();
-        virtual inline int GetLineEndingCode();
+        virtual unsigned char ConvertToZXCode(unsigned char code);
+        virtual inline unsigned char GetFloatingPointNumberCode();
+        virtual inline unsigned char GetLineEndingCode();
         virtual std::string GetKeywords();
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
+        virtual unsigned char GetEscapeCharacter();
 };
 

@@ -1,6 +1,6 @@
 object TZX: TTZX
-  Left = 348
-  Top = 80
+  Left = 242
+  Top = 121
   Width = 290
   Height = 300
   BorderStyle = bsSizeToolWin
@@ -543,9 +543,9 @@ object TZX: TTZX
     DefaultExt = 'tzx'
     Filter = 
       'All Tape Files|*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*' +
-      '.zip;*b80;*b81;*b82|Spectrum Files|*.tzx;*.tap|ZX81 Files|*.t81;' +
-      '*.p;*.p81;*.81|ZX80 Files|*.t81;*.o;*.80|Lambda Files|*.a83|Comp' +
-      'ressed Files|*.zip|BASIC Listing Files|*b80;*b81;*b82'
+      '.zip;*b80;*b81;*b82|Spectrum Files|*.tzx;*.tap;*.b82|ZX81 Files|' +
+      '*.t81;*.p;*.p81;*.81;*.b81|ZX80 Files|*.t81;*.o;*.80;*.b80|Lambd' +
+      'a Files|*.a83'
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
     Left = 104
     Top = 120

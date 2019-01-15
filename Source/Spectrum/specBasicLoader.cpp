@@ -341,14 +341,9 @@ unsigned char specBasicLoader::DecodeGraphic(unsigned char chr1, unsigned char c
         return it->second;
 }
 
-bool specBasicLoader::SupportLineContinuations()
-{
-        return false;
-}
-
 unsigned char specBasicLoader::GetEscapeCharacter()
 {
-        return 0xAC;
+        return Escape;
 }
 
 bool specBasicLoader::SupportUppercaseOnly()

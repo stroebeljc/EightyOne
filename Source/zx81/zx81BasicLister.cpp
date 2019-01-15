@@ -47,11 +47,11 @@ int zx81BasicLister::GetProgramEndAddress()
         return getbyte(vars) + (getbyte(vars + 1) << 8);
 }
 
-int zx81BasicLister::ConvertToZXCode(int code)
+unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
 {
-        int c;
+        unsigned char c;
 
-        switch (code)
+        switch ((char)code)
         {
                 case ' ':
                         c = Space;
@@ -96,12 +96,12 @@ int zx81BasicLister::ConvertToZXCode(int code)
         return c;
 }
 
-int zx81BasicLister::GetFloatingPointNumberCode()
+unsigned char zx81BasicLister::GetFloatingPointNumberCode()
 {
         return Number;
 }
 
-int zx81BasicLister::GetLineEndingCode()
+unsigned char zx81BasicLister::GetLineEndingCode()
 {
         return Newline;
 }
@@ -129,7 +129,7 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
                 lengthRemaining--;
                 endOfLine = (lengthRemaining == 0);
 
-                if ((c >= 0x43 && c < 0x80 && !(c == 0x76 && endOfLine)) || (c == 0xC3))
+                if ((c >= 0x43 && c < 0x80 && !(c == Newline && endOfLine)) || (c == 0xC3))
                 {
                         containsMachineCode = true;
                         break;
@@ -142,4 +142,9 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
         }
 
         return containsMachineCode;
+}
+
+unsigned char zx81BasicLister::GetEscapeCharacter()
+{
+        return Escape;
 }

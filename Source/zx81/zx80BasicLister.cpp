@@ -115,11 +115,11 @@ bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         return true;
 }
 
-int zx80BasicLister::ConvertToZXCode(int code)
+unsigned char zx80BasicLister::ConvertToZXCode(unsigned char code)
 {
-        int c;
+        unsigned char c;
 
-        switch (code)
+        switch ((char)code)
         {
                 case ' ':
                         c = Space;
@@ -149,7 +149,7 @@ bool zx80BasicLister::SupportFloatingPointNumbers()
         return false;
 }
 
-int zx80BasicLister::GetLineEndingCode()
+unsigned char zx80BasicLister::GetLineEndingCode()
 {
         return Newline;
 }
@@ -193,4 +193,7 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
         return containsMachineCode;
 }
 
-
+unsigned char zx80BasicLister::GetEscapeCharacter()
+{
+        return Escape;
+}

@@ -60,7 +60,10 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         stringstream msg;
                         msg << "Unable to parse line " << lineCount << " - " << ex.what() << endl;
                         msg << endl;
-                        msg << line;
+                        bool truncateLine = (line.length() > 256);
+                        int displayLen = truncateLine ? 256: line.length();
+                        msg << line.substr(0, displayLen);
+                        if (truncateLine) msg << "...";
                         Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK);
                         return;
                 }
@@ -79,19 +82,18 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
                 return lineAvailable;
         }
 
-        if (SupportLineContinuations())
-        {
-                while (line[line.length()-2] == '\\')
-                {
-                        string contLine;
-                        lineAvailable = (getline(basicFile, contLine) != NULL);
-                        if (!lineAvailable)
-                        {
-                                break;
-                        }
+        unsigned char continuationChar = GetEscapeCharacter();
 
-                        line = line.substr(0, line.length()-2) + " " + contLine;
+        while (line[line.length()-2] == continuationChar)
+        {
+                string contLine;
+                lineAvailable = (getline(basicFile, contLine) != NULL);
+                if (!lineAvailable)
+                {
+                        break;
                 }
+
+                line = line.substr(0, line.length()-2) + " " + contLine;
         }
         
         return lineAvailable;

@@ -52,7 +52,7 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   TextHeight = 13
   object Label1: TLabel
     Left = 8
-    Top = 56
+    Top = 57
     Width = 217
     Height = 13
     Caption = 'Output non-ASCII symbols as character codes'

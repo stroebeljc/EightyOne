@@ -257,22 +257,20 @@ void specBasicLoader::OutputFloatingPointEncoding(double value, int& addressOffs
         }
         else
         {
-                double exp = floor(DBL_EPSILON + (log(absValue) / log(2)));
-                exponent = 1 + (int)exp;
-
-                double man = absValue / pow(2, exponent);
-                man *= 0x100000000;
-                mantissa = (unsigned long)floor(DBL_EPSILON + man);
-
-                // Numbers in BASIC are always positive (a leading negative sign is an operator and
-                // not part of the actual number) so set the msb to 0 to signify a positive value
-                mantissa &= 0x7FFFFFFF;
-
-                exponent += 128;
-                if (exponent < 1 || exponent > 255)
+                exponent = (int)floor(DBL_EPSILON + (log(value) / log(2)));
+                if (exponent < -129 || exponent > 126)
                 {
                         throw out_of_range("Number out of range");
                 }
+
+                double mantissaVal = (value / pow(2, exponent)) - 1;
+                mantissaVal *= 0x80000000;
+                mantissa = (unsigned long)floor(mantissaVal);
+
+                exponent += 129;
+
+                // Numbers in BASIC are always positive (a leading negative sign is an operator and
+                // not part of the actual number) so set the msb to 0 to signify a positive value
 
                 OutputByte(addressOffset, (unsigned char)exponent);
                 OutputByte(addressOffset, (unsigned char)(mantissa >> 24));

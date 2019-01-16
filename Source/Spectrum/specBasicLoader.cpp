@@ -202,6 +202,7 @@ void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)
 
         bool withinQuotes = false;
         bool withinRem = false;
+        bool withinDefFn = false;
 
         while (mLineBuffer[i] != '\0')
         {
@@ -209,16 +210,34 @@ void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)
                 {
                         unsigned char chr = mLineBufferOutput[i];
                         
-                        if (chr == '\"')
+                        if (!withinRem && !withinDefFn && (chr == '\"'))
                         {
                                 withinQuotes = !withinQuotes;
                         }
-                        else if (chr == Rem)
+                        else if (!withinQuotes && !withinDefFn && (chr == Rem))
                         {
                                 withinRem = true;
                         }
+                        else if (!withinQuotes && !withinRem && (chr == DefFn))
+                        {
+                                withinDefFn = true;
+                        }
+                        else if (!withinQuotes && !withinRem && withinDefFn && (chr == '='))
+                        {
+                                withinDefFn = false;
+                        }
 
-                        if (!withinQuotes && !withinRem && StartOfNumber(i))
+                        if (withinDefFn && ((chr == ',') || (chr == ')')))
+                        {
+                                OutputByte(addressOffset, Number);
+                                OutputByte(addressOffset, 0x00);
+                                OutputByte(addressOffset, 0x00);
+                                OutputByte(addressOffset, 0x00);
+                                OutputByte(addressOffset, 0x00);
+                                OutputByte(addressOffset, 0x00);
+                                OutputByte(addressOffset, chr);
+                        }
+                        else if (!withinDefFn && !withinQuotes && !withinRem && StartOfNumber(i))
                         {
                                 OutputEmbeddedNumber(i, addressOffset);
                         }
@@ -333,7 +352,7 @@ unsigned char specBasicLoader::DecodeGraphic(unsigned char chr1, unsigned char c
                 code << chr1;
                 code << chr2;
                 string msg = "Invalid graphic Code: " + code.str();
-                throw out_of_range(msg.c_str());
+                throw invalid_argument(msg.c_str());
         }
 
         return it->second;

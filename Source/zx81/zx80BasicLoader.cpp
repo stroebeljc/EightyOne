@@ -174,7 +174,7 @@ unsigned char zx80BasicLoader::DecodeGraphic(unsigned char chr1, unsigned char c
                 code << chr1;
                 code << chr2;
                 string msg = "Invalid graphic - Code " + code.str();
-                throw out_of_range(msg.c_str());
+                throw invalid_argument(msg.c_str());
         }
 
         return it->second;
@@ -259,7 +259,7 @@ unsigned char zx80BasicLoader::AsciiToZX(unsigned char ascii)
                         ostringstream code;
                         code << ascii;
                         string msg = "Invalid character - Character " + code.str();
-                        throw out_of_range(msg.c_str());
+                        throw invalid_argument(msg.c_str());
         }
 
         return zxChr;

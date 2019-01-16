@@ -103,7 +103,7 @@ void IBasicLoader::OutputByte(int& addressOffset, unsigned char byte)
 {
         if (addressOffset >= maxProgramLength)
         {
-                throw out_of_range("Program size too large");
+                throw length_error("Program size too large");
         }
 
         mProgramData[addressOffset++] = byte;
@@ -296,6 +296,11 @@ unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
 
         lineNumber = strtol((char*)mLineBuffer, &(char*)pCommand, 10);
 
+        if (pCommand == mLineBuffer)
+        {
+                throw runtime_error("Line number missing");
+        }
+
         return pCommand;
 }
 
@@ -324,17 +329,7 @@ unsigned char IBasicLoader::DecodeCharacter(unsigned char** ppPos)
 
 bool IBasicLoader::StartOfNumber(int index)
 {
-        char chrPrev = mLineBuffer[index-1];
-        char chr1 = mLineBuffer[index];
-        char chr2 = mLineBuffer[index+1];
-        char chr3 = mLineBuffer[index+2];
-
-        bool partOfVariableName = isalpha(chrPrev);
-        bool beginsWithDigit = isdigit(chr1);
-        bool plusMinusOrDecimal = (chr1 == '-' || chr1 == '+' || chr1 == '.') && isdigit(chr2);
-        bool plusMinusAndDecimal = (chr1 == '-' || chr1 == '+') && chr2 == '.' && isdigit(chr3);
-
-        return !partOfVariableName && (beginsWithDigit || plusMinusOrDecimal || plusMinusAndDecimal);
+        return !isalpha(mLineBuffer[index-1]) && ((mLineBuffer[index] == '.') || isdigit(mLineBuffer[index]));
 }
 
 void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
@@ -376,7 +371,7 @@ void IBasicLoader::ExtractEscapeCharacters()
                         unsigned char chr1 = *pPos;
                         if (chr1 == '\0')
                         {
-                                throw out_of_range("Escape sequence incomplete before line ending");
+                                throw runtime_error("Escape sequence incomplete before line ending");
                         }
 
                         *pPos = Blank;
@@ -389,7 +384,7 @@ void IBasicLoader::ExtractEscapeCharacters()
                                 unsigned char chr2 = *pPos;
                                 if (chr2 == '\0')
                                 {
-                                        throw out_of_range("Escape sequence incomplete before line ending");
+                                        throw runtime_error("Escape sequence incomplete before line ending");
                                 }
 
                                 *pPos = Blank;
@@ -421,7 +416,7 @@ unsigned char IBasicLoader::ConvertFromHexChars(unsigned char chr1, unsigned cha
                 code << chr1;
                 code << chr2;
                 string msg = "Invalid character Code: " + code.str();
-                throw out_of_range(msg.c_str());
+                throw invalid_argument(msg.c_str());
         }
         
         int d1 = ConvertFromHexChar(chr1);

@@ -305,7 +305,7 @@ unsigned char zx81BasicLoader::DecodeGraphic(unsigned char chr1, unsigned char c
                 code << chr1;
                 code << chr2;
                 string msg = "Invalid graphic Code: " + code.str();
-                throw out_of_range(msg.c_str());
+                throw invalid_argument(msg.c_str());
         }
 
         return it->second;
@@ -390,7 +390,7 @@ unsigned char zx81BasicLoader::AsciiToZX(unsigned char ascii)
                         ostringstream code;
                         code << ascii;
                         string msg = "Invalid character: " + code.str();
-                        throw out_of_range(msg.c_str());
+                        throw invalid_argument(msg.c_str());
         }
 
         return zxChr;
@@ -437,7 +437,7 @@ void zx81BasicLoader::ExtractDoubleQuoteCharacters()
                         char chr1 = mLineBuffer[i];
                         if (chr1 == '\0')
                         {
-                                throw out_of_range("End quote missing");
+                                throw runtime_error("End quote missing");
                         }
 
                         if (chr1 == '\"')

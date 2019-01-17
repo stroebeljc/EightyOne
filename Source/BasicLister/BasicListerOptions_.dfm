@@ -4,7 +4,7 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Save Settings'
-  ClientHeight = 173
+  ClientHeight = 196
   ClientWidth = 259
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -87,10 +87,17 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   end
   object Label5: TLabel
     Left = 8
-    Top = 105
+    Top = 129
     Width = 213
     Height = 13
     Caption = 'Output continuation markers to split long lines'
+  end
+  object Label6: TLabel
+    Left = 8
+    Top = 105
+    Width = 203
+    Height = 13
+    Caption = 'Output the names of variables in lowercase'
   end
   object cboOutputRemTokensAsCharacterCodes: TCheckBox
     Left = 233
@@ -102,12 +109,12 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   end
   object btnOK: TButton
     Left = 94
-    Top = 136
+    Top = 160
     Width = 68
     Height = 25
     Caption = 'OK'
     ModalResult = 1
-    TabOrder = 4
+    TabOrder = 5
   end
   object cboOutputNonAsciiAsCharacterCodes: TCheckBox
     Left = 231
@@ -127,8 +134,16 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   end
   object cboLimitLineLengths: TCheckBox
     Left = 232
-    Top = 104
+    Top = 128
     Width = 16
+    Height = 17
+    Alignment = taLeftJustify
+    TabOrder = 4
+  end
+  object cboOutputVariableNamesInLowercase: TCheckBox
+    Left = 231
+    Top = 104
+    Width = 17
     Height = 17
     Alignment = taLeftJustify
     TabOrder = 3

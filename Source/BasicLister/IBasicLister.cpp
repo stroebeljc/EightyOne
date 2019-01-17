@@ -395,7 +395,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool limitLineLengths)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths)
 {
         AnsiString lineText = "";
 
@@ -418,7 +418,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputStringTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, withinQuotes, withinRem))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputStringTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, outputVariableNamesInLowercase, withinQuotes, withinRem))
                 {
                         lineText += zxCharacter;
                         lineLength += zxCharacter.Length();
@@ -435,7 +435,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool& withinQuotes, bool& withinRem)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool& withinQuotes, bool& withinRem)
 {
         bool characterAvailable = false;
 
@@ -508,7 +508,15 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         }
         else
         {
-                zxCharacter = mKeyword[c].c_str();
+                if (!withinQuotes && !withinRem && outputVariableNamesInLowercase && (mKeyword[c].length() == 1))
+                {
+                        char chr = tolower(mKeyword[c][0]);
+                        zxCharacter = chr;
+                }
+                else
+                {
+                        zxCharacter = mKeyword[c].c_str();
+                }
 
                 lastKeywordEndedWithSpace = false;
         }

@@ -58,7 +58,7 @@ private:
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
         void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
         void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
-        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool& withinQuotes, bool& withinRem);
+        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool& withinQuotes, bool& withinRem);
         AnsiString FormatLineNumber(int lineNumber);
         COLORREF GetBackgroundColour();
 
@@ -71,7 +71,7 @@ public:
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
         virtual void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        virtual AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool limitLineLengths);
+        virtual AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths);
         virtual void SetLines(std::vector<LineInfo>* linesInfo);
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }

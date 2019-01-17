@@ -35,6 +35,11 @@ bool TSaveBasicListingOptionsForm::GetOutputNonAsciiAsCharacterCodes()
         return cboOutputNonAsciiAsCharacterCodes->Checked;
 }
 
+bool TSaveBasicListingOptionsForm::GetOutputVariableNamesInLowercase()
+{
+        return cboOutputVariableNamesInLowercase->Checked;
+}
+
 bool TSaveBasicListingOptionsForm::GetLimitLineLengths()
 {
         return cboLimitLineLengths->Checked;
@@ -45,6 +50,7 @@ void TSaveBasicListingOptionsForm::SaveSettings(TIniFile *ini)
         ini->WriteBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", cboOutputRemTokensAsCharacterCodes->Checked);
         ini->WriteBool("BASICLISTING", "OutputStringTokensAsCharacterCodes", cboOutputStringTokensAsCharacterCodes->Checked);
         ini->WriteBool("BASICLISTING", "OutputNonAsciiAsCharacterCodes", cboOutputNonAsciiAsCharacterCodes->Checked);
+        ini->WriteBool("BASICLISTING", "OutputVariableNamesInLowercase", cboOutputVariableNamesInLowercase->Checked);
         ini->WriteBool("BASICLISTING", "LimitLineLengths", cboLimitLineLengths->Checked);
 }
 
@@ -53,6 +59,7 @@ void TSaveBasicListingOptionsForm::LoadSettings(TIniFile *ini)
         cboOutputRemTokensAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", false);
         cboOutputStringTokensAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputStringTokensAsCharacterCodes", false);
         cboOutputNonAsciiAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputNonAsciiAsCharacterCodes", false);
+        cboOutputVariableNamesInLowercase->Checked = ini->ReadBool("BASICLISTING", "OutputVariableNamesInLowercase", false);
         cboLimitLineLengths->Checked = ini->ReadBool("BASICLISTING", "LimitLineLengths", false);
 }
 

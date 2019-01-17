@@ -80,7 +80,8 @@ private:	// User declarations
         std::vector<LineInfo>* mLines;
         bool mOutputRemTokensAsCharacterCodes;
         bool mOutputStringTokensAsCharacterCodes;
-        int mOutputNonAsciiAsCharacterCodes;
+        bool mOutputNonAsciiAsCharacterCodes;
+        bool mOutputVariableNamesInLowercase;
         bool mLimitLineLengths;
         
         void ClearBitmap();
@@ -103,6 +104,7 @@ private:	// User declarations
         int FindLineIndex(int lineNumber);
         int FindLineDisplayedOnRow(int row);
         COLORREF GetHighlightColour();
+        void GetSaveOptions();
 
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);

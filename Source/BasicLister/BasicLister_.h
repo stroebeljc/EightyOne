@@ -81,6 +81,7 @@ private:	// User declarations
         bool mOutputRemTokensAsCharacterCodes;
         bool mOutputStringTokensAsCharacterCodes;
         int mOutputNonAsciiAsCharacterCodes;
+        bool mLimitLineLengths;
         
         void ClearBitmap();
         void ConstructBitmap();

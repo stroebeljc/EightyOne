@@ -395,7 +395,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool limitLineLengths)
 {
         AnsiString lineText = "";
 
@@ -412,12 +412,22 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         bool outputLineAsControlCodes = false;
         bool withinRem = false;
         bool withinQuotes = false;
+        int lineLength = 0;
 
+        const int WrapLineThreshold = 160;
+        
         do
         {
                 if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputStringTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, withinQuotes, withinRem))
                 {
                         lineText += zxCharacter;
+                        lineLength += zxCharacter.Length();
+
+                        if (limitLineLengths && (lineLength > WrapLineThreshold))
+                        {
+                                lineText += mEscapeCharacter + '\n';
+                                lineLength = 0;
+                        }
                 }
         }
         while (lengthRemaining > 0);

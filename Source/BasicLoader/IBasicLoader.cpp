@@ -82,9 +82,9 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
                 return lineAvailable;
         }
 
-        unsigned char continuationChar = GetEscapeCharacter();
+        unsigned char escapeChar = GetEscapeCharacter();
 
-        while (line[line.length()-2] == continuationChar)
+        while (line[line.length()-2] == escapeChar)
         {
                 string contLine;
                 lineAvailable = (getline(basicFile, contLine) != NULL);
@@ -93,7 +93,7 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
                         break;
                 }
 
-                line = line.substr(0, line.length()-2) + " " + contLine;
+                line = line.substr(0, line.length()-2) + contLine;
         }
         
         return lineAvailable;

@@ -21,12 +21,15 @@ __published:	// IDE-managed Components
         TCheckBox *cboOutputNonAsciiAsCharacterCodes;
         TCheckBox *cboOutputStringTokensAsCharacterCodes;
         TLabel *Label4;
+        TLabel *Label5;
+        TCheckBox *cboLimitLineLengths;
 private:	// User declarations
 public:		// User declarations
         __fastcall TSaveBasicListingOptionsForm(TComponent* Owner);
         bool GetOutputRemTokensAsCharacterCodes();
         bool GetOutputStringTokensAsCharacterCodes();
         bool GetOutputNonAsciiAsCharacterCodes();
+        bool GetLimitLineLengths();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

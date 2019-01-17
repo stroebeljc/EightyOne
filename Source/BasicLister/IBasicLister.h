@@ -71,7 +71,7 @@ public:
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
         virtual void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        virtual AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes);
+        virtual AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool limitLineLengths);
         virtual void SetLines(std::vector<LineInfo>* linesInfo);
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }

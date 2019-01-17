@@ -1,10 +1,10 @@
 object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
-  Left = 194
-  Top = 133
+  Left = 201
+  Top = 335
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Load BASIC Listing Options'
-  ClientHeight = 146
+  ClientHeight = 147
   ClientWidth = 239
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -61,21 +61,21 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   end
   object Label2: TLabel
     Left = 8
-    Top = 32
+    Top = 33
     Width = 162
     Height = 13
     Caption = 'Attempt to tokenise REM contents'
   end
   object Label3: TLabel
     Left = 8
-    Top = 56
+    Top = 57
     Width = 163
     Height = 13
     Caption = 'Attempt to tokenise string contents'
   end
   object Label4: TLabel
     Left = 8
-    Top = 80
+    Top = 81
     Width = 124
     Height = 13
     Caption = 'Discard redundant spaces'

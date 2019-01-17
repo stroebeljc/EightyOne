@@ -132,14 +132,6 @@ int IBasicLoader::ProgramLength()
 
 void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
 {
-        if (SupportUppercaseOnly())
-        {
-                for (string::iterator c = line.begin(); c != line.end(); ++c)
-                {
-                        *c = toupper(*c);
-                }
-        }
-
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
         strcpy((char*)mLineBuffer, line.c_str());
 
@@ -194,7 +186,14 @@ void IBasicLoader::ExtractSingleCharacters(bool discardRedundantSpaces)
         {
                 if (mLineBuffer[i] != Blank && (!discardRedundantSpaces || (discardRedundantSpaces && (mLineBuffer[i] != ' ' || mLineBufferStrings[i] != ' '))))
                 {
-                        mLineBufferOutput[i] = AsciiToZX(mLineBuffer[i]);
+                        unsigned char c = mLineBuffer[i];
+
+                        if (SupportUppercaseOnly())
+                        {
+                                c = toupper(c);
+                        }
+
+                        mLineBufferOutput[i] = AsciiToZX(c);
                         mLineBufferPopulated[i] = true;
                 }
 
@@ -299,6 +298,11 @@ unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
         if (pCommand == mLineBuffer)
         {
                 throw runtime_error("Line number missing");
+        }
+
+        if ((lineNumber < 0) || (lineNumber > 16383))
+        {
+                throw out_of_range("Line number too high");
         }
 
         return pCommand;

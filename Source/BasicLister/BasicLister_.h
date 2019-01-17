@@ -79,6 +79,7 @@ private:	// User declarations
         int mProgramDisplayRows;
         std::vector<LineInfo>* mLines;
         bool mOutputRemTokensAsCharacterCodes;
+        bool mOutputStringTokensAsCharacterCodes;
         int mOutputNonAsciiAsCharacterCodes;
         
         void ClearBitmap();

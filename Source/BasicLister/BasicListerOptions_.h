@@ -13,16 +13,19 @@
 class TSaveBasicListingOptionsForm : public TForm
 {
 __published:	// IDE-managed Components
-        TCheckBox *cboOutputAsCharacterCodes;
+        TCheckBox *cboOutputRemTokensAsCharacterCodes;
         TButton *btnOK;
         TLabel *Label1;
         TLabel *Label2;
         TLabel *Label3;
         TCheckBox *cboOutputNonAsciiAsCharacterCodes;
+        TCheckBox *cboOutputStringTokensAsCharacterCodes;
+        TLabel *Label4;
 private:	// User declarations
 public:		// User declarations
         __fastcall TSaveBasicListingOptionsForm(TComponent* Owner);
-        bool GetOutputTokensAsCharacterCodes();
+        bool GetOutputRemTokensAsCharacterCodes();
+        bool GetOutputStringTokensAsCharacterCodes();
         bool GetOutputNonAsciiAsCharacterCodes();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

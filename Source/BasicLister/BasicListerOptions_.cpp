@@ -20,9 +20,14 @@ __fastcall TSaveBasicListingOptionsForm::TSaveBasicListingOptionsForm(TComponent
 }
 //---------------------------------------------------------------------------
 
-bool TSaveBasicListingOptionsForm::GetOutputTokensAsCharacterCodes()
+bool TSaveBasicListingOptionsForm::GetOutputRemTokensAsCharacterCodes()
 {
-        return cboOutputAsCharacterCodes->Checked;
+        return cboOutputRemTokensAsCharacterCodes->Checked;
+}
+
+bool TSaveBasicListingOptionsForm::GetOutputStringTokensAsCharacterCodes()
+{
+        return cboOutputStringTokensAsCharacterCodes->Checked;
 }
 
 bool TSaveBasicListingOptionsForm::GetOutputNonAsciiAsCharacterCodes()
@@ -32,14 +37,18 @@ bool TSaveBasicListingOptionsForm::GetOutputNonAsciiAsCharacterCodes()
 
 void TSaveBasicListingOptionsForm::SaveSettings(TIniFile *ini)
 {
-        ini->WriteBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", cboOutputAsCharacterCodes->Checked);
+        ini->WriteBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", cboOutputRemTokensAsCharacterCodes->Checked);
+        ini->WriteBool("BASICLISTING", "OutputStringTokensAsCharacterCodes", cboOutputStringTokensAsCharacterCodes->Checked);
         ini->WriteBool("BASICLISTING", "OutputNonAsciiAsCharacterCodes", cboOutputNonAsciiAsCharacterCodes->Checked);
 }
 
 void TSaveBasicListingOptionsForm::LoadSettings(TIniFile *ini)
 {
-        cboOutputAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", false);
+        cboOutputRemTokensAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", false);
+        cboOutputStringTokensAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputStringTokensAsCharacterCodes", false);
         cboOutputNonAsciiAsCharacterCodes->Checked = ini->ReadBool("BASICLISTING", "OutputNonAsciiAsCharacterCodes", 0);
 }
+
+
 
 

@@ -1,10 +1,10 @@
 object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
-  Left = 267
-  Top = 132
+  Left = 209
+  Top = 122
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Save Settings'
-  ClientHeight = 124
+  ClientHeight = 147
   ClientWidth = 259
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -52,7 +52,7 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   TextHeight = 13
   object Label1: TLabel
     Left = 8
-    Top = 57
+    Top = 81
     Width = 217
     Height = 13
     Caption = 'Output non-ASCII symbols as character codes'
@@ -73,14 +73,21 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   end
   object Label3: TLabel
     Left = 8
-    Top = 32
+    Top = 33
     Width = 204
     Height = 13
     Caption = 'Output tokens in REMs as character codes'
   end
-  object cboOutputAsCharacterCodes: TCheckBox
+  object Label4: TLabel
+    Left = 8
+    Top = 57
+    Width = 205
+    Height = 13
+    Caption = 'Output tokens in strings as character codes'
+  end
+  object cboOutputRemTokensAsCharacterCodes: TCheckBox
     Left = 233
-    Top = 31
+    Top = 32
     Width = 15
     Height = 17
     Alignment = taLeftJustify
@@ -88,19 +95,27 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   end
   object btnOK: TButton
     Left = 94
-    Top = 88
+    Top = 112
     Width = 68
     Height = 25
     Caption = 'OK'
     ModalResult = 1
-    TabOrder = 1
+    TabOrder = 3
   end
   object cboOutputNonAsciiAsCharacterCodes: TCheckBox
+    Left = 231
+    Top = 80
+    Width = 17
+    Height = 17
+    Alignment = taLeftJustify
+    TabOrder = 2
+  end
+  object cboOutputStringTokensAsCharacterCodes: TCheckBox
     Left = 231
     Top = 56
     Width = 17
     Height = 17
     Alignment = taLeftJustify
-    TabOrder = 2
+    TabOrder = 1
   end
 end

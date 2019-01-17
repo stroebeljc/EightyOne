@@ -395,7 +395,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes)
 {
         AnsiString lineText = "";
 
@@ -415,7 +415,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
 
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, withinQuotes, withinRem))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputStringTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, withinQuotes, withinRem))
                 {
                         lineText += zxCharacter;
                 }
@@ -425,7 +425,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool& withinQuotes, bool& withinRem)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool& withinQuotes, bool& withinRem)
 {
         bool characterAvailable = false;
 
@@ -461,16 +461,17 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
 
         characterAvailable = true;
 
-        int length;
+        int length = GetKeywordLength(c);
+        bool token = (length > 1);
 
-        if (outputLineAsControlCodes || (((mKeyword[c] == "£") || (mKeyword[c] == "©")) && outputNonAsciiAsCharacterCodes))
+        if ((outputStringTokensAsCharacterCodes && withinQuotes && token) || outputLineAsControlCodes || (((mKeyword[c] == "£") || (mKeyword[c] == "©")) && outputNonAsciiAsCharacterCodes))
         {
                 zxCharacter = mEscapeCharacter;
                 zxCharacter += UpperCase(IntToHex(c, 2));
 
                 lastKeywordEndedWithSpace = false;
         }
-        else if ((length = GetKeywordLength(c)) > 1)
+        else if (length > 1)
         {
                 if (!withinQuotes && withinRem)
                 {

@@ -546,7 +546,7 @@ void TBasicLister::SaveListingToFile()
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputStringTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes);
                         ofs << lineText.c_str() << '\n';
                 }
 
@@ -613,7 +613,8 @@ void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
 
         SaveBasicListingOptionsForm->ShowModal();
 
-        mOutputRemTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputTokensAsCharacterCodes();
+        mOutputRemTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputRemTokensAsCharacterCodes();
+        mOutputStringTokensAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputStringTokensAsCharacterCodes();
         mOutputNonAsciiAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputNonAsciiAsCharacterCodes();
 
         EnableButtons();

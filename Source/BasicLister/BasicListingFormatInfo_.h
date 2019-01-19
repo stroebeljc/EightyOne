@@ -41,6 +41,9 @@ __published:	// IDE-managed Components
         TLabel *Label23;
         TLabel *Weblink3;
         TButton *btnOK;
+        TLabel *Label20;
+        TLabel *Label22;
+        TLabel *Label24;
         void __fastcall Weblink1Click(TObject *Sender);
         void __fastcall Weblink2Click(TObject *Sender);
         void __fastcall Weblink3Click(TObject *Sender);

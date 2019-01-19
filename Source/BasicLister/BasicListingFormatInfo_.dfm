@@ -4,7 +4,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Saving BASIC Listing As Text'
-  ClientHeight = 338
+  ClientHeight = 378
   ClientWidth = 418
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -54,7 +54,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
     Left = 8
     Top = 8
     Width = 401
-    Height = 289
+    Height = 361
     ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -90,7 +90,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
           'The content of a REM statement is by default output as text if a' +
           'll characters are displayable, and as \nn character codes if any' +
           ' non-displayable characters exist based upon the assumption that' +
-          ' the REM holds machine code. A configuration'
+          ' the REM therefore holds machine code. A'
         WordWrap = True
       end
       object Label4: TLabel
@@ -107,7 +107,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       end
       object Label5: TLabel
         Left = 8
-        Top = 200
+        Top = 232
         Width = 255
         Height = 13
         Caption = 'ZX80 BASIC listing files are saved with extension B80.'
@@ -116,23 +116,24 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label17: TLabel
         Left = 8
         Top = 120
-        Width = 385
+        Width = 377
         Height = 26
         Caption = 
-          'option allows the contents to be output in \nn character code fo' +
-          'rmat irrespective of whether all characters are displayable.'
+          'configuration option allows the contents to be output in \nn cha' +
+          'racter code format irrespective of whether all characters are di' +
+          'splayable.'
         WordWrap = True
       end
       object Label19: TLabel
         Left = 8
-        Top = 222
+        Top = 254
         Width = 285
         Height = 13
         Caption = 'Details of the ZXText2P encoding format can be found here:'
       end
       object Weblink1: TLabel
         Left = 8
-        Top = 238
+        Top = 270
         Width = 219
         Height = 13
         Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
@@ -143,6 +144,16 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
         Font.Style = []
         ParentFont = False
         OnClick = Weblink1Click
+      end
+      object Label20: TLabel
+        Left = 8
+        Top = 198
+        Width = 385
+        Height = 35
+        Caption = 
+          'A configuration option allows variable names to be output in low' +
+          'ercase to ensure there is no ambiguity with BASIC keywords.'
+        WordWrap = True
       end
     end
     object TabSheet2: TTabSheet
@@ -179,7 +190,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
           'The content of a REM statement is by default output as text if a' +
           'll characters are displayable, and as \nn character codes if any' +
           ' non-displayable characters exist based upon the assumption that' +
-          ' the REM holds machine code. A configuration'
+          ' the REM therefore holds machine code. A'
         WordWrap = True
       end
       object Label9: TLabel
@@ -196,7 +207,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       end
       object Label10: TLabel
         Left = 8
-        Top = 200
+        Top = 232
         Width = 255
         Height = 13
         Caption = 'ZX81 BASIC listing files are saved with extension B81.'
@@ -205,27 +216,38 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label16: TLabel
         Left = 8
         Top = 120
-        Width = 385
-        Height = 26
+        Width = 377
+        Height = 33
         Caption = 
-          'option allows the contents to be output in \nn character code fo' +
-          'rmat irrespective of whether all characters are displayable.'
+          'configuration option allows the contents to be output in \nn cha' +
+          'racter code format irrespective of whether all characters are di' +
+          'splayable.'
         WordWrap = True
       end
       object Label21: TLabel
         Left = 8
-        Top = 222
+        Top = 254
         Width = 285
         Height = 13
         Caption = 'Details of the ZXText2P encoding format can be found here:'
       end
       object Weblink2: TLabel
         Left = 8
-        Top = 238
+        Top = 270
         Width = 219
         Height = 13
         Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
         OnClick = Weblink2Click
+      end
+      object Label22: TLabel
+        Left = 8
+        Top = 198
+        Width = 381
+        Height = 26
+        Caption = 
+          'A configuration option allows variable names to be output in low' +
+          'ercase to ensure there is no ambiguity with BASIC keywords.'
+        WordWrap = True
       end
     end
     object TabSheet3: TTabSheet
@@ -279,7 +301,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       end
       object Label15: TLabel
         Left = 8
-        Top = 188
+        Top = 220
         Width = 291
         Height = 13
         Caption = 'ZX Spectrum BASIC listing files are saved with extension B82.'
@@ -297,24 +319,34 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       end
       object Label23: TLabel
         Left = 8
-        Top = 208
+        Top = 240
         Width = 285
         Height = 13
         Caption = 'Details of the ZXText2P encoding format can be found here:'
       end
       object Weblink3: TLabel
         Left = 8
-        Top = 224
+        Top = 256
         Width = 219
         Height = 13
         Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
         OnClick = Weblink3Click
       end
+      object Label24: TLabel
+        Left = 8
+        Top = 188
+        Width = 381
+        Height = 26
+        Caption = 
+          'A configuration option allows variable names to be output in low' +
+          'ercase to ensure there is no ambiguity with BASIC keywords.'
+        WordWrap = True
+      end
     end
   end
   object btnOK: TButton
     Left = 176
-    Top = 304
+    Top = 330
     Width = 68
     Height = 25
     Caption = 'OK'

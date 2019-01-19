@@ -147,6 +147,8 @@ void TIF1::ClockTick(int ts)
                 }
         }
 
+        spectrum.drivebusy = (MDVCurDrive == -1) ? -1 : (WriteEnable ? 1 : 0);
+
         // Microdrive Timer Loop
         if (MDVCurDrive!=-1)   // Ensure motor is running
         {
@@ -382,7 +384,11 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                         return;
                 }
 
-                if (Drives[Drive].data) free(Drives[Drive].data);
+                if (Drives[Drive].data)
+                {
+                        if (Drives[Drive].changed) MDVSaveFile(Drive);
+                        free(Drives[Drive].data);
+                }
                 Drives[Drive].data=data;
                 Drives[Drive].length=256*MDVRECSIZE;
                 Drives[Drive].position=0;
@@ -419,7 +425,11 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                         len=256*MDVRECSIZE;
                 }
 
-                if (Drives[Drive].data) free(Drives[Drive].data);
+                if (Drives[Drive].data)
+                {
+                        if (Drives[Drive].changed) MDVSaveFile(Drive);
+                        free(Drives[Drive].data);
+                }
                 Drives[Drive].data=data;
                 Drives[Drive].length=len;
                 Drives[Drive].position=0;
@@ -489,8 +499,7 @@ void TIF1::MDVSetFileName(int Drive, char *FileName)
                 if (Drives[Drive].data) free(Drives[Drive].data);
                 Drives[Drive].length=0;
                 Drives[Drive].position=0;
-                Drives[Drive].data=NULL;
-
+                Drives[Drive].data=NULL; 
         }
         else    MDVLoadFile(Drive, FileName);
 }
@@ -737,7 +746,7 @@ void __fastcall TIF1::FormDestroy(TObject *Sender)
 {
         int i;
 
-        for(i=0;i<8;i++)
+        for(i=0;i<NoMicroDrives->ItemIndex;i++)
                 MDVSetFileName(i, NULL);
 }
 //---------------------------------------------------------------------------

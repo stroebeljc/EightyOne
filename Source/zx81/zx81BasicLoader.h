@@ -32,11 +32,20 @@ private:
         static const unsigned char Newline = 0x76;
         static const unsigned char Number = 0x7E;
         static const unsigned char DoubleQuote = 0xC0;
+        static const unsigned char LList = 0xE2;
         static const unsigned char Rem = 0xEA;
+        static const unsigned char Goto = 0xEC;
+        static const unsigned char Gosub = 0xED;
+        static const unsigned char List = 0xF0;
+        static const unsigned char Run = 0xF7;
         static const unsigned char Escape = '\\';
-        
+
         void OutputSystemVariables(int& addressOffset);
-        virtual void OutputFloatingPointEncoding(double value, int& addressOffset);        
+        bool IsTokenRequiringLineNumber(unsigned char chr);
+        string ExtractLabel(int& i);
+        int FindLabelDetails(string& label);
+
+        virtual void OutputFloatingPointEncoding(double value, int& addressOffset);
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2);
         virtual unsigned char AsciiToZX(unsigned char ascii);
         virtual void ExtractTokens();
@@ -49,6 +58,7 @@ private:
         virtual void ExtractDoubleQuoteCharacters();
         virtual unsigned char GetEmbbededNumberMark();
         virtual bool SupportUppercaseOnly();
+        virtual bool TokenSupportsLineNumber(unsigned char chr);
 };
 
 #endif

@@ -96,7 +96,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label4: TLabel
         Left = 8
         Top = 152
-        Width = 377
+        Width = 368
         Height = 39
         Caption = 
           'The pound symbol is by default output as £, but this is not part' +
@@ -116,12 +116,11 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label17: TLabel
         Left = 8
         Top = 120
-        Width = 366
+        Width = 385
         Height = 26
         Caption = 
-          'A configuration option allows the contents to be output in \nn c' +
-          'haracter code format irrespective of whether all characters are ' +
-          'displayable.'
+          'option allows the contents to be output in \nn character code fo' +
+          'rmat irrespective of whether all characters are displayable.'
         WordWrap = True
       end
       object Label19: TLabel
@@ -186,7 +185,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label9: TLabel
         Left = 8
         Top = 152
-        Width = 377
+        Width = 368
         Height = 39
         Caption = 
           'The pound symbol is by default output as £, but this is not part' +
@@ -206,12 +205,11 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label16: TLabel
         Left = 8
         Top = 120
-        Width = 366
+        Width = 385
         Height = 26
         Caption = 
-          'A configuration option allows the contents to be output in \nn c' +
-          'haracter code format irrespective of whether all characters are ' +
-          'displayable.'
+          'option allows the contents to be output in \nn character code fo' +
+          'rmat irrespective of whether all characters are displayable.'
         WordWrap = True
       end
       object Label21: TLabel
@@ -236,8 +234,8 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label11: TLabel
         Left = 8
         Top = 8
-        Width = 377
-        Height = 52
+        Width = 375
+        Height = 39
         Caption = 
           'Graphic symbols are encoded in a similar manner to the scheme us' +
           'ed by the ZXText2P utility but encodings begin with ¬ (code $AC)' +
@@ -258,7 +256,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label13: TLabel
         Left = 8
         Top = 99
-        Width = 377
+        Width = 368
         Height = 39
         Caption = 
           'The pound symbol is by default output as £, but this is not part' +
@@ -270,7 +268,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label14: TLabel
         Left = 8
         Top = 143
-        Width = 377
+        Width = 368
         Height = 39
         Caption = 
           'The pound symbol is by default output as ©, but this is not part' +
@@ -282,7 +280,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
       object Label15: TLabel
         Left = 8
         Top = 188
-        Width = 321
+        Width = 291
         Height = 13
         Caption = 'ZX Spectrum BASIC listing files are saved with extension B82.'
         WordWrap = True

@@ -192,7 +192,7 @@ void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset)
                 if (mLineBufferPopulated[i])
                 {
                         unsigned char chr = mLineBufferOutput[i];
-                        
+
                         if (!withinRem && chr == Quote)
                         {
                                 withinQuotes = !withinQuotes;
@@ -475,5 +475,10 @@ unsigned char zx81BasicLoader::GetEmbbededNumberMark()
 bool zx81BasicLoader::SupportUppercaseOnly()
 {
         return true;
+}
+
+bool zx81BasicLoader::TokenSupportsLineNumber(unsigned char chr)
+{
+        return (chr == Goto || chr == Gosub || chr == Run || chr == List || chr == LList);
 }
 

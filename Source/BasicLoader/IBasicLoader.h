@@ -22,11 +22,30 @@
 #include <vcl.h>
 #include <string>
 #include <map>
+#include <vector>
 
 using namespace std;
 
 class IBasicLoader
 {
+private:
+        struct LineEntry
+        {
+                string line;
+                string lineLabel;
+                int lineNumber;
+                int lineNumberLength;
+        };
+
+        unsigned char mEscapeChar;
+
+        unsigned char ConvertFromHexChar(unsigned char chr);
+        bool ReadLine(ifstream& basicFile, string& line);
+        void ReadBasicListingFile(AnsiString filename);
+        bool GetLineNumber(LineEntry& lineEntry);
+        bool GetLineLabel(LineEntry& lineEntry);
+        void ReplaceLabel();
+
 public:
         void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
         unsigned char* ProgramData();
@@ -35,9 +54,10 @@ public:
 protected:
         static const unsigned char Blank = 0x01;
         static const maxProgramLength = 49152;
-        static const maxLineLength = 16384 * 8;  // Allow 16384 of 8 character tokens 
+        static const maxLineLength = 16384 * 8;  // Allow 16384 of 8 character tokens
 
         int mProgramLength;
+        vector<LineEntry> mLines;
         unsigned char mLineBuffer[maxLineLength];
         unsigned char mLineBufferTokenised[maxLineLength];
         unsigned char mLineBufferOutput[maxLineLength];
@@ -45,11 +65,12 @@ protected:
         bool mLineBufferPopulated[maxLineLength];
         unsigned char mProgramData[maxProgramLength];
         unsigned char mCharacterCodeEscape;
+        void BlankLineStart(LineEntry lineEntry);
 
         void OutputByte(int& addressOffset, unsigned char byte);
         void OutputWord(int& addressOffset, int word);
         void ChangeWord(int addressOffset, int word);
-        void ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
+        void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
         void MaskOutRemContents(unsigned char* buffer);
         unsigned char* ExtractLineNumber(int& lineNumber);
         void DoTokenise(map<unsigned char, string> tokens);
@@ -60,6 +81,9 @@ protected:
         void ExtractSingleCharacters(bool discardRedundantSpaces);
         void OutputEmbeddedNumber(int& index, int& addressOffset);
         unsigned char DecodeCharacter(unsigned char** ppPos);
+        void HandleTokenLineNumber(unsigned char* pStartToken, unsigned char* pLabelSearch, int outputIndex);
+        int FindLabelDetails(string& label);
+        string ExtractLabel(unsigned char* pLabelSearch);
 
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2) { return '\0'; }
         virtual unsigned char AsciiToZX(unsigned char ascii) { return '\0'; }
@@ -75,10 +99,7 @@ protected:
         virtual bool SupportFloatingPointNumbers() { return false; }
         virtual unsigned char GetEmbbededNumberMark() { return '\0'; }
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}
-
-private:
-        unsigned char ConvertFromHexChar(unsigned char chr);
-        bool ReadLine(ifstream& basicFile, string& line);
+        virtual bool TokenSupportsLineNumber(unsigned char chr) { return false; }
 };
 
 #endif

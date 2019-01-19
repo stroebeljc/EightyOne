@@ -392,3 +392,10 @@ unsigned char specBasicLoader::AsciiToZX(unsigned char ascii)
 
         return zxChr;
 }
+
+bool specBasicLoader::TokenSupportsLineNumber(unsigned char chr)
+{
+        return (chr == Goto || chr == Gosub || chr == Run || chr == List || chr == LList || chr == Restore || chr == Line);
+}
+
+

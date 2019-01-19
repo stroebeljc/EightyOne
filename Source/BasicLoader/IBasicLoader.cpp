@@ -23,15 +23,21 @@
 
 void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
 {
-        mProgramLength = 0;
+        string result;
 
-        ifstream basicFile(filename.c_str());
-        if (!basicFile)
+        mEscapeChar = GetEscapeCharacter();
+
+        try
         {
-                Application->MessageBox("File not found.", "Load BASIC Listing", MB_OK);
+                ReadBasicListingFile(filename);
+        }
+        catch (exception& ex)
+        {
+                Application->MessageBox(ex.what(), "Load BASIC Listing", MB_OK);
                 return;
         }
 
+        mProgramLength = 0;
         memset(mProgramData, 0, sizeof(mProgramData));
 
         int addressOffset = 0x0000;
@@ -39,64 +45,169 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
 
         mCharacterCodeEscape = GetEscapeCharacter();
         
-        int lineCount = 1;
-        string line;
+        int numberOfLines = mLines.size();
 
-        while (ReadLine(basicFile, line))
+        for (int i = 0; i < numberOfLines; i++)
         {
-                line = line.substr(0, line.length()-1);
-                
                 try
                 {
-                        size_t i = line.find_first_not_of(" \t");
-                        if ((i != string::npos) && (line[i] != '\0') && (line[i] != '#'))
+                        if (mLines[i].lineLabel == "")
                         {
-                                ProcessLine(line, addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces);
-                                lineCount++;
+                                ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces);
                         }
                 }
                 catch (exception& ex)
                 {
                         stringstream msg;
-                        msg << "Unable to parse line " << lineCount << " - " << ex.what() << endl;
+                        msg << "Unable to parse line " << (i + 1) << " - " << ex.what() << endl;
                         msg << endl;
-                        bool truncateLine = (line.length() > 256);
-                        int displayLen = truncateLine ? 256: line.length();
-                        msg << line.substr(0, displayLen);
+                        bool truncateLine = (mLines[i].line.length() > 256);
+                        int displayLen = truncateLine ? 256: mLines[i].line.length();
+                        msg << mLines[i].line.substr(0, displayLen);
                         if (truncateLine) msg << "...";
                         Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK);
                         return;
                 }
         }
-
+        
         OutputEndOfProgramData(addressOffset);
 
         mProgramLength = addressOffset;
 }
 
+void IBasicLoader::ReadBasicListingFile(AnsiString filename)
+{
+        ifstream basicFile(filename.c_str());
+        if (basicFile.fail())
+        {
+                AnsiString error = strerror(errno);
+                throw runtime_error(error.c_str());
+        }
+
+        mLines = vector<LineEntry>();
+
+        string line;
+        int nextLineNumber = 1;
+        
+        try
+        {
+                while (ReadLine(basicFile, line))
+                {
+                        if (nextLineNumber > 16384)
+                        {
+                                throw out_of_range("Line number out of range");
+                        }
+
+                        line = line.substr(0, line.length()-1);
+
+                        LineEntry entry;
+                        entry.line = line;
+                        entry.lineNumberLength = 0;
+                        entry.lineNumber = -1;
+                        entry.lineLabel = "";
+
+                        if (GetLineNumber(entry))
+                        {
+                                if (entry.lineNumber < nextLineNumber)
+                                {
+                                        throw runtime_error("Line number lower than previous line number");
+                                }
+                                nextLineNumber = entry.lineNumber + 1;
+                        }
+                        else if (GetLineLabel(entry))
+                        {
+                                entry.lineNumber = nextLineNumber;
+                        }
+                        else
+                        {
+                                entry.lineNumber = nextLineNumber;
+                                nextLineNumber++;
+                        }
+
+                        mLines.push_back(entry);
+                }
+        }
+        catch (exception& ex)
+        {
+                stringstream msg;
+                msg << "Unable to read line " << (mLines.size() + 1) << " - " << ex.what();
+                throw runtime_error(msg.str().c_str());
+        }
+}
+
+bool IBasicLoader::GetLineNumber(LineEntry& lineEntry)
+{
+        char* pEnd;
+        const char* pStart = lineEntry.line.c_str();
+
+        lineEntry.lineNumber = strtol(pStart, &pEnd, 10);
+
+        if (pEnd == pStart)
+        {
+                return false;
+        }
+
+        if ((lineEntry.lineNumber < 0) || (lineEntry.lineNumber > 16383))
+        {
+                throw out_of_range("Line number out of range");
+        }
+
+        lineEntry.lineNumberLength = pEnd - pStart;
+
+        return true;
+}
+
+bool IBasicLoader::GetLineLabel(LineEntry& lineEntry)
+{
+        if (lineEntry.line[0] != '@')
+        {
+                return false;
+        }
+
+        size_t endLabel = lineEntry.line.find_first_of(":");
+        if ((endLabel == string::npos) || (endLabel == 1))
+        {
+                return false;
+        }
+
+        lineEntry.lineLabel = lineEntry.line.substr(0, endLabel);
+        
+        return true;
+}
+
 bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
 {
-        bool lineAvailable = (getline(basicFile, line) != NULL);
-        if (!lineAvailable)
-        {
-                return lineAvailable;
-        }
+        size_t i;
+        line = "";
+        string inputLine;
 
-        unsigned char escapeChar = GetEscapeCharacter();
-
-        while (line[line.length()-2] == escapeChar)
+        do
         {
-                string contLine;
-                lineAvailable = (getline(basicFile, contLine) != NULL);
-                if (!lineAvailable)
+                do
                 {
-                        break;
-                }
+                        bool lineAvailable = (getline(basicFile, inputLine) != NULL);
+                        if (!lineAvailable)
+                        {
+                                return false;
+                        }
 
-                line = line.substr(0, line.length()-2) + contLine;
+                        // Remove the trailing '\0'
+                        inputLine = inputLine.substr(0, line.length()-1);
+
+                        i = inputLine.find_first_not_of(" \t");
+                }
+                while ((i == string::npos) || (inputLine[i] == '\0') || (inputLine[i] == '#'));
+
+                int len = inputLine.length();
+                if (inputLine[len-1] == mEscapeChar)
+                {
+                        len--;
+                }
+                line += inputLine.substr(0, len);
         }
-        
-        return lineAvailable;
+        while (inputLine[inputLine.length()-2] == mEscapeChar);
+
+        return true;
 }
 
 void IBasicLoader::OutputByte(int& addressOffset, unsigned char byte)
@@ -130,20 +241,18 @@ int IBasicLoader::ProgramLength()
         return mProgramLength;
 }
 
-void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
+void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
 {
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
-        strcpy((char*)mLineBuffer, line.c_str());
+        strcpy((char*)mLineBuffer, lineEntry.line.c_str());
 
         memset(mLineBufferOutput, 0, sizeof(mLineBufferOutput));
         int i = strlen((char*)mLineBuffer);
         memset(mLineBufferOutput, Blank, i);
 
-        memset(mLineBufferPopulated, false, sizeof(mLineBufferPopulated));
+        memset(mLineBufferPopulated, (unsigned char)false, sizeof(mLineBufferPopulated));
 
-        int lineNumber;
-        char* pPos = ExtractLineNumber(lineNumber);
-        memset(mLineBuffer, Blank, pPos - mLineBuffer);
+        BlankLineStart(lineEntry);
 
         ExtractInverseCharacters();
         ExtractEscapeCharacters();
@@ -175,7 +284,28 @@ void IBasicLoader::ProcessLine(string line, int& addressOffset, bool tokeniseRem
 
         ExtractSingleCharacters(discardRedundantSpaces);
 
-        OutputLine(lineNumber, addressOffset);
+        OutputLine(lineEntry.lineNumber, addressOffset);
+}
+
+void IBasicLoader::BlankLineStart(LineEntry lineEntry)
+{
+        if (lineEntry.lineNumberLength > 0)
+        {
+                //Blank out line number characters
+                memset(mLineBuffer, Blank, lineEntry.lineNumberLength);
+        }
+        else
+        {
+                // Blank out leading spaces when there is no line number
+                int i = 0;
+                while ((mLineBuffer[i] == ' ') || (mLineBuffer[i] == '\t'))
+                {
+                        mLineBuffer[i] = Blank;
+                        i++;
+                }
+
+                mLineBuffer[--i] = ' ';
+        }
 }
 
 void IBasicLoader::ExtractSingleCharacters(bool discardRedundantSpaces)
@@ -465,12 +595,15 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
 
                         if (tokenFound)
                         {
-                                int start = tokenBeginsWithSpace? 1 : 0;
-                                int end = tokenEndsWithSpace ? lenToken - 1 : lenToken;
+                                int startOffset = tokenBeginsWithSpace? 1 : 0;
+                                int endOffset = tokenEndsWithSpace ? lenToken - 1 : lenToken;
 
-                                // Blank the token apart from the leading and/or trailing spaces, which allows
-                                // supporting suppressed spaces between tokens
-                                for (int b = start; b < end; b++)
+                                unsigned char* pStartToken = pMatch + startOffset + 1;
+                                unsigned char* pAfterToken = pMatch + lenToken;
+
+                                // Blank the token apart from the leading and/or trailing spaces,
+                                // which allows supporting suppressed spaces between tokens
+                                for (int b = startOffset; b < endOffset; b++)
                                 {
                                         *(pMatch + b) = Blank;
                                 }
@@ -482,12 +615,123 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                                         mLineBuffer[offset + b] = Blank;
                                 }
 
-                                mLineBufferOutput[offset + start] = tokenCode;
-                                mLineBufferPopulated[offset + start] = true;
+                                int outputIndex = offset + startOffset;
+
+                                mLineBufferOutput[outputIndex] = tokenCode;
+                                mLineBufferPopulated[outputIndex] = true;
+
+                                if (TokenSupportsLineNumber(tokenCode))
+                                {
+                                        HandleTokenLineNumber(pStartToken, pAfterToken, outputIndex);
+                                }
                         }
                 }
                 while (tokenFound);
         }
 }
 
+void IBasicLoader::HandleTokenLineNumber(unsigned char* pStartToken, unsigned char* pLabelSearch, int outputIndex)
+{
+        int spaceCount = 0;
+
+        while (*pLabelSearch == ' ')
+        {
+                pLabelSearch++;
+                spaceCount++;
+        }
+
+        if (*pLabelSearch != '@')
+        {
+                return;
+        }
+
+        string label = ExtractLabel(pLabelSearch);
+        int labelLength = label.length();
+
+        int lineEntryIndex = FindLabelDetails(label);
+
+        ostringstream lineNum;
+        int lineNumber = mLines[lineEntryIndex].lineNumber;
+        lineNum << lineNumber;
+        string ln = lineNum.str();
+        const char* pLineNumber = ln.c_str();
+
+        int tokenOffset = pStartToken - mLineBufferTokenised;
+        int labelOffset = pLabelSearch - mLineBufferTokenised;
+
+        unsigned char* pLineBuffer = mLineBuffer + tokenOffset;
+        bool* pBufferPopulated = mLineBufferPopulated + tokenOffset;
+
+        int lineNumberLength = strlen(pLineNumber);
+        for (int n = 0; n < lineNumberLength; n++)
+        {
+                unsigned char lineNumberDigit = pLineNumber[n];
+                pLineBuffer[n] = lineNumberDigit;
+        }
+
+        pLineBuffer += lineNumberLength;
+        memset(pLineBuffer, ' ', spaceCount);
+
+        memset(pBufferPopulated, (unsigned char)true, lineNumberLength + spaceCount);
+
+        int blankLength = (pLabelSearch + spaceCount + labelLength) - pStartToken;
+        memset(mLineBufferTokenised + tokenOffset, Blank, blankLength);
+
+        memset(mLineBufferStrings + labelOffset, Blank, labelLength);
+
+        blankLength = (pLabelSearch + labelLength - lineNumberLength) - pStartToken;
+        memset(pLineBuffer + spaceCount, Blank, blankLength);
+}
+
+string IBasicLoader::ExtractLabel(unsigned char* pLabelSearch)
+{
+        bool endOfLabel;
+        string label;
+
+        label += *pLabelSearch;
+
+        do
+        {
+                pLabelSearch++;
+
+                unsigned char nextChr = *pLabelSearch;
+
+                if ((nextChr == '\0') || (nextChr == ' '))
+                {
+                        endOfLabel = true;
+                }
+                else
+                {
+                        label += nextChr;
+                }
+        }
+        while (!endOfLabel);
+
+        if (label.length() == 1)
+        {
+                throw runtime_error("Invalid label");
+        }
+
+        while (*pLabelSearch == ' ')
+        {
+                pLabelSearch++;
+        }
+
+        return label;
+}
+
+int IBasicLoader::FindLabelDetails(string& label)
+{
+        int numberOfLines = mLines.size();
+
+        for (int i = 0; i < numberOfLines; i++)
+        {
+                if (mLines[i].lineLabel == label)
+                {
+                        return i;
+                }
+        }
+
+        throw runtime_error("Unknown label");
+}
 

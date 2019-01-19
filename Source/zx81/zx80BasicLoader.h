@@ -29,6 +29,10 @@ class zx80BasicLoader : public IBasicLoader
 {
 private:
         static const unsigned char Newline = 0x76;
+        static const unsigned char List = 0xE6;
+        static const unsigned char Goto = 0xEC;
+        static const unsigned char Run = 0xF7;
+        static const unsigned char Gosub = 0xFB;
         static const unsigned char Escape = '\\';
 
         void OutputSystemVariables(int& addressOffset);
@@ -41,6 +45,7 @@ private:
         virtual void ExtractInverseCharacters();
         virtual unsigned char GetEscapeCharacter();
         virtual bool SupportUppercaseOnly();
+        virtual bool TokenSupportsLineNumber(unsigned char chr);
 };
 
 #endif

@@ -25,6 +25,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
 {
         string result;
 
+        mProgramLength = 0;
         mEscapeChar = GetEscapeCharacter();
 
         try
@@ -33,18 +34,23 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
         }
         catch (exception& ex)
         {
-                Application->MessageBox(ex.what(), "Load BASIC Listing", MB_OK);
+                stringstream msg;
+                msg << ex.what() << endl;
+                msg << endl;
+                int index = mLines.size() - 1;
+                bool truncateLine = (mLines[index].line.length() > 256);
+                int displayLen = truncateLine ? 256: mLines[index].line.length();
+                msg << mLines[index].line.substr(0, displayLen);
+                if (truncateLine) msg << "...";
+                Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK);
                 return;
         }
 
-        mProgramLength = 0;
         memset(mProgramData, 0, sizeof(mProgramData));
 
         int addressOffset = 0x0000;
         OutputStartOfProgramData(filename, addressOffset);
 
-        mCharacterCodeEscape = GetEscapeCharacter();
-        
         int numberOfLines = mLines.size();
 
         for (int i = 0; i < numberOfLines; i++)
@@ -88,29 +94,27 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
 
         string line;
         int nextLineNumber = 1;
-        
+        LineEntry entry;
+                        
         try
         {
                 while (ReadLine(basicFile, line))
                 {
-                        if (nextLineNumber > 16384)
-                        {
-                                throw out_of_range("Line number out of range");
-                        }
-
-                        line = line.substr(0, line.length()-1);
-
-                        LineEntry entry;
                         entry.line = line;
                         entry.lineNumberLength = 0;
                         entry.lineNumber = -1;
                         entry.lineLabel = "";
 
+                        if (nextLineNumber > 16384)
+                        {
+                                throw out_of_range("Line number out of range");
+                        }
+
                         if (GetLineNumber(entry))
                         {
                                 if (entry.lineNumber < nextLineNumber)
                                 {
-                                        throw runtime_error("Line number lower than previous line number");
+                                        throw runtime_error("Line number not greater than previous line number");
                                 }
                                 nextLineNumber = entry.lineNumber + 1;
                         }
@@ -129,8 +133,10 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
         }
         catch (exception& ex)
         {
+                mLines.push_back(entry);
+
                 stringstream msg;
-                msg << "Unable to read line " << (mLines.size() + 1) << " - " << ex.what();
+                msg << "Error reading line " << (mLines.size() + 1) << " - " << ex.what();
                 throw runtime_error(msg.str().c_str());
         }
 }
@@ -159,18 +165,23 @@ bool IBasicLoader::GetLineNumber(LineEntry& lineEntry)
 
 bool IBasicLoader::GetLineLabel(LineEntry& lineEntry)
 {
-        if (lineEntry.line[0] != '@')
+        if (lineEntry.line[1] != '@')
         {
                 return false;
         }
 
         size_t endLabel = lineEntry.line.find_first_of(":");
-        if ((endLabel == string::npos) || (endLabel == 1))
+        if (endLabel == string::npos)
         {
                 return false;
         }
 
-        lineEntry.lineLabel = lineEntry.line.substr(0, endLabel);
+        if (endLabel == 2)
+        {
+                throw runtime_error("Invalid label");
+        }
+
+        lineEntry.lineLabel = lineEntry.line.substr(1, endLabel-1);
         
         return true;
 }
@@ -178,7 +189,7 @@ bool IBasicLoader::GetLineLabel(LineEntry& lineEntry)
 bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
 {
         size_t i;
-        line = "";
+        line = " ";
         string inputLine;
 
         do
@@ -192,7 +203,7 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
                         }
 
                         // Remove the trailing '\0'
-                        inputLine = inputLine.substr(0, line.length()-1);
+                        inputLine = inputLine.substr(0, inputLine.length()-1);
 
                         i = inputLine.find_first_not_of(" \t");
                 }
@@ -205,7 +216,7 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
                 }
                 line += inputLine.substr(0, len);
         }
-        while (inputLine[inputLine.length()-2] == mEscapeChar);
+        while (inputLine[inputLine.length()-1] == mEscapeChar);
 
         return true;
 }
@@ -497,7 +508,7 @@ void IBasicLoader::ExtractEscapeCharacters()
 
         while (*pPos != '\0')
         {
-                if (*pPos == mCharacterCodeEscape)
+                if (*pPos == mEscapeChar)
                 {
                         *pPos = Blank;
 

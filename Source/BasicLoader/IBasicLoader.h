@@ -64,9 +64,8 @@ protected:
         unsigned char mLineBufferStrings[maxLineLength];
         bool mLineBufferPopulated[maxLineLength];
         unsigned char mProgramData[maxProgramLength];
-        unsigned char mCharacterCodeEscape;
-        void BlankLineStart(LineEntry lineEntry);
 
+        void BlankLineStart(LineEntry lineEntry);
         void OutputByte(int& addressOffset, unsigned char byte);
         void OutputWord(int& addressOffset, int word);
         void ChangeWord(int addressOffset, int word);

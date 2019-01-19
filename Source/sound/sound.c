@@ -578,7 +578,7 @@ void sound_beeper(int on)
 
         if(!sound_enabled) return;
 
-        val=(on?128+VolumeLevel[3]:128-+VolumeLevel[3]);
+        val=(on?128+VolumeLevel[3]:128-VolumeLevel[3]);
 
         if(val==sound_oldval_orig) return;
 

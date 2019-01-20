@@ -118,6 +118,8 @@ void zx80BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
         {
                 tokens.clear();
 
+                tokens[219] = "NOT(";
+                
                 tokens[236] = " GOTO ";
                 tokens[239] = " RAND ";
                 tokens[249] = " CONT ";

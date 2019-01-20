@@ -598,9 +598,9 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 {
                         pMatch = strstr((char*)mLineBufferTokenised, (char*)pToken);
                         bool matchFound = (pMatch != NULL);
-                        
-                        bool startOk = matchFound && (tokenBeginsWithSpace || !tokenBeginsWithAlpha || (!tokenBeginsWithSpace && !isalpha(pMatch[-1])));
-                        bool endOk = matchFound && (tokenEndsWithSpace || !tokenEndsWithAlpha || (!tokenEndsWithSpace && !isalpha(pMatch[lenToken])));
+
+                        bool startOk = matchFound && (tokenBeginsWithSpace || !tokenBeginsWithAlpha || (!tokenBeginsWithSpace && !isalnum(pMatch[-1])));
+                        bool endOk = matchFound && (tokenEndsWithSpace || !tokenEndsWithAlpha || (!tokenEndsWithSpace && !isalnum(pMatch[lenToken])));
 
                         tokenFound = matchFound && startOk && endOk;
 

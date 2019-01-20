@@ -192,14 +192,44 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
         {
                 tokens.clear();
 
-                tokens[232] = " CONT ";
-                tokens[236] = " GOTO ";
-                tokens[237] = " GOSUB ";
-                tokens[249] = " RAND ";
+                tokens[168] = "FN(";
+                tokens[169] = "POINT(";
+                tokens[170] = "SCREEN$(";
+                tokens[171] = "ATTR(";
+                tokens[172] = "AT(";
+                tokens[173] = "TAB(";
+                tokens[174] = "VAL$(";
+                tokens[175] = "CODE(";
+                tokens[176] = "VAL(";
+                tokens[177] = "LEN(";
+                tokens[178] = "SIN(";
+                tokens[179] = "COS(";
+                tokens[180] = "TAN(";
+                tokens[181] = "ASN(";
+                tokens[182] = "ACS(";
+                tokens[183] = "ATN(";
+                tokens[184] = "LN(";
+                tokens[185] = "EXP(";
+                tokens[186] = "INT(";
+                tokens[187] = "SQR(";
+                tokens[188] = "SGN(";
+                tokens[189] = "ABS(";
+                tokens[190] = "PEEK(";
+                tokens[191] = "IN(";
+                tokens[192] = "USR(";
+                tokens[193] = "STR$(";
+                tokens[194] = "CHR$(";
+                tokens[195] = "NOT(";
+                tokens[196] = "BIN(";
 
                 tokens[206] = " DEFFN ";
                 tokens[211] = " OPEN#";
                 tokens[212] = " CLOSE#";
+
+                tokens[232] = " CONT ";
+                tokens[236] = " GOTO ";
+                tokens[237] = " GOSUB ";
+                tokens[249] = " RAND ";
 
                 DoTokenise(tokens);
 

@@ -176,6 +176,29 @@ void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
         {
                 tokens.clear();
 
+                tokens[193] = "AT(";
+                tokens[194] = "TAB(";
+                tokens[196] = "CODE(";
+                tokens[197] = "VAL(";
+                tokens[198] = "LEN(";
+                tokens[199] = "SIN(";
+                tokens[200] = "COS(";
+                tokens[201] = "TAN(";
+                tokens[202] = "ASN(";
+                tokens[203] = "ACS(";
+                tokens[204] = "ATN(";
+                tokens[205] = "LN(";
+                tokens[206] = "EXP(";
+                tokens[207] = "INT(";
+                tokens[208] = "SQR(";
+                tokens[209] = "SGN(";
+                tokens[210] = "ABS(";
+                tokens[211] = "PEEK(";
+                tokens[212] = "USR(";
+                tokens[213] = "STR$(";
+                tokens[214] = "CHR$(";
+                tokens[215] = "NOT(";
+
                 tokens[232] = " CONTINUE ";
                 tokens[236] = " GO TO ";
                 tokens[237] = " GO SUB ";

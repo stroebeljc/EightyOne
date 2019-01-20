@@ -21,7 +21,7 @@
 #include <sstream>
 #include <cctype>
 
-void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
+void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling)
 {
         string result;
 
@@ -59,7 +59,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                 {
                         if (mLines[i].lineLabel == "")
                         {
-                                ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces);
+                                ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling);
                         }
                 }
                 catch (exception& ex)
@@ -252,7 +252,7 @@ int IBasicLoader::ProgramLength()
         return mProgramLength;
 }
 
-void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces)
+void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling)
 {
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
         strcpy((char*)mLineBuffer, lineEntry.line.c_str());
@@ -291,7 +291,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
                 MaskOutRemContents(mLineBufferTokenised);
         }
 
-        ExtractTokens();
+        ExtractTokens(acceptAlternateKeywordSpelling);
 
         ExtractSingleCharacters(discardRedundantSpaces);
 

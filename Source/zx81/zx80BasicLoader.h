@@ -38,7 +38,7 @@ private:
         void OutputSystemVariables(int& addressOffset);
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2);
         virtual unsigned char AsciiToZX(unsigned char ascii);
-        virtual void ExtractTokens();
+        virtual void ExtractTokens(bool acceptAlternateKeywordSpelling);
         virtual void OutputLine(int lineNumber, int& addressOffset);
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset);
         virtual void OutputEndOfProgramData(int& addressOffset);

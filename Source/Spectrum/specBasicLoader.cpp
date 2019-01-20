@@ -90,7 +90,7 @@ void specBasicLoader::OutputEndOfProgramData(int& addressOffset)
         ChangeWord(21, dataBlockLength + DataBlockLength);
 }
 
-void specBasicLoader::ExtractTokens()
+void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 {
         map<unsigned char, string> tokens;
 
@@ -187,6 +187,28 @@ void specBasicLoader::ExtractTokens()
         tokens[255] = " COPY ";
 
         DoTokenise(tokens);
+
+        if (acceptAlternateKeywordSpelling)
+        {
+                tokens.clear();
+
+                tokens[232] = " CONT ";
+                tokens[236] = " GOTO ";
+                tokens[237] = " GOSUB ";
+                tokens[249] = " RAND ";
+
+                tokens[206] = " DEFFN ";
+                tokens[211] = " OPEN#";
+                tokens[212] = " CLOSE#";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[249] = " RANDOMISE ";
+
+                DoTokenise(tokens);
+        }
 }
 
 void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)

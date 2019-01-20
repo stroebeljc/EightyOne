@@ -238,8 +238,9 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 bool tokeniseRemContents = LoadBasicListingOptionsForm->GetTokeniseRemContents();
                 bool tokeniseStrings = LoadBasicListingOptionsForm->GetTokeniseStringContents();
                 bool discardRedundantSpaces = LoadBasicListingOptionsForm->GetDiscardRedundantSpaces();
+                bool acceptAlternateKeywordSpelling = LoadBasicListingOptionsForm->GetAcceptAlternateKeywordSpelling();
 
-                loader->LoadBasicFile(Filename, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces);
+                loader->LoadBasicFile(Filename, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling);
                 int programLength = loader->ProgramLength();
                 if (programLength > 0)
                 {

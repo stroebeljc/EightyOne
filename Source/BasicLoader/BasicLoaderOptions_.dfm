@@ -4,7 +4,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Load BASIC Listing Options'
-  ClientHeight = 147
+  ClientHeight = 170
   ClientWidth = 239
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -80,6 +80,13 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 13
     Caption = 'Discard redundant spaces'
   end
+  object Label5: TLabel
+    Left = 8
+    Top = 105
+    Width = 168
+    Height = 13
+    Caption = 'Accept Alternate Keyword Spellings'
+  end
   object cboTokeniseRemContents: TCheckBox
     Left = 200
     Top = 32
@@ -98,7 +105,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   end
   object btnOK: TButton
     Left = 84
-    Top = 112
+    Top = 136
     Width = 68
     Height = 25
     Caption = 'OK'
@@ -113,5 +120,13 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 17
     Alignment = taLeftJustify
     TabOrder = 2
+  end
+  object cboAcceptAlternateKeywordSpelling: TCheckBox
+    Left = 208
+    Top = 104
+    Width = 17
+    Height = 17
+    Alignment = taLeftJustify
+    TabOrder = 4
   end
 end

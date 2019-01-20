@@ -79,7 +79,7 @@ void zx80BasicLoader::OutputEndOfProgramData(int& addressOffset)
         ChangeWord(destOffset, elineAddress);
 }
 
-void zx80BasicLoader::ExtractTokens()
+void zx80BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 {
         map<unsigned char, string> tokens;
 
@@ -113,6 +113,24 @@ void zx80BasicLoader::ExtractTokens()
         tokens[254] = " REM ";
 
         DoTokenise(tokens);
+
+        if (acceptAlternateKeywordSpelling)
+        {
+                tokens.clear();
+
+                tokens[236] = " GOTO ";
+                tokens[239] = " RAND ";
+                tokens[249] = " CONT ";
+                tokens[251] = " GOSUB ";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[239] = " RANDOMIZE ";
+
+                DoTokenise(tokens);
+        }
 }
 
 void zx80BasicLoader::OutputLine(int lineNumber, int& addressOffset)

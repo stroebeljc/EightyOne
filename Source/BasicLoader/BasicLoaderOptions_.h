@@ -21,12 +21,15 @@ __published:	// IDE-managed Components
         TLabel *Label3;
         TCheckBox *cboDiscardRedundantSpaces;
         TLabel *Label4;
+        TCheckBox *cboAcceptAlternateKeywordSpelling;
+        TLabel *Label5;
 private:	// User declarations
 public:		// User declarations
         __fastcall TLoadBasicListingOptionsForm(TComponent* Owner);
         bool GetTokeniseRemContents();
         bool GetTokeniseStringContents();
         bool GetDiscardRedundantSpaces();
+        bool GetAcceptAlternateKeywordSpelling();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

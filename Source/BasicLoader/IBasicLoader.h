@@ -47,7 +47,7 @@ private:
         void ReplaceLabel();
 
 public:
-        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
+        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling);
         unsigned char* ProgramData();
         int ProgramLength();
 
@@ -69,7 +69,7 @@ protected:
         void OutputByte(int& addressOffset, unsigned char byte);
         void OutputWord(int& addressOffset, int word);
         void ChangeWord(int addressOffset, int word);
-        void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces);
+        void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling);
         void MaskOutRemContents(unsigned char* buffer);
         unsigned char* ExtractLineNumber(int& lineNumber);
         void DoTokenise(map<unsigned char, string> tokens);
@@ -86,7 +86,7 @@ protected:
 
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2) { return '\0'; }
         virtual unsigned char AsciiToZX(unsigned char ascii) { return '\0'; }
-        virtual void ExtractTokens() {}
+        virtual void ExtractTokens(bool acceptAlternateKeywordSpelling) {}
         virtual void OutputLine(int lineNumber, int& address) {}
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset) {}
         virtual void OutputEndOfProgramData(int& addressOffset) {}

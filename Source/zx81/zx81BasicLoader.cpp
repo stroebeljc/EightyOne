@@ -100,7 +100,7 @@ void zx81BasicLoader::OutputEndOfProgramData(int& addressOffset)
         ChangeWord(nxtlinOffset, varsAddress);
 }
 
-void zx81BasicLoader::ExtractTokens()
+void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 {
         map<unsigned char, string> tokens;
 
@@ -171,6 +171,24 @@ void zx81BasicLoader::ExtractTokens()
         tokens[255] = " COPY ";
       
         DoTokenise(tokens);
+
+        if (acceptAlternateKeywordSpelling)
+        {
+                tokens.clear();
+
+                tokens[232] = " CONTINUE ";
+                tokens[236] = " GO TO ";
+                tokens[237] = " GO SUB ";
+                tokens[249] = " RANDOMISE ";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[249] = " RANDOMIZE ";
+
+                DoTokenise(tokens);
+        }
 }
 
 void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset)

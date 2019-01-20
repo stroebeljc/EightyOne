@@ -111,7 +111,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 3
+    TabOrder = 4
   end
   object cboDiscardRedundantSpaces: TCheckBox
     Left = 200
@@ -127,6 +127,6 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Width = 17
     Height = 17
     Alignment = taLeftJustify
-    TabOrder = 4
+    TabOrder = 3
   end
 end

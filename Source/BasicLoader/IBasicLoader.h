@@ -35,12 +35,13 @@ private:
                 string lineLabel;
                 int lineNumber;
                 int lineNumberLength;
+                int sourceLine;
         };
 
         unsigned char mEscapeChar;
 
         unsigned char ConvertFromHexChar(unsigned char chr);
-        bool ReadLine(ifstream& basicFile, string& line);
+        bool ReadLine(ifstream& basicFile, string& line, int& sourceLine);
         void ReadBasicListingFile(AnsiString filename);
         bool GetLineNumber(LineEntry& lineEntry);
         bool GetLineLabel(LineEntry& lineEntry);

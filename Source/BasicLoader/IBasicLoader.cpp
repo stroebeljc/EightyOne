@@ -65,7 +65,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                 catch (exception& ex)
                 {
                         stringstream msg;
-                        msg << "Unable to parse line " << (i + 1) << " - " << ex.what() << endl;
+                        msg << "Unable to parse line " << mLines[i].sourceLine << " - " << ex.what() << endl;
                         msg << endl;
                         bool truncateLine = (mLines[i].line.length() > 256);
                         int displayLen = truncateLine ? 256: mLines[i].line.length();
@@ -95,15 +95,17 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
         string line;
         int nextLineNumber = 1;
         LineEntry entry;
-                        
+        int sourceLine = 0;
+
         try
         {
-                while (ReadLine(basicFile, line))
+                while (ReadLine(basicFile, line, sourceLine))
                 {
                         entry.line = line;
                         entry.lineNumberLength = 0;
                         entry.lineNumber = -1;
                         entry.lineLabel = "";
+                        entry.sourceLine = sourceLine;
 
                         if (nextLineNumber > 16384)
                         {
@@ -136,7 +138,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                 mLines.push_back(entry);
 
                 stringstream msg;
-                msg << "Error reading line " << (mLines.size() + 1) << " - " << ex.what();
+                msg << "Error reading line " << mLines[mLines.size()-1].sourceLine << " - " << ex.what();
                 throw runtime_error(msg.str().c_str());
         }
 }
@@ -186,7 +188,7 @@ bool IBasicLoader::GetLineLabel(LineEntry& lineEntry)
         return true;
 }
 
-bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
+bool IBasicLoader::ReadLine(ifstream& basicFile, string& line, int& sourceLine)
 {
         size_t i;
         line = " ";
@@ -196,6 +198,8 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line)
         {
                 do
                 {
+                        sourceLine++;
+
                         bool lineAvailable = (getline(basicFile, inputLine) != NULL);
                         if (!lineAvailable)
                         {

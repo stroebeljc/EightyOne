@@ -1,6 +1,6 @@
 object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   Left = 201
-  Top = 335
+  Top = 227
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Load BASIC Listing Options'
@@ -83,9 +83,9 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   object Label5: TLabel
     Left = 8
     Top = 105
-    Width = 168
+    Width = 164
     Height = 13
-    Caption = 'Accept Alternate Keyword Spellings'
+    Caption = 'Accept alternate keyword spellings'
   end
   object cboTokeniseRemContents: TCheckBox
     Left = 200

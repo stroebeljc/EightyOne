@@ -57,10 +57,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
         {
                 try
                 {
-                        if (mLines[i].lineLabel == "")
-                        {
-                                ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling);
-                        }
+                        ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling);
                 }
                 catch (exception& ex)
                 {
@@ -184,7 +181,7 @@ bool IBasicLoader::GetLineLabel(LineEntry& lineEntry)
         }
 
         lineEntry.lineLabel = lineEntry.line.substr(1, endLabel-1);
-        
+
         return true;
 }
 
@@ -259,7 +256,8 @@ int IBasicLoader::ProgramLength()
 void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling)
 {
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
-        strcpy((char*)mLineBuffer, lineEntry.line.c_str());
+        int offset = lineEntry.lineLabel.length() > 0 ? lineEntry.lineLabel.length() + 2 : 0;
+        strcpy((char*)mLineBuffer, lineEntry.line.substr(offset).c_str());
 
         memset(mLineBufferOutput, 0, sizeof(mLineBufferOutput));
         int i = strlen((char*)mLineBuffer);

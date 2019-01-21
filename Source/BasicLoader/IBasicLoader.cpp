@@ -272,12 +272,23 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
         memset(mLineBufferTokenised, 0, sizeof(mLineBufferTokenised));
         strcpy((char*)mLineBufferTokenised, (char*)mLineBuffer);
 
+        if (acceptAlternateKeywordSpelling)
+        {
+                i = 0;
+                while (mLineBufferTokenised[i] != '\0')
+                {
+                        mLineBufferTokenised[i] = toupper(mLineBufferTokenised[i]);
+                        i++;
+                }
+        }
+        
         // Append a space at the end of the line to ensure a token without a trailing space is detected
         i = strlen((char*)mLineBufferTokenised);
         mLineBufferTokenised[i] = ' ';
 
         memset(mLineBufferStrings, 0, sizeof(mLineBufferStrings));
         strcpy((char*)mLineBufferStrings, (char*)mLineBufferTokenised);
+
         MaskOutStrings(mLineBufferStrings);
         MaskOutRemContents(mLineBufferStrings);
 
@@ -591,8 +602,14 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
 
                 bool tokenBeginsWithSpace = (pToken[0] == ' ');
                 bool tokenEndsWithSpace = (pToken[lenToken-1] == ' ');
+                bool tokenEndsWithBracket = (pToken[lenToken-1] == '(');
                 bool tokenBeginsWithAlpha = isalpha(pToken[0]);
                 bool tokenEndsWithAlpha = isalpha(pToken[lenToken-1]);
+
+                if (tokenEndsWithBracket)
+                {
+                        lenToken--;
+                }
 
                 do
                 {

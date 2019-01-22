@@ -38,7 +38,7 @@ private:
                 int sourceLine;
         };
 
-        unsigned char mEscapeChar;
+        unsigned char mEscapeCharacter;
 
         unsigned char ConvertFromHexChar(unsigned char chr);
         bool ReadLine(ifstream& basicFile, string& line, int& sourceLine);
@@ -46,6 +46,7 @@ private:
         bool GetLineNumber(LineEntry& lineEntry);
         bool GetLineLabel(LineEntry& lineEntry);
         void ReplaceLabel();
+        unsigned char GetEscapeCharacter() { return '\\'; }
 
 public:
         void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling);
@@ -80,7 +81,6 @@ protected:
         void MaskOutStrings(unsigned char* buffer);
         void ExtractSingleCharacters(bool discardRedundantSpaces);
         void OutputEmbeddedNumber(int& index, int& addressOffset);
-        unsigned char DecodeCharacter(unsigned char** ppPos);
         void HandleTokenLineNumber(unsigned char* pStartToken, unsigned char* pLabelSearch, int outputIndex);
         int FindLabelDetails(string& label);
         string ExtractLabel(unsigned char* pLabelSearch);
@@ -94,7 +94,6 @@ protected:
         virtual bool SupportUppercaseOnly() { return false; }
         virtual void ExtractInverseCharacters() {}
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr) { return false; }
-        virtual unsigned char GetEscapeCharacter() { return '\0'; }
         virtual void ExtractDoubleQuoteCharacters() {}
         virtual bool SupportFloatingPointNumbers() { return false; }
         virtual unsigned char GetEmbbededNumberMark() { return '\0'; }

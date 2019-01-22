@@ -503,11 +503,6 @@ void zx81BasicLoader::ExtractDoubleQuoteCharacters()
         }
 }
 
-unsigned char zx81BasicLoader::GetEscapeCharacter()
-{
-        return Escape;
-}
-
 unsigned char zx81BasicLoader::GetEmbbededNumberMark()
 {
         return Number;

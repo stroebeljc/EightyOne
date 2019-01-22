@@ -310,6 +310,12 @@ void __fastcall TBasicLister::ScrollBarChange(TObject *Sender)
 
 void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 {
+        Refresh();
+}
+//---------------------------------------------------------------------------
+
+void TBasicLister::Refresh()
+{
         ClearBitmap();
         Invalidate();
 

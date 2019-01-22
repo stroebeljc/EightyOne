@@ -61,6 +61,7 @@ private:
         bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool& withinQuotes, bool& withinRem);
         AnsiString FormatLineNumber(int lineNumber);
         COLORREF GetBackgroundColour();
+        unsigned char GetEscapeCharacter() { return '\\'; }
 
 public:
         IBasicLister();
@@ -99,8 +100,7 @@ protected:
         virtual inline bool CustomColoursSupported() { return false; }
         virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
-        virtual unsigned char GetEscapeCharacter() { return '\0'; }
-        
+
         int GetKeywordLength(unsigned char code);
 
         std::string mKeyword[256];

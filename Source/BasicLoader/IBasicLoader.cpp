@@ -26,7 +26,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
         string result;
 
         mProgramLength = 0;
-        mEscapeChar = GetEscapeCharacter();
+        mEscapeCharacter = GetEscapeCharacter();
 
         try
         {
@@ -211,13 +211,13 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line, int& sourceLine)
                 while ((i == string::npos) || (inputLine[i] == '\0') || (inputLine[i] == '#'));
 
                 int len = inputLine.length();
-                if (inputLine[len-1] == mEscapeChar)
+                if (inputLine[len-1] == mEscapeCharacter)
                 {
                         len--;
                 }
                 line += inputLine.substr(0, len);
         }
-        while (inputLine[inputLine.length()-1] == mEscapeChar);
+        while (inputLine[inputLine.length()-1] == mEscapeCharacter);
 
         return true;
 }
@@ -462,29 +462,6 @@ unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
         return pCommand;
 }
 
-unsigned char IBasicLoader::DecodeCharacter(unsigned char** ppPos)
-{
-        unsigned char zxChr;
-
-        unsigned char* pPos = *ppPos;
-        
-        unsigned char chr1 = *(++pPos);
-        unsigned char chr2 = *(++pPos);
-
-        if (isxdigit(chr1) && isxdigit(chr2))
-        {
-                zxChr = ConvertFromHexChars(chr1, chr2);
-        }
-        else
-        {
-                zxChr = DecodeGraphic(chr1, chr2);
-        }
-
-        *ppPos = pPos;
-        
-        return zxChr;
-}
-
 bool IBasicLoader::StartOfNumber(int index)
 {
         return !isalpha(mLineBuffer[index-1]) && ((mLineBuffer[index] == '.') || isdigit(mLineBuffer[index]));
@@ -521,7 +498,7 @@ void IBasicLoader::ExtractEscapeCharacters()
 
         while (*pPos != '\0')
         {
-                if (*pPos == mEscapeChar)
+                if (*pPos == mEscapeCharacter)
                 {
                         *pPos = Blank;
 

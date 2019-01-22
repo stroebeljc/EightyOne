@@ -43,7 +43,6 @@ private:
         virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset);
         virtual void OutputEndOfProgramData(int& addressOffset);
         virtual void ExtractInverseCharacters();
-        virtual unsigned char GetEscapeCharacter();
         virtual bool SupportUppercaseOnly();
         virtual bool TokenSupportsLineNumber(unsigned char chr);
 };

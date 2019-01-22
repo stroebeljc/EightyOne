@@ -40,7 +40,6 @@ private:
         static const unsigned char LetterA = 38;
         static const unsigned char Newline = 118;
         static const unsigned char Number = 126;
-        static const unsigned char Escape = '\\';
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
@@ -49,6 +48,5 @@ private:
         virtual inline unsigned char GetLineEndingCode();
         virtual std::string GetKeywords();
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
-        virtual unsigned char GetEscapeCharacter();
 };
 

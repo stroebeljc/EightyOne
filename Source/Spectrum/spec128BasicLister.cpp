@@ -50,14 +50,13 @@ spec128BasicLister::spec128BasicLister()
 std::string spec128BasicLister::GetKeywords()
 {
         // Graphics encoding based upon the scheme used by ZXText2P: http://freestuff.grok.co.uk/zxtext2p/index.html
-        // Instead of being prefixed with '\', the prefix '¬' is used since '\' is a symbol present in the ZX Spectrum
-        // character set. UDGs are prefixed with '¬_' followed by the letter. Embedded control codes are prefixed by '¬'
-        // followed by the value of control code as a two digit hexadecimal number.
-        std::string keywords = "¬00¦¬01¦¬02¦¬03¦¬04¦¬05¦¬06¦¬07¦¬08¦¬09¦¬0A¦¬0B¦¬0C¦¬0D¦¬0E¦¬0F¦¬10¦¬11¦¬12¦¬13¦¬14¦¬15¦¬16¦¬17¦¬18¦¬19¦¬1A¦¬1B¦¬1C¦¬1D¦¬1E¦¬1F¦"
+        // UDGs are prefixed with '\_' followed by the letter. Embedded control codes are prefixed by '\' followed by
+        // the value of control code as a two digit hexadecimal number.
+        std::string keywords = "\\00¦\\01¦\\02¦\\03¦\\04¦\\05¦\\06¦\\07¦\\08¦\\09¦\\0A¦\\0B¦\\0C¦\\0D¦\\0E¦\\0F¦\\10¦\\11¦\\12¦\\13¦\\14¦\\15¦\\16¦\\17¦\\18¦\\19¦\\1A¦\\1B¦\\1C¦\\1D¦\\1E¦\\1F¦"
                                " ¦!¦\"¦#¦$¦%¦&¦'¦(¦)¦*¦+¦,¦-¦.¦/¦0¦1¦2¦3¦4¦5¦6¦7¦8¦9¦:¦;¦<¦=¦>¦?¦"
                                "@¦A¦B¦C¦D¦E¦F¦G¦H¦I¦J¦K¦L¦M¦N¦O¦P¦Q¦R¦S¦T¦U¦V¦W¦X¦Y¦Z¦[¦\\¦]¦^¦_¦"
-                               "£¦a¦b¦c¦d¦e¦f¦g¦h¦i¦j¦k¦l¦m¦n¦o¦p¦q¦r¦s¦t¦u¦v¦w¦x¦y¦z¦{¦|¦}¦~¦\xA9¦"
-                               "¬  ¦¬ '¦¬' ¦¬''¦¬ .¦¬ :¦¬'.¦¬':¦¬. ¦¬.'¦¬: ¦¬:'¦¬..¦¬.:¦¬:.¦¬::¦¬_A¦¬_B¦¬_C¦¬_D¦¬_E¦¬_F¦¬_G¦¬_H¦¬_I¦¬_J¦¬_K¦¬_L¦¬_M¦¬_N¦¬_O¦¬_P¦¬_Q¦¬_R¦¬_S¦"
+                               "£¦a¦b¦c¦d¦e¦f¦g¦h¦i¦j¦k¦l¦m¦n¦o¦p¦q¦r¦s¦t¦u¦v¦w¦x¦y¦z¦{¦|¦}¦~¦\\xA9¦"
+                               "\\  ¦\\ '¦\\' ¦\\''¦\\ .¦\\ :¦\\'.¦\\':¦\\. ¦\\.'¦\\: ¦\\:'¦\\..¦\\.:¦\\:.¦\\::¦\\_A¦\\_B¦\\_C¦\\_D¦\\_E¦\\_F¦\\_G¦\\_H¦\\_I¦\\_J¦\\_K¦\\_L¦\\_M¦\\_N¦\\_O¦\\_P¦\\_Q¦\\_R¦\\_S¦"
                                " SPECTRUM ¦ PLAY ¦RND¦INKEY$¦PI¦FN ¦POINT ¦SCREEN$ ¦ATTR ¦AT ¦TAB ¦VAL$ ¦CODE ¦VAL ¦LEN ¦SIN ¦COS ¦TAN ¦ASN ¦ACS ¦ATN ¦LN ¦EXP ¦INT ¦"
                                "SQR ¦SGN ¦ABS ¦PEEK ¦IN ¦USR ¦STR$ ¦CHR$ ¦NOT ¦BIN ¦ OR ¦ AND ¦<=¦>=¦<>¦ LINE ¦ THEN ¦ TO ¦ STEP ¦ DEF FN ¦ CAT ¦"
                                " FORMAT ¦ MOVE ¦ ERASE ¦ OPEN #¦ CLOSE #¦ MERGE ¦ VERIFY ¦ BEEP ¦ CIRCLE ¦ INK ¦ PAPER ¦ FLASH ¦ BRIGHT ¦ INVERSE ¦ OVER ¦ OUT ¦"
@@ -183,7 +182,3 @@ AnsiString spec128BasicLister::GetBasicFileExtension()
         return "b82";
 }
 
-unsigned char spec128BasicLister::GetEscapeCharacter()
-{
-        return Escape;
-}

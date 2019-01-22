@@ -1347,6 +1347,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         zx81_stop=initialStopState;
         DebugUpdate();
         LiveMemoryWindow->Reset();
+        BasicLister->Refresh();
 }
 //---------------------------------------------------------------------------
 

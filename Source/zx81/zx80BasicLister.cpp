@@ -193,7 +193,3 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
         return containsMachineCode;
 }
 
-unsigned char zx80BasicLister::GetEscapeCharacter()
-{
-        return Escape;
-}

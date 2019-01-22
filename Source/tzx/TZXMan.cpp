@@ -33,11 +33,12 @@
 #include "Wavload_.h"
 #include "zx81config.h"
 #include "ZipFile_.h"
-#include "BasicLoader/BasicLoader.h"
-#include "zx81/zx80BasicLoader.h"
-#include "zx81/zx81BasicLoader.h"
-#include "spectrum/specBasicLoader.h"
+#include "BasicLoader\BasicLoader.h"
+#include "zx81\zx80BasicLoader.h"
+#include "zx81\zx81BasicLoader.h"
+#include "spectrum\specBasicLoader.h"
 #include "BasicLoaderOptions_.h"
+#include "BasicLister\BasicLister_.h"
 
 #ifndef edt1
 #define edt1 0x480
@@ -272,6 +273,7 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
 
         TZXFile.Stop(false);
         if (OpenDialog->Execute())
+        {
                 for(i=0; i < OpenDialog->Files->Count; i++)
                 {
                         AnsiString filename = OpenDialog->Files->Strings[i];
@@ -287,6 +289,7 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
                         insert=true;
                         TZXFile.CurBlock=TZXFile.Blocks;
                 }
+        }
         UpdateTable(true);
         //Table->Row=1;
         //TZXFile.CurBlock=Table->Row-1;

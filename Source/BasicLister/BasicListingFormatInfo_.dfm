@@ -4,8 +4,8 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Saving BASIC Listing As Text'
-  ClientHeight = 378
-  ClientWidth = 418
+  ClientHeight = 454
+  ClientWidth = 387
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -50,308 +50,146 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object PageControl: TPageControl
+  object Label26: TLabel
+    Left = 8
+    Top = 40
+    Width = 373
+    Height = 39
+    Caption = 
+      'ZX80 and ZX81 inverse characters and ZX80, ZX81 and Spectrum blo' +
+      'ck graphic symbols are encoded in accordance with the scheme. No' +
+      'n-displayable character codes are output as \nn where nn is the ' +
+      'character code expressed'
+    WordWrap = True
+  end
+  object Label27: TLabel
     Left = 8
     Top = 8
-    Width = 401
-    Height = 361
-    ActivePage = TabSheet1
-    TabOrder = 0
-    object TabSheet1: TTabSheet
-      Caption = 'ZX80'
-      object Label1: TLabel
-        Left = 8
-        Top = 8
-        Width = 372
-        Height = 52
-        Caption = 
-          'Inverse characters and graphic symbols are encoded in accordance' +
-          ' with the scheme used by the ZXText2P utility. In addition, non-' +
-          'displayable character codes are output as \nn where nn is the ch' +
-          'aracter code expressed as a 2 digit hexadecimal number.'
-        WordWrap = True
-      end
-      object Label2: TLabel
-        Left = 8
-        Top = 64
-        Width = 374
-        Height = 13
-        Caption = 
-          'Space suppression between consecutive tokens is replicated in th' +
-          'e text output.'
-        WordWrap = True
-      end
-      object Label3: TLabel
-        Left = 8
-        Top = 81
-        Width = 376
-        Height = 39
-        Caption = 
-          'The content of a REM statement is by default output as text if a' +
-          'll characters are displayable, and as \nn character codes if any' +
-          ' non-displayable characters exist based upon the assumption that' +
-          ' the REM therefore holds machine code. A'
-        WordWrap = True
-      end
-      object Label4: TLabel
-        Left = 8
-        Top = 152
-        Width = 368
-        Height = 39
-        Caption = 
-          'The pound symbol is by default output as £, but this is not part' +
-          ' of the ASCII character set (it has code $A3). A configuration o' +
-          'ption allows it to be output in \nn character code format instea' +
-          'd, i.e. \0C. '
-        WordWrap = True
-      end
-      object Label5: TLabel
-        Left = 8
-        Top = 232
-        Width = 255
-        Height = 13
-        Caption = 'ZX80 BASIC listing files are saved with extension B80.'
-        WordWrap = True
-      end
-      object Label17: TLabel
-        Left = 8
-        Top = 120
-        Width = 377
-        Height = 26
-        Caption = 
-          'configuration option allows the contents to be output in \nn cha' +
-          'racter code format irrespective of whether all characters are di' +
-          'splayable.'
-        WordWrap = True
-      end
-      object Label19: TLabel
-        Left = 8
-        Top = 254
-        Width = 285
-        Height = 13
-        Caption = 'Details of the ZXText2P encoding format can be found here:'
-      end
-      object Weblink1: TLabel
-        Left = 8
-        Top = 270
-        Width = 219
-        Height = 13
-        Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        OnClick = Weblink1Click
-      end
-      object Label20: TLabel
-        Left = 8
-        Top = 198
-        Width = 385
-        Height = 35
-        Caption = 
-          'A configuration option allows variable names to be output in low' +
-          'ercase to ensure there is no ambiguity with BASIC keywords.'
-        WordWrap = True
-      end
-    end
-    object TabSheet2: TTabSheet
-      Caption = 'ZX81'
-      ImageIndex = 1
-      object Label6: TLabel
-        Left = 8
-        Top = 8
-        Width = 372
-        Height = 52
-        Caption = 
-          'Inverse characters and graphic symbols are encoded in accordance' +
-          ' with the scheme used by the ZXText2P utility. In addition, non-' +
-          'displayable character codes are output as \nn where nn is the ch' +
-          'aracter code expressed as a 2 digit hexadecimal number.'
-        WordWrap = True
-      end
-      object Label7: TLabel
-        Left = 8
-        Top = 64
-        Width = 374
-        Height = 13
-        Caption = 
-          'Space suppression between consecutive tokens is replicated in th' +
-          'e text output.'
-        WordWrap = True
-      end
-      object Label8: TLabel
-        Left = 8
-        Top = 81
-        Width = 376
-        Height = 39
-        Caption = 
-          'The content of a REM statement is by default output as text if a' +
-          'll characters are displayable, and as \nn character codes if any' +
-          ' non-displayable characters exist based upon the assumption that' +
-          ' the REM therefore holds machine code. A'
-        WordWrap = True
-      end
-      object Label9: TLabel
-        Left = 8
-        Top = 152
-        Width = 368
-        Height = 39
-        Caption = 
-          'The pound symbol is by default output as £, but this is not part' +
-          ' of the ASCII character set (it has code $A3). A configuration o' +
-          'ption allows it to be output in \nn character code format instea' +
-          'd, i.e. \0C. '
-        WordWrap = True
-      end
-      object Label10: TLabel
-        Left = 8
-        Top = 232
-        Width = 255
-        Height = 13
-        Caption = 'ZX81 BASIC listing files are saved with extension B81.'
-        WordWrap = True
-      end
-      object Label16: TLabel
-        Left = 8
-        Top = 120
-        Width = 377
-        Height = 33
-        Caption = 
-          'configuration option allows the contents to be output in \nn cha' +
-          'racter code format irrespective of whether all characters are di' +
-          'splayable.'
-        WordWrap = True
-      end
-      object Label21: TLabel
-        Left = 8
-        Top = 254
-        Width = 285
-        Height = 13
-        Caption = 'Details of the ZXText2P encoding format can be found here:'
-      end
-      object Weblink2: TLabel
-        Left = 8
-        Top = 270
-        Width = 219
-        Height = 13
-        Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
-        OnClick = Weblink2Click
-      end
-      object Label22: TLabel
-        Left = 8
-        Top = 198
-        Width = 381
-        Height = 26
-        Caption = 
-          'A configuration option allows variable names to be output in low' +
-          'ercase to ensure there is no ambiguity with BASIC keywords.'
-        WordWrap = True
-      end
-    end
-    object TabSheet3: TTabSheet
-      Caption = 'ZX Spectrum'
-      ImageIndex = 2
-      object Label11: TLabel
-        Left = 8
-        Top = 8
-        Width = 375
-        Height = 39
-        Caption = 
-          'Graphic symbols are encoded in a similar manner to the scheme us' +
-          'ed by the ZXText2P utility but encodings begin with ¬ (code $AC)' +
-          ' instead of \. In addition, UDGs are output as ¬_n where n is th' +
-          'e UDG letter, and non-displayable'
-        WordWrap = True
-      end
-      object Label12: TLabel
-        Left = 8
-        Top = 80
-        Width = 374
-        Height = 13
-        Caption = 
-          'Space suppression between consecutive tokens is replicated in th' +
-          'e text output.'
-        WordWrap = True
-      end
-      object Label13: TLabel
-        Left = 8
-        Top = 99
-        Width = 368
-        Height = 39
-        Caption = 
-          'The pound symbol is by default output as £, but this is not part' +
-          ' of the ASCII character set (it has code $A3). A configuration o' +
-          'ption allows it to be output in ¬nn character code format instea' +
-          'd, i.e. \60.'
-        WordWrap = True
-      end
-      object Label14: TLabel
-        Left = 8
-        Top = 143
-        Width = 368
-        Height = 39
-        Caption = 
-          'The pound symbol is by default output as ©, but this is not part' +
-          ' of the ASCII character set (it has code $A9). A configuration o' +
-          'ption allows it to be output in ¬nn character code format instea' +
-          'd, i.e. \7F.'
-        WordWrap = True
-      end
-      object Label15: TLabel
-        Left = 8
-        Top = 220
-        Width = 291
-        Height = 13
-        Caption = 'ZX Spectrum BASIC listing files are saved with extension B82.'
-        WordWrap = True
-      end
-      object Label18: TLabel
-        Left = 8
-        Top = 48
-        Width = 367
-        Height = 26
-        Caption = 
-          'character codes are output as ¬nn where nn is the character code' +
-          ' expressed as a 2 digit hexadecimal number.'
-        WordWrap = True
-      end
-      object Label23: TLabel
-        Left = 8
-        Top = 240
-        Width = 285
-        Height = 13
-        Caption = 'Details of the ZXText2P encoding format can be found here:'
-      end
-      object Weblink3: TLabel
-        Left = 8
-        Top = 256
-        Width = 219
-        Height = 13
-        Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
-        OnClick = Weblink3Click
-      end
-      object Label24: TLabel
-        Left = 8
-        Top = 188
-        Width = 381
-        Height = 26
-        Caption = 
-          'A configuration option allows variable names to be output in low' +
-          'ercase to ensure there is no ambiguity with BASIC keywords.'
-        WordWrap = True
-      end
-    end
+    Width = 367
+    Height = 26
+    Caption = 
+      'The BASIC listing format is based upon that used by the ZXText2P' +
+      ' utility, with extensions to handle a wider range of scenarios.'
+    WordWrap = True
+  end
+  object Label28: TLabel
+    Left = 8
+    Top = 80
+    Width = 377
+    Height = 26
+    Caption = 
+      'as a 2 digit hexadecimal number. On the Spectrum UDGs are encode' +
+      'd as \_n where n is the UDG letter, and a standard \ character i' +
+      's encoded as \\.'
+    WordWrap = True
+  end
+  object Label25: TLabel
+    Left = 8
+    Top = 112
+    Width = 369
+    Height = 26
+    Caption = 
+      'Space suppression between consecutive keywords is replicated in ' +
+      'the text output, and additional spaces within a line are retaine' +
+      'd if present.'
+    WordWrap = True
+  end
+  object Label29: TLabel
+    Left = 8
+    Top = 145
+    Width = 368
+    Height = 39
+    Caption = 
+      'The content of a REM statement is by default output as text if a' +
+      'll characters are displayable, and as \nn character codes if any' +
+      ' non-displayable characters exist (on the assumption that the RE' +
+      'M holds machine code). A configuration'
+    WordWrap = True
+  end
+  object Label30: TLabel
+    Left = 8
+    Top = 184
+    Width = 369
+    Height = 26
+    Caption = 
+      'option allows the contents to always be output in \nn character ' +
+      'code format irrespective of whether all characters are displayab' +
+      'le.'
+    WordWrap = True
+  end
+  object Label31: TLabel
+    Left = 8
+    Top = 216
+    Width = 369
+    Height = 39
+    Caption = 
+      'The pound symbol is by default output as £, but this is not part' +
+      ' of the ASCII character set (it has code $A3). A configuration o' +
+      'ption allows it to be output in \nn character code format instea' +
+      'd. '
+    WordWrap = True
+  end
+  object Label32: TLabel
+    Left = 8
+    Top = 310
+    Width = 369
+    Height = 26
+    Caption = 
+      'A configuration option allows variable names to be output in low' +
+      'ercase to ensure there is no ambiguity with BASIC keywords.'
+    WordWrap = True
+  end
+  object Label33: TLabel
+    Left = 8
+    Top = 344
+    Width = 377
+    Height = 33
+    Caption = 
+      'BASIC listing files are saved with extension B80 for the ZX80, B' +
+      '81 for the ZX81 and B82 for the Spectrum.'
+    WordWrap = True
+  end
+  object Label34: TLabel
+    Left = 8
+    Top = 374
+    Width = 285
+    Height = 13
+    Caption = 'Details of the ZXText2P encoding format can be found here:'
+  end
+  object Label35: TLabel
+    Left = 8
+    Top = 390
+    Width = 219
+    Height = 13
+    Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsUnderline]
+    ParentFont = False
+    OnClick = Weblink1Click
+  end
+  object Label36: TLabel
+    Left = 8
+    Top = 263
+    Width = 369
+    Height = 39
+    Caption = 
+      'On the Spectrum the copyright symbol is by default output as ©, ' +
+      'but this is not part of the ASCII character set (it has code $A9' +
+      '). A configuration option allows it to be output in \nn characte' +
+      'r code format instead.'
+    WordWrap = True
   end
   object btnOK: TButton
-    Left = 176
-    Top = 330
+    Left = 160
+    Top = 418
     Width = 68
     Height = 25
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 1
+    TabOrder = 0
   end
 end

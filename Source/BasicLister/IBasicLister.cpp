@@ -21,6 +21,9 @@
 #include <vcl.h>
 #include <sstream>
 #include <iomanip>
+#include <string>
+
+using namespace std;
 
 IBasicLister::IBasicLister() :
         mProgramDisplayRows(0)
@@ -60,8 +63,7 @@ int IBasicLister::GetKeywordLength(unsigned char code)
         int len;
 
         if (((mKeyword[code][0] == '%') && (mKeyword[code].length() > 1)) ||
-            (mKeyword[code][0] == '\\') ||
-            (mKeyword[code][0] == '¬'))
+            (mKeyword[code][0] == '\\'))
         {
                 len = 1;
         }
@@ -437,8 +439,6 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
 
 bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool& withinQuotes, bool& withinRem)
 {
-        bool characterAvailable = false;
-
         unsigned char c = (unsigned char)getbyte(address);
         address++;
         lengthRemaining--;
@@ -446,7 +446,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
 
         if (endOfLine && (c == mLineEndingCode))
         {
-                return characterAvailable;
+                return false;
         }
 
         bool remToken = (mKeyword[c] == " REM ");
@@ -466,10 +466,8 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                 lengthRemaining -= mEmbeddedNumberSize;
 
                 lastKeywordEndedWithSpace = false;
-                return characterAvailable;
+                return false;
         }
-
-        characterAvailable = true;
 
         int length = GetKeywordLength(c);
         bool token = (length > 1);
@@ -519,9 +517,25 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                 }
 
                 lastKeywordEndedWithSpace = false;
+
+                if (zxCharacter == mEscapeCharacter)
+                {                        
+                        zxCharacter += mEscapeCharacter;
+/*                        unsigned char nc = (unsigned char)getbyte(address);
+                        string nextChr = mKeyword[nc].substr(0, 1);
+
+                        string validEscapeChars;
+                        validEscapeChars = "\\_1234567890ABCDEFabcdef\n '.#~@!;:";
+
+                        size_t pos = nextChr.find_first_of(validEscapeChars);
+                        if (pos != string::npos)
+                        {
+                                zxCharacter += mEscapeCharacter;
+                        }*/ //####
+                }
         }
 
-        return characterAvailable;
+        return true;
 }
 
 AnsiString IBasicLister::FormatLineNumber(int lineNumber)

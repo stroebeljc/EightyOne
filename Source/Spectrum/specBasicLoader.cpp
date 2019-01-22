@@ -410,11 +410,6 @@ unsigned char specBasicLoader::DecodeGraphic(unsigned char chr1, unsigned char c
         return it->second;
 }
 
-unsigned char specBasicLoader::GetEscapeCharacter()
-{
-        return Escape;
-}
-
 bool specBasicLoader::SupportUppercaseOnly()
 {
         return false;
@@ -448,6 +443,17 @@ unsigned char specBasicLoader::AsciiToZX(unsigned char ascii)
 bool specBasicLoader::TokenSupportsLineNumber(unsigned char chr)
 {
         return (chr == Goto || chr == Gosub || chr == Run || chr == List || chr == LList || chr == Restore || chr == Line);
+}
+
+bool specBasicLoader::SingleEscapeSequence(unsigned char chr, unsigned char& zxChr)
+{
+        if (chr == '\\')
+        {
+                zxChr = '\\';
+                return true;
+        }
+
+        return false;
 }
 
 

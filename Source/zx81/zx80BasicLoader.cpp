@@ -307,11 +307,6 @@ void zx80BasicLoader::ExtractInverseCharacters()
         }
 }
 
-unsigned char zx80BasicLoader::GetEscapeCharacter()
-{
-        return Escape;
-}                 
-
 bool zx80BasicLoader::SupportUppercaseOnly()
 {
         return true;

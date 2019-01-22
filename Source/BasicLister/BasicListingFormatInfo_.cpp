@@ -16,7 +16,6 @@ __fastcall TBasicListingFormatInfoForm::TBasicListingFormatInfoForm(TComponent* 
 //---------------------------------------------------------------------------
 void TBasicListingFormatInfoForm::SetActivePage(int index)
 {
-        PageControl->ActivePageIndex = index;
 }
 //---------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 312
-  Top = 246
+  Left = 198
+  Top = 242
   BorderStyle = bsSingle
   Caption = 'EightyOne'
   ClientHeight = 255
@@ -416,6 +416,7 @@ object Form1: TForm1
       end
       object BasicListerOption: TMenuItem
         Caption = 'BASIC Listing...'
+        ShortCut = 16506
         OnClick = BasicListerOptionClick
       end
     end

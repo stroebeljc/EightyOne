@@ -54,7 +54,6 @@ private:
         virtual void OutputEndOfProgramData(int& addressOffset);
         virtual void ExtractInverseCharacters();
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr);
-        virtual unsigned char GetEscapeCharacter();
         virtual void ExtractDoubleQuoteCharacters();
         virtual unsigned char GetEmbbededNumberMark();
         virtual bool SupportUppercaseOnly();

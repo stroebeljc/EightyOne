@@ -41,7 +41,6 @@ private:
         static const unsigned char Over = 21;
         static const unsigned char At = 22;
         static const unsigned char Tab = 23;
-        static const unsigned char Escape = '¬';
 
         int mInkValue;
         int mPaperValue;
@@ -61,6 +60,5 @@ private:
         virtual void InitialiseColours();
         virtual bool CustomColoursSupported();
         virtual COLORREF GetDefaultPaperColour();
-        virtual unsigned char GetEscapeCharacter();
 };
 

@@ -4,7 +4,7 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Save Settings'
-  ClientHeight = 196
+  ClientHeight = 220
   ClientWidth = 259
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -99,6 +99,22 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
     Height = 13
     Caption = 'Output the names of variables in lowercase'
   end
+  object Label7: TLabel
+    Left = 8
+    Top = 153
+    Width = 225
+    Height = 13
+    AutoSize = False
+    Caption = 'Output line numbers above 9999 using 5 digits'
+  end
+  object cboOutputFullWidthLineNumbers: TCheckBox
+    Left = 232
+    Top = 152
+    Width = 16
+    Height = 17
+    Alignment = taLeftJustify
+    TabOrder = 5
+  end
   object cboOutputRemTokensAsCharacterCodes: TCheckBox
     Left = 233
     Top = 32
@@ -109,12 +125,12 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   end
   object btnOK: TButton
     Left = 94
-    Top = 160
+    Top = 184
     Width = 68
     Height = 25
     Caption = 'OK'
     ModalResult = 1
-    TabOrder = 5
+    TabOrder = 6
   end
   object cboOutputNonAsciiAsCharacterCodes: TCheckBox
     Left = 231

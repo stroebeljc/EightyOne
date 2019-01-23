@@ -83,6 +83,7 @@ private:	// User declarations
         bool mOutputNonAsciiAsCharacterCodes;
         bool mOutputVariableNamesInLowercase;
         bool mLimitLineLengths;
+        bool mOutputFullWidthLineNumbers;
         
         void ClearBitmap();
         void ConstructBitmap();

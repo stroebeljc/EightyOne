@@ -456,4 +456,14 @@ bool specBasicLoader::SingleEscapeSequence(unsigned char chr, unsigned char& zxC
         return false;
 }
 
+bool specBasicLoader::NoEscapeSequence(unsigned char chr)
+{
+        string escapeSequenceChars = "\\_\n1234567890ABCDEFabcdef'.:;@#~!";
 
+        string zxChr;
+        zxChr = chr;
+        
+        size_t pos = zxChr.find_first_of(escapeSequenceChars);
+
+        return (pos == string::npos);
+}

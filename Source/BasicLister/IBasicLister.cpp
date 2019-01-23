@@ -397,12 +397,14 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths, bool outputFullWidthLineNumbers)
 {
         AnsiString lineText = "";
 
-        AnsiString lineNumber = FormatLineNumber(lineInfo.lineNumber);
-        lineText += lineNumber.SubString(2, 4);
+        AnsiString lineNumber = FormatLineNumber(lineInfo.lineNumber, outputFullWidthLineNumbers);
+        int startPos = (lineNumber[1] != ' ') ? 1 : 2;
+        int length = strlen(lineNumber.c_str()) - (startPos - 1);
+        lineText += lineNumber.SubString(startPos, length);
 
         int address = lineInfo.addressContent;
         int lengthRemaining = lineInfo.contentLength;
@@ -538,7 +540,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         return true;
 }
 
-AnsiString IBasicLister::FormatLineNumber(int lineNumber)
+AnsiString IBasicLister::FormatLineNumber(int lineNumber, bool outputFullWidthLineNumbers)
 {
         std::ostringstream ss;
 
@@ -546,10 +548,10 @@ AnsiString IBasicLister::FormatLineNumber(int lineNumber)
         ss << std::setw(5);
         ss << lineNumber;
         AnsiString lineNum = ss.str().c_str();
-        
-        if (lineNum[1] != ' ')
+
+        if (!outputFullWidthLineNumbers && (lineNum[1] != ' '))
         {
-                lineNum[2] = ('A' - 1) + (lineNum[1] - '0');
+                lineNum[2] = 'A' + (lineNum[2] - '0');
                 lineNum[1] = ' ';
         }
 

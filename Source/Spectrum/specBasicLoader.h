@@ -55,6 +55,7 @@ private:
         virtual unsigned char AsciiToZX(unsigned char ascii);
         virtual bool TokenSupportsLineNumber(unsigned char chr);
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr);
+        virtual bool NoEscapeSequence(unsigned char chr);
 };
 
 #endif

@@ -99,6 +99,7 @@ protected:
         virtual unsigned char GetEmbbededNumberMark() { return '\0'; }
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}
         virtual bool TokenSupportsLineNumber(unsigned char chr) { return false; }
+        virtual bool NoEscapeSequence(unsigned char chr) { return false; }
 };
 
 #endif

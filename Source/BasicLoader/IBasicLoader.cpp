@@ -90,7 +90,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
         mLines = vector<LineEntry>();
 
         string line;
-        int nextLineNumber = 1;
+        int currentLineNumber = 0;
         LineEntry entry;
         int sourceLine = 0;
 
@@ -104,27 +104,27 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         entry.lineLabel = "";
                         entry.sourceLine = sourceLine;
 
-                        if (nextLineNumber > 16384)
+                        if (currentLineNumber > 16384)
                         {
                                 throw out_of_range("Line number out of range");
                         }
 
                         if (GetLineNumber(entry))
                         {
-                                if (entry.lineNumber < nextLineNumber)
+                                if (entry.lineNumber < currentLineNumber)
                                 {
                                         throw runtime_error("Line number not greater than previous line number");
                                 }
-                                nextLineNumber = entry.lineNumber + 1;
+                                currentLineNumber = entry.lineNumber;
                         }
                         else if (GetLineLabel(entry))
                         {
-                                entry.lineNumber = nextLineNumber;
+                                entry.lineNumber = currentLineNumber + 1;
                         }
                         else
                         {
-                                entry.lineNumber = nextLineNumber;
-                                nextLineNumber++;
+                                entry.lineNumber = currentLineNumber + 1;
+                                currentLineNumber++;
                         }
 
                         mLines.push_back(entry);
@@ -204,7 +204,10 @@ bool IBasicLoader::ReadLine(ifstream& basicFile, string& line, int& sourceLine)
                         }
 
                         // Remove the trailing '\0'
-                        inputLine = inputLine.substr(0, inputLine.length()-1);
+                        if (inputLine[inputLine.length()-1] == '\0')
+                        {
+                                inputLine = inputLine.substr(0, inputLine.length()-1);
+                        }
 
                         i = inputLine.find_first_not_of(" \t");
                 }
@@ -308,7 +311,22 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
 
         ExtractSingleCharacters(discardRedundantSpaces);
 
-        OutputLine(lineEntry.lineNumber, addressOffset);
+        bool lineExists = true;
+
+        if (lineEntry.lineLabel != "")
+        {
+                size_t pos = lineEntry.line.find_first_of(":");
+                lineExists = (lineEntry.line.find_first_not_of(Blank, pos + 1) != string::npos);
+        }
+        else
+        {
+                lineExists = (lineEntry.line.find_first_not_of(Blank, lineEntry.lineNumberLength) != string::npos);
+        }
+
+        if (lineExists)
+        {
+                OutputLine(lineEntry.lineNumber, addressOffset);
+        }
 }
 
 void IBasicLoader::BlankLineStart(LineEntry lineEntry)
@@ -513,7 +531,15 @@ void IBasicLoader::ExtractEscapeCharacters()
 
                         unsigned char zxChr;
 
-                        if (!SingleEscapeSequence(chr1, zxChr))
+                        if (NoEscapeSequence(chr1))
+                        {
+                                int index = (pPos - 1) - mLineBuffer;
+                                mLineBufferOutput[index] = mEscapeCharacter;
+                                mLineBufferPopulated[index] = true;
+                                
+                                zxChr = chr1;
+                        }
+                        else if (!SingleEscapeSequence(chr1, zxChr))
                         {
                                 pPos++;
                                 unsigned char chr2 = *pPos;

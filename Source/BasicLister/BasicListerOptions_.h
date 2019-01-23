@@ -25,6 +25,8 @@ __published:	// IDE-managed Components
         TCheckBox *cboLimitLineLengths;
         TLabel *Label6;
         TCheckBox *cboOutputVariableNamesInLowercase;
+        TCheckBox *cboOutputFullWidthLineNumbers;
+        TLabel *Label7;
 private:	// User declarations
 public:		// User declarations
         __fastcall TSaveBasicListingOptionsForm(TComponent* Owner);
@@ -33,6 +35,7 @@ public:		// User declarations
         bool GetOutputNonAsciiAsCharacterCodes();
         bool GetOutputVariableNamesInLowercase();
         bool GetLimitLineLengths();
+        bool GetOutputFullWidthLineNumbers();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

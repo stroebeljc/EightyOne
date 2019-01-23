@@ -554,7 +554,7 @@ void TBasicLister::SaveListingToFile()
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputStringTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes, mOutputVariableNamesInLowercase, mLimitLineLengths);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputStringTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes, mOutputVariableNamesInLowercase, mLimitLineLengths, mOutputFullWidthLineNumbers);
                         ofs << lineText.c_str() << '\n';
                 }
 
@@ -633,6 +633,7 @@ void TBasicLister::GetSaveOptions()
         mOutputNonAsciiAsCharacterCodes = SaveBasicListingOptionsForm->GetOutputNonAsciiAsCharacterCodes();
         mOutputVariableNamesInLowercase = SaveBasicListingOptionsForm->GetOutputVariableNamesInLowercase();
         mLimitLineLengths = SaveBasicListingOptionsForm->GetLimitLineLengths();
+        mOutputFullWidthLineNumbers = SaveBasicListingOptionsForm->GetOutputFullWidthLineNumbers();
 }
 
 void __fastcall TBasicLister::ToolButtonInfoClick(TObject *Sender)

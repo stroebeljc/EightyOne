@@ -17,6 +17,7 @@
  */
 
 #include "BasicLoader/IBasicLoader.h"
+#include "BasicLoaderOptions_.h"
 #include <fstream>
 #include <sstream>
 #include <cctype>
@@ -89,6 +90,8 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
 
         mLines = vector<LineEntry>();
 
+        int lineNumberIncrement = LoadBasicListingOptionsForm->GetAutomaticLineNumberIncrement();
+
         string line;
         int currentLineNumber = 0;
         LineEntry entry;
@@ -119,12 +122,16 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         }
                         else if (GetLineLabel(entry))
                         {
-                                entry.lineNumber = currentLineNumber + 1;
+                                entry.lineNumber = currentLineNumber + lineNumberIncrement;
+                                if (BasicLineExists(entry))
+                                {
+                                        currentLineNumber += lineNumberIncrement;
+                                }
                         }
                         else
                         {
-                                entry.lineNumber = currentLineNumber + 1;
-                                currentLineNumber++;
+                                currentLineNumber += lineNumberIncrement;
+                                entry.lineNumber = currentLineNumber;
                         }
 
                         mLines.push_back(entry);
@@ -183,6 +190,16 @@ bool IBasicLoader::GetLineLabel(LineEntry& lineEntry)
         lineEntry.lineLabel = lineEntry.line.substr(1, endLabel-1);
 
         return true;
+}
+
+bool IBasicLoader::BasicLineExists(const LineEntry& lineEntry)
+{
+        size_t endOfLabelIndex = lineEntry.line.find(":");
+
+        size_t linePositionIndex = lineEntry.line.substr(endOfLabelIndex).find_first_not_of(" \t");
+
+        return (linePositionIndex != string::npos);
+
 }
 
 bool IBasicLoader::ReadLine(ifstream& basicFile, string& line, int& sourceLine)
@@ -718,7 +735,7 @@ void IBasicLoader::HandleTokenLineNumber(unsigned char* pStartToken, unsigned ch
 
 string IBasicLoader::ExtractLabel(unsigned char* pLabelSearch)
 {
-        bool endOfLabel;
+        bool endOfLabel = false;
         string label;
 
         label += *pLabelSearch;

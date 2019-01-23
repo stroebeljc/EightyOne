@@ -23,6 +23,8 @@ __published:	// IDE-managed Components
         TLabel *Label4;
         TCheckBox *cboAcceptAlternateKeywordSpelling;
         TLabel *Label5;
+        TComboBox *cboLineNumberIncrement;
+        TLabel *Label6;
 private:	// User declarations
 public:		// User declarations
         __fastcall TLoadBasicListingOptionsForm(TComponent* Owner);
@@ -30,6 +32,7 @@ public:		// User declarations
         bool GetTokeniseStringContents();
         bool GetDiscardRedundantSpaces();
         bool GetAcceptAlternateKeywordSpelling();
+        int GetAutomaticLineNumberIncrement();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

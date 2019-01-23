@@ -47,6 +47,7 @@ private:
         bool GetLineLabel(LineEntry& lineEntry);
         void ReplaceLabel();
         unsigned char GetEscapeCharacter() { return '\\'; }
+        bool BasicLineExists(const LineEntry& lineEntry);
 
 public:
         void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling);

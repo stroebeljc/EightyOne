@@ -4,7 +4,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Load BASIC Listing Options'
-  ClientHeight = 170
+  ClientHeight = 194
   ClientWidth = 239
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -87,6 +87,13 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 13
     Caption = 'Accept alternate keyword spellings'
   end
+  object Label6: TLabel
+    Left = 8
+    Top = 131
+    Width = 167
+    Height = 13
+    Caption = 'Automatic line numbering increment'
+  end
   object cboTokeniseRemContents: TCheckBox
     Left = 200
     Top = 32
@@ -105,13 +112,13 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   end
   object btnOK: TButton
     Left = 84
-    Top = 136
+    Top = 160
     Width = 68
     Height = 25
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 4
+    TabOrder = 5
   end
   object cboDiscardRedundantSpaces: TCheckBox
     Left = 200
@@ -128,5 +135,19 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 17
     Alignment = taLeftJustify
     TabOrder = 3
+  end
+  object cboLineNumberIncrement: TComboBox
+    Left = 189
+    Top = 128
+    Width = 36
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 4
+    Text = 'cboLineNumberIncrement'
+    Items.Strings = (
+      '1'
+      '2'
+      '5'
+      '10')
   end
 end

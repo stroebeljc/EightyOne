@@ -38,12 +38,18 @@ bool TLoadBasicListingOptionsForm::GetAcceptAlternateKeywordSpelling()
         return cboAcceptAlternateKeywordSpelling->Checked;
 }
 
+int TLoadBasicListingOptionsForm::GetAutomaticLineNumberIncrement()
+{
+        return StrToInt(cboLineNumberIncrement->Text);
+}
+
 void TLoadBasicListingOptionsForm::SaveSettings(TIniFile *ini)
 {
         ini->WriteBool("BASICLISTING", "TokeniseRemContents", cboTokeniseRemContents->Checked);
         ini->WriteBool("BASICLISTING", "TokeniseStringContents", cboTokeniseStringContents->Checked);
         ini->WriteBool("BASICLISTING", "DiscardRedundantSpaces", cboDiscardRedundantSpaces->Checked);
         ini->WriteBool("BASICLISTING", "AcceptAlternateKeywordSpelling", cboAcceptAlternateKeywordSpelling->Checked);
+        ini->WriteInteger("BASICLISTING", "AutomaticLineNumberIncrementIndex", cboLineNumberIncrement->ItemIndex);
 }
 
 void TLoadBasicListingOptionsForm::LoadSettings(TIniFile *ini)
@@ -51,5 +57,8 @@ void TLoadBasicListingOptionsForm::LoadSettings(TIniFile *ini)
         cboTokeniseRemContents->Checked = ini->ReadBool("BASICLISTING", "TokeniseRemContents", false);
         cboTokeniseStringContents->Checked = ini->ReadBool("BASICLISTING", "TokeniseStringContents", false);
         cboDiscardRedundantSpaces->Checked = ini->ReadBool("BASICLISTING", "DiscardRedundantSpaces", false);
-        cboAcceptAlternateKeywordSpelling->Checked = ini->ReadBool("BASICLISTING", "AcceptAlternateKeywordSpelling", false);}
+        cboAcceptAlternateKeywordSpelling->Checked = ini->ReadBool("BASICLISTING", "AcceptAlternateKeywordSpelling", false);
+        cboLineNumberIncrement->ItemIndex = ini->ReadInteger("BASICLISTING", "AutomaticLineNumberIncrementIndex", 0);
+}
+
 

@@ -247,6 +247,8 @@ private:	// User declarations
         bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
+        Graphics::TBitmap *LEDRedOn;
+        Graphics::TBitmap *LEDRedOff;
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
         int BaseWidth;

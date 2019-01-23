@@ -274,8 +274,12 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         LEDGreenOn = new Graphics::TBitmap;
         LEDGreenOff = new Graphics::TBitmap;
+        LEDRedOn = new Graphics::TBitmap;
+        LEDRedOff = new Graphics::TBitmap;
         ImageList1->GetBitmap(0,LEDGreenOff);
         ImageList1->GetBitmap(1,LEDGreenOn);
+        ImageList1->GetBitmap(2,LEDRedOff);
+        ImageList1->GetBitmap(3,LEDRedOn);
 
         if (!access("eightyone.chm",0)) HelpTopics2->Enabled=true;
         else HelpTopics2->Enabled=false;
@@ -1675,7 +1679,16 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
                 StatusBar->Canvas->Brush->Color = clBtnFace;
                 StatusBar->Canvas->FillRect(R);
                 if (spectrum.drivebusy!=-1)
-                        StatusBar->Canvas->Draw( R.Left, R.Top+1, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                {
+                        if (spectrum.floppytype == FLOPPYIF1)
+                        {
+                                StatusBar->Canvas->Draw( R.Left, R.Top+1, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
+                        }
+                        else
+                        {
+                                StatusBar->Canvas->Draw( R.Left, R.Top+1, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                        }
+                }
         }
 }
 //---------------------------------------------------------------------------

@@ -115,6 +115,7 @@ public:		// User declarations
         void LoadSettings(TIniFile* ini);
         bool ListerAvailable();
         void Refresh();
+        void Clear();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TBasicLister *BasicLister;

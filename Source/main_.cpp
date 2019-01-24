@@ -578,6 +578,8 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         zx81_stop=1;
         sound_ay_reset();
 
+        BasicLister->Clear();
+        
         if ((Ext == ".Z81") || (Ext == ".ACE")) load_snap(Path.c_str());
         if (Ext == ".Z80") spec_load_z80(Path.c_str());
         if (Ext == ".SNA") spec_load_sna(Path.c_str());
@@ -625,6 +627,7 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         if (machine.reset) machine.reset();
         zx81_stop=initialStopState;
         DebugUpdate();
+        BasicLister->Clear();
 }
 //---------------------------------------------------------------------------
 
@@ -1351,7 +1354,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         zx81_stop=initialStopState;
         DebugUpdate();
         LiveMemoryWindow->Reset();
-        BasicLister->Refresh();
+        BasicLister->Clear();
 }
 //---------------------------------------------------------------------------
 
@@ -1360,8 +1363,7 @@ void __fastcall TForm1::Zx97ConfigClick(TObject *Sender)
         Form1->Zx97Config->Checked = !Form1->Zx97Config->Checked;
 
         if (Form1->Zx97Config->Checked) ZX97Dialog->Show();
-        else ZX97Dialog->Close();
-
+        else ZX97Dialog->Close();    
 }
 //---------------------------------------------------------------------------
 

@@ -204,7 +204,11 @@ int IBasicLister::GetProgramRows()
 
 void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds)
 {
-        COLORREF canvasColour = showLineEnds ? GetBackgroundColour() : GetDefaultPaperColour();
+        COLORREF canvasColour = GetSysColor(COLOR_BTNFACE);
+        if (mLines->size() > 0)
+        {
+                canvasColour = showLineEnds ? GetBackgroundColour() : GetDefaultPaperColour();
+        }
         HBRUSH hBrush = CreateSolidBrush(canvasColour);
         FillRect(hdc, &rect, hBrush);
         DeleteObject(hBrush);
@@ -526,7 +530,8 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                 if (zxCharacter == mEscapeCharacter)
                 {                        
                         zxCharacter += mEscapeCharacter;
-/*                        unsigned char nc = (unsigned char)getbyte(address);
+/*
+                        unsigned char nc = (unsigned char)getbyte(address);
                         string nextChr = mKeyword[nc].substr(0, 1);
 
                         string validEscapeChars;
@@ -536,7 +541,8 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                         if (pos != string::npos)
                         {
                                 zxCharacter += mEscapeCharacter;
-                        }*/ //####
+                        }
+*/
                 }
         }
 

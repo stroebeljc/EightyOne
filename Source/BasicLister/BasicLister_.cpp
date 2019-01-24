@@ -100,7 +100,7 @@ void TBasicLister::ClearBitmap()
         rect.right = mBMWidth;
         rect.bottom = mBMHeight;
 
-        mBasicLister->ClearRenderedListing(hdc, mBitmap, rect, ToolButtonLineEnds->Down);
+        mBasicLister->ClearRenderedListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -320,6 +320,17 @@ void TBasicLister::Refresh()
         Invalidate();
 
         LoadProgram();
+}
+//---------------------------------------------------------------------------
+
+void TBasicLister::Clear()
+{
+        mLines->clear();
+
+        ClearBitmap();
+        Invalidate();
+
+        EnableButtons();
 }
 //---------------------------------------------------------------------------
 

@@ -289,10 +289,13 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
                         insert=true;
                         TZXFile.CurBlock=TZXFile.Blocks;
                 }
+
+                if (TZX->AutoLoadBtn->Down)
+                {
+                        BasicLister->Clear();
+                }
         }
         UpdateTable(true);
-        //Table->Row=1;
-        //TZXFile.CurBlock=Table->Row-1;
 }
 //---------------------------------------------------------------------------
 

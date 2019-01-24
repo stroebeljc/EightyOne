@@ -31,6 +31,7 @@
 #include "TZXMan.h"
 #include "sound.h"
 #include "ZipFile_.h"
+#include "BasicLister\BasicLister_.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
@@ -200,8 +201,7 @@ void TWavLoad::LoadFile(AnsiString FName)
         Form1->InWaveLoaderClick(NULL);
         Form1->OutWaveLoaderClick(NULL);
 }
-
-
+            
 void __fastcall TWavLoad::LoadClick(TObject *Sender)
 {
         if (LoadWavDialog->Execute()) LoadFile(LoadWavDialog->FileName);
@@ -713,7 +713,15 @@ void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
 
 void __fastcall TWavLoad::OpenWav1Click(TObject *Sender)
 {
-        if (LoadWavDialog->Execute()) LoadFile(LoadWavDialog->FileName);
+        if (LoadWavDialog->Execute())
+        {
+                LoadFile(LoadWavDialog->FileName);
+
+                if (AutoloadonInsert1->Down)
+                {
+                        BasicLister->Clear();
+                }
+        }
 }
 //---------------------------------------------------------------------------
 

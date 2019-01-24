@@ -67,13 +67,14 @@ public:
         IBasicLister();
         virtual ~IBasicLister();
         void PopulateKeywords();
-        virtual void ExtractProgramDetails();
-        virtual int GetProgramRows();
+        void ExtractProgramDetails();
+        int GetProgramRows();
+        void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
+        void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
+        AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths, bool outputFullWidthLineNumbers);
+        void SetLines(std::vector<LineInfo>* linesInfo);
+
         virtual int GetDisplayColumns() { return DisplayColumns; };
-        virtual void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        virtual void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        virtual AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths, bool outputFullWidthLineNumbers);
-        virtual void SetLines(std::vector<LineInfo>* linesInfo);
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }
         virtual AnsiString GetMachineName() { return ""; }

@@ -15,6 +15,8 @@ Version 1.13 - 24/01/2019 (by Paul Farrow)
     was resized.
   - Debug symbols were loaded when a program was opened via the TZX Manager but not if opened
     from the main window's File menu.
+  - Corrected the height of the Live Memory View window.
+
 * Enhancements:
   - UDG characters for the Spectrum related models are now shown as their corresponding letters
     but underlined (previously they were shown upside down).

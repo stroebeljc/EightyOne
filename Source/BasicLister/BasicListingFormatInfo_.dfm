@@ -75,7 +75,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label28: TLabel
     Left = 8
     Top = 80
-    Width = 377
+    Width = 369
     Height = 26
     Caption = 
       'as a 2 digit hexadecimal number. On the Spectrum UDGs are encode' +
@@ -86,7 +86,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label25: TLabel
     Left = 8
     Top = 112
-    Width = 369
+    Width = 354
     Height = 26
     Caption = 
       'Space suppression between consecutive keywords is replicated in ' +
@@ -109,7 +109,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label30: TLabel
     Left = 8
     Top = 184
-    Width = 369
+    Width = 359
     Height = 26
     Caption = 
       'option allows the contents to always be output in \nn character ' +
@@ -120,7 +120,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label31: TLabel
     Left = 8
     Top = 216
-    Width = 369
+    Width = 368
     Height = 39
     Caption = 
       'The pound symbol is by default output as £, but this is not part' +
@@ -132,7 +132,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label32: TLabel
     Left = 8
     Top = 310
-    Width = 369
+    Width = 346
     Height = 26
     Caption = 
       'A configuration option allows variable names to be output in low' +
@@ -142,8 +142,8 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label33: TLabel
     Left = 8
     Top = 344
-    Width = 377
-    Height = 33
+    Width = 375
+    Height = 26
     Caption = 
       'BASIC listing files are saved with extension B80 for the ZX80, B' +
       '81 for the ZX81 and B82 for the Spectrum.'
@@ -151,14 +151,14 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   end
   object Label34: TLabel
     Left = 8
-    Top = 374
+    Top = 377
     Width = 285
     Height = 13
     Caption = 'Details of the ZXText2P encoding format can be found here:'
   end
   object Label35: TLabel
     Left = 8
-    Top = 390
+    Top = 393
     Width = 219
     Height = 13
     Caption = 'http://freestuff.grok.co.uk/zxtext2p/index.html'
@@ -173,7 +173,7 @@ object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
   object Label36: TLabel
     Left = 8
     Top = 263
-    Width = 369
+    Width = 368
     Height = 39
     Caption = 
       'On the Spectrum the copyright symbol is by default output as ©, ' +

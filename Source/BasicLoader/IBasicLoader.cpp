@@ -107,11 +107,6 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         entry.lineLabel = "";
                         entry.sourceLine = sourceLine;
 
-                        if (currentLineNumber > 16384)
-                        {
-                                throw out_of_range("Line number out of range");
-                        }
-
                         if (GetLineNumber(entry))
                         {
                                 if (entry.lineNumber < currentLineNumber)
@@ -134,6 +129,11 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                                 entry.lineNumber = currentLineNumber;
                         }
 
+                        if ((entry.lineNumber < 0) || (entry.lineNumber > 16383))
+                        {
+                                throw out_of_range("Line number out of range");
+                        }
+                        
                         mLines.push_back(entry);
                 }
         }
@@ -157,11 +157,6 @@ bool IBasicLoader::GetLineNumber(LineEntry& lineEntry)
         if (pEnd == pStart)
         {
                 return false;
-        }
-
-        if ((lineEntry.lineNumber < 0) || (lineEntry.lineNumber > 16383))
-        {
-                throw out_of_range("Line number out of range");
         }
 
         lineEntry.lineNumberLength = pEnd - pStart;

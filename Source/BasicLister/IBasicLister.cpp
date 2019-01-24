@@ -419,9 +419,9 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         bool outputLineAsControlCodes = false;
         bool withinRem = false;
         bool withinQuotes = false;
-        int lineLength = 0;
+        int lineLength = lineText.Length();
 
-        const int WrapLineThreshold = 160;
+        const int WrapLineThreshold = 120;
         
         do
         {

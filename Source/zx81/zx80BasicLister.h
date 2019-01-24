@@ -24,7 +24,7 @@
 class zx80BasicLister : public IBasicLister
 {
 public:
-        zx80BasicLister();
+        zx80BasicLister(bool zxpandEnabled);
         virtual AnsiString GetMachineName();
         virtual AnsiString GetBasicFileExtension();
 
@@ -36,6 +36,8 @@ private:
         static const unsigned char Newline = 118;
         static const unsigned char Escape = '\\';
 
+        bool mZxpandEnabled;
+        
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
         virtual unsigned char ConvertToZXCode(unsigned char code);

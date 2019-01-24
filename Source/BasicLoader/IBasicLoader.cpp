@@ -328,7 +328,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
 
         ExtractSingleCharacters(discardRedundantSpaces);
 
-        bool lineExists = true;
+        bool lineExists;
 
         if (lineEntry.lineLabel != "")
         {
@@ -622,13 +622,15 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 unsigned char* pMatch;
                 bool tokenFound;
 
-                bool tokenBeginsWithSpace = (pToken[0] == ' ');
-                bool tokenEndsWithSpace = (pToken[lenToken-1] == ' ');
-                bool tokenEndsWithBracket = (pToken[lenToken-1] == '(');
-                bool tokenBeginsWithAlpha = isalpha(pToken[0]);
-                bool tokenEndsWithAlpha = isalpha(pToken[lenToken-1]);
+                unsigned char startChar = pToken[0];
+                unsigned char endChar = pToken[lenToken-1];
 
-                if (tokenEndsWithBracket)
+                bool tokenBeginsWithSpace = (startChar == ' ');
+                bool tokenBeginsWithAlpha = isalpha(startChar);
+                bool tokenEndsWithSpace = (endChar == ' ');
+                bool tokenEndsWithAlpha = isalpha(endChar);
+
+                if (endChar == '(' || endChar == '\"' || endChar == '#' || endChar == '*' || endChar == '\'' || endChar == ',' || endChar == ';')
                 {
                         lenToken--;
                 }

@@ -27,6 +27,9 @@ using namespace::std;
 
 class zx80BasicLoader : public IBasicLoader
 {
+public:
+        zx80BasicLoader(bool zxpandEnabled);
+
 private:
         static const unsigned char Newline = 0x76;
         static const unsigned char List = 0xE6;
@@ -34,6 +37,8 @@ private:
         static const unsigned char Run = 0xF7;
         static const unsigned char Gosub = 0xFB;
         static const unsigned char Escape = '\\';
+
+        bool mZxpandEnabled;
 
         void OutputSystemVariables(int& addressOffset);
         virtual unsigned char DecodeGraphic(unsigned char chr1, unsigned char chr2);

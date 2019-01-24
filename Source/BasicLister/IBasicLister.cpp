@@ -247,7 +247,7 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
 
         int address = lineInfo.addressContent;
         int lengthRemaining = lineInfo.contentLength;
-        bool lastKeywordEndedWithSpace = false;
+        bool lastKeywordEndedWithSpace = true;
 
         do
         {
@@ -271,6 +271,8 @@ void IBasicLister::RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int line
                 unsigned char c = ConvertToZXCode(formattedLineNumber[i]);
                 RenderCharacter(hdc, cshdc, x, y, c);
         }
+
+        RenderCharacter(hdc, cshdc, x, y, ConvertToZXCode(' '));
 }
 
 void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace)
@@ -405,10 +407,11 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         int startPos = (lineNumber[1] != ' ') ? 1 : 2;
         int length = strlen(lineNumber.c_str()) - (startPos - 1);
         lineText += lineNumber.SubString(startPos, length);
+        lineText += " ";
 
         int address = lineInfo.addressContent;
         int lengthRemaining = lineInfo.contentLength;
-        bool lastKeywordEndedWithSpace = false;
+        bool lastKeywordEndedWithSpace = true;
         AnsiString zxCharacter;
 
         mEscapeCharacter = AnsiChar(GetEscapeCharacter());

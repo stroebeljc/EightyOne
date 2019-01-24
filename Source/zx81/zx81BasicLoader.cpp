@@ -25,6 +25,11 @@
 
 using namespace std;
 
+zx81BasicLoader::zx81BasicLoader(bool zxpandEnabled)
+{
+        mZxpandEnabled = zxpandEnabled;
+}
+
 void zx81BasicLoader::OutputStartOfProgramData(AnsiString filename, int& addressOffset)
 {
         // Output the system variables
@@ -172,6 +177,17 @@ void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
       
         DoTokenise(tokens);
 
+        if (mZxpandEnabled)
+        {
+                tokens.clear();
+
+                tokens[225] = " ZXPAND ";
+                tokens[226] = " CONFIG ";
+                tokens[255] = " CAT ";
+
+                DoTokenise(tokens);
+        }
+
         if (acceptAlternateKeywordSpelling)
         {
                 tokens.clear();
@@ -198,6 +214,12 @@ void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
                 tokens[213] = "STR$(";
                 tokens[214] = "CHR$(";
                 tokens[215] = "NOT(";
+                tokens[250] = " IF(";
+                
+                tokens[225] = " LPRINT\"";
+                tokens[239] = " LOAD\"";
+                tokens[245] = " PRINT\"";
+                tokens[248] = " SAVE\"";
 
                 tokens[232] = " CONTINUE ";
                 tokens[236] = " GO TO ";
@@ -208,7 +230,21 @@ void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
+                tokens[245] = " PRINT,";
                 tokens[249] = " RANDOMIZE ";
+
+                if (mZxpandEnabled)
+                {
+                        tokens[225] = " ZXPAND\"";
+                        tokens[226] = " CONFIG\"";
+                        tokens[255] = " CAT\"";
+                }
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[245] = " PRINT;";
 
                 DoTokenise(tokens);
         }

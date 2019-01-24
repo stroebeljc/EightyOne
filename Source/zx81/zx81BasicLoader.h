@@ -27,6 +27,8 @@ using namespace::std;
 
 class zx81BasicLoader : public IBasicLoader
 {
+public:
+        zx81BasicLoader(bool zxpandEnabled);
 private:
         static const unsigned char Quote = 0x0B;
         static const unsigned char Newline = 0x76;
@@ -40,6 +42,8 @@ private:
         static const unsigned char Run = 0xF7;
         static const unsigned char Escape = '\\';
 
+        bool mZxpandEnabled;
+        
         void OutputSystemVariables(int& addressOffset);
         bool IsTokenRequiringLineNumber(unsigned char chr);
         string ExtractLabel(int& i);

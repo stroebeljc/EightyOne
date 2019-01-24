@@ -807,7 +807,7 @@ void THW::CreateBasicLister()
 {
         if (!strcmp(machine.CurRom, "zx80.rom"))
         {
-                BasicLister->SetBasicLister(new zx80BasicLister());
+                BasicLister->SetBasicLister(new zx80BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
         else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
@@ -815,7 +815,7 @@ void THW::CreateBasicLister()
                  !strcmp(machine.CurRom, "ts1500.rom") ||
                  !strcmp(machine.CurRom, "tk85.rom"))
         {
-                BasicLister->SetBasicLister(new zx81BasicLister());
+                BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
         else if (!strcmp(machine.CurRom, "spec48.rom"))

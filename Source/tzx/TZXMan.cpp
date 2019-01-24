@@ -223,11 +223,11 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
 
                 if (Extension == ".B80")
                 {
-                        loader = new zx80BasicLoader();
+                        loader = new zx80BasicLoader(zx81.zxpand);
                 }
                 else if (Extension == ".B81")
                 {
-                        loader = new zx81BasicLoader();
+                        loader = new zx81BasicLoader(zx81.zxpand);
                 }
                 else if (Extension == ".B82")
                 {

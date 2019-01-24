@@ -25,6 +25,11 @@
 
 using namespace std;
 
+zx80BasicLoader::zx80BasicLoader(bool zxpandEnabled)
+{
+        mZxpandEnabled = zxpandEnabled;
+}
+
 void zx80BasicLoader::OutputStartOfProgramData(AnsiString filename, int& addressOffset)
 {
         // Output the system variables
@@ -114,22 +119,49 @@ void zx80BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
         DoTokenise(tokens);
 
+        if (mZxpandEnabled)
+        {
+                tokens.clear();
+
+                tokens[241] = " DELETE ";
+                tokens[245] = " CONFIG ";
+                tokens[255] = " CAT ";
+
+                DoTokenise(tokens);
+        }
+
         if (acceptAlternateKeywordSpelling)
         {
                 tokens.clear();
 
                 tokens[219] = "NOT(";
-                
+                tokens[244] = " PRINT\"";
+                tokens[250] = " IF(";
+
                 tokens[236] = " GOTO ";
                 tokens[239] = " RAND ";
                 tokens[249] = " CONT ";
                 tokens[251] = " GOSUB ";
 
+                if (mZxpandEnabled)
+                {
+                        tokens[241] = " DELETE\"";
+                        tokens[245] = " CONFIG\"";
+                        tokens[255] = " CAT\"";
+                }
+                
                 DoTokenise(tokens);
 
                 tokens.clear();
 
                 tokens[239] = " RANDOMIZE ";
+                tokens[244] = " PRINT,";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[244] = " PRINT;";
 
                 DoTokenise(tokens);
         }

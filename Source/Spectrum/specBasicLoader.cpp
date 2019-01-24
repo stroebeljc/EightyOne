@@ -221,6 +221,18 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
                 tokens[194] = "CHR$(";
                 tokens[195] = "NOT(";
                 tokens[196] = "BIN(";
+                tokens[250] = " IF(";
+                
+                tokens[208] = " FORMAT\"";
+                tokens[209] = " MOVE\"";
+                tokens[210] = " ERASE\"";
+                tokens[213] = " MERGE\"";
+                tokens[214] = " VERIFY\"";
+                tokens[224] = " LPRINT\"";
+                tokens[238] = " INPUT\"";
+                tokens[239] = " LOAD\"";
+                tokens[245] = " PRINT\"";
+                tokens[248] = " SAVE\"";
 
                 tokens[206] = " DEFFN ";
                 tokens[211] = " OPEN#";
@@ -235,7 +247,39 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
+                tokens[213] = " MERGE*";
+                tokens[214] = " VERIFY*";
+                tokens[239] = " LOAD*";
+                tokens[248] = " SAVE*";
+
+                tokens[245] = " PRINT'";
                 tokens[249] = " RANDOMISE ";
+                tokens[192] = "USR\"";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[207] = " CAT#";
+                tokens[209] = " MOVE#";
+                tokens[224] = " LPRINT#";
+                tokens[225] = " LLIST#";
+                tokens[238] = " INPUT#";
+                tokens[240] = " LIST#";
+                tokens[245] = " PRINT#";
+                tokens[251] = " CLS#";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[245] = " PRINT,";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[245] = " PRINT;";
 
                 DoTokenise(tokens);
         }

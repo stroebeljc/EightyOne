@@ -182,3 +182,8 @@ AnsiString spec128BasicLister::GetBasicFileExtension()
         return "b82";
 }
 
+bool spec128BasicLister::RequiresInitialSpace()
+{
+        return false;
+}
+

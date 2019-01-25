@@ -364,7 +364,7 @@ void IBasicLoader::BlankLineStart(LineEntry lineEntry)
 
 void IBasicLoader::ExtractSingleCharacters(bool discardRedundantSpaces)
 {
-        int i = 0;
+        int i = 1;
 
         while (mLineBuffer[i] != '\0')
         {
@@ -616,6 +616,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
 
                 unsigned char* pMatch;
                 bool tokenFound;
+                int lenAdjustment = 0;
 
                 unsigned char startChar = pToken[0];
                 unsigned char endChar = pToken[lenToken-1];
@@ -625,11 +626,16 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 bool tokenEndsWithSpace = (endChar == ' ');
                 bool tokenEndsWithAlpha = isalpha(endChar);
 
-                if (endChar == '(' || endChar == '\"' || endChar == '#' || endChar == '*' || endChar == '\'' || endChar == ',' || endChar == ';')
+                if (endChar == '(' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';')
                 {
                         lenToken--;
                 }
 
+                if (endChar == '#' && (it->second == " OPEN#" || it->second == " CLOSE#"))
+                {
+                        lenAdjustment = 1;
+                }
+                
                 do
                 {
                         pMatch = strstr((char*)mLineBufferTokenised, (char*)pToken);
@@ -643,7 +649,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                         if (tokenFound)
                         {
                                 int startOffset = tokenBeginsWithSpace? 1 : 0;
-                                int endOffset = tokenEndsWithSpace ? lenToken - 1 : lenToken;
+                                int endOffset = tokenEndsWithSpace ? lenToken - 1 : lenToken + lenAdjustment;
 
                                 unsigned char* pStartToken = pMatch + startOffset + 1;
                                 unsigned char* pAfterToken = pMatch + lenToken;
@@ -657,7 +663,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
 
                                 int offset = pMatch - mLineBufferTokenised;
 
-                                for (int b = 0; b < lenToken; b++)
+                                for (int b = 0; b < lenToken + lenAdjustment; b++)
                                 {
                                         mLineBuffer[offset + b] = Blank;
                                 }

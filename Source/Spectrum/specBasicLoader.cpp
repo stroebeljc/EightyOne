@@ -26,6 +26,11 @@
 
 using namespace std;
 
+specBasicLoader::specBasicLoader(bool spec128)
+{
+        mSpec128 = spec128;
+}
+
 void specBasicLoader::OutputStartOfProgramData(AnsiString filename, int& addressOffset)
 {
         // Header block
@@ -243,6 +248,12 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
                 tokens[237] = " GOSUB ";
                 tokens[249] = " RAND ";
 
+                if (mSpec128)
+                {
+                        tokens[163] = " SPECTRUM ";
+                        tokens[164] = " PLAY ";
+                }
+
                 DoTokenise(tokens);
 
                 tokens.clear();
@@ -260,6 +271,12 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
+                tokens[210] = " ERASE!";
+                tokens[213] = " MERGE!";
+                tokens[214] = " VERIFY!";
+                tokens[239] = " LOAD!";
+                tokens[248] = " SAVE!";
+
                 tokens[207] = " CAT#";
                 tokens[209] = " MOVE#";
                 tokens[224] = " LPRINT#";
@@ -273,6 +290,7 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
+                tokens[207] = " CAT!";
                 tokens[245] = " PRINT,";
 
                 DoTokenise(tokens);

@@ -101,6 +101,7 @@ protected:
         virtual inline bool CustomColoursSupported() { return false; }
         virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
+        virtual bool RequiresInitialSpace() { return true; }
 
         int GetKeywordLength(unsigned char code);
 

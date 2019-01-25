@@ -60,5 +60,6 @@ private:
         virtual void InitialiseColours();
         virtual bool CustomColoursSupported();
         virtual COLORREF GetDefaultPaperColour();
+        virtual bool RequiresInitialSpace();
 };
 

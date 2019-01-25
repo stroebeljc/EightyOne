@@ -231,7 +231,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 }
                 else if (Extension == ".B82")
                 {
-                        loader = new specBasicLoader();
+                        loader = new specBasicLoader(zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128);
                 }
 
                 LoadBasicListingOptionsForm->ShowModal();

@@ -242,7 +242,11 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->SpectraColourEnable->Visible = (NewMachine == MACHINESPEC48) && ((NewSpec != SPECCYTC2048) && (NewSpec != SPECCYTS2068) && (NewSpec != SPECCYSE));
 
         Form1->BasicListerOption->Enabled = false;
-        BasicLister->SetBasicLister(NULL);
+        if (BasicLister->ListerAvailable())
+        {
+                BasicLister->Clear();
+                BasicLister->SetBasicLister(NULL);
+        }
 
         switch(NewMachine)
         {

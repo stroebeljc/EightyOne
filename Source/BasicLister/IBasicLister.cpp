@@ -414,10 +414,15 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         int startPos = (lineNumber[1] != ' ') ? 1 : 2;
         int length = strlen(lineNumber.c_str()) - (startPos - 1);
         lineText += lineNumber.SubString(startPos, length);
+        bool requiresInitialSpace = RequiresInitialSpace();
+        if (requiresInitialSpace)
+        {
+                lineText += " ";
+        }
 
         int address = lineInfo.addressContent;
         int lengthRemaining = lineInfo.contentLength;
-        bool lastKeywordEndedWithSpace = false;
+        bool lastKeywordEndedWithSpace = requiresInitialSpace;
         AnsiString zxCharacter;
 
         mEscapeCharacter = AnsiChar(GetEscapeCharacter());

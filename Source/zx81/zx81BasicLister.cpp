@@ -28,7 +28,7 @@ std::string zx81BasicLister::GetKeywords()
 {
         std::string keywords;
 
-        if (mZxpandEnabled)
+        if (!mZxpandEnabled)
         {
                 // Graphics encoded in accordance with ZXText2P: http://freestuff.grok.co.uk/zxtext2p/index.html
                 keywords = " ¦\\' ¦\\ '¦\\''¦\\. ¦\\: ¦\\.'¦\\:'¦\\##¦\\,,¦\\~~¦\"¦£¦$¦:¦?¦(¦)¦>¦<¦=¦+¦-¦*¦/¦;¦,¦.¦0¦1¦2¦3¦4¦5¦6¦7¦8¦9¦"

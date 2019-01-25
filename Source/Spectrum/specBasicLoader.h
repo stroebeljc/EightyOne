@@ -28,7 +28,7 @@ using namespace::std;
 class specBasicLoader : public IBasicLoader
 {
 public:
-        specBasicLoader(bool spec128);
+        specBasicLoader(bool spec128, bool if1);
         
 private:
         static const unsigned char Return = 0x0D;
@@ -46,7 +46,8 @@ private:
         static const unsigned char Run = 0xF7;
 
         bool mSpec128;
-
+        bool mIF1;
+        
         void OutputSystemVariables(int& addressOffset);
 
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset);

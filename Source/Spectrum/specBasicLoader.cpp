@@ -26,9 +26,10 @@
 
 using namespace std;
 
-specBasicLoader::specBasicLoader(bool spec128)
+specBasicLoader::specBasicLoader(bool spec128, bool if1)
 {
         mSpec128 = spec128;
+        mIF1 = if1;
 }
 
 void specBasicLoader::OutputStartOfProgramData(AnsiString filename, int& addressOffset)
@@ -258,11 +259,14 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
-                tokens[213] = " MERGE*";
-                tokens[214] = " VERIFY*";
-                tokens[239] = " LOAD*";
-                tokens[248] = " SAVE*";
-
+                if (mIF1)
+                {
+                        tokens[213] = " MERGE*";
+                        tokens[214] = " VERIFY*";
+                        tokens[239] = " LOAD*";
+                        tokens[248] = " SAVE*";
+                }
+                
                 tokens[245] = " PRINT'";
                 tokens[249] = " RANDOMISE ";
                 tokens[192] = "USR\"";
@@ -271,26 +275,33 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
-                tokens[210] = " ERASE!";
-                tokens[213] = " MERGE!";
-                tokens[214] = " VERIFY!";
-                tokens[239] = " LOAD!";
-                tokens[248] = " SAVE!";
+                if (mSpec128)
+                {
+                        tokens[207] = " CAT!";
+                        tokens[210] = " ERASE!";
+                        tokens[213] = " MERGE!";
+                        tokens[214] = " VERIFY!";
+                        tokens[239] = " LOAD!";
+                        tokens[248] = " SAVE!";
+                }
 
-                tokens[207] = " CAT#";
-                tokens[209] = " MOVE#";
                 tokens[224] = " LPRINT#";
                 tokens[225] = " LLIST#";
                 tokens[238] = " INPUT#";
                 tokens[240] = " LIST#";
                 tokens[245] = " PRINT#";
-                tokens[251] = " CLS#";
 
                 DoTokenise(tokens);
 
                 tokens.clear();
 
-                tokens[207] = " CAT!";
+                if (mIF1)
+                {
+                        tokens[207] = " CAT#";
+                        tokens[209] = " MOVE#";
+                        tokens[251] = " CLS#";
+                }
+
                 tokens[245] = " PRINT,";
 
                 DoTokenise(tokens);

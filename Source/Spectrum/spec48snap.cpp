@@ -40,6 +40,10 @@
 #include "tzxman.h"
 #include "interface1.h"
 #include "spec48.h"
+#include "spectra/spectra.h"
+#include "HW_.h"
+#include "main_.h"
+#include "Artifacts_.h"
 
 extern void HWSetMachine(int machine, int speccy);
 
@@ -55,6 +59,8 @@ extern int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
 extern int SPECKb, SPECNextBorder;
 extern int SPECVSync;
 extern int fts;
+
+extern SPECLast1ffd;
 
 int LoadDock(char *Filename)
 {
@@ -100,6 +106,36 @@ int LoadDock(char *Filename)
         return(1);
 }
 
+unsigned char *z80expandSpectra(unsigned char *in, int OutAddr, int Count)
+{
+        while(Count)
+        {
+                if ((in[0]==0xed) && (in[1]==0xed))
+                {
+                        int byte, repeat;
+                        repeat=in[2];
+                        byte=in[3];
+                        while(repeat)
+                        {
+                                SpectraMem[OutAddr] = byte;
+                                OutAddr++;
+                                repeat--;
+                                Count--;
+                        }
+                        in+=4;
+                }
+                else
+                {
+                        SpectraMem[OutAddr] = *in;
+                        in++;
+                        OutAddr++;
+                        Count--;
+                }
+        }
+
+        return(in);
+}
+
 unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
 {
         while(Count)
@@ -129,8 +165,7 @@ unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
 
         return(in);
 }
-
-
+  
 void spec_load_z80(char *fname)
 {
         FILE *f;
@@ -139,11 +174,15 @@ void spec_load_z80(char *fname)
         int z80version;
         int speccy;
 
+        InitialiseSpectra();
+        HW->SetColourOption(COLOURDISABLED);
+        Form1->SetSpectraSwitch(false, false);
+
         f=fopen(fname, "rb");
         if (!f) return;
 
-        buf=(BYTE*)malloc(262144);
-        FileLen=fread(buf,1,262144, f);
+        buf=(BYTE*)malloc(311335);
+        FileLen=fread(buf,1,311335, f);
         fclose(f);
 
         z80version=1;
@@ -252,52 +291,98 @@ void spec_load_z80(char *fname)
                 unsigned char *ptr;
                 int page, len;
               
-                ptr=buf+32;
-                ptr+=buf[30];
+                ptr = buf+32;
+                int h2len = buf[30] + (buf[31] << 8);
+                ptr += h2len;
 
                 while(ptr < (buf+FileLen))
                 {
                         len=ptr[0] + 256*ptr[1];
                         page=ptr[2];
 
-                        if (speccy==SPECCY16 || speccy==SPECCY48
-                                || speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
-                        {
-                                switch(page)
-                                {
-                                case 4: page=2; break;
-                                case 5: page=0; break;
-                                case 8: page=5; break;
-                                default: page=6; break;
-                                }
-                        }
-                        else    page -= 3;
-
                         ptr += 3;
 
-                        if (len==0xffff)
+                        if (page == 13)
                         {
-                                for(i=0;i<16384;i++)
-                                        RAMWrite((page+4), i, ptr[i]);
-                                ptr+=16384;
+                                ptr=z80expandSpectra(ptr, 0, 16384);
+                        }
+                        else if (page == 14)
+                        {
+                                ptr=z80expandSpectra(ptr, 0x4000, 16384);
                         }
                         else
                         {
-                                SPECBlk[0]=page+4;
-                                ptr=z80expand(ptr, 0, 16384);
+                                if (speccy==SPECCY16 || speccy==SPECCY48 || speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
+                                {
+                                        switch(page)
+                                        {
+                                        case 4: page=2; break;
+                                        case 5: page=0; break;
+                                        case 8: page=5; break;
+                                        default: page=6; break;
+                                        }
+                                }
+                                else    page -= 3;
+
+                                if (len==0xffff)
+                                {
+                                        for(i=0;i<16384;i++)
+                                                RAMWrite((page+4), i, ptr[i]);
+                                        ptr+=16384;
+                                }
+                                else
+                                {
+                                        SPECBlk[0]=page+4;
+                                        ptr=z80expand(ptr, 0, 16384);
+                                }
+                                SPECBlk[0]=0;
                         }
-                        SPECBlk[0]=0;
                 }
         }
 
+        int page = (spectrum.machine >= SPECCY128) ? 11 : 9;
+        
+        for(i=0; i<16384; i++)
+        {
+                SpectraMem[i] = SpecMem[(9<<14) + i]; // Page 5
+                SpectraMem[0x4000 + i] = SpecMem[(page<<14) + i]; // Page 5 or 7
+        }
+
+        if (z80version == 3)
+        {
+                SPECLast1ffd = buf[86];
+
+                bool spectraPresent = (buf[37] & 0x08);
+                if (spectraPresent)
+                {
+                        HW->SetColourOption(1);
+                        zx81.colour = COLOURSPECTRA;
+
+                        zx81.spectraColourSwitchOn = buf[87] & 0x01;
+                        zx81.spectraMode = buf[88];
+
+                        DetermineSpectraDisplayBank();
+                }
+                else
+                {
+                        HW->SetColourOption(0);
+                        zx81.colour = COLOURSINCLAIR;
+
+                        zx81.spectraColourSwitchOn = false;
+                        zx81.spectraMode = 0x00;
+                }
+
+                Form1->SetSpectraSwitch(true, zx81.spectraColourSwitchOn);
+        }
+
+        Artifacts->SelectRGBOutput(zx81.colour == COLOURSPECTRA);
+        Artifacts->Vibrant->Checked = !zx81.spectraColourSwitchOn;
         if (zx81.colour == COLOURSPECTRA)
         {
-                 for(i=0; i<16384; i++)
-                 {
-                        SpectraMem[i] = SpecMem[(9<<14) + i];
-                        SpectraMem[0x4000 + i] = SpecMem[(11<<14) + i];
-                 }
+                Form1->DisplayArt->Checked = false;
+                Artifacts->Visible = false;
         }
+        Form1->DisplayArt->Enabled = (zx81.colour != COLOURSPECTRA);
 
         z80.pc.w=buf[32]+ 256*buf[33];
         if (speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
@@ -311,8 +396,7 @@ void spec_load_z80(char *fname)
         //fts=buf[55] | (buf[56]<<8) | (buf[57]<<16);
 
         free(buf);
-}
-
+}         
 
 void spec_load_sna(char *fname)
 {
@@ -381,13 +465,12 @@ void spec_load_sna(char *fname)
                 if (!banks[i])
                         for(j=0;j<16384;j++) RAMWrite((i+4), j, buf[k++]);
 
-        if (zx81.colour == COLOURSPECTRA)
+        int page = (spectrum.machine >= SPECCY128) ? 11 : 9;
+        
+        for(i=0; i<16384; i++)
         {
-                 for(i=0; i<16384; i++)
-                 {
-                        SpectraMem[i] = SpecMem[(9<<14) + i];
-                        SpectraMem[0x4000 + i] = SpecMem[(11<<14) + i];
-                 }
+                SpectraMem[i] = SpecMem[(9<<14) + i];
+                SpectraMem[0x4000 + i] = SpecMem[(page<<14) + i]; // Page 5 or 7
         }
 
         free(buf);
@@ -508,7 +591,55 @@ void z80_save_block(FILE *f, int bank, int z80block)
         fwrite(buf, 1, len, f);
 }
 
+int SpectraRAMRead(int bank, int addr)
+{
+        return SpectraMem[bank*16384 + addr];
+}
 
+void z80_save_spectra_block(FILE *f, int bank, int z80block)
+{
+        int len, run, byte;
+        int lastrun, lastbyte;
+        unsigned char buf[65536];
+        int i;
+
+        i=0;
+        len=0;
+
+        lastbyte=lastrun=-1;
+
+        while(i<16384)
+        {
+                byte=SpectraRAMRead(bank,i);
+                run=1;
+                while((SpectraRAMRead(bank,i+run)==byte)
+                        && ((i+run)<16384)) run++;
+
+                if ((lastbyte==0xed) && (lastrun==1)) run=1;
+                if ((run>4) || (byte==0xed && run>1))
+                {
+                        if (run>255) run=255;
+                        buf[len++]=0xed;
+                        buf[len++]=0xed;
+                        buf[len++]=run;
+                        buf[len++]=byte;
+                }
+                else
+                {
+                        buf[len++]=byte;
+                        run=1;
+                }
+
+                i+=run;
+                lastbyte=byte;
+                lastrun=run;
+        }
+
+        fputc(len&255,f);
+        fputc((len>>8)&255,f);
+        fputc(z80block,f);
+        fwrite(buf, 1, len, f);
+}
 
 void spec_save_z80(char *fname)
 {
@@ -547,9 +678,10 @@ void spec_save_z80(char *fname)
         if (spectrum.kbissue==SPECKBISS2) i|=4;
         fputc(i,f);
 
-        // We're going to do a version 2 .z80 file
+        // We're going to do a version 2 or 3 .z80 file
 
-        fputc(23,f); fputc(0,f);
+        int h2len = (zx81.colour == COLOURSPECTRA) ? 57 : 23;
+        fputc(h2len,f); fputc(0,f);
         fputc(z80.pc.b.l,f); fputc(z80.pc.b.h,f);
 
         switch(spectrum.machine)
@@ -579,10 +711,55 @@ void spec_save_z80(char *fname)
                 fputc(TIMEXByte,f);
         else    fputc(0,f);
 
+        /*
+        Bit 0: 1 if R register emulation on
+	Bit 1: 1 if LDIR emulation on
+	Bit 2: AY sound in use, even on 48K machines
+	Bit 3: SPECTRA interface present
+	Bit 6: (if bit 2 set) Fuller Audio Box emulation
+	Bit 7: Modify hardware
+        */
         flags |= 1 | 2;
+        if (zx81.colour == COLOURSPECTRA) flags |= 8;
         fputc(flags,f);
+
         fputc(0,f);
         for(i=0;i<16;i++) fputc(0,f);
+
+        // If Spectra is enabled then output a version 3 file
+        if (zx81.colour == COLOURSPECTRA)
+        {
+                for (i=55; i<86; i++)
+                {
+                        fputc(0,f);
+                }
+                
+                fputc(SPECLast1ffd, f);
+
+                /*
+                Spectra extension devised for zxsp emulator.
+                
+                Bit 0: new colour modes enabled
+		Bit 1: RS232 enabled
+		Bit 2: Joystick enabled
+		Bit 3: IF1 rom hooks enabled
+		Bit 4: rom paged in
+		Bit 5: port 239: Comms out bit
+		Bit 6: port 239: CTS out bit
+		Bit 7: port 247: Data out bit
+                */
+
+                // Only colour mode supported at present
+                BYTE spectraBits = zx81.spectraColourSwitchOn ? 1 : 0;
+                fputc(spectraBits, f);
+
+                /*
+                Spectra extension devised for zxsp emulator.
+
+                Last out to port 7FDF
+                */
+                fputc(zx81.spectraMode, f);
+        }
 
         if (spectrum.machine==SPECCY16)
                 z80_save_block(f,SPECBlk[1], 8);
@@ -600,5 +777,23 @@ void spec_save_z80(char *fname)
                         z80_save_block(f,i+4, i+3);
         }
 
+        if (zx81.colour == COLOURSPECTRA)
+        {
+                /*
+                Spectra extension devised for zxsp emulator.
+                
+        	pg no.	memory bank
+	        ------	-----------
+        	12		SPECTRA rom
+	        13		SPECTRA ram[0]
+        	14		SPECTRA ram[1]
+                */
+
+                // Only RAM supported at present
+                z80_save_spectra_block(f, 0, 13);
+                z80_save_spectra_block(f, 1, 14);
+        }
+
         fclose(f);
 }
+

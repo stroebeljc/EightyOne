@@ -159,6 +159,7 @@ public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
+        void SetColourOption(int index);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THW *HW;

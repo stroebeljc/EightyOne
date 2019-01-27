@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 255
-  Top = 117
+  Left = 165
+  Top = 121
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'

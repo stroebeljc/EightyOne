@@ -535,9 +535,22 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
         stopped=zx81_stop;
         zx81_stop=1;
 
-        if (zx81.machine==MACHINEACE) SaveSnapDialog->Filter = ".ACE Snapshot|*.ace";
-        else if (zx81.machine==MACHINESPEC48) SaveSnapDialog->Filter = ".SNA Snapshot|*.sna|.Z80 Snapshot|*.z80";
-        else SaveSnapDialog->Filter = ".Z81 Snapshot|*.z81";
+        if (zx81.machine==MACHINEACE)
+        {
+                SaveSnapDialog->Filter = ".ACE Snapshot|*.ace";
+                SaveSnapDialog->DefaultExt = "ACE";
+        }
+        else if (zx81.machine==MACHINESPEC48)
+        {
+                SaveSnapDialog->Filter = ".Z80 Snapshot|*.z80|.SNA Snapshot|*.sna";
+                SaveSnapDialog->DefaultExt = "Z80";
+        }
+        else
+        {
+                SaveSnapDialog->Filter = ".Z81 Snapshot|*.z81";
+                SaveSnapDialog->DefaultExt = "Z81";
+        }
+
         if (!SaveSnapDialog->Execute())
         {
                 zx81_stop=stopped;
@@ -560,9 +573,22 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         AnsiString Path, Ext;
         stopped=zx81_stop;
 
-        if (zx81.machine==MACHINEACE) LoadSnapDialog->Filter = ".ACE Snapshot|*.ace|Compressed Snapshot|*.zip";
-        else if (zx81.machine==MACHINESPEC48) LoadSnapDialog->Filter = "Spectrum Snapshots|*.sna;*.z80|.SNA Snapshot|*.sna|.Z80 Snapshot|*.z80|Compressed Snapshot|*.zip";
-        else LoadSnapDialog->Filter = ".Z81 Snapshot|*.z81|Compressed Snapshot|*.zip";
+        if (zx81.machine==MACHINEACE)
+        {
+                LoadSnapDialog->Filter = ".ACE Snapshot|*.ace|Compressed Snapshot|*.zip";
+                LoadSnapDialog->DefaultExt = "ACE";
+        }
+        else if (zx81.machine==MACHINESPEC48)
+        {
+                LoadSnapDialog->Filter = "Spectrum Snapshots|*.z80;*.sna|.Z80 Snapshot|*.z80|.SNA Snapshot|*.sna|Compressed Snapshot|*.zip";
+                LoadSnapDialog->DefaultExt = "Z80";
+        }
+        else
+        {
+                LoadSnapDialog->Filter = ".Z81 Snapshot|*.z81|Compressed Snapshot|*.zip";
+                LoadSnapDialog->DefaultExt = "Z81";
+        }
+
         if (!LoadSnapDialog->Execute()) return;
 
         Path=LoadSnapDialog->FileName;
@@ -1944,6 +1970,22 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TForm1::SetChromaSwitch(bool enabled, bool checked)
+{
+        ChromaColourEnable->Checked = checked;
+        ChromaColourEnable->Enabled = enabled;
+}
+
+//---------------------------------------------------------------------------
+
+void TForm1::SetSpectraSwitch(bool enabled, bool checked)
+{
+        SpectraColourEnable->Checked = checked;
+        SpectraColourEnable->Enabled = enabled;
+}
+
+//---------------------------------------------------------------------------
+
 void MoveWindow(TForm* form, int& x, int& y)
 {
         form->Left = x;
@@ -2046,5 +2088,6 @@ void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+
 
 

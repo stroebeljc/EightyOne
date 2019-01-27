@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.13 - 26/01/2019 (by Paul Farrow)
+Version 1.13 - 27/01/2019 (by Paul Farrow)
 * Bug fixes:
   - Only the lower 3 bits of the border value are now saved in Spectrum .Z80 and .SNA snapshots.
   - Accessing address $0525 causes the Program Counter to be advanced if flash loading is
@@ -28,6 +28,8 @@ Version 1.13 - 26/01/2019 (by Paul Farrow)
   - BASIC programs in text file format can be read (only for ZX80, ZX81 and Spectrum models).
   - Status bar at the bottom of the emulator window now indicates when reading or writing to a
     Microdrive cartridge.
+  - Added support for Chroma in .z81 snapshots.
+  - Added support for Spectra in .z80 snapshots.
 
 Version 1.12 - 14/08/2018 (by Paul Farrow)
 * Bug fixes:

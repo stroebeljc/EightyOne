@@ -129,7 +129,6 @@ void caserMunger(AnsiString& sym, AnsiString& val)
         sym = UpperCase(sym);
 }
 
-
 AnsiString getMachineRoot(AnsiString fullRomName)
 {
         // return the first part of the rom name up to but excluding the first '.'
@@ -139,7 +138,6 @@ AnsiString getMachineRoot(AnsiString fullRomName)
         int len = p2 - p1;
         return fullRomName.SubString(1,len);
 }
-
 
 void __fastcall THW::OKClick(TObject *Sender)
 {
@@ -2264,4 +2262,9 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------
+
+void THW::SetColourOption(int index)
+{
+        ColourBox->ItemIndex = index;
+}
 

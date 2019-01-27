@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 198
-  Top = 242
+  Left = 170
+  Top = 136
   BorderStyle = bsSingle
   Caption = 'EightyOne'
   ClientHeight = 255
@@ -441,6 +441,7 @@ object Form1: TForm1
     end
   end
   object LoadSnapDialog: TOpenDialog
+    DefaultExt = 'Z81'
     Filter = '.Z81 Snapshot|*.z81|.ACE Snapshot|*.ace'
     Top = 40
   end

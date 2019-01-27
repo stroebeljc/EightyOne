@@ -33,12 +33,17 @@
 #include "zx81.h"
 #include "zx81config.h"
 #include "z80\z80.h"
+#include "chroma\chroma.h"
+#include "HW_.h"
+#include "main_.h"
+#include "Artifacts_.h"
 
 extern int rowcounter;
 
 void load_snap_cpu(FILE *f);
 void load_snap_mem(FILE *f);
 void load_snap_zx81(FILE *f);
+void load_snap_chroma(FILE *f);
 
 extern DebugUpdate();
 
@@ -103,6 +108,11 @@ void load_snap_cpu(FILE *f)
                         load_snap_zx81(f);
                         return;
                 }
+                if (!strcmp(tok,"[CHROMA]"))
+                {
+                        load_snap_chroma(f);
+                        return;
+                }
 
                 if (!strcmp(tok,"PC")) z80.pc.w = hex2dec(get_token(f));
                 if (!strcmp(tok,"SP")) z80.sp.w = hex2dec(get_token(f));
@@ -133,6 +143,48 @@ void load_snap_cpu(FILE *f)
         }
 }
 
+void load_snap_chroma(FILE *f)
+{
+        int Addr, Count, Chr;
+        char *tok;
+
+        Addr=0xC000;
+
+        zx81.colour = COLOURCHROMA;
+        HW->SetColourOption(COLOURCHROMA);
+
+        while(!feof(f))
+        {
+                tok=get_token(f);
+                if (!strcmp(tok,"[MEMORY]"))
+                {
+                        load_snap_mem(f);
+                        return;
+                }
+                else if (!strcmp(tok,"[CPU]"))
+                {
+                        load_snap_cpu(f);
+                        return;
+                }
+                else if (!strcmp(tok,"COLOUR_MODE"))
+                {
+                        zx81.chromaMode = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"COLOUR_ENABLED"))
+                {
+                        zx81.chromaColourSwitchOn = hex2dec(get_token(f));
+                        Form1->SetChromaSwitch(true, zx81.chromaColourSwitchOn);
+                }
+                else if (*tok=='*')
+                {
+                        Count=hex2dec(tok+1);
+                        Chr=hex2dec(get_token(f));
+                        while(Count--) memory[Addr++]=Chr;
+                }
+                else memory[Addr++]=hex2dec(tok);
+        }
+}
+
 void load_snap_zx81(FILE *f)
 {
         char *tok;
@@ -148,6 +200,11 @@ void load_snap_zx81(FILE *f)
                 if (!strcmp(tok,"[CPU]"))
                 {
                         load_snap_cpu(f);
+                        return;
+                }
+                if (!strcmp(tok,"[CHROMA]"))
+                {
+                        load_snap_chroma(f);
                         return;
                 }
 
@@ -176,6 +233,11 @@ void load_snap_mem(FILE *f)
                 else if (!strcmp(tok,"[ZX81]"))
                 {
                         load_snap_zx81(f);
+                        return;
+                }
+                else if (!strcmp(tok,"[CHROMA]"))
+                {
+                        load_snap_chroma(f);
                         return;
                 }
                 else if (!strcmp(tok,"MEMRANGE"))
@@ -246,7 +308,6 @@ void load_snap_ace(FILE *f)
         z80.r = memory[memptr];
 }
 
-
 int load_snap(char *filename)
 {
         char *p;
@@ -270,6 +331,10 @@ int load_snap(char *filename)
         }
         else
         {
+                InitialiseChroma();
+                HW->SetColourOption(COLOURDISABLED);
+                Form1->SetChromaSwitch(false, false);
+
                 f=fopen(filename,"rt");
                 if (!f) return(0);
 
@@ -278,15 +343,16 @@ int load_snap(char *filename)
                         if (!strcmp(get_token(f),"[CPU]")) load_snap_cpu(f);
                         if (!strcmp(get_token(f),"[MEMORY]")) load_snap_mem(f);
                         if (!strcmp(get_token(f),"[ZX81]")) load_snap_zx81(f);
+                        if (!strcmp(get_token(f),"[CHROMA]")) load_snap_chroma(f);
                 }
         }
+
+        Artifacts->SelectRGBOutput(zx81.colour == COLOURCHROMA);
 
         fclose(f);
         DebugUpdate();
         return(1);
 }
-
-
 
 int save_snap(char *filename)
 {
@@ -437,6 +503,31 @@ int save_snap(char *filename)
 
                         Addr += Count;
                 }
+
+                if (zx81.colour == COLOURCHROMA)
+                {
+                        fprintf(f,"\n\n[CHROMA]\n");
+
+                        Addr = 0xC000;
+
+                        while (Addr <= 0x10000)
+                        {
+                                Chr=memory[Addr];
+                                Count=1;
+
+                                while((memory[Addr+Count]==Chr) && ((Addr+Count)<=0x10000))
+                                        Count++;
+
+                                if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
+                                else fprintf(f,"%02X ",Chr);
+
+                                Addr += Count;
+                        }
+
+                        fprintf(f,"\nCOLOUR_MODE %02X\n", zx81.chromaMode);
+                        fprintf(f,"COLOUR_ENABLED %02X\n", zx81.chromaColourSwitchOn);
+                }
+
                 fprintf(f,"\n\n[EOF]\n");
         }
         fclose(f);

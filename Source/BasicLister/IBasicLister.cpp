@@ -138,6 +138,11 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         lineInfo.lineNumber = lineNumber;
 
         int length = getbyte((*address)++) + (getbyte((*address)++) << 8);
+        if (length < 1)
+        {
+                return false;
+        }
+
         lineInfo.contentLength = length;
         lineInfo.lineLength = lineHeaderLength + length;
 
@@ -287,7 +292,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
         unsigned char c = (unsigned char)getbyte(address);
         address++;
         lengthRemaining--;
-        bool endOfLine = (lengthRemaining == 0);
+        bool endOfLine = (lengthRemaining <= 0);
 
         if (endOfLine && (c == mLineEndingCode))
         {
@@ -458,7 +463,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         unsigned char c = (unsigned char)getbyte(address);
         address++;
         lengthRemaining--;
-        bool endOfLine = (lengthRemaining == 0);
+        bool endOfLine = (lengthRemaining <= 0);
 
         if (endOfLine && (c == mLineEndingCode))
         {

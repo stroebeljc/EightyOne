@@ -135,14 +135,14 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
 {
         bool containsMachineCode = false;
 
-        bool endOfLine = (lengthRemaining == 0);
+        bool endOfLine = (lengthRemaining <= 0);
 
         while (!endOfLine)
         {
                 int c = getbyte(address);
                 address++;
                 lengthRemaining--;
-                endOfLine = (lengthRemaining == 0);
+                endOfLine = (lengthRemaining <= 0);
 
                 if ((c >= 0x43 && c < 0x80 && !(c == Newline && endOfLine)) || (c == 0xC3))
                 {

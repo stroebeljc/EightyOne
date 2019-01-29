@@ -1970,22 +1970,6 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TForm1::SetChromaSwitch(bool enabled, bool checked)
-{
-        ChromaColourEnable->Checked = checked;
-        ChromaColourEnable->Enabled = enabled;
-}
-
-//---------------------------------------------------------------------------
-
-void TForm1::SetSpectraSwitch(bool enabled, bool checked)
-{
-        SpectraColourEnable->Checked = checked;
-        SpectraColourEnable->Enabled = enabled;
-}
-
-//---------------------------------------------------------------------------
-
 void MoveWindow(TForm* form, int& x, int& y)
 {
         form->Left = x;
@@ -2088,6 +2072,4 @@ void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
-
-
 

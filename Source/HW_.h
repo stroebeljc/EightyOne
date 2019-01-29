@@ -144,6 +144,8 @@ __published:	// IDE-managed Components
         void __fastcall RomCartridgeBoxChange(TObject *Sender);
         void __fastcall ColourBoxChange(TObject *Sender);
         void __fastcall RomBoxChange(TObject *Sender);
+        void __fastcall ZXPrinterClick(TObject *Sender);
+        void __fastcall FloatingPointHardwareFixClick(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;
@@ -159,7 +161,6 @@ public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
-        void SetColourOption(int index);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THW *HW;

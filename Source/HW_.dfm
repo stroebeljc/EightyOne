@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 165
-  Top = 121
+  Left = 171
+  Top = 295
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1341,6 +1341,7 @@ object HW: THW
         Height = 17
         Caption = 'ZX Printer'
         TabOrder = 10
+        OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
         Left = 200
@@ -1687,6 +1688,7 @@ object HW: THW
         Color = clBtnFace
         ParentColor = False
         TabOrder = 7
+        OnClick = FloatingPointHardwareFixClick
       end
     end
   end

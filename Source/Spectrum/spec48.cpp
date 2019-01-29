@@ -1692,7 +1692,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         }
                                 }
 
-                                if (DrawingBorder) paper=paper2=SPECBorder;
+                                if (DrawingBorder)
+                                    paper=paper2=SPECBorder;
 
                                 i=(tv.AdvancedEffects && (TIMEXMode&4)) ? 2:1;
 

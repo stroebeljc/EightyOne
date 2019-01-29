@@ -2243,9 +2243,9 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
 {
         RomCartridgeFileBox->Text = "";
 
-        bool romCartridgeSelected = (RomCartridgeBox->Text == "None");
-        RomCartridgeFileBox->Enabled = !romCartridgeSelected;
-        BrowseRomCartridge->Enabled = !romCartridgeSelected;
+        bool romCartridgeSelected = (RomCartridgeBox->Text != "None");
+        RomCartridgeFileBox->Enabled = romCartridgeSelected;
+        BrowseRomCartridge->Enabled = romCartridgeSelected;
         
         ResetRequired=true;
 }
@@ -2261,10 +2261,16 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         ResetRequired=true;
 }
-//---------------------------------------------------------------------------
 
-void THW::SetColourOption(int index)
+void __fastcall THW::ZXPrinterClick(TObject *Sender)
 {
-        ColourBox->ItemIndex = index;
+        ResetRequired=true;
 }
+//---------------------------------------------------------------------------
+  
+void __fastcall THW::FloatingPointHardwareFixClick(TObject *Sender)
+{
+        ResetRequired=true;
+}
+//---------------------------------------------------------------------------
 

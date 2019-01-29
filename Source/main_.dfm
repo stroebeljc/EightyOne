@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 170
-  Top = 136
+  Left = 298
+  Top = 141
   BorderStyle = bsSingle
   Caption = 'EightyOne'
   ClientHeight = 255
@@ -449,6 +449,7 @@ object Form1: TForm1
     OnClose = SaveSnapDialogTypeChange
     DefaultExt = 'Z81'
     Filter = '.Z81 Snapshot|*.z81'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     OnTypeChange = SaveSnapDialogTypeChange
     Left = 32
     Top = 72
@@ -617,12 +618,13 @@ object Form1: TForm1
   object SaveConfigDialog: TSaveDialog
     DefaultExt = '.ini'
     Filter = 'Configuration Files (*.ini)|*.ini'
-    Options = [ofHideReadOnly, ofNoChangeDir, ofEnableSizing]
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofNoChangeDir, ofEnableSizing]
     Top = 72
   end
   object SaveScrDialog: TSaveDialog
     DefaultExt = 'bmp'
     Filter = 'Windows Bitmap (.bmp)|*.bmp|Spectrum Screen (.scr)|*.scr'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 64
     Top = 72
   end

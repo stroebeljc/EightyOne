@@ -112,7 +112,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                 // Check for a write to the Chroma's QS Character RAM
                 if ((zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
-                        font[Address - 0x8400]=Data;
+                        font[Address - 0x8400] = Data;
                         memory[Address] = Data;
                         memory[Address + 0x4000] = Data;
                         memory[Address - 0x6000] = Data;

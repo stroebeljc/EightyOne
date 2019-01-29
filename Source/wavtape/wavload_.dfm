@@ -655,6 +655,7 @@ object WavLoad: TWavLoad
     Top = 40
   end
   object SaveWavDialog: TSaveDialog
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 16
     Top = 40
   end

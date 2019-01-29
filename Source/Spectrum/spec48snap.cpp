@@ -175,8 +175,10 @@ void spec_load_z80(char *fname)
         int speccy;
 
         InitialiseSpectra();
-        HW->SetColourOption(COLOURDISABLED);
-        Form1->SetSpectraSwitch(false, false);
+        HW->ColourBox->ItemIndex = COLOURDISABLED;
+        Form1->SpectraColourEnable->Checked = false;
+        Form1->SpectraColourEnable->Enabled = false;
+        Form1->SpectraColourEnable->Visible = false;
 
         f=fopen(fname, "rb");
         if (!f) return;
@@ -355,24 +357,29 @@ void spec_load_z80(char *fname)
                 bool spectraPresent = (buf[37] & 0x08);
                 if (spectraPresent)
                 {
-                        HW->SetColourOption(1);
+                        HW->ColourBox->ItemIndex = 1;
                         zx81.colour = COLOURSPECTRA;
 
                         zx81.spectraColourSwitchOn = buf[87] & 0x01;
                         zx81.spectraMode = buf[88];
-
+                        SPECBorder = buf[89];
+                        SPECNextBorder = SPECBorder;
+                        SPECKb = SPECBorder;
+                        
                         DetermineSpectraDisplayBank();
+
+                        Form1->SpectraColourEnable->Visible = true;
+                        Form1->SpectraColourEnable->Enabled = true;
+                        Form1->SpectraColourEnable->Checked = zx81.spectraColourSwitchOn;
                 }
                 else
                 {
-                        HW->SetColourOption(0);
+                        HW->ColourBox->ItemIndex = 0;
                         zx81.colour = COLOURSINCLAIR;
 
                         zx81.spectraColourSwitchOn = false;
                         zx81.spectraMode = 0x00;
                 }
-
-                Form1->SetSpectraSwitch(true, zx81.spectraColourSwitchOn);
         }
 
         Artifacts->SelectRGBOutput(zx81.colour == COLOURSPECTRA);
@@ -680,7 +687,7 @@ void spec_save_z80(char *fname)
 
         // We're going to do a version 2 or 3 .z80 file
 
-        int h2len = (zx81.colour == COLOURSPECTRA) ? 57 : 23;
+        int h2len = (zx81.colour == COLOURSPECTRA) ? 58 : 23;
         fputc(h2len,f); fputc(0,f);
         fputc(z80.pc.b.l,f); fputc(z80.pc.b.h,f);
 
@@ -737,8 +744,7 @@ void spec_save_z80(char *fname)
                 fputc(SPECLast1ffd, f);
 
                 /*
-                Spectra extension devised for zxsp emulator.
-                
+                Spectra extension devised for zxsp emulator.                     
                 Bit 0: new colour modes enabled
 		Bit 1: RS232 enabled
 		Bit 2: Joystick enabled
@@ -755,10 +761,11 @@ void spec_save_z80(char *fname)
 
                 /*
                 Spectra extension devised for zxsp emulator.
-
                 Last out to port 7FDF
                 */
                 fputc(zx81.spectraMode, f);
+
+                fputc(SPECBorder, f);
         }
 
         if (spectrum.machine==SPECCY16)

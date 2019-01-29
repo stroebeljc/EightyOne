@@ -39,11 +39,21 @@
 #include "Artifacts_.h"
 
 extern int rowcounter;
+extern int MemotechMode;
+extern BYTE font[1024];
 
 void load_snap_cpu(FILE *f);
 void load_snap_mem(FILE *f);
 void load_snap_zx81(FILE *f);
-void load_snap_chroma(FILE *f);
+void load_snap_sound(FILE *f);
+void load_snap_chrgen(FILE *f);
+void load_snap_hires(FILE *f);
+void load_snap_colour(FILE *f);
+void load_snap_romcartridge(FILE *f);
+void load_snap_interfaces(FILE *f);
+void load_snap_advanced(FILE* f);
+void ProcessTag(char* tok, FILE* f);
+void InitialiseHardware();
 
 extern DebugUpdate();
 
@@ -91,6 +101,18 @@ int hex2dec(char *str)
         return(num);
 }
 
+void SetComboBox(TComboBox* comboBox, char* text)
+{
+        for (int i = 0; i < comboBox->Items->Count; i++)
+        {
+                if (comboBox->Items->Strings[i] == text)
+                {
+                        comboBox->ItemIndex = i;
+                        break;
+                }
+        }
+}
+
 void load_snap_cpu(FILE *f)
 {
         char *tok;
@@ -98,19 +120,9 @@ void load_snap_cpu(FILE *f)
         while(!feof(f))
         {
                 tok=get_token(f);
-                if (!strcmp(tok,"[MEMORY]"))
+                if (tok[0] == '[')
                 {
-                        load_snap_mem(f);
-                        return;
-                }
-                if (!strcmp(tok,"[ZX81]"))
-                {
-                        load_snap_zx81(f);
-                        return;
-                }
-                if (!strcmp(tok,"[CHROMA]"))
-                {
-                        load_snap_chroma(f);
+                        ProcessTag(tok, f);
                         return;
                 }
 
@@ -143,45 +155,209 @@ void load_snap_cpu(FILE *f)
         }
 }
 
-void load_snap_chroma(FILE *f)
+void load_snap_sound(FILE *f)
+{
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"TYPE"))
+                {
+                        tok = get_token(f);
+                        SetComboBox(HW->SoundCardBox, tok);
+                }
+        }
+}
+
+void load_snap_chrgen(FILE *f)
+{
+        int Addr, Count, Chr;
+
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"TYPE"))
+                {
+                        tok = get_token(f);
+                        SetComboBox(HW->ChrGenBox, tok);
+
+                        if (HW->ChrGenBox->Text == "Quicksilva")
+                        {
+                                Addr = 0x8400;
+                                Form1->QSChrEnable->Visible = true;
+                                Form1->QSChrEnable->Enabled = true;
+                        }
+                }
+                else if ((HW->ChrGenBox->Text == "Quicksilva") && !strcmp(tok,"ENABLED"))
+                {
+                        zx81.enableQSchrgen = hex2dec(get_token(f));
+                        Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
+                }
+                else if ((HW->ChrGenBox->Text == "Quicksilva") && (*tok=='*'))
+                {
+                        Count=hex2dec(tok+1);
+                        Chr=hex2dec(get_token(f));
+
+                        while(Count--)
+                        {
+                                font[Addr-0x8400] = Chr;
+
+                                if (zx81.colour == COLOURCHROMA)
+                                {
+                                        memory[Addr] = Chr;
+                                        memory[Addr + 0x4000] = Chr;
+                                        memory[Addr - 0x6000] = Chr;
+                                }
+
+                                Addr++;
+                        }
+                }
+                else
+                {
+                        Chr=hex2dec(tok);
+                        font[Addr-0x8400]=Chr;
+                        
+                        if (zx81.colour == COLOURCHROMA)
+                        {
+                                memory[Addr] = Chr;
+                                memory[Addr + 0x4000] = Chr;
+                                memory[Addr - 0x6000] = Chr;
+                        }
+                        Addr++;
+                }
+        }
+}
+
+void load_snap_hires(FILE *f)
+{
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"TYPE"))
+                {
+                        tok = get_token(f);
+                        SetComboBox(HW->HiResBox, tok);
+                        
+                        if (tok=="G007") HW->EnableLowRAM->Checked=true;
+                        if (tok=="Memotech") HW->ProtectROM->Checked=true;
+                }
+        }
+}
+
+void load_snap_romcartridge(FILE *f)
+{
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"TYPE"))
+                {
+                        tok = get_token(f);
+                        SetComboBox(HW->RomCartridgeBox, tok);
+                }
+                else if (!strcmp(tok,"PATH"))
+                {
+                        tok = get_token(f);
+                        HW->RomCartridgeFileBox->Text = tok;
+                }
+        }
+
+        bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
+        HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
+        HW->BrowseRomCartridge->Enabled = romCartridgeSelected;
+}
+
+void load_snap_interfaces(FILE *f)
+{
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"ZXPAND"))
+                {
+                        HW->ZXpand->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"ZX_PRINTER"))
+                {
+                        HW->ZXPrinter->Checked = hex2dec(get_token(f));
+                }
+        }
+}
+
+void load_snap_colour(FILE *f)
 {
         int Addr, Count, Chr;
         char *tok;
+        bool chroma = false;
 
         Addr=0xC000;
-
-        zx81.colour = COLOURCHROMA;
-        HW->SetColourOption(COLOURCHROMA);
 
         while(!feof(f))
         {
                 tok=get_token(f);
-                if (!strcmp(tok,"[MEMORY]"))
+                if (tok[0] == '[')
                 {
-                        load_snap_mem(f);
+                        ProcessTag(tok, f);
                         return;
                 }
-                else if (!strcmp(tok,"[CPU]"))
+
+                if (!strcmp(tok,"TYPE"))
                 {
-                        load_snap_cpu(f);
-                        return;
+                        tok = get_token(f);
+                        SetComboBox(HW->ColourBox, tok);
+                        chroma = (HW->ColourBox->Text == "Chroma");
+                        if (chroma)
+                        {
+                                Form1->ChromaColourEnable->Visible = true;
+                                Form1->ChromaColourEnable->Enabled = true;
+                        }
                 }
-                else if (!strcmp(tok,"COLOUR_MODE"))
+                else if (chroma && !strcmp(tok,"CHROMA_MODE"))
                 {
                         zx81.chromaMode = hex2dec(get_token(f));
                 }
-                else if (!strcmp(tok,"COLOUR_ENABLED"))
+                else if (chroma && !strcmp(tok,"COLOUR_ENABLED"))
                 {
                         zx81.chromaColourSwitchOn = hex2dec(get_token(f));
-                        Form1->SetChromaSwitch(true, zx81.chromaColourSwitchOn);
+                        Form1->ChromaColourEnable->Checked = zx81.chromaColourSwitchOn;
                 }
-                else if (*tok=='*')
+                else if (chroma && *tok=='*')
                 {
                         Count=hex2dec(tok+1);
                         Chr=hex2dec(get_token(f));
                         while(Count--) memory[Addr++]=Chr;
                 }
-                else memory[Addr++]=hex2dec(tok);
+                else if (chroma)
+                {
+                        memory[Addr++]=hex2dec(tok);
+                }
         }
 }
 
@@ -192,25 +368,15 @@ void load_snap_zx81(FILE *f)
         while(!feof(f))
         {
                 tok=get_token(f);
-                if (!strcmp(tok,"[MEMORY]"))
+                if (tok[0] == '[')
                 {
-                        load_snap_mem(f);
-                        return;
-                }
-                if (!strcmp(tok,"[CPU]"))
-                {
-                        load_snap_cpu(f);
-                        return;
-                }
-                if (!strcmp(tok,"[CHROMA]"))
-                {
-                        load_snap_chroma(f);
+                        ProcessTag(tok, f);
                         return;
                 }
 
                 if (!strcmp(tok,"NMI")) NMI_generator = hex2dec(get_token(f));
-                if (!strcmp(tok,"HSYNC")) HSYNC_generator = hex2dec(get_token(f));
-                if (!strcmp(tok,"ROW")) rowcounter = hex2dec(get_token(f));
+                else if (!strcmp(tok,"HSYNC")) HSYNC_generator = hex2dec(get_token(f));
+                else if (!strcmp(tok,"ROW")) rowcounter = hex2dec(get_token(f));
         }
 }
 
@@ -224,26 +390,25 @@ void load_snap_mem(FILE *f)
         while(!feof(f))
         {
                 tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
 
-                if (!strcmp(tok,"[CPU]"))
+                if (!strcmp(tok,"RAM_PACK"))
                 {
-                        load_snap_cpu(f);
-                        return;
-                }
-                else if (!strcmp(tok,"[ZX81]"))
-                {
-                        load_snap_zx81(f);
-                        return;
-                }
-                else if (!strcmp(tok,"[CHROMA]"))
-                {
-                        load_snap_chroma(f);
-                        return;
+                        tok = get_token(f);
+                        SetComboBox(HW->RamPackBox, tok);
                 }
                 else if (!strcmp(tok,"MEMRANGE"))
                 {
                         Addr=hex2dec(get_token(f));
                         get_token(f);
+                }
+                else if (!strcmp(tok,"8K_RAM_ENABLED"))
+                {
+                        HW->EnableLowRAM->Checked=hex2dec(get_token(f));
                 }
                 else if (*tok=='*')
                 {
@@ -251,8 +416,57 @@ void load_snap_mem(FILE *f)
                         Chr=hex2dec(get_token(f));
                         while(Count--) memory[Addr++]=Chr;
                 }
-                else memory[Addr++]=hex2dec(tok);
+                else
+                {
+                        memory[Addr++]=hex2dec(tok);
+                }
         }
+}
+
+void load_snap_advanced(FILE* f)
+{
+        char *tok;
+
+        while(!feof(f))
+        {
+                tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"PROTECT_ROM"))
+                {
+                        HW->ProtectROM->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"M1NOT"))
+                {
+                        HW->M1Not->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"FLOATING_POINT_FIX"))
+                {
+                        HW->FloatingPointHardwareFix->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"NTSC"))
+                {
+                        HW->NTSC->Checked = hex2dec(get_token(f));
+                }
+        }
+}
+
+void ProcessTag(char* tok, FILE* f)
+{             
+        if (!strcmp(tok, "[CPU]")) load_snap_cpu(f);
+        else if (!strcmp(tok, "[MEMORY]")) load_snap_mem(f);
+        else if (!strcmp(tok, "[ZX81]")) load_snap_zx81(f);
+        else if (!strcmp(tok, "[COLOUR]")) load_snap_colour(f);
+        else if (!strcmp(tok, "[SOUND]")) load_snap_sound(f);
+        else if (!strcmp(tok, "[CHR$_GENERATOR]")) load_snap_chrgen(f);
+        else if (!strcmp(tok, "[HIGH_RESOLUTION]")) load_snap_hires(f);
+        else if (!strcmp(tok, "[ROM_CARTRIDGE]")) load_snap_romcartridge(f);
+        else if (!strcmp(tok, "[INTERFACES]")) load_snap_interfaces(f);
+        else if (!strcmp(tok, "[ADVANCED]")) load_snap_advanced(f);
 }
 
 void load_snap_ace(FILE *f)
@@ -308,7 +522,7 @@ void load_snap_ace(FILE *f)
         z80.r = memory[memptr];
 }
 
-int load_snap(char *filename)
+int do_load_snap(char *filename)
 {
         char *p;
         FILE *f;
@@ -331,27 +545,72 @@ int load_snap(char *filename)
         }
         else
         {
-                InitialiseChroma();
-                HW->SetColourOption(COLOURDISABLED);
-                Form1->SetChromaSwitch(false, false);
+                InitialiseHardware();
 
                 f=fopen(filename,"rt");
                 if (!f) return(0);
 
                 while(!feof(f))
                 {
-                        if (!strcmp(get_token(f),"[CPU]")) load_snap_cpu(f);
-                        if (!strcmp(get_token(f),"[MEMORY]")) load_snap_mem(f);
-                        if (!strcmp(get_token(f),"[ZX81]")) load_snap_zx81(f);
-                        if (!strcmp(get_token(f),"[CHROMA]")) load_snap_chroma(f);
-                }
+                        char* tok = get_token(f);
+                        if (tok[0] == '[')
+                        {
+                                ProcessTag(tok, f);
+                        }
+                 }
         }
-
-        Artifacts->SelectRGBOutput(zx81.colour == COLOURCHROMA);
 
         fclose(f);
         DebugUpdate();
         return(1);
+}
+
+void InitialiseHardware()
+{
+        InitialiseChroma();
+        
+        SetComboBox(HW->ColourBox, "None");
+        SetComboBox(HW->SoundCardBox, "None");
+        SetComboBox(HW->ChrGenBox, "Sinclair");
+        SetComboBox(HW->HiResBox, "None");
+        SetComboBox(HW->RomCartridgeBox, "None");
+        HW->RomCartridgeFileBox->Text = "";
+        HW->BrowseRomCartridge->Enabled = false;
+        HW->ZXPrinter->Checked = false;
+        HW->ZXpand->Checked = false;
+        HW->ProtectROM->Checked=true;
+        HW->EnableLowRAM->Checked=false;
+        HW->M1Not->Checked=false;
+        HW->FloatingPointHardwareFix->Checked=false;
+        HW->NTSC->Checked=false;
+        
+        Form1->ChromaColourEnable->Checked = false;
+        Form1->ChromaColourEnable->Enabled = false;
+        Form1->ChromaColourEnable->Visible = false;
+        Form1->QSChrEnable->Checked = false;
+        Form1->QSChrEnable->Enabled = false;
+        Form1->QSChrEnable->Visible = false;
+        Form1->MemotechReset->Visible = false;
+        Form1->MemotechReset->Enabled = false;
+
+        MemotechMode = 0;
+        zx81.enableQSchrgen = false;
+        zx81.chromaColourSwitchOn = false;
+}
+
+int load_snap(char *filename)
+{
+        int ret = do_load_snap(filename);
+        if (!ret) return ret;
+
+        HW->OKClick(NULL);
+
+        ret = do_load_snap(filename);
+        if (!ret) return ret;
+
+        Artifacts->SelectRGBOutput(zx81.colour == COLOURCHROMA);
+
+        return true;
 }
 
 int save_snap(char *filename)
@@ -480,15 +739,15 @@ int save_snap(char *filename)
                 fprintf(f,"HT %02X      IF2 %02X\n", z80.halted, z80.iff2);
 
                 fprintf(f,"\n[ZX81]\n");
-                fprintf(f,"NMI %02X     HSYNC %02X\n",
-                                NMI_generator, HSYNC_generator);
+                fprintf(f,"NMI %02X     HSYNC %02X\n", NMI_generator, HSYNC_generator);
                 fprintf(f,"ROW %03X\n", rowcounter);
 
                 fprintf(f,"\n[MEMORY]\n");
+                fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
+                fprintf(f,"8K_RAM_ENABLED %02X\n", zx81.RAM816k);
 
-                fprintf(f,"MEMRANGE %04X %04X\n", zx81.ROMTOP+1, zx81.RAMTOP);
-
-                Addr=zx81.ROMTOP+1;
+                Addr = zx81.RAM816k ? 8192 : zx81.ROMTOP+1;
+                fprintf(f,"MEMRANGE %04X %04X\n", Addr, zx81.RAMTOP);
 
                 while(Addr<=zx81.RAMTOP)
                 {
@@ -503,11 +762,23 @@ int save_snap(char *filename)
 
                         Addr += Count;
                 }
+                fprintf(f, "\n");
+
+                fprintf(f,"\n[ADVANCED]\n");
+                fprintf(f,"PROTECT_ROM %02X\n", zx81.protectROM);
+                fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
+                fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
+                fprintf(f,"NTSC %02X\n", zx81.NTSC);
+
+                fprintf(f,"\n[SOUND]\n");
+                fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
+
+                // Must output this before the Chr$ Generator section
+                fprintf(f,"\n[COLOUR]\n");
+                fprintf(f,"TYPE %s\n", HW->ColourBox->Text.c_str());
 
                 if (zx81.colour == COLOURCHROMA)
                 {
-                        fprintf(f,"\n\n[CHROMA]\n");
-
                         Addr = 0xC000;
 
                         while (Addr <= 0x10000)
@@ -524,11 +795,50 @@ int save_snap(char *filename)
                                 Addr += Count;
                         }
 
-                        fprintf(f,"\nCOLOUR_MODE %02X\n", zx81.chromaMode);
+                        fprintf(f,"\nCHROMA_MODE %02X\n", zx81.chromaMode);
                         fprintf(f,"COLOUR_ENABLED %02X\n", zx81.chromaColourSwitchOn);
                 }
 
-                fprintf(f,"\n\n[EOF]\n");
+                fprintf(f,"\n[CHR$_GENERATOR]\n");
+                fprintf(f,"TYPE %s\n", HW->ChrGenBox->Text.c_str());
+
+                if (zx81.chrgen == CHRGENQS)
+                {
+                        fprintf(f,"ENABLED %02X\n", zx81.enableQSchrgen);
+
+                        Addr = 0x8400;
+
+                        while (Addr <= 0x8800)
+                        {
+                                Chr=font[Addr-0x8400];
+                                Count=1;
+
+                                while((font[Addr-0x8400+Count]==Chr) && ((Addr+Count)<=0x8800))
+                                        Count++;
+
+                                if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
+                                else fprintf(f,"%02X ",Chr);
+
+                                Addr += Count;
+                        }
+                        fprintf(f, "\n");
+                }
+
+                fprintf(f,"\n[HIGH_RESOLUTION]\n");
+                fprintf(f,"TYPE %s\n", HW->HiResBox->Text.c_str());
+
+                fprintf(f,"\n[ROM_CARTRIDGE]\n");
+                fprintf(f,"TYPE %s\n", HW->RomCartridgeBox->Text.c_str());
+                if (HW->RomCartridgeBox->Text != "None")
+                {
+                        fprintf(f,"PATH %s\n", HW->RomCartridgeFileBox->Text.c_str());
+                }
+
+                fprintf(f,"\n[INTERFACES]\n");
+                fprintf(f,"ZX_PRINTER %02X\n", zx81.zxprinter);
+                fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
+
+                fprintf(f,"\n[EOF]\n");
         }
         fclose(f);
         return(0);

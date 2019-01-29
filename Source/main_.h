@@ -261,8 +261,6 @@ public:		// User declarations
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
-        void SetChromaSwitch(bool enabled, bool checked);
-        void SetSpectraSwitch(bool enabled, bool checked);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

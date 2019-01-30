@@ -1619,7 +1619,7 @@ object HW: THW
         Width = 19
         Height = 21
         Caption = '...'
-        TabOrder = 6
+        TabOrder = 1
         OnClick = BrowseROMClick
       end
       object ProtectROM: TCheckBox
@@ -1632,7 +1632,7 @@ object HW: THW
         Color = clBtnFace
         ParentColor = False
         State = cbChecked
-        TabOrder = 1
+        TabOrder = 2
       end
       object NTSC: TCheckBox
         Left = 232
@@ -1642,7 +1642,7 @@ object HW: THW
         Caption = '60Hz Frame Rate'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 5
+        TabOrder = 7
         OnClick = NTSCClick
       end
       object EnableLowRAM: TCheckBox
@@ -1653,7 +1653,7 @@ object HW: THW
         Caption = 'Enable RAM in 8k-16k'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 2
+        TabOrder = 3
         OnClick = EnableLowRAMClick
       end
       object M1Not: TCheckBox
@@ -1664,7 +1664,7 @@ object HW: THW
         Caption = 'Enable M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 3
+        TabOrder = 4
         OnClick = M1NotClick
       end
       object Issue2: TCheckBox
@@ -1677,7 +1677,7 @@ object HW: THW
         Color = clBtnFace
         ParentBiDiMode = False
         ParentColor = False
-        TabOrder = 4
+        TabOrder = 6
       end
       object FloatingPointHardwareFix: TCheckBox
         Left = 72
@@ -1687,7 +1687,7 @@ object HW: THW
         Caption = 'Floating Point Hardware Fix'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 7
+        TabOrder = 5
         OnClick = FloatingPointHardwareFixClick
       end
     end

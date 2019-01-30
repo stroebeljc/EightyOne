@@ -436,7 +436,11 @@ void load_snap_advanced(FILE* f)
                         return;
                 }
 
-                if (!strcmp(tok,"PROTECT_ROM"))
+                if (!strcmp(tok,"ROM"))
+                {
+                        HW->RomBox->Text = get_token(f);
+                }
+                else if (!strcmp(tok,"PROTECT_ROM"))
                 {
                         HW->ProtectROM->Checked = hex2dec(get_token(f));
                 }
@@ -770,6 +774,7 @@ int save_snap(char *filename)
                 fprintf(f, "\n");
 
                 fprintf(f,"\n[ADVANCED]\n");
+                fprintf(f,"ROM %s\n", HW->RomBox->Text.c_str());
                 fprintf(f,"PROTECT_ROM %02X\n", zx81.protectROM);
                 fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
                 fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);

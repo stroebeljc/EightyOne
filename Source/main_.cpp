@@ -122,7 +122,7 @@ SCANLINE Video[2], *BuildLine, *DisplayLine;
 
 extern symbolstore_test(void);
 
-static bool iniFileExists;
+bool iniFileExists;
 
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -2052,10 +2052,10 @@ void __fastcall TForm1::Tools1Click(TObject *Sender)
 
 void __fastcall TForm1::FormShow(TObject *Sender)
 {
-        if (!iniFileExists)
-        {
-                GatherWindows1Click(this);
-        }
+  //      if (!iniFileExists)
+  //      {
+  //####              GatherWindows1Click(this);
+  //      }
 }
 //---------------------------------------------------------------------------
 

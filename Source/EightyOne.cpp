@@ -155,6 +155,7 @@ TSplash *spl;
 bool ShowSplash=true;
 
 extern HANDLE Mutex;
+extern bool iniFileExists;
 
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)

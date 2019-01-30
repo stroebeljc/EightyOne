@@ -53,3 +53,8 @@
                  spl->IncProgress("Machine Emulation"); Application->CreateForm(__classid(THW), &HW);
 
                  spl->Close();
+
+                if (!iniFileExists)
+                {
+                        Form1->GatherWindows1Click(NULL);
+                }

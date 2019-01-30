@@ -448,7 +448,7 @@ void load_snap_advanced(FILE* f)
                 {
                         HW->FloatingPointHardwareFix->Checked = hex2dec(get_token(f));
                 }
-                else if (!strcmp(tok,"NTSC"))
+                else if (!strcmp(tok,"FRAME_RATE_60HZ"))
                 {
                         HW->NTSC->Checked = hex2dec(get_token(f));
                 }
@@ -746,15 +746,20 @@ int save_snap(char *filename)
                 fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
                 fprintf(f,"8K_RAM_ENABLED %02X\n", zx81.RAM816k);
 
-                Addr = zx81.RAM816k ? 8192 : zx81.ROMTOP+1;
-                fprintf(f,"MEMRANGE %04X %04X\n", Addr, zx81.RAMTOP);
+                Addr = zx81.RAM816k || zx81.zxpand ? 8192 : zx81.ROMTOP+1;
+                int topOfRAM = zx81.RAMTOP;
+                if (zx81.zxpand && (topOfRAM < 0x9FFF))
+                {
+                        topOfRAM = 0x9FFF;
+                }
+                fprintf(f,"MEMRANGE %04X %04X\n", Addr, topOfRAM);
 
-                while(Addr<=zx81.RAMTOP)
+                while(Addr <= topOfRAM)
                 {
                         Chr=memory[Addr];
                         Count=1;
 
-                        while((memory[Addr+Count]==Chr) && ((Addr+Count)<=zx81.RAMTOP))
+                        while((memory[Addr+Count]==Chr) && ((Addr+Count)<=topOfRAM))
                                 Count++;
 
                         if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
@@ -768,7 +773,7 @@ int save_snap(char *filename)
                 fprintf(f,"PROTECT_ROM %02X\n", zx81.protectROM);
                 fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
                 fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
-                fprintf(f,"NTSC %02X\n", zx81.NTSC);
+                fprintf(f,"FRAME_RATE_60HZ %02X\n", zx81.NTSC);
 
                 fprintf(f,"\n[SOUND]\n");
                 fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
@@ -781,12 +786,12 @@ int save_snap(char *filename)
                 {
                         Addr = 0xC000;
 
-                        while (Addr <= 0x10000)
+                        while (Addr <= 0xFFFF)
                         {
                                 Chr=memory[Addr];
                                 Count=1;
 
-                                while((memory[Addr+Count]==Chr) && ((Addr+Count)<=0x10000))
+                                while((memory[Addr+Count]==Chr) && ((Addr+Count)<=0xFFFF))
                                         Count++;
 
                                 if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);

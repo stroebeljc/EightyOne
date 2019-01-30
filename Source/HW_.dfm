@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 171
-  Top = 295
+  Left = 147
+  Top = 186
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1637,9 +1637,9 @@ object HW: THW
       object NTSC: TCheckBox
         Left = 232
         Top = 64
-        Width = 97
+        Width = 113
         Height = 17
-        Caption = 'NTSC TV'
+        Caption = '60Hz Frame Rate'
         Color = clBtnFace
         ParentColor = False
         TabOrder = 5

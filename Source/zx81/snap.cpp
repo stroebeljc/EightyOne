@@ -748,9 +748,9 @@ int save_snap(char *filename)
 
                 Addr = zx81.RAM816k || zx81.zxpand ? 8192 : zx81.ROMTOP+1;
                 int topOfRAM = zx81.RAMTOP;
-                if (zx81.zxpand && (topOfRAM < 0x9FFF))
+                if (zx81.zxpand && (topOfRAM < 0xBFFF))
                 {
-                        topOfRAM = 0x9FFF;
+                        topOfRAM = 0xBFFF;
                 }
                 fprintf(f,"MEMRANGE %04X %04X\n", Addr, topOfRAM);
 

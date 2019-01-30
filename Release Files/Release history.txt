@@ -25,11 +25,12 @@ Version 1.13 - 30/01/2019 (by Paul Farrow)
     Defined.
   - A new window allows the BASIC program held in memory to be viewed and saved as a bitmap or
     as a text file (only for ZX80, ZX81 and Spectrum models).
-  - BASIC programs in text file format can be read (only for ZX80, ZX81 and Spectrum models).
-  - Status bar at the bottom of the emulator window now indicates when reading or writing to a
-    Microdrive cartridge.
+  - Added the ability to read in a BASIC program from a text file (only for ZX80, ZX81 and
+    Spectrum models).
+  - The status bar at the bottom of the emulator window now indicates when reading or writing to
+    a Microdrive cartridge.
   - Added support for various hardware interfaces and settings in .z81 snapshots.
-  - Added support for Spectra in .z80 snapshots.
+  - Added support for the Spectra interface in .z80 snapshots.
   - Save dialogs now prompt to overwrite an existing file.
 
 Version 1.12 - 14/08/2018 (by Paul Farrow)

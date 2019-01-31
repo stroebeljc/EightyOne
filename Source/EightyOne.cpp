@@ -155,7 +155,6 @@ TSplash *spl;
 bool ShowSplash=true;
 
 extern HANDLE Mutex;
-extern bool iniFileExists;
 
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
@@ -225,6 +224,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->ProcessMessages();
                  delete spl;
 
+                 Form1->GatherWindowsIfRequired();
                  Form1->AnimTimer1->Enabled=true;
                  Form1->Timer2->Enabled=true;
                  Application->Run();

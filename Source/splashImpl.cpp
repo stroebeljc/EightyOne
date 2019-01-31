@@ -54,7 +54,3 @@
 
                  spl->Close();
 
-                if (!iniFileExists)
-                {
-                        Form1->GatherWindows1Click(NULL);
-                }

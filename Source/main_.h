@@ -235,7 +235,6 @@ __published:	// IDE-managed Components
         void __fastcall EnableSplashScreenClick(TObject *Sender);
         void __fastcall LiveMemoryOverviewClick(TObject *Sender);
         void __fastcall Tools1Click(TObject *Sender);
-        void __fastcall FormShow(TObject *Sender);
         void __fastcall BasicListerOptionClick(TObject *Sender);
 private:	// User declarations
         int fps;
@@ -261,6 +260,7 @@ public:		// User declarations
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
+        void GatherWindowsIfRequired();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

@@ -122,7 +122,7 @@ SCANLINE Video[2], *BuildLine, *DisplayLine;
 
 extern symbolstore_test(void);
 
-bool iniFileExists;
+static bool iniFileExists;
 
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -286,6 +286,17 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         BuildConfigMenu();
 }
+
+//---------------------------------------------------------------------------
+
+void TForm1::GatherWindowsIfRequired()
+{
+        if (!iniFileExists)
+        {
+                Form1->GatherWindows1Click(this);
+        }
+}
+
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::FormResize(TObject *Sender)
@@ -2047,15 +2058,6 @@ void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
 void __fastcall TForm1::Tools1Click(TObject *Sender)
 {
         LiveMemoryOverview->Enabled = zx81.machine != MACHINEQL;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::FormShow(TObject *Sender)
-{
-  //      if (!iniFileExists)
-  //      {
-  //####              GatherWindows1Click(this);
-  //      }
 }
 //---------------------------------------------------------------------------
 

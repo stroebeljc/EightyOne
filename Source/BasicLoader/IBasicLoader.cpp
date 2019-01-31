@@ -39,10 +39,13 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                 msg << ex.what() << endl;
                 msg << endl;
                 int index = mLines.size() - 1;
-                bool truncateLine = (mLines[index].line.length() > 256);
-                int displayLen = truncateLine ? 256: mLines[index].line.length();
-                msg << mLines[index].line.substr(0, displayLen);
-                if (truncateLine) msg << "...";
+                if (index >= 0)
+                {
+                        bool truncateLine = (mLines[index].line.length() > 256);
+                        int displayLen = truncateLine ? 256: mLines[index].line.length();
+                        msg << mLines[index].line.substr(0, displayLen);
+                        if (truncateLine) msg << "...";
+                }
                 Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK);
                 return;
         }
@@ -81,11 +84,23 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
 
 void IBasicLoader::ReadBasicListingFile(AnsiString filename)
 {
+        if (!FileExists(filename))
+        {
+                stringstream msg;
+                msg << "File not found:" << endl << endl;
+                msg << filename.c_str() << endl;
+
+                throw runtime_error(msg.str());
+        }
+
         ifstream basicFile(filename.c_str());
         if (basicFile.fail())
         {
-                AnsiString error = strerror(errno);
-                throw runtime_error(error.c_str());
+                stringstream msg;
+                msg << "Failed to load file:" << endl << endl;
+                msg << filename.c_str() << endl;
+
+                throw runtime_error(msg.str());
         }
 
         mLines = vector<LineEntry>();

@@ -122,7 +122,7 @@ SCANLINE Video[2], *BuildLine, *DisplayLine;
 
 extern symbolstore_test(void);
 
-static bool iniFileExists;
+static bool iniFileExists = false;
 
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)

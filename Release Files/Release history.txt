@@ -3,6 +3,14 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.14 - xx/xx/2019 (by Paul Farrow and ####)
+* Bug fixes:
+  - Drawing of the drive indicator on the status bar.
+  - ####
+
+* Enhancements:
+  - ####
+
 Version 1.13 - 31/01/2019 (by Paul Farrow)
 * Bug fixes:
   - Only the lower 3 bits of the border value are now saved in Spectrum .Z80 and .SNA snapshots.

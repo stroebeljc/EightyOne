@@ -370,19 +370,20 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
         N4001->Checked=false;
         UserDefined1->Checked=false;
 
-        ClientWidth=BaseWidth;
-        ClientHeight=BaseHeight;
-        if (StatusBar1->Visible)
-        {
-                ClientHeight += StatusBar1->Height;
-                StatusBar1->Repaint();
-        }
         StatusBar1->SizeGrip = false;
         BorderStyle = bsSingle;
         TBorderIcons newBorderIcons = BorderIcons;
         newBorderIcons >> biMinimize;
         newBorderIcons >> biMaximize;
         BorderIcons = newBorderIcons;
+
+        ClientWidth=BaseWidth;
+        ClientHeight=BaseHeight;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Invalidate();
+        }
 }
 //-----------------------------------------------------------------------
 
@@ -393,19 +394,20 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
         N4001->Checked=false;
         UserDefined1->Checked=false;
 
-        ClientWidth=BaseWidth*2;
-        ClientHeight=BaseHeight*2;
-        if (StatusBar1->Visible)
-        {
-                ClientHeight += StatusBar1->Height;
-                StatusBar1->Repaint();
-        }
         StatusBar1->SizeGrip = false;
         BorderStyle = bsSingle;
         TBorderIcons newBorderIcons = BorderIcons;
         newBorderIcons >> biMinimize;
         newBorderIcons >> biMaximize;
         BorderIcons = newBorderIcons;
+
+        ClientWidth=BaseWidth*2;
+        ClientHeight=BaseHeight*2;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Invalidate();
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -416,19 +418,20 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
         N4001->Checked=true;
         UserDefined1->Checked=false;
 
-        ClientWidth=BaseWidth*4;
-        ClientHeight=BaseHeight*4;
-        if (StatusBar1->Visible)
-        {
-                ClientHeight += StatusBar1->Height;
-                StatusBar1->Repaint();
-        }
         StatusBar1->SizeGrip = false;
         BorderStyle = bsSingle;
         TBorderIcons newBorderIcons = BorderIcons;
         newBorderIcons >> biMinimize;
         newBorderIcons >> biMaximize;
         BorderIcons = newBorderIcons;
+
+        ClientWidth=BaseWidth*4;
+        ClientHeight=BaseHeight*4;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Invalidate();
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -439,12 +442,27 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
         N4001->Checked=false;
         UserDefined1->Checked=true;
         
+        int baseWidth=ClientWidth;
+        int baseHeight=ClientHeight;
+        if (StatusBar1->Visible)
+        {
+                baseHeight -= StatusBar1->Height;
+        }
+
         StatusBar1->SizeGrip = true;
         TBorderIcons newBorderIcons = BorderIcons;
         newBorderIcons << biMinimize;
         newBorderIcons << biMaximize;
         BorderIcons = newBorderIcons;
         BorderStyle = bsSizeable;
+
+        ClientWidth=baseWidth;
+        ClientHeight=baseHeight;
+        if (StatusBar1->Visible)
+        {
+                ClientHeight += StatusBar1->Height;
+                StatusBar1->Invalidate();
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -1079,7 +1097,7 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
 
         if (spectrum.drivebusy != Drive)
         {
-                StatusBar1->Repaint();
+                StatusBar1->Invalidate();
                 Drive=spectrum.drivebusy;
         }
 
@@ -1713,7 +1731,7 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
 
                 R=Rect;
                 R.Top += 1;
-                R.Right -= 1;
+                R.Right-=1;
                 R.Bottom -= 2;
                 StatusBar->Canvas->Brush->Color = clBtnFace;
                 StatusBar->Canvas->FillRect(R);
@@ -1721,11 +1739,11 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
                 {
                         if (spectrum.floppytype == FLOPPYIF1)
                         {
-                                StatusBar->Canvas->Draw( R.Left, R.Top+1, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
+                                StatusBar->Canvas->Draw( R.Left+1, R.Top+1, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
                         }
                         else
                         {
-                                StatusBar->Canvas->Draw( R.Left, R.Top+1, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                                StatusBar->Canvas->Draw( R.Left+1, R.Top+1, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
                         }
                 }
         }

@@ -627,7 +627,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                         {
                                 AnsiString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK);
+                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
                         }
                 }
                 break;
@@ -690,7 +690,7 @@ void __fastcall TIF1::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
         AnsiString Msg = "Could not open port ";
-        Application->MessageBox(Msg.c_str(),"Error", MB_OK);
+        Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
         ErrorCode=0;
 }
 //---------------------------------------------------------------------------

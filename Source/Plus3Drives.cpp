@@ -441,7 +441,7 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                                 strcpy(Message,Filename.c_str());
                                 strcat(Message," Does not exist.\nWould you like to create it?");
 
-                                ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL);
+                                ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
 
                                 if (ret!=IDOK) return;
 
@@ -515,7 +515,7 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
                         strcpy(Message,Filename.c_str());
                         strcat(Message," Does not exist.\nWould you like to create it?");
 
-                        ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL);
+                        ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
 
                         if (ret!=IDOK) return;
 

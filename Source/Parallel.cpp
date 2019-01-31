@@ -110,7 +110,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                         {
                                 AnsiString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK);
+                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
                         }
                 }
                 break;

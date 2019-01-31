@@ -102,7 +102,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         }
         else
         {
-                Application->MessageBox("Sorry, that archive does not contain any files of the relevant type","Error", MB_OK);
+                Application->MessageBox("Sorry, that archive does not contain any files of the relevant type","Error", MB_OK | MB_ICONERROR);
                 unzClose(ZFile);
                 return("");
         }

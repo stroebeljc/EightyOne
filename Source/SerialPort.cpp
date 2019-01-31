@@ -308,7 +308,7 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
                         {
                                 AnsiString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK);
+                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
                                 Enabled->Checked=false;
                                 Sender=NULL;
                         }
@@ -406,7 +406,7 @@ void __fastcall TSerialConfig::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
         AnsiString Msg = "Could not open port ";
-        Application->MessageBox(Msg.c_str(),"Error", MB_OK);
+        Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
         Enabled->Checked=false;
         ErrorCode=0;
 }

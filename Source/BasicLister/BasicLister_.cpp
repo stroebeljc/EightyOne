@@ -536,7 +536,7 @@ void TBasicLister::SaveListingToFile()
         bool programLoaded = (ProgramSize() > 0);
         if (!programLoaded)
         {
-                Application->MessageBox("There is no BASIC program loaded.", "Save BASIC Listing", MB_OK);
+                Application->MessageBox("There is no BASIC program loaded.", "Save BASIC Listing", MB_OK | MB_ICONERROR);
                 return;
         }
 

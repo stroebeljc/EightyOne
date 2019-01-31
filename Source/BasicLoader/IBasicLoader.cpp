@@ -46,7 +46,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         msg << mLines[index].line.substr(0, displayLen);
                         if (truncateLine) msg << "...";
                 }
-                Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK);
+                Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK | MB_ICONERROR);
                 return;
         }
 
@@ -72,7 +72,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         int displayLen = truncateLine ? 256: mLines[i].line.length();
                         msg << mLines[i].line.substr(0, displayLen);
                         if (truncateLine) msg << "...";
-                        Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK);
+                        Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK | MB_ICONERROR);
                         return;
                 }
         }

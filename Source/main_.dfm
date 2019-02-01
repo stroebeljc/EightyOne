@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 200
-  Top = 118
+  Left = 222
+  Top = 115
   BorderStyle = bsSingle
   Caption = 'EightyOne'
   ClientHeight = 255
@@ -267,7 +267,7 @@ object Form1: TForm1
       object Config1: TMenuItem
         Caption = 'Configuration'
         object SaveCurrentConfig: TMenuItem
-          Caption = 'Save Current Config'
+          Caption = 'Save Current Configuration'
           OnClick = SaveCurrentConfigClick
         end
         object N7: TMenuItem

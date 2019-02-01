@@ -1730,20 +1730,17 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
                 TRect R;
 
                 R=Rect;
-                R.Top += 1;
-                R.Right-=1;
-                R.Bottom -= 2;
                 StatusBar->Canvas->Brush->Color = clBtnFace;
                 StatusBar->Canvas->FillRect(R);
                 if (spectrum.drivebusy!=-1)
                 {
                         if (spectrum.floppytype == FLOPPYIF1)
                         {
-                                StatusBar->Canvas->Draw( R.Left+1, R.Top+1, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
+                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
                         }
                         else
                         {
-                                StatusBar->Canvas->Draw( R.Left+1, R.Top+1, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
                         }
                 }
         }
@@ -1812,6 +1809,7 @@ void TForm1::BuildConfigMenu(void)
                 closedir(dir);
         }
 }
+//---------------------------------------------------------------------------
 
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 {
@@ -1874,19 +1872,21 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         TZX->LoadSettings(ini);
         FSSettings->LoadSettings(ini);
         HW->LoadSettings(ini);
-        HW->OKClick(NULL);
         IF1->LoadSettings(ini);
         P3Drive->LoadSettings(ini);
         SoundOutput->LoadSettings(ini);
+        ZX97Dialog->LoadSettings(ini);
+        ParallelPort->LoadSettings(ini);
+        MidiForm->LoadSettings(ini);
+        ZipFile->LoadSettings(ini);
+        BasicLister->LoadSettings(ini);
         LoadBasicListingOptionsForm->LoadSettings(ini);
         SaveBasicListingOptionsForm->LoadSettings(ini);
 
-        HardReset1Click(NULL);
-
-        Width=StartUpWidth;
-        Height=StartUpHeight;
-
         delete ini;
+
+        HW->OKClick(NULL);
+        HardReset1Click(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -1939,9 +1939,8 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
         default:
                 break;
         }
-
-
 }
+
 //---------------------------------------------------------------------------
 void __fastcall TForm1::PrinterPort1Click(TObject *Sender)
 {
@@ -1952,7 +1951,6 @@ void __fastcall TForm1::PrinterPort1Click(TObject *Sender)
 void __fastcall TForm1::Midi1Click(TObject *Sender)
 {
         MidiForm->ShowModal();
-
 }
 //---------------------------------------------------------------------------
 
@@ -2011,6 +2009,8 @@ void MoveWindow(TForm* form, int& x, int& y)
                 y += 20;
         }
 }
+
+//---------------------------------------------------------------------------
 
 void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
 {

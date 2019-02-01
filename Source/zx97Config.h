@@ -59,9 +59,9 @@ __published:	// IDE-managed Components
         void __fastcall SwapRAMROMClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
-        void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 public:		// User declarations
+        void LoadSettings(TIniFile *ini);
         __fastcall TZX97Dialog(TComponent* Owner);
 };
 //---------------------------------------------------------------------------

@@ -5,7 +5,9 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 Version 1.14 - xx/xx/2019 (by Paul Farrow and ####)
 * Bug fixes:
-  - Drawing of the drive indicator on the status bar.
+  - Switching from a custom window size to a fixed size did not always change the size correctly.
+  - The drive indicator on the status bar was not always redrawn fully.
+  - Entries from Configuration menu did not load all settings.
   - ####
 
 * Enhancements:

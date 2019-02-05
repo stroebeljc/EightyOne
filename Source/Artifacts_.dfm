@@ -1,6 +1,6 @@
 object Artifacts: TArtifacts
-  Left = 205
-  Top = 137
+  Left = 179
+  Top = 150
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'TV Emulation'
@@ -425,6 +425,7 @@ object Artifacts: TArtifacts
     Width = 33
     Height = 121
     Hint = 'Noise'
+    Enabled = False
     Max = 20
     Min = -20
     Orientation = trVertical
@@ -445,6 +446,7 @@ object Artifacts: TArtifacts
     Width = 33
     Height = 121
     Hint = 'Ghosting'
+    Enabled = False
     Max = 40
     Min = -40
     Orientation = trVertical
@@ -462,9 +464,10 @@ object Artifacts: TArtifacts
   object ArtEnabled: TCheckBox
     Left = 8
     Top = 236
-    Width = 73
+    Width = 105
     Height = 17
-    Caption = 'Enabled'
+    Caption = 'Artefacts Enabled'
+    Enabled = False
     TabOrder = 8
     OnClick = ArtEnabledClick
   end
@@ -474,6 +477,7 @@ object Artifacts: TArtifacts
     Width = 33
     Height = 121
     Hint = 'Scanlines'
+    Enabled = False
     Max = 40
     Min = -40
     Orientation = trVertical
@@ -509,11 +513,12 @@ object Artifacts: TArtifacts
   end
   object SimpleGhosting: TCheckBox
     Left = 8
-    Top = 268
+    Top = 252
     Width = 97
     Height = 17
     Caption = 'Simple Ghosting'
-    TabOrder = 10
+    Enabled = False
+    TabOrder = 9
     OnClick = SimpleGhostingClick
   end
   object ContrastTrack: TTrackBar
@@ -541,6 +546,7 @@ object Artifacts: TArtifacts
     Width = 81
     Height = 17
     Caption = 'Dot Crawl'
+    Enabled = False
     TabOrder = 12
     OnClick = DotCrawl1Click
   end
@@ -550,6 +556,7 @@ object Artifacts: TArtifacts
     Width = 113
     Height = 17
     Caption = 'Advanced Effects'
+    Enabled = False
     TabOrder = 11
     OnClick = AdvEffectsClick
   end
@@ -559,16 +566,18 @@ object Artifacts: TArtifacts
     Width = 105
     Height = 17
     Caption = 'Interlaced Display'
+    Enabled = False
     TabOrder = 13
     OnClick = Interlaced1Click
   end
   object Vibrant: TCheckBox
     Left = 8
-    Top = 252
+    Top = 268
     Width = 97
     Height = 17
     Caption = 'Vibrant Colour'
-    TabOrder = 9
+    Enabled = False
+    TabOrder = 10
     OnClick = TrackBarChange
   end
   object ColourTrack: TTrackBar

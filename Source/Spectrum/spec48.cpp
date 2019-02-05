@@ -995,11 +995,17 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 switch(Address>>8)
                 {
                 case 0x0f:
-                        PrinterWriteData(Data);
+                        if ((zx81.machine == MACHINESPEC48) && (spectrum.machine >= SPECCYPLUS2A))
+                        {
+                                PrinterWriteData(Data);
+                        }
                         break;
 
                 case 0x3f:
-                        floppy_write_datareg(Data);
+                        if ((zx81.machine == MACHINESPEC48) && (spectrum.machine >= SPECCYPLUS2A))
+                        {
+                                floppy_write_datareg(Data);
+                        }
                         break;
 
                 case 0x7f:
@@ -1018,28 +1024,30 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         break;
 
                 case 0x1f:
-                        spectrum.drivebusy = (Data&8) ? 1:0;
-                        floppy_set_motor(Data);
-                        PrinterSetStrobe(Data&16);
-
-                        if ((!SPECBankEnable) || spectrum.machine<=SPECCY128)
-                                break;
-                        SPECLast1ffd=Data;
-                        if (Data&1)
-                        switch((Data>>1)&3)
+                        if ((zx81.machine == MACHINESPEC48) && (spectrum.machine >= SPECCYPLUS2A))
                         {
-                        case 0: SPECBlk[0]=4; SPECBlk[1]=5; SPECBlk[2]=6; SPECBlk[3]=7; break;
-                        case 1: SPECBlk[0]=8; SPECBlk[1]=9; SPECBlk[2]=10; SPECBlk[3]=11; break;
-                        case 2: SPECBlk[0]=8; SPECBlk[1]=9; SPECBlk[2]=10; SPECBlk[3]=7; break;
-                        case 3: SPECBlk[0]=8; SPECBlk[1]=11; SPECBlk[2]=10; SPECBlk[3]=7; break;
-                        }
-                        else
-                        {
-                                SPECBlk[0]= ((SPECLast7ffd>>4)&1) | ((Data>>1)&2);
-                                SPECBlk[3]=4+(SPECLast7ffd&7);
-                                SPECVideoBank=(SPECLast7ffd>>3)&1 ? 11:9;
-                        }
+                                spectrum.drivebusy = (Data&8) ? 1:0;
+                                floppy_set_motor(Data);
+                                PrinterSetStrobe(Data&16);
 
+                                if ((!SPECBankEnable) || spectrum.machine<=SPECCY128)
+                                        break;
+                                SPECLast1ffd=Data;
+                                if (Data&1)
+                                switch((Data>>1)&3)
+                                {
+                                case 0: SPECBlk[0]=4; SPECBlk[1]=5; SPECBlk[2]=6; SPECBlk[3]=7; break;
+                                case 1: SPECBlk[0]=8; SPECBlk[1]=9; SPECBlk[2]=10; SPECBlk[3]=11; break;
+                                case 2: SPECBlk[0]=8; SPECBlk[1]=9; SPECBlk[2]=10; SPECBlk[3]=7; break;
+                                case 3: SPECBlk[0]=8; SPECBlk[1]=11; SPECBlk[2]=10; SPECBlk[3]=7; break;
+                                }
+                                else
+                                {
+                                        SPECBlk[0]= ((SPECLast7ffd>>4)&1) | ((Data>>1)&2);
+                                        SPECBlk[3]=4+(SPECLast7ffd&7);
+                                        SPECVideoBank=(SPECLast7ffd>>3)&1 ? 11:9;
+                                }
+                        }
                         break;
                 case 0xff:
                         SelectAYReg=Data;

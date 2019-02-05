@@ -60,6 +60,7 @@ __published:	// IDE-managed Components
         TLabel *Label1;
         TLabel *Label2;
         void __fastcall SelectRGBOutput(Boolean rgbOutput);
+        void __fastcall ForceVibrantColours(Boolean forceVibrantColours);
         void __fastcall CloseBtnClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall TrackBarChange(TObject *Sender);
@@ -77,6 +78,7 @@ public:		// User declarations
         void LoadSettings(TIniFile *ini);
         void StandardPalette(void);
         void SpectraPalette(void);
+        void ConfigureDotCrawlOption();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TArtifacts *Artifacts;

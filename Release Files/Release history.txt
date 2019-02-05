@@ -8,9 +8,18 @@ Version 1.14 - xx/xx/2019 (by Paul Farrow and ####)
   - Switching from a custom window size to a fixed size did not always change the size correctly.
   - The drive indicator on the status bar was not always redrawn fully.
   - Entries from Configuration menu did not load all settings.
+  - Drive indicator on status bar could appear as a result of a ZXC ROM cartridge menu being
+    displayed.
+  - Selecting items from the menus before the emulator was fully started up could result in an
+    error dialog being displayed.
+  - Drag and drop of program files to the main window now works again.
   - ####
 
 * Enhancements:
+  - Added support for interlace displays when a Chroma interface is selected.
+  - Dot crawl can now only be set for non-128K Spectrum models.
+  - Improved Hardware window machine icons.
+  - Improved Splash Screen image.
   - ####
 
 Version 1.13 - 31/01/2019 (by Paul Farrow)
@@ -26,7 +35,6 @@ Version 1.13 - 31/01/2019 (by Paul Farrow)
   - Debug symbols were loaded when a program was opened via the TZX Manager but not if opened
     from the main window's File menu.
   - Corrected the height of the Live Memory View window.
-
 * Enhancements:
   - UDG characters for the Spectrum related models are now shown as their corresponding letters
     but underlined (previously they were shown upside down).

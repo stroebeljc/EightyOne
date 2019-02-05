@@ -213,7 +213,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                 break;
         }
 
-        Artifacts->SelectRGBOutput((zx81.colour == COLOURCHROMA) || (zx81.colour == COLOURSPECTRA));
+        Artifacts->SelectRGBOutput(zx81.colour == COLOURSPECTRA);
+        Artifacts->ForceVibrantColours(zx81.colour == COLOURCHROMA);
         if (zx81.colour == COLOURSPECTRA)
         {
                 Form1->DisplayArt->Checked = false;
@@ -778,6 +779,14 @@ void __fastcall THW::OKClick(TObject *Sender)
         PCKbInit();
         Kb->OKClick(NULL);
         Artifacts->TrackBarChange(NULL);
+        Artifacts->ConfigureDotCrawlOption();
+
+        bool spec48 = (zx81.machine==MACHINESPEC48 && spectrum.machine<SPECCY128);
+        if (!spec48)
+        {
+                Artifacts->DotCrawl1->Checked = false;
+        }
+
         if (ResetRequired) machine.initialise();
         sound_ay_init();
         Keyboard->KbChange();

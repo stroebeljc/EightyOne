@@ -236,6 +236,7 @@ __published:	// IDE-managed Components
         void __fastcall LiveMemoryOverviewClick(TObject *Sender);
         void __fastcall Tools1Click(TObject *Sender);
         void __fastcall BasicListerOptionClick(TObject *Sender);
+        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

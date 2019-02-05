@@ -54,3 +54,4 @@
 
                  spl->Close();
 
+                 Form1->Enabled = true;

@@ -236,7 +236,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 //                                        &shCNE);
 //        }
 
-        DragAcceptFiles(Handle, true);
+//        DragAcceptFiles(Handle, true);
         Application->OnMessage = AppMessage;
 
         nosound=true;
@@ -758,10 +758,10 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         case 1:
 
                 if (StartUpWidth==0 || StartUpHeight==0) N1001Click(NULL);
-                else
+                else if (UserDefined1->Checked)
                 {
-                        Width=StartUpWidth;
-                        Height=StartUpHeight;
+                       Width=StartUpWidth;
+                       Height=StartUpHeight;
                 }
                 Kb->OKClick(NULL);
                 break;
@@ -1224,17 +1224,17 @@ void TForm1::LoadSettings(TIniFile *ini)
         Left = ini->ReadInteger("MAIN","Left",0);
 
         // The start up height and width are transferred to the real height and width on the first timer event.
-        // The height and width are also restoted to these values after changing the configuration.
+        // The height and width are also restored to these values after changing the configuration.
         if (UserDefined1->Checked)
         {
                 StartUpHeight = ini->ReadInteger("MAIN","Height",0);
                 StartUpWidth = ini->ReadInteger("MAIN","Width",0);
         }
-        else
-        {
-                StartUpHeight = Height;
-                StartUpWidth = Width;
-        }
+  //      else
+  //      {
+  //              StartUpHeight = Height;
+  //              StartUpWidth = Width;
+   //     }
 
         // Always default to the 100% to begin with, before changing to real dimensions upon the next timer event
         ClientHeight = BaseHeight + (StatusBar1->Visible ? StatusBar1->Height : 0);
@@ -2090,6 +2090,12 @@ void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
         {
                 BasicLister->Close();
         }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FormShow(TObject *Sender)
+{
+        DragAcceptFiles(Handle, true);        
 }
 //---------------------------------------------------------------------------
 

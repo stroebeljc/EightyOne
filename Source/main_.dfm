@@ -8,6 +8,7 @@ object Form1: TForm1
   Color = clBtnFace
   Constraints.MinHeight = 128
   Constraints.MinWidth = 128
+  Enabled = False
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -25,6 +26,7 @@ object Form1: TForm1
   OnMouseDown = FormMouseDown
   OnMouseUp = FormMouseUp
   OnResize = FormResize
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar1: TStatusBar

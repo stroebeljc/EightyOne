@@ -612,7 +612,7 @@ int load_snap(char *filename)
         ret = do_load_snap(filename);
         if (!ret) return ret;
 
-        Artifacts->SelectRGBOutput(zx81.colour == COLOURCHROMA);
+        Artifacts->ForceVibrantColours(zx81.colour == COLOURCHROMA);
 
         return true;
 }

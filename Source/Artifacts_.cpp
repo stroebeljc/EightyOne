@@ -252,7 +252,7 @@ void __fastcall TArtifacts::ArtEnabledClick(TObject *Sender)
                 SimpleGhosting->Enabled=false;
         }
 
-        zx81.dirtydisplay= ArtEnabled->Checked;
+        zx81.dirtydisplay = ArtEnabled->Checked;
         TrackBarChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -310,8 +310,7 @@ void TArtifacts::LoadSettings(TIniFile *ini)
                 AdvEffects->Checked=false;
                 AdvEffects->Enabled=false;
         }
-
-
+                           
         TrackBarChange(NULL);
         AdvEffectsClick(NULL);
         booting=false;
@@ -348,31 +347,54 @@ void __fastcall TArtifacts::SelectRGBOutput(Boolean rgbOutput)
 
 //---------------------------------------------------------------------------
 
+void __fastcall TArtifacts::ForceVibrantColours(Boolean forceVibrantColours)
+{
+        if (forceVibrantColours)
+        {
+                ArtEnabled->Checked = false;
+                Vibrant->Checked = true;
+                SimpleGhosting->Checked = false;
+                DotCrawl1->Checked = false;
+                ArtEnabled->Enabled = false;
+                Vibrant->Enabled = false;
+                SimpleGhosting->Enabled = false;
+                DotCrawl1->Enabled = false;
+        }
+}
+
+//---------------------------------------------------------------------------
+
+void TArtifacts::ConfigureDotCrawlOption()
+{
+        bool spec48 = (zx81.machine==MACHINESPEC48 && spectrum.machine<SPECCY128);
+        DotCrawl1->Enabled = AdvEffects->Enabled && spec48;
+        tv.DotCrawl = DotCrawl1->Checked && spec48;
+}
+
+//---------------------------------------------------------------------------
+
 void __fastcall TArtifacts::AdvEffectsClick(TObject *Sender)
 {
         tv.AdvancedEffects = AdvEffects->Checked;
 
         if (tv.AdvancedEffects)
         {
-                DotCrawl1->Enabled=true;
                 Interlaced1->Enabled=true;
                 tv.Interlaced=Interlaced1->Checked;
-                tv.DotCrawl=DotCrawl1->Checked;
         }
         else
         {
-                DotCrawl1->Enabled=false;
                 Interlaced1->Enabled=false;
                 tv.Interlaced=0;
-                tv.DotCrawl=0;
         }
+
+        ConfigureDotCrawlOption();
 
         if (Sender)
         {
                 AccurateInit(true);
                 TrackBarChange(NULL);
-        }
-
+        }        
 }
 //---------------------------------------------------------------------------
 
@@ -382,10 +404,10 @@ void __fastcall TArtifacts::Interlaced1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TArtifacts::FormCreate(TObject *Sender)
 {
         if (tv.DisableAdvanced) AdvEffects->Enabled=false;
 }
 //---------------------------------------------------------------------------
+
 

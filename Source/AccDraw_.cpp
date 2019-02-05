@@ -132,7 +132,6 @@ bool DDError(bool result, AnsiString Message)
                 MB_OK);
 
         return(result);
-
 }
 
 void DDEnd(void)
@@ -276,8 +275,10 @@ void DDAccurateInit(int resize)
         OrigH=Form1->ClientHeight;
         if (Form1->StatusBar1->Visible) OrigH -= Form1->StatusBar1->Height;
 
-        if (Form1->BaseWidth==0) Form1->BaseWidth= NoWinR-NoWinL;
-        if (Form1->BaseHeight==0) Form1->BaseHeight= NoWinT-NoWinB;
+        if (Form1->BaseWidth==0)
+                Form1->BaseWidth= NoWinR-NoWinL;
+        if (Form1->BaseHeight==0)
+                Form1->BaseHeight= NoWinB-NoWinT;
 
         ScaleW = OrigW / Form1->BaseWidth;
         ScaleH = OrigH / Form1->BaseHeight;
@@ -292,7 +293,7 @@ void DDAccurateInit(int resize)
         BPP = DDpf.dwRGBBitCount/8;
 
         Paletteised = (BPP==1) ? true:false;
-        Scale= tv.AdvancedEffects?2:1;
+        Scale = tv.AdvancedEffects ? 2 : 1;
 
         //ScanLen=460*BPP;
         ScanLen=(2+machine.tperscanline*2)*BPP;
@@ -445,14 +446,15 @@ void GDIAccurateInit(int resize)
         //        FScreen.Width = GetSystemMetrics(SM_CXSCREEN);
         //        FScreen.Height = GetSystemMetrics(SM_CYSCREEN);
         //}
-
-
+         
         OrigW=Form1->ClientWidth;
         OrigH=Form1->ClientHeight;
         if (Form1->StatusBar1->Visible) OrigH -= Form1->StatusBar1->Height;
 
-        if (Form1->BaseWidth==0) Form1->BaseWidth= NoWinR-NoWinL;
-        if (Form1->BaseHeight==0) Form1->BaseHeight= NoWinT-NoWinB;
+        if (Form1->BaseWidth==0)
+                Form1->BaseWidth= NoWinR-NoWinL;
+        if (Form1->BaseHeight==0)
+                Form1->BaseHeight= NoWinB-NoWinT;
 
         ScaleW = OrigW / Form1->BaseWidth;
         ScaleH = OrigH / Form1->BaseHeight;
@@ -463,7 +465,7 @@ void GDIAccurateInit(int resize)
         BPP = 2;
 
         Paletteised = (BPP==1) ? true:false;
-        Scale= tv.AdvancedEffects?2:1;
+        Scale = tv.AdvancedEffects ? 2 : 1;
 
         //ScanLen=460*BPP;
         ScanLen=(2+machine.tperscanline*2)*BPP;
@@ -495,8 +497,7 @@ void GDIAccurateInit(int resize)
                 WinL=FuWinL; WinR=FuWinR; WinT=FuWinT; WinB=FuWinB;
                 if (zx81.NTSC) WinB-=51;
                 break;
-        }
-
+        }                  
 
         GDIFrame=new Graphics::TBitmap;
 

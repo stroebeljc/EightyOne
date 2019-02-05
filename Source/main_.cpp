@@ -382,6 +382,7 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
         if (StatusBar1->Visible)
         {
                 ClientHeight += StatusBar1->Height;
+                StatusBar1->Refresh();
                 StatusBar1->Invalidate();
         }
 }
@@ -406,6 +407,7 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
         if (StatusBar1->Visible)
         {
                 ClientHeight += StatusBar1->Height;
+                StatusBar1->Refresh();
                 StatusBar1->Invalidate();
         }
 }
@@ -430,6 +432,7 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
         if (StatusBar1->Visible)
         {
                 ClientHeight += StatusBar1->Height;
+                StatusBar1->Refresh();
                 StatusBar1->Invalidate();
         }
 }
@@ -461,6 +464,7 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
         if (StatusBar1->Visible)
         {
                 ClientHeight += StatusBar1->Height;
+                StatusBar1->Refresh();
                 StatusBar1->Invalidate();
         }
 }
@@ -1097,6 +1101,7 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
 
         if (spectrum.drivebusy != Drive)
         {
+                StatusBar1->Refresh();
                 StatusBar1->Invalidate();
                 Drive=spectrum.drivebusy;
         }

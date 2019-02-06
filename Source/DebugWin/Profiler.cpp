@@ -25,6 +25,7 @@ __fastcall TProfiler::TProfiler(TComponent* Owner)
         : TForm(Owner)
 {
         _pse = new TProfileSampleEdit(this);
+        ButtonPlot->Enabled = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TProfiler::EnableButtons(bool enabled)
@@ -137,10 +138,16 @@ void TProfiler::SampleEditComplete(bool valid, AnsiString tag)
 
 void __fastcall TProfiler::Refresh()
 {
+        int n = 0;
+
         for (size_t i = 0; i < _profileDetails.size(); ++i) {
                 TListItem* item = ListViewProfileSamples->Items->Item[i];
                 UpdateItem(item, item->Caption, _profileDetails[i]);
+                if (_profileDetails[i].SampleCount() > 0) ++n;
         }
+
+
+        ButtonPlot->Enabled = ListViewProfileSamples->Items->Count && n > 0;
         ProfilePlot->Refresh();
 }
 
@@ -156,7 +163,8 @@ void __fastcall TProfiler::ButtonPlotClick(TObject *Sender)
         TListItem* selected = ListViewProfileSamples->Selected;
         if (!selected) return;
 
-        ProfilePlot->PlotTGraph(&_profileDetails[selected->Index]);
+        if (_profileDetails[selected->Index].SampleCount() > 0)
+                ProfilePlot->PlotTGraph(&_profileDetails[selected->Index]);
 }
 //---------------------------------------------------------------------------
 

@@ -23,8 +23,12 @@ void __fastcall TProfilePlot::FormPaint(TObject *Sender)
 {
         if (_pd == NULL || _pd->SampleCount() == 0) return;
 
-        int min = _pd->Min() - 100;
-        int max = _pd->Max() + 100;
+        int min = 0;
+        int max = 1;
+        if (_pd->SampleCount() != 0) {
+                min = _pd->Min() - 100;
+                max = _pd->Max() + 100;
+        }
         if (min < 0) min = 0;
         int range = max - min;
 
@@ -51,7 +55,7 @@ void TProfilePlot::InitScrollbar()
         ScrollBarHorizontal->Min = 0;
         bool enabled = _pd->SampleCount() > ClientWidth;
         ScrollBarHorizontal->Enabled = enabled;
-        ScrollBarHorizontal->Max = _pd->SampleCount() - ClientWidth;
+        ScrollBarHorizontal->Max = max(_pd->SampleCount() - ClientWidth, ClientWidth);
         ScrollBarHorizontal->Position = 0;
 }
 //---------------------------------------------------------------------------
@@ -61,12 +65,19 @@ void __fastcall TProfilePlot::PlotTGraph(ProfileDetail* pd)
         _pd = pd;
         InitScrollbar();
 
+        int min = 0;
+        int max = 0;
+        if (_pd->SampleCount() != 0) {
+                min = _pd->Min();
+                max = _pd->Max();
+        }
+
         AnsiString minmax = "Min: ---- Max: ----";
         if (_pd) {
                 minmax = "Min: ";
-                minmax += _pd->Min();
-                minmax += "Max: ";
-                minmax += _pd->Max();
+                minmax += min;
+                minmax += " Max: ";
+                minmax += max;
         }
         StatusBar1->Panels->Items[0]->Text = minmax;
 

@@ -881,11 +881,11 @@ void comFileOpenWrite(void)
     LATD = res;
 }
 
+extern void serialHex(BYTE);
 
 void comFileSeek(void)
 {
-    DWORD* dpw = (DWORD*)globalData;
-    DWORD seekpos = *dpw;
+    DWORD seekpos = LD_DWORD(globalData);
     LATD = 0x40 | f_lseek (&fil, seekpos);
 }
 
@@ -1399,7 +1399,9 @@ void comParseBufferPlus(void)
         break;
 
         case N_FILE: { // open file
+            zxpandRetblk.op = 0;
             zxpandRetblk.retval = fileOpen(p, FA_OPEN_EXISTING|FA_READ);
+            memcpy(globalData, (void*)&zxpandRetblk, 5);
         }
         break;
 

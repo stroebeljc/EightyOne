@@ -205,6 +205,8 @@ void zx_process_write(void)
       // put data to file
       case 0x06:
       {
+         LATD=0x80;
+
          // write the next N bytes from the global data buffer
          // PORTD = 0 means write 256 bytes.
          //

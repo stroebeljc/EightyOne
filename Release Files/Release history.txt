@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.14 - xx/xx/2019 (by Paul Farrow and ####)
+Version 1.14 - xx/xx/2019 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Switching from a custom window size to a fixed size did not always change the size correctly.
   - The drive indicator on the status bar was not always redrawn fully.
@@ -13,7 +13,8 @@ Version 1.14 - xx/xx/2019 (by Paul Farrow and ####)
   - Selecting items from the menus before the emulator was fully started up could result in an
     error dialog being displayed.
   - Drag and drop of program files to the main window now works again.
-  - ####
+  - Fixed exception in profiler tool window. Profile graph can now only be displayed when data
+    samples have been successfully captured.
 
 * Enhancements:
   - Added support for interlace displays when a Chroma interface is selected.

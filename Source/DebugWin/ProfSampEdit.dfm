@@ -25,7 +25,7 @@ object ProfileSampleEdit: TProfileSampleEdit
     Caption = 'Tag'
   end
   object Label2: TLabel
-    Left = 9
+    Left = 10
     Top = 33
     Width = 63
     Height = 13
@@ -39,6 +39,20 @@ object ProfileSampleEdit: TProfileSampleEdit
     Height = 13
     Alignment = taRightJustify
     Caption = 'End Address'
+  end
+  object Label4: TLabel
+    Left = 8
+    Top = 87
+    Width = 137
+    Height = 26
+    Caption = 'Specify the addresses of the start and end instructions.'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
   end
   object EditTag: TEdit
     Left = 80
@@ -68,9 +82,9 @@ object ProfileSampleEdit: TProfileSampleEdit
     OnChange = EditEndChange
   end
   object ButtonOK: TButton
-    Left = 160
+    Left = 168
     Top = 88
-    Width = 75
+    Width = 67
     Height = 25
     Caption = 'OK'
     Default = True

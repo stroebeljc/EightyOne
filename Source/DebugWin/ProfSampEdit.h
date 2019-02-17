@@ -18,6 +18,7 @@ __published:	// IDE-managed Components
         TEdit *EditStart;
         TEdit *EditEnd;
         TButton *ButtonOK;
+        TLabel *Label4;
         void __fastcall ButtonOKClick(TObject *Sender);
         void __fastcall EditDblClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);

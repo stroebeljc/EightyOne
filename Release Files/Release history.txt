@@ -16,7 +16,6 @@ Version 1.14 - 17/02/2019 (by Paul Farrow and SirMorris)
   - Fixed exception that could occur when opening the Profiler Plot window.
   - Updated to latest ZXpand+ firmware, which fixes a 'break' issue with CAT. 
   - Profiler Plot window now displays the latest min and max values.
-
 * Enhancements:
   - Added support for interlace displays when a Chroma interface is selected.
   - Dot crawl can now only be set for non-128K Spectrum models.

@@ -21,7 +21,7 @@ Version 1.14 - 17/02/2019 (by Paul Farrow and SirMorris)
   - Dot crawl can now only be set for non-128K Spectrum models.
   - Improved Hardware window machine icons.
   - Improved Splash Screen image.
-  - Added auto-upate option to the Profiler window.
+  - Added auto-update option to the Profiler window.
   - Improved UI operation of the Profiler and Profiler Plot windows.
 
 Version 1.13 - 31/01/2019 (by Paul Farrow)

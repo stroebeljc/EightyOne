@@ -25,15 +25,33 @@ __fastcall TProfiler::TProfiler(TComponent* Owner)
         : TForm(Owner)
 {
         _pse = new TProfileSampleEdit(this);
-        ButtonPlot->Enabled = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TProfiler::EnableButtons(bool enabled)
 {
-        ButtonNew->Enabled = enabled;
-        ButtonDelete->Enabled = enabled;
-        ButtonEdit->Enabled = enabled;
-        ButtonReset->Enabled = enabled;
+        if (enabled)
+        {
+                bool entriesExist = (ListViewProfileSamples->Items->Count > 0);
+                bool entrySelected = entriesExist && ListViewProfileSamples->Selected;
+
+                ButtonNew->Enabled = true;
+                ButtonEdit->Enabled = entrySelected;
+                ButtonReset->Enabled = entriesExist;
+                ButtonDelete->Enabled = entrySelected;
+                ButtonRefresh->Enabled = entriesExist && !AutoRefresh->Checked;
+                ButtonPlot->Enabled = entrySelected && !ProfilePlot->Visible;
+                AutoRefresh->Enabled = entriesExist;
+        }
+        else
+        {
+                ButtonNew->Enabled = false;
+                ButtonEdit->Enabled = false;
+                ButtonReset->Enabled = false;
+                ButtonDelete->Enabled = false;
+                ButtonRefresh->Enabled = false;
+                ButtonPlot->Enabled = false;
+                AutoRefresh->Enabled = false;
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TProfiler::UpdateItem(TListItem* item, AnsiString tag, ProfileDetail& pd)
@@ -64,6 +82,8 @@ void __fastcall TProfiler::ButtonEditClick(TObject *Sender)
         EnableButtons(false);
 
         _pse->EditValues(editItem->Caption, &_profileDetails[editItem->Index], &SampleEditComplete);
+
+        EnableButtons(true);
 }
 //---------------------------------------------------------------------------
 
@@ -72,11 +92,15 @@ void __fastcall TProfiler::ButtonResetClick(TObject *Sender)
         TListItem* selected = ListViewProfileSamples->Selected;
         if (!selected) return;
 
+        EnableButtons(false);
+
         int idx = selected->Index;
         ProfileDetail& detail = _profileDetails[idx];
         detail.Reset();
         UpdateItem(selected, selected->Caption, detail);
         ProfilePlot->Refresh();
+
+        EnableButtons(true);
 }
 //---------------------------------------------------------------------------
 
@@ -85,11 +109,32 @@ void __fastcall TProfiler::ButtonDeleteClick(TObject *Sender)
         TListItem* selected = ListViewProfileSamples->Selected;
         if (!selected) return;
 
-        ProfilePlot->Close();
+        EnableButtons(false);
 
-        int idx = selected->Index;
-        ListViewProfileSamples->Items->Delete(idx);
-        _profileDetails.erase(_profileDetails.begin() + idx);
+        Timer->Enabled = false;
+
+        int ret = Application->MessageBox("Are you sure you wish to delete this entry?", "Delete Profile Entry", MB_YESNO | MB_ICONQUESTION);
+
+        if (ret == IDYES)
+        {
+                int idx = selected->Index;
+                ListViewProfileSamples->Items->Delete(idx);
+                _profileDetails.erase(_profileDetails.begin() + idx);
+
+                bool entriesExist = (ListViewProfileSamples->Items->Count > 0);
+                if (entriesExist)
+                {
+                        ListViewProfileSamples->Selected = ListViewProfileSamples->Items->Item[0];
+                }
+                else
+                {
+                        ProfilePlot->Close();
+                }
+        }
+
+        Timer->Enabled = true;
+
+        EnableButtons(true);
 }
 //---------------------------------------------------------------------------
 
@@ -103,11 +148,10 @@ void __fastcall TProfiler::DebugTick(processor* z80)
 
 void __fastcall TProfiler::SampleEditCompleteImpl(bool valid, AnsiString tag)
 {
-        EnableButtons(true);
-
         if (!valid) {
                 delete(_newPD);
                 _newPD = NULL;
+                EnableButtons(true);
                 return;
         }
 
@@ -126,6 +170,8 @@ void __fastcall TProfiler::SampleEditCompleteImpl(bool valid, AnsiString tag)
                 _newPD = NULL;
         }
 
+        EnableButtons(true);
+
         Refresh();
 }
 
@@ -138,19 +184,17 @@ void TProfiler::SampleEditComplete(bool valid, AnsiString tag)
 
 void __fastcall TProfiler::Refresh()
 {
-        int n = 0;
-
-        for (size_t i = 0; i < _profileDetails.size(); ++i) {
+        for (int i = 0; i < ListViewProfileSamples->Items->Count; i++)
+        {
                 TListItem* item = ListViewProfileSamples->Items->Item[i];
-                UpdateItem(item, item->Caption, _profileDetails[i]);
-                if (_profileDetails[i].SampleCount() > 0) ++n;
+                int idx = item->Index;
+                ProfileDetail& detail = _profileDetails[idx];
+                UpdateItem(item, item->Caption, detail);
         }
-
-
-        ButtonPlot->Enabled = ListViewProfileSamples->Items->Count && n > 0;
-        ProfilePlot->Refresh();
+        
+        if (ProfilePlot->Visible)
+                ProfilePlot->Refresh();
 }
-
 
 void __fastcall TProfiler::ButtonRefreshClick(TObject *Sender)
 {
@@ -163,8 +207,67 @@ void __fastcall TProfiler::ButtonPlotClick(TObject *Sender)
         TListItem* selected = ListViewProfileSamples->Selected;
         if (!selected) return;
 
-        if (_profileDetails[selected->Index].SampleCount() > 0)
-                ProfilePlot->PlotTGraph(&_profileDetails[selected->Index]);
+        ProfilePlot->PlotTGraph(&_profileDetails[selected->Index], selected->Caption);
+
+        EnableButtons(true);
+}
+//---------------------------------------------------------------------------
+
+ void __fastcall TProfiler::ListViewProfileSamplesSelectItem(
+      TObject *Sender, TListItem *Item, bool Selected)
+{
+        if (ProfilePlot->Visible)
+        {
+                TListItem* selected = ListViewProfileSamples->Selected;
+                if (selected)
+                {
+                        ProfilePlot->PlotTGraph(&_profileDetails[selected->Index], selected->Caption);
+                }
+        }
+        
+        EnableButtons(true);
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TProfiler::ListViewProfileSamplesEditing(TObject *Sender,
+      TListItem *Item, bool &AllowEdit)
+{
+        AllowEdit = false;        
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfiler::TimerTimer(TObject *Sender)
+{
+        if ((ListViewProfileSamples->Items->Count > 0) && AutoRefresh->Checked)
+        {
+                Refresh();
+
+                if (ProfilePlot->Visible)
+                {
+                        ProfilePlot->ShowLast();
+                }
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfiler::FormClose(TObject *Sender, TCloseAction &Action)
+{
+        Timer->Enabled = false;
+
+        ProfilePlot->Close();    
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfiler::FormShow(TObject *Sender)
+{
+        Timer->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfiler::AutoRefreshClick(TObject *Sender)
+{
+        EnableButtons(true);
 }
 //---------------------------------------------------------------------------
 

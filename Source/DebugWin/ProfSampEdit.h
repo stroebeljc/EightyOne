@@ -21,10 +21,14 @@ __published:	// IDE-managed Components
         void __fastcall ButtonOKClick(TObject *Sender);
         void __fastcall EditDblClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+        void __fastcall EditStartChange(TObject *Sender);
+        void __fastcall EditEndChange(TObject *Sender);
 private:	// User declarations
         bool _valid;
         class ProfileDetail* _pd;
         void (*_completion)(bool, AnsiString);
+        void SetOKButtonStatus();
+        int Count();
 
 public:		// User declarations
         __fastcall TProfileSampleEdit(TComponent* Owner);

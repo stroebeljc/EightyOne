@@ -31,6 +31,8 @@ void __fastcall TProfileSampleEdit::ButtonOKClick(TObject *Sender)
 
         _valid = true;
 
+        EditTag->SetFocus();
+        
         Close();
 }
 //---------------------------------------------------------------------------
@@ -66,3 +68,32 @@ void __fastcall TProfileSampleEdit::FormClose(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TProfileSampleEdit::EditStartChange(TObject *Sender)
+{
+        int start;
+        bool valid = AddressResolver::Validate(EditStart->Text, start);
+        EditStart->Font->Color = valid ? clWindowText : clRed;
+
+        SetOKButtonStatus();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TProfileSampleEdit::EditEndChange(TObject *Sender)
+{
+        int end;
+        bool valid = AddressResolver::Validate(EditEnd->Text, end);
+        EditEnd->Font->Color = valid ? clWindowText : clRed;
+
+        SetOKButtonStatus();
+}
+//---------------------------------------------------------------------------
+
+void TProfileSampleEdit::SetOKButtonStatus()
+{
+        int start, end;
+        bool validAddresses = (AddressResolver::Validate(EditStart->Text, start) &&
+                               AddressResolver::Validate(EditEnd->Text, end));
+
+        bool enable = validAddresses && (EditStart->Text != "") && (EditEnd->Text != "");
+        ButtonOK->Enabled = enable;
+}

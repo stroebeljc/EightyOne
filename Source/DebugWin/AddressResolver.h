@@ -11,6 +11,9 @@ public:
                 if (addressValue.Length() == 0)
                         return false;
 
+                if (addressValue == "$")
+                        return false;
+
                 int tempAddress;
                 if (symbolstore::symbolToAddress(addressValue, tempAddress))
                 {

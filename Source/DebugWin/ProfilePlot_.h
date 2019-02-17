@@ -18,13 +18,17 @@ __published:	// IDE-managed Components
         void __fastcall FormResize(TObject *Sender);
         void __fastcall ScrollBarHorizontalChange(TObject *Sender);
         void __fastcall FormMouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
         class ProfileDetail* _pd;
         void InitScrollbar();
+        void UpdateMinMax(ProfileDetail* pd);
         int _mouseX;
+        
 public:		// User declarations
         __fastcall TProfilePlot(TComponent* Owner);
-        void __fastcall PlotTGraph(class ProfileDetail* pd);
+        void __fastcall PlotTGraph(class ProfileDetail* pd, AnsiString caption);
+        void ShowLast();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TProfilePlot *ProfilePlot;

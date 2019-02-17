@@ -1,16 +1,20 @@
 object ProfilePlot: TProfilePlot
-  Left = 344
-  Top = 139
-  Width = 700
-  Height = 415
+  Left = 170
+  Top = 162
+  Width = 643
+  Height = 402
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Profile Plot'
   Color = clBtnFace
+  Constraints.MinHeight = 148
+  Constraints.MinWidth = 428
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   OnMouseMove = FormMouseMove
   OnPaint = FormPaint
   OnResize = FormResize
@@ -18,18 +22,20 @@ object ProfilePlot: TProfilePlot
   TextHeight = 13
   object ScrollBarHorizontal: TScrollBar
     Left = 0
-    Top = 341
-    Width = 684
+    Top = 332
+    Width = 635
     Height = 17
     Align = alBottom
+    LargeChange = 100
+    Max = 0
     PageSize = 0
     TabOrder = 0
     OnChange = ScrollBarHorizontalChange
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 358
-    Width = 684
+    Top = 349
+    Width = 635
     Height = 19
     Panels = <
       item

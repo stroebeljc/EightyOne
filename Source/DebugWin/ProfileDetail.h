@@ -58,13 +58,16 @@ public:
                 return *std::max_element(_history.begin(), _history.end());
         }
 
-        int SampleCount() {
-                return _history.size();
+        int SampleCount()
+         {
+                int size = _history.size();
+                return size;
         }
 
         int Sample(size_t idx) {
                 return idx < _history.size() ? _history[idx] : 0;
         }
+
 private:
         int _ts, _max;
         int _state;

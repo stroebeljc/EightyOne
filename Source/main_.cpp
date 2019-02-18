@@ -310,6 +310,9 @@ void __fastcall TForm1::FormResize(TObject *Sender)
                         (StatusBar1->Panels->Items[0]->Width
                          +StatusBar1->Panels->Items[1]->Width
                          +StatusBar1->Panels->Items[2]->Width);
+
+        StatusBar1->Refresh();
+        StatusBar1->Invalidate();
 }
 
 //---------------------------------------------------------------------------
@@ -2100,7 +2103,10 @@ void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
 
 void __fastcall TForm1::FormShow(TObject *Sender)
 {
-        DragAcceptFiles(Handle, true);        
+        DragAcceptFiles(Handle, true);
+
+        StatusBar1->Refresh();
+        StatusBar1->Invalidate();
 }
 //---------------------------------------------------------------------------
 

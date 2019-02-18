@@ -7,6 +7,7 @@
 
 #include "ProfilePlot_.h"
 #include "ProfileDetail.h"
+#include "Profiler.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -21,7 +22,13 @@ __fastcall TProfilePlot::TProfilePlot(TComponent* Owner)
 
 void __fastcall TProfilePlot::FormPaint(TObject *Sender)
 {
-        if (_pd == NULL || _pd->SampleCount() == 0) return;
+        if (_pd == NULL || _pd->SampleCount() == 0)
+        {
+                ScrollBarHorizontal->Max = 0;
+                ScrollBarHorizontal->Position = 0;
+                ScrollBarHorizontal->Enabled = false;
+                return;
+        }
 
         int min = 0;
         int max = 1;
@@ -32,19 +39,41 @@ void __fastcall TProfilePlot::FormPaint(TObject *Sender)
         if (min < 0) min = 0;
         int range = max - min;
 
-        double scale = (double)ClientHeight / (double)range;
+        int height = ClientHeight - ScrollBarHorizontal->Height - StatusBar1->Height - 2;
+
+        double scale = (double)height / (double)range;
 
         Canvas->Pen->Color = clBlue;
-        Canvas->MoveTo(0, ClientHeight - (int)((double)_pd->Sample(0) * scale));
+        Canvas->MoveTo(0, height - (int)((double)_pd->Sample(0) * scale));
 
-        int sbBase = ScrollBarHorizontal->Enabled ? ScrollBarHorizontal->Position : 0;
-        int mini = ClientWidth;
-        if (_pd->SampleCount() < mini) mini = _pd->SampleCount();
+        int count = _pd->SampleCount();
 
-        for (int i = 0; i < mini; ++i) {
-                double sam = _pd->Sample(i + sbBase) - _pd->Min();
-                Canvas->LineTo(i, ClientHeight - (int)(sam * scale));
+        int maximum = (count > ClientWidth) ? count - ClientWidth : ClientWidth;
+        ScrollBarHorizontal->Max = maximum;
+        if (ScrollBarHorizontal->Position > maximum)
+        {
+                ScrollBarHorizontal->Position = maximum;
         }
+
+        int mini = ClientWidth;
+        bool scrollable = (count > mini);
+        if (!scrollable)
+        {
+                mini = count;
+                ScrollBarHorizontal->Position = 0;
+        }
+        ScrollBarHorizontal->Enabled = scrollable;
+        
+        int sbBase = ScrollBarHorizontal->Enabled ? ScrollBarHorizontal->Position : 0;
+
+        for (int i = 0; i < mini; ++i)
+        {
+                double sam = _pd->Sample(i + sbBase) - _pd->Min();
+                int y = (int)(sam * scale);
+                Canvas->LineTo(i, height - y);
+        }
+
+        UpdateMinMax(_pd);
 }
 //---------------------------------------------------------------------------
 
@@ -57,14 +86,22 @@ void TProfilePlot::InitScrollbar()
         ScrollBarHorizontal->Enabled = enabled;
         ScrollBarHorizontal->Max = max(_pd->SampleCount() - ClientWidth, ClientWidth);
         ScrollBarHorizontal->Position = 0;
+
+        Refresh();
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TProfilePlot::PlotTGraph(ProfileDetail* pd)
+void __fastcall TProfilePlot::PlotTGraph(ProfileDetail* pd, AnsiString caption)
 {
         _pd = pd;
+        Caption = "Profiler - " + caption;
         InitScrollbar();
+        UpdateMinMax(pd);
+        Show();
+}
 
+void TProfilePlot::UpdateMinMax(ProfileDetail* pd)
+{
         int min = 0;
         int max = 0;
         if (_pd->SampleCount() != 0) {
@@ -80,8 +117,6 @@ void __fastcall TProfilePlot::PlotTGraph(ProfileDetail* pd)
                 minmax += max;
         }
         StatusBar1->Panels->Items[0]->Text = minmax;
-
-        Show();
 }
 //---------------------------------------------------------------------------
 
@@ -96,7 +131,6 @@ void __fastcall TProfilePlot::ScrollBarHorizontalChange(TObject *Sender)
 {
         Refresh();
 }
-
 
 void __fastcall TProfilePlot::FormMouseMove(TObject *Sender,
       TShiftState Shift, int X, int Y)
@@ -123,4 +157,24 @@ void __fastcall TProfilePlot::FormMouseMove(TObject *Sender,
         StatusBar1->Panels->Items[2]->Text = cur;
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TProfilePlot::FormClose(TObject *Sender,
+      TCloseAction &Action)
+{
+        Visible = false;
+        Profiler->EnableButtons(true);
+}
+//---------------------------------------------------------------------------
+
+void TProfilePlot::ShowLast()
+{
+        if (_pd == NULL) return;
+        
+        bool scrollable = (_pd->SampleCount() > ClientWidth);
+
+        if (scrollable)
+        {
+                ScrollBarHorizontal->Position = ScrollBarHorizontal->Max;
+        }
+}
 

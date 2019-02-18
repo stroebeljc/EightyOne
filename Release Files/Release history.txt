@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.14 - xx/xx/2019 (by Paul Farrow and SirMorris)
+Version 1.14 - 17/02/2019 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Switching from a custom window size to a fixed size did not always change the size correctly.
   - The drive indicator on the status bar was not always redrawn fully.
@@ -12,17 +12,17 @@ Version 1.14 - xx/xx/2019 (by Paul Farrow and SirMorris)
     displayed.
   - Selecting items from the menus before the emulator was fully started up could result in an
     error dialog being displayed.
-  - Drag and drop of program files to the main window now works again.
-  - Fixed exception in profiler tool window. Profile graph can now only be displayed when data
-    samples have been successfully captured.
-  - Updated to latest ZXpand+ firmware, fixes 'break' issue with CAT. 
-
+  - Drag and drop of program files into the main window now works again.
+  - Fixed exception that could occur when opening the Profiler Plot window.
+  - Updated to latest ZXpand+ firmware, which fixes a 'break' issue with CAT. 
+  - Profiler Plot window now displays the latest min and max values.
 * Enhancements:
   - Added support for interlace displays when a Chroma interface is selected.
   - Dot crawl can now only be set for non-128K Spectrum models.
   - Improved Hardware window machine icons.
   - Improved Splash Screen image.
-  - ####
+  - Added auto-update option to the Profiler window.
+  - Improved UI operation of the Profiler and Profiler Plot windows.
 
 Version 1.13 - 31/01/2019 (by Paul Farrow)
 * Bug fixes:

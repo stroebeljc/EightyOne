@@ -3,6 +3,12 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.15 - --/--/2019 (by Paul Farrow and SirMorris)
+* Bug fixes:
+
+* Enhancements:
+  - Added 'browse to SD card folder' button to ZXpand option in hardware menu.
+
 Version 1.14 - 17/02/2019 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Switching from a custom window size to a fixed size did not always change the size correctly.

@@ -99,6 +99,7 @@ __published:	// IDE-managed Components
         TEdit *RomCartridgeFileBox;
         TButton *BrowseRomCartridge;
         TCheckBox *FloatingPointHardwareFix;
+        TButton *ButtonZXpandSDCard;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -146,6 +147,7 @@ __published:	// IDE-managed Components
         void __fastcall RomBoxChange(TObject *Sender);
         void __fastcall ZXPrinterClick(TObject *Sender);
         void __fastcall FloatingPointHardwareFixClick(TObject *Sender);
+        void __fastcall ButtonZXpandSDCardClick(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;
@@ -156,11 +158,11 @@ private:	// User declarations
         void EnableRomCartridgeOption(bool enable);
         bool ResetRequired;
         void CreateBasicLister();
-        
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
+        void SetZXpandState(bool checked, bool enabled);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THW *HW;

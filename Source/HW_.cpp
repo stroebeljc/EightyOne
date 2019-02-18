@@ -272,6 +272,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 }
                 zx81.zxpand = (ZXpand->Checked == true);
                 ZXpand->Caption = "ZXpand+";
+
                 break;
 
         case MACHINEACE:
@@ -966,6 +967,13 @@ void THW::SetupForZX81(void)
         uSpeech->Checked=false;
 }
 
+void THW::SetZXpandState(bool checked, bool enabled)
+{
+        ZXpand->Checked=checked;
+        ZXpand->Enabled=enabled;
+        ButtonZXpandSDCard->Enabled = checked && enabled;
+}
+
 void THW::SetupForSpectrum(void)
 {
         AnsiString OldIDE,OldFDC;
@@ -994,8 +1002,7 @@ void THW::SetupForSpectrum(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
-        ZXpand->Checked=false;
-        ZXpand->Enabled=false;
+        SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
 
         ResetRequired=true;
@@ -1093,8 +1100,7 @@ void THW::SetupForQL(void)
         int i;
 
         FloatingPointHardwareFix->Enabled = false;
-        ZXpand->Checked=false;
-        ZXpand->Enabled=false;
+        SetZXpandState(false,false);
         ZXpand->Caption = "ZXpand+";
 
         EnableRomCartridgeOption(false);
@@ -1394,8 +1400,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
 {
         if (TS1500Btn->Down) return;
         SetupForZX81();
-        ZXpand->Checked=false;
-        ZXpand->Enabled=false;
+        SetZXpandState(false,false);
         TS1500Btn->Down=true;
         NewMachine=MACHINETS1500;
         NewMachineName=TS1500Btn->Caption;
@@ -1411,8 +1416,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
 {
         if (LambdaBtn->Down) return;
         SetupForZX81();
-        ZXpand->Checked=false;
-        ZXpand->Enabled=false;
+        SetZXpandState(false,false);
         LambdaBtn->Down=true;
         NewMachine=MACHINELAMBDA;
         NewMachineName=LambdaBtn->Caption;
@@ -1443,8 +1447,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
 {
         if (R470Btn->Down) return;
         SetupForZX81();
-        ZXpand->Checked=false;
-        ZXpand->Enabled=false;
+        SetZXpandState(false,false);
         R470Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=R470Btn->Caption;
@@ -1468,8 +1471,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
 {
         if (TK85Btn->Down) return;
         SetupForZX81();
-        ZXpand->Checked=false;
-        ZXpand->Enabled=false;
+        SetZXpandState(false,false);
         TK85Btn->Down=true;
         NewMachine=MACHINEZX81;
         NewMachineName=TK85Btn->Caption;
@@ -1522,8 +1524,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         RamPackBox->Items->Add("96k");
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
-        ZXpand->Checked=false;
-        ZXpand->Enabled = false;
+        SetZXpandState(false,false);
 }
 //---------------------------------------------------------------------------
 
@@ -1811,7 +1812,8 @@ void THW::LoadSettings(TIniFile *ini)
         Rom=ini->ReadString("DRIVES","MDV7", "NULL");
         if (Rom!="NULL") IF1->MDVSetFileName(7,Rom.c_str());
 
-        ZXpand->Checked=ini->ReadBool("HWARE","ZXpand",ZXpand->Checked);
+        SetZXpandState(ini->ReadBool("HWARE","ZXpand",ZXpand->Checked),
+                        ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)||ini->ReadBool("HWARE","ZX80",ZX81Btn->Down));
         ProtectROM->Checked=ini->ReadBool("HWARE","ProtectRom",ProtectROM->Checked);
         NTSC->Checked=ini->ReadBool("HWARE","NTSC",NTSC->Checked);
         EnableLowRAM->Checked=ini->ReadBool("HWARE","LowRAM",EnableLowRAM->Checked);
@@ -2216,6 +2218,7 @@ void __fastcall THW::uSpeechClick(TObject *Sender)
 void __fastcall THW::ZXpandClick(TObject *Sender)
 {
         ResetRequired=true;
+        SetZXpandState(ZXpand->Checked,true);
 }
 //---------------------------------------------------------------------------
 
@@ -2280,6 +2283,17 @@ void __fastcall THW::ZXPrinterClick(TObject *Sender)
 void __fastcall THW::FloatingPointHardwareFixClick(TObject *Sender)
 {
         ResetRequired=true;
+}
+//---------------------------------------------------------------------------
+
+
+extern char* zxpandSDCardFolderRoot;
+
+void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
+{
+        AnsiString root(zxpandSDCardFolderRoot);
+        AnsiString replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
+        ShellExecute(Application->Handle,"OPEN","EXPLORER.EXE", replaced.c_str(), NULL, 1);
 }
 //---------------------------------------------------------------------------
 

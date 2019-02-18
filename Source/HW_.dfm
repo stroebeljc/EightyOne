@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 195
-  Top = 151
+  Left = 277
+  Top = 162
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1559,9 +1559,9 @@ object HW: THW
       end
       object ZXpand: TCheckBox
         Left = 200
-        Top = 93
-        Width = 97
-        Height = 20
+        Top = 94
+        Width = 65
+        Height = 17
         Caption = 'ZXpand'
         TabOrder = 11
         OnClick = ZXpandClick
@@ -1611,6 +1611,15 @@ object HW: THW
         Enabled = False
         TabOrder = 13
         OnClick = BrowseROMCartridgeClick
+      end
+      object ButtonZXpandSDCard: TButton
+        Left = 272
+        Top = 94
+        Width = 75
+        Height = 16
+        Caption = 'SD Card'
+        TabOrder = 14
+        OnClick = ButtonZXpandSDCardClick
       end
     end
     object FloppyDrives: TTabSheet

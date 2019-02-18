@@ -27,7 +27,7 @@ extern void dirReadNext(void* fileinfo);
 
 // rootpath, curpath; always slash-terminated.
 //
-const char* rootPath = NULL;
+const char* zxpandSDCardFolderRoot = NULL;
 char curPath[32768] = {0};
 
 char tempPath[32768] = {0};
@@ -63,8 +63,8 @@ void SetRoot(const char* root)
       }
    }
 
-   rootPath = strdup(tempPath);
-   strcpy(curPath, rootPath);
+   zxpandSDCardFolderRoot = strdup(tempPath);
+   strcpy(curPath, zxpandSDCardFolderRoot);
 }
 
 const char*createFullPath(const char*path)
@@ -341,7 +341,7 @@ FRESULT f_chdir (
       AddSlash(p);
 
 		// Check that the new path is BELOW the base mmcpath
-		if(0==strncmp(rootPath,p,strlen(rootPath)))
+		if(0==strncmp(zxpandSDCardFolderRoot,p,strlen(zxpandSDCardFolderRoot)))
 		{
 			// And that it exists
 			if(0==_access(p,0))

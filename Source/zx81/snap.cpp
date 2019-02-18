@@ -302,7 +302,8 @@ void load_snap_interfaces(FILE *f)
 
                 if (!strcmp(tok,"ZXPAND"))
                 {
-                        HW->ZXpand->Checked = hex2dec(get_token(f));
+                        // hmmmmmm
+                        HW->SetZXpandState(hex2dec(get_token(f)),true);
                 }
                 else if (!strcmp(tok,"ZX_PRINTER"))
                 {
@@ -581,7 +582,7 @@ void InitialiseHardware()
         HW->RomCartridgeFileBox->Text = "";
         HW->BrowseRomCartridge->Enabled = false;
         HW->ZXPrinter->Checked = false;
-        HW->ZXpand->Checked = false;
+        HW->SetZXpandState(false,false);
         HW->ProtectROM->Checked=true;
         HW->EnableLowRAM->Checked=false;
         HW->M1Not->Checked=false;

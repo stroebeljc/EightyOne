@@ -3,9 +3,9 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.15 - --/--/2019 (by Paul Farrow and SirMorris)
+Version 1.15 - --/--/2019 (by SirMorris and Paul Farrow)
 * Bug fixes:
-
+  - The zoom size was not being restored from the .ini configuration file.
 * Enhancements:
   - Added 'browse to SD card folder' button to ZXpand option in hardware menu.
 

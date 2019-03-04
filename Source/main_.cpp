@@ -765,10 +765,10 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         case 1:
 
                 if (StartUpWidth==0 || StartUpHeight==0) N1001Click(NULL);
-                else if (UserDefined1->Checked)
+                else
                 {
-                       Width=StartUpWidth;
-                       Height=StartUpHeight;
+                       ClientWidth=StartUpWidth;
+                       ClientHeight=StartUpHeight;
                 }
                 Kb->OKClick(NULL);
                 break;
@@ -1232,17 +1232,8 @@ void TForm1::LoadSettings(TIniFile *ini)
         Left = ini->ReadInteger("MAIN","Left",0);
 
         // The start up height and width are transferred to the real height and width on the first timer event.
-        // The height and width are also restored to these values after changing the configuration.
-        if (UserDefined1->Checked)
-        {
-                StartUpHeight = ini->ReadInteger("MAIN","Height",0);
-                StartUpWidth = ini->ReadInteger("MAIN","Width",0);
-        }
-  //      else
-  //      {
-  //              StartUpHeight = Height;
-  //              StartUpWidth = Width;
-   //     }
+        StartUpHeight = ini->ReadInteger("MAIN","Height",0);
+        StartUpWidth = ini->ReadInteger("MAIN","Width",0);
 
         // Always default to the 100% to begin with, before changing to real dimensions upon the next timer event
         ClientHeight = BaseHeight + (StatusBar1->Visible ? StatusBar1->Height : 0);
@@ -1253,8 +1244,8 @@ void TForm1::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("MAIN","Top",Top);
         ini->WriteInteger("MAIN","Left",Left);
-        ini->WriteInteger("MAIN","Height",Height);
-        ini->WriteInteger("MAIN","Width",Width);
+        ini->WriteInteger("MAIN","Height",ClientHeight);
+        ini->WriteInteger("MAIN","Width",ClientWidth);
 
         ini->WriteBool("MAIN", "ShowSplash", ShowSplash);
         ini->WriteInteger("MAIN","RenderMode", RenderMode);

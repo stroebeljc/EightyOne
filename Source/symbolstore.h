@@ -3,14 +3,10 @@
 
 namespace symbolstore
 {
-        // all symbol files are assumed to have the basic form
-        // A.B where . represents a delimeter, assumed to be
-        // either whitespace or '='. they all have subtle diffs, though.
-        // a munger function is called after the expression is split
-        // and trimmed. the mapper expects whole-word symbols and hex addresses,
-        // without any '$' or '0x' introducer.
+        // Split a line of symbol file into symbol and address
+        // return false if line can't/shouldn't be parsed
         //
-        typedef void (*SYMBOLMUNGER)(AnsiString& symbol, AnsiString& address);
+        typedef bool (*SYMBOLSPLITTER)(const char*, AnsiString& symbol, AnsiString& address);
 
         // loading a new symbol file clears old symbols,
         // but when resetting a machine file symbols could be left behind.
@@ -24,8 +20,10 @@ namespace symbolstore
         // if you want to do special processing on each symbol/value pair as
         // they're parsed, pass in a munger.
         //
-        bool loadROMSymbols(const char* filename, SYMBOLMUNGER munger = NULL);
-        bool loadFileSymbols(const char* filename, SYMBOLMUNGER munger = NULL);
+        bool loadROMSymbols(const char* filename);
+
+        bool loadSymFileSymbols(const char* filename);
+        bool loadZ88FileSymbols(const char* filename);
 
         // check if symbols are loaded
         //

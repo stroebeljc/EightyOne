@@ -30,19 +30,46 @@ void splitnosval(AnsiString& inval, AnsiString& outval)
         outval = actualVal;
 }
 
-void loadFileSymbolsProxy(const char* path)
+static bool z88Splitter(const char* input, AnsiString& symOut, AnsiString& valOut)
 {
-        AnsiString pp = AnsiString(path).LowerCase();
-        if (pp.Length() < 3) return;
+        AnsiString sym(input);
+        sym = sym.Trim();
+        if (sym.Length() == 0 || sym[1] == ';')
+        {
+                return false;
+        }
 
-        AnsiString ppp = pp.SubString(pp.Length() - 1, 2);
-        if (ppp != ".p") return;
+        // 'SYM        = $xxxx ; ......'
 
-        pp += ".sym";
-        symbolstore::loadFileSymbols(pp.c_str());
+        int wspos = sym.LastDelimiter(";");
+        if (wspos == 0)
+        {
+                return false;
+        }
+
+        // 'SYM        = $xxxx '
+        sym.SetLength(wspos - 1);
+
+        wspos = sym.LastDelimiter("=");
+        if (wspos == 0)
+        {
+                return false;
+        }
+
+        if (sym.SubString(1,2) == "__") return false;
+
+        AnsiString val(sym.SubString(wspos + 3, sym.Length() - wspos));
+        sym.SetLength(wspos - 1);
+
+        // val = 'xxxx '
+        // sym = 'SYM        '
+
+        symOut = sym.Trim();
+        valOut = val.Trim();
+        return true;
 }
 
-static bool splitline(const char* input, AnsiString& symOut, AnsiString& valOut)
+static bool symSplitter(const char* input, AnsiString& symOut, AnsiString& valOut)
 {
         AnsiString sym(input);
         sym = sym.Trim();
@@ -59,7 +86,7 @@ static bool splitline(const char* input, AnsiString& symOut, AnsiString& valOut)
                 return false;
         }
 
-        AnsiString val(sym.SubString(wspos + 1, sym.Length() - wspos));
+        AnsiString addr(sym.SubString(wspos + 1, sym.Length() - wspos));
 
         // chop any middle words from the line, leaving the symbol name
         //
@@ -71,37 +98,21 @@ static bool splitline(const char* input, AnsiString& symOut, AnsiString& valOut)
                 wspos = sym.LastDelimiter(",= \t");
         }
 
-        symOut = sym;
-        valOut = val;
+        symOut = addr;
+        valOut = sym;
         return true;
 }
 
-void symbolstore_test(void)
+void loadFileSymbolsProxy(const char* path)
 {
-        AnsiString sym, val;
-        assert(!splitline("", sym, val));
-        assert(!splitline("  \t", sym, val));
-        assert(!splitline("  \t;", sym, val));
-        assert(!splitline(";", sym, val));
-        assert(!splitline("bert", sym, val));
-        assert(!splitline("  bert\t ", sym, val));
-        assert(!splitline(" \tbert", sym, val));
-        assert(!splitline("tbert  ", sym, val));
+        AnsiString pp = AnsiString(path).LowerCase();
+        if (pp.Length() < 3) return;
 
-        assert(splitline("bert ernie", sym, val));
-        assert(sym == "bert" && val == "ernie");
+        AnsiString ppp = pp.SubString(pp.Length() - 1, 2);
+        if (ppp != ".p") return;
 
-        assert(splitline("bart\tmaggie", sym, val));
-        assert(sym == "bart" && val == "maggie");
-
-        assert(splitline("barn \t= horse", sym, val));
-        assert(sym == "barn" && val == "horse");
-
-        assert(splitline("burn equ fire", sym, val));
-        assert(sym == "burn" && val == "fire");
-
-        assert(splitline("burp \tequ something rude", sym, val));
-        assert(sym == "burp" && val == "rude");
+        symbolstore::loadSymFileSymbols((pp + ".sym").c_str());
+        symbolstore::loadZ88FileSymbols((pp + ".map").c_str());
 }
 
 static void clearROMSymbols(void)
@@ -122,7 +133,8 @@ void symbolstore::reset(void)
         clearFileSymbols();
 }
 
-static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v, symbolstore::SYMBOLMUNGER munger)
+static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v,
+        symbolstore::SYMBOLSPLITTER splitter)
 {
         FILE* symfile = fopen(filename, "r");
         if (!symfile)
@@ -135,15 +147,12 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v, symbol
 
         while(fgets(buf, 128, symfile))
         {
-                if (!splitline(buf, val, sym))
+                if (!splitter(buf, sym, val))
                 {
                         continue;
                 }
 
-                if (munger)
-                {
-                        munger(sym, val);
-                }
+                sym = UpperCase(sym);
 
                 splitnosval(val, val);
 
@@ -156,16 +165,22 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v, symbol
         return true;
 }
 
-bool symbolstore::loadROMSymbols(const char* filename, symbolstore::SYMBOLMUNGER munger)
+bool symbolstore::loadROMSymbols(const char* filename)
 {
         clearROMSymbols();
-        return loadSymbols(filename, romV2S, romS2V, munger);
+        return loadSymbols(filename, romV2S, romS2V, symSplitter);
 }
 
-bool symbolstore::loadFileSymbols(const char* filename, symbolstore::SYMBOLMUNGER munger)
+bool symbolstore::loadSymFileSymbols(const char* filename)
 {
         clearFileSymbols();
-        return loadSymbols(filename, fileV2S, fileS2V, munger);
+        return loadSymbols(filename, fileV2S, fileS2V, symSplitter);
+}
+
+bool symbolstore::loadZ88FileSymbols(const char* filename)
+{
+        clearFileSymbols();
+        return loadSymbols(filename, fileV2S, fileS2V, z88Splitter);
 }
 
 bool symbolstore::addressToSymbol(const int addr, AnsiString& result)

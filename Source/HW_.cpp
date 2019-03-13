@@ -124,11 +124,6 @@ void zx81_writebyteProxy(int address, int data)
         dirtyBird.insert(address);
 }
 
-void caserMunger(AnsiString& sym, AnsiString& val)
-{
-        sym = UpperCase(sym);
-}
-
 AnsiString getMachineRoot(AnsiString fullRomName)
 {
         // return the first part of the rom name up to but excluding the first '.'
@@ -761,7 +756,7 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         AnsiString sym = romBase;
         sym += ChangeFileExt(machine.CurRom, ".sym");
-        symbolstore::loadROMSymbols(sym.c_str(), caserMunger);
+        symbolstore::loadROMSymbols(sym.c_str());
         SymbolBrowser->RefreshContent();
 
         AnsiString bmp = romBase;

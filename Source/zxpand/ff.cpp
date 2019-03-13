@@ -29,7 +29,6 @@ extern void dirReadNext(void* fileinfo);
 //
 const char* zxpandSDCardFolderRoot = NULL;
 char curPath[32768] = {0};
-
 char tempPath[32768] = {0};
 
 
@@ -83,10 +82,10 @@ char *realpath(const char *path, char *resolved_path)
 	_fullpath(buf,path,32768);
 	
 	len=strlen(buf);
-	
+
 	if (len == 0 || len > 32768 - 1)
 		strcpy(resolved_path, path);
-	else 
+	else
 		strcpy(resolved_path, buf);
  
 	// Replace backslashes with forward slashes so the

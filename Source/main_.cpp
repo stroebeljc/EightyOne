@@ -120,8 +120,6 @@ DWORD VideoThreadId;
 
 SCANLINE Video[2], *BuildLine, *DisplayLine;
 
-extern symbolstore_test(void);
-
 static bool iniFileExists = false;
 
 //---------------------------------------------------------------------------
@@ -131,8 +129,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         AnsiString IniPath;
         char path[256];
         int i;
-
-        symbolstore_test();
 
         strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (zx81.cwd[strlen(zx81.cwd)-1]!='\\')
@@ -1018,8 +1014,14 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext==".SYM")
                         {
-                                symbolstore::loadFileSymbols(Filename.c_str());
-                                // hmm there really should be an event here.
+                                symbolstore::loadSymFileSymbols(Filename.c_str());
+                                SymbolBrowser->RefreshContent();
+                                return;
+                        }
+
+                        if (Ext==".MAP")
+                        {
+                                symbolstore::loadZ88FileSymbols(Filename.c_str());
                                 SymbolBrowser->RefreshContent();
                                 return;
                         }

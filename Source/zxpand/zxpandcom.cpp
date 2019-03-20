@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <usart.h>
 
-static const rom char* VERSION = "ZXPAND+ 1.13 \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ 1.14 \"MOGGY\"";
 
 static BYTE res;
 

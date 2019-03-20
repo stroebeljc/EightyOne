@@ -405,6 +405,12 @@ void zx_process_write(void)
                LATD = serialAvailable();
              }
              break;
+             case 0xc6:
+             {
+               // direct serial/midi output
+                serialWrite(LATD);
+             }
+             break;
              case 0xf0:
              {
                  // delay a couple of milliseconds, then disable

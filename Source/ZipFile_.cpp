@@ -29,7 +29,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         unzFile ZFile;
         FILE *F;
         int error;
-        char FileName[256], Filter[256];
+        char FileName[512], Filter[512];
         char *Orig, *Dest;
         AnsiString File, Ext;
 

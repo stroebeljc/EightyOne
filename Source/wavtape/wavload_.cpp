@@ -719,7 +719,10 @@ void __fastcall TWavLoad::OpenWav1Click(TObject *Sender)
 
                 if (AutoloadonInsert1->Down)
                 {
-                        BasicLister->Clear();
+                        if (BasicLister->ListerAvailable())
+                        {
+                                BasicLister->Clear();
+                        }
                 }
         }
 }

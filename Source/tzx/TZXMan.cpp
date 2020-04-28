@@ -294,7 +294,10 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
 
                 if (TZX->AutoLoadBtn->Down)
                 {
-                        BasicLister->Clear();
+                        if (BasicLister->ListerAvailable())
+                        {
+                                BasicLister->Clear();
+                        }
                 }
         }
         UpdateTable(true);

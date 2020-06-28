@@ -93,13 +93,14 @@ __published:	// IDE-managed Components
         TCheckBox *ZXPrinter;
         TCheckBox *ZXpand;
         TComboBox *ColourBox;
-        TLabel *Label8;
-        TLabel *Label9;
+        TLabel *ColourLabel;
+        TLabel *RomCartridgeLabel;
         TComboBox *RomCartridgeBox;
         TEdit *RomCartridgeFileBox;
         TButton *BrowseRomCartridge;
         TCheckBox *FloatingPointHardwareFix;
         TButton *ButtonZXpandSDCard;
+        TComboBox *ZXC1ConfigurationBox;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);

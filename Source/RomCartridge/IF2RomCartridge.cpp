@@ -16,7 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* Information on the Interface 2 ROM Cartridge mechanism and the ZXC2,
+/* Information on the Interface 2 ROM Cartridge mechanism and the ZXC1, ZXC2,
    ZXC3 and ZXC4 ROM cartridges can be found at www.fruitcake.plus.com */
     
 #include <io.h>
@@ -61,16 +61,20 @@ const int zxc4BankSetShift = 3;
 const BYTE idleDataBus = 0xFF;
 
 BYTE AccessRomCartridgeSinclair(int Address);
+bool AccessRomCartridgeZXC1(int Address, BYTE* Data);
 bool AccessRomCartridgeZXC2(int Address, BYTE* Data);
 bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess);
 bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess);
 BYTE AccessRomCartridgeBank(int bank, int Address);
 bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess);
+void ConfigureZXC1();
 
 extern bool directMemoryAccess;
 
 void InitialiseRomCartridge()
 {
+        ConfigureZXC1();
+
         zx81.zxcPaging = 0;
         zx81.zxcInterface1BankPagedIn = false;
         zx81.zxcCassetteBankPagedIn = false;
@@ -100,6 +104,91 @@ void InitialiseRomCartridge()
         }
 }
 
+void ConfigureZXC1()
+{
+        // Paging timings:
+        // 16K+Pageout	2.46
+        // 32K          1.52
+        // 32K+Pageout  1.52, 3.55
+        // 48K          1.52, 2.23
+        // 48K+Pageout	1.52, 2.23, 4.26
+        // 64K          1.62, 2.23, 3.08
+
+        int framesPerSec = zx81.NTSC ? 60 : 50;
+
+        switch (zx81.zxc1Configuration)
+        {
+                case ZXC1_32K:                  // 27C256: A14 0->1 (22k/220k)
+                        zx81.zxc1BankNumber[0] = 0;
+                        zx81.zxc1BankNumber[1] = 1;
+                        zx81.zxc1BankNumber[2] = -1;
+                        zx81.zxc1BankNumber[3] = -1;
+
+                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        zx81.zxc1BankTimer[1] = 0;
+                        zx81.zxc1BankTimer[2] = 0;
+                        break;
+
+                case ZXC1_48K:                  // 27C512: A14 0->1 (22k/220k), A15 0->1 (33k/330k)
+                        zx81.zxc1BankNumber[0] = 0;
+                        zx81.zxc1BankNumber[1] = 1;
+                        zx81.zxc1BankNumber[2] = 3;
+                        zx81.zxc1BankNumber[3] = -1;
+
+                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        zx81.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
+                        zx81.zxc1BankTimer[2] = 0;
+                        break;
+
+                case ZXC1_64K:                  // 27C512 A14 1->0 (22k/220k), A15 0->1 (33k/330k), A14 0->1 (47k/470k)
+                        zx81.zxc1BankNumber[0] = 1;
+                        zx81.zxc1BankNumber[1] = 0;
+                        zx81.zxc1BankNumber[2] = 2;
+                        zx81.zxc1BankNumber[3] = 3;
+
+                        zx81.zxc1BankTimer[0] = (int)(1.62 * framesPerSec);
+                        zx81.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
+                        zx81.zxc1BankTimer[2] = (int)(3.08 * framesPerSec);
+                        break;
+
+                case ZXC1_16KPAGEOUT:           // 27C128: ROMCS 1->0 (33k/330k)
+                        zx81.zxc1BankNumber[0] = 0;
+                        zx81.zxc1BankNumber[1] = -1;
+                        zx81.zxc1BankNumber[2] = -1;
+                        zx81.zxc1BankNumber[3] = -1;
+
+                        zx81.zxc1BankTimer[0] = (int)(2.46 * framesPerSec);
+                        zx81.zxc1BankTimer[1] = 0;
+                        zx81.zxc1BankTimer[2] = 0;
+                        break;
+
+                case ZXC1_32KPAGEOUT:           // 27C256: A14 0->1 (22k/220k), ROMCS 1->0 (47k/470k)
+                        zx81.zxc1BankNumber[0] = 0;
+                        zx81.zxc1BankNumber[1] = 1;
+                        zx81.zxc1BankNumber[2] = -1;
+                        zx81.zxc1BankNumber[3] = -1;
+
+                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        zx81.zxc1BankTimer[1] = (int)(3.55 * framesPerSec);
+                        zx81.zxc1BankTimer[2] = 0;
+                        break;
+
+                case ZXC1_48KPAGEOUT:           // 27C512: A14 0->1 (22k/220k), A15 0->1 (33k/330k), ROMCS 1->0 (56k/560k)
+                        zx81.zxc1BankNumber[0] = 0;
+                        zx81.zxc1BankNumber[1] = 1;
+                        zx81.zxc1BankNumber[2] = 3;
+                        zx81.zxc1BankNumber[3] = -1;
+
+                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        zx81.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
+                        zx81.zxc1BankTimer[2] = (int)(4.26 * framesPerSec);
+                        break;
+        }
+
+        zx81.zxc1PageOut = false;
+        zx81.zxc1ActiveBank = 0;
+}
+
 bool RomCartridgePagedIn()
 {
         bool pageIn = false;
@@ -108,6 +197,10 @@ bool RomCartridgePagedIn()
         {
         case ROMCARTRIDGESINCLAIR:
                 pageIn = true;
+                break;
+
+        case ROMCARTRIDGEZXC1:
+                pageIn = !zx81.zxc1PageOut;
                 break;
 
         case ROMCARTRIDGEZXC2:
@@ -195,6 +288,10 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
                         readStatus = true;
                         break;
 
+                case ROMCARTRIDGEZXC1:
+                        readStatus = AccessRomCartridgeZXC1(Address, Data);
+                        break;
+
                 case ROMCARTRIDGEZXC2:
                         readStatus = AccessRomCartridgeZXC2(Address, Data);
                         break;
@@ -215,6 +312,44 @@ static inline BYTE AccessRomCartridgeSinclair(int Address)
 {
         const int bank = 0;
         return AccessRomCartridgeBank(bank, Address);
+}
+
+void RomCartridgeZXC1TimerTick()
+{
+        if ((zx81.zxc1ActiveBank >= 0) && (zx81.zxc1ActiveBank < 3))
+        {
+                if (zx81.zxc1BankTimer[zx81.zxc1ActiveBank] > 0)
+                {
+                        zx81.zxc1BankTimer[zx81.zxc1ActiveBank]--;
+
+                        if (zx81.zxc1BankTimer[zx81.zxc1ActiveBank] == 0)
+                        {
+                                zx81.zxc1ActiveBank++;
+
+                                if (zx81.zxc1BankNumber[zx81.zxc1ActiveBank] == -1)
+                                {
+                                        zx81.zxc1PageOut = true;
+                                }
+                        }
+                }
+        }
+}
+
+static inline bool AccessRomCartridgeZXC1(int Address, BYTE* Data)
+{
+        bool dataRead = true;
+
+        if (zx81.zxc1PageOut)
+        {
+                dataRead = false;
+        }
+        else
+        {
+                int bank = zx81.zxc1BankNumber[zx81.zxc1ActiveBank];
+                *Data = AccessRomCartridgeBank(bank, Address);
+        }
+
+        return dataRead;
 }
 
 static inline bool AccessRomCartridgeZXC2(int Address, BYTE* Data)

@@ -74,9 +74,10 @@
 #include "LiveMemoryWindow_.h"
 #include "ProfilePlot_.h"
 #include "Profiler.h"
-#include "BasicLister/BasicLister_.h"
-#include "BasicLister/BasicListerOptions_.h"
-#include "BasicLoader/BasicLoaderOptions_.h"
+#include "BasicLister\BasicLister_.h"
+#include "BasicLister\BasicListerOptions_.h"
+#include "BasicLoader\BasicLoaderOptions_.h"
+#include "ROMCartridge\IF2ROMCartridge.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -1150,6 +1151,11 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
         }
 
         if (!zx81_stop) borrow=j;
+
+        if (zx81.romCartridge == ROMCARTRIDGEZXC1)
+        {
+                RomCartridgeZXC1TimerTick();
+        }
 }
 //---------------------------------------------------------------------------
 

@@ -282,11 +282,34 @@ void load_snap_romcartridge(FILE *f)
                         tok = get_token(f);
                         HW->RomCartridgeFileBox->Text = tok;
                 }
+                else if (!strcmp(tok,"CONFIGURATION"))
+                {
+                        tok = get_token(f);
+                        HW->ZXC1ConfigurationBox->Text = tok;
+                }
         }
 
         bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
         HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
         HW->BrowseRomCartridge->Enabled = romCartridgeSelected;
+
+        bool zxc1Selected = (HW->RomCartridgeBox->Text == "ZXC1");
+        HW->ZXC1ConfigurationBox->Visible = zxc1Selected;
+        if (zxc1Selected)
+        {
+                HW->RomCartridgeFileBox->Left = 281;
+                HW->RomCartridgeFileBox->Width = 73;
+
+                if (HW->ZXC1ConfigurationBox->ItemIndex == -1)
+                {
+                        HW->ZXC1ConfigurationBox->ItemIndex = 0;
+                }
+        }
+        else
+        {
+                HW->RomCartridgeFileBox->Left = 188;
+                HW->RomCartridgeFileBox->Width = 166;
+        }
 }
 
 void load_snap_interfaces(FILE *f)
@@ -579,6 +602,10 @@ void InitialiseHardware()
         SetComboBox(HW->ChrGenBox, "Sinclair");
         SetComboBox(HW->HiResBox, "None");
         SetComboBox(HW->RomCartridgeBox, "None");
+        SetComboBox(HW->ZXC1ConfigurationBox, "32K");
+        HW->ZXC1ConfigurationBox->Visible = false;
+        HW->RomCartridgeFileBox->Left = 188;
+        HW->RomCartridgeFileBox->Width = 166;
         HW->RomCartridgeFileBox->Text = "";
         HW->BrowseRomCartridge->Enabled = false;
         HW->ZXPrinter->Checked = false;
@@ -843,6 +870,10 @@ int save_snap(char *filename)
                 if (HW->RomCartridgeBox->Text != "None")
                 {
                         fprintf(f,"PATH %s\n", HW->RomCartridgeFileBox->Text.c_str());
+                        if (HW->RomCartridgeBox->Text == "ZXC1")
+                        {
+                                fprintf(f,"CONFIGURATION %s\n", HW->ZXC1ConfigurationBox->Text.c_str());
+                        }
                 }
 
                 fprintf(f,"\n[INTERFACES]\n");

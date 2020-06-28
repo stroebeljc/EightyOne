@@ -399,6 +399,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
 
         zx81.romCartridge = RomCartridgeBox->ItemIndex;
+        zx81.zxc1Configuration = (ZXC1TYPE)ZXC1ConfigurationBox->ItemIndex;
 
         if ((zx81.romCartridge == ROMCARTRIDGENONE) || (RomCartridgeFileBox->Text.Trim() == ""))
         {
@@ -406,12 +407,27 @@ void __fastcall THW::OKClick(TObject *Sender)
                 RomCartridgeFileBox->Enabled = false;
                 BrowseRomCartridge->Enabled = false;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
-       }
+                ZXC1ConfigurationBox->Visible = false;
+                RomCartridgeFileBox->Left = 188;
+                RomCartridgeFileBox->Width = 166;
+        }
         else
         {
                 LoadRomCartridgeFile(RomCartridgeFileBox->Text.c_str());
                 RomCartridgeFileBox->Enabled = true;
                 BrowseRomCartridge->Enabled = true;
+                if (zx81.romCartridge == ROMCARTRIDGEZXC1)
+                {
+                        ZXC1ConfigurationBox->Visible = true;
+                        RomCartridgeFileBox->Left = 281;
+                        RomCartridgeFileBox->Width = 73;
+                }
+                else
+                {
+                        ZXC1ConfigurationBox->Visible = false;
+                        RomCartridgeFileBox->Left = 188;
+                        RomCartridgeFileBox->Width = 166;
+                }
                 ResetRequired=true;
         }
 
@@ -876,6 +892,7 @@ void THW::SetupForZX81(void)
         FloatingPointHardwareFix->Enabled = false;
 
         EnableRomCartridgeOption(true);
+        RomCartridgeLabel->Enabled=true;
 
         ZXpand->Caption = "ZXpand+";
 
@@ -925,6 +942,7 @@ void THW::SetupForZX81(void)
         ColourBox->Items->Add("Chroma");
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
+        ColourLabel->Enabled=true;
 
         ProtectROM->Enabled=true;
         NTSC->Enabled=true;
@@ -955,11 +973,17 @@ void THW::SetupForZX81(void)
         Label4->Enabled=true;
         Label7->Enabled=true;
         for(i=0;i<IDEBox->Items->Count;i++)
+        {
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
-
+        }
 
         uSpeech->Enabled=false;
         uSpeech->Checked=false;
+
+        if (RomCartridgeBox->Items->Count > 5)
+        {
+                RomCartridgeBox->Items->Delete(ROMCARTRIDGEZXC1);
+        }
 }
 
 void THW::SetZXpandState(bool checked, bool enabled)
@@ -1003,6 +1027,7 @@ void THW::SetupForSpectrum(void)
         ResetRequired=true;
 
         EnableRomCartridgeOption(true);
+        RomCartridgeLabel->Enabled=true;
 
         OldFDC=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
@@ -1047,8 +1072,9 @@ void THW::SetupForSpectrum(void)
                 ColourBox->Items->Add("Spectra");
                 ColourBox->ItemIndex=0;
                 ColourBox->Enabled=true;
+                ColourLabel->Enabled=true;
         }
-        
+
         ProtectROM->Enabled=true;
         NTSC->Enabled=false;
         NTSC->Checked=false;
@@ -1087,6 +1113,11 @@ void THW::SetupForSpectrum(void)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
 
         uSpeech->Enabled=true;
+
+        if (RomCartridgeBox->Items->Count < 6)
+        {
+                RomCartridgeBox->Items->Add("ZXC1");
+        }
 }
 
 void THW::SetupForQL(void)
@@ -1099,6 +1130,7 @@ void THW::SetupForQL(void)
         ZXpand->Caption = "ZXpand+";
 
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled=false;
 
         ZX80Btn->Down=false;
         ZX81Btn->Down=false;
@@ -1148,6 +1180,7 @@ void THW::SetupForQL(void)
         ColourBox->Items->Strings[0]="Sinclair";
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=false;
+        ColourLabel->Enabled=false;
 
         ProtectROM->Enabled=true;
         NTSC->Enabled=false;
@@ -1435,6 +1468,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         RomCartridgeFileBox->Enabled = false;
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1459,6 +1493,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1481,6 +1516,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1519,6 +1555,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         RamPackBox->Items->Add("96k");
         IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled = false;
         SetZXpandState(false,false);
 }
 //---------------------------------------------------------------------------
@@ -1602,6 +1639,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteInteger("HWARE","Colour",ColourBox->ItemIndex);
         ini->WriteInteger("HWARE","RomCartridge",RomCartridgeBox->ItemIndex);
         ini->WriteString("HWARE","RomCartridgeFile",RomCartridgeFileBox->Text);
+        ini->WriteInteger("HWARE","ZXC1Configuration",ZXC1ConfigurationBox->ItemIndex);
 
         ini->WriteInteger("HWARE","DriveAType",DriveAType->ItemIndex);
         ini->WriteInteger("HWARE","DriveBType",DriveBType->ItemIndex);
@@ -1764,6 +1802,7 @@ void THW::LoadSettings(TIniFile *ini)
         ColourBox->ItemIndex=ini->ReadInteger("HWARE","Colour",ColourBox->ItemIndex);
         RomCartridgeBox->ItemIndex=ini->ReadInteger("HWARE","RomCartridge",RomCartridgeBox->ItemIndex);
         RomCartridgeFileBox->Text=ini->ReadString("HWARE","RomCartridgeFile","");
+        ZXC1ConfigurationBox->ItemIndex=ini->ReadInteger("HWARE","ZXC1Configuration",ZXC1ConfigurationBox->ItemIndex);
         if (RomCartridgeFileBox->Text.Length() > 0)
         {
                 RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
@@ -1897,6 +1936,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         Issue2->Checked=false;
 
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled = false;
 
         NewMachine=MACHINESPEC48;
         NewMachineName=TC2048Btn->Caption;
@@ -1928,6 +1968,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         NTSC->Checked=true;
 
         EnableRomCartridgeOption(false);
+        RomCartridgeLabel->Enabled = false;
 
         NewMachine=MACHINESPEC48;
         NewMachineName=TS2068Btn->Caption;
@@ -1985,6 +2026,9 @@ void THW::EnableRomCartridgeOption(bool enable)
         RomCartridgeBox->Enabled = enable;
         RomCartridgeFileBox->Enabled = enable;
         BrowseRomCartridge->Enabled = enable;
+        ZXC1ConfigurationBox->Visible = false;
+        RomCartridgeFileBox->Left = 188;
+        RomCartridgeFileBox->Width = 166;
 }
 
 //---------------------------------------------------------------------------
@@ -2253,7 +2297,25 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         bool romCartridgeSelected = (RomCartridgeBox->Text != "None");
         RomCartridgeFileBox->Enabled = romCartridgeSelected;
         BrowseRomCartridge->Enabled = romCartridgeSelected;
-        
+
+        bool zxc1Selected = (RomCartridgeBox->Text == "ZXC1");
+        ZXC1ConfigurationBox->Visible = zxc1Selected;
+        if (zxc1Selected)
+        {
+                RomCartridgeFileBox->Left = 281;
+                RomCartridgeFileBox->Width = 73;
+
+                if (ZXC1ConfigurationBox->ItemIndex == -1)
+                {
+                        ZXC1ConfigurationBox->ItemIndex = 0;
+                }
+        }
+        else
+        {
+                RomCartridgeFileBox->Left = 188;
+                RomCartridgeFileBox->Width = 166;
+        }
+
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------

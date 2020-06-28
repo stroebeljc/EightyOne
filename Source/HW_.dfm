@@ -1,10 +1,10 @@
 object HW: THW
-  Left = 277
-  Top = 162
+  Left = 206
+  Top = 128
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
-  ClientHeight = 348
+  ClientHeight = 344
   ClientWidth = 398
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -1365,7 +1365,7 @@ object HW: THW
   end
   object OK: TButton
     Left = 318
-    Top = 319
+    Top = 315
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -1394,7 +1394,7 @@ object HW: THW
   end
   object AdvancedBtn: TButton
     Left = 3
-    Top = 319
+    Top = 315
     Width = 73
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -1404,7 +1404,7 @@ object HW: THW
   end
   object Advanced: TPageControl
     Left = 3
-    Top = 144
+    Top = 140
     Width = 391
     Height = 169
     ActivePage = Interfaces
@@ -1413,7 +1413,7 @@ object HW: THW
     object Interfaces: TTabSheet
       Caption = 'Interfaces'
       object SoundCardLbl: TLabel
-        Left = 55
+        Left = 47
         Top = 20
         Width = 34
         Height = 13
@@ -1421,7 +1421,7 @@ object HW: THW
         Caption = 'Sound:'
       end
       object ChrGenLbl: TLabel
-        Left = 14
+        Left = 6
         Top = 44
         Width = 75
         Height = 13
@@ -1429,23 +1429,23 @@ object HW: THW
         Caption = 'Chr$ Generator:'
       end
       object HiResLbl: TLabel
-        Left = 11
+        Left = 3
         Top = 68
         Width = 78
         Height = 13
         Alignment = taRightJustify
         Caption = 'High Resolution:'
       end
-      object Label8: TLabel
-        Left = 56
+      object ColourLabel: TLabel
+        Left = 48
         Top = 92
         Width = 33
         Height = 13
         Alignment = taRightJustify
         Caption = 'Colour:'
       end
-      object Label9: TLabel
-        Left = 16
+      object RomCartridgeLabel: TLabel
+        Left = 8
         Top = 116
         Width = 73
         Height = 13
@@ -1453,7 +1453,7 @@ object HW: THW
         Caption = 'ROM Cartridge:'
       end
       object SoundCardBox: TComboBox
-        Left = 96
+        Left = 88
         Top = 16
         Width = 89
         Height = 21
@@ -1472,7 +1472,7 @@ object HW: THW
           'Zon X')
       end
       object ChrGenBox: TComboBox
-        Left = 96
+        Left = 88
         Top = 40
         Width = 89
         Height = 21
@@ -1488,7 +1488,7 @@ object HW: THW
           'Lambda')
       end
       object HiResBox: TComboBox
-        Left = 96
+        Left = 88
         Top = 64
         Width = 89
         Height = 21
@@ -1503,7 +1503,7 @@ object HW: THW
           'Memotech')
       end
       object KMouse: TCheckBox
-        Left = 200
+        Left = 188
         Top = 14
         Width = 105
         Height = 17
@@ -1511,7 +1511,7 @@ object HW: THW
         TabOrder = 5
       end
       object TS2050: TCheckBox
-        Left = 200
+        Left = 188
         Top = 30
         Width = 73
         Height = 17
@@ -1522,7 +1522,7 @@ object HW: THW
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
-        Left = 200
+        Left = 188
         Top = 46
         Width = 97
         Height = 17
@@ -1531,7 +1531,7 @@ object HW: THW
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 272
+        Left = 280
         Top = 30
         Width = 75
         Height = 16
@@ -1540,7 +1540,7 @@ object HW: THW
         OnClick = TS2050ConfigClick
       end
       object uSpeech: TCheckBox
-        Left = 200
+        Left = 188
         Top = 62
         Width = 97
         Height = 17
@@ -1549,7 +1549,7 @@ object HW: THW
         OnClick = uSpeechClick
       end
       object ZXPrinter: TCheckBox
-        Left = 200
+        Left = 188
         Top = 78
         Width = 97
         Height = 17
@@ -1558,7 +1558,7 @@ object HW: THW
         OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
-        Left = 200
+        Left = 188
         Top = 94
         Width = 65
         Height = 17
@@ -1567,7 +1567,7 @@ object HW: THW
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
-        Left = 96
+        Left = 88
         Top = 88
         Width = 89
         Height = 21
@@ -1579,7 +1579,7 @@ object HW: THW
           'None')
       end
       object RomCartridgeBox: TComboBox
-        Left = 96
+        Left = 88
         Top = 112
         Width = 89
         Height = 21
@@ -1590,17 +1590,18 @@ object HW: THW
         Items.Strings = (
           'None'
           'Sinclair'
-          'ZXC2'
+          'ZXC4'
           'ZXC3'
-          'ZXC4')
+          'ZXC2'
+          'ZXC1')
       end
       object RomCartridgeFileBox: TEdit
-        Left = 200
+        Left = 188
         Top = 112
-        Width = 154
+        Width = 166
         Height = 21
         Enabled = False
-        TabOrder = 12
+        TabOrder = 13
       end
       object BrowseRomCartridge: TButton
         Left = 356
@@ -1609,17 +1610,35 @@ object HW: THW
         Height = 21
         Caption = '...'
         Enabled = False
-        TabOrder = 13
+        TabOrder = 14
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 272
+        Left = 280
         Top = 94
         Width = 75
         Height = 16
         Caption = 'SD Card'
-        TabOrder = 14
+        TabOrder = 15
         OnClick = ButtonZXpandSDCardClick
+      end
+      object ZXC1ConfigurationBox: TComboBox
+        Left = 188
+        Top = 112
+        Width = 89
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 12
+        Visible = False
+        OnChange = RomCartridgeBoxChange
+        Items.Strings = (
+          '32K'
+          '48K'
+          '64K'
+          '16K+Pageout'
+          '32K+Pageout'
+          '48K+Pageout')
       end
     end
     object FloppyDrives: TTabSheet

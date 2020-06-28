@@ -82,9 +82,10 @@
 
 #define ROMCARTRIDGENONE     0
 #define ROMCARTRIDGESINCLAIR 1
-#define ROMCARTRIDGEZXC2     2
+#define ROMCARTRIDGEZXC4     2
 #define ROMCARTRIDGEZXC3     3
-#define ROMCARTRIDGEZXC4     4
+#define ROMCARTRIDGEZXC2     4
+#define ROMCARTRIDGEZXC1     5
 
 #define CRCACE		0x0a09
 #define CRCASZMIC	0xcac9
@@ -132,6 +133,17 @@
 #define MF128           1
 #define MFPLUS3         2
 
+typedef enum
+{
+        ZXC1_32K,
+        ZXC1_48K,
+        ZXC1_64K,
+        ZXC1_16KPAGEOUT,
+        ZXC1_32KPAGEOUT,
+        ZXC1_48KPAGEOUT,
+        ZXC1_64KPAGEOUT
+} ZXC1TYPE;
+
 typedef struct
 {
         CFGBYTE emuid, major,minor,testver;
@@ -165,6 +177,11 @@ typedef struct
         CFGBYTE zxpand;
         CFGBYTE romCartridge;
         int zxcPaging;
+        int zxc1PageOut;
+        int zxc1ActiveBank;
+        ZXC1TYPE zxc1Configuration;
+        int zxc1BankNumber[4];
+        int zxc1BankTimer[3];
         int zxcLowerControlAccessSelected;
         int zxcInterface1BankPagedIn;
         int zxcCassetteBankPagedIn;

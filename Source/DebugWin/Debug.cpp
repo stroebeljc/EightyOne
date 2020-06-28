@@ -943,6 +943,9 @@ void TDbg::UpdateVals(void)
 
         switch (zx81.romCartridge)
         {
+                case ROMCARTRIDGEZXC1:
+                        GroupBoxZXC->Caption = "ZXC1";
+                        break;
                 case ROMCARTRIDGEZXC2:
                         GroupBoxZXC->Caption = "ZXC2";
                         break;
@@ -954,14 +957,27 @@ void TDbg::UpdateVals(void)
                         break;
                 default:
                         GroupBoxZXC->Caption = "ZXC";
-                break;
+                        break;
         }
 
         bool zxcEnabled = (zx81.romCartridge != ROMCARTRIDGENONE) && (zx81.romCartridge != ROMCARTRIDGESINCLAIR);
         ZXCModeLabel->Enabled = zxcEnabled;
         ZXCMode->Enabled = zxcEnabled;
-        ZXCMode->Caption = "$"+Hex8(zx81.zxcPaging);         
-
+        if (zx81.romCartridge == ROMCARTRIDGEZXC1)
+        {
+                if (zx81.zxc1PageOut)
+                {
+                        ZXCMode->Caption = "OUT";
+                }
+                else
+                {
+                        ZXCMode->Caption = "$"+Hex8(zx81.zxc1ActiveBank);
+                }
+        }
+        else
+        {
+                ZXCMode->Caption = "$"+Hex8(zx81.zxcPaging);
+        }
         SetLabelInfo(HL, z80.hl.w);
         SetLabelInfo(BC, z80.bc.w);
         SetLabelInfo(DE, z80.de.w);

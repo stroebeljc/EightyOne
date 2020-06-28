@@ -92,6 +92,9 @@ void load_config(void)
         zx81.chromaColourSwitchOn = 0;
         zx81.romCartridge = ROMCARTRIDGENONE;
         zx81.zxcPaging = 0;
+        zx81.zxc1PageOut = false;
+        zx81.zxc1ActiveBank = 0;
+        zx81.zxc1Configuration = ZXC1_32K;
         zx81.zxcLowerControlAccessSelected = 0;
         zx81.zxcInterface1BankPagedIn = 0;
         zx81.zxcCassetteBankPagedIn = 0;

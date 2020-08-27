@@ -1407,7 +1407,7 @@ object HW: THW
     Top = 140
     Width = 391
     Height = 169
-    ActivePage = Interfaces
+    ActivePage = AdvSettings
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1931,6 +1931,16 @@ object HW: THW
         ParentColor = False
         TabOrder = 5
         OnClick = FloatingPointHardwareFixClick
+      end
+      object ShowHardwareHSyncs: TCheckBox
+        Left = 232
+        Top = 80
+        Width = 145
+        Height = 17
+        Caption = 'Show Hardware HSyncs'
+        Checked = True
+        State = cbChecked
+        TabOrder = 8
       end
     end
   end

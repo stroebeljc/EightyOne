@@ -1169,7 +1169,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         bit=((shift_register^shift_reg_inv)&32768);
 
-                        bool HSyncPeriod = (hsync_counter-(i/2) < HSyncDuration);
+                        bool HSyncPeriod = zx81.ShowHardwareHSyncs && (hsync_counter-(i/2) < HSyncDuration);
                         if (HSYNC_generator && !HSyncPeriod)
                             colour = (bit ? ink:paper)<<4;
                         else
@@ -1251,8 +1251,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 hsync_counter -= nmilen;
                                 ts += nmilen;
 
-                                // Include if do not want to see HSyncs
-                                // add_blank(CurScanLine, 1, 16*paper);
+                                if (!zx81.ShowHardwareHSyncs)
+                                        add_blank(CurScanLine, 1, 16*paper);
                         }
 
                         borrow = -hsync_counter;

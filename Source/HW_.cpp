@@ -467,6 +467,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
         else Form1->AnimTimer1->Interval=20;
 
+        zx81.ShowHardwareHSyncs = ShowHardwareHSyncs->Checked;
+         
         if ((NewMachine == MACHINESPEC48) || (NewMachine == MACHINEQL))
         {
                 zx81.RAMTOP = 65535;
@@ -1685,6 +1687,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);
         ini->WriteInteger("HWARE","HDRIVE",IDEBox->ItemIndex);
         ini->WriteBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
+        ini->WriteBool("HWARE","ShowHardwareHSyncs",ShowHardwareHSyncs->Checked);
 
         Rom=zx81.ROM80; ini->WriteString("HWARE","ROM80",Rom);
         Rom=zx81.ROM81; ini->WriteString("HWARE","ROM81",Rom);
@@ -1859,6 +1862,7 @@ void THW::LoadSettings(TIniFile *ini)
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
+        ShowHardwareHSyncs->Checked=ini->ReadBool("HWARE","ShowHardwareHSyncs",ShowHardwareHSyncs->Checked);
 
         Upload->Checked=ini->ReadBool("HWARE","ZXCFWP",Upload->Checked);
         ZXCFRAM->ItemIndex=ini->ReadInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);

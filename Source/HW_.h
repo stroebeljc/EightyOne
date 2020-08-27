@@ -101,6 +101,7 @@ __published:	// IDE-managed Components
         TCheckBox *FloatingPointHardwareFix;
         TButton *ButtonZXpandSDCard;
         TComboBox *ZXC1ConfigurationBox;
+        TCheckBox *ShowHardwareHSyncs;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);

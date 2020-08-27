@@ -1756,7 +1756,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 }
                                         }
 
-                                        if (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale))
+                                        if (zx81.ShowHardwareHSyncs && (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale)))
                                         {
                                                 if (tv.AdvancedEffects && !(TIMEXMode&4))
                                                         CurScanLine->scanline[CurScanLine->scanline_len++]=VBLANKCOLOUR;

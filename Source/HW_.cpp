@@ -45,7 +45,7 @@ extern int zx81_do_scanline(SCANLINE *CurScanLine);
 extern void InitPatches(int machineType);
 extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
-
+                                           
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
@@ -822,9 +822,57 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         InitPatches(NewMachine);
 
+        ResetDisplaySize();
+
         if (Sender) Close();
 
         if (Dbg->Visible) Dbg->UpdateVals();
+
+}
+
+void THW::ResetDisplaySize()
+{
+        if (Form1->N1001->Checked)
+        {
+                Form1->N2001Click(NULL);
+                Form1->N1001Click(NULL);
+        }
+        else if (Form1->N2001->Checked)
+        {
+                Form1->N1001Click(NULL);
+                Form1->N2001Click(NULL);
+        }
+        else if (Form1->N4001->Checked)
+        {
+                Form1->N1001Click(NULL);
+                Form1->N4001Click(NULL);
+        }
+        
+        if (Form1->None1->Checked)
+        {
+                Form1->Small1Click(NULL);
+                Form1->None1Click(NULL);
+        }
+        else if (Form1->Small1->Checked)
+        {
+                Form1->None1Click(NULL);
+                Form1->Small1Click(NULL);
+        }
+        else if (Form1->Normal1->Checked)
+        {
+                Form1->None1Click(NULL);
+                Form1->Normal1Click(NULL);
+        }
+        else if (Form1->Large1->Checked)
+        {
+                Form1->None1Click(NULL);
+                Form1->Large1Click(NULL);
+        }
+        else if (Form1->FullImage1->Checked)
+        {
+                Form1->None1Click(NULL);
+                Form1->FullImage1Click(NULL);
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -892,6 +940,7 @@ void THW::SetupForZX81(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
+        ShowHardwareHSyncs->Enabled = false;
 
         EnableRomCartridgeOption(true);
         RomCartridgeLabel->Enabled=true;
@@ -1023,6 +1072,7 @@ void THW::SetupForSpectrum(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
+        ShowHardwareHSyncs->Enabled = true;
         SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
 
@@ -1128,6 +1178,7 @@ void THW::SetupForQL(void)
         int i;
 
         FloatingPointHardwareFix->Enabled = false;
+        ShowHardwareHSyncs->Enabled = false;
         SetZXpandState(false,false);
         ZXpand->Caption = "ZXpand+";
 
@@ -1251,6 +1302,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Text = zx81.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
+        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1266,6 +1318,7 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         RomBox->Text = zx81.ROM81;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
+        ShowHardwareHSyncs->Enabled = true;
         NTSC->Checked=false;
         IDEBoxChange(NULL);
 }
@@ -1422,6 +1475,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<1) RamPackBox->ItemIndex=1;
         NTSC->Checked=true;
+        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1438,6 +1492,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<4) RamPackBox->ItemIndex=4;
         NTSC->Checked=true;
+        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1465,12 +1520,12 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         HiResBox->ItemIndex=0;
         HiResBox->Enabled=false;
         HiResLbl->Enabled=false;
-        IDEBoxChange(NULL);
         RomCartridgeBox->Enabled = false;
         RomCartridgeFileBox->Enabled = false;
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -1493,9 +1548,10 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Items->Add("Lambda");
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
-        IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        ShowHardwareHSyncs->Enabled = true;
+        IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -1516,9 +1572,10 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Items->Add("Lambda");
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
-        IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        ShowHardwareHSyncs->Enabled = true;
+        IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -1555,10 +1612,10 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         IDEBox->Items->Add("AceCF");
         RamPackBox->Items->Add("96k");
-        IDEBoxChange(NULL);
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         SetZXpandState(false,false);
+        IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -2011,13 +2068,13 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         ColourBox->Items->Add("Lambda");
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
-
         if (RamPackBox->Visible)
         {
                 Height -= RamPackHeight;
                 RamPackLbl->Visible=false;
                 RamPackBox->Visible=false;
         }
+        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 

@@ -160,6 +160,7 @@ private:	// User declarations
         void EnableRomCartridgeOption(bool enable);
         bool ResetRequired;
         void CreateBasicLister();
+        void ResetDisplaySize();
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

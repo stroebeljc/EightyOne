@@ -146,7 +146,8 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         lineInfo.contentLength = length;
         lineInfo.lineLength = lineHeaderLength + length;
 
-        lineInfo.displayLength = 4;     // Line number length
+        const int LineNumberLength = 4;
+        lineInfo.displayLength = LineNumberLength;
 
         bool lastKeywordEndedWithSpace = false;
 
@@ -156,7 +157,7 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
 
                 unsigned char b = (unsigned char)getbyte((*address)++);
 
-                if (mSupportsFloatingPointNumbers && (b == mFloatingPointNumberCode))
+                if (mSupportsFloatingPointNumbers && (b == mFloatingPointNumberCode) && ((length - c) >= mEmbeddedNumberSize))
                 {
                         c += mEmbeddedNumberSize;
                         (*address) += mEmbeddedNumberSize;
@@ -165,7 +166,7 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
                         continue;
                 }
 
-                if (mSupportEmbeddedControlCodes && IsEmbeddedControlCode(b))
+                if (mSupportEmbeddedControlCodes && IsEmbeddedControlCode(b) && ((length - c) >= GetEmbeddedControlCodeSize(b)))
                 {
                         int size = GetEmbeddedControlCodeSize(b);
                         c += size;

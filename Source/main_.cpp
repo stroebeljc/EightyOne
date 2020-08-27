@@ -99,7 +99,7 @@ extern loadFileSymbolsProxy(const char*);
 extern bool ShowSplash;
 
 extern "C" void z80_reset();
-extern "C" int z80_nmi(int ts);
+extern "C" int z80_nmi(int ts, int* pNonHaltedWaitStates, int* pHaltedWaitStates);
 extern char **CommandLine;
 extern void ramwobble(int now);
 extern int LoadDock(char *Filename);
@@ -1538,13 +1538,13 @@ void __fastcall TForm1::FullImage1Click(TObject *Sender)
 //---------------------------------------------------------------------------
 void TForm1::DoAutoLoad(void)
 {
-#define AUTOINC(i)  (140+i*5)
+#define AUTOINC(i)  (340+i*10)
 
         if (zx81.machine==MACHINEACE) return;
 
         switch(AutoLoadCount)
         {
-        case 1: ResetZX811Click(NULL); break;
+        case 2: ResetZX811Click(NULL); break;
         case AUTOINC(0): if (zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128)
                                 PCKeyDown(VK_RETURN);
                          else if (zx81.machine==MACHINELAMBDA) PCKeyDown('L');
@@ -1606,8 +1606,8 @@ void TForm1::DoAutoLoad(void)
                          break;
         default: break;
         }
-        AutoLoadCount++;
-        if (AutoLoadCount==500) AutoLoadCount=0;
+        zx81.NTSC ? AutoLoadCount++ : AutoLoadCount+=2;
+        if (AutoLoadCount==1000) AutoLoadCount=0;
 }
 
 void __fastcall TForm1::FullScreenSettings1Click(TObject *Sender)
@@ -1790,9 +1790,11 @@ void __fastcall TForm1::FormMouseUp(TObject *Sender, TMouseButton Button,
 
 void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 {
+        int nonHaltedWaitStates;
+        int haltedWaitStates;
         rzx_close();
         if (machine.nmi) machine.nmi();
-        else z80_nmi(0);
+        else z80_nmi(0, &nonHaltedWaitStates, &haltedWaitStates);
 }
 //---------------------------------------------------------------------------
 

@@ -139,7 +139,7 @@ int z80_interrupt( /*int ts*/ )
 }
 
 /* Process a z80 non-maskable interrupt */
-int z80_nmi( int ts )
+int z80_nmi( int pixelCount, int* pNonHaltedWaitStates, int* pHaltedWaitStates)
 {
         int waitstates=0;
 
@@ -151,15 +151,22 @@ int z80_nmi( int ts )
                 z80.halted=0;
                 PC++;
 
-                waitstates=(ts/2)-machine.tperscanline;
-                //len=ts%16;
+                waitstates=(pixelCount/2)-machine.tperscanline;
                 waitstates = 4-waitstates;
                 if (waitstates<0 || waitstates>=machine.tperscanline) waitstates=0;
+                *pHaltedWaitStates = 18-(4+waitstates);
+        }
+        else
+        {
+                *pNonHaltedWaitStates=(pixelCount/2)-machine.tperscanline;
+                if (*pNonHaltedWaitStates < 12)
+                        *pNonHaltedWaitStates = 15-*pNonHaltedWaitStates;
+                *pNonHaltedWaitStates+=7;
         }
 
         writebyte( --SP, PCH ); writebyte( --SP, PCL );
         R++;
         PC = 0x0066;
 
-        return(4+waitstates);
+        return (4+waitstates);
 }

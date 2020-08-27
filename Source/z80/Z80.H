@@ -66,7 +66,7 @@ extern void z80_init(void);
 extern void z80_reset(void);
 
 extern int z80_interrupt(int ts);
-extern int z80_nmi( int ts );
+extern int z80_nmi( int ts, int* pNonHaltedWaitStates, int* pHaltedWaitStates );
 
 extern int z80_do_opcode(void);
 

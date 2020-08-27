@@ -100,7 +100,7 @@ int setborder=0;
 int zx81_stop=0;
 int LastInstruction;
 int MemotechMode=0;
-int HWidthCounter=0;
+//int HWidthCounter=0;
 
 BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
@@ -1095,6 +1095,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         int PrevRev=0, PrevBit=0, PrevGhost=0;
         int tstotal=0;
         int pixels;
+        static int nonHaltedWaitStates=0;
+        static int haltedWaitStates=0;
 
         CurScanLine->scanline_len=0;
 
@@ -1113,8 +1115,24 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         do
         {
                 LastInstruction=LASTINSTNONE;
-                z80.pc.w=PatchTest(z80.pc.w);
-                ts = z80_do_opcode();
+                if (nonHaltedWaitStates == 0)
+                {
+                        z80.pc.w=PatchTest(z80.pc.w);
+                        ts = z80_do_opcode();
+                }
+                else
+                {
+                        // The wait states should be incorporated into the NMI response but doing so breaks the approximation used
+                        // to align the main picture area, causing it to appear 36 pixels to the right and various programs using
+                        // advanced custom display drivers to misbehave. So instead the display generation is left as is and instead the
+                        // wait states are inserted at the start of the next border line where they cause no harm. The wait states
+                        // from the HALT in the ROM display routine after the last border line has been generated can only be included
+                        // after the main picture area has been displayed. They are therefore included with the wait states for the first
+                        // line of the bottom border which are inserted at the start of the second line of the border.
+                        ts = (nonHaltedWaitStates & 0x001F) + (haltedWaitStates & 0x001F);
+                        nonHaltedWaitStates = 0;
+                        haltedWaitStates = 0;
+                }
 
                 if (int_pending)
                 {
@@ -1123,14 +1141,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (tsint)
                         {
                                 ts += tsint;
-                                if (HWidthCounter>200 && HWidthCounter<216)
-                                        machine.tperscanline=HWidthCounter;
-                                HWidthCounter=0;
+                                //if (HWidthCounter>200 && HWidthCounter<216)
+                                //{
+                                //        machine.tperscanline=HWidthCounter;
+                                //}
+                                //HWidthCounter=0;
                         }
                         int_pending=0;
                 }
 
-                HWidthCounter+=ts;
+                //HWidthCounter+=ts;
 
                 frametstates += ts;
                 tStatesCount += ts;
@@ -1141,13 +1161,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 shift_store=shift_register;
                 pixels=ts<<1;
 
+                const int HSyncDuration = 16;
+
                 for (i=0; i<pixels; i++)
                 {
                         int colour, bit;
 
                         bit=((shift_register^shift_reg_inv)&32768);
 
-                        if (HSYNC_generator)
+                        bool HSyncPeriod = (hsync_counter-(i/2) < HSyncDuration);
+                        if (HSYNC_generator && !HSyncPeriod)
                             colour = (bit ? ink:paper)<<4;
                         else
                             colour = VBLANKCOLOUR;
@@ -1184,6 +1207,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (!HSYNC_generator) rowcounter=0;
                         if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
+
                         break;
                 case LASTINSTOUTFE:
                         NMI_generator=1;
@@ -1200,10 +1224,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 case LASTINSTOUTFF:
                         if (!HSYNC_generator) rowcounter=0;
-                        if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
+                        if (CurScanLine->sync_len != 12)
+                                CurScanLine->sync_valid=SYNCTYPEV;
+                        else
+                                CurScanLine->sync_valid=SYNCTYPEH;
                         HSYNC_generator=1;
-                        //hsync_counter = machine.tperscanline+ts;
-                        //hsync_counter=30;
                         break;
                 default:
                         break;
@@ -1214,25 +1239,31 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 if (!(z80.r & 64))
                         int_pending=1;
 
-                if (!HSYNC_generator) CurScanLine->sync_len += ts;
+                if (!HSYNC_generator)
+                    CurScanLine->sync_len += ts;
 
-                if (hsync_counter<=0)
+                if (hsync_counter <= 1)
                 {
                         if (NMI_generator)
                         {
                                 int nmilen;
-                                nmilen = z80_nmi(CurScanLine->scanline_len);
-                                //if (nmilen!=11) add_blank(nmilen-11,60);
+                                nmilen = z80_nmi(CurScanLine->scanline_len, &nonHaltedWaitStates, &haltedWaitStates);
                                 hsync_counter -= nmilen;
                                 ts += nmilen;
+
+                                // Include if do not want to see HSyncs
+                                // add_blank(CurScanLine, 1, 16*paper);
                         }
 
-                        borrow=-hsync_counter;
+                        borrow = -hsync_counter;
+                }
+                if (hsync_counter <= 0)
+                {
                         if (HSYNC_generator && CurScanLine->sync_len==0)
                         {
-                                CurScanLine->sync_len=10;
+                                CurScanLine->sync_len=HSyncDuration;
                                 CurScanLine->sync_valid=SYNCTYPEH;
-                                if (CurScanLine->scanline_len>=(machine.tperscanline*2))
+                                if (CurScanLine->scanline_len>(machine.tperscanline*2))
                                         CurScanLine->scanline_len=machine.tperscanline*2;
                                 rowcounter = (++rowcounter)&7;
                         }
@@ -1248,7 +1279,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         if (CurScanLine->sync_valid==SYNCTYPEV)
         {
                 hsync_counter=machine.tperscanline;
-                //borrow=0;
         }
 
         return(tstotal);

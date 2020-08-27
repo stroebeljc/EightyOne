@@ -197,7 +197,7 @@ void TWavLoad::LoadFile(AnsiString FName)
         UpdateImage();
         DoCaption("Stopped");
         RecordBtn->Enabled=Wav.CanRecord();
-        if (AutoloadonInsert1->Down) AutoLoadCount=1;
+        if (AutoloadonInsert1->Down) AutoLoadCount=2;
         Form1->InWaveLoaderClick(NULL);
         Form1->OutWaveLoaderClick(NULL);
 }

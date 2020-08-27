@@ -261,7 +261,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
         if (!Insert)
         {
                 TZXFile.AutoStart=AutoStartBtn->Down;
-                if (AutoLoadBtn->Down) AutoLoadCount=1;
+                if (AutoLoadBtn->Down) AutoLoadCount=2;
 
                 Caption = FileNameGetFname(Filename)+FileNameGetExt(Filename)+" - Tape";
                 Form1->InTZXManagerClick(NULL);

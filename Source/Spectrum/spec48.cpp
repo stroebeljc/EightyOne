@@ -260,7 +260,9 @@ void spec48_nmi(void)
                 PlusDPaged=1;
         }
 
-        z80_nmi(0);
+        int nonHaltedWaitStates;
+        int haltedWaitStates;
+        z80_nmi(0, &nonHaltedWaitStates, &haltedWaitStates);
 }
 }
 
@@ -1452,6 +1454,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         int InteruptTime;
         int shiftCount;
 
+        int HSyncDuration = spectrum.machine >= SPECCY128 ? 28 : 24;
+
         SpeedUpCount=0;
         SpeedUp=(zx81.speedup*machine.tperscanline)/100;
 
@@ -1752,10 +1756,18 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 }
                                         }
 
-                                        if (tv.AdvancedEffects && !(TIMEXMode&4))
-                                                CurScanLine->scanline[CurScanLine->scanline_len++]=altcolour;
-
-                                        CurScanLine->scanline[CurScanLine->scanline_len++]=colour; //(SPECVSync>0)? 0:colour;
+                                        if (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale))
+                                        {
+                                                if (tv.AdvancedEffects && !(TIMEXMode&4))
+                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=VBLANKCOLOUR;
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=VBLANKCOLOUR;
+                                        }
+                                        else
+                                        {
+                                                if (tv.AdvancedEffects && !(TIMEXMode&4))
+                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=altcolour;
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=colour; //(SPECVSync>0)? 0:colour;
+                                        }
                                         PBaseColour=BaseColour;
                                         shift_register <<= 1;
                                         ++shiftCount;
@@ -1772,7 +1784,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
         if (loop<=0)
         {
-                CurScanLine->sync_len=24;
+                CurScanLine->sync_len=HSyncDuration;
                 CurScanLine->sync_valid = SYNCTYPEH;
                 if (CurScanLine->scanline_len > (machine.tperscanline*scale))
                         CurScanLine->scanline_len=(machine.tperscanline*2*scale);

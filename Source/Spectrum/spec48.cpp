@@ -1454,7 +1454,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         int InteruptTime;
         int shiftCount;
 
-        int HSyncDuration = spectrum.machine >= SPECCY128 ? 28 : 24;
+        int HSyncDuration = spectrum.machine >= SPECCY128 ? 31 : 27;
+        const int BackPorchDuration = 5;
 
         SpeedUpCount=0;
         SpeedUp=(zx81.speedup*machine.tperscanline)/100;
@@ -1469,7 +1470,13 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         bpaper=VBLANKCOLOUR;
                 }
 
-                add_blank(CurScanLine, borrow*scale,bpaper);
+                int backPorchBorrow = !zx81.HideHardwareHSyncs ? ((borrow < BackPorchDuration) ? borrow : BackPorchDuration) : 0;
+                int displayBorrow = (borrow - backPorchBorrow);
+
+
+                add_blank(CurScanLine, backPorchBorrow*scale, VBLANKCOLOUR);
+                add_blank(CurScanLine, displayBorrow*scale, bpaper);
+
                 PBaseColour=paper;
                 sts=0;
                 delay=SPECLeftBorder - borrow*2;
@@ -1711,7 +1718,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                                 while(i--)
                                 {
-
                                         if (tv.AdvancedEffects && (TIMEXMode&4))
                                                 colour = ((shift_register&32768)?ink:paper) << 4;
                                         else if (zx81.colour != COLOURSPECTRA)
@@ -1756,7 +1762,10 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 }
                                         }
 
-                                        if (zx81.ShowHardwareHSyncs && (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale)))
+                                        bool HSyncPeriod = (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
+                                        bool BackporchPeriod = (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
+                                        bool BlankingPeriod = !zx81.HideHardwareHSyncs && (HSyncPeriod || BackporchPeriod);
+                                        if (BlankingPeriod)
                                         {
                                                 if (tv.AdvancedEffects && !(TIMEXMode&4))
                                                         CurScanLine->scanline[CurScanLine->scanline_len++]=VBLANKCOLOUR;

@@ -1932,14 +1932,12 @@ object HW: THW
         TabOrder = 5
         OnClick = FloatingPointHardwareFixClick
       end
-      object ShowHardwareHSyncs: TCheckBox
+      object HideHardwareHSyncs: TCheckBox
         Left = 232
         Top = 80
         Width = 145
         Height = 17
-        Caption = 'Show Hardware HSyncs'
-        Checked = True
-        State = cbChecked
+        Caption = 'Hide Hardware HSyncs'
         TabOrder = 8
       end
     end

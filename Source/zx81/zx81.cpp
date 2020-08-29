@@ -73,6 +73,8 @@ extern void DebugUpdate(void);
 extern long noise;
 extern int SelectAYReg;
 extern int RasterY;
+extern int VSYNC_TOLLERANCEMAX;
+extern int VSYNC_TOLLERANCEMIN;
 
 extern bool directMemoryAccess;
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
@@ -1099,6 +1101,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         static int nonHaltedWaitStates=0;
         static int haltedWaitStates=0;
         static int nmiOnRasterY=0;
+        static int frameSynchronisedCounter = 0;
+        static int prevRasterY = 0;
+        static int prevPrevRasterY = 0;
+
+        const int HSyncDuration = 16;
+        const int BackPorchDuration = 10;
 
         CurScanLine->scanline_len=0;
 
@@ -1109,7 +1117,49 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         // not desirable to do this when running in SLOW mode since the overspill from the bottom border line would
         // change the length of the VSync pulse. So instead the overspill is deferred for inclusion into the first
         // line of the top border.
-        if (CurScanLine->sync_valid == SYNCTYPEV && RasterY == 0 && nmiOnRasterY > 0)
+
+        nonHaltedWaitStates &= 0x001F;
+        haltedWaitStates &= 0x001F;
+
+        // A crude mechanism to determine whether frame synchronisation has been achieved, which is required to suppress
+        // showing HSync pulses when showing a saving or loading pattern. Synchronisation is assumed when 3 consecutive
+        // frames is found. A counter provides hysteresis so that if a save or load pattern appears to form a valid frame
+        // then it will not cause momentary display of HSync pulses.
+
+        if (RasterY == 0)
+        {
+                bool validScanlineCount = (prevRasterY >= VSYNC_TOLLERANCEMIN) && (prevRasterY <= VSYNC_TOLLERANCEMAX);
+
+                if ((abs(prevRasterY - prevPrevRasterY) <= 1) && validScanlineCount)
+                {
+                        if (frameSynchronisedCounter < 18)
+                                frameSynchronisedCounter++;
+                }
+                else
+                {
+                        if (frameSynchronisedCounter > 0)
+                                frameSynchronisedCounter--;
+                }
+
+                prevPrevRasterY = prevRasterY;
+        }
+
+        prevRasterY = RasterY;
+
+        bool frameSynchronised = (frameSynchronisedCounter > 3);
+
+        bool startSlowModeTopBorder = (CurScanLine->sync_valid == SYNCTYPEV) && (RasterY == 0) && (nmiOnRasterY > 0);
+        bool withinSlowModeBottomBorder = (RasterY > nmiOnRasterY) && (nmiOnRasterY > 0) && NMI_generator;
+        bool startSlowModeBottomBorder = (RasterY == nmiOnRasterY+1) && withinSlowModeBottomBorder;
+
+        // A fudge to get the Back Porch signal to align on the top line
+        // but allowing mistimed flicker-free programs to show distortion
+        if ((zx81.machine == MACHINEZX80) && (RasterY == 0))
+        {
+                borrow -= 4;
+        }
+
+        if (startSlowModeTopBorder)
         {
                 nmiOnRasterY = 0;
                 nonHaltedWaitStates += borrow;
@@ -1118,7 +1168,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         if (CurScanLine->sync_valid)
         {
-                add_blank(CurScanLine, borrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR);
+                int backPorchBorrow = HSYNC_generator ? ((borrow < BackPorchDuration) ? borrow : BackPorchDuration) : 0;
+                int displayBorrow = (borrow - backPorchBorrow);
+
+                add_blank(CurScanLine, backPorchBorrow, HSYNC_generator && !zx81.HideHardwareHSyncs && frameSynchronised ? VBLANKCOLOUR : (16*paper));
+                add_blank(CurScanLine, displayBorrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR);
+
                 if (CurScanLine->sync_len>machine.tperscanline && machine.tperscanline==208)
                         hsync_counter=machine.tperscanline-10;
                 borrow=0;
@@ -1136,24 +1191,24 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 // using a HALT in the ROM display routine and the wait states from this can only be included after the main
                 // picture area has been displayed, i.e. within the bottom border where they will not be noticeable.
 
-                int startBottomBorder = (haltedWaitStates > 0) && (RasterY > nmiOnRasterY) && (nmiOnRasterY > 0);
-
-                if (nonHaltedWaitStates == 0 || startBottomBorder)
+                bool waitStatesWithinBorderArea = (nonHaltedWaitStates > 0);
+                bool haltedWaitStatesAtStartBottomBorder = (haltedWaitStates > 0) && startSlowModeBottomBorder;
+                
+                if (!waitStatesWithinBorderArea || haltedWaitStatesAtStartBottomBorder)
                 {
                         z80.pc.w=PatchTest(z80.pc.w);
                         ts = z80_do_opcode();
 
-                        if (startBottomBorder)
+                        if (haltedWaitStatesAtStartBottomBorder)
                         {
-                                ts += (haltedWaitStates & 0x001F);
+                                ts += haltedWaitStates;
                                 haltedWaitStates = 0;
                         }
                 }
                 else
                 {
-                        ts = (nonHaltedWaitStates & 0x001F) + (haltedWaitStates & 0x001F);
+                        ts = nonHaltedWaitStates;
                         nonHaltedWaitStates = 0;
-                        haltedWaitStates = 0;
                 }
 
                 if (int_pending)
@@ -1183,16 +1238,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 shift_store=shift_register;
                 pixels=ts<<1;
 
-                const int HSyncDuration = 16;
-
                 for (i=0; i<pixels; i++)
                 {
                         int colour, bit;
 
                         bit=((shift_register^shift_reg_inv)&32768);
 
-                        bool HSyncPeriod = zx81.ShowHardwareHSyncs && (hsync_counter-(i/2) < HSyncDuration);
-                        if (HSYNC_generator && !HSyncPeriod)
+                        bool HSyncPeriod = (hsync_counter-(i/2) < HSyncDuration);
+                        bool BackPorchPeriod = (hsync_counter-(i/2)) > (machine.tperscanline - BackPorchDuration);
+                        bool BlankingPeriod = !zx81.HideHardwareHSyncs && (HSyncPeriod || BackPorchPeriod);
+                        if (HSYNC_generator && (!BlankingPeriod || (BlankingPeriod && !frameSynchronised)))
                             colour = (bit ? ink:paper)<<4;
                         else
                             colour = VBLANKCOLOUR;
@@ -1229,7 +1284,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (!HSYNC_generator) rowcounter=0;
                         if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
-
                         break;
                 case LASTINSTOUTFE:
                         NMI_generator=1;
@@ -1248,7 +1302,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 case LASTINSTOUTFF:
                         if (!HSYNC_generator) rowcounter=0;
-                        if (CurScanLine->sync_len != 12)
+                        if (CurScanLine->sync_len == 11 || CurScanLine->sync_len > 20)
                                 CurScanLine->sync_valid=SYNCTYPEV;
                         else
                                 CurScanLine->sync_valid=SYNCTYPEH;
@@ -1275,8 +1329,10 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 hsync_counter -= nmilen;
                                 ts += nmilen;
 
-                                if (!zx81.ShowHardwareHSyncs)
+                                if (zx81.HideHardwareHSyncs)
                                         add_blank(CurScanLine, 1, 16*paper);
+                                else
+                                        add_blank(CurScanLine, 1, VBLANKCOLOUR);
                         }
 
                         borrow = -hsync_counter;

@@ -198,7 +198,7 @@ typedef struct
         CFGBYTE spectraColourSwitchOn;
         CFGBYTE chromaColourSwitchOn;
         CFGBYTE FloatingPointHardwareFix;
-        int ShowHardwareHSyncs;
+        CFGBYTE HideHardwareHSyncs;
 
         char ROM80[256];
         char ROM81[256];

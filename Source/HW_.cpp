@@ -467,7 +467,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
         else Form1->AnimTimer1->Interval=20;
 
-        zx81.ShowHardwareHSyncs = ShowHardwareHSyncs->Checked;
+        zx81.HideHardwareHSyncs = HideHardwareHSyncs->Checked;
          
         if ((NewMachine == MACHINESPEC48) || (NewMachine == MACHINEQL))
         {
@@ -940,7 +940,7 @@ void THW::SetupForZX81(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
-        ShowHardwareHSyncs->Enabled = false;
+        HideHardwareHSyncs->Enabled = true;
 
         EnableRomCartridgeOption(true);
         RomCartridgeLabel->Enabled=true;
@@ -1072,7 +1072,7 @@ void THW::SetupForSpectrum(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
-        ShowHardwareHSyncs->Enabled = true;
+        HideHardwareHSyncs->Enabled = true;
         SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
 
@@ -1178,7 +1178,7 @@ void THW::SetupForQL(void)
         int i;
 
         FloatingPointHardwareFix->Enabled = false;
-        ShowHardwareHSyncs->Enabled = false;
+        HideHardwareHSyncs->Enabled = false;
         SetZXpandState(false,false);
         ZXpand->Caption = "ZXpand+";
 
@@ -1302,7 +1302,6 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Text = zx81.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
-        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1318,7 +1317,6 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         RomBox->Text = zx81.ROM81;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
-        ShowHardwareHSyncs->Enabled = true;
         NTSC->Checked=false;
         IDEBoxChange(NULL);
 }
@@ -1475,7 +1473,6 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<1) RamPackBox->ItemIndex=1;
         NTSC->Checked=true;
-        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1492,7 +1489,6 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<4) RamPackBox->ItemIndex=4;
         NTSC->Checked=true;
-        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1524,6 +1520,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         RomCartridgeFileBox->Enabled = false;
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
+        HideHardwareHSyncs->Enabled = false;
         RomCartridgeLabel->Enabled = false;
         IDEBoxChange(NULL);
 }
@@ -1550,7 +1547,6 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
-        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1574,7 +1570,6 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
-        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1614,6 +1609,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         RamPackBox->Items->Add("96k");
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        HideHardwareHSyncs->Enabled = false;
         SetZXpandState(false,false);
         IDEBoxChange(NULL);
 }
@@ -1744,7 +1740,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);
         ini->WriteInteger("HWARE","HDRIVE",IDEBox->ItemIndex);
         ini->WriteBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
-        ini->WriteBool("HWARE","ShowHardwareHSyncs",ShowHardwareHSyncs->Checked);
+        ini->WriteBool("HWARE","HideHardwareHSyncs",HideHardwareHSyncs->Checked);
 
         Rom=zx81.ROM80; ini->WriteString("HWARE","ROM80",Rom);
         Rom=zx81.ROM81; ini->WriteString("HWARE","ROM81",Rom);
@@ -1919,7 +1915,7 @@ void THW::LoadSettings(TIniFile *ini)
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
-        ShowHardwareHSyncs->Checked=ini->ReadBool("HWARE","ShowHardwareHSyncs",ShowHardwareHSyncs->Checked);
+        HideHardwareHSyncs->Checked=ini->ReadBool("HWARE","HideHardwareHSyncs",HideHardwareHSyncs->Checked);
 
         Upload->Checked=ini->ReadBool("HWARE","ZXCFWP",Upload->Checked);
         ZXCFRAM->ItemIndex=ini->ReadInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);
@@ -2074,7 +2070,6 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
                 RamPackLbl->Visible=false;
                 RamPackBox->Visible=false;
         }
-        ShowHardwareHSyncs->Enabled = true;
         IDEBoxChange(NULL);
 }
 

@@ -480,10 +480,6 @@ void load_snap_advanced(FILE* f)
                 {
                         HW->NTSC->Checked = hex2dec(get_token(f));
                 }
-                else if (!strcmp(tok,"SHOW_HSYNCS"))
-                {
-                        HW->ShowHardwareHSyncs->Checked = hex2dec(get_token(f));
-                }
         }
 }
 
@@ -619,8 +615,7 @@ void InitialiseHardware()
         HW->M1Not->Checked=false;
         HW->FloatingPointHardwareFix->Checked=false;
         HW->NTSC->Checked=false;
-        HW->ShowHardwareHSyncs->Checked = true;
-        
+
         Form1->ChromaColourEnable->Checked = false;
         Form1->ChromaColourEnable->Enabled = false;
         Form1->ChromaColourEnable->Visible = false;
@@ -812,7 +807,6 @@ int save_snap(char *filename)
                 fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
                 fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
                 fprintf(f,"FRAME_RATE_60HZ %02X\n", zx81.NTSC);
-                fprintf(f,"SHOW_HSYNCS %02X\n", zx81.ShowHardwareHSyncs);
 
                 fprintf(f,"\n[SOUND]\n");
                 fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());

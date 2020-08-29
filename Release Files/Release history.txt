@@ -3,18 +3,19 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.18 - 27/08/2020 (by Paul Farrow)
+Version 1.18 - 30/08/2020 (by Paul Farrow)
 * Bug fixes:
   - The lines of a pseudo hi-res display were not correctly aligned.
   - Auto-load did not work for the Timex TS1000 and TS1500.
-  - The bottom border of the ZX80 and ZX81 were not correctly aligned.
+  - Auto-load was very slow to activate when a greater than 1x speed was selected.
+  - The lines of the bottom border of the ZX80 and ZX81 were not correctly aligned.
   - The BASIC Lister did not trap an embedded floating point number encoding that spanned beyond
     the end of a BASIC line, which could prevent the rest of the BASIC listing being displayed,
     e.g. Software Farm's ZX81 game 'Asteroids'.
 * Enhancements:
   - Spectrum support for the ZXC1 ROM cartridge.
-  - Significant improvement in the accuracy of ZX81 SLOW mode timing.
-  - HSync periods now visible in full frame mode.
+  - Significant improvement in the timing accuracy of ZX81 SLOW mode.
+  - Option to show/hide hardware generated HSync pulses when displaying larger borders.
 
 Version 1.17 - 28/04/2020 (by Paul Farrow)
 * Bug fixes:

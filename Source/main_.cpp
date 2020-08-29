@@ -1129,7 +1129,7 @@ void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
 
         j=zx81.single_step?1:(machine.tperframe + borrow);
 
-        if (zx81.machine != MACHINESPEC48 && j!=1)
+        if (zx81.machine != MACHINESPEC48 && j!=1 && !AutoLoadCount)
         {
                 j += (zx81.speedup * machine.tperframe) / machine.tperscanline;
         }

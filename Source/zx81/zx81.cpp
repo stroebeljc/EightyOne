@@ -72,6 +72,7 @@ extern void ResetLastIOAccesses();
 extern void DebugUpdate(void);
 extern long noise;
 extern int SelectAYReg;
+extern int RasterY;
 
 extern bool directMemoryAccess;
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
@@ -1097,15 +1098,28 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         int pixels;
         static int nonHaltedWaitStates=0;
         static int haltedWaitStates=0;
+        static int nmiOnRasterY=0;
 
         CurScanLine->scanline_len=0;
 
         MaxScanLen = (zx81.single_step? 1:420);
 
+        // If the end of a bottom border line occurs midway through an instruction then the instruction is completed
+        // and a corresponding number of pixels drawn at the start of the next line to make up for it. However, it is
+        // not desirable to do this when running in SLOW mode since the overspill from the bottom border line would
+        // change the length of the VSync pulse. So instead the overspill is deferred for inclusion into the first
+        // line of the top border.
+        if (CurScanLine->sync_valid == SYNCTYPEV && RasterY == 0 && nmiOnRasterY > 0)
+        {
+                nmiOnRasterY = 0;
+                nonHaltedWaitStates += borrow;
+                borrow = 0;
+        }
+
         if (CurScanLine->sync_valid)
         {
-                add_blank(CurScanLine, borrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR );
-                if (CurScanLine->sync_len>machine.tperscanline && machine.tperscanline==208 )
+                add_blank(CurScanLine, borrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR);
+                if (CurScanLine->sync_len>machine.tperscanline && machine.tperscanline==208)
                         hsync_counter=machine.tperscanline-10;
                 borrow=0;
                 CurScanLine->sync_valid=0;
@@ -1115,20 +1129,28 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         do
         {
                 LastInstruction=LASTINSTNONE;
-                if (nonHaltedWaitStates == 0)
+
+                // The wait states should be incorporated into the NMI response but doing so breaks the approximation used
+                // to align the main picture area, causing it to appear 36 pixels to the right and various programs using
+                // advanced custom display drivers to misbehave, even crash. The last line of the top border is generated
+                // using a HALT in the ROM display routine and the wait states from this can only be included after the main
+                // picture area has been displayed, i.e. within the bottom border where they will not be noticeable.
+
+                int startBottomBorder = (haltedWaitStates > 0) && (RasterY > nmiOnRasterY) && (nmiOnRasterY > 0);
+
+                if (nonHaltedWaitStates == 0 || startBottomBorder)
                 {
                         z80.pc.w=PatchTest(z80.pc.w);
                         ts = z80_do_opcode();
+
+                        if (startBottomBorder)
+                        {
+                                ts += (haltedWaitStates & 0x001F);
+                                haltedWaitStates = 0;
+                        }
                 }
                 else
                 {
-                        // The wait states should be incorporated into the NMI response but doing so breaks the approximation used
-                        // to align the main picture area, causing it to appear 36 pixels to the right and various programs using
-                        // advanced custom display drivers to misbehave. So instead the display generation is left as is and instead the
-                        // wait states are inserted at the start of the next border line where they cause no harm. The wait states
-                        // from the HALT in the ROM display routine after the last border line has been generated can only be included
-                        // after the main picture area has been displayed. They are therefore included with the wait states for the first
-                        // line of the bottom border which are inserted at the start of the second line of the border.
                         ts = (nonHaltedWaitStates & 0x001F) + (haltedWaitStates & 0x001F);
                         nonHaltedWaitStates = 0;
                         haltedWaitStates = 0;
@@ -1211,6 +1233,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 case LASTINSTOUTFE:
                         NMI_generator=1;
+                        if (RasterY > 0)
+                                nmiOnRasterY = RasterY;
                         if (!HSYNC_generator) rowcounter=0;
                         if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;

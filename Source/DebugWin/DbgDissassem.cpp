@@ -1483,7 +1483,7 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         if (p)
         {
                 int i=GetMem(Addr);
-                if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(255-i));
+                if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(256-i));
                 else StrText=StrRep(StrText,p,3,"+$" + Hex8(i));
                 StrCode += Hex8(GetMem(Addr++));
         }
@@ -1499,7 +1499,7 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         if (p)
         {
                 int i=Offset;
-                if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(255-i));
+                if (i>=128) StrText=StrRep(StrText,p,3,"-$"+Hex8(256-i));
                 else StrText=StrRep(StrText,p,3,"+$" + Hex8(i));
         }
 

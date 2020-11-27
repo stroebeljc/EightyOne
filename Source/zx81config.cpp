@@ -80,7 +80,7 @@ void load_config(void)
         zx81.chrgen=CHRGENSINCLAIR;
         zx81.enableQSchrgen=0;
         zx81.simpleghost=1;
-        zx81.maxireg=32;
+        zx81.maxireg=0x1F;
         zx81.zxprinter=1;
         zx81.zxpand=0;
         machine.clockspeed=3250000;

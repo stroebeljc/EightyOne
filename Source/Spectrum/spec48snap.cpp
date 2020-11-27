@@ -439,7 +439,8 @@ void spec_load_sna(char *fname)
         z80.iy.w=buf[15] + 256*buf[16];
         z80.ix.w=buf[17] + 256*buf[18];
 
-        z80.iff1=buf[19]&2; z80.iff2=buf[19]&4;
+        z80.iff2=buf[19]&4;
+        z80.iff1=z80.iff2;
 
         z80.r=buf[20]; z80.r7=z80.r&128;
         z80.af.w=buf[21] + 256*buf[22];
@@ -515,7 +516,6 @@ void spec_save_sna(char *fname)
         fputc(z80.ix.b.l,f); fputc(z80.ix.b.h,f);
 
         i=0;
-        if (z80.iff1) i |= 2;
         if (z80.iff2) i |= 4;
         fputc(i,f);
 

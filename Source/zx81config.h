@@ -67,7 +67,7 @@
 #define CHRGENSINCLAIR  0
 #define CHRGENDK        1
 #define CHRGENQS        2
-#define CHRGENCHR16     3
+#define CHRGENCHR128     3
 #define CHRGENLAMBDA    4
 
 #define COLOURDISABLED  0
@@ -172,7 +172,7 @@ typedef struct
         CFGBYTE chrgen, enableQSchrgen;
         CFGBYTE bordersize;
         CFGBYTE simpleghost;
-        CFGBYTE maxireg;
+        int maxireg;
         CFGBYTE zxprinter;
         CFGBYTE zxpand;
         CFGBYTE romCartridge;

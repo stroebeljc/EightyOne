@@ -3,6 +3,17 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.19 - 28/11/2020 (by Paul Farrow)
+* Bug fixes:
+  - Negative displacements were off by 1 in disassembled instructions.
+  - Interrupts were not properly preserved in and restored from Spectrum .SNA files.
+  - ZX80 and ZX81 display colours switch to black and white when Chroma colour is enabled and
+    frame synchronisation is lost.
+* Enhancements:
+  - Support for ZX80 pseudo and WRX hi-res modes.
+  - Renamed the Chr$ Generator option CHR$16 to CHR$128.
+  - Slight adjustment to centre position of the TV horizontal hold control.
+
 Version 1.18 - 30/08/2020 (by Paul Farrow)
 * Bug fixes:
   - The lines of a pseudo hi-res display were not correctly aligned.

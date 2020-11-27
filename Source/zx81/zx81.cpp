@@ -709,10 +709,22 @@ BYTE zx81_opcode_fetch(int Address)
         if (!bit6) opcode=0;
         inv = data&128;
 
+        bool zx80 = (zx81.machine == MACHINEZX80);
+        bool chromaColour = (zx81.colour == COLOURCHROMA);
+        bool chrgenChr128 = (zx81.chrgen == CHRGENCHR128);
+        bool upper16KAccess = (z80.i >= 0xC0);
+        bool region8KAccess = (z80.i >= 0x20) && (z80.i < 0x40);
+        bool wrxAccess = (zx81.truehires == HIRESWRX) && !bit6;
+
+        bool chroma80 = zx80 && chromaColour;
+        bool chroma80Chr128 = chroma80 && chrgenChr128 && upper16KAccess;
+        bool notChr128mode  = !chroma80Chr128 && (z80.i > zx81.maxireg);
+        bool chr128mode8kRam = !chroma80Chr128 && region8KAccess && zx81.RAM816k;
+
         // First check for WRX graphics.  This is easy, we just create a
         // 16 bit Address from the IR Register pair and fetch that byte
         // loading it into the video shift register.
-        if (((z80.i>=zx81.maxireg) || (z80.i>= 0x20 && zx81.RAM816k)) && zx81.truehires==HIRESWRX && !bit6)
+        if ((notChr128mode || chr128mode8kRam) && wrxAccess && !chroma80Chr128)
         {
                 FetchChromaColour(Address, data, rowcounter, memory);
 
@@ -754,14 +766,23 @@ BYTE zx81_opcode_fetch(int Address)
                 // to use if CHR$x16 is in use.  Else, standard ZX81
                 // character sets are only 64 characters in size.
 
-                if ((zx81.chrgen==CHRGENCHR16 && (z80.i&1))
-                        || (zx81.chrgen==CHRGENQS && zx81.enableQSchrgen))
+                bool chrgenQS = (zx81.chrgen == CHRGENQS);  
+                bool lower16KAccess = (z80.i < 0x40);
+
+                bool chr128 = chrgenChr128 && (z80.i & 1) && !chroma80;
+                bool qsChars = chrgenQS && zx81.enableQSchrgen;
+
+                if (chr128 || qsChars || chroma80Chr128)
+                {
                         data = ((data&128)>>1)|(data&63);
-                else    data = data&63;
+                }
+                else
+                {
+                    data = data&63;
+                }
 
-
-                // If I points to ROM, OR I points to the 8-16k region for
-                // CHR$x16, we'll fetch the bitmap from there.
+                // If I points to ROM, OR I points anywhere else for
+                // CHR$128, we'll fetch the bitmap from there.
                 // Lambda and the QS Character board have external memory
                 // where the character set is stored, so if one of those
                 // is enabled we better fetch it from the dedicated
@@ -769,20 +790,23 @@ BYTE zx81_opcode_fetch(int Address)
                 // Otherwise, we can't get a bitmap from anywhere, so
                 // display 11111111.
 
-                if (z80.i<64 || (z80.i>=128 && z80.i<192 && zx81.chrgen==CHRGENCHR16))
+                if (lower16KAccess || chrgenChr128)
                 {
-                        if (zx81.extfont || (zx81.chrgen==CHRGENQS && zx81.enableQSchrgen))
+                        if (zx81.extfont || qsChars)
                         {
                                 data= font[(data<<3) | rowcounter];
                         }
                         else
                         {
                                 video = 1;
-                                data=readoperandbyte(((z80.i&254)<<8) + (data<<3) | rowcounter);
+                                data=readoperandbyte(((z80.i & 254) << 8) + (data << 3) | rowcounter);
                                 video = 0;
                         }
                 }
-                else data=255;
+                else
+                {
+                        data=255;
+                }
 
                 update=1;
         }
@@ -1273,7 +1297,15 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if ((zx81.colour == COLOURCHROMA) && ((i & 7) == 7))
                         {
-                                GetChromaColours(&ink, &paper);
+                                if (frameSynchronised)
+                                {
+                                        GetChromaColours(&ink, &paper);
+                                }
+                                else
+                                {
+                                        ink=colourBlack;
+                                        paper=colourBrightWhite;
+                                }
                         }
                 }
 
@@ -1305,7 +1337,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (CurScanLine->sync_len == 11 || CurScanLine->sync_len > 20)
                                 CurScanLine->sync_valid=SYNCTYPEV;
                         else
+                        {
                                 CurScanLine->sync_valid=SYNCTYPEH;
+                                if (zx81.machine == MACHINEZX80)
+                                {
+                                        if (CurScanLine->scanline_len>(machine.tperscanline*2))
+                                                CurScanLine->scanline_len=machine.tperscanline*2;
+                                        add_blank(CurScanLine, machine.tperscanline-CurScanLine->scanline_len, 16*paper);
+                                        hsync_counter += machine.tperscanline;
+                                }
+                        }
                         HSYNC_generator=1;
                         break;
                 default:

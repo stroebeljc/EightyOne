@@ -459,8 +459,10 @@ void __fastcall THW::OKClick(TObject *Sender)
          
         zx81.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
-        if (zx81.chrgen==CHRGENDK || zx81.chrgen==CHRGENCHR16) zx81.maxireg=64;
-        else zx81.maxireg=32;
+        if ((zx81.chrgen==CHRGENDK) || (zx81.chrgen==CHRGENCHR128))
+                zx81.maxireg = 0x3F;
+        else
+                zx81.maxireg = 0x1F;
         if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
 
         zx81.NTSC = NTSC->Checked;

@@ -133,7 +133,7 @@ void TArtifacts::StandardPalette(void)
 
         VSYNC_TOLLERANCEMIN= 283 + VBias->Position;
         VSYNC_TOLLERANCEMAX = VSYNC_TOLLERANCEMIN + 40; //VGain->Position + 40;
-        HSYNC_TOLLERANCE = VGain->Position+405;
+        HSYNC_TOLLERANCE = VGain->Position+390;
 
         if (tv.AdvancedEffects)
         {

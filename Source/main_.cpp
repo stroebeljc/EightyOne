@@ -1542,30 +1542,32 @@ void TForm1::DoAutoLoad(void)
 
         if (zx81.machine==MACHINEACE) return;
 
+        bool zx80 = (zx81.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom");
+
         switch(AutoLoadCount)
         {
         case 2: ResetZX811Click(NULL); break;
         case AUTOINC(0): if (zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128)
                                 PCKeyDown(VK_RETURN);
                          else if (zx81.machine==MACHINELAMBDA) PCKeyDown('L');
-                         else if (zx81.machine==MACHINEZX80) PCKeyDown('W');
+                         else if (zx80) PCKeyDown('W');
                          else PCKeyDown('J');
                          break;
 
         case AUTOINC(1): if (zx81.machine==MACHINESPEC48 && spectrum.machine==SPECCY128)
                                 PCKeyUp(VK_RETURN);
                          else if (zx81.machine==MACHINELAMBDA) PCKeyUp('L');
-                         else if (zx81.machine==MACHINEZX80) PCKeyUp('W');
+                         else if (zx80) PCKeyUp('W');
                          else PCKeyUp('J');
                          break;
 
         case AUTOINC(2):  if (zx81.machine==MACHINESPEC48) PCKeyDown(VK_CONTROL);
                           else if (zx81.machine==MACHINELAMBDA) PCKeyDown('O');
-                          else if (zx81.machine==MACHINEZX80) PCKeyDown(VK_RETURN);
+                          else if (zx80) PCKeyDown(VK_RETURN);
                           else PCKeyDown(VK_SHIFT); break;
 
         case AUTOINC(3): if (zx81.machine==MACHINELAMBDA) PCKeyUp('O');
-                         else if (zx81.machine==MACHINEZX80) PCKeyUp(VK_RETURN);
+                         else if (zx80) PCKeyUp(VK_RETURN);
                          else PCKeyDown('P'); break;
 
         case AUTOINC(4): if (zx81.machine==MACHINELAMBDA) PCKeyDown('A');

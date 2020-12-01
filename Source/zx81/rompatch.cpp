@@ -203,19 +203,20 @@ void InitPatches(int machineType)
         
         patches.clear();
 
-        if (machineType == MACHINEZX80)
-        {
-                patches[0x01ba3e] = ZX80SaveDelayStartSaving;
-                patches[0x02223e] = ZX80GetByteStartLoading;
-                patches[0x01cb11] = ZX80OutByteSaveByte;
-                patches[0x0203c3] = ZX80ZX81LambdaStopTape;
-        }
-        else if (machineType == MACHINEZX81)
+        if ((machineType == MACHINEZX81) ||
+            ((machineType == MACHINEZX80) && (!strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom"))))
         {
                 patches[0x02ffcd] = ZX81SaveDelayStartSaving;
                 patches[0x03561f] = ZX81LambdaGetByteStartLoading;
                 patches[0x031e5e] = ZX81LambdaOutByteSaveByte;
                 patches[0x020721] = ZX80ZX81LambdaStopTape;
+        }
+        else if (machineType == MACHINEZX80)
+        {
+                patches[0x01ba3e] = ZX80SaveDelayStartSaving;
+                patches[0x02223e] = ZX80GetByteStartLoading;
+                patches[0x01cb11] = ZX80OutByteSaveByte;
+                patches[0x0203c3] = ZX80ZX81LambdaStopTape;
         }
         else if (machineType == MACHINELAMBDA)
         {

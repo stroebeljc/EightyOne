@@ -89,6 +89,9 @@ static BYTE idleDataBus = 0xFF;
 const int colourBlack = 0;
 const int colourBrightWhite = 15;
 
+const BYTE idleDataBus80 = 0x40;
+const BYTE idleDataBus81 = 0xFF;
+
 int border=colourBrightWhite, ink=colourBlack, paper=colourBrightWhite;
 
 int NMI_generator=0;
@@ -139,11 +142,11 @@ void zx81_initialise(void)
 
         if (zx81.machine == MACHINEZX80)
         {
-                idleDataBus = 0x40;
+                idleDataBus = idleDataBus80;
         }
         else
         {
-                idleDataBus = 0xFF;
+                idleDataBus = idleDataBus81;
         }
 
         InitialiseChroma();
@@ -176,16 +179,7 @@ void zx81_initialise(void)
         if ((zx81.chrgen==CHRGENDK) && ((zx81.colour != COLOURCHROMA) || (zx81.colour == COLOURCHROMA && !zx81.RAM816k)))
                 romlen+=memory_load("dkchr.rom",8192,4096);
 
-        if (romlen<8192)
-                for(i=0;i<romlen;i++)
-                        if ((i+romlen)<8192) memory[i+romlen]=memory[i];
-
-        if (zx81.shadowROM && romlen<=8192)
-        {
-                for(i=0;i<8192;i++) memory[i+8192]=memory[i];
-                zx81.ROMTOP=16383;
-        }
-        else    zx81.ROMTOP=romlen-1;
+        zx81.ROMTOP=romlen-1;
 
         if (zx81.machine==MACHINEZX97LE)
         {
@@ -520,7 +514,7 @@ BYTE zx81_ReadByte(int Address)
         {
                 data=memory[Address];
         }
-        else if (zx81.zxpand && zx81.machine==MACHINEZX81 && video && Address>=0x1E00 && Address<0x2000)
+        else if (zx81.zxpand && (zx81.machine==MACHINEZX81 || zx81.machine==MACHINETS1000 || zx81.machine==MACHINEZX80) && video && Address>=0x1E00 && Address<0x2000)
         {
                 // CR  zxpand enables the ROM for character access
                 data=memory[Address];
@@ -568,6 +562,10 @@ BYTE zx81_ReadByte(int Address)
                 {
                         // Shadow 8-16K RAM at 40-48K
                         data=memory[Address & 0x7FFF];
+                }
+                else if ((zx81.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom") && !zx81.zxpand && (Address & 0x1000))
+                {
+                        data = idleDataBus80;
                 }
                 else
                 {
@@ -678,7 +676,7 @@ BYTE zx81_opcode_fetch(int Address)
                 // and upper locations $8335, $8735, $9335, $9735, $A335, $A735, $B335 and $B735 which
                 // can affect programs utilising the M1Not modification that allows code to run from the
                 // 32K-48K region.
-                if (((zx81.machine == MACHINEZX80) ||(zx81.machine == MACHINEZX81)) && zx81.FloatingPointHardwareFix)
+                if (((zx81.machine == MACHINEZX80) || (zx81.machine == MACHINEZX81)) && zx81.FloatingPointHardwareFix)
                 {
                         if ((Address & 0x4BFF) == 0x0335)
                         {
@@ -1338,13 +1336,19 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 CurScanLine->sync_valid=SYNCTYPEV;
                         else
                         {
-                                CurScanLine->sync_valid=SYNCTYPEH;
-                                if (zx81.machine == MACHINEZX80)
+                                if (CurScanLine->sync_len > 0)
                                 {
-                                        if (CurScanLine->scanline_len>(machine.tperscanline*2))
-                                                CurScanLine->scanline_len=machine.tperscanline*2;
-                                        add_blank(CurScanLine, machine.tperscanline-CurScanLine->scanline_len, 16*paper);
-                                        hsync_counter += machine.tperscanline;
+                                        if ((NMI_generator == 0) || (zx81.machine == MACHINEZX80))
+                                        {
+                                                CurScanLine->sync_valid=SYNCTYPEH;
+                                        }
+                                        if (zx81.machine == MACHINEZX80)
+                                        {
+                                                if (CurScanLine->scanline_len>(machine.tperscanline*2))
+                                                        CurScanLine->scanline_len=machine.tperscanline*2;
+                                                add_blank(CurScanLine, machine.tperscanline-CurScanLine->scanline_len, 16*paper);
+                                                hsync_counter += machine.tperscanline;
+                                        }
                                 }
                         }
                         HSYNC_generator=1;

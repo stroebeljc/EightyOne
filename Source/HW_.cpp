@@ -60,6 +60,9 @@ void HWSetMachine(int machine, int speccy)
         case MACHINEZX81: HW->ZX81BtnClick(NULL);break;
         case MACHINEACE: HW->AceBtnClick(NULL);break;
         case MACHINETS1500: HW->TS1500BtnClick(NULL);break;
+        case MACHINETS1000: HW->TS1000BtnClick(NULL);break;
+        case MACHINER470: HW->R470BtnClick(NULL);break;
+        case MACHINETK85: HW->TK85BtnClick(NULL);break;
         case MACHINELAMBDA: HW->LambdaBtnClick(NULL);break;
         case MACHINEZX97LE: HW->ZX97LEBtnClick(NULL);break;
         case MACHINESPEC48:
@@ -67,6 +70,7 @@ void HWSetMachine(int machine, int speccy)
                 {
                 case SPECCY16: HW->Spec16BtnClick(NULL);break;
                 case SPECCY48: HW->Spec48BtnClick(NULL);break;
+                case SPECCYPLUS: HW->SpecPlusBtnClick(NULL);break;
                 case SPECCYTC2048: HW->TC2048BtnClick(NULL);break;
                 case SPECCYTS2068: HW->TS2068BtnClick(NULL);break;
                 case SPECCY128: HW->Spec128BtnClick(NULL);break;
@@ -224,7 +228,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
         Form1->ChromaColourEnable->Enabled = zx81.chromaColourSwitchOn;
         Form1->ChromaColourEnable->Checked = zx81.chromaColourSwitchOn;
-        Form1->ChromaColourEnable->Visible = (NewMachine == MACHINEZX80) || (NewMachine == MACHINEZX81) || (NewMachine == MACHINETS1500);
+        Form1->ChromaColourEnable->Visible = (NewMachine == MACHINEZX80) || (NewMachine == MACHINEZX81) ||
+                                             (NewMachine == MACHINETS1000) || (NewMachine == MACHINETS1500);
 
         zx81.spectraColourSwitchOn = (zx81.colour == COLOURSPECTRA);
         if (!prevSpectraColourSwitchOn && zx81.spectraColourSwitchOn)
@@ -251,23 +256,28 @@ void __fastcall THW::OKClick(TObject *Sender)
                 break;
 
         case MACHINEZX81:
-                if (R470Btn->Down)
-                {
-                        strcpy(zx81.ROMR470, machine.CurRom);
-                }
-                else if (TK85Btn->Down)
-                {
-                        strcpy(zx81.ROMTK85, machine.CurRom);
-                        CreateBasicLister();
-                }
-                else
-                {
-                        strcpy(zx81.ROM81, machine.CurRom);
-                        CreateBasicLister();
-                }
+                strcpy(zx81.ROM81, machine.CurRom);
+                CreateBasicLister();
+
                 zx81.zxpand = (ZXpand->Checked == true);
                 ZXpand->Caption = "ZXpand+";
+                break;
 
+        case MACHINER470:
+                strcpy(zx81.ROMR470, machine.CurRom);
+                break;
+
+        case MACHINETK85:
+                strcpy(zx81.ROMTK85, machine.CurRom);
+                CreateBasicLister();
+                break;
+
+        case MACHINETS1000:
+                strcpy(zx81.ROM81, machine.CurRom);
+                CreateBasicLister();
+
+                zx81.zxpand = (ZXpand->Checked == true);
+                ZXpand->Caption = "ZXpand+";            
                 break;
 
         case MACHINEACE:
@@ -276,7 +286,6 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         case MACHINETS1500:
                 strcpy(zx81.ROMTS1500, machine.CurRom);
-                zx81.zxpand = (ZXpand->Checked == true);
                 CreateBasicLister();
                 break;
 
@@ -311,6 +320,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         break;
 
                 case SPECCY48:
+                case SPECCYPLUS:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
                         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(zx81.ROMZXCF, machine.CurRom);
@@ -647,7 +657,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.nmi = spec48_nmi;
                 machine.exit = spec48_exit;
 
-                if (spectrum.machine==SPECCY16 || spectrum.machine==SPECCY48
+                if (spectrum.machine==SPECCY16 || spectrum.machine==SPECCY48 || spectrum.machine==SPECCYPLUS
                         || spectrum.machine==SPECCYTC2048
                         || spectrum.machine==SPECCYSE
                         || spectrum.machine==SPECCYTC2048)
@@ -923,6 +933,7 @@ void THW::SetupForZX81(void)
         ZX81Btn->Down=false;
         Spec16Btn->Down=false;
         Spec48Btn->Down=false;
+        SpecPlusBtn->Down=false;
         Spec128Btn->Down=false;
         SpecP2Btn->Down=false;
         SpecP2aBtn->Down=false;
@@ -975,7 +986,7 @@ void THW::SetupForZX81(void)
         if (RamPackBox->ItemIndex==-1) RamPackBox->ItemIndex=4;
 
         SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
-        if (SoundCardBox->ItemIndex==-1) SoundCardBox->ItemIndex=0;
+        SoundCardBox->ItemIndex=0;
 
         if (!ChrGenBox->Enabled) ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenLbl->Enabled=true; ChrGenBox->Enabled=true;
@@ -1055,6 +1066,7 @@ void THW::SetupForSpectrum(void)
         ZX81Btn->Down=false;
         Spec16Btn->Down=false;
         Spec48Btn->Down=false;
+        SpecPlusBtn->Down=false;
         Spec128Btn->Down=false;
         SpecP2Btn->Down=false;
         SpecP2aBtn->Down=false;
@@ -1094,7 +1106,9 @@ void THW::SetupForSpectrum(void)
 
         FDC->ItemIndex=0;
         for(i=0;i<FDC->Items->Count;i++)
+        {
                 if (FDC->Items->Strings[i]==OldFDC) FDC->ItemIndex=i;
+        }
 
         FDC->Enabled=true;
         FDCChange(NULL);
@@ -1108,7 +1122,7 @@ void THW::SetupForSpectrum(void)
         RamPackBox->ItemIndex=-1;
 
         SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
-        if (SoundCardBox->ItemIndex == -1) SoundCardBox->ItemIndex=5;
+        SoundCardBox->ItemIndex=0;
 
         if (!ChrGenBox->Enabled) ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenBox->ItemIndex=0;
@@ -1191,6 +1205,7 @@ void THW::SetupForQL(void)
         ZX81Btn->Down=false;
         Spec16Btn->Down=false;
         Spec48Btn->Down=false;
+        SpecPlusBtn->Down=false;
         Spec128Btn->Down=false;
         SpecP2Btn->Down=false;
         SpecP2aBtn->Down=false;
@@ -1368,6 +1383,27 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
+{
+        if (SpecPlusBtn->Down) return;
+        SetupForSpectrum();
+        SpecPlusBtn->Down=true;
+
+        //uSpeech->Checked=true;
+        uSpeech->Enabled=true;
+
+        Issue2->Enabled=true;
+        NewMachine=MACHINESPEC48;
+        NewMachineName=SpecPlusBtn->Caption;
+        NewSpec=SPECCYPLUS;
+        RomBox->Text = zx81.ROMSP48;
+        RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
+        IDEBox->Items->Delete(1);
+        IDEBoxChange(NULL);
+}
+//---------------------------------------------------------------------------
+
 void __fastcall THW::Spec16BtnClick(TObject *Sender)
 {
         if (Spec16Btn->Down) return;
@@ -1468,8 +1504,9 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
 {
         if (TS1000Btn->Down) return;
         SetupForZX81();
+        ZXpand->Enabled=true;
         TS1000Btn->Down=true;
-        NewMachine=MACHINEZX81;
+        NewMachine=MACHINETS1000;
         NewMachineName=TS1000Btn->Caption;
         RomBox->Text = zx81.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -1534,7 +1571,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         SetupForZX81();
         SetZXpandState(false,false);
         R470Btn->Down=true;
-        NewMachine=MACHINEZX81;
+        NewMachine=MACHINER470;
         NewMachineName=R470Btn->Caption;
         RomBox->Text = zx81.ROMR470;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -1559,7 +1596,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         SetupForZX81();
         SetZXpandState(false,false);
         TK85Btn->Down=true;
-        NewMachine=MACHINEZX81;
+        NewMachine=MACHINETK85;
         NewMachineName=TK85Btn->Caption;
         RomBox->Text = zx81.ROMTK85;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -1628,7 +1665,7 @@ void __fastcall THW::FormShow(TObject *Sender)
 {
         FloatingPointHardwareFix->Enabled = false;
 
-        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || Spec128Btn->Down || QLBtn->Down)
+        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down || Spec128Btn->Down || QLBtn->Down)
         {
                 Machine->ActivePage=Sinclair;
                 FloatingPointHardwareFix->Enabled = ZX81Btn->Down;
@@ -1671,6 +1708,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","ZX81",ZX81Btn->Down);
         ini->WriteBool("HWARE","Spec16",Spec16Btn->Down);
         ini->WriteBool("HWARE","Spec48",Spec48Btn->Down);
+        ini->WriteBool("HWARE","SpecPlus",SpecPlusBtn->Down);
         ini->WriteBool("HWARE","Spec128",Spec128Btn->Down);
         ini->WriteBool("HWARE","SpecP2",SpecP2Btn->Down);
         ini->WriteBool("HWARE","SpecP2A",SpecP2aBtn->Down);
@@ -1835,6 +1873,7 @@ void THW::LoadSettings(TIniFile *ini)
         if (ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)) ZX81BtnClick(NULL);
         if (ini->ReadBool("HWARE","Spec16",Spec16Btn->Down)) Spec16BtnClick(NULL);
         if (ini->ReadBool("HWARE","Spec48",Spec48Btn->Down)) Spec48BtnClick(NULL);
+        if (ini->ReadBool("HWARE","SpecPlus",SpecPlusBtn->Down)) SpecPlusBtnClick(NULL);
         if (ini->ReadBool("HWARE","Spec128",Spec128Btn->Down)) Spec128BtnClick(NULL);
         if (ini->ReadBool("HWARE","SpecP2",SpecP2Btn->Down)) SpecP2BtnClick(NULL);
         if (ini->ReadBool("HWARE","SpecP2A",SpecP2aBtn->Down)) SpecP2aBtnClick(NULL);
@@ -2232,7 +2271,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="None")
         {
                 if (SpecP2aBtn->Down || SpecP3Btn->Down) RomBox->Text = zx81.ROMSPP3;
-                if (Spec16Btn->Down || Spec48Btn->Down) RomBox->Text = zx81.ROMSP48;
+                if (Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down) RomBox->Text = zx81.ROMSP48;
                 if (Spec128Btn->Down) RomBox->Text = zx81.ROMSP128;
                 if (SpecP2Btn->Down) RomBox->Text = zx81.ROMSPP2;
                 if (TC2048Btn->Down) RomBox->Text = zx81.ROMTC2048;

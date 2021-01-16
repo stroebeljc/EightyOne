@@ -155,6 +155,8 @@ void TKeyboard::KbChange(void)
         case CRCSP81:
                 if (spectrum.machine == SPECCY16)
                         Keyboard->spec16kb->Visible=true;
+                else if (zx81.machine == MACHINESPEC48 && spectrum.machine == SPECCYPLUS)
+                        Keyboard->spec128kb->Visible=true;
                 else
                         Keyboard->spec48kb->Visible=true;
                 break;
@@ -184,8 +186,17 @@ void TKeyboard::KbChange(void)
                 case MACHINEACE:
                         Keyboard->acekb->Visible=true;
                         break;
+                case MACHINETS1000:
+                        Keyboard->ts1000kb->Visible=true;
+                        break;
                 case MACHINETS1500:
                         Keyboard->ts1500kb->Visible=true;
+                        break;
+                case MACHINER470:
+                        Keyboard->r470kb->Visible=true;
+                        break;
+                case MACHINETK85:
+                        Keyboard->tk85kb->Visible=true;
                         break;
                 case MACHINELAMBDA:
                         Keyboard->lambdakb->Visible=true;
@@ -193,6 +204,7 @@ void TKeyboard::KbChange(void)
                 case MACHINESPEC48:
                         switch (spectrum.machine)
                         {
+                        case SPECCYPLUS:
                         case SPECCY128:
                                 Keyboard->spec128kb->Visible=true;
                                 break;

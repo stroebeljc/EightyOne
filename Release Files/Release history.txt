@@ -3,6 +3,24 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.20 - 16/01/2021 (by Paul Farrow)
+* Bug fixes:
+  - The Z81 snapshot format now identifies the computer model. Existig snapshot files that do
+    specify the model are assumed to be for the ZX81.
+  - OUT instructions in user programs were affecting the ZX81 picture when in SLOW mode.
+  - The ZXpand option was not always enabled for the TS1000 in the Hardware dialog.
+  - Unpopulated ROM memory area was not being shadowed correctly for the ZX80.
+
+* Enhancements:
+  - Switching the computer model in the Hardware dialog now defaults the sound option for the
+    ZX80 and ZX81 models to 'none'.
+  - Renamed '128k Spectrum' to 'Spectrum 128' in the Hardware dialog.
+  - Removed the QL option from the Hardware dialog since it emulation has never worked properly.
+  - Added a Spectrum+ option to the Hardware dialog.
+  - Added support for flash loading on the ZX80 with a ZX81 ROM selected.
+  - Added support for flash loading on the TK85.
+  - Added support for flash loading on the ZX97 Lite.
+
 Version 1.19 - 28/11/2020 (by Paul Farrow)
 * Bug fixes:
   - Negative displacements were off by 1 in disassembled instructions.

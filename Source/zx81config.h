@@ -45,16 +45,20 @@
 #define MACHINEZX97LE   5
 #define MACHINESPEC48   6
 #define MACHINEQL       7
+#define MACHINER470     8
+#define MACHINETK85     9
+#define MACHINETS1000   10
 
 #define SPECCY16        0
 #define SPECCY48        1
-#define SPECCYTC2048    2
-#define SPECCYTS2068    3
-#define SPECCY128       4
-#define SPECCYPLUS2     5
-#define SPECCYPLUS2A    6
-#define SPECCYPLUS3     7
-#define SPECCYSE        8
+#define SPECCYPLUS      3
+#define SPECCYTC2048    4
+#define SPECCYTS2068    5
+#define SPECCY128       6
+#define SPECCYPLUS2     7
+#define SPECCYPLUS2A    8
+#define SPECCYPLUS3     9
+#define SPECCYSE        10
 
 #define SPECKBISS2      0
 #define SPECKBISS3      1

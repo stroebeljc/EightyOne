@@ -45,6 +45,7 @@ extern BYTE font[1024];
 void load_snap_cpu(FILE *f);
 void load_snap_mem(FILE *f);
 void load_snap_zx81(FILE *f);
+void load_snap_machine(FILE *f);
 void load_snap_sound(FILE *f);
 void load_snap_chrgen(FILE *f);
 void load_snap_hires(FILE *f);
@@ -55,6 +56,7 @@ void load_snap_advanced(FILE* f);
 void ProcessTag(char* tok, FILE* f);
 void InitialiseHardware();
 
+extern void HWSetMachine(int machine, int speccy);
 extern DebugUpdate();
 
 char *get_token(FILE *f)
@@ -385,6 +387,77 @@ void load_snap_colour(FILE *f)
         }
 }
 
+AnsiString GetMachine()
+{
+        AnsiString machineName;
+
+        switch(zx81.machine)
+        {
+                case MACHINEZX80:
+                        machineName = "ZX80";
+                        break;
+                case MACHINEZX81:
+                        machineName = "ZX81";
+                        break;
+                case MACHINEACE:
+                        machineName = "ACE";
+                        break;
+                case MACHINETS1000:
+                        machineName = "1000";
+                        break;
+                case MACHINETS1500:
+                        machineName = "1500";
+                        break;
+                case MACHINELAMBDA:
+                        machineName = "LAMDA";
+                        break;
+                case MACHINEZX97LE:
+                        machineName = "ZX97LE";
+                        break;
+                case MACHINER470:
+                        machineName = "R470";
+                        break;
+                case MACHINETK85:
+                        machineName = "TK85";
+                        break;
+                default:
+                        machineName = "ZX81";
+                        break;
+        }
+
+        return machineName;
+}
+
+void SetMachine(AnsiString machine)
+{
+        if (machine == "ZX80") HWSetMachine(MACHINEZX80, NULL);
+        else if (machine == "ZX81") HWSetMachine(MACHINEZX81, NULL);
+        else if (machine == "ACE") HWSetMachine(MACHINEACE, NULL);
+        else if (machine == "1500") HWSetMachine(MACHINETS1500, NULL);
+        else if (machine == "LAMDA") HWSetMachine(MACHINELAMBDA, NULL);
+        else if (machine == "ZX97LE") HWSetMachine(MACHINEZX97LE, NULL);
+        else if (machine == "R470") HWSetMachine(MACHINER470, NULL);
+        else if (machine == "TK85") HWSetMachine(MACHINETK85, NULL);
+        else if (machine == "1000") HWSetMachine(MACHINETS1000, NULL);
+}
+
+void load_snap_machine(FILE *f)
+{
+        char *tok;
+
+        while(!feof(f))
+        {
+                tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"MODEL")) SetMachine(get_token(f));
+        }
+}
+
 void load_snap_zx81(FILE *f)
 {
         char *tok;
@@ -486,6 +559,7 @@ void load_snap_advanced(FILE* f)
 void ProcessTag(char* tok, FILE* f)
 {             
         if (!strcmp(tok, "[CPU]")) load_snap_cpu(f);
+        else if (!strcmp(tok, "[MACHINE]")) load_snap_machine(f);
         else if (!strcmp(tok, "[MEMORY]")) load_snap_mem(f);
         else if (!strcmp(tok, "[ZX81]")) load_snap_zx81(f);
         else if (!strcmp(tok, "[COLOUR]")) load_snap_colour(f);
@@ -595,6 +669,8 @@ int do_load_snap(char *filename)
 
 void InitialiseHardware()
 {
+        HWSetMachine(MACHINEZX81, NULL);
+
         InitialiseChroma();
         
         SetComboBox(HW->ColourBox, "None");
@@ -632,11 +708,14 @@ void InitialiseHardware()
 
 int load_snap(char *filename)
 {
+        // Read in the snapshot into memory and settings
         int ret = do_load_snap(filename);
         if (!ret) return ret;
 
+        // Apply the settings
         HW->OKClick(NULL);
 
+        // Re-read in the snapshot into memory
         ret = do_load_snap(filename);
         if (!ret) return ret;
 
@@ -757,6 +836,9 @@ int save_snap(char *filename)
                         ShowMessage("Save failed.");
                         return(0);
                 }
+
+                fprintf(f,"\n[MACHINE]\n");
+                fprintf(f,"MODEL %s\n", GetMachine().c_str());
 
                 fprintf(f,"[CPU]\n");
                 fprintf(f,"PC %04X    SP  %04X\n", z80.pc.w,z80.sp.w);

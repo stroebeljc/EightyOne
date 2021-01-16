@@ -203,7 +203,8 @@ void InitPatches(int machineType)
         
         patches.clear();
 
-        if ((machineType == MACHINEZX81) ||
+        if ((machineType == MACHINEZX81) || (machineType == MACHINETS1000) || (machineType == MACHINETS1500) ||
+            (machineType == MACHINETK85) || (machineType == MACHINER470)|| (machineType == MACHINEZX97LE) ||
             ((machineType == MACHINEZX80) && (!strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom"))))
         {
                 patches[0x02ffcd] = ZX81SaveDelayStartSaving;

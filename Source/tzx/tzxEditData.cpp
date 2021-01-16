@@ -136,7 +136,7 @@ void TEditDataForm::DecodeData(int BlockNo)
                 else
                 {
                         if (c>=128) c-=128;
-                        c = (zx81.machine == MACHINEZX81) ? ZX81CharSet[c] : ZX80CharSet[c];
+                        c = (zx81.machine == MACHINEZX80) ? ZX80CharSet[c] : ZX81CharSet[c];
                 }
 
                 text2 += (char) c;
@@ -206,6 +206,12 @@ void __fastcall TEditDataForm::FormShow(TObject *Sender)
                         break;
 
                  case MACHINEZX81:
+                 case MACHINETS1000:
+                 case MACHINETS1500:
+                 case MACHINER470:
+                 case MACHINETK85:
+                 case MACHINELAMBDA:
+                 case MACHINEZX97LE:
                         CharSet->ItemIndex = zx81Index;
                         break;
 

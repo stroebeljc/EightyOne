@@ -40,9 +40,6 @@ The interface provides the following facilities:
 Full details on the interface can be found at www.fruitcake.plus.com
 */
 
-const BYTE idleDataBus80 = 0x40;
-const BYTE idleDataBus81 = 0xFF;
-
 const int chromaIoPort = 0x7FEF;
 const BYTE colourModeMask = 0x10;
 const BYTE colourEnabledMask = 0x20;
@@ -55,6 +52,9 @@ const BYTE colourPaperMask = 0xF0;
 
 const int colourBlack = 0;
 const int colourBrightWhite = 15;
+
+extern const BYTE idleDataBus80 = 0x40;
+extern const BYTE idleDataBus81 = 0xFF;
 
 int chromaInk = colourBlack;
 int chromaPaper = colourBrightWhite;

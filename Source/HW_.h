@@ -25,6 +25,7 @@ __published:	// IDE-managed Components
         TOffice97Button *ZX80Btn;
         TOffice97Button *ZX81Btn;
         TOffice97Button *Spec48Btn;
+        TOffice97Button *SpecPlusBtn;
         TOffice97Button *Spec128Btn;
         TTabSheet *Others;
         TOffice97Button *LambdaBtn;
@@ -107,6 +108,7 @@ __published:	// IDE-managed Components
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
         void __fastcall Spec48BtnClick(TObject *Sender);
+        void __fastcall SpecPlusBtnClick(TObject *Sender);
         void __fastcall Spec128BtnClick(TObject *Sender);
         void __fastcall Spec16BtnClick(TObject *Sender);
         void __fastcall SpecP2BtnClick(TObject *Sender);

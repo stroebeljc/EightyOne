@@ -262,8 +262,10 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
 
                 const int zx81PulseWidth = 6;
                 const int midLevel = 128;
-                bool limitPulseWidth = (zx81.machine == MACHINEZX80) || (zx81.machine == MACHINEZX81) || (zx81.machine == MACHINETS1500);
-
+                bool limitPulseWidth = (zx81.machine == MACHINEZX80) || (zx81.machine == MACHINEZX81) ||
+                                       (zx81.machine == MACHINETS1500) || (zx81.machine == MACHINETS1000) ||
+                                       (zx81.machine == MACHINEZX97LE) || (zx81.machine == MACHINELAMBDA) ||
+                                       (zx81.machine == MACHINER470) || (zx81.machine == MACHINETK85);
                 if (count < 128)
                 {
                         level = MicState ? midLevel-96 : midLevel+96;

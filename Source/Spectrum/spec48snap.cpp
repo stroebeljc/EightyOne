@@ -770,7 +770,7 @@ void spec_save_z80(char *fname)
 
         if (spectrum.machine==SPECCY16)
                 z80_save_block(f,SPECBlk[1], 8);
-        else if (spectrum.machine==SPECCY48
+        else if (spectrum.machine==SPECCY48 || spectrum.machine==SPECCYPLUS
                 || spectrum.machine==SPECCYTC2048
                 || spectrum.machine==SPECCYTS2068)
         {

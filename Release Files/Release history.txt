@@ -15,7 +15,7 @@ Version 1.20 - 16/01/2021 (by Paul Farrow)
   - Switching the computer model in the Hardware dialog now defaults the sound option for the
     ZX80 and ZX81 models to 'none'.
   - Renamed '128k Spectrum' to 'Spectrum 128' in the Hardware dialog.
-  - Removed the QL option from the Hardware dialog since it emulation has never worked properly.
+  - Removed the QL option from the Hardware dialog since its emulation has never worked properly.
   - Added a Spectrum+ option to the Hardware dialog.
   - Added support for flash loading on the ZX80 with a ZX81 ROM selected.
   - Added support for flash loading on the TK85.

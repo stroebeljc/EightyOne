@@ -3,6 +3,10 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.21 - ##/##/2021 (by Paul Farrow)
+* Enhancements:
+  - Updated program icon to have white keys (provided by equin0x80).
+
 Version 1.20 - 16/01/2021 (by Paul Farrow)
 * Bug fixes:
   - The Z81 snapshot format now identifies the computer model. Existig snapshot files that do

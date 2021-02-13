@@ -545,7 +545,8 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                 || Extension == ".A83"
                 || Extension == ".B80"
                 || Extension == ".B81"
-                || Extension == ".B82")
+                || Extension == ".B82"
+                || Extension == ".TXT")
         {
                         TZX->StopBtnClick(NULL);
                         TZX->OpenDialog->FileName = Filename;
@@ -1014,7 +1015,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip;*.b80;*.b81;*.b82");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip;*.b80;*.b81;*.b82;*.txt");
                                 if (Filename=="") return;
                                 Ext = FileNameGetExt(Filename);
                         }
@@ -1040,7 +1041,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                         else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
                                   || Ext==".81" || Ext==".80" || Ext==".P81"
-                                  || Ext==".B80" || Ext==".B81" || Ext==".B82")
+                                  || Ext==".B80" || Ext==".B81" || Ext==".B82" || Ext==".TXT")
                         {
                                 TZX->LoadFile(Filename, false);
                                 loadFileSymbolsProxy(Filename.c_str());

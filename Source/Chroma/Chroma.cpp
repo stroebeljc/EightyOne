@@ -19,25 +19,40 @@
 #include "Chroma.h"
 
 /*
-Chroma 81 is a multi-function interface for the ZX81, with the primary purpose
+Chroma is a multi-function interface for the ZX80 and ZX81, with the primary purpose
 of providing a clear, sharp picture on most modern TV sets via RGB SCART. The
-interface plugs into the ZX81 expansion bus and requires no modifications to
-the ZX81.
+interfaces plug into the ZX80 or ZX81 expansion bus and require no modifications
+to the computers.
 
-The interface provides the following facilities:
+Chroma 81 provides the following facilities:
 - 16K RAM at $4000
-- 8K RAM at $2000 (suitable for UDGs)
+- 8K RAM at $2000 (suitable for CHR$128 UDGs)
 - 16K RAM at $C000
 - WRX graphic support
 - QS Character Board emulation
 - Two colour modes (attributes file and character colourisation)
 - Cursor joystick socket
 - RS232 socket
-- ROM cartridge socket (allows complete overriding of the ZX81 ROM)
+- ROM cartridge socket (allows complete overriding of the ZX81 ROM and instant program loading)
 - Loading/saving sounds through the TV speaker(s)
 - Reset button
 
-Full details on the interface can be found at www.fruitcake.plus.com
+Chroma 80 provides the following facilities:
+- 16K RAM at $4000
+- 16K RAM at $C000
+- WRX graphic support
+- CHR$128 UDG support
+- Inverse video mode
+- Two colour modes (attributes file and character colourisation)
+- Kempston joystick socket
+- RS232 socket
+- ROM cartridge socket (allows instant loading of programs)
+- Loading/saving sounds through the TV speaker(s)
+- Reset button
+- Compatible with the 4K ROM and the 8K ROM
+- Support for Compshop SLOW mode board
+
+Full details of the interfaces can be found at www.fruitcake.plus.com
 */
 
 const int chromaIoPort = 0x7FEF;
@@ -70,7 +85,7 @@ void DisableChroma()
 
 void InitialiseChroma()
 {
-        if (zx81.machine==MACHINEZX80)
+        if (zx81.machine == MACHINEZX80)
         {
                 idleDataBus = idleDataBus80;
                 colourPresentMask = colourPresentMask80;
@@ -88,7 +103,7 @@ void InitialiseChroma()
 
 bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
 {
-        // The Chroma interface's additional 16K RAM is shared by the colour RAM,
+        // The Chroma 81 interface's additional 16K RAM is shared by the colour RAM,
         // 8K UDG RAM and QS Character RAM. The following approximates it by writing to
         // all three areas.
 
@@ -101,7 +116,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
         // always enabled and a switch was used to select between displaying the
         // standard ZX81 character set in the ROM and the programmable character
         // set in the QS RAM.
-        // The Chroma interface emulates the QS Character Board but deviates with
+        // The Chroma 81 interface emulates the QS Character Board but deviates with
         // respect to the switch functionality. Chroma's switch both enables the RAM
         // and selects it for display.
 
@@ -110,7 +125,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
         if (zx81.colour == COLOURCHROMA)
         {
                 // Check for a write to the Chroma's QS Character RAM
-                if ((zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
+                if ((zx81.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         font[Address - 0x8400] = Data;
                         memory[Address] = Data;
@@ -119,35 +134,48 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         writeHandled = true;
                 }
                 // Check for a write to the Chroma's 8K-16K RAM
-                else if (zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
+                else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         if (zx81.chrgen != CHRGENDK)
                         {
                                 memory[Address] = Data;
                                 memory[Address + 0x8000] = Data;
                                 memory[Address + 0xA000] = Data;
-                                if ((Address >= 0x2400) && (Address < 0x2800)) memory[Address + 0x6000] = Data;
+                                if ((Address >= 0x2400) && (Address < 0x2800))
+                                {
+                                        memory[Address + 0x6000] = Data;
+                                }
                                 writeHandled = true;
                         }
                 }
                 // Check for a write to Chroma's 48K-64K colour RAM
                 else if (zx81.chromaColourSwitchOn && (Address >= 0xC000))
                 {
-                        memory[Address] = Data;
-                        if ((Address < 0xE000) && (zx81.chrgen != CHRGENDK))
+                        if (zx81.machine == MACHINEZX81)
                         {
-                                memory[Address - 0xA000] = Data;
+                                if ((Address < 0xE000) && (zx81.chrgen != CHRGENDK))
+                                {
+                                        memory[Address - 0xA000] = Data;
+                                }
+                                if ((Address >= 0xC400) && (Address < 0xC800))
+                                {
+                                        memory[Address - 0x4000] = Data;
+                                }
                         }
-                        if ((Address >= 0xC400) && (Address < 0x8800)) memory[Address - 0x4000] = Data;
+
+                        memory[Address] = Data;
                         writeHandled = true;
                 }
                 // Chroma's 8-16K RAM is mirrored at 40K-48K
-                else if (zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
+                else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         memory[Address] = Data;
                         memory[Address - 0x8000] = Data;
                         memory[Address + 0x4000] = Data;
-                        if ((Address >= 0xA400) && (Address < 0xA800)) memory[Address - 0x4000] = Data;
+                        if ((Address >= 0xA400) && (Address < 0xA800))
+                        {
+                                memory[Address - 0x4000] = Data;
+                        }
                         writeHandled = true;
                 }
         }
@@ -161,14 +189,14 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
 
         if (zx81.colour == COLOURCHROMA)
         {
-                if (zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
+                if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         *pData = memory[Address];
                         readHandled = true;
                 }
                 // QS Character mode must be enabled if Chroma implementation,
                 // or is always enabled if just a QS Character Board
-                else if ((zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
+                else if ((zx81.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         *pData = memory[Address];
                         readHandled = true;
@@ -179,7 +207,7 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
                         *pData = memory[Address];
                         readHandled = true;
                 }
-                else if (zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
+                else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         *pData = memory[Address];
                         readHandled = true;

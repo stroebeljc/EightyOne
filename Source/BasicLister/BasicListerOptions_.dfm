@@ -1,7 +1,7 @@
 object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
   Left = 209
   Top = 122
-  BorderIcons = [biSystemMenu]
+  BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Save Settings'
   ClientHeight = 220

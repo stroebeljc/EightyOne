@@ -328,6 +328,8 @@ void TBasicLister::Clear()
         mLines->clear();
 
         ClearBitmap();
+        ConfigureStatusBar();
+        ConfigureScrollBar();
         Invalidate();
 
         EnableButtons();
@@ -390,8 +392,11 @@ void TBasicLister::ConfigureStatusBar()
                 int programSize = ProgramSize();
                 if (programSize > 0)
                 {
-                        programDetails += ": $407D-$";
-                        programDetails += AnsiString::IntToHex(16509 + programSize - 1, 4);
+                        int basicStart = mBasicLister->GetProgramStartAddress();
+                        programDetails += ": $";
+                        programDetails += AnsiString::IntToHex(basicStart, 4);
+                        programDetails += "-$";
+                        programDetails += AnsiString::IntToHex(basicStart + programSize - 1, 4);
                 }
         }
 

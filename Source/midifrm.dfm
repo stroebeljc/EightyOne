@@ -1,7 +1,7 @@
 object MidiForm: TMidiForm
   Left = 420
   Top = 152
-  BorderIcons = [biSystemMenu]
+  BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
   ClientHeight = 288

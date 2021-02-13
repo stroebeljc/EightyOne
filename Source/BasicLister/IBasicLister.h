@@ -79,14 +79,14 @@ public:
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }
         virtual AnsiString GetMachineName() { return ""; }
         virtual AnsiString GetBasicFileExtension() { return "txt"; }
+        virtual int GetProgramStartAddress() { return 65535; }
+        virtual int GetProgramEndAddress() { return 65535; }
 
 protected:
         COLORREF mInk;
         COLORREF mPaper;
 
         virtual std::string GetKeywords() { return std::string(""); }
-        virtual int GetProgramStartAddress() { return 65535; }
-        virtual int GetProgramEndAddress() { return 65535; }
         virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }
         virtual inline bool SupportFloatingPointNumbers() { return true; }
         virtual unsigned char GetFloatingPointNumberCode() { return 0; }

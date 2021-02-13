@@ -45,7 +45,7 @@ extern int zx81_do_scanline(SCANLINE *CurScanLine);
 extern void InitPatches(int machineType);
 extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
-                                           
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"

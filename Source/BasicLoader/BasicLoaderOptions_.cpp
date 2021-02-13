@@ -61,4 +61,3 @@ void TLoadBasicListingOptionsForm::LoadSettings(TIniFile *ini)
         cboLineNumberIncrement->ItemIndex = ini->ReadInteger("BASICLISTING", "AutomaticLineNumberIncrementIndex", 0);
 }
 
-

@@ -719,15 +719,15 @@ void TTZXFile::LoadFileData(AnsiString FileName, unsigned char* programData, int
 {
         AnsiString Extension = FileNameGetExt(FileName);
 
-        if (Extension == ".B80")
+        if (Extension == ".B80" || (Extension == ".TXT" && zx81.machine == MACHINEZX80))
         {
                 LoadOFileData(programData, length, Insert);
         }
-        else if (Extension == ".B81")
+        else if (Extension == ".B81" || (Extension == ".TXT" && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
         {
                 LoadPFileData(FileName.c_str(), programData, length, Insert);
         }
-        else if (Extension == ".B82")
+        else if (Extension == ".B82" || (Extension == ".TXT" && zx81.machine == MACHINESPEC48))
         {
                 LoadTapFileData(FileName.c_str(), programData, length, Insert);
         }

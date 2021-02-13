@@ -29,7 +29,7 @@ public:
         virtual COLORREF GetInkColour();
         virtual AnsiString GetMachineName();
         virtual AnsiString GetBasicFileExtension();
-        
+
 private:
         static const unsigned char Return = 13;
         static const unsigned char Number = 14;
@@ -47,7 +47,7 @@ private:
         int mInverseValue;
         int mBrightValue;
         COLORREF mColours[16];
-        
+
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
         virtual unsigned char GetFloatingPointNumberCode();

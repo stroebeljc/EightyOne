@@ -1,7 +1,7 @@
 object HW: THW
   Left = 207
   Top = 130
-  BorderIcons = [biSystemMenu]
+  BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
   ClientHeight = 344

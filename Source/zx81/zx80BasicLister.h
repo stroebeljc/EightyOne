@@ -37,7 +37,7 @@ private:
         static const unsigned char Escape = '\\';
 
         bool mZxpandEnabled;
-        
+
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
         virtual unsigned char ConvertToZXCode(unsigned char code);

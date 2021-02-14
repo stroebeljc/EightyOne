@@ -53,6 +53,7 @@ private:
         bool mSupportsFloatingPointNumbers;
         bool mSupportEmbeddedControlCodes;
         AnsiString mEscapeCharacter;
+        int mScaling;
         
         void RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
@@ -70,7 +71,7 @@ public:
         void ExtractProgramDetails();
         int GetProgramRows();
         void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
+        void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
 

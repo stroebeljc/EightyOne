@@ -1,11 +1,11 @@
 object BasicLister: TBasicLister
-  Left = 192
-  Top = 144
+  Left = 237
+  Top = 121
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'BASIC Listing'
-  ClientHeight = 324
-  ClientWidth = 274
+  ClientHeight = 325
+  ClientWidth = 273
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -56,10 +56,10 @@ object BasicLister: TBasicLister
   PixelsPerInch = 96
   TextHeight = 13
   object ScrollBar: TScrollBar
-    Left = 257
+    Left = 256
     Top = 30
     Width = 17
-    Height = 275
+    Height = 276
     Align = alRight
     Kind = sbVertical
     PageSize = 0
@@ -68,8 +68,8 @@ object BasicLister: TBasicLister
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 305
-    Width = 274
+    Top = 306
+    Width = 273
     Height = 19
     Panels = <
       item
@@ -84,7 +84,7 @@ object BasicLister: TBasicLister
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 274
+    Width = 273
     Height = 30
     ButtonHeight = 21
     ButtonWidth = 54

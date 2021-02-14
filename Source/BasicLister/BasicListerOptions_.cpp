@@ -50,6 +50,11 @@ bool TSaveBasicListingOptionsForm::GetOutputFullWidthLineNumbers()
         return cboOutputFullWidthLineNumbers->Checked;
 }
 
+int TSaveBasicListingOptionsForm::GetScalingFator()
+{
+        return (cboTextScaling->Text == "100%") ? 1 : 2;
+}
+
 void TSaveBasicListingOptionsForm::SaveSettings(TIniFile *ini)
 {
         ini->WriteBool("BASICLISTING", "OutputRemTokensAsCharacterCodes", cboOutputRemTokensAsCharacterCodes->Checked);
@@ -58,6 +63,7 @@ void TSaveBasicListingOptionsForm::SaveSettings(TIniFile *ini)
         ini->WriteBool("BASICLISTING", "OutputVariableNamesInLowercase", cboOutputVariableNamesInLowercase->Checked);
         ini->WriteBool("BASICLISTING", "LimitLineLengths", cboLimitLineLengths->Checked);
         ini->WriteBool("BASICLISTING", "OutputFullSidthLineNumbers", cboOutputFullWidthLineNumbers->Checked);
+        ini->WriteString("BASICLISTING", "TextScaling", cboTextScaling->Text);
 }
 
 void TSaveBasicListingOptionsForm::LoadSettings(TIniFile *ini)
@@ -68,5 +74,6 @@ void TSaveBasicListingOptionsForm::LoadSettings(TIniFile *ini)
         cboOutputVariableNamesInLowercase->Checked = ini->ReadBool("BASICLISTING", "OutputVariableNamesInLowercase", false);
         cboLimitLineLengths->Checked = ini->ReadBool("BASICLISTING", "LimitLineLengths", false);
         cboOutputFullWidthLineNumbers->Checked = ini->ReadBool("BASICLISTING", "OutputFullWidthLineNumbers", false);
+        cboTextScaling->Text = ini->ReadString("BASICLISTING", "TextScaling", "100%");
 }
 

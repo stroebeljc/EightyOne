@@ -59,34 +59,6 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Caption = 'Configure how a BASIC listing file is interpreted:'
     WordWrap = True
   end
-  object Label2: TLabel
-    Left = 8
-    Top = 33
-    Width = 162
-    Height = 13
-    Caption = 'Attempt to tokenise REM contents'
-  end
-  object Label3: TLabel
-    Left = 8
-    Top = 57
-    Width = 163
-    Height = 13
-    Caption = 'Attempt to tokenise string contents'
-  end
-  object Label4: TLabel
-    Left = 8
-    Top = 81
-    Width = 124
-    Height = 13
-    Caption = 'Discard redundant spaces'
-  end
-  object Label5: TLabel
-    Left = 8
-    Top = 105
-    Width = 164
-    Height = 13
-    Caption = 'Accept alternate keyword spellings'
-  end
   object Label6: TLabel
     Left = 8
     Top = 131
@@ -95,20 +67,22 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Caption = 'Automatic line numbering increment'
   end
   object cboTokeniseRemContents: TCheckBox
-    Left = 200
+    Left = 8
     Top = 32
-    Width = 25
+    Width = 217
     Height = 17
     Alignment = taLeftJustify
-    TabOrder = 0
+    Caption = 'Attempt to tokenise REM contents'
+    TabOrder = 1
   end
   object cboTokeniseStringContents: TCheckBox
-    Left = 192
+    Left = 8
     Top = 56
-    Width = 33
+    Width = 217
     Height = 17
     Alignment = taLeftJustify
-    TabOrder = 1
+    Caption = 'Attempt to tokenise string contents'
+    TabOrder = 2
   end
   object btnOK: TButton
     Left = 84
@@ -118,23 +92,25 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 5
+    TabOrder = 0
   end
   object cboDiscardRedundantSpaces: TCheckBox
-    Left = 200
+    Left = 8
     Top = 80
-    Width = 25
+    Width = 217
     Height = 17
     Alignment = taLeftJustify
-    TabOrder = 2
+    Caption = 'Discard redundant spaces'
+    TabOrder = 3
   end
   object cboAcceptAlternateKeywordSpelling: TCheckBox
-    Left = 208
+    Left = 8
     Top = 104
-    Width = 17
+    Width = 217
     Height = 17
     Alignment = taLeftJustify
-    TabOrder = 3
+    Caption = 'Accept alternate keyword spellings'
+    TabOrder = 4
   end
   object cboLineNumberIncrement: TComboBox
     Left = 189
@@ -142,7 +118,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Width = 36
     Height = 21
     ItemHeight = 13
-    TabOrder = 4
+    TabOrder = 5
     Text = 'cboLineNumberIncrement'
     Items.Strings = (
       '1'

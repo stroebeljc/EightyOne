@@ -17,12 +17,8 @@ __published:	// IDE-managed Components
         TCheckBox *cboTokeniseStringContents;
         TButton *btnOK;
         TLabel *Label1;
-        TLabel *Label2;
-        TLabel *Label3;
         TCheckBox *cboDiscardRedundantSpaces;
-        TLabel *Label4;
         TCheckBox *cboAcceptAlternateKeywordSpelling;
-        TLabel *Label5;
         TComboBox *cboLineNumberIncrement;
         TLabel *Label6;
 private:	// User declarations

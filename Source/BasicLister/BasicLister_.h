@@ -68,7 +68,8 @@ __published:	// IDE-managed Components
 
 private:	// User declarations
         static const int DisplayableRows = 48;
-        
+        static const int DisplayableColumns = 32;
+
         HBITMAP mBitmap;
         HWND mHWND;
         int mLastHighlightedEntryIndex;
@@ -84,7 +85,8 @@ private:	// User declarations
         bool mOutputVariableNamesInLowercase;
         bool mLimitLineLengths;
         bool mOutputFullWidthLineNumbers;
-        
+        int mScaling;
+
         void ClearBitmap();
         void ConstructBitmap();
         bool ExtractLine(int* basicPos, int* displayLength);
@@ -106,6 +108,7 @@ private:	// User declarations
         int FindLineDisplayedOnRow(int row);
         COLORREF GetHighlightColour();
         void GetSaveOptions();
+        void SizeWindow();
 
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);

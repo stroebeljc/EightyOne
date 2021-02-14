@@ -13,20 +13,17 @@
 class TSaveBasicListingOptionsForm : public TForm
 {
 __published:	// IDE-managed Components
-        TCheckBox *cboOutputRemTokensAsCharacterCodes;
         TButton *btnOK;
-        TLabel *Label1;
-        TLabel *Label2;
-        TLabel *Label3;
+        TGroupBox *GroupBoxSaveOptions;
+        TCheckBox *cboOutputFullWidthLineNumbers;
+        TCheckBox *cboOutputRemTokensAsCharacterCodes;
         TCheckBox *cboOutputNonAsciiAsCharacterCodes;
         TCheckBox *cboOutputStringTokensAsCharacterCodes;
-        TLabel *Label4;
-        TLabel *Label5;
         TCheckBox *cboLimitLineLengths;
-        TLabel *Label6;
         TCheckBox *cboOutputVariableNamesInLowercase;
-        TCheckBox *cboOutputFullWidthLineNumbers;
-        TLabel *Label7;
+        TGroupBox *GroupBoxDisplayOptions;
+        TLabel *LabelTextScaling;
+        TComboBox *cboTextScaling;
 private:	// User declarations
 public:		// User declarations
         __fastcall TSaveBasicListingOptionsForm(TComponent* Owner);
@@ -36,6 +33,7 @@ public:		// User declarations
         bool GetOutputVariableNamesInLowercase();
         bool GetLimitLineLengths();
         bool GetOutputFullWidthLineNumbers();
+        int GetScalingFator();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

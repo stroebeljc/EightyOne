@@ -47,12 +47,22 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
 {
         mLines = new std::vector<LineInfo>();
 
-        int displayAreaHeight = (DisplayableRows * PixelsPerCharacterHeight);
-        ClientHeight = ToolBar->Height + StatusBar->Height + displayAreaHeight;
-
         TIniFile* ini = new TIniFile(zx81.inipath);
         LoadSettings(ini);
         delete ini;
+
+        SizeWindow();
+}
+
+void TBasicLister::SizeWindow()
+{
+        mScaling = SaveBasicListingOptionsForm->GetScalingFator();
+
+        int displayAreaWidth = (DisplayableColumns * PixelsPerCharacterHeight * mScaling);
+        int displayAreaHeight = (DisplayableRows * PixelsPerCharacterHeight * mScaling);
+
+        ClientWidth = displayAreaWidth + ScrollBar->Width + 1;
+        ClientHeight = ToolBar->Height + StatusBar->Height + displayAreaHeight;
 }
 
 __fastcall TBasicLister::~TBasicLister()
@@ -121,8 +131,8 @@ void TBasicLister::ConstructBitmap()
         int displayRows = mBasicLister->GetProgramRows();
         int displayColumns = mBasicLister->GetDisplayColumns();
 
-        mBMWidth = displayColumns * PixelsPerCharacterWidth;
-        mBMHeight = displayRows * PixelsPerCharacterHeight;
+        mBMWidth = displayColumns * PixelsPerCharacterWidth * mScaling;
+        mBMHeight = displayRows * PixelsPerCharacterHeight * mScaling;
 
         ClientWidth = mBMWidth + ScrollBar->Width + 1;
 
@@ -139,7 +149,7 @@ void TBasicLister::ConstructBitmap()
         rect.right = mBMWidth;
         rect.bottom = mBMHeight;
 
-        mBasicLister->RenderListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down);
+        mBasicLister->RenderListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down, mScaling);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -170,17 +180,23 @@ void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
         COLORREF findColour = highlight ? paperColour : highlightColour;
         COLORREF replaceColour = highlight ? highlightColour : paperColour;
 
-        int startY = startRow * PixelsPerCharacterHeight;
-        int endY = (endRow + 1) * PixelsPerCharacterHeight;
+        int startY = startRow * PixelsPerCharacterHeight * mScaling;
+        int endY = (endRow + 1) * PixelsPerCharacterHeight * mScaling;
 
-        for (int y = startY; y < endY; y++)
+        for (int y = startY; y < endY; y += mScaling)
         {
-                for (int x = 0; x < mBMWidth; x++)
+                for (int x = 0; x < mBMWidth * mScaling; x += mScaling)
                 {
                         COLORREF pixelColor = GetPixel(chdc, x, y);
                         if (pixelColor == findColour)
                         {
                                 SetPixelV(chdc, x, y, replaceColour);
+                                if (mScaling == 2)
+                                {
+                                        SetPixelV(chdc, x+1, y, replaceColour);
+                                        SetPixelV(chdc, x, y+1, replaceColour);
+                                        SetPixelV(chdc, x+1, y+1, replaceColour);
+                                }
                         }
                 }
         }
@@ -197,6 +213,11 @@ void TBasicLister::HighlightLine(int lineNumber)
 
 void TBasicLister::UnhighlightEntry(int index)
 {
+        if (index == -1)
+        {
+                index = mLastHighlightedEntryIndex;
+        }
+
         if (index != -1)
         {
                 int startRow = (*mLines)[index].startDisplayRow;
@@ -377,7 +398,8 @@ void TBasicLister::ConfigureScrollBar()
 
         ScrollBar->SmallChange = 1;
         ScrollBar->LargeChange = DisplayableRows;
-        ScrollBar->Position = 0;
+        ScrollBar->Position = 1;
+        ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
         ScrollBar->Enabled = scrollable;
 }
 
@@ -472,11 +494,11 @@ void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
                 return;
         }
 
-        int rowWithinClientArea = (Y - ToolBar->Height) / PixelsPerCharacterHeight;
+        int rowWithinClientArea = (Y - ToolBar->Height) / (PixelsPerCharacterHeight * mScaling);
         int row = rowWithinClientArea + ScrollBar->Position;
 
         int index = FindLineDisplayedOnRow(row);
-        if (index != mLastHighlightedEntryIndex)
+        if (index != -1 && index != mLastHighlightedEntryIndex)
         {
                 HighlightEntry(index);
         }
@@ -638,8 +660,11 @@ void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
         SaveBasicListingOptionsForm->ShowModal();
 
         GetSaveOptions();
+        SizeWindow();
 
         EnableButtons();
+
+        Refresh();
 }
 
 void TBasicLister::GetSaveOptions()

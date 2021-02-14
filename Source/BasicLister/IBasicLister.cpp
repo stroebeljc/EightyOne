@@ -220,8 +220,10 @@ void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool
         DeleteObject(hBrush);
 }
 
-void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds)
+void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling)
 {
+        mScaling = scaling;
+
         int yOffset = 0;
 
         InitialiseColours();
@@ -368,9 +370,13 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
 {
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
-        int xpos = x << 3;
-        int ypos = y << 3;
-        BitBlt(hdc, xpos, ypos, 8, 8, cshdc, charX, charY, SRCCOPY);
+        int xpos = (x << 3) * mScaling;
+        int ypos = (y << 3) * mScaling;
+        const int srcW = 8;
+        const int srcH = 8;
+        int destW = 8 * mScaling;
+        int destH = 8 * mScaling;
+        StretchBlt(hdc, xpos, ypos, destW, destH, cshdc, charX, charY, srcW, srcH, SRCCOPY);
 
         if (CustomColoursSupported())
         {
@@ -381,9 +387,9 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
                 bool differentPaperColour = (paperColour != backgroundColour);
                 bool differentInkColour = (inkColour != foregroundColour);
 
-                for (int y = ypos; y < ypos + 8; y++)
+                for (int y = ypos; y < ypos + (8 * mScaling); y += mScaling)
                 {
-                        for (int x = xpos; x < xpos + 8; x++)
+                        for (int x = xpos; x < xpos + (8 * mScaling); x += mScaling)
                         {
                                 COLORREF pixelColor = GetPixel(hdc, x, y);
                                 if (pixelColor == backgroundColour)
@@ -391,6 +397,12 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
                                         if (differentPaperColour)
                                         {
                                                 SetPixelV(hdc, x, y, paperColour);
+                                                if (mScaling == 2)
+                                                {
+                                                        SetPixelV(hdc, x+1, y, paperColour);
+                                                        SetPixelV(hdc, x, y+1, paperColour);
+                                                        SetPixelV(hdc, x+1, y+1, paperColour);
+                                                }
                                         }
                                 }
                                 else
@@ -398,6 +410,12 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
                                         if (differentInkColour)
                                         {
                                                 SetPixelV(hdc, x, y, inkColour);
+                                                if (mScaling == 2)
+                                                {
+                                                        SetPixelV(hdc, x+1, y, inkColour);
+                                                        SetPixelV(hdc, x, y+1, inkColour);
+                                                        SetPixelV(hdc, x+1, y+1, inkColour);
+                                                }
                                         }
                                 }
                         }

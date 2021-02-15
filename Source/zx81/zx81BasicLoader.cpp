@@ -606,6 +606,7 @@ void zx81BasicLoader::ExtractZXTokenCharacterCodes()
         zxTokenChars[0x9E] = 163;
         zxTokenChars[0x9F] = 164;
         zxTokenChars[0xA0] = 165;
+        zxTokenChars[0xC0] = 192;
 
         for (unsigned char c = 'a'; c <= 'z'; c++)
         {

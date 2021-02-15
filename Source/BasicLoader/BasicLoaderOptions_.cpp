@@ -43,6 +43,11 @@ int TLoadBasicListingOptionsForm::GetAutomaticLineNumberIncrement()
         return StrToInt(cboLineNumberIncrement->Text);
 }
 
+bool TLoadBasicListingOptionsForm::GetSupportZXTokenEncoding()
+{
+        return cboSupportZXTokenEncoding->Checked;
+}
+
 void TLoadBasicListingOptionsForm::SaveSettings(TIniFile *ini)
 {
         ini->WriteBool("BASICLISTING", "TokeniseRemContents", cboTokeniseRemContents->Checked);
@@ -50,6 +55,7 @@ void TLoadBasicListingOptionsForm::SaveSettings(TIniFile *ini)
         ini->WriteBool("BASICLISTING", "DiscardRedundantSpaces", cboDiscardRedundantSpaces->Checked);
         ini->WriteBool("BASICLISTING", "AcceptAlternateKeywordSpelling", cboAcceptAlternateKeywordSpelling->Checked);
         ini->WriteInteger("BASICLISTING", "AutomaticLineNumberIncrementIndex", cboLineNumberIncrement->ItemIndex);
+        ini->WriteBool("BASICLISTING", "SupportZXTokenEncoding", cboSupportZXTokenEncoding->Checked);
 }
 
 void TLoadBasicListingOptionsForm::LoadSettings(TIniFile *ini)
@@ -59,5 +65,6 @@ void TLoadBasicListingOptionsForm::LoadSettings(TIniFile *ini)
         cboDiscardRedundantSpaces->Checked = ini->ReadBool("BASICLISTING", "DiscardRedundantSpaces", false);
         cboAcceptAlternateKeywordSpelling->Checked = ini->ReadBool("BASICLISTING", "AcceptAlternateKeywordSpelling", false);
         cboLineNumberIncrement->ItemIndex = ini->ReadInteger("BASICLISTING", "AutomaticLineNumberIncrementIndex", 0);
+        cboSupportZXTokenEncoding->Checked = ini->ReadBool("BASICLISTING", "SupportZXTokenEncoding", false);
 }
 

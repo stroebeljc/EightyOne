@@ -19,12 +19,14 @@ Version 1.21 - ##/##/2021 (by Paul Farrow)
   - Cancelling the Load BASIC Listing Options dialog no longer results in a reset.
   - A line highlighted in the BASIC Listing window was not being de-highlighted when clicking
     empty space beyond the end of the program.
+  - The continuation marker in a BASIC Listing file is now supported for comment lines.
 * Enhancements:
   - Updated program icon to have white keys (provided by equin0x80).
   - Selecting a machine specific BASIC Listing file causes a switch to the appropriate computer
     model.
   - Support for loading BASIC Listing files with a .txt extension.
-  - The BASIC Listing window now supports 2x scaling option.
+  - The BASIC Listing window now provides a 2x scaling option.
+  - Support added for loading BASIC Listing files that use ZXToken encoding.
 
 Version 1.20 - 16/01/2021 (by Paul Farrow)
 * Bug fixes:

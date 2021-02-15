@@ -21,6 +21,7 @@ __published:	// IDE-managed Components
         TCheckBox *cboAcceptAlternateKeywordSpelling;
         TComboBox *cboLineNumberIncrement;
         TLabel *Label6;
+        TCheckBox *cboSupportZXTokenEncoding;
 private:	// User declarations
 public:		// User declarations
         __fastcall TLoadBasicListingOptionsForm(TComponent* Owner);
@@ -29,6 +30,7 @@ public:		// User declarations
         bool GetDiscardRedundantSpaces();
         bool GetAcceptAlternateKeywordSpelling();
         int GetAutomaticLineNumberIncrement();
+        bool GetSupportZXTokenEncoding();
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

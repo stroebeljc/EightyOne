@@ -48,9 +48,14 @@ private:
         void ReplaceLabel();
         unsigned char GetEscapeCharacter() { return '\\'; }
         bool BasicLineExists(const LineEntry& lineEntry);
+        string ExtractText(unsigned char* pTextSearch, unsigned char terminator, string errorText);
+        unsigned char ExtractByteValue(unsigned char** ppPos, int base);
+        int ExtractNumericBlockBase(unsigned char** ppPos);
+        void ExtractZXTokenEncoding(bool zxTokenSupport);
+        void ExtractZXTokenNumericBlocks();
 
 public:
-        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling);
+        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         unsigned char* ProgramData();
         int ProgramLength();
 
@@ -72,7 +77,7 @@ protected:
         void OutputByte(int& addressOffset, unsigned char byte);
         void OutputWord(int& addressOffset, int word);
         void ChangeWord(int addressOffset, int word);
-        void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling);
+        void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         void MaskOutRemContents(unsigned char* buffer);
         unsigned char* ExtractLineNumber(int& lineNumber);
         void DoTokenise(map<unsigned char, string> tokens);
@@ -101,6 +106,7 @@ protected:
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}
         virtual bool TokenSupportsLineNumber(unsigned char chr) { return false; }
         virtual bool NoEscapeSequence(unsigned char chr) { return false; }
+        virtual void ExtractZXTokenCharacterCodes() {};
 };
 
 #endif

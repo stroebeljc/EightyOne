@@ -554,3 +554,79 @@ bool zx81BasicLoader::TokenSupportsLineNumber(unsigned char chr)
         return (chr == Goto || chr == Gosub || chr == Run || chr == List || chr == LList);
 }
 
+void zx81BasicLoader::ExtractZXTokenCharacterCodes()
+{
+        map<unsigned char, unsigned char> zxTokenChars;
+
+        zxTokenChars[0xB6] = 1;
+        zxTokenChars[0xB7] = 2;
+        zxTokenChars[0xB8] = 3;
+        zxTokenChars[0xB9] = 4;
+        zxTokenChars[0xBA] = 5;
+        zxTokenChars[0xBB] = 6;
+        zxTokenChars[0xBC] = 7;
+        zxTokenChars[0xBD] = 8;
+        zxTokenChars[0xBE] = 9;
+        zxTokenChars[0xBF] = 10;
+        zxTokenChars[0xAB] = 128;
+        zxTokenChars[0xAC] = 129;
+        zxTokenChars[0xAD] = 130;
+        zxTokenChars[0xAE] = 131;
+        zxTokenChars[0xAF] = 132;
+        zxTokenChars[0xB0] = 133;
+        zxTokenChars[0xB1] = 134;
+        zxTokenChars[0xB2] = 135;
+        zxTokenChars[0xB3] = 136;
+        zxTokenChars[0xB4] = 137;
+        zxTokenChars[0xB5] = 138;
+        zxTokenChars[0x86] = 139;
+        zxTokenChars[0x87] = 140;
+        zxTokenChars[0x88] = 141;
+        zxTokenChars[0x89] = 142;
+        zxTokenChars[0x8A] = 143;
+        zxTokenChars[0x8B] = 144;
+        zxTokenChars[0x8C] = 145;
+        zxTokenChars[0x8D] = 146;
+        zxTokenChars[0x8E] = 147;
+        zxTokenChars[0x8F] = 148;
+        zxTokenChars[0x90] = 149;
+        zxTokenChars[0x91] = 150;
+        zxTokenChars[0x92] = 151;
+        zxTokenChars[0x93] = 152;
+        zxTokenChars[0x94] = 153;
+        zxTokenChars[0x95] = 154;
+        zxTokenChars[0x96] = 155;
+        zxTokenChars[0x97] = 156;
+        zxTokenChars[0x98] = 157;
+        zxTokenChars[0x99] = 158;
+        zxTokenChars[0x9A] = 159;
+        zxTokenChars[0x9B] = 160;
+        zxTokenChars[0x9C] = 161;
+        zxTokenChars[0x9D] = 162;
+        zxTokenChars[0x9E] = 163;
+        zxTokenChars[0x9F] = 164;
+        zxTokenChars[0xA0] = 165;
+
+        for (unsigned char c = 'a'; c <= 'z'; c++)
+        {
+                zxTokenChars[c] = c + 0x45;
+        }
+
+        char* pPos = mLineBuffer;
+
+        while (*pPos != '\0')
+        {
+                map<unsigned char, unsigned char>::const_iterator it = zxTokenChars.find(*pPos);
+
+                if (it != zxTokenChars.end())
+                {
+                        *pPos = Blank;
+
+                        int index = pPos - mLineBuffer;
+                        mLineBufferOutput[index] = it->second;
+                        mLineBufferPopulated[index] = true;
+                }
+
+                pPos++;
+        }
+}

@@ -22,7 +22,7 @@
 #include <sstream>
 #include <cctype>
 
-void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling)
+void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
 {
         string result;
 
@@ -61,7 +61,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
         {
                 try
                 {
-                        ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling);
+                        ProcessLine(mLines[i], addressOffset, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling, zxTokenSupport);
                 }
                 catch (exception& ex)
                 {
@@ -208,46 +208,52 @@ bool IBasicLoader::BasicLineExists(const LineEntry& lineEntry)
 
         size_t linePositionIndex = lineEntry.line.substr(endOfLabelIndex).find_first_not_of(" \t");
 
-        return (linePositionIndex != string::npos);
-
+        return (linePositionIndex != string::npos);               
 }
 
 bool IBasicLoader::ReadLine(ifstream& basicFile, string& line, int& sourceLine)
 {
         size_t i;
-        line = " ";
         string inputLine;
 
         do
         {
+                line = " ";
+
                 do
                 {
-                        sourceLine++;
-
-                        bool lineAvailable = (getline(basicFile, inputLine) != NULL);
-                        if (!lineAvailable)
+                        do
                         {
-                                return false;
-                        }
+                                sourceLine++;
 
-                        // Remove the trailing '\0'
-                        if (inputLine[inputLine.length()-1] == '\0')
+                                bool lineAvailable = (getline(basicFile, inputLine) != NULL);
+                                if (!lineAvailable)
+                                {
+                                        return false;
+                                }
+
+                                // Remove the trailing '\0'
+                                if (inputLine[inputLine.length()-1] == '\0')
+                                {
+                                        inputLine = inputLine.substr(0, inputLine.length()-1);
+                                }
+
+                                i = inputLine.find_first_not_of(" \t");
+                        }
+                        while ((i == string::npos) || (inputLine[i] == '\0'));
+
+                        int len = inputLine.length();
+                        if (len > 0 && inputLine[len-1] == mEscapeCharacter)
                         {
-                                inputLine = inputLine.substr(0, inputLine.length()-1);
+                                len--;
                         }
-
-                        i = inputLine.find_first_not_of(" \t");
+                        line += inputLine.substr(0, len);
                 }
-                while ((i == string::npos) || (inputLine[i] == '\0') || (inputLine[i] == '#'));
+                while (inputLine.length() > 0 && inputLine[inputLine.length()-1] == mEscapeCharacter);
 
-                int len = inputLine.length();
-                if (inputLine[len-1] == mEscapeCharacter)
-                {
-                        len--;
-                }
-                line += inputLine.substr(0, len);
+                i = line.find_first_not_of(" \t");
         }
-        while (inputLine[inputLine.length()-1] == mEscapeCharacter);
+        while (line[i] == '#');
 
         return true;
 }
@@ -283,7 +289,7 @@ int IBasicLoader::ProgramLength()
         return mProgramLength;
 }
 
-void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling)
+void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
 {
         memset(mLineBuffer, 0, sizeof(mLineBuffer));
         int offset = lineEntry.lineLabel.length() > 0 ? lineEntry.lineLabel.length() + 2 : 0;
@@ -297,6 +303,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
 
         BlankLineStart(lineEntry);
 
+        ExtractZXTokenEncoding(zxTokenSupport);
         ExtractInverseCharacters();
         ExtractEscapeCharacters();
         ExtractDoubleQuoteCharacters();
@@ -537,6 +544,137 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
         OutputFloatingPointEncoding(value, addressOffset);
 }
 
+void IBasicLoader::ExtractZXTokenEncoding(bool zxTokenSupport)
+{
+        if (zxTokenSupport)
+        {
+                ExtractZXTokenNumericBlocks();
+                ExtractZXTokenCharacterCodes();
+        }
+}
+
+void IBasicLoader::ExtractZXTokenNumericBlocks()
+{
+        unsigned char* pPos = mLineBuffer;
+
+        bool withinBrackets = false;
+        int base;
+
+        while (*pPos != '\0')
+        {
+                if (*pPos == '[')
+                {
+                        if (withinBrackets)
+                        {
+                                throw runtime_error("Nested numeric blocks not supported");
+                        }
+
+                        withinBrackets = true;
+
+                        *pPos = Blank;
+                        *pPos++;
+                        
+                        base = ExtractNumericBlockBase(&pPos);
+                }
+                else if (withinBrackets && *pPos != ']')
+                {
+                        if (*pPos == ' ' || *pPos == ',' || *pPos == ';' || *pPos == '-' || *pPos == ':' || *pPos == '/')
+                        {
+                                *pPos = Blank;
+                        }
+                        else
+                        {
+                                unsigned char zxChr = ExtractByteValue(&pPos, base);
+
+                                int index = pPos - mLineBuffer;
+                                mLineBufferOutput[index] = zxChr;
+                                mLineBufferPopulated[index] = true;
+                        }
+
+                }
+                else if (*pPos == ']')
+                {
+                        if (!withinBrackets)
+                        {
+                                throw runtime_error("Closing numeric block marker found without opening marker");
+                        }
+
+                        *pPos = Blank;
+
+                        withinBrackets = false;
+                }
+
+                pPos++;
+        }
+
+        if (withinBrackets)
+        {
+                throw runtime_error("Invalid numberic block");
+        }
+}
+
+int IBasicLoader::ExtractNumericBlockBase(unsigned char** ppPos)
+{
+        int base;
+
+        string numericBlockBaseText = ExtractText(*ppPos, ':', "numeric block");
+
+        if (numericBlockBaseText == "DEC")
+        {
+                base = 10;
+        }
+        else if (numericBlockBaseText == "HEX")
+        {
+                base = 16;
+        }
+        else if (numericBlockBaseText == "BIN")
+        {
+                base = 2;
+        }
+        else
+        {
+                throw runtime_error("Unsupported numeric block base");
+        }
+
+        for (unsigned int c = 0; c < numericBlockBaseText.length(); c++)
+        {
+                **ppPos = Blank;
+                (*ppPos)++;
+        }
+
+        **ppPos = Blank;
+
+        return base;
+}
+
+unsigned char IBasicLoader::ExtractByteValue(unsigned char** ppPos, int base)
+{
+        unsigned char byteValue = 0;
+
+        if (base == 16 || base == 2 || base == 10)
+        {
+                char* pEnd;
+                int value = strtol((char*)*ppPos, &pEnd, base);
+                int numberChars = pEnd - *ppPos;
+                if (numberChars == 0)
+                {
+                        throw runtime_error("Invalid value in numeric block");
+                }
+
+                byteValue = (unsigned char)value;
+
+                for (int c = 0; c < numberChars - 1; c++)
+                {
+                        **ppPos = Blank;
+                        (*ppPos)++;
+                }
+
+                **ppPos = Blank;           
+        }
+
+        return byteValue;
+}
+
 void IBasicLoader::ExtractEscapeCharacters()
 {
         unsigned char* pPos = mLineBuffer;
@@ -753,39 +891,44 @@ void IBasicLoader::HandleTokenLineNumber(unsigned char* pStartToken, unsigned ch
 
 string IBasicLoader::ExtractLabel(unsigned char* pLabelSearch)
 {
-        bool endOfLabel = false;
-        string label;
+        return ExtractText(pLabelSearch, ' ', "label");
+}
 
-        label += *pLabelSearch;
+string IBasicLoader::ExtractText(unsigned char* pTextSearch, unsigned char terminator, string errorText)
+{
+        bool endOfText = false;
+        string text;
+
+        text += *pTextSearch;
 
         do
         {
-                pLabelSearch++;
+                pTextSearch++;
 
-                unsigned char nextChr = *pLabelSearch;
+                unsigned char nextChr = *pTextSearch;
 
-                if ((nextChr == '\0') || (nextChr == ' '))
+                if ((nextChr == '\0') || (nextChr == terminator))
                 {
-                        endOfLabel = true;
+                        endOfText = true;
                 }
                 else
                 {
-                        label += nextChr;
+                        text += nextChr;
                 }
         }
-        while (!endOfLabel);
+        while (!endOfText);
 
-        if (label.length() == 1)
+        if (text.length() == 1)
         {
-                throw runtime_error("Invalid label");
+                throw runtime_error("Invalid " + errorText);
         }
 
-        while (*pLabelSearch == ' ')
+        while (*pTextSearch == ' ')
         {
-                pLabelSearch++;
+                pTextSearch++;
         }
 
-        return label;
+        return text;
 }
 
 int IBasicLoader::FindLabelDetails(string& label)

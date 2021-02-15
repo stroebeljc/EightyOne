@@ -467,8 +467,8 @@ object Form1: TForm1
       '.csw;*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83;*.b80;*.b81;*.b82;*.zip' +
       '|Tape Files (T81,P,O,A83)|*.tap;*.t81;*.p;*.o;*.81;*.80;*.a83|TZ' +
       'X Files (TZX)|*.tzx|TAP Files (TAP)|*.tap|Wave Files (WAV,CSW)|*' +
-      '.wav;*.csw|BASIC Listing Files (B80,B81,B82,TXT)|*.b80;*.b81;*.b' +
-      '82;*.txt|Compressed Files (ZIP)|*.zip'
+      '.wav;*.csw|BASIC Listing Files (B80,B81,B82,BAS,TXT)|*.b80;*.b81' +
+      ';*.b82;*.bas;*.txt|Compressed Files (ZIP)|*.zip'
     Left = 32
     Top = 40
   end

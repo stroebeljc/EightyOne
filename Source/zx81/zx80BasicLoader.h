@@ -50,7 +50,7 @@ private:
         virtual void ExtractInverseCharacters();
         virtual bool SupportUppercaseOnly();
         virtual bool TokenSupportsLineNumber(unsigned char chr);
-        virtual void ExtractZXTokenCharacterCodes();
+        virtual void ExtractZxTokenCharacterCodes();
 };
 
 #endif

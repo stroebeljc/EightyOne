@@ -62,7 +62,7 @@ private:
         virtual unsigned char GetEmbbededNumberMark();
         virtual bool SupportUppercaseOnly();
         virtual bool TokenSupportsLineNumber(unsigned char chr);
-        virtual void ExtractZXTokenCharacterCodes();
+        virtual void ExtractZxTokenCharacterCodes();
 };
 
 #endif

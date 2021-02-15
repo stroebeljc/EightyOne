@@ -51,8 +51,8 @@ private:
         string ExtractText(unsigned char* pTextSearch, unsigned char terminator, string errorText);
         unsigned char ExtractByteValue(unsigned char** ppPos, int base);
         int ExtractNumericBlockBase(unsigned char** ppPos);
-        void ExtractZXTokenEncoding(bool zxTokenSupport);
-        void ExtractZXTokenNumericBlocks();
+        void ExtractZxTokenEncoding(bool zxTokenSupport);
+        void ExtractZxTokenNumericBlocks();
 
 public:
         void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
@@ -106,7 +106,7 @@ protected:
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}
         virtual bool TokenSupportsLineNumber(unsigned char chr) { return false; }
         virtual bool NoEscapeSequence(unsigned char chr) { return false; }
-        virtual void ExtractZXTokenCharacterCodes() {};
+        virtual void ExtractZxTokenCharacterCodes() {};
 };
 
 #endif

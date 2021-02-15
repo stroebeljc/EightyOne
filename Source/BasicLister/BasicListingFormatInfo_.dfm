@@ -1,9 +1,9 @@
 object BasicListingFormatInfoForm: TBasicListingFormatInfoForm
-  Left = 196
-  Top = 155
+  Left = 392
+  Top = 159
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
-  Caption = 'Saving BASIC Listing As Text'
+  Caption = 'Saving a BASIC Listing as Text'
   ClientHeight = 454
   ClientWidth = 387
   Color = clBtnFace

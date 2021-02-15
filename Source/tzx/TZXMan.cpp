@@ -218,19 +218,19 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 Extension = FileNameGetExt(Filename);
         }
 
-        if ((Extension == ".B80") || (Extension == ".B81") || (Extension == ".B82") || (Extension == ".TXT"))
+        if ((Extension == ".B80") || (Extension == ".B81") || (Extension == ".B82") || (Extension == ".TXT") || (Extension == ".BAS"))
         {
                 IBasicLoader* loader = NULL;
 
-                if (Extension == ".B80" || (Extension == ".TXT" && zx81.machine == MACHINEZX80))
+                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINEZX80))
                 {
                         loader = new zx80BasicLoader(zx81.zxpand);
                 }
-                else if (Extension == ".B81" || (Extension == ".TXT" && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
+                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
                 {
                         loader = new zx81BasicLoader(zx81.zxpand);
                 }
-                else if (Extension == ".B82" || (Extension == ".TXT" && zx81.machine == MACHINESPEC48))
+                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINESPEC48))
                 {
                         bool spec128 = (zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128);
                         bool if1 = (spectrum.floppytype == FLOPPYIF1);
@@ -243,21 +243,21 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                         return;
                 }
 
-                if (Extension == ".B80" || (Extension == ".TXT" && zx81.machine == MACHINEZX80))
+                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINEZX80))
                 {
                         if (zx81.machine != MACHINEZX80)
                         {
                                 HWSetMachine(MACHINEZX80, NULL);
                         }
                 }
-                else if (Extension == ".B81" || (Extension == ".TXT" && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
+                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
                 {
                         if ((zx81.machine != MACHINEZX81 && zx81.machine != MACHINETS1000 && zx81.machine != MACHINETS1500 && zx81.machine != MACHINETK85))
                         {
                                 HWSetMachine(MACHINEZX81, NULL);
                         }
                 }
-                else if (Extension == ".B82" || (Extension == ".TXT" && zx81.machine == MACHINESPEC48))
+                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINESPEC48))
                 {
                         if (zx81.machine != MACHINESPEC48)
                         {
@@ -269,7 +269,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 bool tokeniseStrings = LoadBasicListingOptionsForm->GetTokeniseStringContents();
                 bool discardRedundantSpaces = LoadBasicListingOptionsForm->GetDiscardRedundantSpaces();
                 bool acceptAlternateKeywordSpelling = LoadBasicListingOptionsForm->GetAcceptAlternateKeywordSpelling();
-                bool zxTokenSupport = LoadBasicListingOptionsForm->GetSupportZXTokenEncoding();
+                bool zxTokenSupport = LoadBasicListingOptionsForm->GetSupportZxTokenEncoding();
                 
                 loader->LoadBasicFile(Filename, tokeniseRemContents, tokeniseStrings, discardRedundantSpaces, acceptAlternateKeywordSpelling, zxTokenSupport);
                 int programLength = loader->ProgramLength();
@@ -312,7 +312,8 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
                         if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
                                   || Ext==".81" || Ext==".80" || Ext==".P81"
-                                  || Ext==".B80" || Ext==".B81" || Ext==".B82" || Ext==".TXT")
+                                  || Ext==".B80" || Ext==".B81" || Ext==".B82"
+                                  || Ext==".TXT" || Ext==".BAS")
                         {
                                 loadFileSymbolsProxy(filename.c_str());
                         }

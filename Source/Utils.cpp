@@ -272,6 +272,7 @@ AnsiString RemoveExt(AnsiString Fname)
                 || Ext==".b81" || Ext==".B81"
                 || Ext==".b82" || Ext==".B82"
                 || Ext==".txt" || Ext==".TXT"
+                || Ext==".bas" || Ext==".BAS"
                 ) && pos>1)
                 Fname = Fname.SubString(1,pos-1);
 

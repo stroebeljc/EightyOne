@@ -349,7 +349,7 @@ bool zx80BasicLoader::TokenSupportsLineNumber(unsigned char chr)
         return (chr == Goto || chr == Gosub || chr == Run || chr == List);
 }
 
-void zx80BasicLoader::ExtractZXTokenCharacterCodes()
+void zx80BasicLoader::ExtractZxTokenCharacterCodes()
 {
         map<unsigned char, unsigned char> zxTokenChars;
 

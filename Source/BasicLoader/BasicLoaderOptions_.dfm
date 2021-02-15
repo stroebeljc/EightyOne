@@ -1,6 +1,6 @@
 object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
-  Left = 201
-  Top = 227
+  Left = 309
+  Top = 226
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Load BASIC Listing Options'
@@ -126,13 +126,13 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
       '5'
       '10')
   end
-  object cboSupportZXTokenEncoding: TCheckBox
+  object cboAcceptZxTokenEncoding: TCheckBox
     Left = 8
     Top = 128
     Width = 217
     Height = 17
     Alignment = taLeftJustify
-    Caption = 'Support ZXToken encoding'
+    Caption = 'Accept ZxToken encoding'
     TabOrder = 5
   end
 end

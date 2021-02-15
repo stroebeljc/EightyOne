@@ -554,7 +554,7 @@ bool zx81BasicLoader::TokenSupportsLineNumber(unsigned char chr)
         return (chr == Goto || chr == Gosub || chr == Run || chr == List || chr == LList);
 }
 
-void zx81BasicLoader::ExtractZXTokenCharacterCodes()
+void zx81BasicLoader::ExtractZxTokenCharacterCodes()
 {
         map<unsigned char, unsigned char> zxTokenChars;
 

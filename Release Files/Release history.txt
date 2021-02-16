@@ -29,7 +29,7 @@ Version 1.21 - 16/02/2021 (by Paul Farrow)
   - The BASIC Listing window now provides a 2x scaling option.
   - Support for loading BASIC Listing files with a .txt extension.
   - Support for loading BASIC Listing files with a .bas extension.
-  - Support for loading BASIC Listing files that use ZxToken encoding.
+  - Support for loading BASIC Listing files that use ZxToken format extensions.
 
 Version 1.20 - 16/01/2021 (by Paul Farrow)
 * Bug fixes:

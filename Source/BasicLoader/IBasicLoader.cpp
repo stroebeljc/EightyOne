@@ -303,7 +303,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
 
         BlankLineStart(lineEntry);
 
-        ExtractZxTokenEncoding(zxTokenSupport);
+        ExtractZxTokenFormatExtensions(zxTokenSupport);
         ExtractInverseCharacters();
         ExtractEscapeCharacters();
         ExtractDoubleQuoteCharacters();
@@ -551,7 +551,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
         OutputFloatingPointEncoding(value, addressOffset);
 }
 
-void IBasicLoader::ExtractZxTokenEncoding(bool zxTokenSupport)
+void IBasicLoader::ExtractZxTokenFormatExtensions(bool zxTokenSupport)
 {
         if (zxTokenSupport)
         {

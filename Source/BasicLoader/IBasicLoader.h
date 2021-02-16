@@ -51,7 +51,7 @@ private:
         string ExtractText(unsigned char* pTextSearch, unsigned char terminator, string errorText);
         unsigned char ExtractByteValue(unsigned char** ppPos, int base);
         int ExtractNumericBlockBase(unsigned char** ppPos);
-        void ExtractZxTokenEncoding(bool zxTokenSupport);
+        void ExtractZxTokenFormatExtensions(bool zxTokenSupport);
         void ExtractZxTokenNumericBlocks();
 
 public:

@@ -126,13 +126,13 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
       '5'
       '10')
   end
-  object cboAcceptZxTokenEncoding: TCheckBox
+  object cboAcceptZxTokenFormatExtensions: TCheckBox
     Left = 8
     Top = 128
     Width = 217
     Height = 17
     Alignment = taLeftJustify
-    Caption = 'Accept ZxToken encoding'
+    Caption = 'Accept ZxToken format extensions'
     TabOrder = 5
   end
 end

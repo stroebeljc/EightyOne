@@ -38,7 +38,6 @@ Version 1.20 - 16/01/2021 (by Paul Farrow)
   - OUT instructions in user programs were affecting the ZX81 picture when in SLOW mode.
   - The ZXpand option was not always enabled for the TS1000 in the Hardware dialog.
   - Unpopulated ROM memory area was not being shadowed correctly for the ZX80.
-
 * Enhancements:
   - Switching the computer model in the Hardware dialog now defaults the sound option for the
     ZX80 and ZX81 models to 'none'.

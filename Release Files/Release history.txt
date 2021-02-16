@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.21 - ##/##/2021 (by Paul Farrow)
+Version 1.21 - 16/02/2021 (by Paul Farrow)
 * Bug fixes:
   - The status bar of the BASIC Listing window was not showing the correct program address range
     for the ZX80 and Spectrum.
@@ -14,20 +14,22 @@ Version 1.21 - ##/##/2021 (by Paul Farrow)
     in an incorrect state.
   - Removal of the close 'X' from the Sound Settings dialog title bar, which was leaving the
     dialog in an incorrect state.
-  - Removal of the close 'X' from the Save BASIC Listing Settings dialog title bar, which was
-    leaving the dialog in an incorrect state.
+  - Removal of the close 'X' from the BASIC Listing Settings dialog title bar, which was leaving
+    the dialog in an incorrect state.
   - Cancelling the Load BASIC Listing Options dialog no longer results in a reset.
   - A line highlighted in the BASIC Listing window was not being de-highlighted when clicking
     empty space beyond the end of the program.
   - The continuation marker in a BASIC Listing file is now supported for comment lines.
+  - The Discard Redundant Spaces option of the BASIC Listing loader was not removing all surplus
+    spaces.
 * Enhancements:
   - Updated program icon to have white keys (provided by equin0x80).
-  - Selecting a machine specific BASIC Listing file causes a switch to the appropriate computer
-    model.
+  - Selecting a machine specific BASIC Listing file causes an automatic switch to the appropriate
+    computer model.
   - The BASIC Listing window now provides a 2x scaling option.
   - Support for loading BASIC Listing files with a .txt extension.
   - Support for loading BASIC Listing files with a .bas extension.
-  - Support added for loading BASIC Listing files that use ZxToken encoding.
+  - Support for loading BASIC Listing files that use ZxToken encoding.
 
 Version 1.20 - 16/01/2021 (by Paul Farrow)
 * Bug fixes:

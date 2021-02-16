@@ -296,10 +296,10 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
         if (mBasicLister != NULL)
         {
                 int programDisplayRows = mBasicLister->GetProgramRows();
-                int programDisplayPixels = programDisplayRows * PixelsPerCharacterHeight;
+                int programDisplayPixels = programDisplayRows * PixelsPerCharacterHeight * mScaling;
                 int copyHeight = (programDisplayPixels > mBMHeight) ? programDisplayPixels : mBMHeight;
 
-                ::BitBlt(hdc, 0, ToolBar->Height - ScrollBar->Position * PixelsPerCharacterHeight, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
+                ::BitBlt(hdc, 0, ToolBar->Height - ScrollBar->Position * PixelsPerCharacterHeight * mScaling, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
         }
         else
         {

@@ -390,19 +390,26 @@ void IBasicLoader::ExtractSingleCharacters(bool discardRedundantSpaces)
 
         while (mLineBuffer[i] != '\0')
         {
-                if (mLineBuffer[i] != Blank && (!discardRedundantSpaces || (discardRedundantSpaces && (mLineBuffer[i] != ' ' || mLineBufferStrings[i] != ' '))))
+                if (mLineBuffer[i] != Blank)
                 {
-                        unsigned char c = mLineBuffer[i];
-
-                        if (SupportUppercaseOnly())
+                        if (!discardRedundantSpaces || (discardRedundantSpaces && (mLineBuffer[i] != ' ' || mLineBufferStrings[i] != ' ')))
                         {
-                                c = toupper(c);
+                                unsigned char c = mLineBuffer[i];
+
+                                if (SupportUppercaseOnly())
+                                {
+                                        c = toupper(c);
+                                }
+
+                                mLineBufferOutput[i] = AsciiToZX(c);
+                                mLineBufferPopulated[i] = true;
                         }
-
-                        mLineBufferOutput[i] = AsciiToZX(c);
-                        mLineBufferPopulated[i] = true;
+                        else
+                        {
+                                mLineBuffer[i] = Blank;
+                        }
                 }
-
+                
                 i++;
         }
 }

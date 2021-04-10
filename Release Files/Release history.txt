@@ -3,6 +3,13 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.22 - ??/??/2021 (by Paul Farrow and SirMorris)
+* Bug fixes:
+  - File SAVEd using ZXpand had their read-only bit set, causing errors when attempting to update
+    or delete them.
+  - ZXpand's CAT function did not behave correctly with reference to the root folder so certain
+    operations would have undefined results.
+
 Version 1.21 - 16/02/2021 (by Paul Farrow)
 * Bug fixes:
   - The status bar of the BASIC Listing window was not showing the correct program address range

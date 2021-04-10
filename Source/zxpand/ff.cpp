@@ -5,7 +5,7 @@
 / Completely hacked to use a local subfolder for EightyOne
 /----------------------------------------------------------------------------*/
 
-#include "ff.h"         /* FatFs configurations and declarations */
+#include "ff.h" /* FatFs configurations and declarations */
 #include "diskio.h"
 
 #include <io.h>
@@ -18,34 +18,32 @@
 #include <fcntl.h>
 #include <SYS\Stat.h>
 
-extern loadFileSymbolsProxy(const char*);
+extern loadFileSymbolsProxy(const char *);
 
 struct stat stats;
 
-extern int dirOpen(const char* path);
-extern void dirReadNext(void* fileinfo);
+extern int dirOpen(const char *path);
+extern void dirReadNext(void *fileinfo);
 
 // rootpath, curpath; always slash-terminated.
 //
-const char* zxpandSDCardFolderRoot = NULL;
+const char *zxpandSDCardFolderRoot = NULL;
 char curPath[32768] = {0};
 char tempPath[32768] = {0};
 
-
-void AddSlash(char* p)
+void AddSlash(char *p)
 {
    size_t n = strlen(p);
-   if (p[n-1] != '/' && p[n-1] != '\\')
+   if (p[n - 1] != '/' && p[n - 1] != '\\')
    {
       p[n] = '/';
-      p[n+1] = 0;
+      p[n + 1] = 0;
    }
 }
 
+extern void dirGetExeLocation(char *buffer, int bufSize);
 
-extern void dirGetExeLocation(char* buffer, int bufSize);
-
-void SetRoot(const char* root)
+void SetRoot(const char *root)
 {
    dirGetExeLocation(tempPath, 32768);
 
@@ -53,10 +51,10 @@ void SetRoot(const char* root)
    strcat(tempPath, root);
    AddSlash(tempPath);
 
-   char* t = tempPath;
-   for (;*t; ++t)
+   char *t = tempPath;
+   for (; *t; ++t)
    {
-      if (*t =='\\')
+      if (*t == '\\')
       {
          *t = '/';
       }
@@ -66,54 +64,60 @@ void SetRoot(const char* root)
    strcpy(curPath, zxpandSDCardFolderRoot);
 }
 
-const char*createFullPath(const char*path)
+// builds an absolute path to an actual folder in the filing system
+// given a 'zxpand sd card root' relative path
+const char* createFullPath(const char *path)
 {
-   strcpy(tempPath, curPath);
-   strcat(tempPath, path);
+   char buf[32768];
+
+   if (*path == '/')
+   {
+      strcpy(buf, zxpandSDCardFolderRoot);
+      ++path;
+   }
+   else
+   {
+      strcpy(buf, curPath);
+   }
+   strcat(buf, path);
+
+   // canonicalize
+   if (_fullpath(tempPath, buf, 32768) == NULL)
+      return NULL;
+
+   // Replace backslashes with forward slashes so the
+   // rest of the code behaves correctly.
+   for (int idx = 0; idx < strlen(tempPath); ++idx)
+   {
+      if (tempPath[idx] == '\\')
+         tempPath[idx] = '/';
+   }
+
+   // specified relative path took us outside of the card root directory
+   if (strlen(tempPath) < strlen(zxpandSDCardFolderRoot))
+      return NULL;
+
    return tempPath;
 }
 
-char *realpath(const char *path, char *resolved_path) 
+void mem_cpy(void *dst, const void *src, int cnt)
 {
-	char buf[32768];
-   int len;
-	size_t idx;
-	
-	_fullpath(buf,path,32768);
-	
-	len=strlen(buf);
-
-	if (len == 0 || len > 32768 - 1)
-		strcpy(resolved_path, path);
-	else
-		strcpy(resolved_path, buf);
- 
-	// Replace backslashes with forward slashes so the
-	// rest of the code behaves correctly.
-	for (idx = 0; idx < strlen(resolved_path); idx++) 
-	{
-		if (resolved_path[idx] == '\\') 
-			resolved_path[idx] = '/';
-	}
-  
-	return resolved_path;
-}
-
-void mem_cpy (void* dst, const void* src, int cnt) {
-   char *d = (char*)dst;
+   char *d = (char *)dst;
    const char *s = (const char *)src;
-   while (cnt--) *d++ = *s++;
+   while (cnt--)
+      *d++ = *s++;
 }
 
-char chk_chr (const char* str, char chr) {
-   while (*str && *str != chr) str++;
+char chk_chr(const char *str, char chr)
+{
+   while (*str && *str != chr)
+      str++;
    return *str;
 }
 
-
 FRESULT cvtERRNO(void)
 {
-   switch(errno)
+   switch (errno)
    {
    case EACCES: // Tried to open read-only file for writing, file's sharing mode does not allow specified operations, or given path is directory.
       return FR_DENIED;
@@ -132,22 +136,15 @@ FRESULT cvtERRNO(void)
    }
 }
 
-void SetHandle(FIL* fp, int handle)
+void SetHandle(FIL *fp, int handle)
 {
-   fp->fs = (FATFS*)handle;
+   fp->fs = (FATFS *)handle;
 }
 
-int GetHandle(FIL* fp)
+int GetHandle(FIL *fp)
 {
    return (int)fp->fs;
 }
-
-
-
-
-
-
-
 
 /*-----------------------------------------------------------------------*/
 /* Helper                                                                */
@@ -166,33 +163,26 @@ void get_fileinfo_special(struct _FILINFO_ *fi)
    }
 }
 
-
-
-
-
-
 /*-----------------------------------------------------------------------*/
 /* Mount a logical filesystem                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_mount (
-   BYTE vol,      /* Logical drive number to be mounted/unmounted */
-   FATFS *fs      /* Pointer to new file system object (NULL for unmount)*/
+FRESULT f_mount(
+    BYTE vol, /* Logical drive number to be mounted/unmounted */
+    FATFS *fs /* Pointer to new file system object (NULL for unmount)*/
 )
 {
    return FR_OK;
 }
 
-
-
 /*-----------------------------------------------------------------------*/
 /* Open or Create a File                                                 */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_open (
-   FIL *fp,       /* Pointer to the blank file object */
-   const XCHAR *path,   /* Pointer to the file name */
-   BYTE mode         /* Access mode and file open mode flags */
+FRESULT f_open(
+    FIL *fp,           /* Pointer to the blank file object */
+    const XCHAR *path, /* Pointer to the file name */
+    BYTE mode          /* Access mode and file open mode flags */
 )
 {
    if (GetHandle(fp) != 0)
@@ -213,9 +203,11 @@ FRESULT f_open (
    }
 
    // use stat(name,...) instead of fstat(handle,...)
-   
-   const char* fullNme = createFullPath(path);
-   int handle = _open(fullNme, flags);
+
+   const char *fullNme = createFullPath(path);
+   if (NULL == fullNme) return FR_NO_PATH;
+
+   int handle = open(fullNme, flags, _S_IREAD | _S_IWRITE);
    if (-1 == handle)
    {
       return cvtERRNO();
@@ -236,25 +228,24 @@ FRESULT f_open (
    return FR_OK;
 }
 
-
-FRESULT f_lseek (FIL *fp, DWORD pos)
+FRESULT f_lseek(FIL *fp, DWORD pos)
 {
-        if (lseek(GetHandle(fp), pos, SEEK_SET) == -1) {
-                return cvtERRNO();
-        }
-        return FR_OK;
+   if (lseek(GetHandle(fp), pos, SEEK_SET) == -1)
+   {
+      return cvtERRNO();
+   }
+   return FR_OK;
 }
-
 
 /*-----------------------------------------------------------------------*/
 /* Read File                                                             */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_read (
-   FIL *fp,       /* Pointer to the file object */
-   void *buff,    /* Pointer to data buffer */
-   UINT btr,      /* Number of bytes to read */
-   UINT *br    /* Pointer to number of bytes read */
+FRESULT f_read(
+    FIL *fp,    /* Pointer to the file object */
+    void *buff, /* Pointer to data buffer */
+    UINT btr,   /* Number of bytes to read */
+    UINT *br    /* Pointer to number of bytes read */
 )
 {
    int n = _read(GetHandle(fp), buff, btr);
@@ -267,18 +258,15 @@ FRESULT f_read (
    return FR_OK;
 }
 
-
-
-
 /*-----------------------------------------------------------------------*/
 /* Write File                                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_write (
-   FIL *fp,       /* Pointer to the file object */
-   const void *buff, /* Pointer to the data to be written */
-   UINT btw,         /* Number of bytes to write */
-   UINT *bw       /* Pointer to number of bytes written */
+FRESULT f_write(
+    FIL *fp,          /* Pointer to the file object */
+    const void *buff, /* Pointer to the data to be written */
+    UINT btw,         /* Number of bytes to write */
+    UINT *bw          /* Pointer to number of bytes written */
 )
 {
    int n = _write(GetHandle(fp), buff, btw);
@@ -291,14 +279,12 @@ FRESULT f_write (
    return FR_OK;
 }
 
-
-
 /*-----------------------------------------------------------------------*/
 /* Close File                                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_close (
-   FIL *fp     /* Pointer to the file object to be closed */
+FRESULT f_close(
+    FIL *fp /* Pointer to the file object to be closed */
 )
 {
    _close(GetHandle(fp));
@@ -306,96 +292,74 @@ FRESULT f_close (
    return FR_OK;
 }
 
-
-
-
 /*-----------------------------------------------------------------------*/
 /* Change Current Drive/Directory                                        */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_chdrive (
-   BYTE drv    /* Drive number */
+FRESULT f_chdrive(
+    BYTE drv /* Drive number */
 )
 {
    return FR_OK;
 }
 
-
-
-FRESULT f_chdir (
-   const XCHAR *path /* Pointer to the directory path */
+FRESULT f_chdir(
+    const XCHAR *path /* Pointer to the directory path */
 )
 {
-   char p[32768];
+   // path is zxpand-sd-relative
 
-   // need to turn the relative path spec into a real path
-   FRESULT	result = FR_NO_PATH;
+   FRESULT result = FR_NO_PATH;
 
-   // add new directory to current
-	sprintf(tempPath,"%s%s",curPath,path);
-	
-	// Resolve the newpath 
-	if(NULL!=realpath(tempPath,p))
-	{
-      AddSlash(p);
+   const char *absPath = createFullPath(path);
+   if (NULL != absPath)
+   {
+      AddSlash(absPath);
 
-		// Check that the new path is BELOW the base mmcpath
-		if(0==strncmp(zxpandSDCardFolderRoot,p,strlen(zxpandSDCardFolderRoot)))
-		{
-			// And that it exists
-			if(0==_access(p,0))
-			{
-            strcpy(curPath, p);
-				result=FR_OK;
-			}
-		}
-	}
+      // Check that it exists
+      if (0 == _access(absPath, 0))
+      {
+         strcpy(curPath, absPath);
+         result = FR_OK;
+      }
+   }
 
    return result;
 }
-
-
-
-
-
-
 
 /*-----------------------------------------------------------------------*/
 /* Open Directory ready fr reading                                       */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_opendir (
-   DIR *dj,       /* Pointer to directory object to create */
-   const XCHAR *path /* Pointer to the directory path */
+FRESULT f_opendir(
+    DIR *dj,          /* Pointer to directory object to create */
+    const XCHAR *path /* Pointer to the directory path */
 )
 {
    return (FRESULT)dirOpen(createFullPath(path));
 }
 
-
-
-
 /*-----------------------------------------------------------------------*/
 /* Read Directory Entry in Sequense                                      */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_readdir (
-   DIR *dj,       /* Pointer to the open directory object */
-   FILINFO *fno      /* Pointer to file information to return */
+FRESULT f_readdir(
+    DIR *dj,     /* Pointer to the open directory object */
+    FILINFO *fno /* Pointer to file information to return */
 )
 {
    dirReadNext(fno);
    return FR_OK;
 }
 
-
-
-
-FRESULT f_mkdir (const XCHAR* dirname)
+FRESULT f_mkdir(const XCHAR *dirname)
 {
    FRESULT ret = FR_OK;
 
-   if (_mkdir(createFullPath(dirname)) == -1)
+   const char* absPath = createFullPath(dirname);
+   if (NULL == absPath) return FR_NO_PATH;
+
+   if (_mkdir(absPath) == -1)
    {
       ret = cvtERRNO();
    }
@@ -403,26 +367,29 @@ FRESULT f_mkdir (const XCHAR* dirname)
    return ret;
 }
 
-
-
-
 /*-----------------------------------------------------------------------*/
 /* Delete a File or Directory                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_rename (
-   const XCHAR *path1,    /* Pointer to the file or directory path */
-   const XCHAR *path2    /* Pointer to the file or directory path */
+FRESULT f_rename(
+    const XCHAR *path1, /* Pointer to the file or directory path */
+    const XCHAR *path2  /* Pointer to the file or directory path */
 )
 {
    FRESULT ret = FR_OK;
 
    char tmpp[32768];
-   createFullPath(path1);
-   strcpy(tmpp, tempPath);
+
+   const char* absPath1 = createFullPath(path1);
+   if (NULL == absPath1) return FR_NO_PATH;
+
+   strcpy(tmpp, absPath1);
+
+   const char* absPath2 = createFullPath(path2);
+   if (NULL == absPath2) return FR_NO_PATH;
 
    // a concatenation of the mmc dir & the requested path
-   if (rename(tmpp, createFullPath(path2)))
+   if (rename(tmpp, absPath2))
    {
       ret = cvtERRNO();
    }
@@ -430,18 +397,17 @@ FRESULT f_rename (
    return ret;
 }
 
-
-
 /*-----------------------------------------------------------------------*/
 /* Delete a File or Directory                                            */
 /*-----------------------------------------------------------------------*/
 
-FRESULT f_unlink (
-   const XCHAR *path    /* Pointer to the file or directory path */
+FRESULT f_unlink(
+    const XCHAR *path /* Pointer to the file or directory path */
 )
 {
    FRESULT ret = FR_OK;
-   const char* target= createFullPath(path);
+   const char *target = createFullPath(path);
+   if (NULL == target) return FR_NO_PATH;
 
    if (-1 == stat(target, &stats))
    {
@@ -458,7 +424,8 @@ FRESULT f_unlink (
    else
    {
       // a concatenation of the mmc dir & the requested path
-      if (_unlink(target) == -1)
+
+      if (remove(target) == -1)
       {
          ret = cvtERRNO();
       }

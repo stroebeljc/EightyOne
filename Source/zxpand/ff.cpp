@@ -314,7 +314,7 @@ FRESULT f_chdir(
    const char *absPath = createFullPath(path);
    if (NULL != absPath)
    {
-      AddSlash(absPath);
+      AddSlash((char*)absPath);
 
       // Check that it exists
       if (0 == _access(absPath, 0))

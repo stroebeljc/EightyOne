@@ -87,10 +87,19 @@ const char* createFullPath(const char *path)
 
    // Replace backslashes with forward slashes so the
    // rest of the code behaves correctly.
-   for (int idx = 0; idx < strlen(tempPath); ++idx)
+   for (int idx = 0; idx < (int)strlen(tempPath); ++idx)
    {
       if (tempPath[idx] == '\\')
          tempPath[idx] = '/';
+   }
+
+   // if input path is a folder then add a slash
+   struct stat lstats;
+   if (-1 != stat(tempPath, &lstats))
+   {
+        if (lstats.st_mode & _S_IFDIR) {
+                AddSlash(tempPath);
+        }
    }
 
    // specified relative path took us outside of the card root directory
@@ -314,8 +323,6 @@ FRESULT f_chdir(
    const char *absPath = createFullPath(path);
    if (NULL != absPath)
    {
-      AddSlash((char*)absPath);
-
       // Check that it exists
       if (0 == _access(absPath, 0))
       {

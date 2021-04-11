@@ -44,6 +44,10 @@ int dirOpen(const char* path)
       hFind = INVALID_HANDLE_VALUE;
    }
 
+   if (path == NULL) {
+      return FR_NO_PATH;
+   }
+
    strcpy(pathPlusExt, path);
    if (path[strlen(path) - 1] != '/' && path[strlen(path) - 1] != '\\')
    {

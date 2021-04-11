@@ -26,7 +26,7 @@ to the computers.
 
 Chroma 81 provides the following facilities:
 - 16K RAM at $4000
-- 8K RAM at $2000 (suitable for CHR$128 UDGs)
+- 8K RAM at $2000 (suitable for CHR$128 UDGs), echoed at $A000
 - 16K RAM at $C000
 - WRX graphic support
 - QS Character Board emulation

@@ -53,6 +53,7 @@ private:
         int ExtractNumericBlockBase(unsigned char** ppPos);
         void ExtractZxTokenFormatExtensions(bool zxTokenSupport);
         void ExtractZxTokenNumericBlocks();
+        void ExtractZxTokenFormatExtensionByteEncoding(bool zxTokenSupport);
 
 public:
         void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);

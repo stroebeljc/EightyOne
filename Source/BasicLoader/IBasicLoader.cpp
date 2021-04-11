@@ -307,6 +307,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
         ExtractInverseCharacters();
         ExtractEscapeCharacters();
         ExtractDoubleQuoteCharacters();
+        ExtractZxTokenFormatExtensionByteEncoding(zxTokenSupport);
 
         memset(mLineBufferTokenised, 0, sizeof(mLineBufferTokenised));
         strcpy((char*)mLineBufferTokenised, (char*)mLineBuffer);
@@ -557,6 +558,63 @@ void IBasicLoader::ExtractZxTokenFormatExtensions(bool zxTokenSupport)
         {
                 ExtractZxTokenNumericBlocks();
                 ExtractZxTokenCharacterCodes();
+        }
+}
+
+void IBasicLoader::ExtractZxTokenFormatExtensionByteEncoding(bool zxTokenSupport)
+{
+        if (!zxTokenSupport)
+        {
+                return;
+        }
+
+        unsigned char* pPos = mLineBuffer;
+
+        while (*pPos != '\0')
+        {
+                if (*pPos == '@')
+                {
+                        *pPos = Blank;
+
+                        pPos++;
+                        unsigned char chr1 = *pPos;
+                        if (chr1 == '\0')
+                        {
+                                throw runtime_error("Escape sequence incomplete before line ending");
+                        }
+
+                        *pPos = Blank;
+
+                        unsigned char zxChr;
+
+                        pPos++;
+                        unsigned char chr2 = *pPos;
+                        if (chr2 == '\0')
+                        {
+                                throw runtime_error("Escape sequence incomplete before line ending");
+                        }
+
+                        *pPos = Blank;
+
+                        if (isxdigit(chr1))
+                        {
+                                zxChr = ConvertFromHexChars(chr1, chr2);
+                        }
+                        else
+                        {
+                                ostringstream code;
+                                code << chr1;
+                                code << chr2;
+                                string msg = "Invalid character Code: " + code.str();
+                                throw invalid_argument(msg.c_str());
+                        }
+                        
+                        int index = pPos - mLineBuffer;
+                        mLineBufferOutput[index] = zxChr;
+                        mLineBufferPopulated[index] = true;
+                }
+
+                pPos++;
         }
 }
 

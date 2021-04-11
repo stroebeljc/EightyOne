@@ -87,7 +87,7 @@ const char* createFullPath(const char *path)
 
    // Replace backslashes with forward slashes so the
    // rest of the code behaves correctly.
-   for (int idx = 0; idx < (int)strlen(tempPath); ++idx)
+   for (unsigned int idx = 0; idx < strlen(tempPath); ++idx)
    {
       if (tempPath[idx] == '\\')
          tempPath[idx] = '/';

@@ -559,7 +559,7 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                         loadFileSymbolsProxy(Filename.c_str());
         }
 
-        zx81_stop=false;
+        zx81_stop=stopped;
 }
 //---------------------------------------------------------------------------
 

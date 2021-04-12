@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.22 - 11/04/2021 (by SirMorris and Paul Farrow)
+Version 1.22 - 12/04/2021 (by SirMorris and Paul Farrow)
 * Bug fixes:
   - File SAVEd using ZXpand had their read-only bit set, causing errors when attempting to update
     or delete them.
@@ -11,6 +11,7 @@ Version 1.22 - 11/04/2021 (by SirMorris and Paul Farrow)
     operations would have undefined results.
   - Opening a new tape file whilst execution was stopped in the debugger would restart execution
     yet the debugger would still display as if stopped.
+  - The RAM provided by the Chroma 81 interface was being incorrectly mirrored in the memory map.
 * Enhancements:
   - Support for the ZxToken format @ directive to encode byte values in BASIC Listing files.
 

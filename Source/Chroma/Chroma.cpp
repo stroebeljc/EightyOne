@@ -129,8 +129,11 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                 {
                         font[Address - 0x8400] = Data;
                         memory[Address] = Data;
-                        memory[Address + 0x4000] = Data;
-                        memory[Address - 0x6000] = Data;
+                        // The QS Character RAM also appears at 0xC400-0XC7FF
+                        if (zx81.chromaColourSwitchOn)
+                        {
+                                memory[Address + 0x4000] = Data;
+                        }
                         writeHandled = true;
                 }
                 // Check for a write to the Chroma's 8K-16K RAM
@@ -139,26 +142,29 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         if (zx81.chrgen != CHRGENDK)
                         {
                                 memory[Address] = Data;
+                                // The 8K RAM is also echoed at 0xA000-0xBFFF and 0xE000-0xFFFF
                                 memory[Address + 0x8000] = Data;
-                                memory[Address + 0xA000] = Data;
-                                if ((Address >= 0x2400) && (Address < 0x2800))
+                                if (zx81.chromaColourSwitchOn)
                                 {
-                                        memory[Address + 0x6000] = Data;
+                                        memory[Address + 0xC000] = Data;
                                 }
                                 writeHandled = true;
                         }
                 }
                 // Check for a write to Chroma's 48K-64K colour RAM
-                else if (zx81.chromaColourSwitchOn && (Address >= 0xC000))
+                else if (zx81.chromaColourSwitchOn && Address >= 0xC000)
                 {
                         if (zx81.machine == MACHINEZX81)
                         {
-                                if ((Address < 0xE000) && (zx81.chrgen != CHRGENDK))
+                                if ((Address >= 0xE000) && (zx81.chrgen != CHRGENDK) && zx81.RAM816k)
                                 {
-                                        memory[Address - 0xA000] = Data;
+                                        // 0xE000-0xFFFF is also echoed at 0x2000-0x3FFF and 0xA000-0xBFFF
+                                        memory[Address - 0xC000] = Data;
+                                        memory[Address - 0x4000] = Data;
                                 }
-                                if ((Address >= 0xC400) && (Address < 0xC800))
+                                if ((Address >= 0xC400) && (Address < 0xC800) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen)
                                 {
+                                        // 0xC400-0xC7FF is also echoed at 0x8400-0x87FF
                                         memory[Address - 0x4000] = Data;
                                 }
                         }
@@ -166,15 +172,14 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         memory[Address] = Data;
                         writeHandled = true;
                 }
-                // Chroma's 8-16K RAM is mirrored at 40K-48K
+                // Chroma's 8-16K RAM is mirrored at 40K-48K and 56K-64K (if enabled)
                 else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         memory[Address] = Data;
                         memory[Address - 0x8000] = Data;
-                        memory[Address + 0x4000] = Data;
-                        if ((Address >= 0xA400) && (Address < 0xA800))
+                        if (zx81.chromaColourSwitchOn)
                         {
-                                memory[Address - 0x4000] = Data;
+                                memory[Address + 0x4000] = Data;
                         }
                         writeHandled = true;
                 }
@@ -194,8 +199,7 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
                         *pData = memory[Address];
                         readHandled = true;
                 }
-                // QS Character mode must be enabled if Chroma implementation,
-                // or is always enabled if just a QS Character Board
+                // QS Character mode must be enabled if Chroma implementation
                 else if ((zx81.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         *pData = memory[Address];
@@ -207,6 +211,7 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
                         *pData = memory[Address];
                         readHandled = true;
                 }
+                // The 8K RAM is echoed at 40K-48K
                 else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         *pData = memory[Address];

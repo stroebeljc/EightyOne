@@ -897,6 +897,7 @@ void THW::CreateBasicLister()
         }
         else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
                  !strcmp(machine.CurRom, "zx81.edition2.rom") ||
+                 !strcmp(machine.CurRom, "zx81.edition3.rom") ||
                  !strcmp(machine.CurRom, "ts1500.rom") ||
                  !strcmp(machine.CurRom, "tk85.rom"))
         {

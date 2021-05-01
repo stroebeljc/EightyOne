@@ -14,6 +14,7 @@ object SearchSequence: TSearchSequence
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
+  Scaled = False
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13

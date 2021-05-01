@@ -13,6 +13,7 @@ object MidiForm: TMidiForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13

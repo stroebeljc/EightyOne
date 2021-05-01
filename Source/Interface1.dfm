@@ -13,6 +13,7 @@ object IF1: TIF1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96

@@ -48,6 +48,7 @@ object SaveBasicListingOptionsForm: TSaveBasicListingOptionsForm
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000FFFF0000}
   OldCreateOrder = False
+  Scaled = False
   PixelsPerInch = 96
   TextHeight = 13
   object btnOK: TButton

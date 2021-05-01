@@ -14,6 +14,7 @@ object TZX: TTZX
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize

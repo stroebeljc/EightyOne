@@ -49,6 +49,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     000000000000000000000000000000000000FFFF0000}
   OldCreateOrder = False
   Position = poScreenCenter
+  Scaled = False
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

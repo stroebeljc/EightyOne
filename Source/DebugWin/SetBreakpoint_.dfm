@@ -12,6 +12,7 @@ object SetBreakpoint: TSetBreakpoint
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13

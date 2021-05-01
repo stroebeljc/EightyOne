@@ -1,10 +1,10 @@
 object Form1: TForm1
-  Left = 222
-  Top = 115
+  Left = 225
+  Top = 118
   BorderStyle = bsSingle
   Caption = 'EightyOne'
-  ClientHeight = 255
-  ClientWidth = 323
+  ClientHeight = 247
+  ClientWidth = 317
   Color = clBtnFace
   Constraints.MinHeight = 128
   Constraints.MinWidth = 128
@@ -16,6 +16,7 @@ object Form1: TForm1
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  Scaled = False
   Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
@@ -31,8 +32,8 @@ object Form1: TForm1
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 236
-    Width = 323
+    Top = 228
+    Width = 317
     Height = 19
     Panels = <
       item

@@ -48,6 +48,7 @@ object BasicLister: TBasicLister
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000FFFF0000}
   OldCreateOrder = False
+  Scaled = False
   OnClose = FormClose
   OnMouseDown = FormMouseDown
   OnMouseWheel = FormMouseWheel

@@ -10,6 +10,7 @@ Version 1.23 - ##/##/2021 (by Paul Farrow)
 * Enhancements:
   - Added support for the 3rd variant of the ZX81 ROM.
   - The BASIC Listing import facility was not trapping lines with identical line numbers.
+  - Improved supported for larger font sizes.
 
 Version 1.22 - 14/04/2021 (by SirMorris and Paul Farrow)
 * Bug fixes:

@@ -13,6 +13,7 @@ object ZX97Dialog: TZX97Dialog
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnClose = FormClose
   OnDestroy = FormDestroy
   PixelsPerInch = 96

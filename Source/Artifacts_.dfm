@@ -13,6 +13,7 @@ object Artifacts: TArtifacts
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96

@@ -14,6 +14,7 @@ object LiveMemoryWindow: TLiveMemoryWindow
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  Scaled = False
   OnClose = FormClose
   OnMouseMove = FormMouseMove
   OnPaint = FormPaint

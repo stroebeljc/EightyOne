@@ -14,6 +14,7 @@ object WavLoad: TWavLoad
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Scaled = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnMouseMove = Image1MouseMove

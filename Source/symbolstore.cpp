@@ -209,7 +209,10 @@ AnsiString symbolstore::addressToSymbolOrHex(const int addr)
         AnsiString temp;
         if (!addressToSymbol(addr, temp))
         {
-                temp = "$" + temp.IntToHex(addr,4);
+                temp = temp.IntToHex(addr,4);
+                int len = strlen(temp.c_str());
+                int delLen = len < 4 ? 0 : len - 4; 
+                temp = "$" + temp.Delete(1, delLen);
         }
 
         return temp;

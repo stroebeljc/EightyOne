@@ -124,7 +124,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
 
                         if (GetLineNumber(entry))
                         {
-                                if (entry.lineNumber < currentLineNumber)
+                                if (entry.lineNumber <= currentLineNumber)
                                 {
                                         throw runtime_error("Line number not greater than previous line number");
                                 }

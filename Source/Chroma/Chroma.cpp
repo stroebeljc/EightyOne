@@ -109,9 +109,9 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
 
         // The QS Character Board provides a programmable character set, with the
         // character RAM stored in 1K RAM located at address 0x8400-0x87FF.
-        // Frist are the bit patterns for the normal characters, and then the
+        // First are the bit patterns for the normal characters, and then the
         // patterns for the inverted characters. The ZX81 display hardware inverts
-        // the bit patterns for the inverted characters and so in these are
+        // the bit patterns for the inverted characters and so these are
         // stored in the QS Character Board RAM in non-inverted form. The RAM was
         // always enabled and a switch was used to select between displaying the
         // standard ZX81 character set in the ROM and the programmable character

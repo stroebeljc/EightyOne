@@ -6,11 +6,11 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 Version 1.23 - ##/##/2021 (by Paul Farrow)
 * Bug fixes:
   - A JR instruction offset to below $0000 or above $FFFF was being displayed incorrectly by
-    disassembler.
+    the disassembler.
 * Enhancements:
   - Added support for the 3rd variant of the ZX81 ROM.
   - The BASIC Listing import facility was not trapping lines with identical line numbers.
-  - Improved supported for larger font sizes.
+  - Improved supported for Windows systems configured with larger font sizes.
 
 Version 1.22 - 14/04/2021 (by SirMorris and Paul Farrow)
 * Bug fixes:

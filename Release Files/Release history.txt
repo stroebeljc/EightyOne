@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.23 - ##/##/2021 (by Paul Farrow)
+Version 1.23 - 19/05/2021 (by Paul Farrow)
 * Bug fixes:
   - A JR instruction offset to below $0000 or above $FFFF was being displayed incorrectly by
     the disassembler.

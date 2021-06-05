@@ -359,10 +359,16 @@ void load_snap_colour(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->ColourBox, tok);
                         chroma = (HW->ColourBox->Text == "Chroma");
+                        bool lambda = (HW->ColourBox->Text == "Lambda");
                         if (chroma)
                         {
                                 Form1->ChromaColourEnable->Visible = true;
                                 Form1->ChromaColourEnable->Enabled = true;
+                                zx81.colour = COLOURCHROMA;
+                        }
+                        else if (lambda)
+                        {
+                                zx81.colour = COLOURLAMBDA;
                         }
                 }
                 else if (chroma && !strcmp(tok,"CHROMA_MODE"))

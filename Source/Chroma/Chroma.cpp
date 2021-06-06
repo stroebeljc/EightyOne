@@ -172,6 +172,11 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         memory[Address] = Data;
                         writeHandled = true;
                 }
+                // Check for a write to 48K-64K when Chroma 80 and colour RAM not enabled - the 16K RAM is not mirrored
+                else if (Address >= 0xC000 && (zx81.machine == MACHINEZX80) && (zx81.RAMTOP <= 0xC000))
+                {
+                        writeHandled = true;
+                }
                 // Chroma's 8-16K RAM is mirrored at 40K-48K and 56K-64K (if enabled)
                 else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
@@ -209,6 +214,11 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
                 else if (zx81.chromaColourSwitchOn && (Address >= 0xC000))
                 {
                         *pData = memory[Address];
+                        readHandled = true;
+                }
+                // Check for a read from 48K-64K when Chroma 80 and colour RAM not enabled - the 16K RAM is not mirrored
+                else if (Address >= 0xC000 && (zx81.machine == MACHINEZX80) && (zx81.RAMTOP <= 0xC000))
+                {
                         readHandled = true;
                 }
                 // The 8K RAM is echoed at 40K-48K

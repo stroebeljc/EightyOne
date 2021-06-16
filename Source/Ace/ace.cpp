@@ -260,7 +260,7 @@ BYTE ace_readport(int Address, int *tstates)
 {
         if (!(Address&1))
         {
-                BYTE keyb, data=0;
+                BYTE keyb, data=0xC0;
                 int i;
 
                 if (GetEarState()) data |= 32;

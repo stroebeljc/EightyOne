@@ -7,6 +7,7 @@ Version 1.24 - ##/##/2021 (by Paul Farrow)
 * Bug fixes:
   - Loading a snapshot that has Chroma colour enabled was not re-enabling the colour mode.
   - The RAM provided by the Chroma 80 interface was being incorrectly mirrored in the memory map.
+  - Changed the default values of bits 6 and 7 when reading port $FE for a Jupiter Ace.
 
 Version 1.23 - 19/05/2021 (by Paul Farrow)
 * Bug fixes:

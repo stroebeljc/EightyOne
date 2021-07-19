@@ -297,7 +297,7 @@ BYTE ace_readport(int Address, int *tstates)
                 break;
         }
 
-        return(255);
+        return(0x20);
 }
 
 int ace_contend(int Address, int tstates, int time)

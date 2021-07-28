@@ -1,22 +1,15 @@
 #include "zxpand.h"
+#include <string.h>
 
 #include "integer.h"
 #include "zxpandio.h"
-
-#include <string.h>
-
 #include "zxpandcom.h"
-
-#include <usart.h>
+//#include "serial.h"
 
 extern WORD globalIndex;
 extern WORD globalAmount;
 extern void delayMillis(short);
 extern void decodeJS(void);
-
-extern int serialAvailable(void);
-extern int serialCopy(BYTE*);
-extern void serialWrite(BYTE);
 
 extern void zeddify(char* buffer);
 
@@ -45,7 +38,7 @@ void zx_process_write(void)
 
    // port a holds the latched address
    //
-   switch (PORTA & 0x07)
+   switch (ppPort())
    {
       // data channel
       case 0x00:
@@ -408,9 +401,23 @@ void zx_process_write(void)
              case 0xc6:
              {
                // direct serial/midi output
-                serialWrite(LATD);
+               serialWrite(globalData[0]);
              }
              break;
+             case 0xc7:
+             {
+               	// direct read
+                LATD = serialRead();
+             }
+             break;
+             case 0xcb:
+             {
+                // serial begin
+                //long rate = 1200 * globalData[0];
+                //serialInit(rate, 1);
+             }
+             break;
+
              case 0xf0:
              {
                  // delay a couple of milliseconds, then disable

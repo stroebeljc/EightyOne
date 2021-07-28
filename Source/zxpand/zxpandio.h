@@ -17,6 +17,8 @@
 
 #define CARDPRESENT() 1
 #define RESETPRESSED() 0
+#define ASSERT_RESET
+#define Reset()
 
 #define LEDPINSOUT()
 
@@ -28,6 +30,17 @@ extern unsigned char LEDs;
 #define GREENLEDOFF() LEDs&=0x7f;
 
 #define ACTIVITYSTROBE(x)
+
+#define ppPort() PORTA
+#define ppCommandWaiting() 0
+
+#define serialRead() 0
+#define serialWrite(x)
+#define serialCopy(x) 0
+#define serialClose()
+
+#define serialInit(x,y)
+#define serialAvailable() 0
 
 #define _ZXPANDIO
 #endif

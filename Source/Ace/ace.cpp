@@ -62,6 +62,7 @@ extern BYTE ZXKeyboard[8];
 int ACEMICState, ACETopBorder, ACELeftBorder;
 BYTE acecolour[1024], acelatch=4;
 
+static BYTE idleDataBus = 0x20;
 
 extern void ZXPrinterWritePort(unsigned char Data);
 extern unsigned char ZXPrinterReadPort(void);
@@ -297,7 +298,7 @@ BYTE ace_readport(int Address, int *tstates)
                 break;
         }
 
-        return(0x20);
+        return(idleDataBus);
 }
 
 int ace_contend(int Address, int tstates, int time)
@@ -349,7 +350,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 ts=z80_do_opcode();
                 if (!fts)
                 {
-                        int intlen=z80_interrupt(0);
+                        int intlen=z80_interrupt(idleDataBus);
                         ts+=intlen;
                         if (intlen) WavStop();
                 }

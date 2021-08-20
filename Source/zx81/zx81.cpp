@@ -1235,7 +1235,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 if (int_pending)
                 {
-                        int tsint = z80_interrupt(ts);
+                        int tsint = z80_interrupt(idleDataBus);
 
                         if (tsint)
                         {

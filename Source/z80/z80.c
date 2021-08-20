@@ -103,7 +103,7 @@ void z80_reset( void )
 }
 
 /* Process a z80 maskable interrupt */
-int z80_interrupt( /*int ts*/ )
+int z80_interrupt(int bus)
 {
         /* Process if IFF1 set */
         if( IFF1 )
@@ -126,7 +126,7 @@ int z80_interrupt( /*int ts*/ )
                 case 1: PC = 0x0038; StackChange+=2; return(13);
                 case 2:
 	        {
-	                WORD inttemp=(0x100*I)+0xff;
+	                WORD inttemp=(0x100*I) + bus;
 	                PCL = readbyte(inttemp++); PCH = readbyte(inttemp);
 	                StackChange+=2;
                         return(19);

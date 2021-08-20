@@ -27,7 +27,6 @@
 #define MDVSTREAMLEN 4
 //#define MDVTPERBYTE 250
 
-
 //---------------------------------------------------------------------------
 typedef struct
 {
@@ -102,6 +101,8 @@ private:	// User declarations
         int MDVGetNextBlock(int Drive, bool Header);
         int MDVPos(int Drive, int Offset);
         bool romEditionChanged;
+        unsigned char* FindNextDataBlock(int Drive);
+        unsigned char* FindSector(int Drive);
 
 public:		// User declarations
         int MDVNoDrives;
@@ -125,6 +126,7 @@ public:		// User declarations
         void MDVSetFileName(int Drive, char *FileName);
         void MDVLoadFile(int Drive, char *FileName);
         void MDVSaveFile(int Drive);
+        bool MotorRunning();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TIF1 *IF1;

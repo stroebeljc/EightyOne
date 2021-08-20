@@ -197,6 +197,11 @@ void TIF1::ClockTick(int ts)
         }
 }
 
+bool TIF1::MotorRunning()
+{
+        return (MDVCurDrive!=-1);
+}
+
 int TIF1::GetSerialData(void)
 {
         int data=-1;
@@ -283,28 +288,76 @@ int TIF1::MDVPos(int Drive, int Offset)
         return(NewPos);
 }
 
+unsigned char* TIF1::FindSector(int Drive)
+{
+        int foundSectorNumber;
+
+        do
+        {
+                int currentPosition = Drives[Drive].position;
+
+                const bool header = true;
+                foundSectorNumber = MDVGetNextBlock(Drive, header);
+                if (Drives[Drive].position < currentPosition)
+                {
+                        foundSectorNumber = -2;
+                }
+        }
+        while (foundSectorNumber == -1);
+
+        unsigned char* dataPosition = 0;
+
+        if (foundSectorNumber != -2)
+        {
+                dataPosition = Drives[Drive].data + Drives[Drive].position;
+        }
+
+        return dataPosition;
+}
+
+unsigned char* TIF1::FindNextDataBlock(int Drive)
+{
+        int currentPosition = Drives[Drive].position;
+
+        const bool datablock = false;
+        int blockStatus = MDVGetNextBlock(Drive, datablock);
+
+        unsigned char* dataPosition = 0;
+
+        if (blockStatus == -1)
+        {
+                dataPosition = Drives[Drive].data + Drives[Drive].position;
+        }
+
+        if (blockStatus > 0)
+        {
+                Drives[Drive].position = currentPosition;
+        }
+
+        return dataPosition;
+}
+
 int TIF1::MDVGetNextBlock(int Drive, bool header)
 {
         bool found;
         int i, count;
-        int StartPos = Drives[Drive].position;
 
         do
         {
                 found=true;
-                for(i=0;i<8;i++) if (Drives[Drive].data[MDVPos(Drive, i)]!=0) found=false;
-                if (Drives[Drive].data[MDVPos(Drive, 8)]!=0xff) found=false;
-                if (Drives[Drive].data[MDVPos(Drive, 9)]!=0xff) found=false;
+                for(i=0;i<10;i++) if (Drives[Drive].data[MDVPos(Drive, i)]!=0) found=false;
+                if (Drives[Drive].data[MDVPos(Drive, 10)]!=0xff) found=false;
+                if (Drives[Drive].data[MDVPos(Drive, 11)]!=0xff) found=false;
 
                 if (found)
                 {
                         int byte;
 
-                        Drives[Drive].position = MDVPos(Drive, 10);
+                        Drives[Drive].position = MDVPos(Drive, 12);
                         count=0;
                         for(i=0;i<14;i++)
                         {
-                                byte= Drives[Drive].data[Drive, MDVPos(Drive, i)];
+                                byte = Drives[Drive].data[Drive, MDVPos(Drive, i)];
 
                                 count += byte;
                                 if (count&256) count++;
@@ -313,21 +366,33 @@ int TIF1::MDVGetNextBlock(int Drive, bool header)
                                 if (count&255) count--;
                                 count &= 0xff;
                         }
-                        if ((Drives[Drive].data[MDVPos(Drive, 14)] != count)
-                                && header) found=false;
+                        if (Drives[Drive].data[MDVPos(Drive, 14)] != count)
+                                found = false;
+                }
+                else
+                {
+                        Drives[Drive].position = MDVPos(Drive, 1);
                 }
 
                 if (found)
                 {
                         if ((Drives[Drive].data[MDVPos(Drive, 0)]) & 1)
-                                return(Drives[Drive].data[MDVPos(Drive, 1)]);
-                        else    return(-1);
+                        {
+                                int secNo = (Drives[Drive].data[MDVPos(Drive, 1)]);
+                                if (secNo > 0x00 && secNo < 0xFF)
+                                {
+                                        return secNo;
+                                }
+                        }
+                        else
+                        {
+                                return -1;
+                        }
                 }
+        }
+        while (Drives[Drive].position < Drives[Drive].length);
 
-                Drives[Drive].position = MDVPos(Drive, 1);
-        } while(Drives[Drive].position != StartPos);
-
-        return(-1);
+        return -2;
 }
 
 void TIF1::MDVLoadFile(int Drive, char *FileName)
@@ -373,7 +438,7 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                                 secptr += 101; //GAP
                                 sectors++;
                         }
-                } while(len);
+                } while(len && (sectors < 254));
 
                 fclose(f);
 
@@ -440,47 +505,57 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
 
 void TIF1::MDVSaveFile(int Drive)
 {
-        FILE *f;
-        AnsiString Ext=GetExt(Drives[Drive].FileName);
+        unsigned char* buffer;
+        int bufferSize;
 
-        if (Ext==".MDR")
+        AnsiString Ext = GetExt(Drives[Drive].FileName);
+        if (Ext == ".MDR")
         {
-                bool header;
-                f=fopen(Drives[Drive].FileName, "wb");
-                if (f)
+                const int MDR_HEADER_SIZE = 15;
+                const int MDR_RECORD_SIZE = 528;
+                const int MDR_SECTOR_SIZE = MDR_HEADER_SIZE + MDR_RECORD_SIZE;
+                const int MDR_NUMBER_OF_SECTORS = 254;
+                const int MDR_WRITE_PROTECT_SIZE = 1;
+                const int MDR_FILE_SIZE = (MDR_SECTOR_SIZE * MDR_NUMBER_OF_SECTORS) + MDR_WRITE_PROTECT_SIZE;
+
+                bufferSize = MDR_FILE_SIZE;
+                buffer = (unsigned char*)malloc(bufferSize);
+                memset(buffer, 0x00, bufferSize);
+
+                Drives[Drive].position = 0;
+                unsigned char* headerPosition;
+                int sectorIndex = 0;
+
+                do
                 {
-                        int SecNo;
-
-                        do
+                        headerPosition = FindSector(Drive);
+                        if (headerPosition != 0)
                         {
-                                SecNo=MDVGetNextBlock(Drive, true);
-                        } while(SecNo!=0xfe);
-                        fwrite(Drives[Drive].data + Drives[Drive].position, 1, 15, f);
-                        Drives[Drive].position = MDVPos(Drive, 15);
+                                memcpy(buffer + (sectorIndex * MDR_SECTOR_SIZE), headerPosition, MDR_HEADER_SIZE);
 
+                                unsigned char* dataPosition = FindNextDataBlock(Drive);
+                                if (dataPosition != 0)
+                                {
+                                        memcpy(buffer + (sectorIndex * MDR_SECTOR_SIZE) + MDR_HEADER_SIZE, dataPosition, MDR_RECORD_SIZE);
+                                }
 
-                        header=false;
-                        SecNo=MDVGetNextBlock(Drive, header);
-                        while(SecNo!=0xfe)
-                        {
-                                fwrite(Drives[Drive].data + Drives[Drive].position,
-                                        1, (SecNo==-1) ? 528:15 , f);
-                                Drives[Drive].position = MDVPos(Drive, (SecNo==-1) ? 528:15);
-                                header=!header;
-                                SecNo=MDVGetNextBlock(Drive, header);
+                                sectorIndex++;
                         }
-
-                        fclose(f);
                 }
+                while (headerPosition != 0 && sectorIndex < MDR_NUMBER_OF_SECTORS);
         }
         else
         {
-                f=fopen(Drives[Drive].FileName, "wb");
-                if (f)
-                {
-                        fwrite(Drives[Drive].data, 1, Drives[Drive].length, f);
-                        fclose(f);
-                }
+                bufferSize = Drives[Drive].length;
+                buffer = (unsigned char*)malloc(bufferSize);
+                memcpy(buffer, Drives[Drive].data, Drives[Drive].length);
+        }
+
+        FILE* f = fopen(Drives[Drive].FileName, "wb");
+        if (f)
+        {
+                fwrite(buffer, 1, bufferSize , f);
+                fclose(f);
         }
 }
 

@@ -1594,7 +1594,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 {
                         if (fts>InteruptPosition && IntDue)
                         {
-                                InteruptTime=(TIMEXByte&64)?0:z80_interrupt(0);
+                                InteruptTime=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
                                 if (rzx.mode==RZX_PLAYBACK)
                                 {
                                         //if (RZXCounter<=0) Sy=machine.scanlines;

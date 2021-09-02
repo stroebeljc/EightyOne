@@ -4,14 +4,14 @@
 #include "ff.h"
 #include "wildcard.h"
 #include "zxpandio.h"
+//#include "serial.h"
 
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <usart.h>
 
-static const rom char* VERSION = "ZXPAND+ 1.14 \"MOGGY\"";
+static const rom char* VERSION = "ZXPAND+ \"TOMTE\"";
 
 static BYTE res;
 
@@ -20,11 +20,13 @@ static FIL fil;
 static FILINFO filinfo;
 static FATFS fatfs;
 
-static int sb;
+static int sb = -1;
 
 #define WILD_LEN  16
 static char  WildPattern[WILD_LEN+1];
 
+// HA! only set if file opened through port 4.
+// perhaps should be part of general file opening func?
 char defaultExtension;
 WORD defaultLoadAddr;
 
@@ -47,16 +49,6 @@ extern void mem_cpy (void* dst, const void* src, int cnt);
 extern char chk_chr (const rom char* str, char chr);
 
 extern void tryProgramCPLD(const char* filename);
-
-extern void ringReset(void);
-extern int serialAvailable(void);
-extern BYTE serialRead(void);
-extern void serialWrite(BYTE);
-extern void serialPrint(char*);
-extern void serialInit(int, int);
-extern void serialClose(void);
-extern void serialHex(BYTE);
-extern int serialCopy(BYTE*);
 
 extern void delayMillis(short);
 
@@ -418,7 +410,7 @@ void GetWildcard(char* p)
         }
         else
         {
-            // Wildcard on it's own
+            // Wildcard on its own
             // Copy wildcard, then set path to null
             strncpy(WildPattern,(const char*)p,WILD_LEN);
             p[0]=0x00;
@@ -794,7 +786,7 @@ void comFileOpenRead(void)
     {
         if (*p == '$')
         {
-            serialInit(12, 1);
+            serialInit(38400, 1);
 
             delayMillis(100);
 
@@ -973,7 +965,7 @@ void comFileClose(void)
         sb = -1;
         LATD = 0x40;
         serialWrite('X'); // goodnight kiss
-        serialInit(12,0); // turn off rx irq
+        serialInit(38400,0); // turn off rx irq
     }
     else LATD=0x40 | f_close(&fil);
 }
@@ -1018,12 +1010,10 @@ void comFileDelete(void)
     LATD = ret;
 }
 
-BYTE lb;
-
-
-
 static BYTE ROM disableOverlay[8] = { 0x01,0x07,0xe0,0x3e,0xb0,0xed,0x79,0xc9 };
 static BYTE ROM      setRamtop[9] = { 0x21,0xff,0xff,0x22,0x04,0x40,0xc3,0xc3,0x03 };
+
+static BYTE ROM      startMidi[9] = { 0x01,0x07,0xe0,0x3e,0xcf,0xed,0x79,0xe1,0xc9 };
 
 // buffer of form "C", "C,C", "C,123"
 //
@@ -1275,7 +1265,7 @@ void comParseBuffer(void)
 
 enum verbs
 {
-    V_OPEN, V_PUT, V_GET, V_CLOSE, V_DELETE, V_RENAME
+    V_OPEN, V_PUT, V_GET, V_CLOSE, V_DELETE, V_RENAME, V_PLAY
 };
 
 rom far char* verbs[] = {
@@ -1285,6 +1275,7 @@ rom far char* verbs[] = {
     (rom far char*)"CLO",
     (rom far char*)"DEL",
     (rom far char*)"REN",
+    (rom far char*)"PLA",
     (rom far char*)NULL
 };
 
@@ -1332,11 +1323,18 @@ int identifyToken(char** p, rom far char** tokens)
 }
 
 
+// callback passed to midi play function. returns nonzero if zxpand command is fired whilst playing
+int midiShouldStop(void) {
+    return ppCommandWaiting(); // && ppCommand() == 0x01 && ppPort() == 7;
+}
+
+
 void InitRetBlk(char* p)
 {
     zxpandRetblk.address = atoi(p+1);
     zxpandRetblk.op = 2;             // executable
 }
+
 
 /*
 ED 5B 3F 40  ld de,(16447) ; data ptr
@@ -1348,13 +1346,15 @@ static BYTE ROM memPut[12] = { 0xed,0x5b,0x3f,0x40,0x2a,0x3e,0x40,0x3e,0x01,0xc3
 
 int zxpandContinuation;
 
-void midiPitchBendReset(int i);
-void midiSoundOff(int i, int type);
-
 BYTE far gmReset[] = {
     0xF0,0x7E,0x7F,0x09,0x01,0xF7
 };
 
+void midiReset(void) {
+    int i;
+    for(i = 0; i < sizeof(gmReset); ++i)
+        serialWrite(gmReset[i]);
+}
 
 // buffer of form "VERB STREAMID PARAM PARAM,..."
 //
@@ -1386,15 +1386,13 @@ void comParseBufferPlus(void)
         switch (noun)
         {
         case N_SERIAL: { // open serial [rate]
-            // nnn = (32000000 / rate / 64) - 1
             long rate = atol(p) ? atol(p) : 38400;
-            long spbrg = 32000000 / rate / 64 - 1;
-            serialInit((int)spbrg, 1);
+            serialInit(rate, 1);
         }
         break;
 
         case N_MIDI: { // open midi
-            serialInit(15, 0);
+            serialInit(31250, 0);
         }
         break;
 
@@ -1430,9 +1428,6 @@ void comParseBufferPlus(void)
         break;
 
         default:
-            putrsUSART((rom far char *)"OPEN ");
-            serialHex(noun);
-            putrsUSART((rom far char *)" \r");
             break;
         }
     }
@@ -1469,9 +1464,6 @@ void comParseBufferPlus(void)
         break;
 
         default:
-            putrsUSART((rom far char *)"PUT ");
-            serialHex(noun);
-            putrsUSART((rom far char *)" \r");
             break;
         }
     }
@@ -1501,6 +1493,30 @@ void comParseBufferPlus(void)
         }
         break;
 
+        case N_FILE: {
+            UINT read;
+            int o = 32; // idea is that zxpand command retrieves 32 bytes, 5 header + some data/code, next read will get remaining bytes
+            zxpandRetblk.retval = 0x40;
+            if (*p =='*')
+            {
+                // GET SER *30000
+                InitRetBlk(p);
+
+                memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&memPut[0]), sizeof(memPut));
+                globalData[5+8] = 0; // now it's memget ;)
+            }
+            else
+            {
+                zxpandRetblk.op = 1;             // string data
+                zxpandRetblk.address = 16449;    // memory ptr
+                o = 5;
+            }
+            zxpandRetblk.retval = 0x40 | f_read(&fil, &globalData[o], 256, &read);
+			zxpandRetblk.len = read;
+            memcpy(globalData, (void*)&zxpandRetblk, 5);
+        }
+        break;
+
         case N_SERIAL: {
             int o = 32;
             zxpandRetblk.retval = 0x40;
@@ -1518,7 +1534,7 @@ void comParseBufferPlus(void)
                 zxpandRetblk.address = 16449;    // memory ptr
                 o = 5;
             }
-// todo: add BINARY switch
+            // todo: add BINARY switch?
 			zxpandRetblk.len = serialCopy((BYTE*)(&globalData[o]));
             memcpy(globalData, (void*)&zxpandRetblk, 5);
         }
@@ -1550,9 +1566,6 @@ void comParseBufferPlus(void)
         break;
 
         default:
-            putrsUSART((rom far char *)"GET ");
-            serialHex(noun);
-            putrsUSART((rom far char *)" \r");
             break;
         }
         // get
@@ -1567,17 +1580,12 @@ void comParseBufferPlus(void)
             break;
 
         case N_MIDI: {
-            int i;
-            for(i = 0; i < sizeof(gmReset); ++i)
-                serialWrite(gmReset[i]);
+            midiReset();
             serialClose();
         }
         break;
 
         default:
-            putrsUSART((rom far char *)"CLOSE ");
-            serialHex(noun);
-            putrsUSART((rom far char *)" \r");
             break;
         }
         // close
@@ -1596,7 +1604,25 @@ void comParseBufferPlus(void)
         retcode = 0x40 | f_rename(p, q);
     }
     break;
+
+    case V_PLAY: {
+        switch (noun)
+        {
+            case N_MIDI: {
+                retcode = fileOpen(p, FA_OPEN_EXISTING|FA_READ);
+                if (retcode == 0x40) {
+                    serialInit(31250, 0);
+
+                    memcpypgm2ram((void*)(&globalData[5]), (const rom far void*)(&startMidi[0]), sizeof(startMidi));
+                    globalData[0] = 2;
+                }
+            }
+            break;
+        }
     }
+    break;
+
+    } // switch (verb)
 
     GOOUTPUTMODE;
     LATD = retcode;

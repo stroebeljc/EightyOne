@@ -791,7 +791,7 @@ void comFileOpenRead(void)
             delayMillis(100);
 
             serialWrite('I');
-            while(serialAvailable() < 2);
+            //while(serialAvailable() < 2);
             length = serialRead();
             length += 256 * serialRead();
             res = 0x40;
@@ -903,22 +903,22 @@ void comFileRead(void)
             serialWrite(sb);
             serialWrite(globalAmount&0xff);
 
-            crc = 0;
+            //crc = 0;
             for (read = 0; read < (unsigned)globalAmount; ++read)
             {
-                while(!serialAvailable());
+                //while(!serialAvailable());
                 b = serialRead();
                 *p = b;
                 ++p;
 
-                crc += b;
+                //crc += b;
             }
 
-            while(serialAvailable() < 2);
-            rxcrc = serialRead();
-            rxcrc += 256 * serialRead();
+            //while(serialAvailable() < 2);
+            //rxcrc = serialRead();
+            //rxcrc += 256 * serialRead();
 
-            error = ring_error | (crc != rxcrc);
+            error = ring_error;// | (crc != rxcrc);
             ring_error = 0;
         }
         while(error);
@@ -1386,8 +1386,8 @@ void comParseBufferPlus(void)
         switch (noun)
         {
         case N_SERIAL: { // open serial [rate]
-            long rate = atol(p) ? atol(p) : 38400;
-            serialInit(rate, 1);
+            //long rate = atol(p) ? atol(p) : 38400;
+            //serialInit(rate, 1);
         }
         break;
 
@@ -1518,7 +1518,7 @@ void comParseBufferPlus(void)
         break;
 
         case N_SERIAL: {
-            int o = 32;
+            //int o = 32;
             zxpandRetblk.retval = 0x40;
             if (*p =='*')
             {
@@ -1532,7 +1532,7 @@ void comParseBufferPlus(void)
             {
                 zxpandRetblk.op = 1;             // string data
                 zxpandRetblk.address = 16449;    // memory ptr
-                o = 5;
+                //o = 5;
             }
             // todo: add BINARY switch?
 			zxpandRetblk.len = serialCopy((BYTE*)(&globalData[o]));

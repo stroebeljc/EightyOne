@@ -579,7 +579,8 @@ void GDIAccurateUpdateDisplay(bool singlestep)
                         (rcsource.Right-rcsource.Left),
                         (rcsource.Bottom-rcsource.Top),
                         SRCCOPY);
-        if (!ret) ShowMessage(SysErrorMessage(GetLastError()));
+// Commented out the error dialog to prevent error displayed after bring PC out of hibernation
+//      if (!ret) ShowMessage(SysErrorMessage(GetLastError()));
 
         dest=buffer= (unsigned char *) GDIFrame->ScanLine[0];
 }

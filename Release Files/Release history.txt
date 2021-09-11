@@ -13,6 +13,7 @@ Version 1.24 - 11/09/2021 (by Paul Farrow and SirMorris)
   - Memory window View Words option could lock up for the Spectrum and Jupiter Ace.
   - Memory window View Traditional option defaults to the character set for the selected computer
     model if the default ROM is changed and no corresponding character set bitmap exists.
+  - "Access Denied" error dialog no longer gets displayed after taking the PC out of hibernation.
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
 

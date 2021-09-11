@@ -128,6 +128,24 @@ void zx81_writebyteProxy(int address, int data)
         dirtyBird.insert(address);
 }
 
+void spec48_writebyteProxy(int address, int data)
+{
+        spec48_writebyte(address, data);
+        dirtyBird.insert(address);
+}
+
+void ace_writebyteProxy(int address, int data)
+{
+        ace_writebyte(address, data);
+        dirtyBird.insert(address);
+}
+
+void ql_writebyteProxy(int address, int data)
+{
+        ql_writebyte(address, data);
+        dirtyBird.insert(address);
+}
+
 AnsiString getMachineRoot(AnsiString fullRomName)
 {
         // return the first part of the rom name up to but excluding the first '.'
@@ -607,7 +625,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINEACE:
                 machine.initialise = ace_initialise;
                 machine.do_scanline = ace_do_scanline;
-                machine.writebyte = ace_writebyte;
+                machine.writebyte = ace_writebyteProxy;
                 machine.setbyte = ace_writebyte;
                 machine.readbyte = ace_readbyte;
                 machine.readoperandbyte = ace_readoperandbyte;
@@ -625,7 +643,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINEQL:
                 machine.initialise = ql_initialise;
                 machine.do_scanline = ql_do_scanline;
-                machine.writebyte = ql_writebyte;
+                machine.writebyte = ql_writebyteProxy;
                 machine.setbyte = ql_writebyte;
                 machine.readbyte = ql_readbyte;
                 machine.readoperandbyte = ql_readbyte;
@@ -643,7 +661,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINESPEC48:
                 machine.initialise = spec48_initialise;
                 machine.do_scanline = spec48_do_scanline;
-                machine.writebyte = spec48_writebyte;
+                machine.writebyte = spec48_writebyteProxy;
                 machine.setbyte = spec48_setbyte;
                 machine.readbyte = spec48_readbyte;
                 machine.readoperandbyte = spec48_readoperandbyte;

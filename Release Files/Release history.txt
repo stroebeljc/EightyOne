@@ -3,13 +3,14 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.24 - 03/09/2021 (by Paul Farrow and SirMorris)
+Version 1.24 - 11/09/2021 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Loading a snapshot that has Chroma colour enabled was not re-enabling the colour mode.
   - The RAM provided by the Chroma 80 interface was being incorrectly mirrored in the memory map.
   - Changed the default values of bits 6 and 7 when reading port $FE for a Jupiter Ace.
   - Changed the default value of the data bus on the Jupiter Ace from 0xFF to 0x20.
   - Microdrive .MDR files were saved with an incorrect size.
+  - Memory window View Word option could lock up for the Spectrum and Jupiter Ace.
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
 

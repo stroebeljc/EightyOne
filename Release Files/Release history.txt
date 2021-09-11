@@ -10,7 +10,9 @@ Version 1.24 - 11/09/2021 (by Paul Farrow and SirMorris)
   - Changed the default values of bits 6 and 7 when reading port $FE for a Jupiter Ace.
   - Changed the default value of the data bus on the Jupiter Ace from 0xFF to 0x20.
   - Microdrive .MDR files were saved with an incorrect size.
-  - Memory window View Word option could lock up for the Spectrum and Jupiter Ace.
+  - Memory window View Words option could lock up for the Spectrum and Jupiter Ace.
+  - Memory window View Traditional option defaults to the character set for the selected computer
+    model if the default ROM is changed and no corresponding character set bitmap exists.
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
 

@@ -811,6 +811,62 @@ void __fastcall THW::OKClick(TObject *Sender)
         bmp += ChangeFileExt(machine.CurRom, ".bmp");
         delete (Graphics::TBitmap*)machine.cset;
         machine.cset = NULL;
+        if (!FileExists(bmp))
+        {
+                // Select character set file based on the machine model
+                switch(zx81.machine)
+                {
+                case MACHINEZX80:
+                        bmp = romBase + "zx80.bmp";
+                        break;
+                case MACHINETS1000:
+                case MACHINEZX81:
+                        bmp = romBase + "zx81.edition3.bmp";
+                        break;
+                case MACHINEACE:
+                        bmp = romBase + "ace.bmp";
+                        break;
+                case MACHINETS1500:
+                        bmp = romBase + "ts1500.bmp";
+                        break;
+                case MACHINER470:
+                        bmp = romBase + "ringo470.bmp";
+                        break;
+                case MACHINETK85:
+                        bmp = romBase + "tk85.bmp";
+                        break;
+                case MACHINELAMBDA:
+                        bmp = romBase + "lambda.bmp";
+                        break;
+                case MACHINESPEC48:
+                        switch (spectrum.machine)
+                        {
+                        case SPECCY128:
+                                bmp = romBase + "spec128.bmp";
+                                break;
+                        case SPECCYTC2048:
+                                bmp = romBase + "tc2048.bmp";
+                                break;
+                        case SPECCYTS2068:
+                                bmp = romBase + "ts2068.bmp";
+                                break;
+                        case SPECCY48:
+                        case SPECCY16:
+                        case SPECCYPLUS:
+                                bmp = romBase + "spec48.bmp";
+                                break;
+                        case SPECCYPLUS2:
+                                bmp = romBase + "specp2.bmp";
+                                break;
+                        case SPECCYPLUS2A:
+                        case SPECCYPLUS3:
+                                bmp = romBase + "specp3.version4_1.bmp";
+                                break;
+                        }
+                        break;
+                }
+        }
+
         if (FileExists(bmp))
         {
                 Graphics::TBitmap* cset = new Graphics::TBitmap;

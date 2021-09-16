@@ -108,7 +108,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
         int lineNumberIncrement = LoadBasicListingOptionsForm->GetAutomaticLineNumberIncrement();
 
         string line;
-        int currentLineNumber = 0;
+        int currentLineNumber = -1;
         LineEntry entry;
         int sourceLine = 0;
 

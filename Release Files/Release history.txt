@@ -16,7 +16,7 @@ Version 1.24 - 16/09/2021 (by Paul Farrow and SirMorris)
   - "Access Denied" error dialog no longer gets displayed after taking the PC out of hibernation.
   - The BASIC listing import facility was not detecting Spectrum 128 specific keywords unless
     the 'Accept alternate keyword spellings' option was selected.
-
+  - The BASIC listing import facility was not allowing a line number of 0.
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
   - Facility to create a blank microdrive file.

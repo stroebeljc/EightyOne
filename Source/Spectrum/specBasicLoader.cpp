@@ -100,6 +100,12 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 {
         map<unsigned char, string> tokens;
 
+        if (mSpec128)
+        {
+                tokens[163] = " SPECTRUM ";
+                tokens[164] = " PLAY ";
+        }
+
         tokens[165] = "RND";
         tokens[166] = "INKEY$";
         tokens[167] = "PI";
@@ -196,64 +202,31 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
         if (acceptAlternateKeywordSpelling)
         {
-                tokens.clear();
+                ReplaceTokenEndCharacters(tokens, ' ', '(');
+                DoTokenise(tokens);
 
-                tokens[168] = "FN(";
-                tokens[169] = "POINT(";
-                tokens[170] = "SCREEN$(";
-                tokens[171] = "ATTR(";
-                tokens[172] = "AT(";
-                tokens[173] = "TAB(";
-                tokens[174] = "VAL$(";
-                tokens[175] = "CODE(";
-                tokens[176] = "VAL(";
-                tokens[177] = "LEN(";
-                tokens[178] = "SIN(";
-                tokens[179] = "COS(";
-                tokens[180] = "TAN(";
-                tokens[181] = "ASN(";
-                tokens[182] = "ACS(";
-                tokens[183] = "ATN(";
-                tokens[184] = "LN(";
-                tokens[185] = "EXP(";
-                tokens[186] = "INT(";
-                tokens[187] = "SQR(";
-                tokens[188] = "SGN(";
-                tokens[189] = "ABS(";
-                tokens[190] = "PEEK(";
-                tokens[191] = "IN(";
-                tokens[192] = "USR(";
-                tokens[193] = "STR$(";
-                tokens[194] = "CHR$(";
-                tokens[195] = "NOT(";
-                tokens[196] = "BIN(";
-                tokens[250] = " IF(";
-                
-                tokens[208] = " FORMAT\"";
-                tokens[209] = " MOVE\"";
-                tokens[210] = " ERASE\"";
-                tokens[213] = " MERGE\"";
-                tokens[214] = " VERIFY\"";
-                tokens[224] = " LPRINT\"";
-                tokens[238] = " INPUT\"";
-                tokens[239] = " LOAD\"";
-                tokens[245] = " PRINT\"";
-                tokens[248] = " SAVE\"";
+                ReplaceTokenEndCharacters(tokens, '(', '\"');
+                DoTokenise(tokens);
+
+                tokens.clear();
 
                 tokens[206] = " DEFFN ";
                 tokens[211] = " OPEN#";
                 tokens[212] = " CLOSE#";
+                tokens[224] = " LPRINT#";
+                tokens[225] = " LLIST#";
+                tokens[238] = " INPUT#";
+                tokens[240] = " LIST#";
+                tokens[245] = " PRINT#";
 
                 tokens[232] = " CONT ";
                 tokens[236] = " GOTO ";
                 tokens[237] = " GOSUB ";
                 tokens[249] = " RAND ";
 
-                if (mSpec128)
-                {
-                        tokens[163] = " SPECTRUM ";
-                        tokens[164] = " PLAY ";
-                }
+                tokens[197] = "OR ";
+                tokens[198] = "AND ";
+                tokens[204] = "TO ";
 
                 DoTokenise(tokens);
 
@@ -266,10 +239,18 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
                         tokens[239] = " LOAD*";
                         tokens[248] = " SAVE*";
                 }
-                
+
+                tokens[204] = " TO)";
                 tokens[245] = " PRINT'";
                 tokens[249] = " RANDOMISE ";
-                tokens[192] = "USR\"";
+
+                DoTokenise(tokens);
+
+                tokens.clear();
+
+                tokens[197] = "OR(";
+                tokens[198] = "AND(";
+                tokens[204] = "TO(";
 
                 DoTokenise(tokens);
 
@@ -284,12 +265,6 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
                         tokens[239] = " LOAD!";
                         tokens[248] = " SAVE!";
                 }
-
-                tokens[224] = " LPRINT#";
-                tokens[225] = " LLIST#";
-                tokens[238] = " INPUT#";
-                tokens[240] = " LIST#";
-                tokens[245] = " PRINT#";
 
                 DoTokenise(tokens);
 

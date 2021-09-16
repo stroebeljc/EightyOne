@@ -57,7 +57,7 @@ void zx81BasicLoader::OutputStartOfProgramData(AnsiString filename, int& address
         OutputByte(addressOffset, 0x00);        //FLAGX
         OutputWord(addressOffset, 0x0000);      //STRLEN
         OutputWord(addressOffset, 0x0C8D);      //T_ADDR
-        OutputWord(addressOffset, 0x0000);      //SEED
+        OutputWord(addressOffset, 0x4321);      //SEED
         OutputWord(addressOffset, 0xE6E0);      //FRAMES
         OutputWord(addressOffset, 0x0000);      //COORDS
         OutputByte(addressOffset, 0xBC);        //PR_CC
@@ -190,36 +190,17 @@ void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
         if (acceptAlternateKeywordSpelling)
         {
+                ReplaceTokenEndCharacters(tokens, ' ', '(');
+                DoTokenise(tokens);
+
+                ReplaceTokenEndCharacters(tokens, '(', '\"');
+                DoTokenise(tokens);
+
                 tokens.clear();
 
-                tokens[193] = "AT(";
-                tokens[194] = "TAB(";
-                tokens[196] = "CODE(";
-                tokens[197] = "VAL(";
-                tokens[198] = "LEN(";
-                tokens[199] = "SIN(";
-                tokens[200] = "COS(";
-                tokens[201] = "TAN(";
-                tokens[202] = "ASN(";
-                tokens[203] = "ACS(";
-                tokens[204] = "ATN(";
-                tokens[205] = "LN(";
-                tokens[206] = "EXP(";
-                tokens[207] = "INT(";
-                tokens[208] = "SQR(";
-                tokens[209] = "SGN(";
-                tokens[210] = "ABS(";
-                tokens[211] = "PEEK(";
-                tokens[212] = "USR(";
-                tokens[213] = "STR$(";
-                tokens[214] = "CHR$(";
-                tokens[215] = "NOT(";
-                tokens[250] = " IF(";
-                
-                tokens[225] = " LPRINT\"";
-                tokens[239] = " LOAD\"";
-                tokens[245] = " PRINT\"";
-                tokens[248] = " SAVE\"";
+                tokens[217] = "OR ";
+                tokens[218] = "AND ";
+                tokens[223] = "TO ";
 
                 tokens[232] = " CONTINUE ";
                 tokens[236] = " GO TO ";
@@ -230,20 +211,17 @@ void zx81BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
+                tokens[223] = " TO)";
                 tokens[245] = " PRINT,";
                 tokens[249] = " RANDOMIZE ";
-
-                if (mZxpandEnabled)
-                {
-                        tokens[225] = " ZXPAND\"";
-                        tokens[226] = " CONFIG\"";
-                        tokens[255] = " CAT\"";
-                }
 
                 DoTokenise(tokens);
 
                 tokens.clear();
 
+                tokens[217] = "OR(";
+                tokens[218] = "AND(";
+                tokens[223] = "TO(";
                 tokens[245] = " PRINT;";
 
                 DoTokenise(tokens);

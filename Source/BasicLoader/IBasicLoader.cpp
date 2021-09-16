@@ -821,6 +821,23 @@ unsigned char IBasicLoader::ConvertFromHexChar(unsigned char chr)
         return val;
 }
 
+void IBasicLoader::ReplaceTokenEndCharacters(map<unsigned char, string>& tokens, const unsigned char oldChar, const unsigned char newChar)
+{
+        map<unsigned char, string>::iterator it;
+
+        for (it = tokens.begin(); it != tokens.end(); it++)
+        {
+                const unsigned char* pToken = (it->second).c_str();
+                int lenToken = strlen((char*)pToken);
+                const unsigned char endChar = pToken[lenToken-1];
+
+                if (endChar == oldChar)
+                {
+                        it->second[lenToken-1] = newChar;
+                }
+        }
+}
+
 void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
 {
         map<unsigned char, string>::reverse_iterator it;
@@ -836,15 +853,15 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 bool tokenFound;
                 int lenAdjustment = 0;
 
-                unsigned char startChar = pToken[0];
-                unsigned char endChar = pToken[lenToken-1];
+                const unsigned char startChar = pToken[0];
+                const unsigned char endChar = pToken[lenToken-1];
 
                 bool tokenBeginsWithSpace = (startChar == ' ');
                 bool tokenBeginsWithAlpha = isalpha(startChar);
                 bool tokenEndsWithSpace = (endChar == ' ');
                 bool tokenEndsWithAlpha = isalpha(endChar);
 
-                if (endChar == '(' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';')
+                if (endChar == '(' || endChar == ')' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';')
                 {
                         lenToken--;
                 }

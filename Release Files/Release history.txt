@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.24 - 11/09/2021 (by Paul Farrow and SirMorris)
+Version 1.24 - 16/09/2021 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Loading a snapshot that has Chroma colour enabled was not re-enabling the colour mode.
   - The RAM provided by the Chroma 80 interface was being incorrectly mirrored in the memory map.
@@ -14,9 +14,15 @@ Version 1.24 - 11/09/2021 (by Paul Farrow and SirMorris)
   - Memory window View Traditional option defaults to the character set for the selected computer
     model if the default ROM is changed and no corresponding character set bitmap exists.
   - "Access Denied" error dialog no longer gets displayed after taking the PC out of hibernation.
+  - The BASIC listing import facility was not detecting Spectrum 128 specific keywords unless
+    the 'Accept alternate keyword spellings' option was selected.
+
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
   - Facility to create a blank microdrive file.
+  - The BASIC listing import facility not sets a non-zero value for system variable SEED.
+  - The BASIC listing import facility now tolerates a wider range of formatting if the 'Accept
+    alternate keyword spellings' option is selected.
 
 Version 1.23 - 19/05/2021 (by Paul Farrow)
 * Bug fixes:

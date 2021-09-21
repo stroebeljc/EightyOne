@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.24 - 16/09/2021 (by Paul Farrow and SirMorris)
+Version 1.24 - 21/09/2021 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Loading a snapshot that has Chroma colour enabled was not re-enabling the colour mode.
   - The RAM provided by the Chroma 80 interface was being incorrectly mirrored in the memory map.
@@ -17,6 +17,7 @@ Version 1.24 - 16/09/2021 (by Paul Farrow and SirMorris)
   - The BASIC listing import facility was not detecting Spectrum 128 specific keywords unless
     the 'Accept alternate keyword spellings' option was selected.
   - The BASIC listing import facility was not allowing a line number of 0.
+  - Unused bits of ZX Printer input port $FB now return the idle status of the data bus.
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
   - Facility to create a blank microdrive file.

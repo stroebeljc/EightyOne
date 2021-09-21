@@ -65,7 +65,7 @@ BYTE acecolour[1024], acelatch=4;
 static BYTE idleDataBus = 0x20;
 
 extern void ZXPrinterWritePort(unsigned char Data);
-extern unsigned char ZXPrinterReadPort(void);
+extern unsigned char ZXPrinterReadPort(BYTE idleDataBus);
 extern int ACEMICState, ACETopBorder, ACELeftBorder;
 extern int TZXEventCounter;
 extern void TZXWriteByte(unsigned char Byte);
@@ -289,7 +289,7 @@ BYTE ace_readport(int Address, int *tstates)
                 if (zx81.aytype==AY_TYPE_ACE) return(sound_ay_read(SelectAYReg));
 
         case 0xfb:
-                if (zx81.zxprinter) return(ZXPrinterReadPort());
+                if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
 
         case 0xff:
                 if (zx81.aytype==AY_TYPE_BOLDFIELD) return(sound_ay_read(SelectAYReg));

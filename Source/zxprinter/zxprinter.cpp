@@ -182,19 +182,18 @@ void TPrinter::WritePort(unsigned char Data)
         EncoderWheel=false;
 }
 
-unsigned char TPrinter::ReadPort(void)
+unsigned char TPrinter::ReadPort(BYTE idleDataBus)
 {
-        unsigned char Data=0;
+        unsigned char Data=idleDataBus;
 
-        if (OnPaper) Data=128;
-        //else Data=0;
+        Data &= 0xBF;
 
-        if (EncoderWheel) Data |= 1;
+        if (!OnPaper) Data &= 0x7F;
+
+        if (!EncoderWheel) Data &= 0xFE;
 
         return(Data);
-
 }
-
 
 //---------------------------------------------------------------------------
 void ZXPrinterClockTick(int ts)
@@ -206,9 +205,9 @@ void ZXPrinterWritePort(unsigned char Data)
         Printer->WritePort(Data);
 }
 
-unsigned char ZXPrinterReadPort(void)
+unsigned char ZXPrinterReadPort(BYTE idleDataBus)
 {
-        return(Printer->ReadPort());
+        return(Printer->ReadPort(idleDataBus));
 }
 
 

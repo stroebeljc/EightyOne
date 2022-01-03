@@ -87,6 +87,8 @@ __published:	// IDE-managed Components
         TUpDown *HD0SUD;
         TCheckBox *HD0ReadOnly;
         TCheckBox *HD1ReadOnly;
+        TButton *btnCreateCartridge;
+        TSaveDialog *SaveDialog1;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall DriveAFSBtnClick(TObject *Sender);
         void __fastcall DriveAEjectBtnClick(TObject *Sender);
@@ -107,6 +109,7 @@ __published:	// IDE-managed Components
         void __fastcall HD1HUDClick(TObject *Sender, TUDBtnType Button);
         void __fastcall HD0ReadOnlyClick(TObject *Sender);
         void __fastcall HD1ReadOnlyClick(TObject *Sender);
+        void __fastcall btnCreateCartridgeClick(TObject *Sender);
 private:	// User declarations
         int FloppyTop, HDTop, MicroTop;
         int GetMDVNo(TObject *Sender);

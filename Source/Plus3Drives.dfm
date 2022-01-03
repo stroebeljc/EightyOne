@@ -659,6 +659,16 @@ object P3Drive: TP3Drive
       OnClick = MDV0EjectBtnClick
     end
   end
+  object btnCreateCartridge: TButton
+    Left = 8
+    Top = 544
+    Width = 185
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = 'Create blank microdrive cartridge...'
+    TabOrder = 4
+    OnClick = btnCreateCartridgeClick
+  end
   object OpenDialog1: TOpenDialog
     Filter = 
       'Disk Images|*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.lar;*.zip|+3 D' +
@@ -679,6 +689,13 @@ object P3Drive: TP3Drive
   object OpenDialog3: TOpenDialog
     Filter = 'All Microdrive Cartridges (*.mdr, *.mdv)|*.mdr;*.mdv'
     Left = 160
+    Top = 392
+  end
+  object SaveDialog1: TSaveDialog
+    DefaultExt = 'mdr'
+    Filter = 'Microdrive Cartridge (*.mdr)|*.mdr'
+    Title = 'Create Blank Microdrive File'
+    Left = 128
     Top = 392
   end
 end

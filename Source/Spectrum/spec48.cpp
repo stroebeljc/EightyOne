@@ -1375,7 +1375,7 @@ BYTE ReadPort(int Address, int *tstates)
 
         case 0xfb:
                 if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_datareg());
-                if (zx81.zxprinter) return(ZXPrinterReadPort());
+                if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
                 break;
 
         case 0xfd:

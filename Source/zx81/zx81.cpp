@@ -1085,7 +1085,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                                 sound_beeper(beeper);
                         return(255);
                 case 0xfb:
-                        if (zx81.zxprinter) return(ZXPrinterReadPort());
+                        if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
 
                 default:
                         break;

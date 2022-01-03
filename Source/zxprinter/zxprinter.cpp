@@ -149,13 +149,13 @@ void TPrinter::ClockTick(int ts)
 
         if (Counter2)
         {
-                OnPaper=false;
+                OnPaper=StylusActive;
                 EncoderWheel=false;
                 Counter2--;
         }
         else
         {
-                OnPaper=true;
+                if (XPos==0) OnPaper=true;
                 EncoderWheel=true;
                 OutputBit();
                 XPos++;
@@ -163,7 +163,7 @@ void TPrinter::ClockTick(int ts)
                 if (XPos==(zx81.machine==MACHINESPEC48 ? 257:258))
                 {
                         OutputLine();
-                        OnPaper=false;
+                        OnPaper=StylusActive;
                         EncoderWheel=false;
                         XPos=0;
                         Counter2=1+LineSpeed*10;
@@ -178,23 +178,22 @@ void TPrinter::WritePort(unsigned char Data)
         if (Data&128) StylusActive=true;
         else StylusActive=false;
 
-        OnPaper=false;
+        OnPaper=StylusActive;
         EncoderWheel=false;
 }
 
-unsigned char TPrinter::ReadPort(void)
+unsigned char TPrinter::ReadPort(BYTE idleDataBus)
 {
-        unsigned char Data=0;
+        unsigned char Data=idleDataBus;
 
-        if (OnPaper) Data=128;
-        //else Data=0;
+        Data &= 0xBF;
 
-        if (EncoderWheel) Data |= 1;
+        if (!OnPaper) Data &= 0x7F;
+
+        if (!EncoderWheel) Data &= 0xFE;
 
         return(Data);
-
 }
-
 
 //---------------------------------------------------------------------------
 void ZXPrinterClockTick(int ts)
@@ -206,9 +205,9 @@ void ZXPrinterWritePort(unsigned char Data)
         Printer->WritePort(Data);
 }
 
-unsigned char ZXPrinterReadPort(void)
+unsigned char ZXPrinterReadPort(BYTE idleDataBus)
 {
-        return(Printer->ReadPort());
+        return(Printer->ReadPort(idleDataBus));
 }
 
 

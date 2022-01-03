@@ -563,14 +563,13 @@ void GDIAccurateInit(int resize)
 void GDIAccurateUpdateDisplay(bool singlestep)
 {
         static int framecounter=0;
-        int ret;
-
+        
         if (++framecounter > zx81.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
 
-        ret=StretchBlt(Form1->Canvas->Handle,
+        StretchBlt(Form1->Canvas->Handle,
                         rcdest.Left, rcdest.Top,
                         (rcdest.Right-rcdest.Left),
                         (rcdest.Bottom-rcdest.Top),
@@ -579,7 +578,8 @@ void GDIAccurateUpdateDisplay(bool singlestep)
                         (rcsource.Right-rcsource.Left),
                         (rcsource.Bottom-rcsource.Top),
                         SRCCOPY);
-        if (!ret) ShowMessage(SysErrorMessage(GetLastError()));
+// Commented out the error dialog to prevent error displayed after bring PC out of hibernation
+//      if (!ret) ShowMessage(SysErrorMessage(GetLastError()));
 
         dest=buffer= (unsigned char *) GDIFrame->ScanLine[0];
 }

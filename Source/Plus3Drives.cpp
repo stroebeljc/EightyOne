@@ -394,6 +394,8 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
 
         if (Height<80) Form1->DiskDrives1->Visible=false;
         else Form1->DiskDrives1->Visible=true;
+
+        btnCreateCartridge->Visible = MicroGroup->Visible;
 }
 //---------------------------------------------------------------------------
 
@@ -742,4 +744,50 @@ void P3DriveMachineHasInitialised(void)
 //---------------------------------------------------------------------------
 
 
+
+void __fastcall TP3Drive::btnCreateCartridgeClick(TObject *Sender)
+{
+        btnCreateCartridge->Enabled = false;
+
+        if (SaveDialog1->Execute())
+        {
+                AnsiString FileName;
+                FileName = SaveDialog1->FileName;
+                bool success = true;
+
+                FILE* f=fopen(FileName.c_str(), "wb");
+                if (f)
+                {
+                        try
+                        {
+                                for (int i = 0; i < 137922; i++)
+                                {
+                        	        fputc(0xFC, f);
+                                }
+                                fputc(0x00, f);
+                        }
+                        catch (...)
+                        {
+                                success = false;
+                        }
+
+                        if (fclose(f))
+                        {
+                                success = false;
+                        }
+                }
+                else
+                {
+                        success = false;
+                }
+
+                if (!success)
+                {
+                        ShowMessage("Failed to create microdrive file");
+                }
+        }
+
+        btnCreateCartridge->Enabled = true;
+}
+//---------------------------------------------------------------------------
 

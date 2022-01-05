@@ -21,7 +21,6 @@ Version 1.24 - 05/01/2022 (by Paul Farrow and SirMorris)
   - COPYing a collapsed display on a ZX81 no longer results in corrupt printer output.
   - Resolved issue introduced in version 1.18 that broke support for certain pseudo hi-res display
     drivers, e.g. Invaders (Odyssey Computing), Pacman (Brian Lewis), Invaders (Brian Lewis).
-    
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
   - Facility to create a blank microdrive file.

@@ -24,7 +24,7 @@ Version 1.24 - 05/01/2022 (by Paul Farrow and SirMorris)
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
   - Facility to create a blank microdrive file.
-  - The BASIC listing import facility not sets a non-zero value for system variable SEED.
+  - The BASIC listing import facility now sets a non-zero value for system variable SEED.
   - The BASIC listing import facility now tolerates a wider range of formatting if the 'Accept
     alternate keyword spellings' option is selected.
 

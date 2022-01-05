@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.24 - 03/01/2022 (by Paul Farrow and SirMorris)
+Version 1.24 - 05/01/2022 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Loading a snapshot that has Chroma colour enabled was not re-enabling the colour mode.
   - The RAM provided by the Chroma 80 interface was being incorrectly mirrored in the memory map.
@@ -20,7 +20,8 @@ Version 1.24 - 03/01/2022 (by Paul Farrow and SirMorris)
   - Unused bits of ZX Printer input port $FB now return the idle status of the data bus.
   - COPYing a collapsed display on a ZX81 no longer results in corrupt printer output.
   - Resolved issue introduced in version 1.18 that broke support for certain pseudo hi-res display
-    drivers, e.g. Invaders (Odyssey Computing), Pacman (Brian Lewis) and Invaders (Brian Lewis).
+    drivers, e.g. Invaders (Odyssey Computing), Pacman (Brian Lewis), Invaders (Brian Lewis).
+    
 * Enhancements:
   - Updated ZXpand+ firmware to 't0mte'.
   - Facility to create a blank microdrive file.

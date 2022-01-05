@@ -102,6 +102,8 @@ void load_config(void)
         zx81.HideHardwareHSyncs = false;
         machine.tperscanline=207;
         machine.tperframe=312*207;
+        machine.fps=50;
+
         machine.intposition=0;    
 
         zx81.bordersize=BORDERNORMAL;

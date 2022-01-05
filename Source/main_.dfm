@@ -639,10 +639,4 @@ object Form1: TForm1
     Left = 96
     Top = 40
   end
-  object AnimTimer1: TAnimTimer
-    Enabled = False
-    OnTimer = AnimTimer1Timer
-    Left = 64
-    Top = 8
-  end
 end

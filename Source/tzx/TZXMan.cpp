@@ -93,7 +93,7 @@ void TTZX::ClockTick(int TStates, bool ZX81)
 
         if (!TZXFile.Playing) return;
 
-        if (SoundOn->Down) sound_beeper(TZXFile.GetEarState());
+        if (SoundOn->Down) Sound.Beeper(TZXFile.GetEarState(), frametstates);
 
         if (TZXFile.ClockTick(TStates))
         {

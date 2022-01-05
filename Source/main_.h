@@ -142,7 +142,6 @@ __published:	// IDE-managed Components
         TOpenDialog *OpenRZX;
         TMenuItem *QSChrEnable;
         TMenuItem *N9;
-        TAnimTimer *AnimTimer1;
         TMenuItem *SpectraColourEnable;
         TMenuItem *ChromaColourEnable;
         TMenuItem *GatherWindows1;
@@ -179,7 +178,6 @@ __published:	// IDE-managed Components
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
         void __fastcall DebugWinClick(TObject *Sender);
         void __fastcall PauseZX81Click(TObject *Sender);
-        void __fastcall AnimTimer1Timer(TObject *Sender);
         void __fastcall InverseVideoClick(TObject *Sender);
         void __fastcall FormDeactivate(TObject *Sender);
         void __fastcall DisplayArtClick(TObject *Sender);
@@ -251,6 +249,8 @@ private:	// User declarations
         Graphics::TBitmap *LEDRedOff;
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
+        virtual void __fastcall WndProc(TMessage &Msg);
+
         int BaseWidth;
         int BaseHeight;
         bool FullScreen;
@@ -262,6 +262,8 @@ public:		// User declarations
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
         void GatherWindowsIfRequired();
+        void __fastcall RunFrame();
+        int RunFrameEnable;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

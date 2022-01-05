@@ -46,6 +46,5 @@ public:		// User declarations
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSoundOutput *SoundOutput;
-extern "C" void SoundOP_Update(unsigned char *data, int len);
 //---------------------------------------------------------------------------
 #endif

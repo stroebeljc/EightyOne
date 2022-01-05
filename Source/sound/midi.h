@@ -1,20 +1,27 @@
 #ifndef MIDI_H
 #define MIDI_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+class CMidi
+{
+public:
+        CMidi();
+        void WriteBit(int Bit);
+        void ClockTick(int ts);
+        void Write(int Byte);
+        void Start(void);
+        void Stop(void);
+        int Device;
 
-void MidiWriteBit(int Bit);
-void MidiClockTick(int ts);
-void MidiWrite(int Byte);
-void MidiStart(void);
-void MidiStop(void);
+private:
+        int MidiSerialCount;
+        int MidiByte;
+        unsigned char MidiBuffer[1024];
+        int MidiBufferLen;
+        void *outHandle;
 
-extern int MidiDev;
+};
 
-#ifdef __cplusplus
-}
-#endif
+extern CMidi Midi;
+
 
 #endif

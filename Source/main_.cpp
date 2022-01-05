@@ -36,7 +36,6 @@
 #include "kbstatus.h"
 #include "snap.h"
 #include "zx81config.h"
-#include "sound.h"
 #include "FullScreen.h"
 #include "main_.h"
 #include "accdraw_.h"
@@ -49,7 +48,7 @@
 #include "debug.h"
 #include "utils.h"
 #include "artifacts_.h"
-#include "SoundOP.h"
+#include "sound\SoundOP.h"
 #include "memsave_.h"
 #include "zx97config.h"
 #include "SerialPort.h"
@@ -61,7 +60,7 @@
 #include "z80.h"
 #include "parallel.h"
 #include "sp0256.h"
-#include "midifrm.h"
+#include "sound\SoundForm.h"
 #include "ZipFile_.h"
 #include "debug68.h"
 #include "symbolstore.h"
@@ -78,6 +77,8 @@
 #include "BasicLister\BasicListerOptions_.h"
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
+
+#include "sound\sound.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -97,6 +98,7 @@ extern int AccurateDraw(SCANLINE *Line);
 extern loadFileSymbolsProxy(const char*);
 
 extern bool ShowSplash;
+extern int frametstates;
 
 extern "C" void z80_reset();
 extern "C" int z80_nmi(int ts, int* pNonHaltedWaitStates, int* pHaltedWaitStates);
@@ -109,19 +111,32 @@ extern void spec_save_z80(char *fname);
 extern void spec_save_sna(char *fname);
 extern "C" void rzx_close(void);
 
-extern "C" void VideoThread(void);
-
 int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 
 int AutoLoadCount=0;
 char TEMP1[256];
 
-HANDLE Mutex;
-DWORD VideoThreadId;
-
 SCANLINE Video[2], *BuildLine, *DisplayLine;
 
 static bool iniFileExists = false;
+
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::WndProc(TMessage &Message)
+{
+        switch(Message.Msg)
+        {
+        case WM_USER:
+                if (RunFrameEnable)
+                        Form1->RunFrame();
+                break;
+
+        default:
+                break;
+        }
+	TForm::WndProc(Message);
+}
 
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -130,6 +145,8 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         AnsiString IniPath;
         char path[256];
         int i;
+
+        RunFrameEnable=false;
 
         strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (zx81.cwd[strlen(zx81.cwd)-1]!='\\')
@@ -192,15 +209,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         BuildLine=&Video[0];
         DisplayLine=&Video[1];
 
-        //Mutex=CreateMutex(NULL, true, NULL);
-        //CreateThread(
-        //             NULL,       // default security attributes
-        //             0,          // default stack size
-        //             (LPTHREAD_START_ROUTINE) VideoThread,
-        //             NULL,       // no thread function arguments
-        //             0,          // default creation flags
-        //             &VideoThreadId); // receive thread identifier
-
         SpecStartUp();
 }
 //---------------------------------------------------------------------------
@@ -210,7 +218,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         TIniFile *ini;
         char soundfile[256];
 
-        AnimTimer1->Enabled=false;
+        RunFrameEnable=false;
 
 //        LPITEMIDLIST ppidl;
 //
@@ -242,8 +250,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         if (access(soundfile,0)) nosound=false;
 
         ATA_Init();
-
-        if (!nosound) nosound=sound_init();
         load_config();
         PCKbInit();
 
@@ -252,6 +258,12 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         ini = new TIniFile(zx81.inipath);
         ShowSplash = ini->ReadBool("MAIN","ShowSplash", ShowSplash);
         EnableSplashScreen->Checked = ShowSplash;
+
+        SP0256_Init();
+
+        iniFileExists = FileExists(zx81.inipath);
+        LoadSettings(ini);
+
         RenderMode=ini->ReadInteger("MAIN","RenderMode", RENDERGDI);
 
         if (!RenderInit())
@@ -260,13 +272,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
                 exit(0);
         }
 
-        SP0256_Init();
-
-        iniFileExists = FileExists(zx81.inipath);
-        LoadSettings(ini);
         delete ini;
 
-        AnimTimer1->Interval=20;
+        //machine.fps=20;
         Timer2->Interval=1000;
 
         LEDGreenOn = new Graphics::TBitmap;
@@ -282,6 +290,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         else HelpTopics2->Enabled=false;
 
         BuildConfigMenu();
+        if ( Sound.Initialise(Form1->Handle, machine.fps,0,0,0 )) MessageBox(NULL, "","Sound Error",0);
 }
 
 //---------------------------------------------------------------------------
@@ -444,7 +453,7 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
         N2001->Checked=false;
         N4001->Checked=false;
         UserDefined1->Checked=true;
-        
+
         int baseWidth=ClientWidth;
         int baseHeight=ClientHeight;
         if (StatusBar1->Visible)
@@ -497,7 +506,18 @@ void __fastcall TForm1::Speed1Click(TObject *Sender)
 void __fastcall TForm1::Keyboard1Click(TObject *Sender)
 {
         PCAllKeysUp();
-        Kb->ShowModal();
+        if (Keyboard1->Checked)
+        {
+                Kb->Close();
+                Keyboard1->Checked=false;
+        }
+        else
+        {
+                PCAllKeysUp();
+                Kb->Show();
+                Keyboard1->Checked=true;
+        }
+        //Kb->ShowModal();
 }
 //---------------------------------------------------------------------------
 
@@ -637,7 +657,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         }
 
         zx81_stop=1;
-        sound_ay_reset();
+        Sound.AYReset();
 
         if (BasicLister->ListerAvailable())
         {
@@ -685,7 +705,7 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         PCAllKeysUp();
         zx81_stop=1;
         z80_reset();
-        sound_ay_reset();
+        Sound.AYReset();
         InitialiseChroma();
         DisableSpectra();
         if (machine.reset) machine.reset();
@@ -711,11 +731,11 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         if (machine.exit) machine.exit();
 
         zx81_stop=true;
-        AnimTimer1->Enabled=false;
+        RunFrameEnable=false;
 
         PCAllKeysUp();
 
-        if (!nosound) sound_end();
+        if (!nosound) Sound.End();
 
         ini = new TIniFile(zx81.inipath);
         SaveSettings(ini);
@@ -762,6 +782,19 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         int targetfps;
         AnsiString Filename, Ext;
         int i=0;
+
+        static HWND OldhWnd=NULL;
+
+        if (Form1->Handle != OldhWnd)
+        {
+                OldhWnd=Form1->Handle;
+                Sound.ReInitialise(OldhWnd, 0,0,0,0);
+
+                RenderEnd();
+                RenderInit();
+                AccurateInit(true);
+        }
+
 
         if (startup<=6) startup++;
 
@@ -831,7 +864,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 P3Drive->RedetectDrivesClick(NULL);
                 DrivesChanged=false;
         }
-        
+
         targetfps = zx81.NTSC ? 60:50;
         if (((targetfps-1) == fps) || ((targetfps+1)==fps)) fps=targetfps;
         targetfps = (targetfps  * 9) / 10;
@@ -948,7 +981,7 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                                                 GetSystemMetrics(SM_CXSCREEN) + (Width-ClientWidth),
                                                 GetSystemMetrics(SM_CYSCREEN)
                                                         + (Height-ClientHeight)
-                                                        + StatusBar1->Height, NULL);
+                                                        + StatusBar1->Height, 0x400);
                         }
                 }
                 else
@@ -1077,101 +1110,6 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::AnimTimer1Timer(TObject *Sender)
-{
-        static int j, borrow, Drive;
-        unsigned short rshift = VK_RSHIFT;
-        unsigned short lshift = VK_LSHIFT;
-
-        if (zx81.UseRShift)
-        {
-                bool L=((GetAsyncKeyState(VK_LSHIFT)&32768)!=0);
-                bool R=((GetAsyncKeyState(VK_RSHIFT)&32768)!=0);
-                TShiftState z;
-
-                if (R != RShift)
-                {
-                        RShift=R;
-                        if (R) FormKeyDown(NULL, rshift, z);
-                        else FormKeyUp(NULL, rshift,z);
-                }
-
-                if (L != LShift)
-                {
-                        LShift=L;
-                        if (L) FormKeyDown(NULL, lshift,z);
-                        else FormKeyUp(NULL, lshift,z);
-                }
-        }
-
-        if (!nosound) sound_frame();
-
-        if (zx81_stop)
-        {
-                AccurateUpdateDisplay(false);
-                return;
-        }
-        if (AutoLoadCount) DoAutoLoad();
-
-        if (spectrum.drivebusy != Drive)
-        {
-                StatusBar1->Refresh();
-                StatusBar1->Invalidate();
-                Drive=spectrum.drivebusy;
-        }
-
-        if (spectrum.kmouse)
-        {
-                mouse.x = Controls::Mouse->CursorPos.x;
-                mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
-        }
-
-        fps++;
-        frametstates=0;
-
-        j=zx81.single_step?1:(machine.tperframe + borrow);
-
-        if (zx81.machine != MACHINESPEC48 && j!=1 && !AutoLoadCount)
-        {
-                j += (zx81.speedup * machine.tperframe) / machine.tperscanline;
-        }
-
-        while (j>0 && !zx81_stop)
-        {
-                j-= machine.do_scanline(BuildLine);
-                AccurateDraw(BuildLine);
-                //WaitForSingleObject(Mutex,INFINITE);
-                //templine=BuildLine;
-                //BuildLine=DisplayLine;
-                //DisplayLine=templine;
-                //BuildLine->sync_len=DisplayLine->sync_len;
-                //BuildLine->sync_valid=DisplayLine->sync_valid;
-                //ReleaseMutex(Mutex);
-                //SwitchToThread();
-                //Sleep(0);
-                //AccurateDraw(DisplayLine);
-        }
-
-        if (!zx81_stop) borrow=j;
-
-        if (zx81.romCartridge == ROMCARTRIDGEZXC1)
-        {
-                RomCartridgeZXC1TimerTick();
-        }
-}
-//---------------------------------------------------------------------------
-
-void VideoThread(void)
-{
-        while(1)
-        {
-                WaitForSingleObject(Mutex,INFINITE);
-                AccurateDraw(DisplayLine);
-                ReleaseMutex(Mutex);
-                SwitchToThread();
-        }
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 {
@@ -1420,7 +1358,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         z80_reset();
         AccurateInit(false);
         machine.initialise();
-        sound_ay_reset();
+        Sound.AYReset(); //sound_ay_reset();
         zx81_stop=initialStopState;
         DebugUpdate();
         LiveMemoryWindow->Reset();
@@ -1972,7 +1910,18 @@ void __fastcall TForm1::PrinterPort1Click(TObject *Sender)
 
 void __fastcall TForm1::Midi1Click(TObject *Sender)
 {
-        MidiForm->ShowModal();
+        if (Midi1->Checked)
+        {
+                MidiForm->Close();
+                Midi1->Checked=false;
+        }
+        else
+        {
+                PCAllKeysUp();
+                MidiForm->Show();
+                Midi1->Checked=true;
+        }
+        //MidiForm->ShowModal();
 }
 //---------------------------------------------------------------------------
 
@@ -2123,4 +2072,94 @@ void __fastcall TForm1::FormShow(TObject *Sender)
         StatusBar1->Invalidate();
 }
 //---------------------------------------------------------------------------
+void __fastcall TForm1::RunFrame()
+{
+        static int j, borrow, Drive;
+        unsigned short rshift = VK_RSHIFT;
+        unsigned short lshift = VK_LSHIFT;
+
+        if (zx81.UseRShift)
+        {
+                bool L=((GetAsyncKeyState(VK_LSHIFT)&32768)!=0);
+                bool R=((GetAsyncKeyState(VK_RSHIFT)&32768)!=0);
+                TShiftState z;
+
+                if (R != RShift)
+                {
+                        RShift=R;
+                        if (R) FormKeyDown(NULL, rshift, z);
+                        else FormKeyUp(NULL, rshift,z);
+                }
+
+                if (L != LShift)
+                {
+                        LShift=L;
+                        if (L) FormKeyDown(NULL, lshift,z);
+                        else FormKeyUp(NULL, lshift,z);
+                }
+        }
+
+        // if (!nosound) ;
+        Sound.Frame(); //sound_frame();
+
+        if (zx81_stop)
+        {
+                AccurateUpdateDisplay(false);
+                return;
+        }
+        if (AutoLoadCount) DoAutoLoad();
+
+        if (spectrum.drivebusy != Drive)
+        {
+                StatusBar1->Refresh();
+                StatusBar1->Invalidate();
+                Drive=spectrum.drivebusy;
+        }
+
+        if (spectrum.kmouse)
+        {
+                mouse.x = Controls::Mouse->CursorPos.x;
+                mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
+        }
+
+        fps++;
+        frametstates=0;
+
+        j=zx81.single_step?1:(machine.tperframe + borrow);
+
+        if (zx81.machine != MACHINESPEC48 && j!=1 && !AutoLoadCount)
+        {
+                j += (zx81.speedup * machine.tperframe) / machine.tperscanline;
+        }
+
+        while (j>0 && !zx81_stop)
+        {
+                j-= machine.do_scanline(BuildLine);
+                AccurateDraw(BuildLine);
+                //WaitForSingleObject(Mutex,INFINITE);
+                //templine=BuildLine;
+                //BuildLine=DisplayLine;
+                //DisplayLine=templine;
+                //BuildLine->sync_len=DisplayLine->sync_len;
+                //BuildLine->sync_valid=DisplayLine->sync_valid;
+                //ReleaseMutex(Mutex);
+                //SwitchToThread();
+                //Sleep(0);
+                //AccurateDraw(DisplayLine);
+        }
+
+        if (!zx81_stop) borrow=j;
+
+        if (zx81.romCartridge == ROMCARTRIDGEZXC1)
+        {
+                RomCartridgeZXC1TimerTick();
+        }
+}
+
+
+
+
+
+
+
 

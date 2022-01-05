@@ -74,12 +74,6 @@ __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-cdecl void SoundOP_Update(unsigned char *data, int len)
-{
-        SoundOutput->UpdateImage(data,len);
-}
-//---------------------------------------------------------------------------
-
 void __fastcall TSoundOutput::FormClose(TObject *Sender,
       TCloseAction &Action)
 {

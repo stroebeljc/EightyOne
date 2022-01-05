@@ -248,7 +248,7 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
                 static int count=0, level=128, lastbit=0;
                 //int curve[12] = { 36, 56, 60,  64, 64, 64,  64, 64, 64,  60, 56, 36 };
 
-                if (SoundOn->Down) sound_beeper(MicState);
+                if (SoundOn->Down) Sound.Beeper(MicState, frametstates);
 
                 if (MicState == lastbit)
                         count ++;// (zx81.machine==MACHINEACE)?1:3;
@@ -281,7 +281,7 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
                 lastbit=MicState;
                 //ScrollBar->Max=Wav.NoSamples;
         }
-        else    if (SoundOn->Down) sound_beeper(GetEarState());
+        else    if (SoundOn->Down) Sound.Beeper(GetEarState(), frametstates);
 
         if (TapePos>Wav.NoSamples)
         {

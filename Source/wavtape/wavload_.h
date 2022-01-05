@@ -37,6 +37,9 @@
 #include <Menus.hpp>
 #include <Buttons.hpp>
 #include "OffBtn.hpp"
+
+extern int frametstates;
+
 //---------------------------------------------------------------------------
 class TWavLoad : public TForm
 {

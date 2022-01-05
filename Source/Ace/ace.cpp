@@ -114,7 +114,7 @@ void ace_writebyte(int Address, int Data)
         if (zx81.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
-                if (Address == 0x7ffe) sound_ay_write(SelectAYReg,Data);
+                if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data, frametstates);
         }
 
         if (Address<8192) return;
@@ -202,7 +202,7 @@ void ace_writeport(int Address, int Data, int *tstates)
                         SelectAYReg=Data&15;
         case 0x5f:
                 if (zx81.aytype==AY_TYPE_FULLER)
-                        sound_ay_write(SelectAYReg, Data);
+                        Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0x73:
@@ -229,7 +229,7 @@ void ace_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdf:
-                if (zx81.aytype==AY_TYPE_ACE) sound_ay_write(SelectAYReg, Data);
+                if (zx81.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xfb:
@@ -244,12 +244,12 @@ void ace_writeport(int Address, int Data, int *tstates)
         case 0xfe:
                 ACEMICState = Data&8;
                 beeper = 1-beeper;
-                sound_beeper(beeper);
+                Sound.Beeper(beeper, frametstates);
                 break;
 
         case 0xff:
                 if (zx81.aytype==AY_TYPE_BOLDFIELD)
-                        sound_ay_write(SelectAYReg, Data);
+                        Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         default:
@@ -286,13 +286,13 @@ BYTE ace_readport(int Address, int *tstates)
                 if (zx81.ts2050) return(d8251readCTRL());
 
         case 0xdd:
-                if (zx81.aytype==AY_TYPE_ACE) return(sound_ay_read(SelectAYReg));
+                if (zx81.aytype==AY_TYPE_ACE) return(Sound.AYRead(SelectAYReg));
 
         case 0xfb:
                 if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
 
         case 0xff:
-                if (zx81.aytype==AY_TYPE_BOLDFIELD) return(sound_ay_read(SelectAYReg));
+                if (zx81.aytype==AY_TYPE_BOLDFIELD) return(Sound.AYRead(SelectAYReg));
 
         default:
                 break;

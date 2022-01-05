@@ -37,7 +37,7 @@
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
 
-extern "C" void sound_ay_init(void);
+//extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
 
 extern void HWSetMachine(int machine, int speccy);
@@ -494,8 +494,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
 
         zx81.NTSC = NTSC->Checked;
-        if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
-        else Form1->AnimTimer1->Interval=20;
+//####        if (zx81.NTSC) Form1->AnimTimer1->Interval=17;
+//        else Form1->AnimTimer1->Interval=20;
 
         zx81.HideHardwareHSyncs = HideHardwareHSyncs->Checked;
          
@@ -684,6 +684,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         machine.tperscanline=224;
                         machine.intposition=14336;
                         machine.scanlines=312;
+                        machine.fps=50;
                         machine.tperframe= machine.tperscanline * machine.scanlines;
 
                 }
@@ -701,6 +702,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         machine.tperscanline=226;
                         machine.intposition=10848;
                         machine.scanlines=262;
+                        machine.fps=60;
                         machine.tperframe= machine.tperscanline * machine.scanlines;
                 }
                 else
@@ -709,6 +711,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         machine.tperscanline=228;
                         machine.intposition=14336-228+32;
                         machine.scanlines=311;
+                        machine.fps=50;
                         machine.tperframe= machine.tperscanline * machine.scanlines;
                 }
                 break;
@@ -725,6 +728,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.writeport = zx81_writeport;
                 machine.contendmem = zx81_contend;
                 machine.contendio = zx81_contend;
+                machine.fps = zx81.NTSC ? 60:50; // may be overwritten later
                 machine.reset = NULL;
                 machine.nmi = NULL;
                 machine.exit = NULL;
@@ -888,7 +892,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
 
         if (ResetRequired) machine.initialise();
-        sound_ay_init();
+        Sound.AYInit();
         Keyboard->KbChange();
 
         Form1->RZX1->Enabled=false;
@@ -913,6 +917,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (Sender) Close();
 
         if (Dbg->Visible) Dbg->UpdateVals();
+        Sound.ReInitialise(NULL, machine.fps,0,0,0);
 
 }
 

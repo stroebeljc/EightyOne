@@ -25,7 +25,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <mem.h>
-
+#include <midi.h>
 #include "zx81.h"
 #include "z80\z80.h"
 #include "snap.h"
@@ -55,7 +55,7 @@ extern "C"
 {
         int CRC32Block(char *memory, int romlen);
         void P3DriveMachineHasInitialised(void);
-        void MidiClockTick(int);
+//        void MidiClockTick(int);
 }
 
 extern void InitialiseSpectra();
@@ -840,7 +840,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0x5f:
-                if (zx81.aytype==AY_TYPE_FULLER) sound_ay_write(SelectAYReg, Data);
+                if (zx81.aytype==AY_TYPE_FULLER) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg(Data);
                 break;
 
@@ -936,7 +936,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                 break;
                         }
                 default:
-                        if (zx81.aytype==AY_TYPE_ACE) sound_ay_write(SelectAYReg, Data);
+                        if (zx81.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                         break;
                 }
         case 0xe3:
@@ -982,7 +982,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xf6:
-                if (zx81.aytype==AY_TYPE_TIMEX || spectrum.machine==SPECCYSE) sound_ay_write(SelectAYReg, Data);
+                if (zx81.aytype==AY_TYPE_TIMEX || spectrum.machine==SPECCYSE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xf7:
@@ -1058,7 +1058,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         break;
 
                 case 0xbf:
-                        sound_ay_write(SelectAYReg, Data);
+                        Sound.AYWrite(SelectAYReg, Data, frametstates);
                         break;
                 }
                 break;
@@ -1081,7 +1081,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (!(Address&1))
                 {
                         SPECMICState = Data&8;
-                        if (zx81.vsyncsound) sound_beeper(Data&16);
+                        if (zx81.vsyncsound) Sound.Beeper(Data&16, frametstates);
 
                         if (zx81.colour == COLOURSPECTRA)
                         {
@@ -1298,7 +1298,7 @@ BYTE ReadPort(int Address, int *tstates)
 
         case 0xdd:
                 if (zx81.aytype==AY_TYPE_ACE)
-                        return(sound_ay_read(SelectAYReg));
+                        return(Sound.AYRead(SelectAYReg));
                 break;
 
         case 0xdf:
@@ -1364,7 +1364,7 @@ BYTE ReadPort(int Address, int *tstates)
 
         case 0xf6:
                 if (zx81.aytype==AY_TYPE_TIMEX || spectrum.machine==SPECCYSE)
-                        return(sound_ay_read(SelectAYReg));
+                        return(Sound.AYRead(SelectAYReg));
                 break;
 
         case 0xf7:
@@ -1382,7 +1382,7 @@ BYTE ReadPort(int Address, int *tstates)
                 switch((Address>>8)&255)
                 {
                 case 0x0f:      return(PrinterBusy());
-                case 0xff:      return(sound_ay_read(SelectAYReg));
+                case 0xff:      return(Sound.AYRead(SelectAYReg));
                 case 0x3f:
                                 return(floppy_read_datareg());
                 case 0x2f:
@@ -1534,7 +1534,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 WavClockTick(ts, SPECMICState);
                 if (zx81.zxprinter) ZXPrinterClockTick(ts);
                 PrinterClockTick(ts);
-                MidiClockTick(ts);
+                Midi.ClockTick(ts);
                 if (spectrum.floppytype==FLOPPYIF1) IF1ClockTick(ts);
                 else if (spectrum.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 

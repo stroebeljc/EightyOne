@@ -41,6 +41,9 @@
 #include <IniFiles.hpp>
 #include <Buttons.hpp>
 #include "OffBtn.hpp"
+
+extern int frametstates;
+
 //---------------------------------------------------------------------------
 class TTZX : public TForm
 {

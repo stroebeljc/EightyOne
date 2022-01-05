@@ -316,7 +316,8 @@ typedef struct
         int intposition;
         int scanlines;
         char CurRom[256];
-
+        int fps;
+        
         void* cset;
 
 } MACHINE;

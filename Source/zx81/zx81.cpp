@@ -106,6 +106,7 @@ int setborder=0;
 int zx81_stop=0;
 int LastInstruction;
 int MemotechMode=0;
+int SelectAYReg=0;
 int HWidthCounter=0;
 
 BYTE zxpandROMOverlay[8192];
@@ -278,7 +279,7 @@ void zx81_WriteByte(int Address, int Data)
         if (zx81.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
-                if (Address == 0x7ffe) sound_ay_write(SelectAYReg,Data);
+                if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data,frametstates);
         }
 
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
@@ -880,7 +881,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         if (ChromaIOWrite(Address, Data))
         {
                 if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
-                if (zx81.vsyncsound) sound_beeper(1);
+                if (zx81.vsyncsound) Sound.Beeper(1,frametstates);
                 return;
         }
 
@@ -900,7 +901,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         case 0x0f:
         case 0x1f:
                 if (zx81.aytype==AY_TYPE_ZONX)
-                        sound_ay_write(SelectAYReg, Data);
+                        Sound.AYWrite(SelectAYReg, Data,frametstates);
                 break;
 
         case 0x3f:
@@ -909,7 +910,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0x5f:
                 if (zx81.aytype==AY_TYPE_FULLER)
-                        sound_ay_write(SelectAYReg, Data);
+                        Sound.AYWrite(SelectAYReg, Data,frametstates);
                 break;
 
         case 0x73:
@@ -946,7 +947,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdf:
-                if (zx81.aytype==AY_TYPE_ACE) sound_ay_write(SelectAYReg, Data);
+                if (zx81.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 if (zx81.aytype==AY_TYPE_ZONX) SelectAYReg=Data&15;
                 break;
 
@@ -976,7 +977,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
         if ((zx81.machine != MACHINELAMBDA) && zx81.vsyncsound)
-                sound_beeper(1);
+                Sound.Beeper(1,frametstates);
 }
 
 BYTE zx81_readport(int Address, int *tstates)
@@ -1005,7 +1006,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                 BYTE keyb;
                 int i;
                 if ((zx81.machine!=MACHINELAMBDA) && zx81.vsyncsound)
-                        sound_beeper(0);
+                        Sound.Beeper(0,frametstates);
                 if (zx81.NTSC) data|=64;
                 if (!GetEarState()) data |= 128;
 
@@ -1077,12 +1078,12 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 case 0xdd:
                         if (zx81.aytype==AY_TYPE_ACE)
-                                return(sound_ay_read(SelectAYReg));
+                                return(Sound.AYRead(SelectAYReg));
 
                 case 0xf5:
                         beeper = 1-beeper;
                         if ((zx81.machine==MACHINELAMBDA) && zx81.vsyncsound)
-                                sound_beeper(beeper);
+                                Sound.Beeper(beeper, frametstates);
                         return(255);
                 case 0xfb:
                         if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));

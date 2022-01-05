@@ -72,7 +72,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TPrinter(TComponent* Owner);
         void WritePort(unsigned char Data);
-        unsigned char ReadPort(void);
+        unsigned char ReadPort(BYTE idleDataBus);
         void ClockTick(int ts);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

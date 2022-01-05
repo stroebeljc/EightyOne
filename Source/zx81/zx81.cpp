@@ -106,7 +106,7 @@ int setborder=0;
 int zx81_stop=0;
 int LastInstruction;
 int MemotechMode=0;
-//int HWidthCounter=0;
+int HWidthCounter=0;
 
 BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
@@ -1017,7 +1017,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                 }
 
                 return(~data);
-        }   
+        }
         else
         {
                 if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
@@ -1085,7 +1085,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                                 sound_beeper(beeper);
                         return(255);
                 case 0xfb:
-                        if (zx81.zxprinter) return(ZXPrinterReadPort());
+                        if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
 
                 default:
                         break;
@@ -1240,16 +1240,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (tsint)
                         {
                                 ts += tsint;
-                                //if (HWidthCounter>200 && HWidthCounter<216)
-                                //{
-                                //        machine.tperscanline=HWidthCounter;
-                                //}
-                                //HWidthCounter=0;
+                                if (zx81.machine == MACHINEZX81 && HWidthCounter>200 && HWidthCounter<216)
+                                {
+                                        machine.tperscanline=HWidthCounter;
+                                }
+                                HWidthCounter=0;
                         }
                         int_pending=0;
                 }
 
-                //HWidthCounter+=ts;
+                HWidthCounter+=ts;
 
                 frametstates += ts;
                 tStatesCount += ts;
@@ -1332,7 +1332,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 case LASTINSTOUTFF:
                         if (!HSYNC_generator) rowcounter=0;
-                        if (CurScanLine->sync_len == 11 || CurScanLine->sync_len > 20)
+                        if (CurScanLine->sync_len == 11 ||
+                            (zx81.machine == MACHINEZX81 && CurScanLine->sync_len == 12 && hsync_counter >= 12) ||   // Specific to get hi-res Pacman and Invaders to work but not upset the first line of Forty Niner, etc
+                            CurScanLine->sync_len > 20)    // ZX80 HSync pulses are 20 T-states
                                 CurScanLine->sync_valid=SYNCTYPEV;
                         else
                         {

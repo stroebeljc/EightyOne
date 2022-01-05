@@ -49,7 +49,7 @@ void zx80BasicLoader::OutputStartOfProgramData(AnsiString filename, int& address
         OutputWord(addressOffset, 0x0000);      //OLDPPC
         OutputByte(addressOffset, 0x00);        //FLAGX
         OutputWord(addressOffset, 0x07B6);      //T_ADDR
-        OutputWord(addressOffset, 0x0000);      //SEED
+        OutputWord(addressOffset, 0x4321);      //SEED
         OutputWord(addressOffset, 0x0000);      //FRAMES
         OutputWord(addressOffset, 0x0000);      //DEST
         OutputWord(addressOffset, 0x0000);      //RESULT
@@ -132,28 +132,28 @@ void zx80BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
         if (acceptAlternateKeywordSpelling)
         {
-                tokens.clear();
+                ReplaceTokenEndCharacters(tokens, ' ', '(');
+                DoTokenise(tokens);
 
-                tokens[219] = "NOT(";
-                tokens[244] = " PRINT\"";
-                tokens[250] = " IF(";
+                ReplaceTokenEndCharacters(tokens, '(', '\"');
+                DoTokenise(tokens);
+
+                tokens.clear();
 
                 tokens[236] = " GOTO ";
                 tokens[239] = " RAND ";
                 tokens[249] = " CONT ";
                 tokens[251] = " GOSUB ";
 
-                if (mZxpandEnabled)
-                {
-                        tokens[241] = " DELETE\"";
-                        tokens[245] = " CONFIG\"";
-                        tokens[255] = " CAT\"";
-                }
-                
+                tokens[214] = "TO ";
+                tokens[224] = "AND ";
+                tokens[225] = "OR ";
+
                 DoTokenise(tokens);
 
                 tokens.clear();
 
+                tokens[214] = " TO)";
                 tokens[239] = " RANDOMIZE ";
                 tokens[244] = " PRINT,";
 
@@ -161,6 +161,9 @@ void zx80BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
 
                 tokens.clear();
 
+                tokens[214] = "TO(";
+                tokens[224] = "AND(";
+                tokens[225] = "OR(";
                 tokens[244] = " PRINT;";
 
                 DoTokenise(tokens);

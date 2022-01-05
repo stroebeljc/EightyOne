@@ -128,6 +128,24 @@ void zx81_writebyteProxy(int address, int data)
         dirtyBird.insert(address);
 }
 
+void spec48_writebyteProxy(int address, int data)
+{
+        spec48_writebyte(address, data);
+        dirtyBird.insert(address);
+}
+
+void ace_writebyteProxy(int address, int data)
+{
+        ace_writebyte(address, data);
+        dirtyBird.insert(address);
+}
+
+void ql_writebyteProxy(int address, int data)
+{
+        ql_writebyte(address, data);
+        dirtyBird.insert(address);
+}
+
 AnsiString getMachineRoot(AnsiString fullRomName)
 {
         // return the first part of the rom name up to but excluding the first '.'
@@ -607,7 +625,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINEACE:
                 machine.initialise = ace_initialise;
                 machine.do_scanline = ace_do_scanline;
-                machine.writebyte = ace_writebyte;
+                machine.writebyte = ace_writebyteProxy;
                 machine.setbyte = ace_writebyte;
                 machine.readbyte = ace_readbyte;
                 machine.readoperandbyte = ace_readoperandbyte;
@@ -625,7 +643,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINEQL:
                 machine.initialise = ql_initialise;
                 machine.do_scanline = ql_do_scanline;
-                machine.writebyte = ql_writebyte;
+                machine.writebyte = ql_writebyteProxy;
                 machine.setbyte = ql_writebyte;
                 machine.readbyte = ql_readbyte;
                 machine.readoperandbyte = ql_readbyte;
@@ -643,7 +661,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINESPEC48:
                 machine.initialise = spec48_initialise;
                 machine.do_scanline = spec48_do_scanline;
-                machine.writebyte = spec48_writebyte;
+                machine.writebyte = spec48_writebyteProxy;
                 machine.setbyte = spec48_setbyte;
                 machine.readbyte = spec48_readbyte;
                 machine.readoperandbyte = spec48_readoperandbyte;
@@ -793,6 +811,62 @@ void __fastcall THW::OKClick(TObject *Sender)
         bmp += ChangeFileExt(machine.CurRom, ".bmp");
         delete (Graphics::TBitmap*)machine.cset;
         machine.cset = NULL;
+        if (!FileExists(bmp))
+        {
+                // Select character set file based on the machine model
+                switch(zx81.machine)
+                {
+                case MACHINEZX80:
+                        bmp = romBase + "zx80.bmp";
+                        break;
+                case MACHINETS1000:
+                case MACHINEZX81:
+                        bmp = romBase + "zx81.edition3.bmp";
+                        break;
+                case MACHINEACE:
+                        bmp = romBase + "ace.bmp";
+                        break;
+                case MACHINETS1500:
+                        bmp = romBase + "ts1500.bmp";
+                        break;
+                case MACHINER470:
+                        bmp = romBase + "ringo470.bmp";
+                        break;
+                case MACHINETK85:
+                        bmp = romBase + "tk85.bmp";
+                        break;
+                case MACHINELAMBDA:
+                        bmp = romBase + "lambda.bmp";
+                        break;
+                case MACHINESPEC48:
+                        switch (spectrum.machine)
+                        {
+                        case SPECCY128:
+                                bmp = romBase + "spec128.bmp";
+                                break;
+                        case SPECCYTC2048:
+                                bmp = romBase + "tc2048.bmp";
+                                break;
+                        case SPECCYTS2068:
+                                bmp = romBase + "ts2068.bmp";
+                                break;
+                        case SPECCY48:
+                        case SPECCY16:
+                        case SPECCYPLUS:
+                                bmp = romBase + "spec48.bmp";
+                                break;
+                        case SPECCYPLUS2:
+                                bmp = romBase + "specp2.bmp";
+                                break;
+                        case SPECCYPLUS2A:
+                        case SPECCYPLUS3:
+                                bmp = romBase + "specp3.version4_1.bmp";
+                                break;
+                        }
+                        break;
+                }
+        }
+
         if (FileExists(bmp))
         {
                 Graphics::TBitmap* cset = new Graphics::TBitmap;

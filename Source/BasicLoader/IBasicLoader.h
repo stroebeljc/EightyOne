@@ -81,6 +81,7 @@ protected:
         void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         void MaskOutRemContents(unsigned char* buffer);
         unsigned char* ExtractLineNumber(int& lineNumber);
+        void ReplaceTokenEndCharacters(map<unsigned char, string>& tokens, const unsigned char oldChar, const unsigned char newChar);
         void DoTokenise(map<unsigned char, string> tokens);
         bool StartOfNumber(int index);
         unsigned char ConvertFromHexChars(unsigned char chr1, unsigned char chr2);

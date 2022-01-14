@@ -3,6 +3,10 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.25 - 14/01/2022 (by Paul Farrow)
+* Enhancements:
+  - Improved support for variations of pseudo hi-res display drivers.
+
 Version 1.24 - 05/01/2022 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - Loading a snapshot that has Chroma colour enabled was not re-enabling the colour mode.

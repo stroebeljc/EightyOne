@@ -3,9 +3,10 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.25 - 14/01/2022 (by Paul Farrow)
-* Enhancements:
-  - Improved support for variations of pseudo hi-res display drivers.
+Version 1.25 - 16/01/2022 (by Paul Farrow)
+* Bug fixes:
+  - Resolved an issue affecting specific pseudo hi-res display driver implementations that would
+    cause the first line to mis-aligned.
 
 Version 1.24 - 05/01/2022 (by Paul Farrow and SirMorris)
 * Bug fixes:

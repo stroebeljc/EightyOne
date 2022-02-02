@@ -1129,6 +1129,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         const int HSyncDuration = 16;
         const int BackPorchDuration = 10;
+        const int ZX80HSyncDuration = 20;
 
         CurScanLine->scanline_len=0;
 
@@ -1332,9 +1333,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 case LASTINSTOUTFF:
                         if (!HSYNC_generator) rowcounter=0;
-                        if (CurScanLine->sync_len == 11 ||
-                            (zx81.machine == MACHINEZX81 && CurScanLine->sync_len == 12 && hsync_counter >= 12) ||   // Specific to get hi-res Pacman and Invaders to work but not upset the first line of Forty Niner, etc
-                            CurScanLine->sync_len > 20)    // ZX80 HSync pulses are 20 T-states
+                        if ((CurScanLine->sync_len == 11 && hsync_counter >= CurScanLine->sync_len) ||
+                            (CurScanLine->sync_len == 12 && hsync_counter >= CurScanLine->sync_len) ||
+                            (CurScanLine->sync_len > ZX80HSyncDuration))
                                 CurScanLine->sync_valid=SYNCTYPEV;
                         else
                         {

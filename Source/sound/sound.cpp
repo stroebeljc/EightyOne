@@ -188,7 +188,7 @@ void CSound::AYInit(void)
   if(level)								\
     {									\
     if(AYToneTick[chan]>=AYTonePeriod[chan])			\
-      (*(ptr))+=(level),was_high=1;					\
+      { (*(ptr))+=(level); was_high=1; }					\
     else								\
       (*(ptr))-=(level);						\
     }									\
@@ -340,26 +340,29 @@ void CSound::AYOverlay(void)
                 mixer=AYRegisters[7];
                 if((mixer&4)==0 || (mixer&0x20)==0)
                 {
+                        // channel C
                         level=(noise_toggle || (mixer&0x20))?tone_level[2]:0;
                         level=(level*VolumeLevel[2])/31;
                         AY_OVERLAY_TONE(ptr,2,level);
-                        if(m_Channels==2)
+                        if(ACBMix)
                                 ptr[1]=*ptr;
                 }
                 if((mixer&1)==0 || (mixer&0x08)==0)
                 {
+                        // channel A
                         level=(noise_toggle || (mixer&0x08))?tone_level[0]:0;
                         level=(level*VolumeLevel[1])/31;
                         AY_OVERLAY_TONE(ptr,0,level);
                 }
                 if((mixer&2)==0 || (mixer&0x10)==0)
                 {
+                        // channel B
                         level=(noise_toggle || (mixer&0x10))?tone_level[1]:0;
                         level=(level*VolumeLevel[0])/31;
-                        AY_OVERLAY_TONE(ptr+(m_Channels-1),1,level);
+                        AY_OVERLAY_TONE(ptr+(ACBMix?1:0),1,level);
                 }
 
-                if(m_Channels==1)
+                if(!ACBMix)
                         ptr[1]=*ptr;
 
                 // update noise RNG/filter

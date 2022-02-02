@@ -31,9 +31,6 @@ __published:	// IDE-managed Components
         TLabel *Label6;
         TGroupBox *GroupBox3;
         TCheckBox *BtnStereo;
-        TRadioButton *Btn8Bit;
-        TRadioButton *Btn16Bit;
-        TComboBox *FreqBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
         void __fastcall MidiChange(TObject *Sender);

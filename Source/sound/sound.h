@@ -79,8 +79,9 @@ public:
 	void AYReset(void);
 	void Frame(void);
 	void Beeper(int on, int frametstates);
-        int VolumeLevel[4];
 
+        int VolumeLevel[4];
+        bool ACBMix;
 
 private:
         CDSnd DXSound;

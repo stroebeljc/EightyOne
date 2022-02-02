@@ -1,6 +1,6 @@
 object MidiForm: TMidiForm
-  Left = 195
-  Top = 158
+  Left = 242
+  Top = 124
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
@@ -189,42 +189,8 @@ object MidiForm: TMidiForm
       Top = 72
       Width = 89
       Height = 17
-      Caption = 'Stereo (ACB)'
+      Caption = 'ACB mix'
       TabOrder = 0
-    end
-    object Btn8Bit: TRadioButton
-      Left = 8
-      Top = 24
-      Width = 89
-      Height = 17
-      Caption = '8 Bit Audio'
-      Enabled = False
-      TabOrder = 1
-    end
-    object Btn16Bit: TRadioButton
-      Left = 8
-      Top = 40
-      Width = 89
-      Height = 17
-      Caption = '16 Bit Audio'
-      Enabled = False
-      TabOrder = 2
-    end
-    object FreqBox: TComboBox
-      Left = 8
-      Top = 112
-      Width = 145
-      Height = 21
-      Style = csDropDownList
-      ItemHeight = 13
-      TabOrder = 3
-      Items.Strings = (
-        '11025 Hz'
-        '16000 Hz'
-        '22050 Hz'
-        '32000 Hz'
-        '44100 Hz'
-        '48000 Hz')
     end
   end
 end

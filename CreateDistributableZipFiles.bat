@@ -40,13 +40,13 @@ if not exist "%TestFolder%" goto :ErrorFolderNotFound
 
 rem ---- Check component subfolders exists
 
-set TestFolder=%ComponentsFolder%\Animation-Timer
-if not exist "%TestFolder%" goto :ErrorFolderNotFound
-
 set TestFolder=%ComponentsFolder%\ComPort Library
 if not exist "%TestFolder%" goto :ErrorFolderNotFound
 
 set TestFolder=%ComponentsFolder%\DirectDraw
+if not exist "%TestFolder%" goto :ErrorFolderNotFound
+
+set TestFolder=%ComponentsFolder%\DirectSound
 if not exist "%TestFolder%" goto :ErrorFolderNotFound
 
 set TestFolder=%ComponentsFolder%\Office Button 97
@@ -118,6 +118,8 @@ del /s /q "%OutputDevEnvSourceFolder%\*.*$$$" > nul 2>&1
 del /s /q "%OutputDevEnvSourceFolder%\*.gitattributes" > nul 2>&1
 del /s /q "%OutputDevEnvSourceFolder%\*.gitignore" > nul 2>&1
 rmdir /s /q "%OutputDevEnvSourceFolder%\.git" > nul 2>&1
+
+del /s /q "%ReleaseFilesFolder%\*.bak" > nul 2>&1
 
 rem ---- Create the release folder contents
 

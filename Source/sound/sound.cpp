@@ -345,7 +345,12 @@ void CSound::AYOverlay(void)
                         level=(level*VolumeLevel[2])/31;
                         AY_OVERLAY_TONE(ptr,2,level);
                         if(ACBMix)
-                                ptr[1]=*ptr;
+                        {
+                                // chan c shouldn't be full vol on both channels
+                                int atv = *ptr * 3/4;
+                                ptr[0]=atv;
+                                ptr[1]=atv;
+                        }
                 }
                 if((mixer&1)==0 || (mixer&0x08)==0)
                 {

@@ -1,11 +1,11 @@
 object MidiForm: TMidiForm
-  Left = 242
-  Top = 124
+  Left = 313
+  Top = 236
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
-  ClientHeight = 256
-  ClientWidth = 344
+  ClientHeight = 258
+  ClientWidth = 289
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,16 +19,15 @@ object MidiForm: TMidiForm
   TextHeight = 13
   object GroupBox1: TGroupBox
     Left = 8
-    Top = 182
-    Width = 160
+    Top = 184
+    Width = 201
     Height = 65
-    Anchors = []
     Caption = 'Send MIDI Output to:'
     TabOrder = 1
     object MidiBox: TComboBox
       Left = 16
       Top = 24
-      Width = 128
+      Width = 169
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akRight]
@@ -38,11 +37,11 @@ object MidiForm: TMidiForm
     end
   end
   object OK: TButton
-    Left = 229
-    Top = 206
-    Width = 75
+    Left = 216
+    Top = 224
+    Width = 67
     Height = 25
-    Anchors = []
+    Anchors = [akRight, akBottom]
     Caption = 'OK'
     TabOrder = 2
     OnClick = OKClick
@@ -50,55 +49,63 @@ object MidiForm: TMidiForm
   object GroupBox2: TGroupBox
     Left = 8
     Top = 8
-    Width = 160
+    Width = 273
     Height = 169
-    Caption = 'Volume'
+    Caption = 'Mix'
     TabOrder = 0
     object Label1: TLabel
       Left = 32
-      Top = 24
+      Top = 20
       Width = 56
       Height = 13
       Caption = 'AY Channel'
     end
     object Label2: TLabel
-      Left = 104
-      Top = 32
+      Left = 120
+      Top = 39
       Width = 34
       Height = 13
       Caption = 'Beeper'
     end
     object Label3: TLabel
       Left = 24
-      Top = 40
+      Top = 39
       Width = 7
       Height = 13
       Caption = 'A'
     end
     object Label4: TLabel
       Left = 56
-      Top = 40
+      Top = 39
       Width = 7
       Height = 13
       Caption = 'B'
     end
     object Label5: TLabel
       Left = 88
-      Top = 40
+      Top = 39
       Width = 7
       Height = 13
       Caption = 'C'
     end
     object Label6: TLabel
-      Left = 76
-      Top = 146
-      Width = 24
+      Left = 75
+      Top = 141
+      Width = 45
       Height = 13
+      Alignment = taCenter
       Caption = 'Mute'
+    end
+    object Label7: TLabel
+      Left = 193
+      Top = 20
+      Width = 61
+      Height = 13
+      Caption = 'Stereo Mode'
     end
     object ChAVol: TTrackBar
       Left = 16
-      Top = 56
+      Top = 51
       Width = 41
       Height = 89
       Max = 31
@@ -114,7 +121,7 @@ object MidiForm: TMidiForm
     end
     object ChBVol: TTrackBar
       Left = 48
-      Top = 56
+      Top = 51
       Width = 41
       Height = 89
       Max = 31
@@ -130,7 +137,7 @@ object MidiForm: TMidiForm
     end
     object ChCVol: TTrackBar
       Left = 80
-      Top = 56
+      Top = 51
       Width = 41
       Height = 89
       Max = 31
@@ -145,8 +152,8 @@ object MidiForm: TMidiForm
       OnChange = MidiChange
     end
     object BeeperVol: TTrackBar
-      Left = 112
-      Top = 56
+      Left = 128
+      Top = 51
       Width = 41
       Height = 89
       Max = 31
@@ -162,35 +169,37 @@ object MidiForm: TMidiForm
     end
     object AYMute: TCheckBox
       Left = 52
-      Top = 144
+      Top = 139
       Width = 17
       Height = 17
       TabOrder = 4
       OnClick = MidiChange
     end
     object BeeperMute: TCheckBox
-      Left = 116
-      Top = 144
+      Left = 131
+      Top = 139
       Width = 17
       Height = 17
       TabOrder = 5
       OnClick = MidiChange
     end
-  end
-  object GroupBox3: TGroupBox
-    Left = 176
-    Top = 8
-    Width = 161
-    Height = 169
-    Caption = 'Output Format'
-    TabOrder = 3
-    object BtnStereo: TCheckBox
-      Left = 8
-      Top = 72
-      Width = 89
+    object RadioButtonMono: TRadioButton
+      Left = 200
+      Top = 41
+      Width = 63
       Height = 17
-      Caption = 'ACB mix'
-      TabOrder = 0
+      Caption = 'Mono'
+      Checked = True
+      TabOrder = 6
+      TabStop = True
+    end
+    object RadioButtonACB: TRadioButton
+      Left = 200
+      Top = 58
+      Width = 63
+      Height = 17
+      Caption = 'ACB'
+      TabOrder = 7
     end
   end
 end

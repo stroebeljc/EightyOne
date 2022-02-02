@@ -69,7 +69,7 @@ void __fastcall TMidiForm::MidiChange(TObject *Sender)
         Sound.VolumeLevel[2]= AYMute->Checked ? 0:ChCVol->Max - ChCVol->Position;
         Sound.VolumeLevel[3]= BeeperMute->Checked ? 0:BeeperVol->Max - BeeperVol->Position;
 
-        Sound.ACBMix = BtnStereo->Checked;
+        Sound.ACBMix = RadioButtonACB->Checked;
 
         if (LastMidiItem!=MidiBox->ItemIndex)
         {
@@ -91,7 +91,7 @@ void TMidiForm::SaveSettings(TIniFile *ini)
         ini->WriteInteger("MIDI","MidiDev",MidiBox->ItemIndex);
         ini->WriteBool("MIDI","AYMute",AYMute->Checked);
         ini->WriteBool("MIDI","BeeperMute",BeeperMute->Checked);
-        ini->WriteBool("MIDI","Stereo",BtnStereo->Checked);
+        ini->WriteBool("MIDI","AYMixACB",RadioButtonACB->Checked);
 }
 
 void TMidiForm::LoadSettings(TIniFile *ini)
@@ -105,7 +105,7 @@ void TMidiForm::LoadSettings(TIniFile *ini)
         MidiBox->ItemIndex=ini->ReadInteger("MIDI","MidiDev",MidiBox->ItemIndex);
         AYMute->Checked=ini->ReadBool("MIDI","AYMute",AYMute->Checked);
         BeeperMute->Checked=ini->ReadBool("MIDI","BeeperMute",BeeperMute->Checked);
-        BtnStereo->Checked=ini->ReadBool("MIDI","Stereo",BtnStereo->Checked);
+        RadioButtonACB->Checked=ini->ReadBool("MIDI","AYMixACB",RadioButtonACB->Checked);
 
         OKClick(NULL);
 

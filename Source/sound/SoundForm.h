@@ -29,8 +29,9 @@ __published:	// IDE-managed Components
         TCheckBox *AYMute;
         TCheckBox *BeeperMute;
         TLabel *Label6;
-        TGroupBox *GroupBox3;
-        TCheckBox *BtnStereo;
+        TLabel *Label7;
+        TRadioButton *RadioButtonMono;
+        TRadioButton *RadioButtonACB;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
         void __fastcall MidiChange(TObject *Sender);

@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.26 - 03/02/2022 (by SirMorris and Mike Wynne)
+Version 1.26 - 03/02/2022 (by Mike Wynne and SirMorris)
 * Bug fixes:
   - Integrated Mike's sound changes which now use DirectSound to deliver the audio and timing for
     AY emulation. This fixes the significant audio glitching that used to be present in playback.

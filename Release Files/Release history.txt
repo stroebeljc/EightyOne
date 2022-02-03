@@ -7,6 +7,11 @@ Version 1.26 - 03/02/2022 (by Mike Wynne and SirMorris)
 * Bug fixes:
   - Integrated Mike's sound changes which now use DirectSound to deliver the audio and timing for
     AY emulation. This fixes the significant audio glitching that used to be present in playback.
+* Changes:
+  - Re-ordered items in the Options menu. F-key assignments have been changed for some items,
+    SOund, Speed and TV Emulation.
+  - Moved ZX97 advanced config to Hardware->Homebrew->ZX97->Advanced Settings tab->More button.
+    Button is only present when ZX97lite is selected system.
 * Enhancements:
   - Stereo (ACB) mixing and mono output (default) for the AY emulation are now selectable from the
     Options->Sound menu.

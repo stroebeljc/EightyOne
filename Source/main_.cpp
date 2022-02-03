@@ -1998,7 +1998,6 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(SerialConfig, l, t);
         MoveWindow(IF1, l, t);
         MoveWindow(HistoryBox, l, t);
-        MoveWindow(ZX97Dialog, l, t);
         MoveWindow(ParallelPort, l, t);
         MoveWindow(Kb, l, t);
         MoveWindow(ZipFile, l, t);

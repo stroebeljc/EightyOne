@@ -132,9 +132,6 @@ ProductName=EightyOne
 ProductVersion=1
 Comments=
 
-[Excluded Packages]
-$(BCB)\Bin\dclbde50.bpl=Borland BDE DB Components
-
 [HistoryLists\hlIncludePath]
 Count=30
 Item0=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source

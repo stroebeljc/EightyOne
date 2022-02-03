@@ -3,15 +3,16 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.26 - 03/02/2022 (by Mike Wynne and SirMorris)
+Version 1.26 - 03/02/2022 (by Mike Wynne, SirMorris and Paul Farrow)
 * Bug fixes:
   - Integrated Mike's sound changes which now use DirectSound to deliver the audio and timing for
     AY emulation. This fixes the significant audio glitching that used to be present in playback.
+  - The ZX80 display now aligns properly with the ZX81 and Spectrum for all border size options.
 * Changes:
-  - Re-ordered items in the Options menu. F-key assignments have been changed for some items,
-    SOund, Speed and TV Emulation.
+  - Re-ordered items in the Options menu. F-key assignments have been changed for items: Sound,
+    Speed and TV Emulation.
   - Moved ZX97 advanced config to Hardware->Homebrew->ZX97->Advanced Settings tab->More button.
-    Button is only present when ZX97lite is selected system.
+    Button is only present when ZX97 Lite is selected system.
 * Enhancements:
   - Stereo (ACB) mixing and mono output (default) for the AY emulation are now selectable from the
     Options->Sound menu.

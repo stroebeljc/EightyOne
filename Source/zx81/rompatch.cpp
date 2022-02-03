@@ -101,7 +101,7 @@ bool ZX81LambdaGetByteStartLoading(int& pc)
 bool ZX81SaveDelayStartSaving(int& pc)
 {
         WavStartRec();
-        if (FlashSaveable())
+        if (IsFlashSaveable())
         {
                 z80.de.w=0x0001;  // If FlashSaving, remove Save Delay
         }
@@ -121,7 +121,7 @@ bool LambdaSaveDelayStartSaving(int& pc)
 // handle: 0x17Ed37 Lambda
 bool ZX81LambdaOutByteSaveByte(int& pc)
 {
-       if (FlashSaveable())
+       if (IsFlashSaveable())
        {
                 WavRecordByte(memory[z80.hl.w]);
                 pc=pop16();
@@ -133,7 +133,7 @@ bool ZX81LambdaOutByteSaveByte(int& pc)
 bool ZX80SaveDelayStartSaving(int& pc)
 {
         WavStartRec();
-        if (FlashSaveable())
+        if (IsFlashSaveable())
         {
                 z80.de.w=0x0001;  // If FlashSaving, remove Save Delay
         }
@@ -157,7 +157,7 @@ bool ZX80GetByteStartLoading(int& pc)
 // handle: 0x01cb11
 bool ZX80OutByteSaveByte(int& pc)
 {
-        if (FlashSaveable())
+        if (IsFlashSaveable())
         {
                 WavRecordByte(memory[z80.hl.w]);
                 pc=0x01f3;

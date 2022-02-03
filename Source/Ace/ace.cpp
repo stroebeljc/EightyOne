@@ -334,7 +334,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
 
         do
         {
-                if (FlashSaveable() && z80.pc.w==0x186d)
+                if (IsFlashSaveable() && z80.pc.w==0x186d)
                 {
                         WavRecordByte(z80.hl.b.l);
                         z80.pc.w=0x1872;
@@ -356,7 +356,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 }
 
                 i=70;
-                while(FlashLoading && FlashLoadable() && i)
+                while(FlashLoading && IsFlashLoadable() && i)
                 {
                         ts=z80_do_opcode();
                         WavClockTick(ts,0);

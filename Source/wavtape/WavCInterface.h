@@ -28,8 +28,8 @@ extern "C" {
 
 int WavFlashLoad(void);
 void WavRewind(void);
-int FlashLoadable(void);
-int FlashSaveable(void);
+int IsFlashLoadable(void);
+int IsFlashSaveable(void);
 int GetEarState(void);
 void WavClockTick(int TStates, int MicState);
 void WavStop(void);

@@ -42,13 +42,13 @@ void WavRewind(void)
         else WavLoad->RewStartClick(NULL);
 }
 
-int FlashLoadable(void)
+int IsFlashLoadable(void)
 {
         if (zx81.TZXin) return TZXFile.FlashLoadable;
         return(0);
 }
 
-int FlashSaveable(void)
+int IsFlashSaveable(void)
 {
         if (zx81.TZXout) return 1;
         return(0);

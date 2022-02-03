@@ -93,8 +93,7 @@
       -I&quot;..\Components\ComPort Library&quot; 
       -I&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot; 
       -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp -boa"/>
-    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -RT- -X- -a8 -6 -b- -k- -vi -c -tW 
-      -tWM"/>
+    <CFLAG1 value="-O2 -Vx -Ve -RT- -X- -a8 -6 -b- -k- -vi -c -tW -tWM"/>
     <PFLAGS value="-$Y- -$L- -$I- -$D- -$C- -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zn"/>
@@ -132,6 +131,9 @@ OriginalFilename=EightyOne.exe
 ProductName=EightyOne
 ProductVersion=1
 Comments=
+
+[Excluded Packages]
+$(BCB)\Bin\dclbde50.bpl=Borland BDE DB Components
 
 [HistoryLists\hlIncludePath]
 Count=30

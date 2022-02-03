@@ -57,7 +57,6 @@ __published:	// IDE-managed Components
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
         void __fastcall SwapRAMROMClick(TObject *Sender);
-        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
         void SaveSettings(TIniFile *ini);
 public:		// User declarations

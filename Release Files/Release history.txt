@@ -3,6 +3,14 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.26 - 03/02/2022 (by SirMorris and Mike Wynne)
+* Bug fixes:
+  - Integrated Mike's sound changes which now use DirectSound to deliver the audio and timing for
+    AY emulation. This fixes the significant audio glitching that used to be present in playback.
+* Enhancements:
+  - Stereo (ACB) mixing and mono output (default) for the AY emulation are now selectable from the
+    Options->Sound menu.
+
 Version 1.25 - 16/01/2022 (by Paul Farrow)
 * Bug fixes:
   - Resolved an issue affecting specific pseudo hi-res display driver implementations that would

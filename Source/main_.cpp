@@ -1369,15 +1369,6 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Zx97ConfigClick(TObject *Sender)
-{
-        Form1->Zx97Config->Checked = !Form1->Zx97Config->Checked;
-
-        if (Form1->Zx97Config->Checked) ZX97Dialog->Show();
-        else ZX97Dialog->Close();    
-}
-//---------------------------------------------------------------------------
-
 void __fastcall TForm1::TS20501Click(TObject *Sender)
 {
         SerialConfig->ShowModal();

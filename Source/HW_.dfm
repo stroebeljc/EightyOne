@@ -1,5 +1,5 @@
 object HW: THW
-  Left = 207
+  Left = 287
   Top = 130
   BorderIcons = []
   BorderStyle = bsToolWindow
@@ -29,7 +29,7 @@ object HW: THW
     Top = 8
     Width = 392
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = HomeBrew
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -1451,7 +1451,7 @@ object HW: THW
     Top = 140
     Width = 391
     Height = 169
-    ActivePage = Interfaces
+    ActivePage = AdvSettings
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1983,6 +1983,16 @@ object HW: THW
         Height = 17
         Caption = 'Hide Hardware HSyncs'
         TabOrder = 8
+      end
+      object ButtonAdvancedMore: TButton
+        Left = 248
+        Top = 104
+        Width = 75
+        Height = 25
+        Caption = 'More...'
+        TabOrder = 9
+        Visible = False
+        OnClick = ButtonAdvancedMoreClick
       end
     end
   end

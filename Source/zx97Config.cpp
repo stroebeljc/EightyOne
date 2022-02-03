@@ -165,10 +165,5 @@ void TZX97Dialog::LoadSettings(TIniFile *ini)
         ProtectB115->Checked=ini->ReadBool("ZX97","b115", ProtectB115->Checked);
         SaveRAM->Checked=ini->ReadBool("ZX97","SaveRAM", SaveRAM->Checked);
 }
-void __fastcall TZX97Dialog::FormClose(TObject *Sender,
-      TCloseAction &Action)
-{
-        Form1->Zx97Config->Checked=false;
-}
 //---------------------------------------------------------------------------
 

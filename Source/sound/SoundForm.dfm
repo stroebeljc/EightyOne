@@ -89,12 +89,13 @@ object MidiForm: TMidiForm
       Caption = 'C'
     end
     object Label6: TLabel
-      Left = 75
+      Left = 64
       Top = 141
-      Width = 45
+      Width = 65
       Height = 13
       Alignment = taCenter
-      Caption = 'Mute'
+      AutoSize = False
+      Caption = '-   Mute   -'
     end
     object Label7: TLabel
       Left = 193

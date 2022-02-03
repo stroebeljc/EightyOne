@@ -373,10 +373,6 @@ object Form1: TForm1
         ShortCut = 121
         OnClick = DisplayArtClick
       end
-      object Zx97Config: TMenuItem
-        Caption = 'ZX97 Config...'
-        OnClick = Zx97ConfigClick
-      end
       object DBG1: TMenuItem
         Caption = 'Debug Opt 1'
         Visible = False

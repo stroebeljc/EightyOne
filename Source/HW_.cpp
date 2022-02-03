@@ -36,6 +36,7 @@
 #include "zx81\zx80BasicLister.h"
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
+#include "zx97config.h"
 
 //extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
@@ -597,12 +598,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
         zx81.m1not = M1Not->Checked? 49152 : 32768;
 
-        Form1->Zx97Config->Enabled=false;
         if (zx81.machine==MACHINEZX97LE)
         {
                 zx81.RAMTOP=65535;
                 zx81.m1not=49152;
-                Form1->Zx97Config->Enabled=true;
         }
 
         if (TS2050->Checked==1) { zx81.ts2050=1; Form1->TS20501->Enabled=true; }
@@ -2505,6 +2504,9 @@ void __fastcall THW::ColourBoxChange(TObject *Sender)
 
 void __fastcall THW::RomBoxChange(TObject *Sender)
 {
+        AnsiString romFile = RomBox->Text;
+        ButtonAdvancedMore->Visible = romFile == "zx97.rom";
+
         ResetRequired=true;
 }
 
@@ -2528,6 +2530,13 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
         AnsiString root(zxpandSDCardFolderRoot);
         AnsiString replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
         ShellExecute(Application->Handle,"OPEN","EXPLORER.EXE", replaced.c_str(), NULL, 1);
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
+{
+        ZX97Dialog->Show();
 }
 //---------------------------------------------------------------------------
 

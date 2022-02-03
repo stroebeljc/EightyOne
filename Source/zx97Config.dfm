@@ -14,7 +14,6 @@ object ZX97Dialog: TZX97Dialog
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
-  OnClose = FormClose
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13

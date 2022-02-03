@@ -95,7 +95,6 @@ __published:	// IDE-managed Components
         TMenuItem *LoadMemoryBlock1;
         TMenuItem *SaveMemoryBlock1;
         TMenuItem *HardReset1;
-        TMenuItem *Zx97Config;
         TMenuItem *Ports;
         TMenuItem *TS20501;
         TMenuItem *InTZXManager;
@@ -192,7 +191,6 @@ __published:	// IDE-managed Components
         void __fastcall LoadMemoryBlock1Click(TObject *Sender);
         void __fastcall SaveMemoryBlock1Click(TObject *Sender);
         void __fastcall HardReset1Click(TObject *Sender);
-        void __fastcall Zx97ConfigClick(TObject *Sender);
         void __fastcall TS20501Click(TObject *Sender);
         void __fastcall TZXManClick(TObject *Sender);
         void __fastcall InTZXManagerClick(TObject *Sender);

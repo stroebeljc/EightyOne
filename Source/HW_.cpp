@@ -2536,7 +2536,7 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
-        ZX97Dialog->Show();
+        ZX97Dialog->ShowModal();
 }
 //---------------------------------------------------------------------------
 

@@ -3,6 +3,11 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.27 - 26/02/2022 (by Paul Farrow)
+* Bug fixes:
+  - An ampersand within a label in a ROM symbol file was not being shown in the debugger's
+    disassembler window but was being treated as signifying an underlined accelerator key.
+
 Version 1.26 - 03/02/2022 (by Mike Wynne, SirMorris and Paul Farrow)
 * Bug fixes:
   - Integrated Mike's sound changes which now use DirectSound to deliver the audio and timing for

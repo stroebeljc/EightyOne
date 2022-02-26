@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 160
-  Top = 358
+  Left = 294
+  Top = 334
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -555,6 +555,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentColor = False
       ParentFont = False
+      ShowAccelChar = False
     end
     object Disass1: TLabel
       Left = 8
@@ -571,6 +572,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentColor = False
       ParentFont = False
+      ShowAccelChar = False
     end
     object Disass2: TLabel
       Left = 8
@@ -587,6 +589,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentColor = False
       ParentFont = False
+      ShowAccelChar = False
     end
     object Disass3: TLabel
       Left = 8
@@ -604,6 +607,7 @@ object Dbg: TDbg
       ParentColor = False
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass4: TLabel
@@ -620,6 +624,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass5: TLabel
@@ -636,6 +641,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass6: TLabel
@@ -652,6 +658,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass7: TLabel
@@ -668,6 +675,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass8: TLabel
@@ -684,6 +692,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass9: TLabel
@@ -700,6 +709,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Label8: TLabel
@@ -730,6 +740,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
     object Disass11: TLabel
@@ -746,6 +757,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       PopupMenu = MemDumpPopup
+      ShowAccelChar = False
       OnMouseDown = Disass3MouseDown
     end
   end

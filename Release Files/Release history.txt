@@ -7,6 +7,8 @@ Version 1.27 - 26/02/2022 (by Paul Farrow)
 * Bug fixes:
   - An ampersand within a label in a ROM symbol file was not being shown in the debugger's
     disassembler window but was being treated as signifying an underlined accelerator key.
+  - Joypad button mapping was causing an issue with third party controllers. Treat all
+    buttons as the fire button so all controllers work without configuration.
 
 Version 1.26 - 03/02/2022 (by Mike Wynne, SirMorris and Paul Farrow)
 * Bug fixes:

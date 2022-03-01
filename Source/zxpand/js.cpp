@@ -12,16 +12,18 @@ void initJoy(void)
 
 unsigned char readJoy(void)
 {
-   JOYINFO joyInfo;
+   JOYINFOEX joyInfo;
+   joyInfo.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY;
+
    unsigned char joypos = 0xfe;
 
-   if (JOYERR_NOERROR == joyGetPos(0, &joyInfo))
+   if (JOYERR_NOERROR == joyGetPosEx(0, &joyInfo))
    {
-      if (joyInfo.wYpos == caps.wYmin) joypos &= 0x7f;
-      if (joyInfo.wYpos == caps.wYmax) joypos &= 0xbf;
-      if (joyInfo.wXpos == caps.wXmin) joypos &= 0xdf;
-      if (joyInfo.wXpos == caps.wXmax) joypos &= 0xef;
-      if (joyInfo.wButtons & JOY_BUTTON1) joypos &= 0xf7;
+      if (joyInfo.dwYpos == caps.wYmin) joypos &= 0x7f;
+      if (joyInfo.dwYpos == caps.wYmax) joypos &= 0xbf;
+      if (joyInfo.dwXpos == caps.wXmin) joypos &= 0xdf;
+      if (joyInfo.dwXpos == caps.wXmax) joypos &= 0xef;
+      if (joyInfo.dwButtons != 0) joypos &= 0xf7;
    }
 
    if (GetKeyState(VK_NUMPAD8) & 0x8000)

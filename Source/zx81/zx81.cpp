@@ -83,7 +83,6 @@ extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 static BYTE ReadInputPort(int Address, int *tstates);
-
 static BYTE idleDataBus = 0xFF;
 
 const int colourBlack = 0;
@@ -108,6 +107,7 @@ int LastInstruction;
 int MemotechMode=0;
 int SelectAYReg=0;
 int HWidthCounter=0;
+bool allowSoundOutput = true;
 
 BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
@@ -881,7 +881,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         if (ChromaIOWrite(Address, Data))
         {
                 if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
-                if (zx81.vsyncsound) Sound.Beeper(1,frametstates);
+                if (zx81.vsyncsound && allowSoundOutput) Sound.Beeper(1,frametstates);
                 return;
         }
 
@@ -976,7 +976,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         }
 
         if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
-        if ((zx81.machine != MACHINELAMBDA) && zx81.vsyncsound)
+        if ((zx81.machine != MACHINELAMBDA) && zx81.vsyncsound && allowSoundOutput)
                 Sound.Beeper(1,frametstates);
 }
 
@@ -1005,7 +1005,8 @@ BYTE ReadInputPort(int Address, int *tstates)
         {
                 BYTE keyb;
                 int i;
-                if ((zx81.machine!=MACHINELAMBDA) && zx81.vsyncsound)
+                if ((zx81.machine!=MACHINELAMBDA) && zx81.vsyncsound && allowSoundOutput)
+
                         Sound.Beeper(0,frametstates);
                 if (zx81.NTSC) data|=64;
                 if (!GetEarState()) data |= 128;
@@ -1127,11 +1128,15 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         static int frameSynchronisedCounter = 0;
         static int prevRasterY = 0;
         static int prevPrevRasterY = 0;
+        static int scanlinesBlack = 0;
+        static int scanlinesWhite = 0;
+        static bool outputBlackScanlines = true;
 
         const int HSyncDuration = 16;
         const int BackPorchDuration = 10;
         const int ZX80HSyncDuration = 20;
-
+        const int SoundScanlineMismatchTolerance = 5;
+                                                            
         CurScanLine->scanline_len=0;
 
         MaxScanLen = (zx81.single_step? 1:420);
@@ -1147,7 +1152,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         // A crude mechanism to determine whether frame synchronisation has been achieved, which is required to suppress
         // showing HSync pulses when showing a saving or loading pattern. Synchronisation is assumed when 3 consecutive
-        // frames is found. A counter provides hysteresis so that if a save or load pattern appears to form a valid frame
+        // frames are found. A counter provides hysteresis so that if a save or load pattern appears to form a valid frame
         // then it will not cause momentary display of HSync pulses.
 
         if (RasterY == 0)
@@ -1204,6 +1209,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 CurScanLine->sync_valid=0;
                 CurScanLine->sync_len=0;
         }
+
+        bool setSoundOutputOff;
+        bool setSoundOutputOn;
 
         do
         {
@@ -1309,9 +1317,13 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
+                setSoundOutputOff = false;
+                setSoundOutputOn = false;
+
                 switch(LastInstruction)
                 {
                 case LASTINSTOUTFD:
+                        setSoundOutputOff = true;
                         NMI_generator=0;
                         if (!HSYNC_generator) rowcounter=0;
                         if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
@@ -1319,6 +1331,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 case LASTINSTOUTFE:
                         NMI_generator=1;
+                        setSoundOutputOff = true;
                         if (RasterY > 0)
                                 nmiOnRasterY = RasterY;
                         if (!HSYNC_generator) rowcounter=0;
@@ -1328,11 +1341,13 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 case LASTINSTINFE:
                         if (!NMI_generator)
                         {
+                                setSoundOutputOn = true;
                                 HSYNC_generator=0;
                                 if (CurScanLine->sync_len==0) CurScanLine->sync_valid=0;
                         }
                         break;
                 case LASTINSTOUTFF:
+                        setSoundOutputOff = true;
                         if (!HSYNC_generator) rowcounter=0;
                         if ((CurScanLine->sync_len == 11 && hsync_counter >= CurScanLine->sync_len) ||
                             (CurScanLine->sync_len == 12 && hsync_counter >= CurScanLine->sync_len) ||
@@ -1359,6 +1374,25 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         break;
                 default:
                         break;
+                }
+
+                if (setSoundOutputOff)
+                {
+                        if (outputBlackScanlines)
+                        {
+                                allowSoundOutput = ((zx81.colour != COLOURCHROMA) || !frameSynchronised  || (scanlinesBlack > 1 && scanlinesWhite > 1 && abs(scanlinesBlack - scanlinesWhite) <= SoundScanlineMismatchTolerance));
+                                scanlinesWhite = 0;
+                                outputBlackScanlines = false;
+                        }
+                }
+                else if (setSoundOutputOn)
+                {
+                        if (!outputBlackScanlines)
+                        {
+                                allowSoundOutput = ((zx81.colour != COLOURCHROMA) || !frameSynchronised  || (scanlinesBlack > 1 && scanlinesWhite > 1 && abs(scanlinesBlack - scanlinesWhite) <= SoundScanlineMismatchTolerance));
+                                scanlinesBlack = 0;
+                                outputBlackScanlines = true;
+                        }
                 }
 
                 hsync_counter -= ts;
@@ -1388,6 +1422,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 }
                 if (hsync_counter <= 0)
                 {
+                        if (outputBlackScanlines)
+                                scanlinesBlack++;
+                        else
+                                scanlinesWhite++;
+
                         if (HSYNC_generator && CurScanLine->sync_len==0)
                         {
                                 CurScanLine->sync_len=HSyncDuration;
@@ -1400,6 +1439,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 }
 
                 tstotal += ts;
+
 
                 DebugUpdate();
 

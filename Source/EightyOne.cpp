@@ -213,30 +213,16 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
         try
         {
                  Application->Initialize();
+                 Application->Title = "EightyOne";
                  #include "splashImpl.cpp"
 
                  Application->ProcessMessages();
                  delete spl;
 
                  Form1->GatherWindowsIfRequired();
-                 Application->Title = "EightyOne";
-                 Application->CreateForm(__classid(TEditArchiveInfo), &EditArchiveInfo);
-                 Application->CreateForm(__classid(TEditDataForm), &EditDataForm);
-                 Application->CreateForm(__classid(TEditGeneralForm), &EditGeneralForm);
-                 Application->CreateForm(__classid(TEditHWInfoForm), &EditHWInfoForm);
-                 Application->CreateForm(__classid(TEditPauseForm), &EditPauseForm);
-                 Application->CreateForm(__classid(TEditTextForm), &EditTextForm);
-                 Application->CreateForm(__classid(TTZX), &TZX);
-                 Application->CreateForm(__classid(TWavLoad), &WavLoad);
-                 Application->CreateForm(__classid(TPrinter), &Printer);
-                 Application->CreateForm(__classid(TP3Drive), &P3Drive);
-                 Application->CreateForm(__classid(TCreateHDF), &CreateHDF);
-                 Application->CreateForm(__classid(TFSSettings), &FSSettings);
-                 Application->CreateForm(__classid(TIF1), &IF1);
                  Form1->Caption = "EightyOne";
                  Form1->Timer2->Enabled=true;
                  Form1->RunFrameEnable=1;
-
 
                  Application->Run();
         }

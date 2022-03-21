@@ -1133,6 +1133,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
         Display1->Checked = ini->ReadBool("MAIN", "Display1", Display1->Checked);
         Speed1->Checked = ini->ReadBool("MAIN", "Speed1", Speed1->Checked);
+        Sound1->Checked = ini->ReadBool("MAIN", "Sound1", Sound1->Checked);
 
         DisplayArt->Checked=ini->ReadBool("MAIN","DisplayArt",DisplayArt->Checked);
 
@@ -1223,6 +1224,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "OutWave", OutWaveLoader->Checked);
         ini->WriteBool("MAIN", "OutTZX", OutTZXManager->Checked);
         ini->WriteBool("MAIN", "OutAudio", OutAudioOut->Checked);
+        ini->WriteBool("MAIN", "Sound1", Sound1->Checked);
 
         ini->WriteBool("MAIN", "BorderNone", None1->Checked);
         ini->WriteBool("MAIN", "BorderSmall", Small1->Checked);

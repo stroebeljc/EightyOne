@@ -1922,7 +1922,7 @@ object HW: THW
       end
       object NTSC: TCheckBox
         Left = 232
-        Top = 64
+        Top = 48
         Width = 113
         Height = 17
         Caption = '60Hz Frame Rate'
@@ -1954,8 +1954,8 @@ object HW: THW
         OnClick = M1NotClick
       end
       object Issue2: TCheckBox
-        Left = 232
-        Top = 48
+        Left = 72
+        Top = 112
         Width = 105
         Height = 17
         BiDiMode = bdLeftToRight
@@ -1978,7 +1978,7 @@ object HW: THW
       end
       object HideHardwareHSyncs: TCheckBox
         Left = 232
-        Top = 80
+        Top = 64
         Width = 145
         Height = 17
         Caption = 'Hide Hardware HSyncs'
@@ -1990,9 +1990,17 @@ object HW: THW
         Width = 75
         Height = 25
         Caption = 'More...'
-        TabOrder = 9
+        TabOrder = 10
         Visible = False
         OnClick = ButtonAdvancedMoreClick
+      end
+      object HideBackporchPeriods: TCheckBox
+        Left = 232
+        Top = 80
+        Width = 145
+        Height = 17
+        Caption = 'Hide Backporch Periods'
+        TabOrder = 9
       end
     end
   end

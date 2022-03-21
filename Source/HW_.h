@@ -104,6 +104,7 @@ __published:	// IDE-managed Components
         TComboBox *ZXC1ConfigurationBox;
         TCheckBox *HideHardwareHSyncs;
         TButton *ButtonAdvancedMore;
+        TCheckBox *HideBackporchPeriods;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);

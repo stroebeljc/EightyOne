@@ -499,6 +499,7 @@ void __fastcall THW::OKClick(TObject *Sender)
 //        else Form1->AnimTimer1->Interval=20;
 
         zx81.HideHardwareHSyncs = HideHardwareHSyncs->Checked;
+        zx81.HideBackporchPeriods = HideBackporchPeriods->Checked;
          
         if ((NewMachine == MACHINESPEC48) || (NewMachine == MACHINEQL))
         {
@@ -897,14 +898,8 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->RZX1->Enabled=false;
         if (zx81.machine==MACHINESPEC48) Form1->RZX1->Enabled=true;
 
-        if ( ((zx81.machine==MACHINESPEC48
-                || zx81.machine==MACHINEACE
-                || zx81.machine==MACHINELAMBDA)
-                        && !Form1->Sound1->Checked)
-                || ( (zx81.machine!=MACHINESPEC48
-                        && zx81.machine!=MACHINEACE
-                        && zx81.machine!=MACHINELAMBDA)
-                                && Form1->Sound1->Checked) )
+        if ( ((zx81.machine==MACHINESPEC48 || zx81.machine==MACHINEACE || zx81.machine==MACHINELAMBDA) && !Form1->Sound1->Checked)
+                || ( (zx81.machine!=MACHINESPEC48 && zx81.machine!=MACHINEACE && zx81.machine!=MACHINELAMBDA) && (zx81.colour != COLOURCHROMA) && Form1->Sound1->Checked) )
                         Form1->Sound1Click(NULL);
 
         spectrum.drivebusy = -1;
@@ -1033,6 +1028,7 @@ void THW::SetupForZX81(void)
 
         FloatingPointHardwareFix->Enabled = false;
         HideHardwareHSyncs->Enabled = true;
+        HideBackporchPeriods->Enabled = true;
 
         EnableRomCartridgeOption(true);
         RomCartridgeLabel->Enabled=true;
@@ -1166,6 +1162,7 @@ void THW::SetupForSpectrum(void)
 
         FloatingPointHardwareFix->Enabled = false;
         HideHardwareHSyncs->Enabled = true;
+        HideBackporchPeriods->Enabled = true;
         SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
 
@@ -1274,6 +1271,7 @@ void THW::SetupForQL(void)
 
         FloatingPointHardwareFix->Enabled = false;
         HideHardwareHSyncs->Enabled = false;
+        HideBackporchPeriods->Enabled = false;
         SetZXpandState(false,false);
         ZXpand->Caption = "ZXpand+";
 
@@ -1398,6 +1396,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Text = zx81.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
+        HideBackporchPeriods->Enabled = false;
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1639,6 +1638,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         HideHardwareHSyncs->Enabled = false;
+        HideBackporchPeriods->Enabled = false;
         RomCartridgeLabel->Enabled = false;
         IDEBoxChange(NULL);
 }
@@ -1728,6 +1728,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         HideHardwareHSyncs->Enabled = false;
+        HideBackporchPeriods->Enabled = false;
         SetZXpandState(false,false);
         IDEBoxChange(NULL);
 }
@@ -1860,6 +1861,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteInteger("HWARE","HDRIVE",IDEBox->ItemIndex);
         ini->WriteBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
         ini->WriteBool("HWARE","HideHardwareHSyncs",HideHardwareHSyncs->Checked);
+        ini->WriteBool("HWARE","HideBackporchPeriods",HideBackporchPeriods->Checked);
 
         Rom=zx81.ROM80; ini->WriteString("HWARE","ROM80",Rom);
         Rom=zx81.ROM81; ini->WriteString("HWARE","ROM81",Rom);
@@ -2036,6 +2038,7 @@ void THW::LoadSettings(TIniFile *ini)
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
         HideHardwareHSyncs->Checked=ini->ReadBool("HWARE","HideHardwareHSyncs",HideHardwareHSyncs->Checked);
+        HideBackporchPeriods->Checked=ini->ReadBool("HWARE","HideBackporchPeriods",HideBackporchPeriods->Checked);
 
         Upload->Checked=ini->ReadBool("HWARE","ZXCFWP",Upload->Checked);
         ZXCFRAM->ItemIndex=ini->ReadInteger("HWARE","ZXCFRAM",ZXCFRAM->ItemIndex);

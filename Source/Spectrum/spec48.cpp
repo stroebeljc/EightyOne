@@ -49,7 +49,10 @@
 #include "Spectra\Spectra.h"
 #include "LiveMemoryWindow_.h"
 
-#define VBLANKCOLOUR (0*16)
+#define VBLANKCOLOUR    (0*16)     
+#define HSYNCCOLOUR     VBLANKCOLOUR
+#define VSYNCCOLOUR     VBLANKCOLOUR
+#define BACKPORCHCOLOUR VBLANKCOLOUR
 
 extern "C"
 {
@@ -1469,14 +1472,14 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 int bpaper = (zx81.colour != COLOURSPECTRA) ? paper*16 : paper;
                 if (fts >= (machine.scanlines-4)*machine.tperscanline)
                 {
-                        bpaper=VBLANKCOLOUR;
+                        bpaper=VSYNCCOLOUR;
                 }
 
-                int backPorchBorrow = !zx81.HideHardwareHSyncs ? ((borrow < BackPorchDuration) ? borrow : BackPorchDuration) : 0;
+                int backPorchBorrow = !zx81.HideBackporchPeriods ? ((borrow < BackPorchDuration) ? borrow : BackPorchDuration) : 0;
                 int displayBorrow = (borrow - backPorchBorrow);
 
 
-                add_blank(CurScanLine, backPorchBorrow*scale, VBLANKCOLOUR);
+                add_blank(CurScanLine, backPorchBorrow*scale, BACKPORCHCOLOUR);
                 add_blank(CurScanLine, displayBorrow*scale, bpaper);
 
                 PBaseColour=paper;
@@ -1597,7 +1600,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 InteruptTime=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
                                 if (rzx.mode==RZX_PLAYBACK)
                                 {
-                                        //if (RZXCounter<=0) Sy=machine.scanlines;
                                         rzx_update(&RZXCounter);
                                 }
 
@@ -1707,7 +1709,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 }
 
                                                 chars++;
-                                                //noise=0;
                                                 noise=(noise<<8) | attr;
                                                 delay=8;
                                         }
@@ -1734,7 +1735,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         }
                                         
                                         if (fts >= (machine.scanlines-4)*machine.tperscanline)
-                                                colour=VBLANKCOLOUR;
+                                                colour=VSYNCCOLOUR;
 
                                         altcolour=colour;
                                         BaseColour=colour>>4;
@@ -1760,24 +1761,28 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                         if (((Sy&3)==DCCount) || ((Sy&3)==((DCCount+1)&3)))
                                                                 altcolour=(PBaseColour+1)<<4;
                                                         else    altcolour=(BaseColour+1)<<4;
-                                                        //if (altcolour==128) altcolour--;
                                                 }
                                         }
 
-                                        bool HSyncPeriod = (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
-                                        bool BackporchPeriod = (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
-                                        bool BlankingPeriod = !zx81.HideHardwareHSyncs && (HSyncPeriod || BackporchPeriod);
-                                        if (BlankingPeriod)
+                                        bool HSyncPeriod = !zx81.HideHardwareHSyncs && (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
+                                        bool BackporchPeriod = !zx81.HideBackporchPeriods && (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
+                                        if (HSyncPeriod)
                                         {
                                                 if (tv.AdvancedEffects && !(TIMEXMode&4))
-                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=VBLANKCOLOUR;
-                                                CurScanLine->scanline[CurScanLine->scanline_len++]=VBLANKCOLOUR;
+                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=HSYNCCOLOUR;
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=HSYNCCOLOUR;
+                                        }
+                                        else if (BackporchPeriod)
+                                        {
+                                                if (tv.AdvancedEffects && !(TIMEXMode&4))
+                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=BACKPORCHCOLOUR;
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=BACKPORCHCOLOUR;
                                         }
                                         else
                                         {
                                                 if (tv.AdvancedEffects && !(TIMEXMode&4))
                                                         CurScanLine->scanline[CurScanLine->scanline_len++]=altcolour;
-                                                CurScanLine->scanline[CurScanLine->scanline_len++]=colour; //(SPECVSync>0)? 0:colour;
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=colour;
                                         }
                                         PBaseColour=BaseColour;
                                         shift_register <<= 1;

@@ -44,7 +44,10 @@
 #include "Chroma\Chroma.h"
 #include "LiveMemoryWindow_.h"
 
-#define VBLANKCOLOUR (0*16)
+#define VBLANKCOLOUR    (0*16)
+#define HSYNCCOLOUR     VBLANKCOLOUR
+#define VSYNCCOLOUR     VBLANKCOLOUR
+#define BACKPORCHCOLOUR VBLANKCOLOUR
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -1133,10 +1136,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         static bool outputBlackScanlines = true;
 
         const int HSyncDuration = 16;
-        const int BackPorchDuration = 10;
+        const int BackporchDuration = 17; //Should really be 16 but causes left border by 2 pixels wider than it should
         const int ZX80HSyncDuration = 20;
         const int SoundScanlineMismatchTolerance = 5;
-                                                            
+        const int horizontalOffset = ZX80HSyncDuration - HSyncDuration - 1;
+
         CurScanLine->scanline_len=0;
 
         MaxScanLen = (zx81.single_step? 1:420);
@@ -1197,11 +1201,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         if (CurScanLine->sync_valid)
         {
-                int backPorchBorrow = HSYNC_generator ? ((borrow < BackPorchDuration) ? borrow : BackPorchDuration) : 0;
+                int backPorchBorrow = HSYNC_generator ? ((borrow < BackporchDuration-horizontalOffset) ? borrow : BackporchDuration-horizontalOffset) : 0;
                 int displayBorrow = (borrow - backPorchBorrow);
 
-                add_blank(CurScanLine, backPorchBorrow, HSYNC_generator && !zx81.HideHardwareHSyncs && frameSynchronised ? VBLANKCOLOUR : (16*paper));
-                add_blank(CurScanLine, displayBorrow, HSYNC_generator ? (16*paper) : VBLANKCOLOUR);
+                add_blank(CurScanLine, backPorchBorrow, HSYNC_generator && !zx81.HideBackporchPeriods && frameSynchronised ? BACKPORCHCOLOUR : (16*paper));
+                add_blank(CurScanLine, displayBorrow, HSYNC_generator ? (16*paper) : BACKPORCHCOLOUR);
 
                 if (CurScanLine->sync_len>machine.tperscanline && machine.tperscanline==208)
                         hsync_counter=machine.tperscanline-10;
@@ -1270,19 +1274,35 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 shift_store=shift_register;
                 pixels=ts<<1;
 
+                bool inFE = (LastInstruction == LASTINSTINFE && !NMI_generator);
+                bool outFF = (LastInstruction == LASTINSTOUTFF && !NMI_generator);
+
+                int hsyncDuration = (zx81.machine == MACHINEZX80) ? ZX80HSyncDuration : HSyncDuration;
+                int backporchPosition = machine.tperscanline - BackporchDuration;
+                bool zx80 = (zx81.machine == MACHINEZX80);
+
                 for (i=0; i<pixels; i++)
                 {
+                        const int portOperationActive = 6;
                         int colour, bit;
 
-                        bit=((shift_register^shift_reg_inv)&32768);
+                        bit = ((shift_register ^ shift_reg_inv) & 32768);
 
-                        bool HSyncPeriod = (hsync_counter-(i/2) < HSyncDuration);
-                        bool BackPorchPeriod = (hsync_counter-(i/2)) > (machine.tperscanline - BackPorchDuration);
-                        bool BlankingPeriod = !zx81.HideHardwareHSyncs && (HSyncPeriod || BackPorchPeriod);
-                        if (HSYNC_generator && (!BlankingPeriod || (BlankingPeriod && !frameSynchronised)))
-                            colour = (bit ? ink:paper)<<4;
+                        int pixelCounter = hsync_counter - horizontalOffset - (i/2);
+                        bool inFEBlack = inFE && (i >= pixels - portOperationActive);
+                        bool outFFBlack = outFF && (i < pixels - portOperationActive);
+                        bool outFFWhite = outFF && !outFFBlack && (zx81.HideBackporchPeriods || zx80);
+                        bool HSyncPeriod = !zx81.HideHardwareHSyncs && (pixelCounter < hsyncDuration) && (zx80 || pixelCounter >= 0);
+                        bool BackporchPeriod = !zx81.HideBackporchPeriods && (!zx80 && (pixelCounter > backporchPosition || (pixelCounter < 0)));
+                        bool BlankingPeriod = (HSyncPeriod || BackporchPeriod);
+                        if ((HSYNC_generator && (!BlankingPeriod || (BlankingPeriod && !frameSynchronised)) && !inFEBlack && !outFFBlack) || outFFWhite)
+                                colour = (bit ? ink:paper) << 4;
+                        else if (BackporchPeriod)
+                                colour = BACKPORCHCOLOUR;
+                        else if (HSyncPeriod || inFEBlack || outFFBlack)
+                                colour = HSYNCCOLOUR;
                         else
-                            colour = VBLANKCOLOUR;
+                                colour = VSYNCCOLOUR;
 
                         if (zx81.dirtydisplay)
                         {
@@ -1322,14 +1342,14 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 switch(LastInstruction)
                 {
-                case LASTINSTOUTFD:
+                case LASTINSTOUTFD:     // NMI generator off
                         setSoundOutputOff = true;
                         NMI_generator=0;
                         if (!HSYNC_generator) rowcounter=0;
                         if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
                         break;
-                case LASTINSTOUTFE:
+                case LASTINSTOUTFE:     // NMI generator on
                         NMI_generator=1;
                         setSoundOutputOff = true;
                         if (RasterY > 0)
@@ -1338,7 +1358,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (CurScanLine->sync_len) CurScanLine->sync_valid=SYNCTYPEV;
                         HSYNC_generator=1;
                         break;
-                case LASTINSTINFE:
+                case LASTINSTINFE:      // VSync start
                         if (!NMI_generator)
                         {
                                 setSoundOutputOn = true;
@@ -1346,7 +1366,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 if (CurScanLine->sync_len==0) CurScanLine->sync_valid=0;
                         }
                         break;
-                case LASTINSTOUTFF:
+                case LASTINSTOUTFF:     // VSync end
                         setSoundOutputOff = true;
                         if (!HSYNC_generator) rowcounter=0;
                         if ((CurScanLine->sync_len == 11 && hsync_counter >= CurScanLine->sync_len) ||
@@ -1412,10 +1432,10 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 hsync_counter -= nmilen;
                                 ts += nmilen;
 
-                                if (zx81.HideHardwareHSyncs)
+                                if (zx81.HideBackporchPeriods)
                                         add_blank(CurScanLine, 1, 16*paper);
                                 else
-                                        add_blank(CurScanLine, 1, VBLANKCOLOUR);
+                                        add_blank(CurScanLine, 1, BACKPORCHCOLOUR);
                         }
 
                         borrow = -hsync_counter;

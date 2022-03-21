@@ -203,6 +203,7 @@ typedef struct
         CFGBYTE chromaColourSwitchOn;
         CFGBYTE FloatingPointHardwareFix;
         CFGBYTE HideHardwareHSyncs;
+        CFGBYTE HideBackporchPeriods;
 
         char ROM80[256];
         char ROM81[256];

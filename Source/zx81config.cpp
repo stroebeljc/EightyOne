@@ -100,6 +100,7 @@ void load_config(void)
         zx81.zxcCassetteBankPagedIn = 0;
         zx81.FloatingPointHardwareFix = 0;
         zx81.HideHardwareHSyncs = false;
+        zx81.HideBackporchPeriods = false;
         machine.tperscanline=207;
         machine.tperframe=312*207;
         machine.fps=50;

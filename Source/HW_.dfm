@@ -1451,7 +1451,7 @@ object HW: THW
     Top = 140
     Width = 391
     Height = 169
-    ActivePage = AdvSettings
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1999,7 +1999,7 @@ object HW: THW
         Top = 80
         Width = 145
         Height = 17
-        Caption = 'Hide Backporch Periods'
+        Caption = 'Hide Back Porch Periods'
         TabOrder = 9
       end
     end

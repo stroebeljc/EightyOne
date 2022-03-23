@@ -1274,12 +1274,13 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 shift_store=shift_register;
                 pixels=ts<<1;
 
-                bool inFE = (LastInstruction == LASTINSTINFE && !NMI_generator);
-                bool outFF = (LastInstruction == LASTINSTOUTFF && !NMI_generator);
-
+                bool zx80 = (zx81.machine == MACHINEZX80);
+                bool inFE = (LastInstruction == LASTINSTINFE) && !NMI_generator;
+                bool outFF = ((LastInstruction == LASTINSTOUTFF) || (zx80 && LastInstruction == LASTINSTOUTFD)) && !NMI_generator;
                 int hsyncDuration = (zx81.machine == MACHINEZX80) ? ZX80HSyncDuration : HSyncDuration;
                 int backporchPosition = machine.tperscanline - BackporchDuration;
-                bool zx80 = (zx81.machine == MACHINEZX80);
+                bool hideHardwareHSyncs = !zx80 && zx81.HideHardwareHSyncs;
+                bool hideBackporchPeriods = zx80 || zx81.HideBackporchPeriods;
 
                 for (i=0; i<pixels; i++)
                 {
@@ -1291,9 +1292,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         int pixelCounter = hsync_counter - horizontalOffset - (i/2);
                         bool inFEBlack = inFE && (i >= pixels - portOperationActive);
                         bool outFFBlack = outFF && (i < pixels - portOperationActive);
-                        bool outFFWhite = outFF && !outFFBlack && (zx81.HideBackporchPeriods || zx80);
-                        bool HSyncPeriod = !zx81.HideHardwareHSyncs && (pixelCounter < hsyncDuration) && (zx80 || pixelCounter >= 0);
-                        bool BackporchPeriod = !zx81.HideBackporchPeriods && (!zx80 && (pixelCounter > backporchPosition || (pixelCounter < 0)));
+                        bool outFFWhite = outFF && !outFFBlack && hideBackporchPeriods;
+                        bool HSyncPeriod = !hideHardwareHSyncs && (pixelCounter < hsyncDuration) && (zx80 || pixelCounter >= 0);
+                        bool BackporchPeriod = !hideBackporchPeriods && (!zx80 && (pixelCounter > backporchPosition || (pixelCounter < 0)));
                         bool BlankingPeriod = (HSyncPeriod || BackporchPeriod);
                         if ((HSYNC_generator && (!BlankingPeriod || (BlankingPeriod && !frameSynchronised)) && !inFEBlack && !outFFBlack) || outFFWhite)
                                 colour = (bit ? ink:paper) << 4;

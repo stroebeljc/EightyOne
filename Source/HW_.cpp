@@ -1396,6 +1396,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Text = zx81.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
+        HideHardwareHSyncs->Enabled = false;
         HideBackporchPeriods->Enabled = false;
         IDEBoxChange(NULL);
 }

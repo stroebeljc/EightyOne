@@ -1275,8 +1275,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 pixels=ts<<1;
 
                 bool zx80 = (zx81.machine == MACHINEZX80);
-                bool inFE = (LastInstruction == LASTINSTINFE) && !NMI_generator;
-                bool outFF = ((LastInstruction == LASTINSTOUTFF) || (zx80 && LastInstruction == LASTINSTOUTFD)) && !NMI_generator;
+                bool videoOutputBlack = (CurScanLine->sync_valid > 0);
+                bool inFE = (LastInstruction == LASTINSTINFE) && !NMI_generator && !videoOutputBlack;
+                bool outFF = ((LastInstruction == LASTINSTOUTFF) || (zx80 && LastInstruction == LASTINSTOUTFD)) && !NMI_generator && videoOutputBlack;
                 int hsyncDuration = (zx81.machine == MACHINEZX80) ? ZX80HSyncDuration : HSyncDuration;
                 int backporchPosition = machine.tperscanline - BackporchDuration;
                 bool hideHardwareHSyncs = !zx80 && zx81.HideHardwareHSyncs;
@@ -1292,7 +1293,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         int pixelCounter = hsync_counter - horizontalOffset - (i/2);
                         bool inFEBlack = inFE && (i >= pixels - portOperationActive);
                         bool outFFBlack = outFF && (i < pixels - portOperationActive);
-                        bool outFFWhite = outFF && !outFFBlack && hideBackporchPeriods;
+                        bool outFFWhite = outFF && !outFFBlack && hideBackporchPeriods && videoOutputBlack;
                         bool HSyncPeriod = !hideHardwareHSyncs && (pixelCounter < hsyncDuration) && (zx80 || pixelCounter >= 0);
                         bool BackporchPeriod = !hideBackporchPeriods && (!zx80 && (pixelCounter > backporchPosition || (pixelCounter < 0)));
                         bool BlankingPeriod = (HSyncPeriod || BackporchPeriod);

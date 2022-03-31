@@ -3,6 +3,11 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.28 - 31/03/2022 (by Paul Farrow)
+* Bug fixes:
+  - Resolved issue where black bars could appear in the top and bottom border areas, and a white
+    bar at the end of the VSync pulse.
+
 Version 1.27 - 23/03/2022 (by Paul Farrow and SirMorris)
 * Bug fixes:
   - An ampersand within a label in a ROM symbol file was not being shown in the debugger's

@@ -60,14 +60,14 @@ void ql_initialise(void)
         for(i=0;i<0x20000;i++) memory[i]=0;
         for(i=0x40000;i<=0xfffff;i++) memory[i]=0;
         romlen=memory_load(machine.CurRom, 0, 65536);
-        zx81.romcrc=CRC32Block(memory,romlen);
+        emulator.romcrc=CRC32Block(memory,romlen);
         zx81.ROMTOP=romlen-1;
         HWReset();
 
         //CurScanLine->sync_len=0;
-        //CurScanLine->sync_valid=0;
+        //CurScanLine->sync_type=0;
 
-        QLTopBorder= (zx81.NTSC) ? 1:24;
+        QLTopBorder= (machine.NTSC) ? 1:24;
         QLLeftBorder=37*2+1;
         QLFlashCount=50;
 
@@ -129,14 +129,14 @@ int ql_do_scanline(SCANLINE *CurScanLine)
                 pixels=0;
                 QLFlash=0;
         }
-        MaxScanLen = zx81.single_step? 1:420;
+        MaxScanLen = emulator.single_step? 1:420;
 
         do
         {
                 ts=CPURun(1);
                 if (!fts)
                 {
-                        int intlen=0;//z80_interrupt(0);
+                        int intlen=0;
                         ts+=intlen;
                 }
 
@@ -185,7 +185,7 @@ int ql_do_scanline(SCANLINE *CurScanLine)
         if (loop<=0)
         {
                 CurScanLine->sync_len=24;
-                CurScanLine->sync_valid = SYNCTYPEH;
+                CurScanLine->sync_type = SYNCTYPEH;
                 if (CurScanLine->scanline_len > machine.tperscanline*2) CurScanLine->scanline_len=machine.tperscanline*2;
 
                 borrow = -loop;
@@ -196,7 +196,7 @@ int ql_do_scanline(SCANLINE *CurScanLine)
                 {
                         fts=0;
                         CurScanLine->sync_len=414;
-                        CurScanLine->sync_valid = SYNCTYPEV;
+                        CurScanLine->sync_type = SYNCTYPEV;
                         Sy=0;
                         borrow=0;
                         loop=machine.tperscanline;

@@ -38,7 +38,7 @@ __fastcall TSpeed::TSpeed(TComponent* Owner)
 {
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }
@@ -59,7 +59,7 @@ void __fastcall TSpeed::Recalc(TObject *Sender)
         //if (zx81.NTSC) AccurateTStates=zx81.clockspeed / 60;
 
         speedup=AccurateSpeed->Position * 32;
-        zx81.speedup = (machine.tperscanline * speedup)/100;
+        emulator.speedup = (machine.tperscanline * speedup)/100;
 }
 //---------------------------------------------------------------------------
 void TSpeed::LoadSettings(TIniFile *ini)
@@ -106,8 +106,8 @@ void __fastcall TSpeed::FormClose(TObject *Sender, TCloseAction &Action)
 
 void __fastcall TSpeed::EnableFrameSkipClick(TObject *Sender)
 {
-        if (EnableFrameSkip->Checked) zx81.frameskip=0;
-        else zx81.frameskip=-1;
+        if (EnableFrameSkip->Checked) emulator.frameskip=0;
+        else emulator.frameskip=-1;
 }
 //---------------------------------------------------------------------------
 

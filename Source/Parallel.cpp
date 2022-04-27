@@ -34,7 +34,7 @@ __fastcall TParallelPort::TParallelPort(TComponent* Owner)
 
         ComPortListChange(NULL);
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }

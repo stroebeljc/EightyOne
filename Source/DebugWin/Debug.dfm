@@ -781,7 +781,7 @@ object Dbg: TDbg
       Height = 14
       Alignment = taRightJustify
       AutoSize = False
-      Caption = 'NMI Gen:'
+      Caption = 'NMI Generator:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -796,7 +796,7 @@ object Dbg: TDbg
       Height = 14
       Alignment = taRightJustify
       AutoSize = False
-      Caption = 'HSYNC Gen:'
+      Caption = 'Sync Output:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -826,7 +826,7 @@ object Dbg: TDbg
       Height = 14
       Alignment = taRightJustify
       AutoSize = False
-      Caption = 'Row Counter:'
+      Caption = 'Line Counter:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -905,20 +905,20 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
     end
-    object HSYNCGen: TLabel
+    object SyncOutput: TLabel
       Left = 115
       Top = 34
       Width = 57
       Height = 14
       AutoSize = False
-      Caption = 'OFF'
+      Caption = 'White'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Courier New'
       Font.Style = []
       ParentFont = False
-      OnClick = HSYNCGenClick
+      OnClick = SyncOutputClick
     end
     object Label27: TLabel
       Left = 47

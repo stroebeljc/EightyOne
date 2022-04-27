@@ -13,7 +13,7 @@ TLoadBasicListingOptionsForm *LoadBasicListingOptionsForm;
 __fastcall TLoadBasicListingOptionsForm::TLoadBasicListingOptionsForm(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile* ini = new TIniFile(zx81.inipath);
+        TIniFile* ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }

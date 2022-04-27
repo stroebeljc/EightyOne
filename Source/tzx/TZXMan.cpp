@@ -195,7 +195,7 @@ __fastcall TTZX::TTZX(TComponent* Owner)
 {
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
@@ -222,17 +222,17 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
         {
                 IBasicLoader* loader = NULL;
 
-                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINEZX80))
+                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINEZX80))
                 {
                         loader = new zx80BasicLoader(zx81.zxpand);
                 }
-                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
+                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (emulator.machine == MACHINEZX81 || emulator.machine == MACHINETS1000 || emulator.machine == MACHINETS1500 || emulator.machine == MACHINETK85)))
                 {
                         loader = new zx81BasicLoader(zx81.zxpand);
                 }
-                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINESPEC48))
+                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINESPECTRUM))
                 {
-                        bool spec128 = (zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128);
+                        bool spec128 = (emulator.machine==MACHINESPECTRUM && spectrum.model>=SPECCY128);
                         bool if1 = (spectrum.floppytype == FLOPPYIF1);
                         loader = new specBasicLoader(spec128, if1);
                 }
@@ -243,25 +243,25 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                         return;
                 }
 
-                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINEZX80))
+                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINEZX80))
                 {
-                        if (zx81.machine != MACHINEZX80)
+                        if (emulator.machine != MACHINEZX80)
                         {
                                 HWSetMachine(MACHINEZX80, NULL);
                         }
                 }
-                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (zx81.machine == MACHINEZX81 || zx81.machine == MACHINETS1000 || zx81.machine == MACHINETS1500 || zx81.machine == MACHINETK85)))
+                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (emulator.machine == MACHINEZX81 || emulator.machine == MACHINETS1000 || emulator.machine == MACHINETS1500 || emulator.machine == MACHINETK85)))
                 {
-                        if ((zx81.machine != MACHINEZX81 && zx81.machine != MACHINETS1000 && zx81.machine != MACHINETS1500 && zx81.machine != MACHINETK85))
+                        if ((emulator.machine != MACHINEZX81 && emulator.machine != MACHINETS1000 && emulator.machine != MACHINETS1500 && emulator.machine != MACHINETK85))
                         {
                                 HWSetMachine(MACHINEZX81, NULL);
                         }
                 }
-                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && zx81.machine == MACHINESPEC48))
+                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINESPECTRUM))
                 {
-                        if (zx81.machine != MACHINESPEC48)
+                        if (emulator.machine != MACHINESPECTRUM)
                         {
-                                HWSetMachine(MACHINESPEC48, SPECCY48);
+                                HWSetMachine(MACHINESPECTRUM, SPECCY48);
                         }
                 }
 
@@ -686,7 +686,7 @@ void TTZX::RecStopCheck(void)
         BlockLen=RecPtr-RecBuf;
         if (BlockLen<2) return;
 
-        if (zx81.machine==MACHINESPEC48 || zx81.machine==MACHINEACE)
+        if (emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE)
         {
                 TZXFile.MoveBlock(TZXFile.AddROMBlock(RecBuf, BlockLen),Table->Row-1);
                 TZXFile.Tape[TZXFile.CurBlock].Pause=3000;

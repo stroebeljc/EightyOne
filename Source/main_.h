@@ -148,6 +148,23 @@ __published:	// IDE-managed Components
         TMenuItem *EnableSplashScreen;
         TMenuItem *LiveMemoryOverview;
         TMenuItem *BasicListerOption;
+        TMenuItem *Annotations;
+        TMenuItem *HorizontalSyncPulse;
+        TMenuItem *VerticalSyncPulse;
+        TMenuItem *BackPorch;
+        TMenuItem *NonMaskableInterruptResponse;
+        TMenuItem *NonMaskableInterruptServiceRoutine;
+        TMenuItem *MaskableInterruptResponse;
+        TMenuItem *MaskableInterruptServiceRoutine;
+        TMenuItem *InstructionStraddlingNMI;
+        TMenuItem *InstructionStraddlingNMIWaitStates;
+        TMenuItem *Z80Halted;
+        TMenuItem *N11;
+        TMenuItem *SelectAllColourisations;
+        TMenuItem *DeselectAllColourisations;
+        TMenuItem *NonMaskableInterruptServiceRoutineRecursion;
+        TMenuItem *RomDisplayDriver;
+        TMenuItem *NonMaskableInterruptResponseWaitStates;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -233,6 +250,23 @@ __published:	// IDE-managed Components
         void __fastcall Tools1Click(TObject *Sender);
         void __fastcall BasicListerOptionClick(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
+        void __fastcall HorizontalSyncPulseClick(TObject *Sender);
+        void __fastcall VerticalSyncPulseClick(TObject *Sender);
+        void __fastcall BackPorchClick(TObject *Sender);
+        void __fastcall NonMaskableInterruptResponseClick(TObject *Sender);
+        void __fastcall NonMaskableInterruptServiceRoutineClick(
+          TObject *Sender);
+        void __fastcall MaskableInterruptResponseClick(TObject *Sender);
+        void __fastcall MaskableInterruptServiceRoutineClick(
+          TObject *Sender);
+        void __fastcall InstructionStraddlingNMIClick(TObject *Sender);
+        void __fastcall InstructionStraddlingNMIWaitStatesClick(TObject *Sender);
+        void __fastcall Z80HaltedClick(TObject *Sender);
+        void __fastcall SelectAllColourisationsClick(TObject *Sender);
+        void __fastcall DeselectAllColourisationsClick(TObject *Sender);
+        void __fastcall RomDisplayDriverClick(TObject *Sender);
+        void __fastcall NonMaskableInterruptServiceRoutineRecursionClick(TObject *Sender);
+        void __fastcall NonMaskableInterruptResponseWaitStatesClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

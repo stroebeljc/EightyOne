@@ -167,7 +167,7 @@ void TEditGeneralForm::DecodeData(int BlockNo)
                 else
                 {
                         if (c>=128) c-=128;
-                        c = (zx81.machine == MACHINEZX80) ? ZX80CharSet[c] : ZX81CharSet[c];
+                        c = (emulator.machine == MACHINEZX80) ? ZX80CharSet[c] : ZX81CharSet[c];
                 }
 
                 text2 += (char) c;
@@ -225,7 +225,7 @@ void __fastcall TEditGeneralForm::CharSetChange(TObject *Sender)
 
 void __fastcall TEditGeneralForm::ButtonSaveClick(TObject *Sender)
 {
-        if (zx81.machine == MACHINEZX80)
+        if (emulator.machine == MACHINEZX80)
         {
                 SaveZX80File();
         }
@@ -305,12 +305,12 @@ void __fastcall TEditGeneralForm::SaveZX80File()
 
 void __fastcall TEditGeneralForm::FormShow(TObject *Sender)
 {
-        ButtonSave->Visible = (zx81.machine == MACHINEZX81) || (zx81.machine == MACHINEZX80) ||
-                              (zx81.machine == MACHINETS1000) || (zx81.machine == MACHINETS1500) ||
-                              (zx81.machine == MACHINER470) || (zx81.machine == MACHINELAMBDA) ||
-                              (zx81.machine == MACHINETK85) || (zx81.machine == MACHINEZX97LE);
+        ButtonSave->Visible = (emulator.machine == MACHINEZX81) || (emulator.machine == MACHINEZX80) ||
+                              (emulator.machine == MACHINETS1000) || (emulator.machine == MACHINETS1500) ||
+                              (emulator.machine == MACHINER470) || (emulator.machine == MACHINELAMBDA) ||
+                              (emulator.machine == MACHINETK85) || (emulator.machine == MACHINEZX97LE);
 
-        switch (zx81.machine)
+        switch (emulator.machine)
         {
                 case MACHINEZX80:
                         CharSet->ItemIndex = zx80Index;

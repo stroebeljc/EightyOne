@@ -156,7 +156,7 @@ void CSound::AYInit(void)
         for(f=0;f<3;f++)
                 AYToneTick[f]=AYTonePeriod[f]=0;
 
-        switch(zx81.aytype)
+        switch(machine.aytype)
         {
         case AY_TYPE_QUICKSILVA: clock=AY_CLOCK_QUICKSILVA; break;
         case AY_TYPE_ZONX: clock=AY_CLOCK_ZONX; break;
@@ -494,7 +494,7 @@ void CSound::Frame(void)
                 // must be AY then, so `zero' buffer ready for it
         //        memset(Buffer,128,FrameSize*m_Channels);
 
-        if(zx81.aysound ) AYOverlay();
+        if(machine.aysound ) AYOverlay();
 
         DXSound.Frame(Buffer, FrameSize*m_Channels);
         SoundOutput->UpdateImage(Buffer,FrameSize*m_Channels);

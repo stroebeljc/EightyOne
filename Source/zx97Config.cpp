@@ -43,11 +43,11 @@ __fastcall TZX97Dialog::TZX97Dialog(TComponent* Owner)
         char filename[256];
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
-        strcpy(filename,zx81.cwd);
+        strcpy(filename,emulator.cwd);
         strcat(filename,"NV_Memory\\zx97.nv");
 
         f=fopen(filename,"rb");
@@ -114,13 +114,13 @@ void __fastcall TZX97Dialog::FormDestroy(TObject *Sender)
         char filename[256];
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         SaveSettings(ini);
         delete ini;
 
         if (SaveRAM->Checked)
         {
-                strcpy(filename,zx81.cwd);
+                strcpy(filename,emulator.cwd);
                 strcat(filename,"NV_Memory\\zx97.nv");
 
                 f=fopen(filename,"wb");

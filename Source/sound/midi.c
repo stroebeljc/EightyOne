@@ -14,8 +14,8 @@ int MidiDev=-1;
 
 void MidiWriteBit(int Bit)
 {
-        if (zx81.machine==MACHINESPEC48 &&
-                ( spectrum.machine==SPECCYPLUS2A || spectrum.machine==SPECCYPLUS3))
+        if (emulator.machine==MACHINESPECTRUM &&
+                ( spectrum.model==SPECCYPLUS2A || spectrum.model==SPECCYPLUS3))
         {
                 MidiByte = (MidiByte>>1) | (((~Bit>>2)&1)<<8);
 

@@ -52,7 +52,7 @@ extern void ace_writeport(int Address, int Data, int *tstates);
 extern BYTE ace_readport(int Address, int *tstates);
 extern int ace_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
-extern int framepos, NMI_generator, HSYNC_generator, frametstates;
+extern int framepos, nmiGeneratorEnabled, syncOutputWhite, frametstates;
 extern int tStatesCount;
 extern int zx81_stop;
 extern BYTE ZXKeyboard[];

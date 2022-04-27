@@ -47,8 +47,8 @@ __fastcall TArtifacts::TArtifacts(TComponent* Owner)
 {
         TIniFile *ini;
 
-        zx81.dirtydisplay=true;
-        ini = new TIniFile(zx81.inipath);
+        emulator.dirtydisplay=true;
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }
@@ -66,7 +66,7 @@ void __fastcall TArtifacts::FormClose(TObject *Sender,
 //---------------------------------------------------------------------------
 void __fastcall TArtifacts::TrackBarChange(TObject *Sender)
 {
-        if (zx81.colour == COLOURSPECTRA)
+        if (machine.colour == COLOURSPECTRA)
         {
                 SpectraPalette();
         }
@@ -142,7 +142,7 @@ void TArtifacts::StandardPalette(void)
                 HSYNC_TOLLERANCE *= 2;
         }
 
-        if (zx81.NTSC)
+        if (machine.NTSC)
         {
                 VSYNC_TOLLERANCEMIN-=60;
                 VSYNC_TOLLERANCEMAX-=60;
@@ -165,7 +165,7 @@ void TArtifacts::StandardPalette(void)
         for(i=0;i<16;i++)
         {
                 colour=i;
-                if (zx81.inverse) colour=(i&8) + (7-(colour&7));
+                if (emulator.inverse) colour=(i&8) + (7-(colour&7));
 
                 difference=(1000*(((colour>7)?HiBrightLevel:ContrastLevel)-BrightnessLevel))/16;
                 basecolour=(difference*((colour&7)+9))/1000;
@@ -252,7 +252,7 @@ void __fastcall TArtifacts::ArtEnabledClick(TObject *Sender)
                 SimpleGhosting->Enabled=false;
         }
 
-        zx81.dirtydisplay = ArtEnabled->Checked;
+        emulator.dirtydisplay = ArtEnabled->Checked;
         TrackBarChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -302,8 +302,8 @@ void TArtifacts::LoadSettings(TIniFile *ini)
 
         if (Form1->DisplayArt->Checked) Show();
 
-        zx81.dirtydisplay= ArtEnabled->Checked;
-        zx81.simpleghost = SimpleGhosting->Checked;
+        emulator.dirtydisplay= ArtEnabled->Checked;
+        emulator.simpleghost = SimpleGhosting->Checked;
 
         if (tv.DisableAdvanced)
         {
@@ -317,7 +317,7 @@ void TArtifacts::LoadSettings(TIniFile *ini)
 }
 void __fastcall TArtifacts::SimpleGhostingClick(TObject *Sender)
 {
-        zx81.simpleghost = SimpleGhosting->Checked;
+        emulator.simpleghost = SimpleGhosting->Checked;
 }
 //---------------------------------------------------------------------------
 
@@ -366,7 +366,7 @@ void __fastcall TArtifacts::ForceVibrantColours(Boolean forceVibrantColours)
 
 void TArtifacts::ConfigureDotCrawlOption()
 {
-        bool spec48 = (zx81.machine==MACHINESPEC48 && spectrum.machine<SPECCY128);
+        bool spec48 = (emulator.machine==MACHINESPECTRUM && spectrum.model<SPECCY128);
         DotCrawl1->Enabled = AdvEffects->Enabled && spec48;
         tv.DotCrawl = DotCrawl1->Checked && spec48;
 }

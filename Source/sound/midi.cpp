@@ -43,8 +43,8 @@ void CMidi::WriteBit(int Bit)
         // Midi is transmitted at 31.25 kbs, 1 start bit, 8 data bits, MSB first,
         //  then 1 stop bit.
 
-        if (zx81.machine==MACHINESPEC48 &&
-                ( spectrum.machine==SPECCYPLUS2A || spectrum.machine==SPECCYPLUS3))
+        if (emulator.machine==MACHINESPECTRUM &&
+                ( spectrum.model==SPECCYPLUS2A || spectrum.model==SPECCYPLUS3))
         {
                 // Midi data arrives in bit 2 of the port, so to build a midi byte
                 // we do the following:

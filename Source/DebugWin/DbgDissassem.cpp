@@ -29,7 +29,7 @@ BYTE GetMem(int Addr)
 {
 	BYTE byteVal;
 
-        if (zx81.machine==MACHINESPEC48 || zx81.machine==MACHINEACE || Addr<zx81.m1not)
+        if (emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE || Addr<zx81.m1not)
 	{
                 byteVal = readFromMemory ? getbyte(Addr) : instructionBytesBuffer[Addr - instructionAddress];
 	}
@@ -98,8 +98,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         StrCode += Hex8(Opcode);
         Addr++;
 
-        if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                || zx81.machine==MACHINESPEC48))
+        if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                || emulator.machine==MACHINESPECTRUM))
                 Opcode=-1;
 
 
@@ -311,8 +311,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         case 0xca: StrText="JP Z,nnnn"; break;
         case 0xcb:
                 Opcode = GetMem(Addr);
-                if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                || zx81.machine==MACHINESPEC48))
+                if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                || emulator.machine==MACHINESPECTRUM))
                         Opcode=-1;
                 StrCode += Hex8(Opcode);
                 Addr++;
@@ -596,8 +596,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         case 0xdc: StrText="CALL C,nnnn"; break;
         case 0xdd:
                 Opcode = GetMem(Addr);
-                if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                || zx81.machine==MACHINESPEC48))
+                if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                || emulator.machine==MACHINESPECTRUM))
                         Opcode=-1;
                 StrCode += Hex8(Opcode);
                 Addr++;
@@ -688,8 +688,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
                         Offset = GetMem(Addr++);
                         StrCode += Hex8(Offset);
                         Opcode = GetMem(Addr);
-                        if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                || zx81.machine==MACHINESPEC48))
+                        if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                || emulator.machine==MACHINESPECTRUM))
                                 Opcode=-1;
                         StrCode += Hex8(Opcode);
                         Addr++;
@@ -979,8 +979,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         case 0xec: StrText="CALL PE,nnnn"; break;
         case 0xed:
                 Opcode = GetMem(Addr);
-                if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                || zx81.machine==MACHINESPEC48))
+                if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                || emulator.machine==MACHINESPECTRUM))
                         Opcode=-1;
                 StrCode += Hex8(Opcode);
                 Addr++;
@@ -1085,8 +1085,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
         case 0xfc: StrText="CALL M,nnnn"; break;
         case 0xfd:
                 Opcode = GetMem(Addr);
-                if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                || zx81.machine==MACHINESPEC48))
+                if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                || emulator.machine==MACHINESPECTRUM))
                         Opcode=-1;
                 StrCode += Hex8(Opcode);
                 Addr++;
@@ -1177,8 +1177,8 @@ AnsiString TDbg::DisassembleAddress(int* Ad)
                         Offset = GetMem(Addr++);
                         StrCode += Hex8(Offset);
                         Opcode = GetMem(Addr);
-                        if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE
-                                                        || zx81.machine==MACHINESPEC48))
+                        if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE
+                                                        || emulator.machine==MACHINESPECTRUM))
                                 Opcode=-1;
                         StrCode += Hex8(Opcode);
                         Addr++;

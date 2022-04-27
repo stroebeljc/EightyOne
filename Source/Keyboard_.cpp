@@ -39,7 +39,7 @@ __fastcall TKeyboard::TKeyboard(TComponent* Owner)
 {
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }
@@ -110,7 +110,7 @@ void TKeyboard::KbChange(void)
         KeyboardFunctions->Visible=false;
         KeyboardFunctions->EnableTimer(false);
 
-        switch(zx81.romcrc)
+        switch(emulator.romcrc)
         {
         case CRCACE:
                 Keyboard->acekb->Visible=true;
@@ -145,17 +145,17 @@ void TKeyboard::KbChange(void)
 
         case CRCZX81_ED1:
         case CRCZX81_ED2:
-                if (zx81.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
-                else if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
+                if (machine.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
+                else if (machine.NTSC) Keyboard->ts1000kb->Visible=true;
                 else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                 else Keyboard->zx81kb->Visible=true;
                 break;
 
         case CRCSP48:
         case CRCSP81:
-                if (spectrum.machine == SPECCY16)
+                if (spectrum.model == SPECCY16)
                         Keyboard->spec16kb->Visible=true;
-                else if (zx81.machine == MACHINESPEC48 && spectrum.machine == SPECCYPLUS)
+                else if (emulator.machine == MACHINESPECTRUM && spectrum.model == SPECCYPLUS)
                         Keyboard->spec128kb->Visible=true;
                 else
                         Keyboard->spec48kb->Visible=true;
@@ -169,7 +169,7 @@ void TKeyboard::KbChange(void)
                 else Keyboard->zx81kb->Visible=true;
                 break;
         default:
-                switch(zx81.machine)
+                switch(emulator.machine)
                 {
                 case MACHINEZX80:
                         if (zx81.zxpand) Keyboard->zx80zxpandkb->Visible=true;
@@ -178,8 +178,8 @@ void TKeyboard::KbChange(void)
                         KeyboardFunctions->EnableTimer(KeyboardFunctions->Visible);
                         break;
                 case MACHINEZX81:
-                        if (zx81.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
-                        else if (zx81.NTSC) Keyboard->ts1000kb->Visible=true;
+                        if (machine.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
+                        else if (machine.NTSC) Keyboard->ts1000kb->Visible=true;
                         else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                         else Keyboard->zx81kb->Visible=true;
                         break;
@@ -201,8 +201,8 @@ void TKeyboard::KbChange(void)
                 case MACHINELAMBDA:
                         Keyboard->lambdakb->Visible=true;
                         break;
-                case MACHINESPEC48:
-                        switch (spectrum.machine)
+                case MACHINESPECTRUM:
+                        switch (spectrum.model)
                         {
                         case SPECCYPLUS:
                         case SPECCY128:

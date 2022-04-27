@@ -145,7 +145,7 @@ __fastcall TWavLoad::TWavLoad(TComponent* Owner)
 
         IgnoreZX81=false;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
@@ -251,7 +251,7 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
                 if (SoundOn->Down) Sound.Beeper(MicState, frametstates);
 
                 if (MicState == lastbit)
-                        count ++;// (zx81.machine==MACHINEACE)?1:3;
+                        count ++;// (emulator.machine==MACHINEACE)?1:3;
                 else
                         count=0;
                 //count=0;
@@ -262,10 +262,10 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
 
                 const int zx81PulseWidth = 6;
                 const int midLevel = 128;
-                bool limitPulseWidth = (zx81.machine == MACHINEZX80) || (zx81.machine == MACHINEZX81) ||
-                                       (zx81.machine == MACHINETS1500) || (zx81.machine == MACHINETS1000) ||
-                                       (zx81.machine == MACHINEZX97LE) || (zx81.machine == MACHINELAMBDA) ||
-                                       (zx81.machine == MACHINER470) || (zx81.machine == MACHINETK85);
+                bool limitPulseWidth = (emulator.machine == MACHINEZX80) || (emulator.machine == MACHINEZX81) ||
+                                       (emulator.machine == MACHINETS1500) || (emulator.machine == MACHINETS1000) ||
+                                       (emulator.machine == MACHINEZX97LE) || (emulator.machine == MACHINELAMBDA) ||
+                                       (emulator.machine == MACHINER470) || (emulator.machine == MACHINETK85);
                 if (count < 128)
                 {
                         level = MicState ? midLevel-96 : midLevel+96;

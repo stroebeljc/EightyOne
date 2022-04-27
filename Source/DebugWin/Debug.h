@@ -116,7 +116,7 @@ __published:	// IDE-managed Components
         TLabel *RowCount;
         TLabel *ShiftReg;
         TGroupBox *GroupBox4;
-        TLabel *HSYNCGen;
+        TLabel *SyncOutput;
         TGroupBox *GroupBox5;
         TLabel *Stack0;
         TLabel *Stack1;
@@ -223,7 +223,7 @@ __published:	// IDE-managed Components
         void __fastcall SkipINTBtnClick(TObject *Sender);
         void __fastcall HistoryClick(TObject *Sender);
         void __fastcall NMIGenClick(TObject *Sender);
-        void __fastcall HSYNCGenClick(TObject *Sender);
+        void __fastcall SyncOutputClick(TObject *Sender);
         void __fastcall HLClick(TObject *Sender);
         void __fastcall BCClick(TObject *Sender);
         void __fastcall DEClick(TObject *Sender);

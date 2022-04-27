@@ -20,7 +20,7 @@ void SP0256_Init(void)
         if (Phones) free(Phones);
         Phones=NULL;
 
-        strcpy(FileName,zx81.cwd);
+        strcpy(FileName,emulator.cwd);
         strcat(FileName,"ROM\\sp0256.bin");
 
         f=fopen(FileName,"rb");

@@ -31,7 +31,7 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
         BuildHDList(HD0List);
         BuildHDList(HD1List);
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
@@ -41,7 +41,7 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
 
         FormShow(Owner);
 
-        //if (spectrum.machine==SPECCYPLUS3
+        //if (spectrum.model==SPECCYPLUS3
         //        || spectrum.HDType!=HDNONE)
         //        Form1->DiskDrives1->Visible=true;
         //else

@@ -80,7 +80,7 @@ void TDebug68k::UpdateVals(void)
 void __fastcall TDebug68k::StopClick(TObject *Sender)
 {
         zx81_stop = !zx81_stop;
-        zx81.single_step=0;
+        emulator.single_step=0;
         if (zx81_stop) Stop->Caption="Run";
         else Stop->Caption="Stop";
         UpdateVals();
@@ -90,7 +90,7 @@ void __fastcall TDebug68k::StopClick(TObject *Sender)
 void __fastcall TDebug68k::SingleStepClick(TObject *Sender)
 {
         zx81_stop=0;
-        zx81.single_step=1;
+        emulator.single_step=1;
 }
 //---------------------------------------------------------------------------
 

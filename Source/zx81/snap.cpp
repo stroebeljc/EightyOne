@@ -38,7 +38,7 @@
 #include "main_.h"
 #include "Artifacts_.h"
 
-extern int rowcounter;
+extern int lineCounter;
 extern int MemotechMode;
 extern BYTE font[1024];
 
@@ -215,7 +215,7 @@ void load_snap_chrgen(FILE *f)
                         {
                                 font[Addr-0x8400] = Chr;
 
-                                if (zx81.colour == COLOURCHROMA)
+                                if (machine.colour == COLOURCHROMA)
                                 {
                                         memory[Addr] = Chr;
                                         memory[Addr + 0x4000] = Chr;
@@ -229,8 +229,8 @@ void load_snap_chrgen(FILE *f)
                 {
                         Chr=hex2dec(tok);
                         font[Addr-0x8400]=Chr;
-                        
-                        if (zx81.colour == COLOURCHROMA)
+
+                        if (machine.colour == COLOURCHROMA)
                         {
                                 memory[Addr] = Chr;
                                 memory[Addr + 0x4000] = Chr;
@@ -364,11 +364,11 @@ void load_snap_colour(FILE *f)
                         {
                                 Form1->ChromaColourEnable->Visible = true;
                                 Form1->ChromaColourEnable->Enabled = true;
-                                zx81.colour = COLOURCHROMA;
+                                machine.colour = COLOURCHROMA;
                         }
                         else if (lambda)
                         {
-                                zx81.colour = COLOURLAMBDA;
+                                machine.colour = COLOURLAMBDA;
                         }
                 }
                 else if (chroma && !strcmp(tok,"CHROMA_MODE"))
@@ -397,7 +397,7 @@ AnsiString GetMachine()
 {
         AnsiString machineName;
 
-        switch(zx81.machine)
+        switch(emulator.machine)
         {
                 case MACHINEZX80:
                         machineName = "ZX80";
@@ -477,9 +477,12 @@ void load_snap_zx81(FILE *f)
                         return;
                 }
 
-                if (!strcmp(tok,"NMI")) NMI_generator = hex2dec(get_token(f));
-                else if (!strcmp(tok,"HSYNC")) HSYNC_generator = hex2dec(get_token(f));
-                else if (!strcmp(tok,"ROW")) rowcounter = hex2dec(get_token(f));
+                if (!strcmp(tok,"NMI")) nmiGeneratorEnabled = hex2dec(get_token(f));
+                else if (!strcmp(tok,"SYNC")) syncOutputWhite = hex2dec(get_token(f));
+                else if (!strcmp(tok,"LINE")) lineCounter = hex2dec(get_token(f));
+                //Backwards compatibility
+                else if (!strcmp(tok,"HSYNC")) syncOutputWhite = hex2dec(get_token(f));
+                else if (!strcmp(tok,"ROW")) lineCounter = hex2dec(get_token(f));
         }
 }
 
@@ -725,7 +728,7 @@ int load_snap(char *filename)
         ret = do_load_snap(filename);
         if (!ret) return ret;
 
-        Artifacts->ForceVibrantColours(zx81.colour == COLOURCHROMA);
+        Artifacts->ForceVibrantColours(machine.colour == COLOURCHROMA);
 
         return true;
 }
@@ -859,8 +862,8 @@ int save_snap(char *filename)
                 fprintf(f,"HT %02X      IF2 %02X\n", z80.halted, z80.iff2);
 
                 fprintf(f,"\n[ZX81]\n");
-                fprintf(f,"NMI %02X     HSYNC %02X\n", NMI_generator, HSYNC_generator);
-                fprintf(f,"ROW %03X\n", rowcounter);
+                fprintf(f,"NMI %02X     SYNC %02X\n", nmiGeneratorEnabled, syncOutputWhite);
+                fprintf(f,"LINE %03X\n", lineCounter);
 
                 fprintf(f,"\n[MEMORY]\n");
                 fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
@@ -891,10 +894,10 @@ int save_snap(char *filename)
 
                 fprintf(f,"\n[ADVANCED]\n");
                 fprintf(f,"ROM %s\n", HW->RomBox->Text.c_str());
-                fprintf(f,"PROTECT_ROM %02X\n", zx81.protectROM);
+                fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
                 fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
                 fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
-                fprintf(f,"FRAME_RATE_60HZ %02X\n", zx81.NTSC);
+                fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
 
                 fprintf(f,"\n[SOUND]\n");
                 fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
@@ -903,7 +906,7 @@ int save_snap(char *filename)
                 fprintf(f,"\n[COLOUR]\n");
                 fprintf(f,"TYPE %s\n", HW->ColourBox->Text.c_str());
 
-                if (zx81.colour == COLOURCHROMA)
+                if (machine.colour == COLOURCHROMA)
                 {
                         Addr = 0xC000;
 
@@ -965,7 +968,7 @@ int save_snap(char *filename)
                 }
 
                 fprintf(f,"\n[INTERFACES]\n");
-                fprintf(f,"ZX_PRINTER %02X\n", zx81.zxprinter);
+                fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
                 fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
 
                 fprintf(f,"\n[EOF]\n");
@@ -986,7 +989,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         }
         else
         {
-                strcpy(file, zx81.cwd);
+                strcpy(file, emulator.cwd);
                 strcat(file,"ROM\\");
                 strcat(file,filename);
         }
@@ -1024,7 +1027,7 @@ int memory_load(char *filename, int address, int length)
         }
         else
         {
-                strcpy(file, zx81.cwd);
+                strcpy(file, emulator.cwd);
                 strcat(file,"ROM\\");
                 strcat(file,filename);
         }
@@ -1055,7 +1058,7 @@ int font_load(char *filename, char *address, int length)
         char file[256];
         int len;
 
-        strcpy(file, zx81.cwd);
+        strcpy(file, emulator.cwd);
         strcat(file,"ROM\\");
         strcat(file,filename);
 

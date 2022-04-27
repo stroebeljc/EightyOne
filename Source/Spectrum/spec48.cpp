@@ -263,9 +263,7 @@ void spec48_nmi(void)
                 PlusDPaged=1;
         }
 
-        int nonHaltedWaitStates;
-        int haltedWaitStates;
-        z80_nmi(0, &nonHaltedWaitStates, &haltedWaitStates);
+        z80_nmi();
 }
 }
 
@@ -286,9 +284,8 @@ void spec48_reset(void)
         SPECLast1ffd=0;
         if (spectrum.divIDEVersion==2) SPECLast7ffd=16;
 
-        if (spectrum.machine==SPECCYSE) SPECBlk[2]=8+4;
-        if (spectrum.machine==SPECCYTS2068) SPECBankEnable=0;
-        else if (spectrum.machine>=SPECCY128) SPECBankEnable=1;
+        if (spectrum.model==SPECCYTS2068) SPECBankEnable=0;
+        else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
         else SPECBankEnable=0;
 
         MFActive=0;
@@ -356,35 +353,35 @@ void spec48_initialise(void)
         for(i=0;i<sizeof(PlusDMem);i++) PlusDMem[i]=255;
 
         for(i=0;i<sizeof(TimexWritable);i++)
-                TimexWritable[i]=(spectrum.machine==SPECCYSE) ? 1:0;
+                TimexWritable[i]=0;
 
         if (spectrum.floppytype==FLOPPYDISCIPLE)
         {
-                romlen=memory_load(zx81.ROMDISCIPLE,0,16384);
+                romlen=memory_load(emulator.ROMDISCIPLE,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYPLUSD)
         {
-                romlen=memory_load(zx81.ROMPLUSD,0,16384);
+                romlen=memory_load(emulator.ROMPLUSD,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYOPUSD)
         {
-                romlen=memory_load(zx81.ROMOPUSD,0,16384);
+                romlen=memory_load(emulator.ROMOPUSD,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYBETA)
         {
-                romlen=memory_load(zx81.ROMBETADISC,0,16384);
+                romlen=memory_load(emulator.ROMBETADISC,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.uspeech)
         {
-                romlen=memory_load(zx81.ROMUSPEECH,0,16384);
+                romlen=memory_load(emulator.ROMUSPEECH,0,16384);
                 memcpy(uSpeechMem, memory, romlen);
         }
 
@@ -402,11 +399,11 @@ void spec48_initialise(void)
         }
 
         romlen=memory_load(machine.CurRom, 0, 65536);
-        zx81.romcrc=CRC32Block(memory,romlen);
+        emulator.romcrc=CRC32Block(memory,romlen);
 
         memcpy(SpecMem, memory, romlen);
 
-        if (spectrum.machine==SPECCYTS2068)
+        if (spectrum.model==SPECCYTS2068)
                 memcpy(TimexMem+65536, memory+16384, 8192);
 
         if (spectrum.MFVersion == MF128)
@@ -422,17 +419,17 @@ void spec48_initialise(void)
         }
 
 
-        if (strlen(zx81.ROMDock)) LoadDock(zx81.ROMDock);
+        if (strlen(emulator.ROMDock)) LoadDock(emulator.ROMDock);
 
-        SPECTopBorder= (zx81.NTSC) ? 32:56;
+        SPECTopBorder= (machine.NTSC) ? 32:56;
         SPECLeftBorder=1+37*2;
 
-        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-machine.intposition;
+        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.intposition;
         if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
 
         for(i=0;i<79999;i++) ContendArray[i]=0;
 
-        pos=machine.intposition-1;//((SPECLeftBorder/2)+SPECTopBorder*zx81.tperscanline)-8;
+        pos=spectrum.intposition-1;
 
         for(i=0;i<192;i++)
         {
@@ -546,11 +543,9 @@ void SPECLoadCheck(void)
 
 void spec48_WriteByte(int Address, int Data)
 {
-        register int SpecSETemp;
-
         LiveMemoryWindow->Write(Address);
 
-        if (Address>=32768 && spectrum.machine==SPECCY16) return;
+        if (Address>=32768 && spectrum.model==SPECCY16) return;
 
         if (Address<16384)
         {
@@ -611,7 +606,7 @@ void spec48_WriteByte(int Address, int Data)
                 
                 // The ROM cartridge socket does not differentiate between a memory read or write,
                 // so all accesses are treated as reads
-                if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+                if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
                 {
                         BYTE data;
                         if (ReadRomCartridge(Address, (BYTE*)&data))
@@ -620,15 +615,8 @@ void spec48_WriteByte(int Address, int Data)
                         }
                 }
 
-                if ((SPECBlk[0]<4) && (zx81.protectROM) && (!TIMEXPage) ) return;
+                if ((SPECBlk[0]<4) && (machine.protectROM) && (!TIMEXPage) ) return;
         }
-
-        SpecSETemp=TIMEXPage;
-        if (spectrum.machine==SPECCYSE)
-        {
-                if ((SPECBlk[Address>>14]&1) && (Address>=49152)) TIMEXPage=0;
-        }
-
 
         if ((1<<(Address>>13)) & TIMEXPage)
         {
@@ -638,13 +626,12 @@ void spec48_WriteByte(int Address, int Data)
         else
         {
                 RAMWrite(SPECBlk[Address>>14], Address, Data);
-                if (zx81.colour == COLOURSPECTRA)
+                if (machine.colour == COLOURSPECTRA)
                 {
                         SpectraRAMWrite(Address, Data);
                 }
         }
 
-        TIMEXPage=SpecSETemp;
         noise = (noise<<8) | Data;
 }
 
@@ -671,7 +658,6 @@ void spec48_writebyte(int Address, int Data)
 BYTE spec48_ReadByte(int Address)
 {
         int data;
-        register int SpecSETemp;
 
         LiveMemoryWindow->Read(Address);
 
@@ -737,7 +723,7 @@ BYTE spec48_ReadByte(int Address)
                         return(data);
                 }
 
-                if ((zx81.romCartridge != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+                if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
                 {
                         if (ReadRomCartridge(Address, (BYTE*)&data))
                         {
@@ -746,18 +732,10 @@ BYTE spec48_ReadByte(int Address)
                 }
         }
 
-        SpecSETemp=TIMEXPage;
-        if (spectrum.machine==SPECCYSE)
-        {
-                if ((SPECBlk[Address>>14]&1) && (Address>=49152)) TIMEXPage=0;
-        }
-
         if ((1<<(Address>>13)) & TIMEXPage)
                 data=TimexMem[65536*TIMEXBank+Address];
         else
                 data=RAMRead(SPECBlk[Address>>14], Address);
-
-        TIMEXPage=SpecSETemp;
 
         noise = (noise<<8) | data;
         return(data);
@@ -836,22 +814,22 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         case 0x3f:
                 if (spectrum.MFVersion==MF128) MFLockout=1;
-                if (zx81.aytype==AY_TYPE_FULLER) SelectAYReg=Data&15;
+                if (machine.aytype==AY_TYPE_FULLER) SelectAYReg=Data&15;
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_trackreg(Data);
         case 0x5b:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_trackreg(Data);
                 break;
 
         case 0x5f:
-                if (zx81.aytype==AY_TYPE_FULLER) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.aytype==AY_TYPE_FULLER) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg(Data);
                 break;
 
         case 0x73:
-                if (zx81.ts2050) d8251writeDATA(Data);
+                if (machine.ts2050) d8251writeDATA(Data);
                 break;
         case 0x77:
-                if (zx81.ts2050) d8251writeCTRL(Data);
+                if (machine.ts2050) d8251writeCTRL(Data);
                 break;
 
         case 0x7b:
@@ -923,7 +901,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdd:
-                if (zx81.aytype==AY_TYPE_ACE) SelectAYReg=Data;
+                if (machine.aytype==AY_TYPE_ACE) SelectAYReg=Data;
                 break;
 
         case 0xdf:
@@ -932,14 +910,14 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 case 0x7f:
                         // The SPECTRA IO port has priority over devices connected behind it, which it
                         // ensures by masking out the IORQ line
-                        if ((zx81.colour == COLOURSPECTRA) && zx81.spectraColourSwitchOn)
+                        if ((machine.colour == COLOURSPECTRA) && spectrum.spectraColourSwitchOn)
                         {
-                                zx81.spectraMode = Data;
+                                spectrum.spectraMode = Data;
                                 DetermineSpectraDisplayBank();
                                 break;
                         }
                 default:
-                        if (zx81.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                        if (machine.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                         break;
                 }
         case 0xe3:
@@ -974,18 +952,16 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xf4:
-                if (spectrum.machine==SPECCYTC2048
-                        || spectrum.machine==SPECCYTS2068
-                        || spectrum.machine==SPECCYSE)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
                         TIMEXPage=Data;
                 break;
 
         case 0xf5:
-                if (zx81.aytype==AY_TYPE_TIMEX || spectrum.machine==SPECCYSE) SelectAYReg=Data;
+                if (machine.aytype==AY_TYPE_TIMEX) SelectAYReg=Data;
                 break;
 
         case 0xf6:
-                if (zx81.aytype==AY_TYPE_TIMEX || spectrum.machine==SPECCYSE) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.aytype==AY_TYPE_TIMEX) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xf7:
@@ -996,20 +972,20 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0xfb:
                 if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_datareg(Data);
                 if (spectrum.floppytype==FLOPPYDISCIPLE) PrinterWriteData(Data);
-                if (zx81.zxprinter) ZXPrinterWritePort(Data);
+                if (machine.zxprinter) ZXPrinterWritePort(Data);
                 break;
         case 0xfd:
                 switch(Address>>8)
                 {
                 case 0x0f:
-                        if ((zx81.machine == MACHINESPEC48) && (spectrum.machine >= SPECCYPLUS2A))
+                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
                                 PrinterWriteData(Data);
                         }
                         break;
 
                 case 0x3f:
-                        if ((zx81.machine == MACHINESPEC48) && (spectrum.machine >= SPECCYPLUS2A))
+                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
                                 floppy_write_datareg(Data);
                         }
@@ -1023,21 +999,21 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         SPECBlk[2]=6;
                         SPECBlk[3]=4+(Data&7);
                         SPECVideoBank=(Data>>3)&1 ? 11:9;
-                        if (spectrum.machine!=SPECCYSE) SPECBankEnable=!((Data>>5)&1);
-                        if (zx81.colour == COLOURSPECTRA)
+                        SPECBankEnable=!((Data>>5)&1);
+                        if (machine.colour == COLOURSPECTRA)
                         {
                                 DetermineSpectraDisplayBank();
                         }
                         break;
 
                 case 0x1f:
-                        if ((zx81.machine == MACHINESPEC48) && (spectrum.machine >= SPECCYPLUS2A))
+                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
                                 spectrum.drivebusy = (Data&8) ? 1:0;
                                 floppy_set_motor(Data);
                                 PrinterSetStrobe(Data&16);
 
-                                if ((!SPECBankEnable) || spectrum.machine<=SPECCY128)
+                                if ((!SPECBankEnable) || spectrum.model<=SPECCY128)
                                         break;
                                 SPECLast1ffd=Data;
                                 if (Data&1)
@@ -1069,9 +1045,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0xff:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_set_motor(Data);
 
-                if (spectrum.machine==SPECCYTC2048
-                        || spectrum.machine==SPECCYTS2068
-                        || spectrum.machine==SPECCYSE)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
                 {
                         TIMEXByte=Data;
                         TIMEXMode=Data&7;
@@ -1086,7 +1060,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         SPECMICState = Data&8;
                         if (zx81.vsyncsound) Sound.Beeper(Data&16, frametstates);
 
-                        if (zx81.colour == COLOURSPECTRA)
+                        if (machine.colour == COLOURSPECTRA)
                         {
                                 SPECNextBorder = DetermineSpectraBorderColour(Data, flash & 0x10);
                         }
@@ -1226,11 +1200,11 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x73:
-                if (zx81.ts2050) return(d8251readDATA());
+                if (machine.ts2050) return(d8251readDATA());
                 break;
 
         case 0x77:
-                if (zx81.ts2050) return(d8251readCTRL());
+                if (machine.ts2050) return(d8251readCTRL());
                 break;
 
         case 0x7b:
@@ -1300,7 +1274,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xdd:
-                if (zx81.aytype==AY_TYPE_ACE)
+                if (machine.aytype==AY_TYPE_ACE)
                         return(Sound.AYRead(SelectAYReg));
                 break;
 
@@ -1310,9 +1284,9 @@ BYTE ReadPort(int Address, int *tstates)
                 case 0x7f:
                         // The SPECTRA IO port has priority over devices connected behind it, which it
                         // ensures by masking out the IORQ line
-                        if ((zx81.colour == COLOURSPECTRA) && zx81.spectraColourSwitchOn)
+                        if ((machine.colour == COLOURSPECTRA) && spectrum.spectraColourSwitchOn)
                         {
-                                return zx81.spectraMode;
+                                return spectrum.spectraMode;
                         }
                 default:
                         if (spectrum.kmouse)
@@ -1359,14 +1333,12 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf4:
-                if (spectrum.machine==SPECCYTC2048
-                        || spectrum.machine==SPECCYTS2068
-                        || spectrum.machine==SPECCYSE)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
                         return(TIMEXPage);
                 break;
 
         case 0xf6:
-                if (zx81.aytype==AY_TYPE_TIMEX || spectrum.machine==SPECCYSE)
+                if (machine.aytype==AY_TYPE_TIMEX)
                         return(Sound.AYRead(SelectAYReg));
                 break;
 
@@ -1378,7 +1350,7 @@ BYTE ReadPort(int Address, int *tstates)
 
         case 0xfb:
                 if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_datareg());
-                if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
+                if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));
                 break;
 
         case 0xfd:
@@ -1396,9 +1368,7 @@ BYTE ReadPort(int Address, int *tstates)
         case 0xff:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged)
                         return(floppy_get_state());
-                if (spectrum.machine==SPECCYTC2048
-                        || spectrum.machine==SPECCYTS2068
-                        || spectrum.machine==SPECCYSE)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
                         return(TIMEXByte);
                 break;
 
@@ -1411,11 +1381,7 @@ BYTE ReadPort(int Address, int *tstates)
                         if ( !(((SPECKb&16) && spectrum.kbissue==SPECKBISS2)
                                 || ((SPECKb&8) && spectrum.kbissue==SPECKBISS3))) data=64;
 
-                        if ((spectrum.machine==SPECCYTC2048)
-                                || (spectrum.machine==SPECCYTS2068)
-                                || (spectrum.machine==SPECCYSE)) data=160;
-
-
+                        if ((spectrum.model==SPECCYTC2048) || (spectrum.model==SPECCYTS2068)) data=160;
 
                         SPECLoadCheck();
                         if (WavPlaying()) data = (data&~64) | (GetEarState() ? 64:0);
@@ -1434,7 +1400,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
         }
 
-        if (spectrum.machine<=SPECCY128) return(FloatingBus);
+        if (spectrum.model<=SPECCY128) return(FloatingBus);
 
         return(idleDataBus);
 }
@@ -1459,23 +1425,23 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         int InteruptTime;
         int shiftCount;
 
-        int HSyncDuration = spectrum.machine >= SPECCY128 ? 31 : 27;
+        int HSyncDuration = spectrum.model >= SPECCY128 ? 31 : 27;
         const int BackPorchDuration = 5;
 
         SpeedUpCount=0;
-        SpeedUp=(zx81.speedup*machine.tperscanline)/100;
+        SpeedUp=(emulator.speedup*machine.tperscanline)/100;
 
         CurScanLine->scanline_len=0;
 
         if (clean_exit)
         {
-                int bpaper = (zx81.colour != COLOURSPECTRA) ? paper*16 : paper;
+                int bpaper = (machine.colour != COLOURSPECTRA) ? paper*16 : paper;
                 if (fts >= (machine.scanlines-4)*machine.tperscanline)
                 {
                         bpaper=VSYNCCOLOUR;
                 }
 
-                int backPorchBorrow = !zx81.HideBackporchPeriods ? ((borrow < BackPorchDuration) ? borrow : BackPorchDuration) : 0;
+                int backPorchBorrow = (borrow < BackPorchDuration) ? borrow : BackPorchDuration;
                 int displayBorrow = (borrow - backPorchBorrow);
 
 
@@ -1490,7 +1456,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
         if (fts<=0) IntDue=1;
 
-        MaxScanLen = scale * zx81.single_step? 1:500;
+        MaxScanLen = scale * emulator.single_step? 1:500;
         do
         {
                 LastPC=z80.pc.w;
@@ -1500,9 +1466,9 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         && spectrum.HDType!=HDPITERSCF
                         && spectrum.HDType!=HDPITERS8B
                         && spectrum.HDType!=HDPITERS16B
-                        && (    (SPECBlk[0]==0 && spectrum.machine<SPECCYTS2068)
-                             || (SPECBlk[0]==1 && spectrum.machine>SPECCYTS2068 && spectrum.machine<SPECCYPLUS2A)
-                             || (SPECBlk[0]==3 && spectrum.machine>SPECCYPLUS2) ))
+                        && (    (SPECBlk[0]==0 && spectrum.model<SPECCYTS2068)
+                             || (SPECBlk[0]==1 && spectrum.model>SPECCYTS2068 && spectrum.model<SPECCYPLUS2A)
+                             || (SPECBlk[0]==3 && spectrum.model>SPECCYPLUS2) ))
                 {
                         if (IsFlashSaveable() && !PlusDPaged && !RomCartridgePagedIn())
                         {
@@ -1535,7 +1501,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 ts=z80_do_opcode();
 
                 WavClockTick(ts, SPECMICState);
-                if (zx81.zxprinter) ZXPrinterClockTick(ts);
+                if (machine.zxprinter) ZXPrinterClockTick(ts);
                 PrinterClockTick(ts);
                 Midi.ClockTick(ts);
                 if (spectrum.floppytype==FLOPPYIF1) IF1ClockTick(ts);
@@ -1652,7 +1618,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 {
                                                 case 0:
                                                 case 1:
-                                                        if (zx81.colour != COLOURSPECTRA)
+                                                        if (machine.colour != COLOURSPECTRA)
                                                         {
                                                                 shift_register=RAMRead(SPECVideoBank, (TIMEXMode<<13)+cellOffset);
                                                                 attr=RAMRead(SPECVideoBank, (TIMEXMode<<13)+6144+chars+((y>>3)<<5));
@@ -1689,7 +1655,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                                                 int flashSwap = (flash & 0x10);
 
-                                                if (zx81.colour == COLOURSPECTRA)
+                                                if (machine.colour == COLOURSPECTRA)
                                                 {
                                                         DetermineSpectraInkPaper(attr, attr2, flashSwap, &ink, &ink2, &paper, &paper2);
                                                         SPECNextBorder = DetermineSpectraBorderColour(SPECKb, flashSwap);
@@ -1723,7 +1689,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 {
                                         if (tv.AdvancedEffects && (TIMEXMode&4))
                                                 colour = ((shift_register&32768)?ink:paper) << 4;
-                                        else if (zx81.colour != COLOURSPECTRA)
+                                        else if (machine.colour != COLOURSPECTRA)
                                                 colour = ((shift_register&128)?ink:paper) << 4;
                                         else
                                         {
@@ -1740,7 +1706,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         altcolour=colour;
                                         BaseColour=colour>>4;
 
-                                        if (zx81.dirtydisplay)
+                                        if (emulator.dirtydisplay)
                                         {
                                                 if (PrevGhost) { colour|=4; PrevGhost=0; }
                                                 if (BaseColour!=PrevBit &&
@@ -1764,8 +1730,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 }
                                         }
 
-                                        bool HSyncPeriod = !zx81.HideHardwareHSyncs && (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
-                                        bool BackporchPeriod = !zx81.HideBackporchPeriods && (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
+                                        bool HSyncPeriod = (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
+                                        bool BackporchPeriod = (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
                                         if (HSyncPeriod)
                                         {
                                                 if (tv.AdvancedEffects && !(TIMEXMode&4))
@@ -1801,7 +1767,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         if (loop<=0)
         {
                 CurScanLine->sync_len=HSyncDuration;
-                CurScanLine->sync_valid = SYNCTYPEH;
+                CurScanLine->sync_type = SYNCTYPEH;
                 if (CurScanLine->scanline_len > (machine.tperscanline*scale))
                         CurScanLine->scanline_len=(machine.tperscanline*2*scale);
 
@@ -1813,7 +1779,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 {
                         fts =0; //-= machine.tperframe;
                         CurScanLine->sync_len=414;
-                        CurScanLine->sync_valid = SYNCTYPEV;
+                        CurScanLine->sync_type = SYNCTYPEV;
                         Sy=0;
                         //borrow=0;
                         loop=machine.tperscanline;

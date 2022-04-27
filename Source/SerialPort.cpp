@@ -264,7 +264,7 @@ __fastcall TSerialConfig::TSerialConfig(TComponent* Owner)
         FileNameBox->Text="c:\\rs232.txt";
         File=NULL;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }

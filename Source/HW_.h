@@ -47,7 +47,6 @@ __published:	// IDE-managed Components
         TOffice97Button *TS2068Btn;
         TTabSheet *HomeBrew;
         TOffice97Button *ZX97LEBtn;
-        TOffice97Button *SpecSEBtn;
         TPageControl *Advanced;
         TTabSheet *Interfaces;
         TTabSheet *FloppyDrives;
@@ -102,9 +101,7 @@ __published:	// IDE-managed Components
         TCheckBox *FloatingPointHardwareFix;
         TButton *ButtonZXpandSDCard;
         TComboBox *ZXC1ConfigurationBox;
-        TCheckBox *HideHardwareHSyncs;
         TButton *ButtonAdvancedMore;
-        TCheckBox *HideBackporchPeriods;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -141,7 +138,6 @@ __published:	// IDE-managed Components
         void __fastcall DriveBTypeChange(TObject *Sender);
         void __fastcall IF1ConfigClick(TObject *Sender);
         void __fastcall MultifaceClick(TObject *Sender);
-        void __fastcall SpecSEBtnClick(TObject *Sender);
         void __fastcall IDEBoxChange(TObject *Sender);
         void __fastcall QLBtnClick(TObject *Sender);
         void __fastcall FDCChange(TObject *Sender);

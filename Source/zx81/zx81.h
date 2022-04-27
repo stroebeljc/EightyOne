@@ -43,7 +43,6 @@
 extern BYTE memory[];
 extern BYTE acecolour[];
 extern void zx81_initialise(void);
-//extern int zx81_do_scanline(SCANLINE *CurScanLine);
 extern void zx81_writebyte(int Address, int Data);
 extern void zx81_setbyte(int Address, int Data);
 extern BYTE zx81_readbyte(int Address);
@@ -54,7 +53,8 @@ extern void zx81_writeport(int Address, int Data, int *tstates);
 extern BYTE zx81_readport(int Address, int *tstates);
 extern int zx81_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
-extern int framepos, NMI_generator, HSYNC_generator, frametstates;
+extern int framepos, frametstates;
+extern BOOL nmiGeneratorEnabled, syncOutputWhite;
 extern int tStatesCount;
 extern int zx81_stop;
 extern BYTE ZXKeyboard[];

@@ -28,10 +28,8 @@
 
 
 extern void AccurateInit(int resize);
-//extern int AccurateDraw(SCANLINE *Line);
 extern void AccurateUpdateDisplay(bool singlestep);
 extern void RecalcPalette(void);
-//extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern DWORD Palette[];
 extern int RenderInit(void);
 extern void RenderEnd(void);

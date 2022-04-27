@@ -105,68 +105,72 @@ void z80_reset( void )
 /* Process a z80 maskable interrupt */
 int z80_interrupt(int bus)
 {
-        /* Process if IFF1 set */
-        if( IFF1 )
+        if (IFF1)
         {
-                if( z80.halted )
+                if (z80.halted)
                 {
                         PC++;
                         z80.halted = 0;
                 }
 
-                IFF1=IFF2=0;
+                IFF1 = 0;
+                IFF2 = 0;
 
-                writebyte( --SP, PCH ); writebyte( --SP, PCL );
+                writebyte(--SP, PCH);
+                writebyte(--SP, PCL);
 
                 R++;
 
-                switch(IM)
+                switch (IM)
                 {
-                case 0: PC = 0x0038; StackChange+=2; return(13);
-                case 1: PC = 0x0038; StackChange+=2; return(13);
-                case 2:
-	        {
-	                WORD inttemp=(0x100*I) + bus;
-	                PCL = readbyte(inttemp++); PCH = readbyte(inttemp);
-	                StackChange+=2;
-                        return(19);
-	        }
-                default:
-                        return(12);
+                        case 0:
+                        {
+                                // Assume a RST 38h placed on the data bus
+                                PC = 0x0038;
+                                StackChange += 2;
+                                return 13;
+                        }
+                        case 1:
+                        {
+                                PC = 0x0038;
+                                StackChange += 2;
+                                return 13;
+                        }
+                        case 2:
+	                {
+	                        WORD vectorAddress = (I << 8) + bus;
+        	                PCL = readbyte(vectorAddress++);
+                                PCH = readbyte(vectorAddress);
+	                        StackChange += 2;
+                                return 19;
+        	        }
+                        default:
+                        {
+                                return 12;
+                        }
                 }
         }
-        return(0);
+
+        return 0;
 }
 
 /* Process a z80 non-maskable interrupt */
-int z80_nmi( int pixelCount, int* pNonHaltedWaitStates, int* pHaltedWaitStates)
+int z80_nmi()
 {
-        int waitstates=0;
-
-        StackChange+=2;
+        StackChange += 2;
         IFF1 = 0;
 
         if (z80.halted)
         {
                 z80.halted=0;
                 PC++;
-
-                waitstates=(pixelCount/2)-machine.tperscanline;
-                waitstates = 4-waitstates;
-                if (waitstates<0 || waitstates>=machine.tperscanline) waitstates=0;
-                *pHaltedWaitStates = 18-(4+waitstates);
-        }
-        else
-        {
-                *pNonHaltedWaitStates=(pixelCount/2)-machine.tperscanline;
-                if (*pNonHaltedWaitStates < 12)
-                        *pNonHaltedWaitStates = 15-*pNonHaltedWaitStates;
-                *pNonHaltedWaitStates+=7;
         }
 
-        writebyte( --SP, PCH ); writebyte( --SP, PCL );
+        writebyte(--SP, PCH);
+        writebyte(--SP, PCL);
+        
         R++;
         PC = 0x0066;
 
-        return (4+waitstates);
+        return 11;
 }

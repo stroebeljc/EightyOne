@@ -39,7 +39,7 @@ __fastcall TKb::TKb(TComponent* Owner)
 
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }
@@ -49,11 +49,11 @@ void __fastcall TKb::OKClick(TObject *Sender)
         switch(CursorMode->ItemIndex)
         {
         case 0:
-                if (zx81.machine==MACHINEACE) PCKeySetCursor('5', '7', '6', '8', 0);
+                if (emulator.machine==MACHINEACE) PCKeySetCursor('5', '7', '6', '8', 0);
                 else PCKeySetCursor('5', '6', '7', '8', 0);
                 break;
         case 1:
-                if (zx81.machine==MACHINEACE) PCKeySetCursor('5', '7', '6', '8', 1);
+                if (emulator.machine==MACHINEACE) PCKeySetCursor('5', '7', '6', '8', 1);
                 else PCKeySetCursor('5', '6', '7', '8', 1);
                 break;
         case 2:
@@ -74,9 +74,9 @@ void __fastcall TKb::OKClick(TObject *Sender)
         if (RadioButton2->Checked) PCKeySetCTRL('0');
         //if (RadioButton3->Checked) PCKeySetCTRL('.');
 
-        if (CheckBox1->Checked && (zx81.machine==MACHINESPEC48
-                                    || zx81.machine==MACHINEACE)) zx81.UseRShift=true;
-        else zx81.UseRShift=false;
+        if (CheckBox1->Checked && (emulator.machine==MACHINESPECTRUM
+                                    || emulator.machine==MACHINEACE)) emulator.UseRShift=true;
+        else emulator.UseRShift=false;
 
         if (Sender) Close();
 }
@@ -146,8 +146,8 @@ void TKb::SaveSettings(TIniFile *ini)
 
 void __fastcall TKb::FormShow(TObject *Sender)
 {
-        if (zx81.machine==MACHINESPEC48
-                || zx81.machine==MACHINEACE)
+        if (emulator.machine==MACHINESPECTRUM
+                || emulator.machine==MACHINEACE)
         {
                 Label2->Visible=false;
                 RadioButton1->Visible=false;

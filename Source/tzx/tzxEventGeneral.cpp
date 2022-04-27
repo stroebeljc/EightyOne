@@ -42,7 +42,7 @@
         case 2: EarState = 0; PulseList++; break;               \
         case 3: EarState = 1; PulseList++; break;               \
         }                                                       \
-        if ((zx81.machine != MACHINESPEC48)                     \
+        if ((emulator.machine != MACHINESPECTRUM)                     \
                 && (WavLoad->IgnoreZX81==false) )               \
                         EarState=!EarState;                     \
 
@@ -65,7 +65,7 @@ bool TTZXFile::EventGeneral(void)
                 DataLen=Tape[CurBlock].Head.General.DataLen;
                 TOTP=Tape[CurBlock].Head.General.TOTP;
 
-                if (FlashLoad && zx81.machine!=MACHINESPEC48) data++;
+                if (FlashLoad && emulator.machine!=MACHINESPECTRUM) data++;
 
                 Syms=Tape[CurBlock].Head.General.ASD; if (Syms) Syms -= 1;
                 SymbolSize=0;
@@ -86,7 +86,7 @@ bool TTZXFile::EventGeneral(void)
 
                 if (TOTP==0) phase=2;
 
-                if (FlashLoad && zx81.machine!=MACHINESPEC48) phase=5;
+                if (FlashLoad && emulator.machine!=MACHINESPECTRUM) phase=5;
 
                 TZXByte=TZX_BYTE_EMPTY;
                 FlashLoadable=1;

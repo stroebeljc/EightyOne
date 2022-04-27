@@ -72,7 +72,7 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
 
         ModeList->ItemIndex=0;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }

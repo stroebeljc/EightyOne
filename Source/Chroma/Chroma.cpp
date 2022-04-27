@@ -85,7 +85,7 @@ void DisableChroma()
 
 void InitialiseChroma()
 {
-        if (zx81.machine == MACHINEZX80)
+        if (emulator.machine == MACHINEZX80)
         {
                 idleDataBus = idleDataBus80;
                 colourPresentMask = colourPresentMask80;
@@ -122,10 +122,10 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
 
         bool writeHandled = false;
 
-        if (zx81.colour == COLOURCHROMA)
+        if (machine.colour == COLOURCHROMA)
         {
                 // Check for a write to the Chroma's QS Character RAM
-                if ((zx81.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
+                if ((emulator.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         font[Address - 0x8400] = Data;
                         memory[Address] = Data;
@@ -137,7 +137,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         writeHandled = true;
                 }
                 // Check for a write to the Chroma's 8K-16K RAM
-                else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
+                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         if (zx81.chrgen != CHRGENDK)
                         {
@@ -154,7 +154,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                 // Check for a write to Chroma's 48K-64K colour RAM
                 else if (zx81.chromaColourSwitchOn && Address >= 0xC000)
                 {
-                        if (zx81.machine == MACHINEZX81)
+                        if (emulator.machine == MACHINEZX81)
                         {
                                 if ((Address >= 0xE000) && (zx81.chrgen != CHRGENDK) && zx81.RAM816k)
                                 {
@@ -173,12 +173,12 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         writeHandled = true;
                 }
                 // Check for a write to 48K-64K when Chroma 80 and colour RAM not enabled - the 16K RAM is not mirrored
-                else if (Address >= 0xC000 && (zx81.machine == MACHINEZX80) && (zx81.RAMTOP <= 0xC000))
+                else if (Address >= 0xC000 && (emulator.machine == MACHINEZX80) && (zx81.RAMTOP <= 0xC000))
                 {
                         writeHandled = true;
                 }
                 // Chroma's 8-16K RAM is mirrored at 40K-48K and 56K-64K (if enabled)
-                else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
+                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         memory[Address] = Data;
                         memory[Address - 0x8000] = Data;
@@ -197,15 +197,15 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
 {
         bool readHandled = false;
 
-        if (zx81.colour == COLOURCHROMA)
+        if (machine.colour == COLOURCHROMA)
         {
-                if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
+                if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         *pData = memory[Address];
                         readHandled = true;
                 }
                 // QS Character mode must be enabled if Chroma implementation
-                else if ((zx81.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
+                else if ((emulator.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         *pData = memory[Address];
                         readHandled = true;
@@ -217,12 +217,12 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
                         readHandled = true;
                 }
                 // Check for a read from 48K-64K when Chroma 80 and colour RAM not enabled - the 16K RAM is not mirrored
-                else if (Address >= 0xC000 && (zx81.machine == MACHINEZX80) && (zx81.RAMTOP <= 0xC000))
+                else if (Address >= 0xC000 && (emulator.machine == MACHINEZX80) && (zx81.RAMTOP <= 0xC000))
                 {
                         readHandled = true;
                 }
                 // The 8K RAM is echoed at 40K-48K
-                else if ((zx81.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
+                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         *pData = memory[Address];
                         readHandled = true;
@@ -236,7 +236,7 @@ bool ChromaIOWrite(int Address, BYTE Data)
 {
         bool writeHandled = false;
 
-        if (zx81.colour == COLOURCHROMA)
+        if (machine.colour == COLOURCHROMA)
         {
                 if ((Address == chromaIoPort) && zx81.chromaColourSwitchOn)
                 {
@@ -256,7 +256,7 @@ bool ChromaIORead(int Address, BYTE* pData)
 {
         bool readHandled = false;
 
-        if (zx81.colour == COLOURCHROMA)
+        if (machine.colour == COLOURCHROMA)
         {
                 if ((Address == chromaIoPort) && zx81.chromaColourSwitchOn)
                 {
@@ -268,9 +268,9 @@ bool ChromaIORead(int Address, BYTE* pData)
         return readHandled;
 }
 
-void FetchChromaColour(const int Address, const BYTE data, int rowcounter, BYTE* memory)
+void FetchChromaColour(const int Address, const BYTE data, int lineCounter, BYTE* memory)
 {
-    if ((zx81.colour == COLOURCHROMA) && zx81.chromaColourSwitchOn && (zx81.chromaMode & colourEnabledMask))
+    if ((machine.colour == COLOURCHROMA) && zx81.chromaColourSwitchOn && (zx81.chromaMode & colourEnabledMask))
     {
         int colourAddress;
 
@@ -284,7 +284,7 @@ void FetchChromaColour(const int Address, const BYTE data, int rowcounter, BYTE*
         {
             // Character code colour mode
             BYTE entry = ((data & 0x80) >> 1) | (data & 0x3F);
-            colourAddress = 0xC000 + (entry << 3) + rowcounter;
+            colourAddress = 0xC000 + (entry << 3) + lineCounter;
         }
 
         int c = memory[colourAddress];
@@ -300,12 +300,12 @@ void FetchChromaColour(const int Address, const BYTE data, int rowcounter, BYTE*
 
 void SetChromaColours()
 {
-        if (zx81.colour == COLOURCHROMA)
+        if (machine.colour == COLOURCHROMA)
         {
                 chromaPaper = GetChromaBorderColour();
                 chromaInk = colourBlack;
         }
-        else if (zx81.colour == COLOURDISABLED)
+        else if (machine.colour == COLOURDISABLED)
         {
                 chromaPaper = colourBrightWhite;
                 chromaInk = colourBlack;

@@ -28,7 +28,7 @@ extern void DisableChroma();
 extern void InitialiseChroma();
 extern bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font);
 extern bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory);
-extern void FetchChromaColour(const int Address, const BYTE data, int rowCounter, BYTE* memory);
+extern void FetchChromaColour(const int Address, const BYTE data, int lineCounter, BYTE* memory);
 extern bool ChromaIOWrite(int Address, BYTE Data);
 extern bool ChromaIORead(int Address, BYTE* pData);
 extern void SetChromaColours();

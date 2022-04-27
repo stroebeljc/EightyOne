@@ -84,11 +84,11 @@ void ace_initialise(void)
         for(i=0;i<65536;i++) memory[i]=random(255);
 
         romlen=memory_load(machine.CurRom, 0, 65536);
-        zx81.romcrc=CRC32Block(memory,romlen);
+        emulator.romcrc=CRC32Block(memory,romlen);
         zx81.ROMTOP=romlen-1;
 
-        acelatch= (zx81.colour==COLOURACE) ? 4:7;
-        ACETopBorder= (zx81.NTSC) ? 32:56;
+        acelatch= (machine.colour==COLOURACE) ? 4:7;
+        ACETopBorder= (machine.NTSC) ? 32:56;
         ACELeftBorder=37*2+1;
 
         z80_reset();
@@ -111,7 +111,7 @@ void ace_writebyte(int Address, int Data)
 
         LiveMemoryWindow->Write(Address);
 
-        if (zx81.aytype == AY_TYPE_QUICKSILVA)
+        if (machine.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
                 if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data, frametstates);
@@ -129,10 +129,10 @@ void ace_writebyte(int Address, int Data)
 
         if (Address>=0x2400 && Address<=0x27ff) acecolour[Address-0x2400]=acelatch;
 
-        if ( (Address<=zx81.ROMTOP && zx81.protectROM) || Address>zx81.RAMTOP)
+        if ( (Address<=zx81.ROMTOP && machine.protectROM) || Address>zx81.RAMTOP)
                 return;
 
-        if (zx81.ace96k && z80.r7 && Address>=16384)
+        if (machine.ace96k && z80.r7 && Address>=16384)
                 Address+=65536;
         memory[Address]=Data;
 }
@@ -151,7 +151,7 @@ BYTE ace_ReadByte(int Address)
 
         if (Address>=0x2800 && Address<=0x2fff) return(255);
 
-        if (zx81.ace96k && z80.r7 && Address>=16384) Address+=65536;
+        if (machine.ace96k && z80.r7 && Address>=16384) Address+=65536;
         data=memory[Address];
         noise = (noise<<8) | data;
         return(data);
@@ -198,18 +198,18 @@ void ace_writeport(int Address, int Data, int *tstates)
         case 0x01:
                 break;
         case 0x3f:
-                if (zx81.aytype==AY_TYPE_FULLER)
+                if (machine.aytype==AY_TYPE_FULLER)
                         SelectAYReg=Data&15;
         case 0x5f:
-                if (zx81.aytype==AY_TYPE_FULLER)
+                if (machine.aytype==AY_TYPE_FULLER)
                         Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0x73:
-                if (zx81.ts2050) d8251writeDATA(Data);
+                if (machine.ts2050) d8251writeDATA(Data);
                 break;
         case 0x77:
-                if (zx81.ts2050) d8251writeCTRL(Data);
+                if (machine.ts2050) d8251writeCTRL(Data);
                 break;
 
         case 0xc7:
@@ -225,19 +225,19 @@ void ace_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdd:
-                if (zx81.aytype==AY_TYPE_ACE) SelectAYReg=Data;
+                if (machine.aytype==AY_TYPE_ACE) SelectAYReg=Data;
                 break;
 
         case 0xdf:
-                if (zx81.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xfb:
-                if (zx81.zxprinter) ZXPrinterWritePort(Data);
+                if (machine.zxprinter) ZXPrinterWritePort(Data);
                 break;
 
         case 0xfd:
-                if (zx81.aytype==AY_TYPE_BOLDFIELD)
+                if (machine.aytype==AY_TYPE_BOLDFIELD)
                         SelectAYReg=Data;
                 break;
 
@@ -248,7 +248,7 @@ void ace_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xff:
-                if (zx81.aytype==AY_TYPE_BOLDFIELD)
+                if (machine.aytype==AY_TYPE_BOLDFIELD)
                         Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
@@ -280,19 +280,19 @@ BYTE ace_readport(int Address, int *tstates)
         switch(Address&255)
         {
         case 0x73:
-                if (zx81.ts2050) return(d8251readDATA());
+                if (machine.ts2050) return(d8251readDATA());
 
         case 0x77:
-                if (zx81.ts2050) return(d8251readCTRL());
+                if (machine.ts2050) return(d8251readCTRL());
 
         case 0xdd:
-                if (zx81.aytype==AY_TYPE_ACE) return(Sound.AYRead(SelectAYReg));
+                if (machine.aytype==AY_TYPE_ACE) return(Sound.AYRead(SelectAYReg));
 
         case 0xfb:
-                if (zx81.zxprinter) return(ZXPrinterReadPort(idleDataBus));
+                if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));
 
         case 0xff:
-                if (zx81.aytype==AY_TYPE_BOLDFIELD) return(Sound.AYRead(SelectAYReg));
+                if (machine.aytype==AY_TYPE_BOLDFIELD) return(Sound.AYRead(SelectAYReg));
 
         default:
                 break;
@@ -330,7 +330,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 delay=ACELeftBorder - borrow*2;
                 chars=0;
         }
-        MaxScanLen = zx81.single_step? 1:420;
+        MaxScanLen = emulator.single_step? 1:420;
 
         do
         {
@@ -365,7 +365,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 if (!WavPlaying()) FlashLoading=0;
 
                 WavClockTick(ts, ACEMICState);
-                if (zx81.zxprinter) ZXPrinterClockTick(ts);
+                if (machine.zxprinter) ZXPrinterClockTick(ts);
                 //sound_beeper(GetEarState());
 
                 loop-=ts;
@@ -403,12 +403,10 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                         }
 
                         colour = ((shift_register&128)?ink:paper) << 4;
-                        if (zx81.dirtydisplay)
+                        if (emulator.dirtydisplay)
                         {
                                 if (PrevGhost) colour|=4;
                                 PrevGhost=0;
-
-                                //if (RasterY&1) colour|=8;
 
                                 if (PrevBit)
                                         { colour|=2; PrevGhost=1; }
@@ -427,7 +425,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
         if (loop<=0)
         {
                 CurScanLine->sync_len=24;
-                CurScanLine->sync_valid = SYNCTYPEH;
+                CurScanLine->sync_type = SYNCTYPEH;
                 if (CurScanLine->scanline_len > machine.tperscanline*2) CurScanLine->scanline_len=machine.tperscanline*2;
 
                 borrow = -loop;
@@ -438,7 +436,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 {
                         fts=0;
                         CurScanLine->sync_len=414;
-                        CurScanLine->sync_valid = SYNCTYPEV;
+                        CurScanLine->sync_type = SYNCTYPEV;
                         Sy=0;
                         borrow=0;
                         loop=machine.tperscanline;

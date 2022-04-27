@@ -64,7 +64,7 @@ extern BYTE SPECLast7ffd;
 
 void DisableSpectra()
 {
-        zx81.spectraMode = 0x00;
+        spectrum.spectraMode = 0x00;
         spectraDisplayBankOffset = 0x0000;
 }
 
@@ -84,12 +84,12 @@ BYTE SpectraRAMRead(int bankOffset)
 void SpectraRAMWrite(int Address, BYTE Data)
 {
         bool write4000 = ((Address >= 0x4000) && (Address <= 0x7FFF));
-        bool detectWriteAtC000 = (SPECBankEnable && (spectrum.machine != SPECCYSE));
+        bool detectWriteAtC000 = SPECBankEnable;
         bool writeC000 = detectWriteAtC000 && ((Address >= 0xC000) && (Address <= 0xFFFF));
         int bank128 = (SPECLast7ffd & 0x07);
         bool writeBank5 = (write4000 || (writeC000 && (bank128 == 0x05)));
         bool writeBank7 = (writeC000 && (bank128 == 0x07));
-        bool shadowScreen1 = (zx81.spectraMode & spectraShadowBank);
+        bool shadowScreen1 = (spectrum.spectraMode & spectraShadowBank);
 
         if (writeBank7)
         {
@@ -108,13 +108,13 @@ void FetchSpectraAttributeFileBytes(int y, int column, int* attr1, int* attr2)
         int area, row, line;
         int lineOffset, secondByteOffset, baseOffset;
 
-        switch (zx81.spectraMode & spectraDisplayMode)
+        switch (spectrum.spectraMode & spectraDisplayMode)
         {
         case spectraDisplayModeRow:
                 area = ((y >> 3) & 0x18);
                 line = 0;
                 row = ((y >> 3) & 0x07);
-                secondByteOffset = (zx81.spectraMode & spectraDoubleByte) ? 0x0400 : 0x0000;
+                secondByteOffset = (spectrum.spectraMode & spectraDoubleByte) ? 0x0400 : 0x0000;
                 baseOffset = 0x1800;
                 break;
 
@@ -122,7 +122,7 @@ void FetchSpectraAttributeFileBytes(int y, int column, int* attr1, int* attr2)
                 area = ((y >> 2) & 0x30);
                 line = ((y << 1) & 0x08);
                 row = ((y >> 3) & 0x07);
-                secondByteOffset = (zx81.spectraMode & spectraDoubleByte) ? 0x0800 : 0x0000;
+                secondByteOffset = (spectrum.spectraMode & spectraDoubleByte) ? 0x0800 : 0x0000;
                 baseOffset = 0x2000;
                 break;
 
@@ -130,12 +130,12 @@ void FetchSpectraAttributeFileBytes(int y, int column, int* attr1, int* attr2)
                 area = ((y >> 1) & 0x60);
                 line = ((y << 2) & 0x18);
                 row = ((y >> 3) & 0x07);
-                secondByteOffset = (zx81.spectraMode & spectraDoubleByte) ? 0x1000 : 0x0000;
+                secondByteOffset = (spectrum.spectraMode & spectraDoubleByte) ? 0x1000 : 0x0000;
                 baseOffset = 0x2000;
                 break;
 
         case spectraDisplayModeSingle:
-                if (zx81.spectraMode & spectraDoubleByte)
+                if (spectrum.spectraMode & spectraDoubleByte)
                 {
                         if (y < 128)
                         {
@@ -195,9 +195,9 @@ void DetermineSpectraInkPaper(int attr1, int attr2, int flashSwap, int* inkLeft,
         const int colourMask = 0x3F;
         const int paperWhite = 0x40;
 
-        int db = zx81.spectraMode & spectraDoubleByte ? 1 : 0;
-        int ec = zx81.spectraMode & spectraExtraColours ? 2 : 0;
-        int hc = zx81.spectraMode & spectraHalfCell ? 4 : 0;
+        int db = spectrum.spectraMode & spectraDoubleByte ? 1 : 0;
+        int ec = spectrum.spectraMode & spectraExtraColours ? 2 : 0;
+        int hc = spectrum.spectraMode & spectraHalfCell ? 4 : 0;
         int displayMode = hc | ec | db;
 
         switch (displayMode)
@@ -328,9 +328,9 @@ int DetermineSpectraBorderColour(int Data, int flashSwap)
 
         int borderColour;
 
-        if  (zx81.spectraMode & spectraEnhancedBorder)
+        if  (spectrum.spectraMode & spectraEnhancedBorder)
         {
-                if (zx81.spectraMode & spectraExtraColours)
+                if (spectrum.spectraMode & spectraExtraColours)
                 {
                         const int b0 = 0x20;
                         const int r0 = 0x40;
@@ -372,7 +372,7 @@ int DetermineSpectraBorderColour(int Data, int flashSwap)
 void DetermineSpectraDisplayBank()
 {
         bool spectrum128Screen1 = (SPECLast7ffd & 0x08);
-        bool displayBank1 = (zx81.spectraMode & spectraDisplayBank);
+        bool displayBank1 = (spectrum.spectraMode & spectraDisplayBank);
 
         if (!spectrum128Screen1)
         {

@@ -70,9 +70,9 @@ int VSYNC_MINLEN=VMIN;
 #define LaWinR (LaWinL+400)
 
 #define FuWinT 0
-#define FuWinB (FuWinT+312)
+#define FuWinB (FuWinT+313)
 #define FuWinL 0
-#define FuWinR (FuWinL+413)
+#define FuWinR (FuWinL+414)
 
 /*
 #define Plot(x,c) { if (Paletteised) dest[RasterX+(x)]= (c); \
@@ -295,36 +295,50 @@ void DDAccurateInit(int resize)
         Paletteised = (BPP==1) ? true:false;
         Scale = tv.AdvancedEffects ? 2 : 1;
 
-        //ScanLen=460*BPP;
-        ScanLen=(2+machine.tperscanline*2)*BPP;
+        ScanLen=(machine.tperscanline*2)*BPP;
 
-        switch(zx81.bordersize)
+        switch(emulator.bordersize)
         {
         case BORDERNONE:
                 WinL=BlWinL; WinR=BlWinR; WinT=BlWinT; WinB=BlWinB;
-                if (zx81.NTSC) { WinT-=24; WinB-=24; }
+                if (machine.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERSMALL:
                 WinL=SmWinL; WinR=SmWinR; WinT=SmWinT; WinB=SmWinB;
-                if (zx81.NTSC) { WinT-=24; WinB-=24; }
+                if (machine.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERNORMAL:
                 WinL=NoWinL; WinR=NoWinR; WinT=NoWinT; WinB=NoWinB;
-                if (zx81.NTSC) { WinT-=24; WinB-=24; }
+                if (machine.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERLARGE:
                 WinL=LaWinL; WinR=LaWinR; WinT=LaWinT; WinB=LaWinB;
-                if (zx81.NTSC) { WinB-=24; }
+                if (machine.NTSC) { WinB-=24; }
                 break;
         case BORDERFULL:
                 WinL=FuWinL; WinR=FuWinR; WinT=FuWinT; WinB=FuWinB;
-                if (zx81.NTSC) WinB-=51;
+                if (machine.NTSC) { WinB-=51; }
                 break;
         }
-        if ((zx81.machine == MACHINEZX80) || (zx81.machine == MACHINELAMBDA))
+
+        if (emulator.bordersize <= BORDERNORMAL)
         {
-                WinL += 2;
-                WinR += 2;
+                if (emulator.machine == MACHINEZX80)
+                {
+                        WinL += 2;
+                        WinR += 2;
+                }
+                else if ((emulator.machine == MACHINEZX81) || (emulator.machine == MACHINETS1000) || (emulator.machine == MACHINETS1500) ||
+                         (emulator.machine == MACHINETK85) || (emulator.machine == MACHINER470) || (emulator.machine == MACHINEZX97LE))
+                {
+                        WinL += 4;
+                        WinR += 4;
+                }
+                else if (emulator.machine == MACHINELAMBDA)
+                {
+                        WinL += 6;
+                        WinR += 6;
+                }
         }
 
         ZeroMemory( &ddsd, sizeof( ddsd ) );
@@ -391,7 +405,7 @@ void DDAccurateUpdateDisplay(bool singlestep)
         HRESULT hRet;
         RECT rDest;
 
-        if (++framecounter > zx81.frameskip || singlestep)
+        if (++framecounter > emulator.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
@@ -467,36 +481,49 @@ void GDIAccurateInit(int resize)
         Paletteised = (BPP==1) ? true:false;
         Scale = tv.AdvancedEffects ? 2 : 1;
 
-        //ScanLen=460*BPP;
-        ScanLen=(2+machine.tperscanline*2)*BPP;
+        ScanLen=(machine.tperscanline*2)*BPP;
 
-        switch(zx81.bordersize)
+        switch(emulator.bordersize)
         {
         case BORDERNONE:
                 WinL=BlWinL; WinR=BlWinR; WinT=BlWinT; WinB=BlWinB;
-                if (zx81.NTSC) { WinT-=24; WinB-=24; }
+                if (machine.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERSMALL:
                 WinL=SmWinL; WinR=SmWinR; WinT=SmWinT; WinB=SmWinB;
-                if (zx81.NTSC) { WinT-=24; WinB-=24; }
+                if (machine.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERNORMAL:
                 WinL=NoWinL; WinR=NoWinR; WinT=NoWinT; WinB=NoWinB;
-                if (zx81.NTSC) { WinT-=24; WinB-=24; }
+                if (machine.NTSC) { WinT-=24; WinB-=24; }
                 break;
         case BORDERLARGE:
                 WinL=LaWinL; WinR=LaWinR; WinT=LaWinT; WinB=LaWinB;
-                if (zx81.NTSC) { WinB-=24; }
+                if (machine.NTSC) { WinB-=24; }
                 break;
         case BORDERFULL:
                 WinL=FuWinL; WinR=FuWinR; WinT=FuWinT; WinB=FuWinB;
-                if (zx81.NTSC) WinB-=51;
+                if (machine.NTSC) { WinB-=51; }
                 break;
-        }                  
-        if ((zx81.machine == MACHINEZX80) || (zx81.machine == MACHINELAMBDA))
+        }
+        if (emulator.bordersize <= BORDERNORMAL)
         {
-                WinL += 2;
-                WinR += 2;
+                if (emulator.machine == MACHINEZX80)
+                {
+                        WinL += 2;
+                        WinR += 2;
+                }
+                else if ((emulator.machine == MACHINEZX81) || (emulator.machine == MACHINETS1000) || (emulator.machine == MACHINETS1500) ||
+                         (emulator.machine == MACHINETK85) || (emulator.machine == MACHINER470) || (emulator.machine == MACHINEZX97LE))
+                {
+                        WinL += 4;
+                        WinR += 4;
+                }
+                else if (emulator.machine == MACHINELAMBDA)
+                {
+                        WinL += 6;
+                        WinR += 6;
+                }
         }
 
         GDIFrame=new Graphics::TBitmap;
@@ -564,7 +591,7 @@ void GDIAccurateUpdateDisplay(bool singlestep)
 {
         static int framecounter=0;
         
-        if (++framecounter > zx81.frameskip || singlestep)
+        if (++framecounter > emulator.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
@@ -632,7 +659,7 @@ int AccurateDraw(SCANLINE *Line)
                 {
                         if (!tv.Interlaced) Plot(TVP, c+8-Shade);
 
-                        if (zx81.machine!=MACHINESPEC48)
+                        if (emulator.machine!=MACHINESPECTRUM)
                         {
                                 RasterX +=BPP;
                                 Plot(FrameNo*TVP, c+Shade);
@@ -643,12 +670,12 @@ int AccurateDraw(SCANLINE *Line)
 
                 RasterX += BPP;
 
-                if (RasterX > ScanLen)
+                if (RasterX >= ScanLen)
                 {
                         RasterX=0;
                         dest += TVP * Scale;
                         RasterY += Scale;
-                        if ((!tv.AdvancedEffects) && (zx81.colour != COLOURSPECTRA)) Shade=8-Shade;
+                        if ((!tv.AdvancedEffects) && (machine.colour != COLOURSPECTRA)) Shade=8-Shade;
 
                         if (RasterY>=TVH)
                         {
@@ -656,19 +683,19 @@ int AccurateDraw(SCANLINE *Line)
                                 //RasterY=0;
                                 //dest=buffer;
                                 i=Line->scanline_len+1;
-                                Line->sync_valid=true;
+                                Line->sync_type=SYNCTYPEV;
                         }
                 }
         }
-        if (Line->sync_len<HSYNC_MINLEN) Line->sync_valid=0;
-        if (Line->sync_valid)
+        if (Line->sync_len<HSYNC_MINLEN) Line->sync_type=0;
+        if (Line->sync_type)
         {
                 if (RasterX>(HSYNC_TOLLERANCE*BPP))
                 {
                         //scanlen[RasterY]=RasterX;
                         RasterX=0;
                         RasterY+= Scale;
-                        if ((!tv.AdvancedEffects) && (zx81.colour != COLOURSPECTRA)) Shade=8-Shade;
+                        if ((!tv.AdvancedEffects) && (machine.colour != COLOURSPECTRA)) Shade=8-Shade;
                         dest += TVP* Scale;
                 }
                 if (RasterY>=TVH ||  RasterY>=VSYNC_TOLLERANCEMAX
@@ -696,7 +723,7 @@ int AccurateDraw(SCANLINE *Line)
                 }
         }
 
-        if (zx81.single_step)
+        if (emulator.single_step)
         {
                 int i;
 

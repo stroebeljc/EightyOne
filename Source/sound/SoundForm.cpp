@@ -41,7 +41,7 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
         MidiBox->ItemIndex=1;
         Midi.Start();
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 

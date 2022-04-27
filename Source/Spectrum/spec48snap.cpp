@@ -68,14 +68,14 @@ int LoadDock(char *Filename)
         int i,bank, chunks[8];
         char *ptr;
 
-        if (spectrum.machine!=SPECCYTC2048 && spectrum.machine!=SPECCYTS2068)
+        if (spectrum.model!=SPECCYTC2048 && spectrum.model!=SPECCYTS2068)
                 return(0);
 
 
         if (!strlen(Filename))
         {
                 for(i=0;i<((64+64)*1024);i++) TimexMem[i]=255;
-                zx81.ROMDock[0]='\0';
+                emulator.ROMDock[0]='\0';
                 return(1);
         }
 
@@ -102,7 +102,7 @@ int LoadDock(char *Filename)
                 if (chunks[i]&2) fread(ptr,1,8192,f);
         }
         fclose(f);
-        strcpy(zx81.ROMDock, Filename);
+        strcpy(emulator.ROMDock, Filename);
         return(1);
 }
 
@@ -254,7 +254,7 @@ void spec_load_z80(char *fname)
                 case SPECCYPLUS3: speccy=SPECCYPLUS2A; break;
                 }
         }
-        HWSetMachine(MACHINESPEC48, speccy);
+        HWSetMachine(MACHINESPECTRUM, speccy);
         machine.initialise();
 
         z80.af.b.h = buf[0]; z80.af.b.l = buf[1];
@@ -342,7 +342,7 @@ void spec_load_z80(char *fname)
                 }
         }
 
-        int page = (spectrum.machine >= SPECCY128) ? 11 : 9;
+        int page = (spectrum.model >= SPECCY128) ? 11 : 9;
         
         for(i=0; i<16384; i++)
         {
@@ -358,10 +358,10 @@ void spec_load_z80(char *fname)
                 if (spectraPresent)
                 {
                         HW->ColourBox->ItemIndex = 1;
-                        zx81.colour = COLOURSPECTRA;
+                        machine.colour = COLOURSPECTRA;
 
-                        zx81.spectraColourSwitchOn = buf[87] & 0x01;
-                        zx81.spectraMode = buf[88];
+                        spectrum.spectraColourSwitchOn = buf[87] & 0x01;
+                        spectrum.spectraMode = buf[88];
                         SPECBorder = buf[89];
                         SPECNextBorder = SPECBorder;
                         SPECKb = SPECBorder;
@@ -370,26 +370,26 @@ void spec_load_z80(char *fname)
 
                         Form1->SpectraColourEnable->Visible = true;
                         Form1->SpectraColourEnable->Enabled = true;
-                        Form1->SpectraColourEnable->Checked = zx81.spectraColourSwitchOn;
+                        Form1->SpectraColourEnable->Checked = spectrum.spectraColourSwitchOn;
                 }
                 else
                 {
                         HW->ColourBox->ItemIndex = 0;
-                        zx81.colour = COLOURSINCLAIR;
+                        machine.colour = COLOURSINCLAIR;
 
-                        zx81.spectraColourSwitchOn = false;
-                        zx81.spectraMode = 0x00;
+                        spectrum.spectraColourSwitchOn = false;
+                        spectrum.spectraMode = 0x00;
                 }
         }
 
-        Artifacts->SelectRGBOutput(zx81.colour == COLOURSPECTRA);
-        Artifacts->Vibrant->Checked = !zx81.spectraColourSwitchOn;
-        if (zx81.colour == COLOURSPECTRA)
+        Artifacts->SelectRGBOutput(machine.colour == COLOURSPECTRA);
+        Artifacts->Vibrant->Checked = !spectrum.spectraColourSwitchOn;
+        if (machine.colour == COLOURSPECTRA)
         {
                 Form1->DisplayArt->Checked = false;
                 Artifacts->Visible = false;
         }
-        Form1->DisplayArt->Enabled = (zx81.colour != COLOURSPECTRA);
+        Form1->DisplayArt->Enabled = (machine.colour != COLOURSPECTRA);
 
         z80.pc.w=buf[32]+ 256*buf[33];
         if (speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
@@ -423,8 +423,8 @@ void spec_load_sna(char *fname)
         len=fread(buf,1,147487, f);
         fclose(f);
 
-        if (len>49179) HWSetMachine(MACHINESPEC48, SPECCY128);
-        else HWSetMachine(MACHINESPEC48, SPECCY48);
+        if (len>49179) HWSetMachine(MACHINESPECTRUM, SPECCY128);
+        else HWSetMachine(MACHINESPECTRUM, SPECCY48);
         machine.initialise();
 
         z80.i = buf[0];
@@ -473,7 +473,7 @@ void spec_load_sna(char *fname)
                 if (!banks[i])
                         for(j=0;j<16384;j++) RAMWrite((i+4), j, buf[k++]);
 
-        int page = (spectrum.machine >= SPECCY128) ? 11 : 9;
+        int page = (spectrum.model >= SPECCY128) ? 11 : 9;
         
         for(i=0; i<16384; i++)
         {
@@ -493,10 +493,10 @@ void spec_save_sna(char *fname)
         f=fopen(fname,"wb");
         if (!f) return;
 
-        if (!(spectrum.machine==SPECCY128
-                || spectrum.machine==SPECCYPLUS2
-                || spectrum.machine==SPECCYPLUS2A
-                || spectrum.machine==SPECCYPLUS3))
+        if (!(spectrum.model==SPECCY128
+                || spectrum.model==SPECCYPLUS2
+                || spectrum.model==SPECCYPLUS2A
+                || spectrum.model==SPECCYPLUS3))
         {
                 z80.sp.w -= 2;
                 spec48_setbyte(z80.sp.w, z80.pc.b.l);
@@ -531,10 +531,10 @@ void spec_save_sna(char *fname)
 
         for(i=0;i<49152;i++) fputc(spec48_getbyte(16384+i),f);
 
-        if (spectrum.machine==SPECCY128
-                || spectrum.machine==SPECCYPLUS2
-                || spectrum.machine==SPECCYPLUS2A
-                || spectrum.machine==SPECCYPLUS3)
+        if (spectrum.model==SPECCY128
+                || spectrum.model==SPECCYPLUS2
+                || spectrum.model==SPECCYPLUS2A
+                || spectrum.model==SPECCYPLUS3)
         {
                 fputc(z80.pc.b.l,f); fputc(z80.pc.b.h,f);
                 fputc(SPECLast7ffd,f);
@@ -687,11 +687,11 @@ void spec_save_z80(char *fname)
 
         // We're going to do a version 2 or 3 .z80 file
 
-        int h2len = (zx81.colour == COLOURSPECTRA) ? 58 : 23;
+        int h2len = (machine.colour == COLOURSPECTRA) ? 58 : 23;
         fputc(h2len,f); fputc(0,f);
         fputc(z80.pc.b.l,f); fputc(z80.pc.b.h,f);
 
-        switch(spectrum.machine)
+        switch(spectrum.model)
         {
         case SPECCY16: mode=0; flags=128; break;
         case SPECCY48: mode=0; flags=0; break;
@@ -706,15 +706,15 @@ void spec_save_z80(char *fname)
         if (spectrum.floppytype==FLOPPYIF1) mode++;
 
         fputc(mode,f);
-        if (spectrum.machine==SPECCY128
-                || spectrum.machine==SPECCYPLUS2
-                || spectrum.machine==SPECCYPLUS2A
-                || spectrum.machine==SPECCYPLUS3)
+        if (spectrum.model==SPECCY128
+                || spectrum.model==SPECCYPLUS2
+                || spectrum.model==SPECCYPLUS2A
+                || spectrum.model==SPECCYPLUS3)
                         fputc(SPECLast7ffd,f);
         else    fputc(0,f);
 
-        if (spectrum.machine==SPECCYTC2048
-                || spectrum.machine==SPECCYTS2068)
+        if (spectrum.model==SPECCYTC2048
+                || spectrum.model==SPECCYTS2068)
                 fputc(TIMEXByte,f);
         else    fputc(0,f);
 
@@ -727,14 +727,14 @@ void spec_save_z80(char *fname)
 	Bit 7: Modify hardware
         */
         flags |= 1 | 2;
-        if (zx81.colour == COLOURSPECTRA) flags |= 8;
+        if (machine.colour == COLOURSPECTRA) flags |= 8;
         fputc(flags,f);
 
         fputc(0,f);
         for(i=0;i<16;i++) fputc(0,f);
 
         // If Spectra is enabled then output a version 3 file
-        if (zx81.colour == COLOURSPECTRA)
+        if (machine.colour == COLOURSPECTRA)
         {
                 for (i=55; i<86; i++)
                 {
@@ -756,23 +756,22 @@ void spec_save_z80(char *fname)
                 */
 
                 // Only colour mode supported at present
-                BYTE spectraBits = zx81.spectraColourSwitchOn ? 1 : 0;
+                BYTE spectraBits = spectrum.spectraColourSwitchOn ? 1 : 0;
                 fputc(spectraBits, f);
 
                 /*
                 Spectra extension devised for zxsp emulator.
                 Last out to port 7FDF
                 */
-                fputc(zx81.spectraMode, f);
+                fputc(spectrum.spectraMode, f);
 
                 fputc(SPECBorder, f);
         }
 
-        if (spectrum.machine==SPECCY16)
+        if (spectrum.model==SPECCY16)
                 z80_save_block(f,SPECBlk[1], 8);
-        else if (spectrum.machine==SPECCY48 || spectrum.machine==SPECCYPLUS
-                || spectrum.machine==SPECCYTC2048
-                || spectrum.machine==SPECCYTS2068)
+        else if (spectrum.model==SPECCY48 || spectrum.model==SPECCYPLUS
+                || spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
         {
                 z80_save_block(f,SPECBlk[1], 8);
                 z80_save_block(f,SPECBlk[2], 4);
@@ -784,7 +783,7 @@ void spec_save_z80(char *fname)
                         z80_save_block(f,i+4, i+3);
         }
 
-        if (zx81.colour == COLOURSPECTRA)
+        if (machine.colour == COLOURSPECTRA)
         {
                 /*
                 Spectra extension devised for zxsp emulator.

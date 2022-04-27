@@ -609,7 +609,7 @@ __fastcall TIF1::TIF1(TComponent* Owner)
 
         for(i=0;i<8;i++) Drives[i].FileName[0]='\0';
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }

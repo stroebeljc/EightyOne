@@ -51,7 +51,8 @@ TDbg *Dbg;
 // ability to disable the breakpoint w/o deleting it
 // re-calculate breakpoints if symbols change???
 
-extern int frametstates, rowcounter, RasterY, HSYNC_generator, NMI_generator;
+extern int frametstates, lineCounter, RasterY;
+extern BOOL syncOutputWhite, nmiGeneratorEnabled;
 extern int tStatesCount;
 extern unsigned char shift_store;
 
@@ -136,12 +137,12 @@ void DebugUpdate(void)
 
         if (Dbg->NMIRetAddr==-1 && NMISaveSingleStep!=-1)
         {
-                zx81.single_step=NMISaveSingleStep;
+                emulator.single_step=NMISaveSingleStep;
                 NMISaveSingleStep=-1;
         }
         if (Dbg->INTRetAddr==-1 && INTSaveSingleStep!=-1)
         {
-                zx81.single_step=INTSaveSingleStep;
+                emulator.single_step=INTSaveSingleStep;
                 INTSaveSingleStep=-1;
         }         
 
@@ -149,13 +150,13 @@ void DebugUpdate(void)
                 && Dbg->NMIRetAddr==-1 && Dbg->Continuous->Checked)
         {
                 Dbg->NMIRetAddr = getbyte(z80.sp.w) + 256*getbyte(z80.sp.w + 1);
-                NMISaveSingleStep = zx81.single_step;
-                zx81.single_step=0;
+                NMISaveSingleStep = emulator.single_step;
+                emulator.single_step=0;
         }
         if (z80.pc.w == Dbg->NMIRetAddr)
         {
                 Dbg->NMIRetAddr=-1;
-                zx81.single_step=NMISaveSingleStep;
+                emulator.single_step=NMISaveSingleStep;
         }
         if (Dbg->NMIRetAddr!=-1) return;
 
@@ -163,13 +164,13 @@ void DebugUpdate(void)
                 && Dbg->INTRetAddr==-1 && Dbg->Continuous->Checked)
         {
                 Dbg->INTRetAddr = getbyte(z80.sp.w) + 256*getbyte(z80.sp.w + 1);
-                INTSaveSingleStep = zx81.single_step;
-                zx81.single_step=0;
+                INTSaveSingleStep = emulator.single_step;
+                emulator.single_step=0;
         }
         if (z80.pc.w == Dbg->INTRetAddr)
         {
                 Dbg->INTRetAddr=-1;
-                zx81.single_step=INTSaveSingleStep;
+                emulator.single_step=INTSaveSingleStep;
         }
         if (Dbg->INTRetAddr!=-1) return;
 
@@ -188,7 +189,7 @@ void DebugUpdate(void)
                 zx81_stop=1;
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
-                zx81.single_step = Dbg->Continuous->Checked ? 1 : 0;
+                emulator.single_step = Dbg->Continuous->Checked ? 1 : 0;
         }
 
         Profiler->DebugTick(&z80);
@@ -899,7 +900,7 @@ void TDbg::UpdateVals(void)
 {
         int i, Stack;
 
-        switch(zx81.machine)
+        switch(emulator.machine)
         {
         case MACHINEACE:
                 Stack=getbyte(0x3C3B)+256*getbyte(0x3C3C) -2;
@@ -921,27 +922,27 @@ void TDbg::UpdateVals(void)
                 AceStk7->Caption = "$"+Hex16(Stack); AceStkVal7->Caption = "$"+Hex16(getbyte(Stack)+256*getbyte(Stack+1));
                 break;
 
-        case MACHINESPEC48:
-                SpectraModeLabel->Enabled = (zx81.colour == COLOURSPECTRA);
-                SpectraMode->Enabled = (zx81.colour == COLOURSPECTRA) && zx81.spectraColourSwitchOn;
-                SpectraMode->Caption = "$"+Hex8(zx81.spectraMode);
+        case MACHINESPECTRUM:
+                SpectraModeLabel->Enabled = (machine.colour == COLOURSPECTRA);
+                SpectraMode->Enabled = (machine.colour == COLOURSPECTRA) && spectrum.spectraColourSwitchOn;
+                SpectraMode->Caption = "$"+Hex8(spectrum.spectraMode);
                 break;
 
         default:
-                RowCount->Caption = rowcounter;
+                RowCount->Caption = lineCounter;
                 Scanline->Caption = RasterY;
                 ShiftReg->Caption = Bin8(shift_store);
                 TStates->Caption = frametstates;
-                NMIGen->Caption = NMI_generator ? "On":"Off";
-                HSYNCGen->Caption = HSYNC_generator ? "On":"Off";
+                NMIGen->Caption = nmiGeneratorEnabled ? "On":"Off";
+                SyncOutput->Caption = syncOutputWhite ? "White":"Black";
 
-                ChromaColourModeLabel->Enabled = (zx81.colour == COLOURCHROMA);
-                ChromaColourMode->Enabled = (zx81.colour == COLOURCHROMA) && zx81.chromaColourSwitchOn;
+                ChromaColourModeLabel->Enabled = (machine.colour == COLOURCHROMA);
+                ChromaColourMode->Enabled = (machine.colour == COLOURCHROMA) && zx81.chromaColourSwitchOn;
                 ChromaColourMode->Caption = "$"+Hex8(zx81.chromaMode);
                 break;
         }
 
-        switch (zx81.romCartridge)
+        switch (romcartridge.type)
         {
                 case ROMCARTRIDGEZXC1:
                         GroupBoxZXC->Caption = "ZXC1";
@@ -960,23 +961,23 @@ void TDbg::UpdateVals(void)
                         break;
         }
 
-        bool zxcEnabled = (zx81.romCartridge != ROMCARTRIDGENONE) && (zx81.romCartridge != ROMCARTRIDGESINCLAIR);
+        bool zxcEnabled = (romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGESINCLAIR);
         ZXCModeLabel->Enabled = zxcEnabled;
         ZXCMode->Enabled = zxcEnabled;
-        if (zx81.romCartridge == ROMCARTRIDGEZXC1)
+        if (romcartridge.type == ROMCARTRIDGEZXC1)
         {
-                if (zx81.zxc1PageOut)
+                if (romcartridge.zxc1PageOut)
                 {
                         ZXCMode->Caption = "OUT";
                 }
                 else
                 {
-                        ZXCMode->Caption = "$"+Hex8(zx81.zxc1ActiveBank);
+                        ZXCMode->Caption = "$"+Hex8(romcartridge.zxc1ActiveBank);
                 }
         }
         else
         {
-                ZXCMode->Caption = "$"+Hex8(zx81.zxcPaging);
+                ZXCMode->Caption = "$"+Hex8(romcartridge.zxcPaging);
         }
         SetLabelInfo(HL, z80.hl.w);
         SetLabelInfo(BC, z80.bc.w);
@@ -1125,7 +1126,7 @@ bool TDbg::IsStepOverInstruction(int Addr)
         Opcode = GetMem(Addr);
         Addr++;
 
-        if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE || zx81.machine==MACHINESPEC48))
+        if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE || emulator.machine==MACHINESPECTRUM))
         {
 		Opcode=-1;
 	}
@@ -1155,7 +1156,7 @@ bool TDbg::IsStepOverInstruction(int Addr)
 		break;
         case 0xed:
                 Opcode = GetMem(Addr);
-                if (Addr>=zx81.m1not && !(Opcode&64) && !(zx81.machine==MACHINEACE || zx81.machine==MACHINESPEC48))
+                if (Addr>=zx81.m1not && !(Opcode&64) && !(emulator.machine==MACHINEACE || emulator.machine==MACHINESPECTRUM))
                 {
 			Opcode=-1;
 		}
@@ -1228,7 +1229,7 @@ void TDbg::EnableValues(bool enable)
         TStates->Enabled = enable;
 
         NMIGen->Enabled = enable;
-        HSYNCGen->Enabled = enable;
+        SyncOutput->Enabled = enable;
 
         AceStk0->Enabled=enable; AceStkVal0->Enabled=enable;
         AceStk1->Enabled=enable; AceStkVal1->Enabled=enable;
@@ -1278,7 +1279,7 @@ __fastcall TDbg::TDbg(TComponent* Owner)
         Breakpoints=0;
         NMIRetAddr=INTRetAddr=-1;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
@@ -1306,7 +1307,7 @@ void __fastcall TDbg::RunStopClick(TObject *Sender)
 
 void __fastcall TDbg::FormClose(TObject *Sender, TCloseAction &Action)
 {
-        zx81.single_step=0;
+        emulator.single_step=0;
         Form1->DebugWin->Checked=false;
         zx81_stop=0;
         StepOutRequested = 0;
@@ -1317,7 +1318,7 @@ void __fastcall TDbg::FormShow(TObject *Sender)
 {
         Continuous->Enabled = true;
 
-        if (Continuous->Checked==true) zx81.single_step=1;
+        if (Continuous->Checked==true) emulator.single_step=1;
         UpdateVals();
 }
 //---------------------------------------------------------------------------
@@ -1328,12 +1329,12 @@ void __fastcall TDbg::ContinuousClick(TObject *Sender)
         {
                 if (Continuous->Checked==true)
                 {
-                        zx81.single_step=1;
+                        emulator.single_step=1;
                         EnableVals();
                 }
                 else
                 {
-                        zx81.single_step=0;
+                        emulator.single_step=0;
                         DisableVals();
                 }
 
@@ -1346,7 +1347,7 @@ void __fastcall TDbg::SingleStepClick(TObject *Sender)
 {
         MemoryWindow->ClearChanges();
         zx81_stop=0;
-        zx81.single_step=1;
+        emulator.single_step=1;
         StackChange = 0;
         DoNext=true;
 }
@@ -1506,14 +1507,14 @@ void TDbg::PopulateHistoryWindow()
 
 void __fastcall TDbg::NMIGenClick(TObject *Sender)
 {
-        NMI_generator = !NMI_generator;
+        nmiGeneratorEnabled = !nmiGeneratorEnabled;
         UpdateVals();
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TDbg::HSYNCGenClick(TObject *Sender)
+void __fastcall TDbg::SyncOutputClick(TObject *Sender)
 {
-        HSYNC_generator = !HSYNC_generator;
+        syncOutputWhite = !syncOutputWhite;
         UpdateVals();
 }
 //---------------------------------------------------------------------------

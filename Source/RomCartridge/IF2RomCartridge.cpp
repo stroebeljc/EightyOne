@@ -75,12 +75,12 @@ void InitialiseRomCartridge()
 {
         ConfigureZXC1();
 
-        zx81.zxcPaging = 0;
-        zx81.zxcInterface1BankPagedIn = false;
-        zx81.zxcCassetteBankPagedIn = false;
-        zx81.zxcLowerControlAccessSelected = false;
+        romcartridge.zxcPaging = 0;
+        romcartridge.zxcInterface1BankPagedIn = false;
+        romcartridge.zxcCassetteBankPagedIn = false;
+        romcartridge.zxcLowerControlAccessSelected = false;
 
-        if (zx81.machine == MACHINEZX80)
+        if (emulator.machine == MACHINEZX80)
         {
                 zxcStartAddressRangeFull = 0xC000;
                 zxcEndAddressRangeFullWrite = 0xFFFF;
@@ -114,105 +114,105 @@ void ConfigureZXC1()
         // 48K+Pageout	1.52, 2.23, 4.26
         // 64K          1.62, 2.23, 3.08
 
-        int framesPerSec = zx81.NTSC ? 60 : 50;
+        int framesPerSec = machine.NTSC ? 60 : 50;
 
-        switch (zx81.zxc1Configuration)
+        switch (romcartridge.zxc1Configuration)
         {
                 case ZXC1_32K:                  // 27C256: A14 0->1 (22k/220k)
-                        zx81.zxc1BankNumber[0] = 0;
-                        zx81.zxc1BankNumber[1] = 1;
-                        zx81.zxc1BankNumber[2] = -1;
-                        zx81.zxc1BankNumber[3] = -1;
+                        romcartridge.zxc1BankNumber[0] = 0;
+                        romcartridge.zxc1BankNumber[1] = 1;
+                        romcartridge.zxc1BankNumber[2] = -1;
+                        romcartridge.zxc1BankNumber[3] = -1;
 
-                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
-                        zx81.zxc1BankTimer[1] = 0;
-                        zx81.zxc1BankTimer[2] = 0;
+                        romcartridge.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        romcartridge.zxc1BankTimer[1] = 0;
+                        romcartridge.zxc1BankTimer[2] = 0;
                         break;
 
                 case ZXC1_48K:                  // 27C512: A14 0->1 (22k/220k), A15 0->1 (33k/330k)
-                        zx81.zxc1BankNumber[0] = 0;
-                        zx81.zxc1BankNumber[1] = 1;
-                        zx81.zxc1BankNumber[2] = 3;
-                        zx81.zxc1BankNumber[3] = -1;
+                        romcartridge.zxc1BankNumber[0] = 0;
+                        romcartridge.zxc1BankNumber[1] = 1;
+                        romcartridge.zxc1BankNumber[2] = 3;
+                        romcartridge.zxc1BankNumber[3] = -1;
 
-                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
-                        zx81.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
-                        zx81.zxc1BankTimer[2] = 0;
+                        romcartridge.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        romcartridge.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
+                        romcartridge.zxc1BankTimer[2] = 0;
                         break;
 
                 case ZXC1_64K:                  // 27C512 A14 1->0 (22k/220k), A15 0->1 (33k/330k), A14 0->1 (47k/470k)
-                        zx81.zxc1BankNumber[0] = 1;
-                        zx81.zxc1BankNumber[1] = 0;
-                        zx81.zxc1BankNumber[2] = 2;
-                        zx81.zxc1BankNumber[3] = 3;
+                        romcartridge.zxc1BankNumber[0] = 1;
+                        romcartridge.zxc1BankNumber[1] = 0;
+                        romcartridge.zxc1BankNumber[2] = 2;
+                        romcartridge.zxc1BankNumber[3] = 3;
 
-                        zx81.zxc1BankTimer[0] = (int)(1.62 * framesPerSec);
-                        zx81.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
-                        zx81.zxc1BankTimer[2] = (int)(3.08 * framesPerSec);
+                        romcartridge.zxc1BankTimer[0] = (int)(1.62 * framesPerSec);
+                        romcartridge.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
+                        romcartridge.zxc1BankTimer[2] = (int)(3.08 * framesPerSec);
                         break;
 
                 case ZXC1_16KPAGEOUT:           // 27C128: ROMCS 1->0 (33k/330k)
-                        zx81.zxc1BankNumber[0] = 0;
-                        zx81.zxc1BankNumber[1] = -1;
-                        zx81.zxc1BankNumber[2] = -1;
-                        zx81.zxc1BankNumber[3] = -1;
+                        romcartridge.zxc1BankNumber[0] = 0;
+                        romcartridge.zxc1BankNumber[1] = -1;
+                        romcartridge.zxc1BankNumber[2] = -1;
+                        romcartridge.zxc1BankNumber[3] = -1;
 
-                        zx81.zxc1BankTimer[0] = (int)(2.46 * framesPerSec);
-                        zx81.zxc1BankTimer[1] = 0;
-                        zx81.zxc1BankTimer[2] = 0;
+                        romcartridge.zxc1BankTimer[0] = (int)(2.46 * framesPerSec);
+                        romcartridge.zxc1BankTimer[1] = 0;
+                        romcartridge.zxc1BankTimer[2] = 0;
                         break;
 
                 case ZXC1_32KPAGEOUT:           // 27C256: A14 0->1 (22k/220k), ROMCS 1->0 (47k/470k)
-                        zx81.zxc1BankNumber[0] = 0;
-                        zx81.zxc1BankNumber[1] = 1;
-                        zx81.zxc1BankNumber[2] = -1;
-                        zx81.zxc1BankNumber[3] = -1;
+                        romcartridge.zxc1BankNumber[0] = 0;
+                        romcartridge.zxc1BankNumber[1] = 1;
+                        romcartridge.zxc1BankNumber[2] = -1;
+                        romcartridge.zxc1BankNumber[3] = -1;
 
-                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
-                        zx81.zxc1BankTimer[1] = (int)(3.55 * framesPerSec);
-                        zx81.zxc1BankTimer[2] = 0;
+                        romcartridge.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        romcartridge.zxc1BankTimer[1] = (int)(3.55 * framesPerSec);
+                        romcartridge.zxc1BankTimer[2] = 0;
                         break;
 
                 case ZXC1_48KPAGEOUT:           // 27C512: A14 0->1 (22k/220k), A15 0->1 (33k/330k), ROMCS 1->0 (56k/560k)
-                        zx81.zxc1BankNumber[0] = 0;
-                        zx81.zxc1BankNumber[1] = 1;
-                        zx81.zxc1BankNumber[2] = 3;
-                        zx81.zxc1BankNumber[3] = -1;
+                        romcartridge.zxc1BankNumber[0] = 0;
+                        romcartridge.zxc1BankNumber[1] = 1;
+                        romcartridge.zxc1BankNumber[2] = 3;
+                        romcartridge.zxc1BankNumber[3] = -1;
 
-                        zx81.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
-                        zx81.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
-                        zx81.zxc1BankTimer[2] = (int)(4.26 * framesPerSec);
+                        romcartridge.zxc1BankTimer[0] = (int)(1.52 * framesPerSec);
+                        romcartridge.zxc1BankTimer[1] = (int)(2.23 * framesPerSec);
+                        romcartridge.zxc1BankTimer[2] = (int)(4.26 * framesPerSec);
                         break;
         }
 
-        zx81.zxc1PageOut = false;
-        zx81.zxc1ActiveBank = 0;
+        romcartridge.zxc1PageOut = false;
+        romcartridge.zxc1ActiveBank = 0;
 }
 
 bool RomCartridgePagedIn()
 {
         bool pageIn = false;
 
-        switch (zx81.romCartridge)
+        switch (romcartridge.type)
         {
         case ROMCARTRIDGESINCLAIR:
                 pageIn = true;
                 break;
 
         case ROMCARTRIDGEZXC1:
-                pageIn = !zx81.zxc1PageOut;
+                pageIn = !romcartridge.zxc1PageOut;
                 break;
 
         case ROMCARTRIDGEZXC2:
-                pageIn = ((zx81.zxcPaging & zxc2PageOut) == 0);
+                pageIn = ((romcartridge.zxcPaging & zxc2PageOut) == 0);
                 break;
 
         case ROMCARTRIDGEZXC3:
-                pageIn = ((zx81.zxcPaging & zxc3PageOut) == 0);
+                pageIn = ((romcartridge.zxcPaging & zxc3PageOut) == 0);
                 break;
 
         case ROMCARTRIDGEZXC4:
-                pageIn = ((zx81.zxcPaging & zxc4PageOut) == 0);
+                pageIn = ((romcartridge.zxcPaging & zxc4PageOut) == 0);
                 break;
         }
 
@@ -234,7 +234,7 @@ bool LoadRomCartridgeFile(char *filename)
         }
         else
         {
-                strcpy(file, zx81.cwd);
+                strcpy(file, emulator.cwd);
                 strcat(file,"ROM\\");
                 strcat(file,filename);
         }
@@ -281,7 +281,7 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
 
         if (romBankAccess || windowRead)
         {
-                switch (zx81.romCartridge)
+                switch (romcartridge.type)
                 {
                 case ROMCARTRIDGESINCLAIR:
                         *Data = AccessRomCartridgeSinclair(Address);
@@ -316,19 +316,19 @@ static inline BYTE AccessRomCartridgeSinclair(int Address)
 
 void RomCartridgeZXC1TimerTick()
 {
-        if ((zx81.zxc1ActiveBank >= 0) && (zx81.zxc1ActiveBank < 3))
+        if ((romcartridge.zxc1ActiveBank >= 0) && (romcartridge.zxc1ActiveBank < 3))
         {
-                if (zx81.zxc1BankTimer[zx81.zxc1ActiveBank] > 0)
+                if (romcartridge.zxc1BankTimer[romcartridge.zxc1ActiveBank] > 0)
                 {
-                        zx81.zxc1BankTimer[zx81.zxc1ActiveBank]--;
+                        romcartridge.zxc1BankTimer[romcartridge.zxc1ActiveBank]--;
 
-                        if (zx81.zxc1BankTimer[zx81.zxc1ActiveBank] == 0)
+                        if (romcartridge.zxc1BankTimer[romcartridge.zxc1ActiveBank] == 0)
                         {
-                                zx81.zxc1ActiveBank++;
+                                romcartridge.zxc1ActiveBank++;
 
-                                if (zx81.zxc1BankNumber[zx81.zxc1ActiveBank] == -1)
+                                if (romcartridge.zxc1BankNumber[romcartridge.zxc1ActiveBank] == -1)
                                 {
-                                        zx81.zxc1PageOut = true;
+                                        romcartridge.zxc1PageOut = true;
                                 }
                         }
                 }
@@ -339,13 +339,13 @@ static inline bool AccessRomCartridgeZXC1(int Address, BYTE* Data)
 {
         bool dataRead = true;
 
-        if (zx81.zxc1PageOut)
+        if (romcartridge.zxc1PageOut)
         {
                 dataRead = false;
         }
         else
         {
-                int bank = zx81.zxc1BankNumber[zx81.zxc1ActiveBank];
+                int bank = romcartridge.zxc1BankNumber[romcartridge.zxc1ActiveBank];
                 *Data = AccessRomCartridgeBank(bank, Address);
         }
 
@@ -356,18 +356,18 @@ static inline bool AccessRomCartridgeZXC2(int Address, BYTE* Data)
 {
         bool dataRead = true;
 
-        if (!directMemoryAccess && (Address >= zxcUpperControlBase) && !(zx81.zxcPaging & zxc2Locked))
+        if (!directMemoryAccess && (Address >= zxcUpperControlBase) && !(romcartridge.zxcPaging & zxc2Locked))
         {
-                zx81.zxcPaging = (Address & zxcUpperControlMask);
+                romcartridge.zxcPaging = (Address & zxcUpperControlMask);
                 *Data = idleDataBus;
         }
-        else if (zx81.zxcPaging & zxc2PageOut)
+        else if (romcartridge.zxcPaging & zxc2PageOut)
         {
                 dataRead = false;
         }
         else
         {
-                int bank = (zx81.zxcPaging & zxc2Bank);
+                int bank = (romcartridge.zxcPaging & zxc2Bank);
                 *Data = AccessRomCartridgeBank(bank, Address);
         }
 
@@ -378,25 +378,25 @@ static inline bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAcc
 {
         bool dataRead = true;
 
-        if (!directMemoryAccess && (Address >= zxcUpperControlBase) && !(zx81.zxcPaging & zxc3Locked) && ((zx81.machine != MACHINEZX80) || writeAccess))
+        if (!directMemoryAccess && (Address >= zxcUpperControlBase) && !(romcartridge.zxcPaging & zxc3Locked) && ((emulator.machine != MACHINEZX80) || writeAccess))
         {
-                zx81.zxcPaging = (Address & zxcUpperControlMask);
+                romcartridge.zxcPaging = (Address & zxcUpperControlMask);
                 *Data = idleDataBus;
         }
-        else if (zx81.zxcPaging & zxc3PageOut)
+        else if (romcartridge.zxcPaging & zxc3PageOut)
         {
                 dataRead = false;
         }
         else
         {
-                if (zx81.zxcPaging & zxc3Write)
+                if (romcartridge.zxcPaging & zxc3Write)
                 {
                         // This will need to change when support for writing to the ROM is implemented
                         *Data = idleDataBus;
                 }
                 else
                 {
-                        int bank = (zx81.zxcPaging & zxc3Bank);
+                        int bank = (romcartridge.zxcPaging & zxc3Bank);
                         *Data = AccessRomCartridgeBank(bank, Address);
                 }
         }
@@ -407,11 +407,11 @@ static inline bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAcc
 static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess)
 {
         bool dataRead = true;
-        bool controlAccessLocked = (zx81.zxcPaging & zxc4Locked);
-        bool upperControlAccess = ((!directMemoryAccess && !controlAccessLocked) || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn) &&
-                                   !zx81.zxcLowerControlAccessSelected && (Address >= zxcUpperControlBase) && ((zx81.machine != MACHINEZX80) || writeAccess);
-        bool lowerControlAccess = ((!directMemoryAccess && !controlAccessLocked) || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn) &&
-                                   zx81.zxcLowerControlAccessSelected && (Address < zxcLowerControlLimit) && ((zx81.machine != MACHINEZX80) || !(zx81.zxcPaging & zxc4PageOut));
+        bool controlAccessLocked = (romcartridge.zxcPaging & zxc4Locked);
+        bool upperControlAccess = ((!directMemoryAccess && !controlAccessLocked) || romcartridge.zxcInterface1BankPagedIn || romcartridge.zxcCassetteBankPagedIn) &&
+                                   !romcartridge.zxcLowerControlAccessSelected && (Address >= zxcUpperControlBase) && ((emulator.machine != MACHINEZX80) || writeAccess);
+        bool lowerControlAccess = ((!directMemoryAccess && !controlAccessLocked) || romcartridge.zxcInterface1BankPagedIn || romcartridge.zxcCassetteBankPagedIn) &&
+                                   romcartridge.zxcLowerControlAccessSelected && (Address < zxcLowerControlLimit) && ((emulator.machine != MACHINEZX80) || !(romcartridge.zxcPaging & zxc4PageOut));
 
         if (upperControlAccess)
         {
@@ -420,11 +420,11 @@ static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAcc
                 int paging = (Address & zxcUpperControlMask);
                 if ((paging & controlAccessSelectionMask) == selectLowerControlAccess)
                 {
-                        zx81.zxcLowerControlAccessSelected = true;
+                        romcartridge.zxcLowerControlAccessSelected = true;
                 }
                 else
                 {
-                        zx81.zxcPaging = (zx81.zxcPaging & ~zxcUpperControlMask) | paging;
+                        romcartridge.zxcPaging = (romcartridge.zxcPaging & ~zxcUpperControlMask) | paging;
                 }
                 *Data = idleDataBus;
         }
@@ -435,19 +435,19 @@ static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAcc
                 int paging = (Address & zxcLowerControlMask);
                 if ((paging & controlAccessSelectionMask) == selectUpperControlAccess)
                 {
-                        zx81.zxcLowerControlAccessSelected = false;
+                        romcartridge.zxcLowerControlAccessSelected = false;
                 }
                 else
                 {
-                        zx81.zxcPaging = paging;
+                        romcartridge.zxcPaging = paging;
                 }
                 *Data = idleDataBus;
         }
         else
         {
-                if (!(zx81.zxcPaging & zxc4PageOut) || zx81.zxcInterface1BankPagedIn || zx81.zxcCassetteBankPagedIn)
+                if (!(romcartridge.zxcPaging & zxc4PageOut) || romcartridge.zxcInterface1BankPagedIn || romcartridge.zxcCassetteBankPagedIn)
                 {
-                        if (zx81.zxcPaging & zxc4Write)
+                        if (romcartridge.zxcPaging & zxc4Write)
                         {
                                 // This will need to change when support for writing to the ROM is implemented
                                 *Data = idleDataBus;
@@ -456,19 +456,19 @@ static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAcc
                         {
                                 int readBank = 0;
                                 
-                                if ((!zx81.zxcInterface1BankPagedIn && !zx81.zxcCassetteBankPagedIn) ||
-                                    (!(zx81.zxcPaging & zxc4Interface1Paging) && zx81.zxcInterface1BankPagedIn) ||
-                                    (!(zx81.zxcPaging & zxc4CassettePaging) && zx81.zxcCassetteBankPagedIn))
+                                if ((!romcartridge.zxcInterface1BankPagedIn && !romcartridge.zxcCassetteBankPagedIn) ||
+                                    (!(romcartridge.zxcPaging & zxc4Interface1Paging) && romcartridge.zxcInterface1BankPagedIn) ||
+                                    (!(romcartridge.zxcPaging & zxc4CassettePaging) && romcartridge.zxcCassetteBankPagedIn))
                                 {
-                                        readBank = (zx81.zxcPaging & zxc4Bank);
+                                        readBank = (romcartridge.zxcPaging & zxc4Bank);
                                 }
                                 else
                                 {
                                         // Force a read from bank 2 if the Interface 1 bank is active or bank 3 if the Cassette bank is active
-                                        readBank = zx81.zxcCassetteBankPagedIn ? 3 : 2;
+                                        readBank = romcartridge.zxcCassetteBankPagedIn ? 3 : 2;
                                 }
 
-                                int bank = (((zx81.zxcPaging & zxc4BankSet) >> zxc4BankSetShift) | readBank);
+                                int bank = (((romcartridge.zxcPaging & zxc4BankSet) >> zxc4BankSetShift) | readBank);
                                 *Data = AccessRomCartridgeBank(bank, Address);
                         }
                 }
@@ -482,25 +482,25 @@ static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAcc
 
         if (!directMemoryAccess)
         {
-                if (!zx81.zxcInterface1BankPagedIn && !zx81.zxcCassetteBankPagedIn &&
-                (zx81.zxcPaging & zxc4Interface1Paging) && ((Address == 0x0008) || (Address == 0x1708)))
+                if (!romcartridge.zxcInterface1BankPagedIn && !romcartridge.zxcCassetteBankPagedIn &&
+                (romcartridge.zxcPaging & zxc4Interface1Paging) && ((Address == 0x0008) || (Address == 0x1708)))
                 {
-                        zx81.zxcInterface1BankPagedIn = true;
+                        romcartridge.zxcInterface1BankPagedIn = true;
                 }
-                else if (zx81.zxcInterface1BankPagedIn && (zx81.zxcPaging & zxc4Interface1Paging) && (Address == 0x0700))
+                else if (romcartridge.zxcInterface1BankPagedIn && (romcartridge.zxcPaging & zxc4Interface1Paging) && (Address == 0x0700))
                 {
-                        zx81.zxcInterface1BankPagedIn = false;
+                        romcartridge.zxcInterface1BankPagedIn = false;
                 }
 
-                if (!zx81.zxcInterface1BankPagedIn && !zx81.zxcCassetteBankPagedIn &&
-                (zx81.zxcPaging & zxc4CassettePaging) && ((Address == 0x0556) || (Address == 0x04C2)))
+                if (!romcartridge.zxcInterface1BankPagedIn && !romcartridge.zxcCassetteBankPagedIn &&
+                (romcartridge.zxcPaging & zxc4CassettePaging) && ((Address == 0x0556) || (Address == 0x04C2)))
                 {
-                        zx81.zxcCassetteBankPagedIn = true;
+                        romcartridge.zxcCassetteBankPagedIn = true;
                 }
-                else if (zx81.zxcCassetteBankPagedIn && (zx81.zxcPaging & zxc4CassettePaging) &&
+                else if (romcartridge.zxcCassetteBankPagedIn && (romcartridge.zxcPaging & zxc4CassettePaging) &&
                         ((Address == 0x0556) || (Address == 0x04C2) || (Address == 0x0555)))
                 {
-                        zx81.zxcCassetteBankPagedIn = false;
+                        romcartridge.zxcCassetteBankPagedIn = false;
                 }
         }
 

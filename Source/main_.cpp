@@ -101,7 +101,7 @@ extern bool ShowSplash;
 extern int frametstates;
 
 extern "C" void z80_reset();
-extern "C" int z80_nmi(int ts, int* pNonHaltedWaitStates, int* pHaltedWaitStates);
+extern "C" int z80_nmi();
 extern char **CommandLine;
 extern void ramwobble(int now);
 extern int LoadDock(char *Filename);
@@ -148,17 +148,17 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 
         RunFrameEnable=false;
 
-        strcpy(zx81.cwd, (FileNameGetPath(Application->ExeName)).c_str());
-        if (zx81.cwd[strlen(zx81.cwd)-1]!='\\')
+        strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
+        if (emulator.cwd[strlen(emulator.cwd)-1]!='\\')
         {
-                zx81.cwd[strlen(zx81.cwd)-1]='\\';
-                zx81.cwd[strlen(zx81.cwd)]='\0';
+                emulator.cwd[strlen(emulator.cwd)-1]='\\';
+                emulator.cwd[strlen(emulator.cwd)]='\0';
         }
 
-        strcpy(TEMP1, zx81.cwd);
-        GetTempPath(256, zx81.temppath);
-        strcat(zx81.temppath, "eo\\");
-        mkdir(zx81.temppath);
+        strcpy(TEMP1, emulator.cwd);
+        GetTempPath(256, emulator.temppath);
+        strcat(emulator.temppath, "eo\\");
+        mkdir(emulator.temppath);
 
         if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, path))
         {
@@ -166,27 +166,27 @@ __fastcall TForm1::TForm1(TComponent* Owner)
                 if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
                 IniPath += "EightyOne\\";
                 mkdir(IniPath.c_str());
-                strcpy(zx81.configpath, IniPath.c_str());
+                strcpy(emulator.configpath, IniPath.c_str());
 
                 IniPath += FileNameGetFname(Application->ExeName);
                 IniPath += ".ini";
-                strcpy(zx81.inipath, IniPath.c_str());
+                strcpy(emulator.inipath, IniPath.c_str());
         }
         else
         {
                 IniPath=ChangeFileExt(Application->ExeName, ".ini" );
-                strcpy(zx81.inipath, IniPath.c_str());
+                strcpy(emulator.inipath, IniPath.c_str());
                 IniPath=FileNameGetPath(Application->ExeName);
-                strcpy(zx81.configpath, IniPath.c_str());
+                strcpy(emulator.configpath, IniPath.c_str());
         }
 
         if (!SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, path))
         {
                 IniPath=path;
                 if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
-                strcpy(zx81.mydocs, IniPath.c_str());
+                strcpy(emulator.mydocs, IniPath.c_str());
         }
-        else    strcpy(zx81.mydocs, zx81.cwd);
+        else    strcpy(emulator.mydocs, emulator.cwd);
 
         for(i=0; CommandLine[i]!=NULL; i++)
         {
@@ -194,8 +194,8 @@ __fastcall TForm1::TForm1(TComponent* Owner)
                 {
                         IniPath=CommandLine[i];
                         if (IniPath.Pos("\\")==0)
-                                IniPath=zx81.configpath + IniPath;
-                        strcpy(zx81.inipath, IniPath.c_str());
+                                IniPath=emulator.configpath + IniPath;
+                        strcpy(emulator.inipath, IniPath.c_str());
 
                 }
         }
@@ -245,7 +245,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         Application->OnMessage = AppMessage;
 
         nosound=true;
-        strcpy(soundfile,zx81.cwd);
+        strcpy(soundfile,emulator.cwd);
         strcat(soundfile,"nosound");
         if (access(soundfile,0)) nosound=false;
 
@@ -255,13 +255,13 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         Application->OnDeactivate=FormDeactivate;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         ShowSplash = ini->ReadBool("MAIN","ShowSplash", ShowSplash);
         EnableSplashScreen->Checked = ShowSplash;
 
         SP0256_Init();
 
-        iniFileExists = FileExists(zx81.inipath);
+        iniFileExists = FileExists(emulator.inipath);
         LoadSettings(ini);
 
         RenderMode=ini->ReadInteger("MAIN","RenderMode", RENDERGDI);
@@ -326,7 +326,7 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if ((Key==VK_SHIFT) && (zx81.UseRShift)) return;
+        if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyDown(Key);
@@ -337,7 +337,7 @@ void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
 void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if ((Key==VK_SHIFT) && (zx81.UseRShift)) return;
+        if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyUp(Key);
@@ -590,12 +590,12 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
         stopped=zx81_stop;
         zx81_stop=1;
 
-        if (zx81.machine==MACHINEACE)
+        if (emulator.machine==MACHINEACE)
         {
                 SaveSnapDialog->Filter = ".ACE Snapshot|*.ace";
                 SaveSnapDialog->DefaultExt = "ACE";
         }
-        else if (zx81.machine==MACHINESPEC48)
+        else if (emulator.machine==MACHINESPECTRUM)
         {
                 SaveSnapDialog->Filter = ".Z80 Snapshot|*.z80|.SNA Snapshot|*.sna";
                 SaveSnapDialog->DefaultExt = "Z80";
@@ -628,12 +628,12 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         AnsiString Path, Ext;
         stopped=zx81_stop;
 
-        if (zx81.machine==MACHINEACE)
+        if (emulator.machine==MACHINEACE)
         {
                 LoadSnapDialog->Filter = ".ACE Snapshot|*.ace|Compressed Snapshot|*.zip";
                 LoadSnapDialog->DefaultExt = "ACE";
         }
-        else if (zx81.machine==MACHINESPEC48)
+        else if (emulator.machine==MACHINESPECTRUM)
         {
                 LoadSnapDialog->Filter = "Spectrum Snapshots|*.z80;*.sna|.Z80 Snapshot|*.z80|.SNA Snapshot|*.sna|Compressed Snapshot|*.zip";
                 LoadSnapDialog->DefaultExt = "Z80";
@@ -737,7 +737,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         if (!nosound) Sound.End();
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         SaveSettings(ini);
         delete ini;
 
@@ -747,17 +747,17 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         RenderEnd();
 
-        if ((dir = opendir(zx81.temppath)) != NULL)
+        if ((dir = opendir(emulator.temppath)) != NULL)
         {
                 while ((ent = readdir(dir)) != NULL)
                 {
-                        TempFile = zx81.temppath;
+                        TempFile = emulator.temppath;
                         TempFile += ent->d_name;
                         DeleteFile(TempFile);
                 }
 
                 closedir(dir);
-                _rmdir(zx81.temppath);
+                _rmdir(emulator.temppath);
         }
         //SHChangeNotifyDeregister(nID);
 }
@@ -865,11 +865,11 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 DrivesChanged=false;
         }
 
-        targetfps = zx81.NTSC ? 60:50;
+        targetfps = machine.NTSC ? 60:50;
         if (((targetfps-1) == fps) || ((targetfps+1)==fps)) fps=targetfps;
         targetfps = (targetfps  * 9) / 10;
-        if (fps > (targetfps+2) && zx81.frameskip>0) zx81.frameskip--;
-        if (fps < targetfps && zx81.frameskip<10 && zx81.frameskip>=0) zx81.frameskip++;
+        if (fps > (targetfps+2) && emulator.frameskip>0) emulator.frameskip--;
+        if (fps < targetfps && emulator.frameskip<10 && emulator.frameskip>=0) emulator.frameskip++;
 
         if (FullScreen)
         {
@@ -885,16 +885,16 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         }
         else
         {
-                if (zx81.single_step)
+                if (emulator.single_step)
                         text +="Debug Mode";
                 else
                 {
                         text += fps;
                         text += "fps";
-                        if (zx81.frameskip>0)
+                        if (emulator.frameskip>0)
                         {
                                 text += " FS ";
-                                text += zx81.frameskip;
+                                text += emulator.frameskip;
                         }
                 }
         }
@@ -1017,7 +1017,7 @@ void __fastcall TForm1::DebugWinClick(TObject *Sender)
         DebugWin->Checked = !DebugWin->Checked;
         if (DebugWin->Checked)
         {
-                if (zx81.machine==MACHINEQL) Debug68k->Show();
+                if (emulator.machine==MACHINEQL) Debug68k->Show();
                 else Dbg->Show();
         }
         else
@@ -1114,7 +1114,7 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 {
         InverseVideo->Checked = !InverseVideo->Checked;
-        zx81.inverse = 1 - zx81.inverse;
+        emulator.inverse = 1 - emulator.inverse;
         if (Sender) Artifacts->TrackBarChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1165,15 +1165,15 @@ void TForm1::LoadSettings(TIniFile *ini)
         SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
 
-        if (None1->Checked) { zx81.bordersize=BORDERNONE; None1Click(NULL); }
-        if (Small1->Checked) { zx81.bordersize=BORDERSMALL; Small1Click(NULL); }
-        if (Normal1->Checked) { zx81.bordersize=BORDERNORMAL; Normal1Click(NULL); }
-        if (Large1->Checked) { zx81.bordersize=BORDERLARGE; Large1Click(NULL); }
-        if (FullImage1->Checked) { zx81.bordersize=BORDERFULL; FullImage1Click(NULL); }
+        if (None1->Checked) { emulator.bordersize=BORDERNONE; None1Click(NULL); }
+        if (Small1->Checked) { emulator.bordersize=BORDERSMALL; Small1Click(NULL); }
+        if (Normal1->Checked) { emulator.bordersize=BORDERNORMAL; Normal1Click(NULL); }
+        if (Large1->Checked) { emulator.bordersize=BORDERLARGE; Large1Click(NULL); }
+        if (FullImage1->Checked) { emulator.bordersize=BORDERFULL; FullImage1Click(NULL); }
 
-        zx81.audioout = OutAudioOut->Checked ? 1:0;
-        zx81.TZXin = InTZXManager->Checked ? 1:0;
-        zx81.TZXout = OutTZXManager->Checked ? 1:0;
+        emulator.audioout = OutAudioOut->Checked ? 1:0;
+        emulator.TZXin = InTZXManager->Checked ? 1:0;
+        emulator.TZXout = OutTZXManager->Checked ? 1:0;
 
         AccurateInit(true);
 
@@ -1286,7 +1286,6 @@ void __fastcall TForm1::Sound1Click(TObject *Sender)
 void __fastcall TForm1::DBG1Click(TObject *Sender)
 {
         DBG1->Checked=!DBG1->Checked;
-        zx81.debug1=DBG1->Checked;
         HW->Show();
 }
 //---------------------------------------------------------------------------
@@ -1301,7 +1300,7 @@ void __fastcall TForm1::InWaveLoaderClick(TObject *Sender)
 {
         InWaveLoader->Checked=true;
         InTZXManager->Checked=false;
-        zx81.TZXin=0;
+        emulator.TZXin=0;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::OutWaveLoaderClick(TObject *Sender)
@@ -1309,8 +1308,8 @@ void __fastcall TForm1::OutWaveLoaderClick(TObject *Sender)
         OutWaveLoader->Checked=true;
         OutAudioOut->Checked=false;
         OutTZXManager->Checked=false;
-        zx81.audioout=0;
-        zx81.TZXout=0;
+        emulator.audioout=0;
+        emulator.TZXout=0;
 }
 //---------------------------------------------------------------------------
 
@@ -1319,8 +1318,8 @@ void __fastcall TForm1::OutAudioOutClick(TObject *Sender)
         OutWaveLoader->Checked=false;
         OutTZXManager->Checked=false;
         OutAudioOut->Checked=true;
-        zx81.audioout=1;
-        zx81.TZXout=0;
+        emulator.audioout=1;
+        emulator.TZXout=0;
 }
 //---------------------------------------------------------------------------
 
@@ -1336,7 +1335,6 @@ void __fastcall TForm1::SoundOutput1Click(TObject *Sender)
 void __fastcall TForm1::ROMClick(TObject *Sender)
 {
         PCAllKeysUp();
-        //ROMBox->ShowModal();
 }
 //---------------------------------------------------------------------------
 
@@ -1390,7 +1388,7 @@ void __fastcall TForm1::InTZXManagerClick(TObject *Sender)
 {
         InWaveLoader->Checked=false;
         InTZXManager->Checked=true;
-        zx81.TZXin=1;
+        emulator.TZXin=1;
 }
 //---------------------------------------------------------------------------
 
@@ -1399,11 +1397,10 @@ void __fastcall TForm1::OutTZXManagerClick(TObject *Sender)
         OutWaveLoader->Checked=false;
         OutTZXManager->Checked=true;
         OutAudioOut->Checked=false;
-        zx81.TZXout=1;
-        zx81.audioout=0;
+        emulator.TZXout=1;
+        emulator.audioout=0;
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall TForm1::RPWobble1Click(TObject *Sender)
 {
@@ -1426,7 +1423,7 @@ void __fastcall TForm1::Small1Click(TObject *Sender)
         FullImage1->Checked=false;
         if (Small1->Checked) return;
         Small1->Checked=true;
-        zx81.bordersize=BORDERSMALL;
+        emulator.bordersize=BORDERSMALL;
         AccurateInit(true);
 }
 //---------------------------------------------------------------------------
@@ -1439,7 +1436,7 @@ void __fastcall TForm1::Normal1Click(TObject *Sender)
         FullImage1->Checked=false;
         if (Normal1->Checked) return;
         Normal1->Checked=true;
-        zx81.bordersize=BORDERNORMAL;
+        emulator.bordersize=BORDERNORMAL;
         AccurateInit(true);
 }
 //---------------------------------------------------------------------------
@@ -1452,7 +1449,7 @@ void __fastcall TForm1::Large1Click(TObject *Sender)
         FullImage1->Checked=false;
         if (Large1->Checked) return;
         Large1->Checked=true;
-        zx81.bordersize=BORDERLARGE;
+        emulator.bordersize=BORDERLARGE;
         AccurateInit(true);
 }
 //---------------------------------------------------------------------------
@@ -1465,7 +1462,7 @@ void __fastcall TForm1::FullImage1Click(TObject *Sender)
         Large1->Checked=false;
         if (FullImage1->Checked) return;
         FullImage1->Checked=true;
-        zx81.bordersize=BORDERFULL;
+        emulator.bordersize=BORDERFULL;
         AccurateInit(true);
 }
 //---------------------------------------------------------------------------
@@ -1473,75 +1470,75 @@ void TForm1::DoAutoLoad(void)
 {
 #define AUTOINC(i)  (340+i*10)
 
-        if (zx81.machine==MACHINEACE) return;
+        if (emulator.machine==MACHINEACE) return;
 
-        bool zx80 = (zx81.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom");
+        bool zx80 = (emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom");
 
         switch(AutoLoadCount)
         {
         case 2: ResetZX811Click(NULL); break;
-        case AUTOINC(0): if (zx81.machine==MACHINESPEC48 && spectrum.machine>=SPECCY128)
+        case AUTOINC(0): if (emulator.machine==MACHINESPECTRUM && spectrum.model>=SPECCY128)
                                 PCKeyDown(VK_RETURN);
-                         else if (zx81.machine==MACHINELAMBDA) PCKeyDown('L');
+                         else if (emulator.machine==MACHINELAMBDA) PCKeyDown('L');
                          else if (zx80) PCKeyDown('W');
                          else PCKeyDown('J');
                          break;
 
-        case AUTOINC(1): if (zx81.machine==MACHINESPEC48 && spectrum.machine==SPECCY128)
+        case AUTOINC(1): if (emulator.machine==MACHINESPECTRUM && spectrum.model==SPECCY128)
                                 PCKeyUp(VK_RETURN);
-                         else if (zx81.machine==MACHINELAMBDA) PCKeyUp('L');
+                         else if (emulator.machine==MACHINELAMBDA) PCKeyUp('L');
                          else if (zx80) PCKeyUp('W');
                          else PCKeyUp('J');
                          break;
 
-        case AUTOINC(2):  if (zx81.machine==MACHINESPEC48) PCKeyDown(VK_CONTROL);
-                          else if (zx81.machine==MACHINELAMBDA) PCKeyDown('O');
+        case AUTOINC(2):  if (emulator.machine==MACHINESPECTRUM) PCKeyDown(VK_CONTROL);
+                          else if (emulator.machine==MACHINELAMBDA) PCKeyDown('O');
                           else if (zx80) PCKeyDown(VK_RETURN);
                           else PCKeyDown(VK_SHIFT); break;
 
-        case AUTOINC(3): if (zx81.machine==MACHINELAMBDA) PCKeyUp('O');
+        case AUTOINC(3): if (emulator.machine==MACHINELAMBDA) PCKeyUp('O');
                          else if (zx80) PCKeyUp(VK_RETURN);
                          else PCKeyDown('P'); break;
 
-        case AUTOINC(4): if (zx81.machine==MACHINELAMBDA) PCKeyDown('A');
+        case AUTOINC(4): if (emulator.machine==MACHINELAMBDA) PCKeyDown('A');
                          else PCKeyUp('P'); break;
 
-        case AUTOINC(5): if (zx81.machine==MACHINELAMBDA) PCKeyUp('A');
+        case AUTOINC(5): if (emulator.machine==MACHINELAMBDA) PCKeyUp('A');
                          else PCKeyDown('P'); break;
 
-        case AUTOINC(6): if (zx81.machine==MACHINELAMBDA) PCKeyDown('D');
+        case AUTOINC(6): if (emulator.machine==MACHINELAMBDA) PCKeyDown('D');
                          else PCKeyUp('P'); break;
 
-        case AUTOINC(7): if (zx81.machine==MACHINELAMBDA) PCKeyUp('D');
-                         else if (zx81.machine==MACHINESPEC48) PCKeyUp(VK_CONTROL);
+        case AUTOINC(7): if (emulator.machine==MACHINELAMBDA) PCKeyUp('D');
+                         else if (emulator.machine==MACHINESPECTRUM) PCKeyUp(VK_CONTROL);
                          else PCKeyUp(VK_SHIFT); break;
 
-        case AUTOINC(8): if (zx81.machine==MACHINELAMBDA) PCKeyDown(VK_SHIFT);
+        case AUTOINC(8): if (emulator.machine==MACHINELAMBDA) PCKeyDown(VK_SHIFT);
                          else PCKeyDown(VK_RETURN); break;
 
-        case AUTOINC(9): if (zx81.machine==MACHINELAMBDA) PCKeyDown('5');
+        case AUTOINC(9): if (emulator.machine==MACHINELAMBDA) PCKeyDown('5');
                          else PCKeyUp(VK_RETURN); break;
 
-        case AUTOINC(10): if (zx81.machine==MACHINELAMBDA) PCKeyUp('5');
+        case AUTOINC(10): if (emulator.machine==MACHINELAMBDA) PCKeyUp('5');
                          break;
 
-        case AUTOINC(11): if (zx81.machine==MACHINELAMBDA) PCKeyDown('5');
+        case AUTOINC(11): if (emulator.machine==MACHINELAMBDA) PCKeyDown('5');
                          break;
 
-        case AUTOINC(12): if (zx81.machine==MACHINELAMBDA) PCKeyUp('5');
+        case AUTOINC(12): if (emulator.machine==MACHINELAMBDA) PCKeyUp('5');
                          break;
 
-        case AUTOINC(13): if (zx81.machine==MACHINELAMBDA) PCKeyUp(VK_SHIFT);
+        case AUTOINC(13): if (emulator.machine==MACHINELAMBDA) PCKeyUp(VK_SHIFT);
                          break;
 
-        case AUTOINC(14): if (zx81.machine==MACHINELAMBDA) PCKeyDown(VK_RETURN);
+        case AUTOINC(14): if (emulator.machine==MACHINELAMBDA) PCKeyDown(VK_RETURN);
                          break;
 
-        case AUTOINC(15): if (zx81.machine==MACHINELAMBDA) PCKeyUp(VK_RETURN);
+        case AUTOINC(15): if (emulator.machine==MACHINELAMBDA) PCKeyUp(VK_RETURN);
                          break;
         default: break;
         }
-        zx81.NTSC ? AutoLoadCount++ : AutoLoadCount+=2;
+        machine.NTSC ? AutoLoadCount++ : AutoLoadCount+=2;
         if (AutoLoadCount==1000) AutoLoadCount=0;
 }
 
@@ -1567,7 +1564,7 @@ void __fastcall TForm1::None1Click(TObject *Sender)
         FullImage1->Checked=false;
         if (None1->Checked) return;
         None1->Checked=true;
-        zx81.bordersize=BORDERNONE;
+        emulator.bordersize=BORDERNONE;
         AccurateInit(true);
 
 }
@@ -1596,7 +1593,7 @@ void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
 {
         AnsiString Path, Ext;
 
-        Path = zx81.cwd;
+        Path = emulator.cwd;
         Path += "Dock";
 
         OpenDock->InitialDir = Path;
@@ -1725,11 +1722,9 @@ void __fastcall TForm1::FormMouseUp(TObject *Sender, TMouseButton Button,
 
 void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 {
-        int nonHaltedWaitStates;
-        int haltedWaitStates;
         rzx_close();
         if (machine.nmi) machine.nmi();
-        else z80_nmi(0, &nonHaltedWaitStates, &haltedWaitStates);
+        else z80_nmi();
 }
 //---------------------------------------------------------------------------
 
@@ -1740,7 +1735,7 @@ void TForm1::BuildConfigMenu(void)
 
         while(Config1->Count >2) Config1->Delete(2);
 
-        if ((dir = opendir(zx81.configpath)) != NULL)
+        if ((dir = opendir(emulator.configpath)) != NULL)
         {
                 while ((ent = readdir(dir)) != NULL)
                 {
@@ -1770,7 +1765,7 @@ void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
         AnsiString FileName;
 
         SaveConfigDialog->FileName="";
-        SaveConfigDialog->InitialDir=zx81.configpath;
+        SaveConfigDialog->InitialDir=emulator.configpath;
 
         if (!SaveConfigDialog->Execute()) return;
 
@@ -1807,7 +1802,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
                 ConfigName=Before+After;
         }
 
-        FileName = zx81.configpath;
+        FileName = emulator.configpath;
         FileName = FileName + ConfigName;
         FileName = FileName + ".ini";
 
@@ -1859,7 +1854,7 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
 
         SaveScrDialog->Filter = "Windows Bitmap (.bmp)|*.bmp";
 
-        if (zx81.machine==MACHINESPEC48)
+        if (emulator.machine==MACHINESPECTRUM)
                 SaveScrDialog->Filter += "|Spectrum Screen (.scr)|*.scr";
 
 
@@ -1938,7 +1933,7 @@ void __fastcall TForm1::SpectraColourEnableClick(TObject *Sender)
         bool previousSpectraColourEnable = SpectraColourEnable->Checked;
 
         SpectraColourEnable->Checked = !SpectraColourEnable->Checked;
-        zx81.spectraColourSwitchOn = SpectraColourEnable->Checked;
+        spectrum.spectraColourSwitchOn = SpectraColourEnable->Checked;
 
         if (previousSpectraColourEnable)
         {
@@ -2038,7 +2033,7 @@ void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
 
 void __fastcall TForm1::Tools1Click(TObject *Sender)
 {
-        LiveMemoryOverview->Enabled = zx81.machine != MACHINEQL;
+        LiveMemoryOverview->Enabled = emulator.machine != MACHINEQL;
 }
 //---------------------------------------------------------------------------
 
@@ -2070,7 +2065,7 @@ void __fastcall TForm1::RunFrame()
         unsigned short rshift = VK_RSHIFT;
         unsigned short lshift = VK_LSHIFT;
 
-        if (zx81.UseRShift)
+        if (emulator.UseRShift)
         {
                 bool L=((GetAsyncKeyState(VK_LSHIFT)&32768)!=0);
                 bool R=((GetAsyncKeyState(VK_RSHIFT)&32768)!=0);
@@ -2117,11 +2112,11 @@ void __fastcall TForm1::RunFrame()
         fps++;
         frametstates=0;
 
-        j=zx81.single_step?1:(machine.tperframe + borrow);
+        j=emulator.single_step?1:(machine.tperframe + borrow);
 
-        if (zx81.machine != MACHINESPEC48 && j!=1 && !AutoLoadCount)
+        if (emulator.machine != MACHINESPECTRUM && j!=1 && !AutoLoadCount)
         {
-                j += (zx81.speedup * machine.tperframe) / machine.tperscanline;
+                j += (emulator.speedup * machine.tperframe) / machine.tperscanline;
         }
 
         while (j>0 && !zx81_stop)
@@ -2142,16 +2137,184 @@ void __fastcall TForm1::RunFrame()
 
         if (!zx81_stop) borrow=j;
 
-        if (zx81.romCartridge == ROMCARTRIDGEZXC1)
+        if (romcartridge.type == ROMCARTRIDGEZXC1)
         {
                 RomCartridgeZXC1TimerTick();
         }
 }
 
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::HorizontalSyncPulseClick(TObject *Sender)
+{
+        HorizontalSyncPulse->Checked = !HorizontalSyncPulse->Checked;
+        emulator.ColouriseHorizontalSyncPulse = HorizontalSyncPulse->Checked;
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::VerticalSyncPulseClick(TObject *Sender)
+{
+        VerticalSyncPulse->Checked = !VerticalSyncPulse->Checked;
+        emulator.ColouriseVerticalSyncPulse = VerticalSyncPulse->Checked;
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::BackPorchClick(TObject *Sender)
+{
+        BackPorch->Checked = !BackPorch->Checked;
+        emulator.ColouriseBackPorch = BackPorch->Checked;
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::NonMaskableInterruptResponseClick(TObject *Sender)
+{
+        NonMaskableInterruptResponse->Checked = !NonMaskableInterruptResponse->Checked;
+        emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
+        NonMaskableInterruptResponseWaitStates->Enabled = NonMaskableInterruptResponse->Checked;
+        if (!NonMaskableInterruptResponse->Checked)
+        {
+                NonMaskableInterruptResponse->Checked = false;
+                emulator.ColouriseNonMaskableInterruptResponseWaitStates = false;
+        }
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::NonMaskableInterruptServiceRoutineClick(
+      TObject *Sender)
+{
+        NonMaskableInterruptServiceRoutine->Checked = !NonMaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = NonMaskableInterruptServiceRoutine->Checked;
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::MaskableInterruptResponseClick(TObject *Sender)
+{
+        MaskableInterruptResponse->Checked = !MaskableInterruptResponse->Checked;
+        emulator.ColouriseMaskableInterruptResponse = MaskableInterruptResponse->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::MaskableInterruptServiceRoutineClick(
+      TObject *Sender)
+{
+        MaskableInterruptServiceRoutine->Checked = !MaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseMaskableInterruptServiceRoutine = MaskableInterruptServiceRoutine->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::InstructionStraddlingNMIClick(TObject *Sender)
+{
+        InstructionStraddlingNMI->Checked = !InstructionStraddlingNMI->Checked;
+        emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
+        InstructionStraddlingNMIWaitStates->Enabled = InstructionStraddlingNMI->Checked;
+        if (!InstructionStraddlingNMI->Checked)
+        {
+                InstructionStraddlingNMIWaitStates->Checked = false;
+                emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::InstructionStraddlingNMIWaitStatesClick(TObject *Sender)
+{
+        InstructionStraddlingNMIWaitStates->Checked = !InstructionStraddlingNMIWaitStates->Checked;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = InstructionStraddlingNMIWaitStates->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Z80HaltedClick(TObject *Sender)
+{
+        Z80Halted->Checked = !Z80Halted->Checked;
+        emulator.ColouriseZ80Halted = Z80Halted->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
+{
+        HorizontalSyncPulse->Checked = true;
+        VerticalSyncPulse->Checked = true;
+        RomDisplayDriver->Checked = true;
+        BackPorch->Checked = true;
+        NonMaskableInterruptResponse->Checked = true;
+        NonMaskableInterruptResponseWaitStates->Checked = true;
+        NonMaskableInterruptResponseWaitStates->Enabled = true;
+        NonMaskableInterruptServiceRoutine->Checked = true;
+        NonMaskableInterruptServiceRoutineRecursion->Checked = true;
+        MaskableInterruptResponse->Checked = true;
+        MaskableInterruptServiceRoutine->Checked = true;
+        InstructionStraddlingNMI->Checked = true;
+        InstructionStraddlingNMIWaitStates->Checked = true;
+        InstructionStraddlingNMIWaitStates->Enabled = true;
+        Z80Halted->Checked = true;
+
+        emulator.ColouriseHorizontalSyncPulse = true;
+        emulator.ColouriseVerticalSyncPulse = true;
+        emulator.ColouriseRomDisplayDriver = true;
+        emulator.ColouriseBackPorch = true;
+        emulator.ColouriseNonMaskableInterruptResponse = true;
+        emulator.ColouriseNonMaskableInterruptResponseWaitStates = true;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = true;
+        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = true;
+        emulator.ColouriseMaskableInterruptResponse = true;
+        emulator.ColouriseMaskableInterruptServiceRoutine = true;
+        emulator.ColouriseInstructionStraddlingNMI = true;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = true;
+        emulator.ColouriseZ80Halted = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::DeselectAllColourisationsClick(TObject *Sender)
+{
+        HorizontalSyncPulse->Checked = false;
+        VerticalSyncPulse->Checked = false;
+        RomDisplayDriver->Checked = false;
+        BackPorch->Checked = false;
+        NonMaskableInterruptResponse->Checked = false;
+        NonMaskableInterruptResponseWaitStates->Checked = false;
+        NonMaskableInterruptResponseWaitStates->Enabled = false;
+        NonMaskableInterruptServiceRoutine->Checked = false;
+        NonMaskableInterruptServiceRoutineRecursion->Checked = false;
+        MaskableInterruptResponse->Checked = false;
+        MaskableInterruptServiceRoutine->Checked = false;
+        InstructionStraddlingNMI->Checked = false;
+        InstructionStraddlingNMIWaitStates->Checked = false;
+        InstructionStraddlingNMIWaitStates->Enabled = false;
+        Z80Halted->Checked = false;
+
+        emulator.ColouriseHorizontalSyncPulse = false;
+        emulator.ColouriseVerticalSyncPulse = false;
+        emulator.ColouriseRomDisplayDriver = false;
+        emulator.ColouriseBackPorch = false;
+        emulator.ColouriseNonMaskableInterruptResponse = false;
+        emulator.ColouriseNonMaskableInterruptResponseWaitStates = false;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = false;
+        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
+        emulator.ColouriseMaskableInterruptResponse = false;
+        emulator.ColouriseMaskableInterruptServiceRoutine = false;
+        emulator.ColouriseInstructionStraddlingNMI = false;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
+        emulator.ColouriseZ80Halted = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::RomDisplayDriverClick(TObject *Sender)
+{
+        RomDisplayDriver->Checked = !RomDisplayDriver->Checked;
+        emulator.ColouriseRomDisplayDriver = RomDisplayDriver->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::NonMaskableInterruptServiceRoutineRecursionClick(TObject *Sender)
+{
+        NonMaskableInterruptServiceRoutineRecursion->Checked = !NonMaskableInterruptServiceRoutineRecursion->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = NonMaskableInterruptServiceRoutineRecursion->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::NonMaskableInterruptResponseWaitStatesClick(TObject *Sender)
+{
+        NonMaskableInterruptResponseWaitStates->Checked = !NonMaskableInterruptResponseWaitStates->Checked;
+        emulator.ColouriseNonMaskableInterruptResponseWaitStates = NonMaskableInterruptResponseWaitStates->Checked;
+}
+//---------------------------------------------------------------------------
 

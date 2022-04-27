@@ -68,7 +68,7 @@ __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
         //ClearImage();
 
         TIniFile *ini;
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }

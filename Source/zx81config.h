@@ -28,6 +28,7 @@
 
 #define EMUID           0x85
 
+#define SYNCNONE        0         
 #define SYNCTYPEH       1
 #define SYNCTYPEV       2
 
@@ -43,7 +44,7 @@
 #define MACHINETS1500   3
 #define MACHINELAMBDA   4
 #define MACHINEZX97LE   5
-#define MACHINESPEC48   6
+#define MACHINESPECTRUM 6
 #define MACHINEQL       7
 #define MACHINER470     8
 #define MACHINETK85     9
@@ -58,7 +59,6 @@
 #define SPECCYPLUS2     7
 #define SPECCYPLUS2A    8
 #define SPECCYPLUS3     9
-#define SPECCYSE        10
 
 #define SPECKBISS2      0
 #define SPECKBISS3      1
@@ -150,102 +150,27 @@ typedef enum
 
 typedef struct
 {
-        CFGBYTE emuid, major,minor,testver;
-        CFGBYTE dirtydisplay;
-        CFGBYTE machine;
         CFGBYTE extfont;
         CFGBYTE shadowROM;
         CFGBYTE RAM816k;
-        CFGBYTE protectROM;
         CFGBYTE truehires;
-        CFGBYTE NTSC;
-        CFGBYTE inverse;
-        CFGBYTE aysound;
-        CFGBYTE aytype;
-        CFGBYTE single_step;
-        CFGBYTE vsyncsound;
-        CFGBYTE beepersound;
-        CFGBYTE ts2050;
-        CFGBYTE ace96k;
-        CFGBYTE TZXin, TZXout;
-        CFGBYTE audioout,audioin;
-        CFGBYTE colour;
-        CFGBYTE debug1, debug2;
-        CFGBYTE autoload;
         CFGBYTE wobble;
-        CFGBYTE chrgen, enableQSchrgen;
-        CFGBYTE bordersize;
-        CFGBYTE simpleghost;
+        CFGBYTE chrgen;
+        CFGBYTE enableQSchrgen;
+        CFGBYTE vsyncsound;
         int maxireg;
-        CFGBYTE zxprinter;
         CFGBYTE zxpand;
-        CFGBYTE romCartridge;
-        int zxcPaging;
-        int zxc1PageOut;
-        int zxc1ActiveBank;
-        ZXC1TYPE zxc1Configuration;
-        int zxc1BankNumber[4];
-        int zxc1BankTimer[3];
-        int zxcLowerControlAccessSelected;
-        int zxcInterface1BankPagedIn;
-        int zxcCassetteBankPagedIn;
         int RAMTOP;
         int ROMTOP;
         int m1not;
-        //int romtype;
-        int romcrc;
-        int frameskip;
-        int speedup;
-        int UseRShift;
         CFGBYTE chromaMode;
-        CFGBYTE spectraMode;
-        CFGBYTE spectraColourSwitchOn;
         CFGBYTE chromaColourSwitchOn;
         CFGBYTE FloatingPointHardwareFix;
-        CFGBYTE HideHardwareHSyncs;
-        CFGBYTE HideBackporchPeriods;
-
-        char ROM80[256];
-        char ROM81[256];
-        char ROMACE[256];
-        char ROMTS1000[256];
-        char ROMTS1500[256];
-        char ROMLAMBDA[256];
-        char ROMPC8300[256];
-        char ROMTK85[256];
-        char ROM97LE[256];
-        char ROMR470[256];
-        char ROMSP48[256];
-        char ROMSP128[256];
-        char ROMSPP2[256];
-        char ROMSPP3[256];
-        char ROMSPP3E[256];
-        char ROMSPP3ECF[256];
-        char ROMTC2048[256];
-        char ROMTS2068[256];
-        char ROMSPSE[256];
-        char ROMDock[256];
-        char ROMZXCF[256];
-        char ROMZX8BIT[256];
-        char ROMZX16BIT[256];
-        char ROMQL[256];
-        char ROMPLUSD[256];
-        char ROMDISCIPLE[256];
-        char ROMOPUSD[256];
-        char ROMBETADISC[256];
-        char ROMUSPEECH[256];
-        char ROMCARTRIDGE[4 * 1024 * 1024];
-        char cwd[256];
-        char temppath[256];
-        char inipath[256];
-        char configpath[256];
-        char mydocs[256];
-        char machinename[256];
 } ZX81;
 
 typedef struct
 {
-        int machine;
+        int model;
         int RAMBanks;
         int ROMBanks;
         int uspeech;
@@ -263,8 +188,10 @@ typedef struct
         int MFLockout;
         int MFVersion;
         int divIDEVersion;
+        CFGBYTE spectraMode;
+        CFGBYTE spectraColourSwitchOn;
+        int intposition;
 } SPECTRUM;
-
 
 typedef struct
 {
@@ -287,11 +214,11 @@ typedef struct
 
 typedef struct
 {
-        int sync_len, sync_valid;
+        int sync_len;
+        int sync_type;
         int scanline_len;
         BYTE scanline[4000];
 } SCANLINE;
-
 
 typedef struct
 {
@@ -311,17 +238,116 @@ typedef struct
         void (*nmi)(void);
         void (*exit)(void);
 
+        void* cset;
+
         int clockspeed;
         int tperscanline;
         int tperframe;
-        int intposition;
         int scanlines;
-        char CurRom[256];
         int fps;
-        
-        void* cset;
+        CFGBYTE NTSC;
+        char CurRom[256];
 
+        // Shared Interfaces / facilities
+        CFGBYTE zxprinter;
+        CFGBYTE aysound;
+        CFGBYTE aytype;
+        CFGBYTE ts2050;
+        CFGBYTE colour;
+
+        // Specific machine options
+        CFGBYTE ace96k;
+
+        CFGBYTE protectROM;
 } MACHINE;
+
+typedef struct
+{
+        CFGBYTE emuid, major,minor,testver;
+        CFGBYTE machine;
+
+        CFGBYTE single_step;
+        int frameskip;
+        int speedup;
+        int romcrc;
+        int UseRShift;
+
+        CFGBYTE TZXin;
+        CFGBYTE TZXout;
+        CFGBYTE audioout;
+        CFGBYTE audioin;
+        CFGBYTE autoload;
+
+        CFGBYTE dirtydisplay;
+        CFGBYTE bordersize;
+        CFGBYTE simpleghost;
+        CFGBYTE inverse;
+        CFGBYTE beepersound;
+
+        CFGBYTE ColouriseHorizontalSyncPulse;
+        CFGBYTE ColouriseVerticalSyncPulse;
+        CFGBYTE ColouriseRomDisplayDriver;
+        CFGBYTE ColouriseBackPorch;
+        CFGBYTE ColouriseNonMaskableInterruptResponse;
+        CFGBYTE ColouriseNonMaskableInterruptResponseWaitStates;
+        CFGBYTE ColouriseNonMaskableInterruptServiceRoutine;
+        CFGBYTE ColouriseNonMaskableInterruptServiceRoutineRecursion;
+        CFGBYTE ColouriseMaskableInterruptResponse;
+        CFGBYTE ColouriseMaskableInterruptServiceRoutine;
+        CFGBYTE ColouriseInstructionStraddlingNMI;
+        CFGBYTE ColouriseInstructionStraddlingNMIWaitStates;
+        CFGBYTE ColouriseZ80Halted;
+
+        char ROM80[256];
+        char ROM81[256];
+        char ROMACE[256];
+        char ROMTS1000[256];
+        char ROMTS1500[256];
+        char ROMLAMBDA[256];
+        char ROMPC8300[256];
+        char ROMTK85[256];
+        char ROM97LE[256];
+        char ROMR470[256];
+        char ROMSP48[256];
+        char ROMSP128[256];
+        char ROMSPP2[256];
+        char ROMSPP3[256];
+        char ROMSPP3E[256];
+        char ROMSPP3ECF[256];
+        char ROMTC2048[256];
+        char ROMTS2068[256];
+        char ROMDock[256];
+        char ROMZXCF[256];
+        char ROMZX8BIT[256];
+        char ROMZX16BIT[256];
+        char ROMQL[256];
+        char ROMPLUSD[256];
+        char ROMDISCIPLE[256];
+        char ROMOPUSD[256];
+        char ROMBETADISC[256];
+        char ROMUSPEECH[256];
+
+        char cwd[256];
+        char temppath[256];
+        char inipath[256];
+        char configpath[256];
+        char mydocs[256];
+        char machinename[256];
+} EMULATOR;
+
+typedef struct
+{
+        CFGBYTE type;
+        int zxcPaging;
+        int zxc1PageOut;
+        int zxc1ActiveBank;
+        ZXC1TYPE zxc1Configuration;
+        int zxc1BankNumber[4];
+        int zxc1BankTimer[3];
+        int zxcLowerControlAccessSelected;
+        int zxcInterface1BankPagedIn;
+        int zxcCassetteBankPagedIn;
+} ROMCARTRIDGE;
 
 typedef struct
 {
@@ -335,6 +361,9 @@ extern SPECTRUM spectrum;
 extern TV tv;
 extern MACHINE machine;
 extern MOUSE mouse;
+extern ROMCARTRIDGE romcartridge;
+extern EMULATOR emulator;
+
 extern void load_config();
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))

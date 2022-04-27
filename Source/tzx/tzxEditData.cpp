@@ -69,7 +69,7 @@ void TEditDataForm::DecodeData(int BlockNo)
         switch(TZXFile.Tape[BlockNo].BlockID)
         {
         case TZX_BLOCK_ROM:
-                if (zx81.machine==MACHINEACE)
+                if (emulator.machine==MACHINEACE)
                 {
                         PPL->Text = 2011; PPL->Enabled=false;
                         NoPP->Text= (TZXFile.Tape[BlockNo].Data.Data[0]!=0)?
@@ -136,7 +136,7 @@ void TEditDataForm::DecodeData(int BlockNo)
                 else
                 {
                         if (c>=128) c-=128;
-                        c = (zx81.machine == MACHINEZX80) ? ZX80CharSet[c] : ZX81CharSet[c];
+                        c = (emulator.machine == MACHINEZX80) ? ZX80CharSet[c] : ZX81CharSet[c];
                 }
 
                 text2 += (char) c;
@@ -199,7 +199,7 @@ void __fastcall TEditDataForm::CharSetChange(TObject *Sender)
 
 void __fastcall TEditDataForm::FormShow(TObject *Sender)
 {
-        switch (zx81.machine)
+        switch (emulator.machine)
         {
                 case MACHINEZX80:
                         CharSet->ItemIndex = zx80Index;

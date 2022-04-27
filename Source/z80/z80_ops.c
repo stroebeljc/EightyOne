@@ -46,6 +46,32 @@ unsigned short RZXCounter=0;
 extern int RetExecuted;
 extern int StackChange;
 
+#define maxMCycles 11
+static int mCycles[maxMCycles];
+static int mCycleIndex = 0;
+
+void StoreMCycle(int cycleLength)
+{
+        if (mCycleIndex < maxMCycles - 1)
+        {
+                if (cycleLength >= 3 || (mCycles[mCycleIndex] == 0 && cycleLength ==1))
+                {
+                        mCycles[mCycleIndex] = cycleLength;
+                        mCycleIndex++;
+                        mCycles[mCycleIndex] = 0;
+                }
+                else
+                {
+                        mCycles[mCycleIndex - 1] += cycleLength;
+                }
+        }
+}
+
+int* z80_MCycles()
+{
+        return mCycles;
+}
+
 void SetSP(int i)
 {
         //spBase = i;
@@ -55,6 +81,8 @@ void SetSP(int i)
 int z80_do_opcode()
 {
     BYTE opcode;
+
+    mCycleIndex = 0;
 
     tstates=0;
     RetExecuted = 0;

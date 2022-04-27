@@ -148,7 +148,7 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
 
                         len=fread(p, 1, 65536, f);
 
-                        if (zx81.machine==MACHINESPEC48)
+                        if (emulator.machine==MACHINESPECTRUM)
                         {
                                 if (Ext==".SCR" && (len==12288 || len==12289))
                                 {

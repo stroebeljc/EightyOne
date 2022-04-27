@@ -59,7 +59,7 @@ void delayMillis(short x)
 void saveEEPROM(void)
 {
    char file[256];
-   strcpy(file, zx81.cwd);
+   strcpy(file, emulator.cwd);
    strcat(file, "NV_Memory\\zxpand-eeprom.bin");
 
    FILE* eep = fopen(file,"wb");
@@ -74,7 +74,7 @@ void saveEEPROM(void)
 void LoadEEPROM(void)
 {
    char file[256];
-   strcpy(file, zx81.cwd);
+   strcpy(file, emulator.cwd);
    strcat(file, "NV_Memory\\zxpand-eeprom.bin");
 
    FILE* eep = fopen(file,"rb");

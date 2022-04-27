@@ -27,36 +27,36 @@
 
 void WavRecordByte(int Byte)
 {
-        if (zx81.TZXout) TZX->RecordByte(Byte);
+        if (emulator.TZXout) TZX->RecordByte(Byte);
 }
 
 int WavFlashLoad(void)
 {
-        if (zx81.TZXin) return(TZX->FlashLoadBtn->Down);
+        if (emulator.TZXin) return(TZX->FlashLoadBtn->Down);
         else return false;
 }
 
 void WavRewind(void)
 {
-        if (zx81.TZXin) TZX->RewEndClick(NULL);
+        if (emulator.TZXin) TZX->RewEndClick(NULL);
         else WavLoad->RewStartClick(NULL);
 }
 
 int IsFlashLoadable(void)
 {
-        if (zx81.TZXin) return TZXFile.FlashLoadable;
+        if (emulator.TZXin) return TZXFile.FlashLoadable;
         return(0);
 }
 
 int IsFlashSaveable(void)
 {
-        if (zx81.TZXout) return 1;
+        if (emulator.TZXout) return 1;
         return(0);
 }
 
 int GetEarState()
 {
-        if (zx81.TZXin) return(TZXFile.GetEarState());
+        if (emulator.TZXin) return(TZXFile.GetEarState());
         return(WavLoad->GetEarState());
 }
 
@@ -64,9 +64,6 @@ void WavClockTick(int TStates, int MicState)
 {
         TZX->ClockTick(TStates, true);
         WavLoad->ClockTick(TStates, true, MicState);
-        //WavLoad->ClockTick(TStates, true, TZXFile.GetEarState());
-
-
 }
 
 void WavStop()
@@ -78,7 +75,7 @@ void WavStop()
 
 void WavStart()
 {
-        if (zx81.TZXin)
+        if (emulator.TZXin)
         {
                 if (TZX->AutoStartBtn->Down)
                         TZX->PlayBtnClick(NULL);
@@ -88,18 +85,18 @@ void WavStart()
 
 void WavStartRec()
 {
-        if (!zx81.TZXout) WavLoad->StartRec();
+        if (!emulator.TZXout) WavLoad->StartRec();
 }
 
 int WavPlaying()
 {
-        if (zx81.TZXin) return(TZXFile.Playing);
+        if (emulator.TZXin) return(TZXFile.Playing);
         return(WavLoad->Playing);
 }
 
 int WavInGroup()
 {
-        if (zx81.TZXin) return(TZXFile.Tape[TZXFile.CurBlock].Group);
+        if (emulator.TZXin) return(TZXFile.Tape[TZXFile.CurBlock].Group);
         else return(0);
 }
 

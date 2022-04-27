@@ -66,7 +66,7 @@ extern void z80_init(void);
 extern void z80_reset(void);
 
 extern int z80_interrupt(int bus);
-extern int z80_nmi( int ts, int* pNonHaltedWaitStates, int* pHaltedWaitStates );
+extern int z80_nmi();
 
 extern int z80_do_opcode(void);
 
@@ -80,6 +80,8 @@ extern BYTE overflow_sub_table[];
 extern BYTE sz53_table[];
 extern BYTE sz53p_table[];
 extern BYTE parity_table[];
+extern void StoreMCycle(int cycleLength);
+extern int* z80_MCycles();
 
 #ifdef __cplusplus
 }

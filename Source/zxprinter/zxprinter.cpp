@@ -111,7 +111,7 @@ __fastcall TPrinter::TPrinter(TComponent* Owner)
         ScrollBar->Min=0;
         ScrollBar->Max=PrinterOutput->Height;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }
@@ -160,7 +160,7 @@ void TPrinter::ClockTick(int ts)
                 OutputBit();
                 XPos++;
 
-                if (XPos==(zx81.machine==MACHINESPEC48 ? 257:258))
+                if (XPos==(emulator.machine==MACHINESPECTRUM ? 257:258))
                 {
                         OutputLine();
                         OnPaper=StylusActive;

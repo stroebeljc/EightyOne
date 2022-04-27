@@ -19,7 +19,7 @@ __fastcall TZipFile::TZipFile(TComponent* Owner)
 {
         TIniFile *ini;
 
-        ini = new TIniFile(zx81.inipath);
+        ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 }
@@ -159,7 +159,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         {
                 // Create a path in the temp directory to extract to
 
-                strcpy(FileName, zx81.temppath);
+                strcpy(FileName, emulator.temppath);
                 strcat(FileName, File.c_str());
 
                 // Open file for writing, then extract the contents.

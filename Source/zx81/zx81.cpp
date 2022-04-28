@@ -1678,35 +1678,42 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 allowSoundOutput = (machine.colour == COLOURCHROMA) && !frameSynchronised;
 
-                int carryOverPixels = PortActiveDuration * 2;
-                BYTE* copyPosition = CurScanLine->scanline + CurScanLine->scanline_len - carryOverPixels;
+                int PortActiveDurationPixels = PortActiveDuration * 2;
+                BYTE* copyPosition = CurScanLine->scanline + CurScanLine->scanline_len - PortActiveDurationPixels;
+                int carryOverPixelCount = 0;
+                int afterVSyncPosition = (lineClockCounter + PortActiveDuration) % machine.tperscanline;
+                bool extendVSync = true;
 
-                if (emulator.ColouriseHorizontalSyncPulse)
+                for (int i = 0; i < PortActiveDuration; i++)
                 {
-                        for (int i = 0; i < carryOverPixels; i++)
+                        if ((afterVSyncPosition > ZX81HSyncPositionStart) || (afterVSyncPosition < ZX81HSyncPositionEnd))
                         {
-                                if (emulator.ColouriseHorizontalSyncPulse && (copyPosition[i] == Blue))
+                                extendVSync = false;
+                        }
+
+                        if (!extendVSync)
+                        {
+                                if (emulator.ColouriseHorizontalSyncPulse)
                                 {
-                                        carryOverScanlineBuffer[i] = BrightBlue;
+                                        carryOverScanlineBuffer[carryOverPixelCount++] = BrightBlue;
+                                        carryOverScanlineBuffer[carryOverPixelCount++] = BrightBlue;
                                 }
                                 else
                                 {
-                                        carryOverScanlineBuffer[i] = copyPosition[i];
+                                        carryOverScanlineBuffer[carryOverPixelCount++] = copyPosition[i];
+                                        carryOverScanlineBuffer[carryOverPixelCount++] = copyPosition[i];
                                 }
                         }
-                }
-                else
-                {
-                        memcpy(carryOverScanlineBuffer , copyPosition, carryOverPixels);
+
+                        afterVSyncPosition--;
                 }
 
-                CurScanLine->scanline_len -= carryOverPixels;
+                CurScanLine->scanline_len -= carryOverPixelCount;
+                int carryOverClockCount = carryOverPixelCount / 2;
+                add_blank(CurScanLine, lineClockCounter + carryOverClockCount, BLANKCOLOUR);
 
-                int clocksToBlank = (lineClockCounter + PortActiveDuration) % machine.tperscanline;
-                add_blank(CurScanLine, clocksToBlank, BLANKCOLOUR);
-
-                lineClockCarryCounter = PortActiveDuration;
-                lineClockCounter = (machine.tperscanline - PortActiveDuration) % machine.tperscanline;
+                lineClockCounter = machine.tperscanline - carryOverClockCount;
+                lineClockCarryCounter = carryOverClockCount;
         }
         else
         {

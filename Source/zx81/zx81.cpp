@@ -18,6 +18,7 @@
  * zx81.c
  *
  */
+
 #include <vcl.h>
 
 #include <stdlib.h>
@@ -98,7 +99,7 @@ int ZX81BackporchPositionEnd;
 int nmiWaitPositionEnd;
 int nmiWaitPositionAfter;
 
-// Clock positions count down from 207 to 1
+// Clock positions count down from 207 to 1 in EO
 const int ZX80HSyncDuration = 20;
 const int ZX80HSyncPositionStart = ZX80HSyncDuration;
 const int ZX80HSyncPositionEnd = ZX80HSyncPositionStart - ZX80HSyncDuration + 1;
@@ -111,24 +112,25 @@ const int ZX81HSyncPositionEnd = ZX81HSyncPositionStart - ZX81HSyncDuration + 1;
 const int ZX81HSyncPositionAfter = ZX81HSyncPositionEnd - 1;
 const int ZX81HSyncPositionAcceptanceStart = (ZX81HSyncDuration * 2) + ZX81HSyncPositionEnd;
 
-const int InterruptOffsetFromHSync = 16;
-const int InterruptPosition = ZX81HSyncPositionStart + InterruptOffsetFromHSync;
-const int InterruptAcknowledgeOffset = 4;       // Number clocks from the INT to the response acknowledgement
-
-const int NMIDetectionDuration = 2;    // Number of clocks required before end of an instruction in order to detect the NMI
-const int NMIWaitDetectionDuration = 1;
+const int InterruptDetectionDurationAtEndOfInstruction = 1;
+const int InterruptAcknowledgeOffsetFromInterruptResponse = 3;
+const int InterruptAcknowledgeOffsetFromInterrupt = InterruptDetectionDurationAtEndOfInstruction + InterruptAcknowledgeOffsetFromInterruptResponse;
+const int InterruptAcknowledgeOffsetToHSync = 16;
+const int InterruptPosition = ZX81HSyncPositionStart + InterruptAcknowledgeOffsetToHSync;
 
 const int NMIResponseM1DurationBeforeWait = 2;
 const int NMIResponseM1DurationAfterWait = 3;
 const int NMIResponseM1Duration = NMIResponseM1DurationBeforeWait + NMIResponseM1DurationAfterWait;
 const int NMIResponseM2Duration = 3;
 const int NMIResponseM3Duration = 3;
-const int NMIResponseM2PositionStart = nmiWaitPositionEnd - 1;
 const int NMIResponseDuration = NMIResponseM1Duration + NMIResponseM2Duration + NMIResponseM3Duration;
 
-const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionDuration;
+const int NMIDetectionDurationAtEndOfInstruction = 1;
+const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionDurationAtEndOfInstruction;
 const int NMIDetectionPositionEnd = ZX81HSyncPositionEnd;
 const int NMIDetectionPositionAfter = NMIDetectionPositionEnd - 1;
+
+const int WaitDetectionDurationAfterNMI = 1;
 
 const int PortActiveDuration = 3;
 const int PortActiveDurationPixels = PortActiveDuration * 2;
@@ -324,7 +326,7 @@ void zx81_initialise(void)
 
         ZX81BackporchPositionStart = machine.tperscanline;
         ZX81BackporchPositionEnd = ZX81BackporchPositionStart - ZX81BackporchDuration + 1;
-        nmiWaitPositionEnd = machine.tperscanline - NMIWaitDetectionDuration + 1;
+        nmiWaitPositionEnd = machine.tperscanline - WaitDetectionDurationAfterNMI + 1;
         nmiWaitPositionAfter = nmiWaitPositionEnd - 1;
 
         scanlinePixelLength = machine.tperscanline * 2;
@@ -1194,7 +1196,6 @@ BYTE ReadInputPort(int Address, int *tstates)
 
 int zx81_contend(int Address, int states, int time)
 {
-        StoreMCycle(time);
         return(time);
 }
 
@@ -1353,7 +1354,21 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = PatchTest(z80.pc.w);
+                int addr = z80.pc.w;    //####
                 int ts = z80_do_opcode();
+
+                int mCyclesTotal = 0;
+                int cc = 0;
+                while (mCycles[cc] != 0)
+                {
+                        mCyclesTotal += mCycles[cc];
+                        cc++;
+                }
+                if (ts != mCyclesTotal)
+                {
+                //####
+                        int i=0;
+                }
 
                 int hsyncCounterAfterInstruction = (lineClockCounter - ts);
 
@@ -1368,20 +1383,23 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 if (!z80.halted && instructionStraddlesNMI)
                 {
                         int c = 0;
-                        int instructionPos = lineClockCounter;
+                        int instructionPosition = lineClockCounter;
                         bool insertWaitStates = false;
 
                         while ((mCycles[c] != 0) && !insertWaitStates)
                         {
-                                if ((instructionPos - 1) <= NMIDetectionPositionStart)
+                                int instructionPositionT2 = instructionPosition - 1;
+
+                                if (instructionPositionT2 <= NMIDetectionPositionStart)
                                 {
-                                        ts += (instructionPos - ZX81HSyncPositionAfter) + NMIWaitDetectionDuration;
-                                        nmiWaitPositionStart = instructionPos - 1;
+                                        //#### was instructionPosition
+                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter) + WaitDetectionDurationAfterNMI;
+                                        nmiWaitPositionStart = instructionPositionT2;
                                         insertWaitStates = true;
                                 }
                                 else
                                 {
-                                        instructionPos -= mCycles[c];
+                                        instructionPosition -= mCycles[c];
                                         c++;
                                 }
                         }
@@ -1396,7 +1414,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (interruptResponseDuration > 0)
                         {
-                                int intResponseAcknowledgeStart = (hsyncCounterAfterInstruction - InterruptAcknowledgeOffset);
+                                int intResponseAcknowledgeStart = (hsyncCounterAfterInstruction - InterruptAcknowledgeOffsetFromInterrupt);
                                 int lineCounterAdjustment = InterruptPosition - intResponseAcknowledgeStart;
                                 if (lineCounterAdjustment != 0)
                                 {
@@ -1573,8 +1591,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (lineClockCounter >= NMIDetectionPositionEnd)
                         {
-                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + NMIWaitDetectionDuration;
-                                nmiWaitPositionStart = lineClockCounter - NMIDetectionDuration;
+                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + WaitDetectionDurationAfterNMI;
+                                nmiWaitPositionStart = lineClockCounter - NMIDetectionDurationAtEndOfInstruction;
                         }
 
                         int nmiResponseActualDuration = nmiResponseDuration + nmiResponseM1DurationWait;
@@ -1897,7 +1915,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         {
                                 if (z80.halted)
                                 {
-                                        int intResponseAcknowledgeStart = (hsyncCounterAfterInstruction - InterruptAcknowledgeOffset);
+                                        int intResponseAcknowledgeStart = (hsyncCounterAfterInstruction - InterruptAcknowledgeOffsetFromInterrupt);
                                         int lineCounterAdjustment = InterruptPosition - intResponseAcknowledgeStart;
                                         if (lineCounterAdjustment != 0)
                                         {

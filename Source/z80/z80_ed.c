@@ -80,6 +80,7 @@ break;
 
 case 0x47:	/* LD I,A */
 tstates += 1;
+AddToMCycle(1);
 I=A;
 break;
 
@@ -104,6 +105,7 @@ break;
 
 case 0x4f:	/* LD R,A */
 tstates += 1;
+AddToMCycle(1);
 
 /* Keep the RZX instruction counter right */
 // rzx_instructions_offset += ( R - A );
@@ -137,6 +139,7 @@ break;
 
 case 0x57:	/* LD A,I */
 tstates += 1;
+AddToMCycle(1);
 A=I;
 F = ( F & FLAG_C ) | sz53_table[A] | ( IFF2 ? FLAG_V : 0 );
 break;
@@ -167,6 +170,7 @@ break;
 
 case 0x5f:	/* LD A,R */
 tstates += 1;
+AddToMCycle(1);
 A=(R&0x7f) | (R7&0x80);
 F = ( F & FLAG_C ) | sz53_table[A] | ( IFF2 ? FLAG_V : 0 );
 break;
@@ -193,6 +197,9 @@ break;
 case 0x67:	/* RRD */
 {
   BYTE bytetemp=readbyte(HL);
+  InsertMCycle(3);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 7 ); contend( HL, 3 );
   writebyte(HL,  ( A << 4 ) | ( bytetemp >> 4 ) );
   A = ( A & 0xf0 ) | ( bytetemp & 0x0f );
@@ -222,6 +229,9 @@ break;
 case 0x6f:	/* RLD */
 {
   BYTE bytetemp=readbyte(HL);
+  InsertMCycle(3);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 7 ); contend( HL, 3 );
   writebyte(HL, (bytetemp << 4 ) | ( A & 0x0f ) );
   A = ( A & 0xf0 ) | ( bytetemp >> 4 );
@@ -274,6 +284,8 @@ break;
 case 0xa0:	/* LDI */
 {
   BYTE bytetemp=readbyte(HL);
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( DE, 3 ); contend( DE, 1 ); contend( DE, 1 );
   BC--;
   writebyte(DE,bytetemp);
@@ -289,6 +301,8 @@ case 0xa1:	/* CPI */
   BYTE value=readbyte(HL),bytetemp=A-value,
     lookup = ( (A & 0x08) >> 3 ) | ( ( (value) & 0x08 ) >> 2 ) |
     ( (bytetemp & 0x08) >> 1 );
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
   contend( HL, 1 ); contend( HL, 1 );
   HL++; BC--;
@@ -303,6 +317,9 @@ break;
 case 0xa2:	/* INI */
 {
   WORD initemp=readport(BC,&tstates);
+  AddToMCycle(1);
+  InsertMCycle(4);
+  InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
   B--; HL++;
@@ -314,6 +331,9 @@ break;
 case 0xa3:	/* OUTI */
 {
   WORD outitemp=readbyte(HL);
+  AddToMCycle(1);
+  InsertMCycle(3);
+  InsertMCycle(4);
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
   HL++;
   writeport(BC,outitemp,&tstates);
@@ -327,6 +347,8 @@ break;
 case 0xa8:	/* LDD */
 {
   BYTE bytetemp=readbyte(HL);
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( DE, 3 ); contend( DE, 1 ); contend( DE, 1 );
   BC--;
   writebyte(DE,bytetemp);
@@ -342,6 +364,8 @@ case 0xa9:	/* CPD */
   BYTE value=readbyte(HL),bytetemp=A-value,
     lookup = ( (A & 0x08) >> 3 ) | ( ( (value) & 0x08 ) >> 2 ) |
     ( (bytetemp & 0x08) >> 1 );
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
   contend( HL, 1 ); contend( HL, 1 );
   HL--; BC--;
@@ -356,6 +380,9 @@ break;
 case 0xaa:	/* IND */
 {
   WORD initemp=readport(BC,&tstates);
+  AddToMCycle(1);
+  InsertMCycle(4);
+  InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
   B--; HL--;
@@ -367,6 +394,9 @@ break;
 case 0xab:	/* OUTD */
 {
   WORD outitemp=readbyte(HL);
+  AddToMCycle(1);
+  InsertMCycle(3);
+  InsertMCycle(4);
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
   HL--;
   writeport(BC,outitemp,&tstates);
@@ -380,6 +410,8 @@ break;
 case 0xb0:	/* LDIR */
 {
   BYTE bytetemp = readbyte( HL );
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( DE, 3 ); contend( DE, 1 ); contend( DE, 1 );
   writebyte(DE,bytetemp);
   HL++; DE++; BC--;
@@ -387,6 +419,7 @@ case 0xb0:	/* LDIR */
   F = ( F & ( FLAG_C | FLAG_Z | FLAG_S ) ) | ( BC ? FLAG_V : 0 ) |
     ( bytetemp & FLAG_3 ) | ( (bytetemp & 0x02) ? FLAG_5 : 0 );
   if(BC) {
+    InsertMCycle(5);
     contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 );
     contend( DE, 1 );
     PC-=2;
@@ -399,6 +432,8 @@ case 0xb1:	/* CPIR */
   BYTE value=readbyte(HL),bytetemp=A-value,
     lookup = ( (A & 0x08) >> 3 ) | ( ( (value) & 0x08 ) >> 2 ) |
     ( (bytetemp & 0x08) >> 1 );
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
   contend( HL, 1 ); contend( HL, 1 );
   HL++; BC--;
@@ -408,6 +443,7 @@ case 0xb1:	/* CPIR */
   if(F & FLAG_H) bytetemp--;
   F |= ( bytetemp & FLAG_3 ) | ( (bytetemp&0x02) ? FLAG_5 : 0 );
   if( ( F & ( FLAG_V | FLAG_Z ) ) == FLAG_V ) {
+    InsertMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -418,12 +454,16 @@ break;
 case 0xb2:	/* INIR */
 {
   WORD initemp=readport(BC,&tstates);
+  AddToMCycle(1);
+  InsertMCycle(4);
+  InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
   B--; HL++;
   F = (initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
+    InsertMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -434,6 +474,8 @@ break;
 case 0xb3:	/* OTIR */
 {
   WORD outitemp=readbyte(HL);
+  AddToMCycle(1);
+  InsertMCycle(3);
   tstates++; contend( HL, 4 );
   writeport(BC,outitemp,&tstates);
   B--;	HL++;	/* This does happen first, despite what the specs say */
@@ -441,11 +483,14 @@ case 0xb3:	/* OTIR */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
+    InsertMCycle(4);
+    InsertMCycle(5);
     contend_io( BC, 1 );
-    contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 ); 
+    contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
     PC-=2;
   } else {
+    InsertMCycle(3);
     contend_io( BC, 3 );
   }
 }
@@ -454,6 +499,8 @@ break;
 case 0xb8:	/* LDDR */
 {
   BYTE bytetemp=readbyte(HL);
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( DE, 3 ); contend( DE, 1 ); contend( DE, 1 );
   writebyte(DE,bytetemp);
   HL--; DE--; BC--;
@@ -461,6 +508,7 @@ case 0xb8:	/* LDDR */
   F = ( F & ( FLAG_C | FLAG_Z | FLAG_S ) ) | ( BC ? FLAG_V : 0 ) |
     ( bytetemp & FLAG_3 ) | ( (bytetemp & 0x02) ? FLAG_5 : 0 );
   if(BC) {
+    InsertMCycle(5);
     contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 );
     contend( DE, 1 );
     PC-=2;
@@ -473,6 +521,8 @@ case 0xb9:	/* CPDR */
   BYTE value=readbyte(HL),bytetemp=A-value,
     lookup = ( (A & 0x08) >> 3 ) | ( ( (value) & 0x08 ) >> 2 ) |
     ( (bytetemp & 0x08) >> 1 );
+  InsertMCycle(3);
+  InsertMCycle(5);
   contend( HL, 3 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
   contend( HL, 1 ); contend( HL, 1 );
   HL--; BC--;
@@ -482,6 +532,7 @@ case 0xb9:	/* CPDR */
   if(F & FLAG_H) bytetemp--;
   F |= ( bytetemp & FLAG_3 ) | ( (bytetemp&0x02) ? FLAG_5 : 0 );
   if( ( F & ( FLAG_V | FLAG_Z ) ) == FLAG_V ) {
+    InsertMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -492,12 +543,16 @@ break;
 case 0xba:	/* INDR */
 {
   WORD initemp=readport(BC,&tstates);
+  AddToMCycle(1);
+  InsertMCycle(4);
+  InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
   B--; HL--;
   F = (initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
+    InsertMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -508,6 +563,8 @@ break;
 case 0xbb:	/* OTDR */
 {
   WORD outitemp=readbyte(HL);
+  AddToMCycle(1);
+  InsertMCycle(3);
   tstates++; contend( HL, 4 );
   writeport(BC,outitemp,&tstates);
   B--; HL--;	/* This does happen first, despite what the specs say */
@@ -515,11 +572,14 @@ case 0xbb:	/* OTDR */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
+    InsertMCycle(4);
+    InsertMCycle(5);
     contend_io( BC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
     PC-=2;
   } else {
+    InsertMCycle(4);
     contend_io( BC, 3 );
   }
 }

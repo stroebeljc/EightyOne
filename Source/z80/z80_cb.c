@@ -51,6 +51,8 @@ break;
 case 0x06:	/* RLC (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   RLC(bytetemp);
   writebyte(HL,bytetemp);
@@ -88,6 +90,8 @@ break;
 case 0x0e:	/* RRC (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL,4 ); contend( HL, 3 );
   RRC(bytetemp);
   writebyte(HL,bytetemp);
@@ -125,6 +129,8 @@ break;
 case 0x16:	/* RL (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   RL(bytetemp);
   writebyte(HL,bytetemp);
@@ -162,6 +168,8 @@ break;
 case 0x1e:	/* RR (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   RR(bytetemp);
   writebyte(HL,bytetemp);
@@ -199,6 +207,8 @@ break;
 case 0x26:	/* SLA (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   SLA(bytetemp);
   writebyte(HL,bytetemp);
@@ -236,6 +246,8 @@ break;
 case 0x2e:	/* SRA (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   SRA(bytetemp);
   writebyte(HL,bytetemp);
@@ -273,6 +285,8 @@ break;
 case 0x36:	/* SLL (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   SLL(bytetemp);
   writebyte(HL,bytetemp);
@@ -310,6 +324,8 @@ break;
 case 0x3e:	/* SRL (HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
+  InsertMCycle(3);
   contend( HL, 4 ); contend( HL, 3 );
   SRL(bytetemp);
   writebyte(HL,bytetemp);
@@ -347,6 +363,7 @@ break;
 case 0x46:	/* BIT 0,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(0,bytetemp);
 }
@@ -383,6 +400,7 @@ break;
 case 0x4e:	/* BIT 1,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(1,bytetemp);
 }
@@ -419,6 +437,7 @@ break;
 case 0x56:	/* BIT 2,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(2,bytetemp);
 }
@@ -455,6 +474,7 @@ break;
 case 0x5e:	/* BIT 3,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(3,bytetemp);
 }
@@ -491,6 +511,7 @@ break;
 case 0x66:	/* BIT 4,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(4,bytetemp);
 }
@@ -527,6 +548,7 @@ break;
 case 0x6e:	/* BIT 5,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(5,bytetemp);
 }
@@ -563,6 +585,7 @@ break;
 case 0x76:	/* BIT 6,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT(6,bytetemp);
 }
@@ -599,6 +622,7 @@ break;
 case 0x7e:	/* BIT 7,(HL) */
 {
   BYTE bytetemp = readbyte(HL);
+  InsertMCycle(4);
   contend( HL, 4 );
   BIT7(bytetemp);
 }
@@ -633,6 +657,8 @@ L &= 0xfe;
 break;
 
 case 0x86:	/* RES 0,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0xfe);
 break;
@@ -666,6 +692,8 @@ L &= 0xfd;
 break;
 
 case 0x8e:	/* RES 1,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0xfd);
 break;
@@ -699,6 +727,8 @@ L &= 0xfb;
 break;
 
 case 0x96:	/* RES 2,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0xfb);
 break;
@@ -732,6 +762,8 @@ L &= 0xf7;
 break;
 
 case 0x9e:	/* RES 3,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0xf7);
 break;
@@ -765,6 +797,8 @@ L &= 0xef;
 break;
 
 case 0xa6:	/* RES 4,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0xef);
 break;
@@ -799,6 +833,8 @@ break;
 
 case 0xae:	/* RES 5,(HL) */
 contend( HL, 4 ); contend( HL, 3 );
+InsertMCycle(4);
+InsertMCycle(3);
 writebyte(HL, readbyte(HL) & 0xdf);
 break;
 
@@ -831,6 +867,8 @@ L &= 0xbf;
 break;
 
 case 0xb6:	/* RES 6,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0xbf);
 break;
@@ -864,6 +902,8 @@ L &= 0x7f;
 break;
 
 case 0xbe:	/* RES 7,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) & 0x7f);
 break;
@@ -897,6 +937,8 @@ L |= 0x01;
 break;
 
 case 0xc6:	/* SET 0,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x01);
 break;
@@ -930,6 +972,8 @@ L |= 0x02;
 break;
 
 case 0xce:	/* SET 1,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x02);
 break;
@@ -963,6 +1007,8 @@ L |= 0x04;
 break;
 
 case 0xd6:	/* SET 2,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x04);
 break;
@@ -996,6 +1042,8 @@ L |= 0x08;
 break;
 
 case 0xde:	/* SET 3,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x08);
 break;
@@ -1029,6 +1077,8 @@ L |= 0x10;
 break;
 
 case 0xe6:	/* SET 4,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x10);
 break;
@@ -1062,6 +1112,8 @@ L |= 0x20;
 break;
 
 case 0xee:	/* SET 5,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x20);
 break;
@@ -1095,6 +1147,8 @@ L |= 0x40;
 break;
 
 case 0xf6:	/* SET 6,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x40);
 break;
@@ -1128,6 +1182,8 @@ L |= 0x80;
 break;
 
 case 0xfe:	/* SET 7,(HL) */
+InsertMCycle(4);
+InsertMCycle(3);
 contend( HL, 4 ); contend( HL, 3 );
 writebyte(HL, readbyte(HL) | 0x80);
 break;

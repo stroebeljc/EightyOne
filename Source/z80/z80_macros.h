@@ -122,7 +122,7 @@
 
 #define ADC16(value)\
 {\
-  DWORD add16temp= HL + (value) + ( F & FLAG_C );\
+  DWORD add16temp = HL + (value) + ( F & FLAG_C );\
   BYTE lookup = ( ( HL & 0x8800 ) >> 11 ) |\
     ( ( (value) & 0x8800 ) >> 10 ) |\
     ( ( add16temp & 0x8800 ) >> 9 );\
@@ -132,6 +132,8 @@
     ( H & ( FLAG_3 | FLAG_5 | FLAG_S ) ) |\
     halfcarry_add_table[lookup&0x07]|\
     ( HL ? 0 : FLAG_Z );\
+  InsertMCycle(4);\
+  InsertMCycle(3);\
 }
 
 #define ADD(value)\
@@ -147,11 +149,13 @@
 
 #define ADD16(value1,value2)\
 {\
-  DWORD add16temp= (value1) + (value2);\
+  DWORD add16temp = (value1) + (value2);\
   BYTE lookup = ( ( (value1) & 0x0800 ) >> 11 ) |\
     ( ( (value2) & 0x0800 ) >> 10 ) |\
     ( ( add16temp & 0x0800 ) >> 9 );\
   tstates += 7;\
+  InsertMCycle(4);\
+  InsertMCycle(3);\
   (value1) = add16temp;\
   F = ( F & ( FLAG_V | FLAG_Z | FLAG_S ) ) |\
     ( add16temp & 0x10000 ? FLAG_C : 0 )|\
@@ -176,6 +180,7 @@
 {\
   BYTE calltempl, calltemph;\
   calltempl=readoperandbyte(PC++);\
+  AddToMCycle(1);\
   contend( PC, 1 );\
   calltemph=readoperandbyte(PC++);\
   PUSH16(PCL,PCH);\
@@ -213,6 +218,7 @@ break
 
 #define IN(reg,port)\
 {\
+  InsertMCycle(4);\
   contend_io( port, 3 );\
   (reg)=readport((port),&tstates);\
   F = ( F & FLAG_C) | sz53p_table[(reg)];\
@@ -228,12 +234,16 @@ break
 #define LD16_NNRR(regl,regh)\
 {\
   WORD ldtemp;\
+  InsertMCycle(3);\
   contend( PC, 3 );\
   ldtemp=readoperandbyte(PC++);\
+  InsertMCycle(3);\
   contend( PC, 3 );\
   ldtemp|=readoperandbyte(PC++) << 8;\
+  InsertMCycle(3);\
   contend( ldtemp, 3 );\
   writebyte(ldtemp++,(regl));\
+  InsertMCycle(3);\
   contend( ldtemp, 3 );\
   writebyte(ldtemp,(regh));\
 }
@@ -241,12 +251,16 @@ break
 #define LD16_RRNN(regl,regh)\
 {\
   WORD ldtemp;\
+  InsertMCycle(3);\
   contend( PC, 3 );\
   ldtemp=readoperandbyte(PC++);\
+  InsertMCycle(3);\
   contend( PC, 3 );\
   ldtemp|=readoperandbyte(PC++) << 8;\
+  InsertMCycle(3);\
   contend( ldtemp, 3 );\
   (regl)=readbyte(ldtemp++);\
+  InsertMCycle(3);\
   contend( ldtemp, 3 );\
   (regh)=readbyte(ldtemp);\
 }
@@ -260,6 +274,7 @@ break
 
 #define JR()\
 {\
+  AddToMCycle(5);\
   contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 );\
   contend( PC, 1 );\
   PC+=(SBYTE)readoperandbyte(PC);\
@@ -273,14 +288,17 @@ break
 
 #define OUT(port,reg)\
 {\
+  InsertMCycle(4);\
   contend_io( port, 3 );\
   writeport(port,reg, &tstates);\
 }
 
 #define POP16(regl,regh)\
 {\
+  InsertMCycle(3);\
   contend( SP, 3 );\
   (regl)=readbyte(SP++);\
+  InsertMCycle(3);\
   contend( SP, 3 );\
   (regh)=readbyte(SP++);\
   StackChange -= 2;\
@@ -289,8 +307,10 @@ break
 
 #define PUSH16(regl,regh)\
 {\
+  InsertMCycle(3);\
   SP--; contend( SP, 3 );\
   writebyte(SP,(regh));\
+  InsertMCycle(3);\
   SP--; contend( SP, 3 );\
   writebyte(SP,(regl));\
   StackChange += 2;\
@@ -298,8 +318,10 @@ break
 
 #define RET()\
 {\
+  InsertMCycle(3);\
   contend( SP, 3 );\
   (PCL)=readbyte(SP++);\
+  InsertMCycle(3);\
   contend( SP, 3 );\
   (PCH)=readbyte(SP++);\
   StackChange -= 2;\
@@ -362,6 +384,8 @@ break
     ( H & ( FLAG_3 | FLAG_5 | FLAG_S ) ) |\
     halfcarry_sub_table[lookup&0x07] |\
     ( HL ? 0 : FLAG_Z) ;\
+  InsertMCycle(4);\
+  InsertMCycle(3);\
 }
 
 #define SLA(value)\

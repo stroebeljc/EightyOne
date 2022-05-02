@@ -1221,6 +1221,11 @@ enum InterruptResponseType
 
 bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool instructionStraddlesNMI, InterruptResponseType interruptResponse, bool halted, bool inOperationActive = false, bool outOperationActive = false)
 {
+        if (position > machine.tperscanline)
+        {
+                return true;
+        }
+
         if (position < ZX81HSyncPositionEnd)
         {
                 position += machine.tperscanline;
@@ -1685,13 +1690,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 if (vsyncFound)
                 {
                         frameSynchronised = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);
-                        frameSynchronisedCounter = 0;
                 }
                 else
                 {
                         vsyncFound = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);
-                        frameSynchronisedCounter = 0;
                 }
+                frameSynchronisedCounter = 0;
 
                 allowSoundOutput = (machine.colour == COLOURCHROMA) && !frameSynchronised;
 
@@ -1717,8 +1721,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 }
                                 else
                                 {
-                                        carryOverScanlineBuffer[carryOverPixelCount++] = copyPosition[i];
-                                        carryOverScanlineBuffer[carryOverPixelCount++] = copyPosition[i];
+                                        int copyPositionPixel = copyPosition[i * 2];
+                                        carryOverScanlineBuffer[carryOverPixelCount++] = copyPositionPixel;
+                                        carryOverScanlineBuffer[carryOverPixelCount++] = copyPositionPixel;
                                 }
                         }
 
@@ -1729,8 +1734,15 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 int carryOverClockCount = carryOverPixelCount / 2;
                 add_blank(CurScanLine, lineClockCounter + carryOverClockCount, BLANKCOLOUR);
 
-                lineClockCounter = machine.tperscanline - carryOverClockCount;
-                lineClockCarryCounter = carryOverClockCount;
+                if ((lineClockCounter < ZX81HSyncPositionEnd) || (lineClockCounter > ZX81HSyncPositionStart))
+                {
+                        lineClockCounter = machine.tperscanline - carryOverClockCount;
+                        lineClockCarryCounter = carryOverClockCount;
+                }
+                else
+                {
+                        lineClockCounter += machine.tperscanline;
+                }
         }
         else
         {
@@ -1744,9 +1756,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         vsyncFound = false;
                         allowSoundOutput = (machine.colour == COLOURCHROMA);
                 }
-        }
 
-        CurScanLine->scanline_len = scanlinePixelLength;
+                CurScanLine->scanline_len = scanlinePixelLength;
+        }
 
         return tstotal;
 }

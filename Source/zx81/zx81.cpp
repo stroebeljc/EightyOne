@@ -130,7 +130,7 @@ const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionDurat
 const int NMIDetectionPositionEnd = ZX81HSyncPositionEnd;
 const int NMIDetectionPositionAfter = NMIDetectionPositionEnd - 1;
 
-const int WaitDetectionDurationAfterNMI = 1;
+const int WaitDurationAfterNMI = 1;
 
 const int PortActiveDuration = 3;
 const int PortActiveDurationPixels = PortActiveDuration * 2;
@@ -326,7 +326,7 @@ void zx81_initialise(void)
 
         ZX81BackporchPositionStart = machine.tperscanline;
         ZX81BackporchPositionEnd = ZX81BackporchPositionStart - ZX81BackporchDuration + 1;
-        nmiWaitPositionEnd = machine.tperscanline - WaitDetectionDurationAfterNMI + 1;
+        nmiWaitPositionEnd = machine.tperscanline - WaitDurationAfterNMI + 1;
         nmiWaitPositionAfter = nmiWaitPositionEnd - 1;
 
         scanlinePixelLength = machine.tperscanline * 2;
@@ -1392,9 +1392,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                                 if (instructionPositionT2 <= NMIDetectionPositionStart)
                                 {
-                                        //#### was instructionPosition
-                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter) + WaitDetectionDurationAfterNMI;
-                                        nmiWaitPositionStart = instructionPositionT2;
+                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter) + WaitDurationAfterNMI;
+                                        nmiWaitPositionStart = instructionPositionT2 - 1;
                                         insertWaitStates = true;
                                 }
                                 else
@@ -1591,8 +1590,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (lineClockCounter >= NMIDetectionPositionEnd)
                         {
-                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + WaitDetectionDurationAfterNMI;
-                                nmiWaitPositionStart = lineClockCounter - NMIDetectionDurationAtEndOfInstruction;
+                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + WaitDurationAfterNMI;
+                                nmiWaitPositionStart = lineClockCounter - NMIResponseM1DurationBeforeWait;
                         }
 
                         int nmiResponseActualDuration = nmiResponseDuration + nmiResponseM1DurationWait;
@@ -1636,7 +1635,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 CurScanLine->sync_type = SYNCTYPEH;
                         }
 
-                        int overhangPixels = (CurScanLine->scanline_len - scanlineActivePixelLength);//scanlinePixelLength);
+                        int overhangPixels = (CurScanLine->scanline_len - scanlineActivePixelLength);
                         if (overhangPixels > 0)
                         {
                                 memcpy(carryOverScanlineBuffer, CurScanLine->scanline + scanlineActivePixelLength, overhangPixels);

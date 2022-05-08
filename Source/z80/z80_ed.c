@@ -198,7 +198,7 @@ case 0x67:	/* RRD */
 {
   BYTE bytetemp=readbyte(HL);
   InsertMCycle(3);
-  InsertMCycle(4);
+  AddToMCycle(4);
   InsertMCycle(3);
   contend( HL, 7 ); contend( HL, 3 );
   writebyte(HL,  ( A << 4 ) | ( bytetemp >> 4 ) );
@@ -230,7 +230,7 @@ case 0x6f:	/* RLD */
 {
   BYTE bytetemp=readbyte(HL);
   InsertMCycle(3);
-  InsertMCycle(4);
+  AddToMCycle(4);
   InsertMCycle(3);
   contend( HL, 7 ); contend( HL, 3 );
   writebyte(HL, (bytetemp << 4 ) | ( A & 0x0f ) );
@@ -423,7 +423,7 @@ case 0xb0:	/* LDIR */
   F = ( F & ( FLAG_C | FLAG_Z | FLAG_S ) ) | ( BC ? FLAG_V : 0 ) |
     ( bytetemp & FLAG_3 ) | ( (bytetemp & 0x02) ? FLAG_5 : 0 );
   if(BC) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 );
     contend( DE, 1 );
     PC-=2;
@@ -447,7 +447,7 @@ case 0xb1:	/* CPIR */
   if(F & FLAG_H) bytetemp--;
   F |= ( bytetemp & FLAG_3 ) | ( (bytetemp&0x02) ? FLAG_5 : 0 );
   if( ( F & ( FLAG_V | FLAG_Z ) ) == FLAG_V ) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -468,7 +468,7 @@ case 0xb2:	/* INIR */
   F = (initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -490,7 +490,7 @@ case 0xb3:	/* OTIR */
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   if(B) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend_io( BC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
@@ -513,7 +513,7 @@ case 0xb8:	/* LDDR */
   F = ( F & ( FLAG_C | FLAG_Z | FLAG_S ) ) | ( BC ? FLAG_V : 0 ) |
     ( bytetemp & FLAG_3 ) | ( (bytetemp & 0x02) ? FLAG_5 : 0 );
   if(BC) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 ); contend( DE, 1 );
     contend( DE, 1 );
     PC-=2;
@@ -537,7 +537,7 @@ case 0xb9:	/* CPDR */
   if(F & FLAG_H) bytetemp--;
   F |= ( bytetemp & FLAG_3 ) | ( (bytetemp&0x02) ? FLAG_5 : 0 );
   if( ( F & ( FLAG_V | FLAG_Z ) ) == FLAG_V ) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -558,7 +558,7 @@ case 0xba:	/* INDR */
   F = (initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
   if(B) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=2;
@@ -580,7 +580,7 @@ case 0xbb:	/* OTDR */
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   if(B) {
-    InsertMCycle(5);
+    AddToMCycle(5);
     contend_io( BC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );

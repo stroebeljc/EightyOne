@@ -132,8 +132,8 @@
     ( H & ( FLAG_3 | FLAG_5 | FLAG_S ) ) |\
     halfcarry_add_table[lookup&0x07]|\
     ( HL ? 0 : FLAG_Z );\
-  InsertMCycle(4);\
-  InsertMCycle(3);\
+  AddToMCycle(4); \
+  AddToMCycle(3);\
 }
 
 #define ADD(value)\
@@ -154,8 +154,8 @@
     ( ( (value2) & 0x0800 ) >> 10 ) |\
     ( ( add16temp & 0x0800 ) >> 9 );\
   tstates += 7;\
-  InsertMCycle(4);\
-  InsertMCycle(3);\
+  AddToMCycle(4);\
+  AddToMCycle(3);\
   (value1) = add16temp;\
   F = ( F & ( FLAG_V | FLAG_Z | FLAG_S ) ) |\
     ( add16temp & 0x10000 ? FLAG_C : 0 )|\
@@ -275,7 +275,7 @@ break
 
 #define JR()\
 {\
-  InsertMCycle(5);\
+  AddToMCycle(5);\
   contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 );\
   contend( PC, 1 );\
   PC+=(SBYTE)readoperandbyte(PC);\
@@ -386,8 +386,8 @@ break
     ( H & ( FLAG_3 | FLAG_5 | FLAG_S ) ) |\
     halfcarry_sub_table[lookup&0x07] |\
     ( HL ? 0 : FLAG_Z) ;\
-  InsertMCycle(4);\
-  InsertMCycle(3);\
+  AddToMCycle(4);\
+  AddToMCycle(3);\
 }
 
 #define SLA(value)\

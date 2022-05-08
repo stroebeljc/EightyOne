@@ -49,6 +49,7 @@ extern int StackChange;
 #define maxMCycles 11
 static int mCycles[maxMCycles];
 static int mCycleIndex = -1;
+static int inputOutputMCycle = -1;
 
 void InsertMCycle(int cycleLength)
 {
@@ -73,6 +74,11 @@ int* z80_MCycles()
         return mCycles;
 }
 
+int z80_InputOutputMCycle()
+{
+        return inputOutputMCycle;
+}
+
 void SetSP(int i)
 {
         //spBase = i;
@@ -84,6 +90,7 @@ int z80_do_opcode()
     BYTE opcode;
 
     mCycleIndex = -1;
+    inputOutputMCycle = -1;
 
     tstates=0;
     RetExecuted = 0;
@@ -1015,7 +1022,6 @@ int z80_do_opcode()
 	contend( PC, 4 );
 	outtemp = opcode_fetch( PC++ ) + ( A << 8 );
 	OUT( outtemp , A);
-        //tstates += 1;
       }
       break;
     case 0xd4:		/* CALL NC,nnnn */
@@ -1069,6 +1075,7 @@ int z80_do_opcode()
 	contend( PC, 4 );
 	intemp = opcode_fetch( PC++ ) + ( A << 8 );
         InsertMCycle(4);
+        inputOutputMCycle = mCycleIndex;
 	contend_io( intemp, 3 );
         A=readport( intemp, &tstates );
       }

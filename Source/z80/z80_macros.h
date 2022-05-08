@@ -219,6 +219,7 @@ break
 #define IN(reg,port)\
 {\
   InsertMCycle(4);\
+  inputOutputMCycle = mCycleIndex;\
   contend_io( port, 3 );\
   (reg)=readport((port),&tstates);\
   F = ( F & FLAG_C) | sz53p_table[(reg)];\
@@ -274,7 +275,7 @@ break
 
 #define JR()\
 {\
-  AddToMCycle(5);\
+  InsertMCycle(5);\
   contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 );\
   contend( PC, 1 );\
   PC+=(SBYTE)readoperandbyte(PC);\
@@ -289,6 +290,7 @@ break
 #define OUT(port,reg)\
 {\
   InsertMCycle(4);\
+  inputOutputMCycle = mCycleIndex;\
   contend_io( port, 3 );\
   writeport(port,reg, &tstates);\
 }

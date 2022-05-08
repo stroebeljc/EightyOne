@@ -319,6 +319,7 @@ case 0xa2:	/* INI */
   WORD initemp=readport(BC,&tstates);
   AddToMCycle(1);
   InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
@@ -334,6 +335,7 @@ case 0xa3:	/* OUTI */
   AddToMCycle(1);
   InsertMCycle(3);
   InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
   HL++;
   writeport(BC,outitemp,&tstates);
@@ -382,6 +384,7 @@ case 0xaa:	/* IND */
   WORD initemp=readport(BC,&tstates);
   AddToMCycle(1);
   InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
@@ -397,6 +400,7 @@ case 0xab:	/* OUTD */
   AddToMCycle(1);
   InsertMCycle(3);
   InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
   HL--;
   writeport(BC,outitemp,&tstates);
@@ -456,6 +460,7 @@ case 0xb2:	/* INIR */
   WORD initemp=readport(BC,&tstates);
   AddToMCycle(1);
   InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
@@ -482,15 +487,15 @@ case 0xb3:	/* OTIR */
                 /* Erm, no it doesn't - MW */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
+  InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   if(B) {
-    InsertMCycle(4);
     InsertMCycle(5);
     contend_io( BC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
     PC-=2;
   } else {
-    InsertMCycle(3);
     contend_io( BC, 3 );
   }
 }
@@ -545,6 +550,7 @@ case 0xba:	/* INDR */
   WORD initemp=readport(BC,&tstates);
   AddToMCycle(1);
   InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   InsertMCycle(3);
   tstates += 2; contend_io( BC, 3 ); contend( HL, 3 );
   writebyte(HL,initemp);
@@ -571,15 +577,15 @@ case 0xbb:	/* OTDR */
                 /* Erm, no it doesn't - MW */
   F = (outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B];
   /* C,H and P/V flags not implemented */
+  InsertMCycle(4);
+  inputOutputMCycle = mCycleIndex;
   if(B) {
-    InsertMCycle(4);
     InsertMCycle(5);
     contend_io( BC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
     PC-=2;
   } else {
-    InsertMCycle(4);
     contend_io( BC, 3 );
   }
 }

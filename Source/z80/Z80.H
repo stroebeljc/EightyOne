@@ -82,6 +82,7 @@ extern BYTE sz53p_table[];
 extern BYTE parity_table[];
 extern void StoreMCycle(int cycleLength);
 extern int* z80_MCycles();
+extern int z80_InputOutputMCycle();
 
 #ifdef __cplusplus
 }

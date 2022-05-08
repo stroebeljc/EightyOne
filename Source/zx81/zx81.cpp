@@ -112,25 +112,26 @@ const int ZX81HSyncPositionEnd = ZX81HSyncPositionStart - ZX81HSyncDuration + 1;
 const int ZX81HSyncPositionAfter = ZX81HSyncPositionEnd - 1;
 const int ZX81HSyncPositionAcceptanceStart = (ZX81HSyncDuration * 2) + ZX81HSyncPositionEnd;
 
-const int InterruptDetectionDurationAtEndOfInstruction = 1;
+const int InterruptDetectionDurationAtEndOfInstruction = 1;     //####
 const int InterruptAcknowledgeOffsetFromInterruptResponse = 3;
 const int InterruptAcknowledgeOffsetFromInterrupt = InterruptDetectionDurationAtEndOfInstruction + InterruptAcknowledgeOffsetFromInterruptResponse;
 const int InterruptAcknowledgeOffsetToHSync = 16;
 const int InterruptPosition = ZX81HSyncPositionStart + InterruptAcknowledgeOffsetToHSync;
 
-const int NMIResponseM1DurationBeforeWait = 2;
-const int NMIResponseM1DurationAfterWait = 3;
-const int NMIResponseM1Duration = NMIResponseM1DurationBeforeWait + NMIResponseM1DurationAfterWait;
-const int NMIResponseM2Duration = 3;
-const int NMIResponseM3Duration = 3;
-const int NMIResponseDuration = NMIResponseM1Duration + NMIResponseM2Duration + NMIResponseM3Duration;
+//const int NMIResponseM1DurationBeforeWait = 2;
+//const int NMIResponseM1DurationAfterWait = 3;
+//const int NMIResponseM1Duration = NMIResponseM1DurationBeforeWait + NMIResponseM1DurationAfterWait;
+//const int NMIResponseM2Duration = 3;
+//const int NMIResponseM3Duration = 3;
+//const int NMIResponseDuration = NMIResponseM1Duration + NMIResponseM2Duration + NMIResponseM3Duration;
 
-const int NMIDetectionDurationAtEndOfInstruction = 1;
-const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionDurationAtEndOfInstruction;
-const int NMIDetectionPositionEnd = ZX81HSyncPositionEnd;
-const int NMIDetectionPositionAfter = NMIDetectionPositionEnd - 1;
+//const int NMIDetectionDurationAtEndOfInstruction = 1;
+//const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionDurationAtEndOfInstruction;
 
-const int WaitDurationAfterNMI = 1;
+//const int NMIDetectionPositionEnd = ZX81HSyncPositionEnd;
+//const int NMIDetectionPositionAfter = NMIDetectionPositionEnd - 1;
+
+//const int WaitDurationAfterNMI = 1;
 
 const int PortActiveDuration = 3;
 const int PortActiveDurationPixels = PortActiveDuration * 2;
@@ -184,7 +185,7 @@ int scanlinePixelLength;
 
 BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
-BYTE font[1024];                //Allows for both non-inverted and inverted for the QS Chars Board 
+BYTE font[1024];                //Allows for both non-inverted and inverted for the QS Chars Board
 BYTE memhrg[1024];
 BYTE ZXKeyboard[8];
 BYTE ZX1541Mem[(8+32)*1024]; // ZX1541 has 8k EEPROM and 32k RAM
@@ -326,7 +327,7 @@ void zx81_initialise(void)
 
         ZX81BackporchPositionStart = machine.tperscanline;
         ZX81BackporchPositionEnd = ZX81BackporchPositionStart - ZX81BackporchDuration + 1;
-        nmiWaitPositionEnd = machine.tperscanline - WaitDurationAfterNMI + 1;
+        nmiWaitPositionEnd = machine.tperscanline; //#### - WaitDurationAfterNMI + 1;
         nmiWaitPositionAfter = nmiWaitPositionEnd - 1;
 
         scanlinePixelLength = machine.tperscanline * 2;
@@ -457,7 +458,7 @@ void zx81_WriteByte(int Address, int Data)
                 goto writeMem;
                 }
         }
-        
+
         // Memotech Hi-res board has 1k of RAM available at address 8192
         // permanently and overlaid the ROM at address 0 when z80.i is odd
         // or data is written to address 0-1k
@@ -1190,7 +1191,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         break;
                 }
         }
-        
+
         return idleDataBus;
 }
 
@@ -1362,6 +1363,13 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 int addr = z80.pc.w;    //####
                 int ts = z80_do_opcode();
 
+                if (nmiGeneratorEnabled && lineClockCounter < 32 && (LastInstruction == LASTINSTOUTFD || LastInstruction == LASTINSTOUTFE || LastInstruction == LASTINSTOUTFF))
+                {
+                //#### stretch on the IN/OUT Tw state
+                        int i=0;
+                }
+
+
                 int mCyclesTotal = 0;
                 int cc = 0;
                 while (mCycles[cc] != 0)
@@ -1377,29 +1385,38 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 int hsyncCounterAfterInstruction = (lineClockCounter - ts);
 
-                bool startOfHSyncPulse = (lineClockCounter > ZX81HSyncPositionStart) && (hsyncCounterAfterInstruction <= ZX81HSyncPositionStart);
+                bool startOfHSyncPulse = (lineClockCounter >= ZX81HSyncPositionStart) && (hsyncCounterAfterInstruction < ZX81HSyncPositionStart);
                 if (syncOutputWhite && startOfHSyncPulse)
                 {
                         lineCounter = (++lineCounter) & 7;
                 }
 
-                bool instructionStraddlesNMI = nmiGeneratorEnabled && (hsyncCounterAfterInstruction <= NMIDetectionPositionStart);
+                //#### overlap of 1 appears to be sufficient according to the scope
+                bool nmiDetectedDuringInstruction = nmiGeneratorEnabled && (hsyncCounterAfterInstruction <= (ZX81HSyncPositionStart - 2)); //####NMIDetectionPositionStart);
 
-                if (!z80.halted && instructionStraddlesNMI)
+                //#### T2 can't be the final clock of the instruction hence the -2
+                if (!z80.halted && nmiGeneratorEnabled && (hsyncCounterAfterInstruction <= (ZX81HSyncPositionStart - 2))) //####nmiDetectedDuringInstruction)
                 {
                         int c = 0;
                         int instructionPosition = lineClockCounter;
-                        bool insertWaitStates = false;
+                        bool insertedWaitStates = false;
 
-                        while ((mCycles[c] != 0) && !insertWaitStates)
+                        while ((mCycles[c] != 0) && !insertedWaitStates)
                         {
                                 int instructionPositionT2 = instructionPosition - 1;
 
-                                if (instructionPositionT2 <= NMIDetectionPositionStart)
+                                if (c == z80_InputOutputMCycle())
                                 {
-                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter) + WaitDurationAfterNMI;
+                                        // For IN and OUT instructions, the state of the WAIT line at T2 is irrelevant since a TW state
+                                        // is automatically inserted. It will sample WAIT to allow further wait states to be inserted.
+                                        instructionPositionT2--;
+                                }
+
+                                if (instructionPositionT2 <= ZX81HSyncPositionStart)//#### && (instructionPositionT2 >= ZX81HSyncPositionEnd)) //####NMIDetectionPositionStart)
+                                {
+                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter);//#### + WaitDurationAfterNMI;
                                         nmiWaitPositionStart = instructionPositionT2 - 1;
-                                        insertWaitStates = true;
+                                        insertedWaitStates = true;
                                 }
                                 else
                                 {
@@ -1470,7 +1487,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 {
                                         colour |= 1;
                                 }
-                                
+
                                 noise >>= 1;
                                 PrevRev = shift_reg_inv & 0x8000;
                                 PrevBit = bit;
@@ -1481,7 +1498,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         bool interruptResponseActive = (i >= (pixels - interruptResponsePixels));
                         InterruptResponseType interruptResponse = interruptResponseActive ? MaskableInterrupt : NoInterrupt;
 
-                        zx81_DrawPixel(CurScanLine, lineClockCounter - (i/2), colour, instructionStraddlesNMI, interruptResponse, z80Halted, inOperationActive, outOperationActive);
+                        zx81_DrawPixel(CurScanLine, lineClockCounter - (i/2), colour, nmiDetectedDuringInstruction, interruptResponse, z80Halted, inOperationActive, outOperationActive);
 
                         shift_register <<= 1;
                         shift_reg_inv <<= 1;
@@ -1587,19 +1604,26 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 lineClockCounter -= ts;
 
-                if (nmiGeneratorEnabled && (lineClockCounter <= NMIDetectionPositionStart))
+                if (nmiDetectedDuringInstruction) //####nmiGeneratorEnabled && (lineClockCounter <= NMIDetectionPositionStart))
                 {
+
+
+
                         int nmiResponseDuration = z80_nmi();
 
-                        int nmiResponseM1DurationWait = 0;
+                        int nmiResponseWaitDuration = 0;
 
-                        if (lineClockCounter >= NMIDetectionPositionEnd)
+                        int nmiResponsePositionT2 = lineClockCounter - 1;
+
+                        if (nmiResponsePositionT2 >= ZX81HSyncPositionEnd) //####NMIDetectionPositionEnd)
                         {
-                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + WaitDurationAfterNMI;
-                                nmiWaitPositionStart = lineClockCounter - NMIResponseM1DurationBeforeWait;
+                                nmiResponseWaitDuration = nmiResponsePositionT2 - ZX81HSyncPositionAfter;
+                                nmiWaitPositionStart = nmiResponsePositionT2 - 1;  //#### this could be 0? yes but ignored by the drawing routine
+
+//####                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + WaitDurationAfterNMI;
                         }
 
-                        int nmiResponseActualDuration = nmiResponseDuration + nmiResponseM1DurationWait;
+                        int nmiResponseActualDuration = nmiResponseDuration + nmiResponseWaitDuration;
                         int instructionOverhangHSyncDuration = ZX81HSyncPositionStart - lineClockCounter;
                         int remainingHSyncDuration = ZX81HSyncDuration - instructionOverhangHSyncDuration;
 
@@ -1617,12 +1641,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         frametstates += nmiResponseActualDuration;
                         tStatesCount += nmiResponseActualDuration;
 
-                        const bool instructionStraddlesNMI = false;
+                        nmiDetectedDuringInstruction = false;
                         int colour = (syncOutputWhite ? paper : ink) << 4;
 
                         while (nmiResponseActualDuration > 0)
                         {
-                                zx81_DrawClockCycle(CurScanLine, lineClockCounter, colour, instructionStraddlesNMI, NonMaskableInterrupt, z80.halted);
+                                zx81_DrawClockCycle(CurScanLine, lineClockCounter, colour, nmiDetectedDuringInstruction, NonMaskableInterrupt, z80.halted);
                                 lineClockCounter--;
                                 nmiResponseActualDuration--;
                         }
@@ -1732,9 +1756,10 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 CurScanLine->scanline_len -= carryOverPixelCount;
                 int carryOverClockCount = carryOverPixelCount / 2;
-                add_blank(CurScanLine, lineClockCounter + carryOverClockCount, BLANKCOLOUR);
+                if (lineClockCounter + carryOverClockCount != 0) //####
+                        add_blank(CurScanLine, lineClockCounter + carryOverClockCount, BLANKCOLOUR);
 
-                if ((lineClockCounter < ZX81HSyncPositionEnd) || (lineClockCounter > ZX81HSyncPositionStart))
+                if ((carryOverClockCount != 0) && (lineClockCounter < ZX81HSyncPositionEnd))// || (lineClockCounter > ZX81HSyncPositionStart)))
                 {
                         lineClockCounter = machine.tperscanline - carryOverClockCount;
                         lineClockCarryCounter = carryOverClockCount;

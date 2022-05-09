@@ -1321,42 +1321,60 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         do
         {
-                if (z80.pc.w == 0x0000)   //#### reset other variables upon initialisation?
+                if (emulator.ColouriseNonMaskableInterruptServiceRoutine)
                 {
-                        nmiLevel = 0;
-                }
-                else if (z80.pc.w == 0x0066)    //#### is range identical for all 81 models?
-                {
-                        nmiLevel++;
-                }
-                else if (nmiLevel && ((z80.pc.w == 0x007A) || ((z80.pc.w < 0x0066) || (z80.pc.w > 0x007D))))
-                {
-                        nmiLevel--;
+                        if (z80.pc.w == 0x0000)
+                        {
+                                nmiLevel = 0;
+                        }
+                        else if (z80.pc.w == 0x0066)
+                        {
+                                nmiLevel++;
+                        }
+                        else if (emulator.machine != MACHINELAMBDA)
+                        {
+                                if (((nmiLevel > 1) && (z80.pc.w == 0x007A) || (nmiLevel && ((z80.pc.w < 0x0066) || (z80.pc.w > 0x007D)))))
+                                {
+                                        nmiLevel--;
+                                }
+                        }
+                        else
+                        {
+                                if (((nmiLevel > 1) && (z80.pc.w == 0x0062) || (nmiLevel && ((z80.pc.w < 0x0059) || (z80.pc.w > 0x006D)))))
+                                {
+                                        nmiLevel--;
+                                }
+                        }
                 }
 
-                //#### maybe note stack return address and check for a return?
-                withinDisplayDriver = ((z80.pc.w >= 0x0229) && (z80.pc.w <= (withinDisplayDriver ? 0x02E6 : 0x02BA)));
-
-                if (z80.pc.w == 0x0038)    //#### is range identical for all 81 models?
+                if (emulator.ColouriseRomDisplayDriver)
                 {
-                        intISR = true;
+                        if (emulator.machine != MACHINELAMBDA)
+                        {
+                                withinDisplayDriver = ((z80.pc.w >= 0x0229) && (z80.pc.w <= (withinDisplayDriver ? 0x02E6 : 0x02BA)));
+                        }
+                        else
+                        {
+                                withinDisplayDriver = ((z80.pc.w >= 0x01ED && z80.pc.w <= 0x020F) || (z80.pc.w >= 0x12C0 && z80.pc.w <= 0x1336) ||
+                                                       (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) ||  withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2));
+                        }
                 }
-                else if ((z80.pc.w < 0x0038) || (z80.pc.w > 0x0048))
+                
+                if (emulator.ColouriseMaskableInterruptServiceRoutine)
                 {
-                        intISR = false;
+                        if (z80.pc.w == 0x0038)
+                        {
+                                intISR = true;
+                        }
+                        else if ((z80.pc.w < 0x0038) || (z80.pc.w > 0x0048))
+                        {
+                                intISR = false;
+                        }
                 }
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = PatchTest(z80.pc.w);
-                int addr = z80.pc.w;    //####
                 int ts = z80_do_opcode();
-
-                if (nmiGeneratorEnabled && lineClockCounter < 32 && (LastInstruction == LASTINSTOUTFD || LastInstruction == LASTINSTOUTFE || LastInstruction == LASTINSTOUTFF))
-                {
-                //#### stretch on the IN/OUT Tw state
-                        int i=0;
-                }
-
 
                 int mCyclesTotal = 0;
                 int cc = 0;
@@ -1364,11 +1382,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 {
                         mCyclesTotal += mCycles[cc];
                         cc++;
-                }
-                if (ts != mCyclesTotal)
-                {
-                //####
-                        int i=0;
                 }
 
                 int lineClockCounterAfterInstruction = (lineClockCounter - ts);

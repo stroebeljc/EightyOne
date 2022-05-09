@@ -110,28 +110,17 @@ const int ZX81BackporchDuration = 16;
 const int ZX81HSyncPositionStart = ZX81HSyncDuration;
 const int ZX81HSyncPositionEnd = ZX81HSyncPositionStart - ZX81HSyncDuration + 1;
 const int ZX81HSyncPositionAfter = ZX81HSyncPositionEnd - 1;
-const int ZX81HSyncPositionAcceptanceStart = (ZX81HSyncDuration * 2) + ZX81HSyncPositionEnd;
+const int ZX81HSyncPositionAcceptanceStart = ((3 * ZX81HSyncDuration) / 2) + ZX81HSyncPositionEnd;
 
-const int InterruptDetectionDurationAtEndOfInstruction = 1;     //####
-const int InterruptAcknowledgeOffsetFromInterruptResponse = 3;
-const int InterruptAcknowledgeOffsetFromInterrupt = InterruptDetectionDurationAtEndOfInstruction + InterruptAcknowledgeOffsetFromInterruptResponse;
-const int InterruptAcknowledgeOffsetToHSync = 16;
-const int InterruptPosition = ZX81HSyncPositionStart + InterruptAcknowledgeOffsetToHSync;
+const int InterruptAcknowledgementDuration = 3; // The acknowledgement spans 3 clock cycles
+const int InterruptAcknowledgementOffsetStartIntoInterruptResponse = 2; // The acknowledgement spans into the first TW cycle
+const int InterruptAcknowledgementOffsetEndIntoInterruptResponse = InterruptAcknowledgementOffsetStartIntoInterruptResponse + InterruptAcknowledgementDuration - 1; // The acknowledgement spans into the T3 cycle
+const int InterruptAcknowledgementOffsetToHSync = 16;
+const int InterruptAcknowledgementPositionStart = ZX81HSyncPositionStart + InterruptAcknowledgementOffsetToHSync;
+const int InterruptResponsePositionStart = InterruptAcknowledgementPositionStart + InterruptAcknowledgementOffsetEndIntoInterruptResponse;
 
-//const int NMIResponseM1DurationBeforeWait = 2;
-//const int NMIResponseM1DurationAfterWait = 3;
-//const int NMIResponseM1Duration = NMIResponseM1DurationBeforeWait + NMIResponseM1DurationAfterWait;
-//const int NMIResponseM2Duration = 3;
-//const int NMIResponseM3Duration = 3;
-//const int NMIResponseDuration = NMIResponseM1Duration + NMIResponseM2Duration + NMIResponseM3Duration;
-
-//const int NMIDetectionDurationAtEndOfInstruction = 1;
-//const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionDurationAtEndOfInstruction;
-
-//const int NMIDetectionPositionEnd = ZX81HSyncPositionEnd;
-//const int NMIDetectionPositionAfter = NMIDetectionPositionEnd - 1;
-
-//const int WaitDurationAfterNMI = 1;
+const int NMIDetectionOffsetFromEndOfInstruction = 2; // The NMI is detected at the start of the final clock of an instruction so must have been active within the clock beforehand 
+const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionOffsetFromEndOfInstruction;
 
 const int PortActiveDuration = 3;
 const int PortActiveDurationPixels = PortActiveDuration * 2;
@@ -1220,7 +1209,7 @@ enum InterruptResponseType
         MaskableInterrupt
 };
 
-bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool instructionStraddlesNMI, InterruptResponseType interruptResponse, bool halted, bool inOperationActive = false, bool outOperationActive = false)
+bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool instructionStraddlesNMI = false, InterruptResponseType interruptResponse = NoInterrupt, bool halted = false, bool inOperationActive = false, bool outOperationActive = false)
 {
         if (position > machine.tperscanline)
         {
@@ -1278,8 +1267,7 @@ bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                 {
                         pixelColour = emulator.ColouriseHorizontalSyncPulse ? Blue : Black;
                 }
-                //####
-                else if (false && backporchPeriod)
+                else if (backporchPeriod)
                 {
                         pixelColour = emulator.ColouriseBackPorch ? BrightBlue : Black;
                 }
@@ -1294,7 +1282,7 @@ bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
         return true;
 }
 
-bool zx81_DrawClockCycle(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool instructionStraddlesNMI, InterruptResponseType interruptResponse, bool halted, bool inOperationActive = false, bool outOperationActive = false)
+bool zx81_DrawClockCycle(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool instructionStraddlesNMI = false, InterruptResponseType interruptResponse = NoInterrupt, bool halted = false, bool inOperationActive = false, bool outOperationActive = false)
 {
         if (zx81_DrawPixel(CurScanLine, position, pixelColour, instructionStraddlesNMI, interruptResponse, halted, inOperationActive, outOperationActive))
         {
@@ -1383,19 +1371,17 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         int i=0;
                 }
 
-                int hsyncCounterAfterInstruction = (lineClockCounter - ts);
+                int lineClockCounterAfterInstruction = (lineClockCounter - ts);
 
-                bool startOfHSyncPulse = (lineClockCounter >= ZX81HSyncPositionStart) && (hsyncCounterAfterInstruction < ZX81HSyncPositionStart);
+                bool startOfHSyncPulse = (lineClockCounter >= ZX81HSyncPositionStart) && (lineClockCounterAfterInstruction < ZX81HSyncPositionStart);
                 if (syncOutputWhite && startOfHSyncPulse)
                 {
                         lineCounter = (++lineCounter) & 7;
                 }
 
-                //#### overlap of 1 appears to be sufficient according to the scope
-                bool nmiDetectedDuringInstruction = nmiGeneratorEnabled && (hsyncCounterAfterInstruction <= (ZX81HSyncPositionStart - 2)); //####NMIDetectionPositionStart);
+                bool nmiDetectedDuringInstruction = nmiGeneratorEnabled && (lineClockCounterAfterInstruction <= NMIDetectionPositionStart);
 
-                //#### T2 can't be the final clock of the instruction hence the -2
-                if (!z80.halted && nmiGeneratorEnabled && (hsyncCounterAfterInstruction <= (ZX81HSyncPositionStart - 2))) //####nmiDetectedDuringInstruction)
+                if (!z80.halted && nmiGeneratorEnabled && (lineClockCounterAfterInstruction <= NMIDetectionPositionStart))
                 {
                         int c = 0;
                         int instructionPosition = lineClockCounter;
@@ -1412,9 +1398,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                         instructionPositionT2--;
                                 }
 
-                                if (instructionPositionT2 <= ZX81HSyncPositionStart)//#### && (instructionPositionT2 >= ZX81HSyncPositionEnd)) //####NMIDetectionPositionStart)
+                                if (instructionPositionT2 <= ZX81HSyncPositionStart)
                                 {
-                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter);//#### + WaitDurationAfterNMI;
+                                        ts += (instructionPositionT2 - ZX81HSyncPositionAfter);
                                         nmiWaitPositionStart = instructionPositionT2 - 1;
                                         insertedWaitStates = true;
                                 }
@@ -1435,12 +1421,13 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (interruptResponseDuration > 0)
                         {
-                                int intResponseAcknowledgeStart = (hsyncCounterAfterInstruction - InterruptAcknowledgeOffsetFromInterrupt);
-                                int lineCounterAdjustment = InterruptPosition - intResponseAcknowledgeStart;
-                                if (lineCounterAdjustment != 0)
+                                // Immediately after the instruction is the interrupt response. This should occur at a known position relative to the HSync pulse.
+                                // If it does not then the line clock counter is adjusted.
+                                if (lineClockCounterAfterInstruction != InterruptResponsePositionStart)
                                 {
+                                        int lineCounterAdjustment = InterruptResponsePositionStart - lineClockCounterAfterInstruction;
                                         lineClockCounter += lineCounterAdjustment;
-                                        hsyncCounterAfterInstruction += lineCounterAdjustment;
+                                        lineClockCounterAfterInstruction += lineCounterAdjustment;
 
                                         int lineCounterAdjustmentPixels = (lineCounterAdjustment * 2);
                                         scanlineActivePixelLength += lineCounterAdjustmentPixels;
@@ -1604,23 +1591,18 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 lineClockCounter -= ts;
 
-                if (nmiDetectedDuringInstruction) //####nmiGeneratorEnabled && (lineClockCounter <= NMIDetectionPositionStart))
+                if (nmiDetectedDuringInstruction)
                 {
-
-
-
                         int nmiResponseDuration = z80_nmi();
 
                         int nmiResponseWaitDuration = 0;
 
                         int nmiResponsePositionT2 = lineClockCounter - 1;
 
-                        if (nmiResponsePositionT2 >= ZX81HSyncPositionEnd) //####NMIDetectionPositionEnd)
+                        if (nmiResponsePositionT2 >= ZX81HSyncPositionEnd)
                         {
                                 nmiResponseWaitDuration = nmiResponsePositionT2 - ZX81HSyncPositionAfter;
-                                nmiWaitPositionStart = nmiResponsePositionT2 - 1;  //#### this could be 0? yes but ignored by the drawing routine
-
-//####                                nmiResponseM1DurationWait = lineClockCounter - NMIResponseM1DurationBeforeWait - NMIDetectionPositionAfter + WaitDurationAfterNMI;
+                                nmiWaitPositionStart = nmiResponsePositionT2 - 1;
                         }
 
                         int nmiResponseActualDuration = nmiResponseDuration + nmiResponseWaitDuration;
@@ -1756,10 +1738,30 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 CurScanLine->scanline_len -= carryOverPixelCount;
                 int carryOverClockCount = carryOverPixelCount / 2;
-                if (lineClockCounter + carryOverClockCount != 0) //####
-                        add_blank(CurScanLine, lineClockCounter + carryOverClockCount, BLANKCOLOUR);
 
-                if ((carryOverClockCount != 0) && (lineClockCounter < ZX81HSyncPositionEnd))// || (lineClockCounter > ZX81HSyncPositionStart)))
+                if (CurScanLine->scanline_len < (machine.tperscanline * 2))
+                {
+                        int remainingLineClockCounter = machine.tperscanline - (CurScanLine->scanline_len / 2);
+                        if (remainingLineClockCounter <= ZX81HSyncPositionStart)
+                        {
+                                paper = BLANKCOLOUR;
+
+                                do
+                                {
+                                        zx81_DrawClockCycle(CurScanLine, remainingLineClockCounter, paper);
+                                        remainingLineClockCounter--;
+                                }
+                                while (remainingLineClockCounter > 0);
+
+                                paper = colourBrightWhite;
+                        }
+                        else
+                        {
+                                add_blank(CurScanLine, remainingLineClockCounter, BLANKCOLOUR);
+                        }
+                }
+
+                if ((carryOverClockCount != 0) && (lineClockCounter < ZX81HSyncPositionEnd))
                 {
                         lineClockCounter = machine.tperscanline - carryOverClockCount;
                         lineClockCarryCounter = carryOverClockCount;
@@ -1933,9 +1935,9 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = PatchTest(z80.pc.w);
                 int ts = z80_do_opcode();
 
-                int hsyncCounterAfterInstruction = (lineClockCounter - ts);
+                int lineClockCounterAfterInstruction = (lineClockCounter - ts);
 
-                bool startOfHSyncPulse = (lineClockCounter > ZX80HSyncPositionStart) && (hsyncCounterAfterInstruction <= ZX80HSyncPositionStart);
+                bool startOfHSyncPulse = (lineClockCounter > ZX80HSyncPositionStart) && (lineClockCounterAfterInstruction <= ZX80HSyncPositionStart);
                 if (syncOutputWhite && startOfHSyncPulse)
                 {
                         lineCounter = (++lineCounter) & 7;
@@ -1951,12 +1953,13 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         {
                                 if (z80.halted)
                                 {
-                                        int intResponseAcknowledgeStart = (hsyncCounterAfterInstruction - InterruptAcknowledgeOffsetFromInterrupt);
-                                        int lineCounterAdjustment = InterruptPosition - intResponseAcknowledgeStart;
-                                        if (lineCounterAdjustment != 0)
+                                        // Immediately after the instruction is the interrupt response. This should occur at a known position relative to the HSync pulse.
+                                        // If it does not then the line clock counter is adjusted.
+                                        if (lineClockCounterAfterInstruction != InterruptResponsePositionStart)
                                         {
+                                                int lineCounterAdjustment = InterruptResponsePositionStart - lineClockCounterAfterInstruction;
                                                 lineClockCounter += lineCounterAdjustment;
-                                                hsyncCounterAfterInstruction += lineCounterAdjustment;
+                                                lineClockCounterAfterInstruction += lineCounterAdjustment;
 
                                                 int lineCounterAdjustmentPixels = (lineCounterAdjustment * 2);
                                                 scanlineActivePixelLength += lineCounterAdjustmentPixels;

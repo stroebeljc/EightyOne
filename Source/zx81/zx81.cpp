@@ -1047,7 +1047,6 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xfd:
-                if (emulator.machine==MACHINEZX80) break;
                 LastInstruction = LASTINSTOUTFD;
                 break;
 
@@ -1055,9 +1054,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         default:
                 if (!(Address&1))
                 {
-                        if (emulator.machine==MACHINEZX80) break;
                         LastInstruction = LASTINSTOUTFE;
-                        break;
                 }
                 break;
         }
@@ -1092,8 +1089,7 @@ BYTE ReadInputPort(int Address, int *tstates)
         {
                 BYTE keyb;
                 int i;
-                if ((emulator.machine!=MACHINELAMBDA) && zx81.vsyncsound && allowSoundOutput)
-
+                if ((emulator.machine!=MACHINELAMBDA) && zx81.vsyncsound && allowSoundOutput)     
                         Sound.Beeper(0,frametstates);
                 if (machine.NTSC) data|=64;
                 if (!GetEarState()) data |= 128;

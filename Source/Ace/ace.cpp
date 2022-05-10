@@ -241,18 +241,18 @@ void ace_writeport(int Address, int Data, int *tstates)
                         SelectAYReg=Data;
                 break;
 
-        case 0xfe:
-                ACEMICState = Data&8;
-                beeper = 1-beeper;
-                Sound.Beeper(beeper, frametstates);
-                break;
-
         case 0xff:
                 if (machine.aytype==AY_TYPE_BOLDFIELD)
                         Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         default:
+                if (!(Address&1))
+                {
+                        ACEMICState = Data&8;
+                        beeper = 1-beeper;
+                        Sound.Beeper(beeper, frametstates);
+                }
                 break;
         }
 }

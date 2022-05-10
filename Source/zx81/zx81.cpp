@@ -1232,7 +1232,7 @@ bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         nmiWaitPositionStart = 0;
                 }
 
-                if (instructionStraddlesNMI && emulator.ColouriseInstructionStraddlingNMI)
+                if (emulator.ColouriseInstructionStraddlingNMI && instructionStraddlesNMI)
                 {
                         bool instructionWaitState = ((position <= nmiWaitPositionStart) || (position >= nmiWaitPositionEnd));
                         pixelColour =  (emulator.ColouriseInstructionStraddlingNMIWaitStates && instructionWaitState) ? BrightYellow : Yellow;
@@ -1242,16 +1242,16 @@ bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         bool instructionWaitState = ((position <= nmiWaitPositionStart) || (position >= nmiWaitPositionEnd));
                         pixelColour =  (emulator.ColouriseNonMaskableInterruptResponseWaitStates && instructionWaitState) ? BrightMagenta : Magenta;
                 }
-                else if (emulator.ColouriseNonMaskableInterruptServiceRoutine && (nmiLevel > 0))
+                else if ((nmiLevel > 0) && emulator.ColouriseNonMaskableInterruptServiceRoutine)
                 {
                         bool showRecursion = emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion && (nmiLevel > 1);
                         pixelColour = showRecursion ? BrightGreen : Green;
                 }
-                else if (emulator.ColouriseMaskableInterruptResponse && (interruptResponse == MaskableInterrupt))
+                else if ((interruptResponse == MaskableInterrupt) && emulator.ColouriseMaskableInterruptResponse)
                 {
                         pixelColour = BrightCyan;
                 }
-                else if (emulator.ColouriseMaskableInterruptServiceRoutine && intISR)
+                else if (intISR && emulator.ColouriseMaskableInterruptServiceRoutine)
                 {
                         pixelColour = Cyan;
                 }
@@ -1259,9 +1259,9 @@ bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                 {
                         pixelColour = (vsyncPeriod && emulator.ColouriseVerticalSyncPulse) ? Red : BrightRed;
                 }
-                else if (vsyncPeriod)
+                else if (vsyncPeriod && emulator.ColouriseVerticalSyncPulse)
                 {
-                        pixelColour = emulator.ColouriseVerticalSyncPulse ? Red : Black;
+                        pixelColour = Red;
                 }
                 else if (hsyncPeriod)
                 {
@@ -1270,6 +1270,10 @@ bool zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                 else if (backporchPeriod)
                 {
                         pixelColour = emulator.ColouriseBackPorch ? BrightBlue : Black;
+                }
+                else if (vsyncPeriod && !emulator.ColouriseVerticalSyncPulse)
+                {
+                        pixelColour = Black;
                 }
                 else if (emulator.ColouriseZ80Halted && halted)
                 {
@@ -1393,25 +1397,30 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 }
 
                 bool nmiDetectedDuringInstruction = nmiGeneratorEnabled && (lineClockCounterAfterInstruction <= NMIDetectionPositionStart);
+                bool nmiOnInstruction = !nmiGeneratorEnabled && (LastInstruction == LASTINSTOUTFD);
+                bool checkForWaitInsertion = !z80.halted && (lineClockCounterAfterInstruction <= NMIDetectionPositionStart) &&
+                                             (nmiGeneratorEnabled || nmiOnInstruction);
 
-                if (!z80.halted && nmiGeneratorEnabled && (lineClockCounterAfterInstruction <= NMIDetectionPositionStart))
+                if (checkForWaitInsertion)
                 {
                         int c = 0;
                         int instructionPosition = lineClockCounter;
                         bool insertedWaitStates = false;
+                        bool nmiOffInstruction = (LastInstruction == LASTINSTOUTFE);
 
                         while ((mCycles[c] != 0) && !insertedWaitStates)
                         {
                                 int instructionPositionT2 = instructionPosition - 1;
+                                bool ioMCycle = c == z80_InputOutputMCycle();
 
-                                if (c == z80_InputOutputMCycle())
+                                if (ioMCycle)
                                 {
                                         // For IN and OUT instructions, the state of the WAIT line at T2 is irrelevant since a TW state
                                         // is automatically inserted. It will sample WAIT to allow further wait states to be inserted.
                                         instructionPositionT2--;
                                 }
 
-                                if (instructionPositionT2 <= ZX81HSyncPositionStart)
+                                if ((instructionPositionT2 <= ZX81HSyncPositionStart && !nmiOffInstruction) || (ioMCycle && nmiOnInstruction))
                                 {
                                         ts += (instructionPositionT2 - ZX81HSyncPositionAfter);
                                         nmiWaitPositionStart = instructionPositionT2 - 1;

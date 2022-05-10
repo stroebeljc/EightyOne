@@ -77,7 +77,6 @@
 #include "BasicLister\BasicListerOptions_.h"
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
-
 #include "sound\sound.h"
 
 //---------------------------------------------------------------------------
@@ -1165,6 +1164,34 @@ void TForm1::LoadSettings(TIniFile *ini)
         SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
 
+        HorizontalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
+        VerticalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
+        RomDisplayDriver->Checked = ini->ReadBool("MAIN", "ColouriseRomDisplayDriver", RomDisplayDriver->Checked);
+        BackPorch->Checked = ini->ReadBool("MAIN", "ColouriseBackPorch", BackPorch->Checked);
+        NonMaskableInterruptResponse->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponse", NonMaskableInterruptResponse->Checked);
+        NonMaskableInterruptResponseWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates", NonMaskableInterruptResponseWaitStates->Checked);
+        NonMaskableInterruptServiceRoutine->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine", NonMaskableInterruptServiceRoutine->Checked);
+        NonMaskableInterruptServiceRoutineRecursion->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutineRecursion", NonMaskableInterruptServiceRoutineRecursion->Checked);
+        MaskableInterruptResponse->Checked = ini->ReadBool("MAIN", "ColouriseMaskableInterruptResponse", MaskableInterruptResponse->Checked);
+        MaskableInterruptServiceRoutine->Checked = ini->ReadBool("MAIN", "ColouriseMaskableInterruptServiceRoutine", MaskableInterruptServiceRoutine->Checked);
+        InstructionStraddlingNMI->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
+        InstructionStraddlingNMIWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
+        Z80Halted->Checked = ini->ReadBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
+
+        emulator.ColouriseHorizontalSyncPulse = HorizontalSyncPulse->Checked;
+        emulator.ColouriseVerticalSyncPulse = VerticalSyncPulse->Checked;
+        emulator.ColouriseRomDisplayDriver = RomDisplayDriver->Checked;
+        emulator.ColouriseBackPorch = BackPorch->Checked;
+        emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
+        emulator.ColouriseNonMaskableInterruptResponseWaitStates = NonMaskableInterruptResponseWaitStates->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = NonMaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = NonMaskableInterruptServiceRoutineRecursion->Checked;
+        emulator.ColouriseMaskableInterruptResponse = MaskableInterruptResponse->Checked;
+        emulator.ColouriseMaskableInterruptServiceRoutine = MaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = InstructionStraddlingNMIWaitStates->Checked;
+        emulator.ColouriseZ80Halted = Z80Halted->Checked;
+
         if (None1->Checked) { emulator.bordersize=BORDERNONE; None1Click(NULL); }
         if (Small1->Checked) { emulator.bordersize=BORDERSMALL; Small1Click(NULL); }
         if (Normal1->Checked) { emulator.bordersize=BORDERNORMAL; Normal1Click(NULL); }
@@ -1246,6 +1273,20 @@ void TForm1::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+
+        ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
+        ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
+        ini->WriteBool("MAIN", "ColouriseRomDisplayDriver", RomDisplayDriver->Checked);
+        ini->WriteBool("MAIN", "ColouriseBackPorch", BackPorch->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponse", NonMaskableInterruptResponse->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates", NonMaskableInterruptResponseWaitStates->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine", NonMaskableInterruptServiceRoutine->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutineRecursion", NonMaskableInterruptServiceRoutineRecursion->Checked);
+        ini->WriteBool("MAIN", "ColouriseMaskableInterruptResponse", MaskableInterruptResponse->Checked);
+        ini->WriteBool("MAIN", "ColouriseMaskableInterruptServiceRoutine", MaskableInterruptServiceRoutine->Checked);
+        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
+        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
+        ini->WriteBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);

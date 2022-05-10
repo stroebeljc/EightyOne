@@ -888,6 +888,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                 || ( (emulator.machine!=MACHINESPECTRUM && emulator.machine!=MACHINEACE && emulator.machine!=MACHINELAMBDA) && (machine.colour != COLOURCHROMA) && Form1->Sound1->Checked) )
                         Form1->Sound1Click(NULL);
 
+        Form1->EnableColourisationOptions();
+
         spectrum.drivebusy = -1;
 
         InitPatches(NewMachine);
@@ -898,7 +900,6 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         if (Dbg->Visible) Dbg->UpdateVals();
         Sound.ReInitialise(NULL, machine.fps,0,0,0);
-
 }
 
 void THW::ResetDisplaySize()
@@ -1369,6 +1370,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Text = emulator.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
+        Form1->EnableColourisationOptions();
 
         IDEBoxChange(NULL);
 }
@@ -1385,6 +1387,8 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
         NTSC->Checked=false;
+        Form1->EnableColourisationOptions();
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1401,6 +1405,7 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
         NewMachine=MACHINESPECTRUM;
         NewMachineName=Spec48Btn->Caption;
         NewSpec=SPECCY48;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMSP48;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -1424,6 +1429,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         NewSpec=SPECCY128;
         RomBox->Text = emulator.ROMSP128;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        Form1->EnableColourisationOptions();
 
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(1);
@@ -1443,6 +1449,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         NewMachine=MACHINESPECTRUM;
         NewMachineName=SpecPlusBtn->Caption;
         NewSpec=SPECCYPLUS;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMSP48;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -1464,6 +1471,7 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         NewMachine=MACHINESPECTRUM;
         NewMachineName=Spec16Btn->Caption;
         NewSpec=SPECCY16;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMSP48;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -1484,6 +1492,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS2;
+        Form1->EnableColourisationOptions();
         NewMachineName=SpecP2Btn->Caption;
         RomBox->Text = emulator.ROMSPP2;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -1507,6 +1516,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS2A;
+        Form1->EnableColourisationOptions();
         NewMachineName=SpecP2aBtn->Caption;
         RomBox->Text = emulator.ROMSPP3;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -1530,6 +1540,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS3;
+        Form1->EnableColourisationOptions();
         NewMachineName=SpecP3Btn->Caption;
         RomBox->Text = emulator.ROMSPP3;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -1554,6 +1565,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         TS1000Btn->Down=true;
         NewMachine=MACHINETS1000;
         NewMachineName=TS1000Btn->Caption;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<1) RamPackBox->ItemIndex=1;
@@ -1570,6 +1582,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         TS1500Btn->Down=true;
         NewMachine=MACHINETS1500;
         NewMachineName=TS1500Btn->Caption;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMTS1500;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<4) RamPackBox->ItemIndex=4;
@@ -1606,6 +1619,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1631,6 +1645,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1654,6 +1669,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1694,6 +1710,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         SetZXpandState(false,false);
+        Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2079,6 +2096,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         NewMachine=MACHINESPECTRUM;
         NewMachineName=TC2048Btn->Caption;
         NewSpec=SPECCYTC2048;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMTC2048;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2109,6 +2127,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         RomCartridgeLabel->Enabled = false;
 
         NewMachine=MACHINESPECTRUM;
+        Form1->EnableColourisationOptions();
         NewMachineName=TS2068Btn->Caption;
         NewSpec=SPECCYTS2068;
         RomBox->Text = emulator.ROMTS2068;
@@ -2145,6 +2164,7 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         ColourBox->Items->Add("Lambda");
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
+        Form1->EnableColourisationOptions();
         if (RamPackBox->Visible)
         {
                 Height -= RamPackHeight;
@@ -2303,6 +2323,7 @@ void __fastcall THW::QLBtnClick(TObject *Sender)
 
         NewMachine=MACHINEQL;
         NewMachineName=QLBtn->Caption;
+        Form1->EnableColourisationOptions();
         RomBox->Text = emulator.ROMQL;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
 }

@@ -2270,37 +2270,101 @@ void __fastcall TForm1::Z80HaltedClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TForm1::EnableColourisationOptions()
+{
+        BOOL enableOption = (emulator.machine != MACHINEZX97LE && emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINEACE);
+
+        SelectAllColourisations->Enabled = enableOption;
+        DeselectAllColourisations->Enabled = enableOption;
+
+        if (!enableOption)
+        {
+                HorizontalSyncPulse->Checked = false;
+                VerticalSyncPulse->Checked = false;
+                RomDisplayDriver->Checked = false;
+                BackPorch->Checked = false;
+                Z80Halted->Checked = false;
+                MaskableInterruptResponse->Checked = false;
+                MaskableInterruptServiceRoutine->Checked = false;
+
+                emulator.ColouriseHorizontalSyncPulse = false;
+                emulator.ColouriseVerticalSyncPulse = false;
+                emulator.ColouriseRomDisplayDriver = false;
+                emulator.ColouriseBackPorch = false;
+                emulator.ColouriseZ80Halted = false;
+                emulator.ColouriseMaskableInterruptResponse = false;
+                emulator.ColouriseMaskableInterruptServiceRoutine = false;
+        }
+
+        HorizontalSyncPulse->Enabled = enableOption;
+        VerticalSyncPulse->Enabled = enableOption;
+        RomDisplayDriver->Enabled = enableOption;
+        BackPorch->Enabled = enableOption;
+        Z80Halted->Enabled = enableOption;
+        MaskableInterruptResponse->Enabled = enableOption;
+        MaskableInterruptServiceRoutine->Enabled = enableOption;
+
+        enableOption = enableOption && (emulator.machine != MACHINEZX80);
+        NonMaskableInterruptResponse->Enabled = enableOption;
+        NonMaskableInterruptResponseWaitStates->Enabled = enableOption;
+        NonMaskableInterruptServiceRoutine->Enabled = enableOption;
+        NonMaskableInterruptServiceRoutineRecursion->Enabled = enableOption;
+        InstructionStraddlingNMI->Enabled = enableOption;
+        InstructionStraddlingNMIWaitStates->Enabled = enableOption;
+
+        if (!enableOption)
+        {
+                NonMaskableInterruptResponse->Checked = false;
+                NonMaskableInterruptResponseWaitStates->Checked = false;
+                NonMaskableInterruptServiceRoutine->Checked = false;
+                NonMaskableInterruptServiceRoutineRecursion->Checked = false;
+                InstructionStraddlingNMI->Checked = false;
+                InstructionStraddlingNMIWaitStates->Checked = false;
+
+                emulator.ColouriseNonMaskableInterruptResponse = false;
+                emulator.ColouriseNonMaskableInterruptResponseWaitStates = false;
+                emulator.ColouriseNonMaskableInterruptServiceRoutine = false;
+                emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
+                emulator.ColouriseInstructionStraddlingNMI = false;
+                emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
+        }
+}
+
 void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
 {
-        HorizontalSyncPulse->Checked = true;
-        VerticalSyncPulse->Checked = true;
-        RomDisplayDriver->Checked = true;
-        BackPorch->Checked = true;
-        NonMaskableInterruptResponse->Checked = true;
-        NonMaskableInterruptResponseWaitStates->Checked = true;
-        NonMaskableInterruptResponseWaitStates->Enabled = true;
-        NonMaskableInterruptServiceRoutine->Checked = true;
-        NonMaskableInterruptServiceRoutineRecursion->Checked = true;
-        MaskableInterruptResponse->Checked = true;
-        MaskableInterruptServiceRoutine->Checked = true;
-        InstructionStraddlingNMI->Checked = true;
-        InstructionStraddlingNMIWaitStates->Checked = true;
-        InstructionStraddlingNMIWaitStates->Enabled = true;
-        Z80Halted->Checked = true;
+        BOOL selectOption = (emulator.machine != MACHINEZX97LE && emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINEACE);
 
-        emulator.ColouriseHorizontalSyncPulse = true;
-        emulator.ColouriseVerticalSyncPulse = true;
-        emulator.ColouriseRomDisplayDriver = true;
-        emulator.ColouriseBackPorch = true;
-        emulator.ColouriseNonMaskableInterruptResponse = true;
-        emulator.ColouriseNonMaskableInterruptResponseWaitStates = true;
-        emulator.ColouriseNonMaskableInterruptServiceRoutine = true;
-        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = true;
-        emulator.ColouriseMaskableInterruptResponse = true;
-        emulator.ColouriseMaskableInterruptServiceRoutine = true;
-        emulator.ColouriseInstructionStraddlingNMI = true;
-        emulator.ColouriseInstructionStraddlingNMIWaitStates = true;
-        emulator.ColouriseZ80Halted = true;
+        HorizontalSyncPulse->Checked = selectOption;
+        VerticalSyncPulse->Checked = selectOption;
+        RomDisplayDriver->Checked = selectOption;
+        BackPorch->Checked = selectOption;
+        MaskableInterruptResponse->Checked = selectOption;
+        MaskableInterruptServiceRoutine->Checked = selectOption;
+        Z80Halted->Checked = selectOption;
+
+        emulator.ColouriseHorizontalSyncPulse = selectOption;
+        emulator.ColouriseVerticalSyncPulse = selectOption;
+        emulator.ColouriseRomDisplayDriver = selectOption;
+        emulator.ColouriseBackPorch = selectOption;
+        emulator.ColouriseMaskableInterruptResponse = selectOption;
+        emulator.ColouriseMaskableInterruptServiceRoutine = selectOption;
+        emulator.ColouriseZ80Halted = selectOption;
+
+        selectOption = selectOption && (emulator.machine != MACHINEZX80);
+
+        NonMaskableInterruptResponse->Checked = selectOption;
+        NonMaskableInterruptResponseWaitStates->Checked = selectOption;
+        NonMaskableInterruptServiceRoutine->Checked = selectOption;
+        NonMaskableInterruptServiceRoutineRecursion->Checked = selectOption;
+        InstructionStraddlingNMI->Checked = selectOption;
+        InstructionStraddlingNMIWaitStates->Checked = selectOption;
+
+        emulator.ColouriseNonMaskableInterruptResponse = selectOption;
+        emulator.ColouriseNonMaskableInterruptResponseWaitStates = selectOption;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = selectOption;
+        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = selectOption;
+        emulator.ColouriseInstructionStraddlingNMI = selectOption;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = selectOption;
 }
 //---------------------------------------------------------------------------
 
@@ -2312,14 +2376,12 @@ void __fastcall TForm1::DeselectAllColourisationsClick(TObject *Sender)
         BackPorch->Checked = false;
         NonMaskableInterruptResponse->Checked = false;
         NonMaskableInterruptResponseWaitStates->Checked = false;
-        NonMaskableInterruptResponseWaitStates->Enabled = false;
         NonMaskableInterruptServiceRoutine->Checked = false;
         NonMaskableInterruptServiceRoutineRecursion->Checked = false;
         MaskableInterruptResponse->Checked = false;
         MaskableInterruptServiceRoutine->Checked = false;
         InstructionStraddlingNMI->Checked = false;
         InstructionStraddlingNMIWaitStates->Checked = false;
-        InstructionStraddlingNMIWaitStates->Enabled = false;
         Z80Halted->Checked = false;
 
         emulator.ColouriseHorizontalSyncPulse = false;

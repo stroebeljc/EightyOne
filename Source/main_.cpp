@@ -2211,12 +2211,6 @@ void __fastcall TForm1::NonMaskableInterruptResponseClick(TObject *Sender)
 {
         NonMaskableInterruptResponse->Checked = !NonMaskableInterruptResponse->Checked;
         emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
-        NonMaskableInterruptResponseWaitStates->Enabled = NonMaskableInterruptResponse->Checked;
-        if (!NonMaskableInterruptResponse->Checked)
-        {
-                NonMaskableInterruptResponse->Checked = false;
-                emulator.ColouriseNonMaskableInterruptResponseWaitStates = false;
-        }
 }
 //---------------------------------------------------------------------------
 
@@ -2247,12 +2241,6 @@ void __fastcall TForm1::InstructionStraddlingNMIClick(TObject *Sender)
 {
         InstructionStraddlingNMI->Checked = !InstructionStraddlingNMI->Checked;
         emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
-        InstructionStraddlingNMIWaitStates->Enabled = InstructionStraddlingNMI->Checked;
-        if (!InstructionStraddlingNMI->Checked)
-        {
-                InstructionStraddlingNMIWaitStates->Checked = false;
-                emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
-        }
 }
 //---------------------------------------------------------------------------
 

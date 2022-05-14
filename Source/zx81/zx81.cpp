@@ -1616,24 +1616,18 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (CurScanLine->sync_len > ZX81HSyncDuration)
                         {
-                                // If the VSync pulse has ended prior to the HSync period then blank the rest of the line
-                                // and construct a carry over of equal length such that the first line of the next frame
-                                // will begin from the same column as the VSync ended.
+                                // If the VSync pulse has ended prior to the HSync period then move it to the start of the next frame
                                 if (frameSynchronised && (portActivePositionStart > ZX81HSyncPositionStart))
                                 {
-                                        BYTE* portActivePosition = CurScanLine->scanline + CurScanLine->scanline_len - PortActiveDurationPixels;
-                                        memset(portActivePosition, BLANKCOLOUR, scanlinePixelLength);
-                                        CurScanLine->scanline_len += scanlinePixelLength - PortActiveDurationPixels;
+                                        BYTE* startScanline = CurScanLine->scanline + CurScanLine->scanline_len;
+                                        BYTE* afterScanline = CurScanLine->scanline + scanlineActivePixelLength;
+                                        memcpy(afterScanline, startScanline, CurScanLine->scanline_len);
 
-                                        int paperColour = paper << 4;
-                                        int position = lineClockCounter + PortActiveDuration;
+                                        memset(CurScanLine->scanline, BLANKCOLOUR, scanlinePixelLength);
 
-                                        for (int i = 0; i < PortActiveDurationPixels; i++)
-                                        {
-                                                zx81_DrawPixel(CurScanLine, position - (i/2), paperColour);
-                                        }
+                                        lineClockCounter = ts - (CurScanLine->scanline_len / 2);
 
-                                        lineClockCounter = ts - (CurScanLine->scanline_len - scanlinePixelLength) / 2;
+                                        CurScanLine->scanline_len += scanlineActivePixelLength;
                                 }
                         }
                         // If a software generated pulse is close to the hardware generated HSync pulse then treat it as the HSync pulse,
@@ -1731,7 +1725,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 }
 
                                 CurScanLine->scanline_len -= overhangPixels;
-                                scanlineActivePixelLength -= overhangPixels;
+                                //scanlineActivePixelLength -= overhangPixels;      //#### is this valid?     set this to the same as scanline_len? or perhaps valid for hsync?
+                                scanlineActivePixelLength = CurScanLine->scanline_len;       //#### is this better to exit na exit from the loop?
                         }
                         // If fewer pixels have been drawn than expected for the scanline, which will occur if the line clock counter was moved backwards,
                         // then move any carry-over pixels to the buffer for drawing at the start of the new scanline and replace with blank pixels in case visible.
@@ -1739,15 +1734,21 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         {
                                 if (frameSynchronised)
                                 {
-                                        int carryOverPixels = lineClockCarryCounter * 2;
+/*                                        int carryOverPixels = lineClockCarryCounter * 2;
                                         unsigned char* overflowPosition = CurScanLine->scanline + CurScanLine->scanline_len - carryOverPixels;
                                         memcpy(carryOverScanlineBuffer, overflowPosition, carryOverPixels);
+  */
+//                                        lineClockCounter = machine.tperscanline - CurScanLine->scanline_len / 2; //-lineClockCarryCounter; //(overhangPixels / 2);
 
+                                        /*
+                                        //#### should this only occur if close to the HSync?
                                         int overflowPixels = -overhangPixels + carryOverPixels;
                                         memset(overflowPosition, BLANKCOLOUR, overflowPixels);
 
                                         CurScanLine->scanline_len -= carryOverPixels;
-                                        scanlineActivePixelLength -= carryOverPixels;
+                                        //#### scanlineActivePixelLength -= carryOverPixels;
+                                        scanlineActivePixelLength = CurScanLine->scanline_len;       //#### is this better to exit na exit from the loop?
+                                        */
                                 }
                         }
 

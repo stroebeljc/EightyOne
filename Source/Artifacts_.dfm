@@ -577,7 +577,9 @@ object Artifacts: TArtifacts
     Width = 97
     Height = 17
     Caption = 'Vibrant Colour'
+    Checked = True
     Enabled = False
+    State = cbChecked
     TabOrder = 10
     OnClick = TrackBarChange
   end

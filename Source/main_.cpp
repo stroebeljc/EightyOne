@@ -525,13 +525,13 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
         AnsiString Extension, Filename;
         int stopped;
 
-        stopped=zx81_stop;
-        zx81_stop=true;
+        stopped=emulation_stop;
+        emulation_stop=true;
 
         PCAllKeysUp();
         if (!OpenTape1->Execute())
         {
-                zx81_stop=stopped;
+                emulation_stop=stopped;
                 return;
         }
 
@@ -578,7 +578,7 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
                         loadFileSymbolsProxy(Filename.c_str());
         }
 
-        zx81_stop=stopped;
+        emulation_stop=stopped;
 }
 //---------------------------------------------------------------------------
 
@@ -586,8 +586,8 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
 {
         AnsiString Path, Ext;
         int stopped;
-        stopped=zx81_stop;
-        zx81_stop=1;
+        stopped=emulation_stop;
+        emulation_stop=1;
 
         if (emulator.machine==MACHINEACE)
         {
@@ -607,7 +607,7 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
 
         if (!SaveSnapDialog->Execute())
         {
-                zx81_stop=stopped;
+                emulation_stop=stopped;
                 return;
         }
         Path=SaveSnapDialog->FileName;
@@ -617,7 +617,7 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
         if (Ext == ".Z80") spec_save_z80(Path.c_str());
         if (Ext == ".SNA") spec_save_sna(Path.c_str());
 
-        zx81_stop=stopped;
+        emulation_stop=stopped;
 }
 //---------------------------------------------------------------------------
 
@@ -625,7 +625,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
 {
         int stopped;
         AnsiString Path, Ext;
-        stopped=zx81_stop;
+        stopped=emulation_stop;
 
         if (emulator.machine==MACHINEACE)
         {
@@ -655,7 +655,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
                 Ext = FileNameGetExt(Path);
         }
 
-        zx81_stop=1;
+        emulation_stop=1;
         Sound.AYReset();
 
         if (BasicLister->ListerAvailable())
@@ -666,7 +666,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         if ((Ext == ".Z81") || (Ext == ".ACE")) load_snap(Path.c_str());
         if (Ext == ".Z80") spec_load_z80(Path.c_str());
         if (Ext == ".SNA") spec_load_sna(Path.c_str());
-        zx81_stop=stopped;
+        emulation_stop=stopped;
 }
 //---------------------------------------------------------------------------
 
@@ -690,25 +690,25 @@ void __fastcall TForm1::NewTape1Click(TObject *Sender)
 
 void __fastcall TForm1::ResetButtonClick(TObject *Sender)
 {
-        zx81_stop=1;
+        emulation_stop=1;
         machine.initialise();
-        zx81_stop=0;
+        emulation_stop=0;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::ResetZX811Click(TObject *Sender)
 {
-        int initialStopState = zx81_stop;
+        int initialStopState = emulation_stop;
 
         rzx_close();
         PCAllKeysUp();
-        zx81_stop=1;
+        emulation_stop=1;
         z80_reset();
         Sound.AYReset();
         InitialiseChroma();
         DisableSpectra();
         if (machine.reset) machine.reset();
-        zx81_stop=initialStopState;
+        emulation_stop=initialStopState;
         DebugUpdate();
         if (BasicLister->ListerAvailable())
         {
@@ -729,7 +729,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         if (FullScreen) FormKeyPress(NULL, escKey);
         if (machine.exit) machine.exit();
 
-        zx81_stop=true;
+        emulation_stop=true;
         RunFrameEnable=false;
 
         PCAllKeysUp();
@@ -878,7 +878,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 
         AnsiString text="";
 
-        if (zx81_stop)
+        if (emulation_stop)
         {
                 text +="Paused";
         }
@@ -1104,7 +1104,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
 void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 {
-        zx81_stop = !zx81_stop;
+        emulation_stop = !emulation_stop;
         Dbg->UpdateVals();
 }
 //---------------------------------------------------------------------------
@@ -1393,14 +1393,14 @@ void __fastcall TForm1::SaveMemoryBlock1Click(TObject *Sender)
 
 void __fastcall TForm1::HardReset1Click(TObject *Sender)
 {
-        int initialStopState = zx81_stop;
+        int initialStopState = emulation_stop;
         rzx_close();
-        zx81_stop=1;
+        emulation_stop=1;
         z80_reset();
         AccurateInit(false);
         machine.initialise();
         Sound.AYReset(); //sound_ay_reset();
-        zx81_stop=initialStopState;
+        emulation_stop=initialStopState;
         DebugUpdate();
         LiveMemoryWindow->Reset();
         if (BasicLister->ListerAvailable())
@@ -2130,7 +2130,7 @@ void __fastcall TForm1::RunFrame()
         // if (!nosound) ;
         Sound.Frame(); //sound_frame();
 
-        if (zx81_stop)
+        if (emulation_stop)
         {
                 AccurateUpdateDisplay(false);
                 return;
@@ -2160,7 +2160,7 @@ void __fastcall TForm1::RunFrame()
                 j += (emulator.speedup * machine.tperframe) / machine.tperscanline;
         }
 
-        while (j>0 && !zx81_stop)
+        while (j>0 && !emulation_stop)
         {
                 j-= machine.do_scanline(BuildLine);
                 AccurateDraw(BuildLine);
@@ -2176,7 +2176,7 @@ void __fastcall TForm1::RunFrame()
                 //AccurateDraw(DisplayLine);
         }
 
-        if (!zx81_stop) borrow=j;
+        if (!emulation_stop) borrow=j;
 
         if (romcartridge.type == ROMCARTRIDGEZXC1)
         {
@@ -2287,12 +2287,12 @@ void TForm1::EnableColourisationOptions()
         HorizontalSyncPulse->Enabled = enableOption;
         VerticalSyncPulse->Enabled = enableOption;
         RomDisplayDriver->Enabled = enableOption;
-        BackPorch->Enabled = enableOption;
         Z80Halted->Enabled = enableOption;
         MaskableInterruptResponse->Enabled = enableOption;
         MaskableInterruptServiceRoutine->Enabled = enableOption;
 
         enableOption = enableOption && (emulator.machine != MACHINEZX80);
+        BackPorch->Enabled = enableOption;
         NonMaskableInterruptResponse->Enabled = enableOption;
         NonMaskableInterruptResponseWaitStates->Enabled = enableOption;
         NonMaskableInterruptServiceRoutine->Enabled = enableOption;
@@ -2325,7 +2325,6 @@ void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
         HorizontalSyncPulse->Checked = selectOption;
         VerticalSyncPulse->Checked = selectOption;
         RomDisplayDriver->Checked = selectOption;
-        BackPorch->Checked = selectOption;
         MaskableInterruptResponse->Checked = selectOption;
         MaskableInterruptServiceRoutine->Checked = selectOption;
         Z80Halted->Checked = selectOption;
@@ -2333,13 +2332,13 @@ void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
         emulator.ColouriseHorizontalSyncPulse = selectOption;
         emulator.ColouriseVerticalSyncPulse = selectOption;
         emulator.ColouriseRomDisplayDriver = selectOption;
-        emulator.ColouriseBackPorch = selectOption;
         emulator.ColouriseMaskableInterruptResponse = selectOption;
         emulator.ColouriseMaskableInterruptServiceRoutine = selectOption;
         emulator.ColouriseZ80Halted = selectOption;
 
         selectOption = selectOption && (emulator.machine != MACHINEZX80);
 
+        BackPorch->Checked = selectOption;
         NonMaskableInterruptResponse->Checked = selectOption;
         NonMaskableInterruptResponseWaitStates->Checked = selectOption;
         NonMaskableInterruptServiceRoutine->Checked = selectOption;
@@ -2347,6 +2346,7 @@ void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
         InstructionStraddlingNMI->Checked = selectOption;
         InstructionStraddlingNMIWaitStates->Checked = selectOption;
 
+        emulator.ColouriseBackPorch = selectOption;
         emulator.ColouriseNonMaskableInterruptResponse = selectOption;
         emulator.ColouriseNonMaskableInterruptResponseWaitStates = selectOption;
         emulator.ColouriseNonMaskableInterruptServiceRoutine = selectOption;

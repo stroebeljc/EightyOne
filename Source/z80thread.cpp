@@ -53,7 +53,7 @@ void __fastcall Tz80::Execute()
         //---- Place thread code here ----
         do
         {
-                if (!zx81_stop)
+                if (!emulation_stop)
                 {
                         int ts=65000;
 

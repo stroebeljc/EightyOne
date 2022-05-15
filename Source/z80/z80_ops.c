@@ -48,8 +48,9 @@ extern int StackChange;
 
 #define maxMCycles 11
 static int mCycles[maxMCycles];
-static int mCycleIndex = -1;
-static int inputOutputMCycle = -1;
+static int numberOfMCycles;
+static int mCycleIndex ;
+static int inputOutputMCycle;
 
 void InsertMCycle(int cycleLength)
 {
@@ -79,6 +80,11 @@ int z80_InputOutputMCycle()
         return inputOutputMCycle;
 }
 
+int z80_NumberOfMCycles()
+{
+        return numberOfMCycles;
+}
+
 void SetSP(int i)
 {
         //spBase = i;
@@ -89,6 +95,7 @@ int z80_do_opcode()
 {
     BYTE opcode;
 
+    numberOfMCycles = 1;
     mCycleIndex = -1;
     inputOutputMCycle = -1;
 

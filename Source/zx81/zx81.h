@@ -56,7 +56,7 @@ extern int tstates, event_next_event;
 extern int framepos, frametstates;
 extern BOOL nmiGeneratorEnabled, syncOutputWhite;
 extern int tStatesCount;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();
 

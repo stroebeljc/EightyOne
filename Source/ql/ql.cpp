@@ -47,7 +47,7 @@ extern void HWReset(void);
 
 extern int RasterY;
 extern long noise;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE memory[];
 
 int QLTopBorder, QLLeftBorder, QLFlash, QLFlashCount, QLMode=0;
@@ -179,7 +179,7 @@ int ql_do_scanline(SCANLINE *CurScanLine)
                         CurScanLine->scanline[CurScanLine->scanline_len++]=colour;
                 }
                 DebugUpdate68k();
-        } while(loop>0 && !zx81_stop && sts<MaxScanLen);
+        } while(loop>0 && !emulation_stop && sts<MaxScanLen);
 
 
         if (loop<=0)

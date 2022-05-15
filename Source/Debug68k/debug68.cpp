@@ -15,11 +15,11 @@ TDebug68k *Debug68k;
 
 extern "C" int m68k_disassemble(char* str_buff, int pc);
 
-extern int zx81_stop;
+extern int emulation_stop;
 
 void DebugUpdate68k(void)
 {
-        if (zx81_stop) Debug68k->UpdateVals();
+        if (emulation_stop) Debug68k->UpdateVals();
 }
 
 //---------------------------------------------------------------------------
@@ -79,9 +79,9 @@ void TDebug68k::UpdateVals(void)
 
 void __fastcall TDebug68k::StopClick(TObject *Sender)
 {
-        zx81_stop = !zx81_stop;
+        emulation_stop = !emulation_stop;
         emulator.single_step=0;
-        if (zx81_stop) Stop->Caption="Run";
+        if (emulation_stop) Stop->Caption="Run";
         else Stop->Caption="Stop";
         UpdateVals();
 }
@@ -89,7 +89,7 @@ void __fastcall TDebug68k::StopClick(TObject *Sender)
 
 void __fastcall TDebug68k::SingleStepClick(TObject *Sender)
 {
-        zx81_stop=0;
+        emulation_stop=0;
         emulator.single_step=1;
 }
 //---------------------------------------------------------------------------

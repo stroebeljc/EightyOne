@@ -36,7 +36,7 @@ extern int ql_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
 extern int framepos, frametstates;
 extern BOOL nmiGeneratorEnabled, syncOutputWhite;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE ZXKeyboard[];
 extern int ql_do_accurate();
 

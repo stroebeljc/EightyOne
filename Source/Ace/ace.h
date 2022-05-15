@@ -54,7 +54,7 @@ extern int ace_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
 extern int framepos, nmiGeneratorEnabled, syncOutputWhite, frametstates;
 extern int tStatesCount;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();
 

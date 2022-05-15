@@ -186,7 +186,7 @@ void DebugUpdate(void)
 
         if (Dbg->DoNext)
         {
-                zx81_stop=1;
+                emulation_stop=1;
                 Dbg->DoNext=false;
                 Dbg->UpdateVals();
                 emulator.single_step = Dbg->Continuous->Checked ? 1 : 0;
@@ -1094,7 +1094,7 @@ void TDbg::UpdateVals(void)
                 IOPort3Data->Caption = "-";
         }
 
-        if (zx81_stop)
+        if (emulation_stop)
         {
                 RunStop->Caption = "Run";
                 SingleStep->Enabled = true;
@@ -1294,8 +1294,8 @@ __fastcall TDbg::TDbg(TComponent* Owner)
 
 void __fastcall TDbg::RunStopClick(TObject *Sender)
 {
-        zx81_stop = !zx81_stop;
-        if(!zx81_stop)
+        emulation_stop = !emulation_stop;
+        if(!emulation_stop)
         {
                 MemoryWindow->ClearChanges();
         }
@@ -1309,7 +1309,7 @@ void __fastcall TDbg::FormClose(TObject *Sender, TCloseAction &Action)
 {
         emulator.single_step=0;
         Form1->DebugWin->Checked=false;
-        zx81_stop=0;
+        emulation_stop=0;
         StepOutRequested = 0;
 }
 //---------------------------------------------------------------------------
@@ -1346,7 +1346,7 @@ void __fastcall TDbg::ContinuousClick(TObject *Sender)
 void __fastcall TDbg::SingleStepClick(TObject *Sender)
 {
         MemoryWindow->ClearChanges();
-        zx81_stop=0;
+        emulation_stop=0;
         emulator.single_step=1;
         StackChange = 0;
         DoNext=true;
@@ -1966,7 +1966,7 @@ void __fastcall TDbg::FormKeyDown(TObject *Sender, WORD &Key,
         {
                 RunStopClick(Sender);
         }
-        else if (zx81_stop && Shift.Contains(ssShift))
+        else if (emulation_stop && Shift.Contains(ssShift))
         {
                 switch(Key)
                 {

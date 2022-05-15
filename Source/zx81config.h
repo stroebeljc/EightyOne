@@ -271,7 +271,8 @@ typedef struct
         int speedup;
         int romcrc;
         int UseRShift;
-
+        int stop;
+        
         CFGBYTE TZXin;
         CFGBYTE TZXout;
         CFGBYTE audioout;

@@ -59,7 +59,7 @@ extern "C" int framepos, frametstates;
 extern "C" BOOL nmiGeneratorEnabled, syncOutputWhite;
 extern "C" BYTE get_i_reg(void);
 extern "C" BYTE ZXKeyboard[];
-extern "C" int zx81_stop;
+extern "C" int emulation_stop;
 #else
 
 extern BYTE memory[];
@@ -78,7 +78,7 @@ extern int zx81_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
 extern int framepos, frametstates;
 extern BOOL nmiGeneratorEnabled, syncOutputWhite;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();
 

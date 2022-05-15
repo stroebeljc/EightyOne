@@ -86,7 +86,7 @@ extern void LoadDock(char *filename);
 
 extern long noise;
 extern int SelectAYReg;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE ZXKeyboard[8];
 
 static BYTE ReadPort(int Address, int *tstates);
@@ -1761,7 +1761,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 DebugUpdate();
 
 
-        } while((loop>0 || SpeedUpCount>0) && !zx81_stop && sts<MaxScanLen);
+        } while((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
 
 
         if (loop<=0)

@@ -55,7 +55,7 @@ extern void DebugUpdate(void);
 extern int RasterY;
 extern long noise;
 extern int SelectAYReg;
-extern int zx81_stop;
+extern int emulation_stop;
 extern BYTE memory[];
 extern BYTE ZXKeyboard[8];
 
@@ -419,7 +419,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                         shift_register <<= 1;
                 }
                 DebugUpdate();
-        } while(loop>0 && !zx81_stop && sts<MaxScanLen);
+        } while(loop>0 && !emulation_stop && sts<MaxScanLen);
 
 
         if (loop<=0)

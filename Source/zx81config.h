@@ -334,6 +334,8 @@ typedef struct
         char configpath[256];
         char mydocs[256];
         char machinename[256];
+
+        int scanlinesPerFrame;
 } EMULATOR;
 
 typedef struct

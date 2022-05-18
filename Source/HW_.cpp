@@ -187,7 +187,8 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         zx81.zxpand = 0;
 
-        if (NewMachine != emulator.machine && LiveMemoryWindow && LiveMemoryWindow->Visible)
+        bool machineChanged = (NewMachine != emulator.machine);
+        if (machineChanged && LiveMemoryWindow && LiveMemoryWindow->Visible)
                 LiveMemoryWindow->Close();
 
         strcpy(emulator.machinename, Name.c_str());
@@ -884,9 +885,14 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->RZX1->Enabled=false;
         if (emulator.machine==MACHINESPECTRUM) Form1->RZX1->Enabled=true;
 
-        if ( ((emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE || emulator.machine==MACHINELAMBDA) && !Form1->Sound1->Checked)
+        if (machineChanged)
+        {
+                if ( ((emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE || emulator.machine==MACHINELAMBDA) && !Form1->Sound1->Checked)
                 || ( (emulator.machine!=MACHINESPECTRUM && emulator.machine!=MACHINEACE && emulator.machine!=MACHINELAMBDA) && (machine.colour != COLOURCHROMA) && Form1->Sound1->Checked) )
+                {
                         Form1->Sound1Click(NULL);
+                }
+        }
 
         Form1->EnableColourisationOptions();
 
@@ -2164,7 +2170,6 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         ColourBox->Items->Add("Lambda");
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
-        Form1->EnableColourisationOptions();
         if (RamPackBox->Visible)
         {
                 Height -= RamPackHeight;
@@ -2172,6 +2177,7 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
                 RamPackBox->Visible=false;
         }
         IDEBoxChange(NULL);
+        Form1->EnableColourisationOptions();
 }
 
 //---------------------------------------------------------------------------

@@ -168,7 +168,8 @@ int z80_nmi()
 
         writebyte(--SP, PCH);
         writebyte(--SP, PCL);
-        
+
+        numberOfM1Cycles++;
         R++;
         PC = 0x0066;
 

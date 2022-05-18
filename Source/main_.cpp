@@ -898,6 +898,15 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 }
         }
 
+        AnsiString scanlinesInfo = "";
+        if (emulator.scanlinesPerFrame > 0)
+        {
+                scanlinesInfo = "     ";
+                scanlinesInfo += emulator.scanlinesPerFrame;
+                scanlinesInfo += " Scanlines";
+        }
+        StatusBar1->Panels->Items[3]->Text = scanlinesInfo;
+        
         StatusBar1->Panels->Items[1]->Text = text;
         fps=0;
 
@@ -1512,16 +1521,18 @@ void TForm1::DoAutoLoad(void)
 #define AUTOINC(i)  (340+i*10)
 
         if (emulator.machine==MACHINEACE) return;
-
         bool zx80 = (emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom");
 
         switch(AutoLoadCount)
         {
-        case 2: ResetZX811Click(NULL); break;
+        case 2:
+                 ResetZX811Click(NULL);
+                 break;
         case AUTOINC(0): if (emulator.machine==MACHINESPECTRUM && spectrum.model>=SPECCY128)
                                 PCKeyDown(VK_RETURN);
                          else if (emulator.machine==MACHINELAMBDA) PCKeyDown('L');
-                         else if (zx80) PCKeyDown('W');
+                         else if (zx80)
+                                PCKeyDown('W');
                          else PCKeyDown('J');
                          break;
 
@@ -1534,7 +1545,8 @@ void TForm1::DoAutoLoad(void)
 
         case AUTOINC(2):  if (emulator.machine==MACHINESPECTRUM) PCKeyDown(VK_CONTROL);
                           else if (emulator.machine==MACHINELAMBDA) PCKeyDown('O');
-                          else if (zx80) PCKeyDown(VK_RETURN);
+                          else if (zx80)
+                                PCKeyDown(VK_RETURN);
                           else PCKeyDown(VK_SHIFT); break;
 
         case AUTOINC(3): if (emulator.machine==MACHINELAMBDA) PCKeyUp('O');
@@ -2261,6 +2273,7 @@ void __fastcall TForm1::Z80HaltedClick(TObject *Sender)
 void TForm1::EnableColourisationOptions()
 {
         BOOL enableOption = (emulator.machine != MACHINEZX97LE && emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINEACE);
+        BOOL annotatableROM = IsAnnotatableROM();    //@@@@
 
         SelectAllColourisations->Enabled = enableOption;
         DeselectAllColourisations->Enabled = enableOption;
@@ -2283,20 +2296,28 @@ void TForm1::EnableColourisationOptions()
                 emulator.ColouriseMaskableInterruptResponse = false;
                 emulator.ColouriseMaskableInterruptServiceRoutine = false;
         }
+        else if (!annotatableROM)
+        {
+                RomDisplayDriver->Checked = false;
+                MaskableInterruptServiceRoutine->Checked = false;
+
+                emulator.ColouriseRomDisplayDriver = false;
+                emulator.ColouriseMaskableInterruptServiceRoutine = false;
+        }
 
         HorizontalSyncPulse->Enabled = enableOption;
         VerticalSyncPulse->Enabled = enableOption;
-        RomDisplayDriver->Enabled = enableOption;
+        RomDisplayDriver->Enabled = enableOption && annotatableROM;
         Z80Halted->Enabled = enableOption;
         MaskableInterruptResponse->Enabled = enableOption;
-        MaskableInterruptServiceRoutine->Enabled = enableOption;
+        MaskableInterruptServiceRoutine->Enabled = enableOption && annotatableROM;
 
         enableOption = enableOption && (emulator.machine != MACHINEZX80);
         BackPorch->Enabled = enableOption;
         NonMaskableInterruptResponse->Enabled = enableOption;
         NonMaskableInterruptResponseWaitStates->Enabled = enableOption;
-        NonMaskableInterruptServiceRoutine->Enabled = enableOption;
-        NonMaskableInterruptServiceRoutineRecursion->Enabled = enableOption;
+        NonMaskableInterruptServiceRoutine->Enabled = enableOption && annotatableROM;
+        NonMaskableInterruptServiceRoutineRecursion->Enabled = enableOption && annotatableROM;
         InstructionStraddlingNMI->Enabled = enableOption;
         InstructionStraddlingNMIWaitStates->Enabled = enableOption;
 
@@ -2315,6 +2336,14 @@ void TForm1::EnableColourisationOptions()
                 emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
                 emulator.ColouriseInstructionStraddlingNMI = false;
                 emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
+        }
+        else if (!annotatableROM)
+        {
+                NonMaskableInterruptServiceRoutine->Checked = false;
+                NonMaskableInterruptServiceRoutineRecursion->Checked = false;
+
+                emulator.ColouriseNonMaskableInterruptServiceRoutine = false;
+                emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
         }
 }
 

@@ -48,9 +48,9 @@ extern int StackChange;
 
 #define maxMCycles 11
 static int mCycles[maxMCycles];
-static int numberOfMCycles;
 static int mCycleIndex ;
 static int inputOutputMCycle;
+int numberOfM1Cycles;
 
 void InsertMCycle(int cycleLength)
 {
@@ -80,9 +80,9 @@ int z80_InputOutputMCycle()
         return inputOutputMCycle;
 }
 
-int z80_NumberOfMCycles()
+int z80_NumberOfM1Cycles()
 {
-        return numberOfMCycles;
+        return numberOfM1Cycles;
 }
 
 void SetSP(int i)
@@ -95,7 +95,6 @@ int z80_do_opcode()
 {
     BYTE opcode;
 
-    numberOfMCycles = 1;
     mCycleIndex = -1;
     inputOutputMCycle = -1;
 
@@ -109,6 +108,7 @@ int z80_do_opcode()
     contend( PC, 4 ); R++; RZXCounter--;
 
     //if (z80.halted) opcode=0;
+    numberOfM1Cycles = 1;
     opcode = opcode_fetch( PC++ );
 
     switch(opcode) {
@@ -972,6 +972,7 @@ int z80_do_opcode()
 	BYTE opcode2;
         InsertMCycle(4);
 	contend( PC, 4 );
+        numberOfM1Cycles++;
 	opcode2 = opcode_fetch( PC++ );
 	R++; RZXCounter--;
 
@@ -1099,6 +1100,7 @@ int z80_do_opcode()
 	BYTE opcode2;
         InsertMCycle(4);
 	contend( PC, 4 );
+        numberOfM1Cycles++;
 	opcode2 = opcode_fetch( PC++ );
 	R++; RZXCounter--;
 
@@ -1211,6 +1213,7 @@ int z80_do_opcode()
 	BYTE opcode2;
         InsertMCycle(4);
 	contend( PC, 4 );
+        numberOfM1Cycles++;
 	opcode2 = opcode_fetch( PC++ );
 	R++; RZXCounter--;
 	switch(opcode2) {
@@ -1341,5 +1344,4 @@ int z80_do_opcode()
     z80.tstates = tstates;
     return tstates;
 }
-
 

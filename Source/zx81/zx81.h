@@ -59,5 +59,6 @@ extern int tStatesCount;
 extern int emulation_stop;
 extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();
+extern BOOL IsAnnotatableROM();
 
 #endif

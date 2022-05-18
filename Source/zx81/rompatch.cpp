@@ -238,7 +238,9 @@ int PatchTest(int pc)
 {
         DWORD patchHandle = (pc << 8) | memory[pc];
 
-        PATCHMAP::iterator it = patches.find(patchHandle);
+        PATCHMAP::iterator it = patches.end();
+
+        it = patches.find(patchHandle);
         if (it != patches.end())
         {
                 it->second(pc);

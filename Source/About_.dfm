@@ -4,7 +4,7 @@ object About: TAbout
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'About'
-  ClientHeight = 379
+  ClientHeight = 420
   ClientWidth = 336
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -383,14 +383,14 @@ object About: TAbout
   end
   object Label2: TLabel
     Left = 8
-    Top = 96
+    Top = 136
     Width = 289
     Height = 13
     Caption = 'This program is released under the GNU GPL. Please see the'
   end
   object Label3: TLabel
     Left = 7
-    Top = 112
+    Top = 152
     Width = 320
     Height = 13
     Caption = 
@@ -399,7 +399,7 @@ object About: TAbout
   end
   object Label5: TLabel
     Left = 8
-    Top = 136
+    Top = 176
     Width = 300
     Height = 13
     Caption = 'Z80 core and DirectSound code taken from fuse, the free UNIX'
@@ -426,34 +426,34 @@ object About: TAbout
   end
   object Label6: TLabel
     Left = 8
-    Top = 152
+    Top = 192
     Width = 196
     Height = 13
     Caption = 'Spectrum emulator © 2003 Philip Kendall.'
   end
   object Label9: TLabel
     Left = 8
-    Top = 200
+    Top = 240
     Width = 276
     Height = 13
     Caption = 'Many thanks to Wilf Rigter for providing essential technical'
   end
   object Label10: TLabel
     Left = 8
-    Top = 176
+    Top = 216
     Width = 279
     Height = 13
     Caption = 'AY8910 Code taken from Z81 © 1995-2001 Russell Marks.'
   end
   object Label11: TLabel
     Left = 8
-    Top = 240
+    Top = 264
     Width = 3
     Height = 13
   end
   object Label4: TLabel
     Left = 8
-    Top = 216
+    Top = 256
     Width = 295
     Height = 13
     Caption = 
@@ -462,21 +462,21 @@ object About: TAbout
   end
   object Label12: TLabel
     Left = 8
-    Top = 232
+    Top = 272
     Width = 303
     Height = 13
     Caption = 'various add-ons including the Memotech and G007 Hi-res cards.'
   end
   object Label13: TLabel
     Left = 8
-    Top = 272
+    Top = 312
     Width = 303
     Height = 13
     Caption = 'dk'#39'tronics graphics ROM dump and several bug reports provided'
   end
   object Label14: TLabel
     Left = 8
-    Top = 288
+    Top = 328
     Width = 108
     Height = 13
     Caption = 'by Simon Holdsworth.  '
@@ -502,32 +502,32 @@ object About: TAbout
   end
   object Label16: TLabel
     Left = 8
-    Top = 248
+    Top = 288
     Width = 196
     Height = 13
     Caption = 'G007 information also provided by Kryton.'
   end
   object Label17: TLabel
     Left = 8
-    Top = 335
+    Top = 375
     Width = 151
     Height = 13
     Caption = 'Icon designed by Paul E Collins.'
   end
   object Label7: TLabel
     Left = 8
-    Top = 312
+    Top = 352
     Width = 199
     Height = 13
     Caption = 'lib765 and libdsk © 2000-2005 John Elliot.'
   end
   object Label18: TLabel
     Left = 8
-    Top = 357
+    Top = 397
     Width = 225
     Height = 16
     AutoSize = False
-    Caption = 'Dedicated to Abbey (1998 - 2008)'
+    Caption = 'Dedicated to Abbey (1998-2008)'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -535,9 +535,25 @@ object About: TAbout
     Font.Style = [fsBold]
     ParentFont = False
   end
+  object Label19: TLabel
+    Left = 8
+    Top = 96
+    Width = 321
+    Height = 26
+    Caption = 'Releases up to 1.0a were created by Michael D Wynne, with all'
+    WordWrap = True
+  end
+  object Label20: TLabel
+    Left = 8
+    Top = 112
+    Width = 321
+    Height = 13
+    Caption = 'subsequent releases created by Paul Farrow and Charlie Robson.'
+    WordWrap = True
+  end
   object Button1: TButton
     Left = 248
-    Top = 346
+    Top = 387
     Width = 81
     Height = 26
     Anchors = [akRight, akBottom]

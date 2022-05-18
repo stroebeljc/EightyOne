@@ -508,8 +508,7 @@ void CSound::Frame(void)
 }
 
 void CSound::Beeper(int on, int frametstates)
-{
-
+{                                     
         unsigned char *ptr;
         int newpos,subpos;
         int val,subval;

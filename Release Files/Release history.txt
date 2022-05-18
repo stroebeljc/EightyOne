@@ -3,14 +3,16 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.29 - 10/05/2022 (by Paul Farrow)
+Version 1.29 - 17/05/2022 (by Paul Farrow)
+* Bug fixes:
+  - Jupiter Ace beeper port now partially decoded.
+  - Beeper sound setting now restored from the .ini file.
+  - Beeper sound for ZX81 models now renders the HSync pulses.
 * Changes:
   - Retired support for the homebrew Spectrum SE.
 * Enhancements:
   - Improved emulation accuracy of the display mechanism for ZX80 and ZX81 models.
   - Added colourisation support of display elements for ZX80 and ZX81 models.
-* Bug fixes:
-  - Jupiter Ace beeper port now partially decoded.
 
 Version 1.28 - 31/03/2022 (by Paul Farrow)
 * Bug fixes:

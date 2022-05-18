@@ -1780,6 +1780,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         fts =0; //-= machine.tperframe;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_type = SYNCTYPEV;
+                        emulator.scanlinesPerFrame = Sy;
                         Sy=0;
                         //borrow=0;
                         loop=machine.tperscanline;

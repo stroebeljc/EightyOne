@@ -359,7 +359,12 @@ void zx81_initialise(void)
 
 BOOL IsAnnotatableROM()
 {
-        bool annotatableROM;
+        bool annotatableROM = true;
+
+        if (!strcmp(machine.CurRom, ""))
+        {
+                return annotatableROM;
+        }
 
         switch (emulator.machine)
         {
@@ -369,19 +374,10 @@ BOOL IsAnnotatableROM()
 
         case MACHINEZX81:
         case MACHINETS1000:
-                annotatableROM = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom");
-                break;
-
-        case MACHINER470:
-                annotatableROM = !strcmp(machine.CurRom, "ringo470.rom");
-                break;
-
         case MACHINETK85:
-                annotatableROM = !strcmp(machine.CurRom, "tk85.rom");
-                break;
-
         case MACHINETS1500:
-                annotatableROM = !strcmp(machine.CurRom, "ts1500.rom");
+                annotatableROM = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
+                                 !strcmp(machine.CurRom, "ringo470.rom") || !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
                 break;
 
         case MACHINELAMBDA:
@@ -1348,7 +1344,7 @@ void zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         {
                                 pixelColour = White;
                         }
-                        else if (firstInstructionPixel)
+                        else if (emulator.ColouriseUserProgramInstructionPositions && firstInstructionPixel && (nmiLevel == 0) && !withinDisplayDriver)
                         {
                                 pixelColour = Yellow;
                         }
@@ -1392,7 +1388,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         do
         {
-                if ((emulator.ColouriseNonMaskableInterruptServiceRoutine || emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion) && annotatableROM)
+//####                if ((emulator.ColouriseNonMaskableInterruptServiceRoutine || emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion) && annotatableROM)
+                if (annotatableROM)
                 {
                         if (z80.pc.w == 0x0000)
                         {
@@ -1418,7 +1415,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
-                if (emulator.ColouriseRomDisplayDriver && annotatableROM)
+//####                if (emulator.ColouriseRomDisplayDriver &&
+                if (annotatableROM)
                 {
                         if (!lambdaSelected)
                         {
@@ -1569,7 +1567,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         InterruptResponseType interruptResponse = interruptResponseActive ? MaskableInterrupt : NoInterrupt;
 
                         int clockIndex = i/2;
-                        bool firstUserProgramInstructionClock = false; //#### nmiGeneratorEnabled && (clockIndex == 0);
+                        bool firstUserProgramInstructionClock = nmiGeneratorEnabled && (clockIndex == 0);
                         zx81_DrawPixel(CurScanLine, lineClockCounter - clockIndex, colour, nmiDetectedDuringInstruction, interruptResponse, z80Halted, inOperationActive, outOperationActive, firstUserProgramInstructionClock);
                       //####  zx81_DrawPixel(CurScanLine, lineClockCounter - (i/2), colour, nmiDetectedDuringInstruction, interruptResponse, z80Halted, inOperationActive, outOperationActive);
                         shift_register <<= 1;

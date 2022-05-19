@@ -117,7 +117,10 @@ void ace_writebyte(int Address, int Data)
                 if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data, frametstates);
         }
 
-        if (Address<8192) return;
+        if (Address<=zx81.ROMTOP && machine.protectROM)
+        {
+                return;
+        }
 
         if (Address==0x2700 && (Data&128)) acelatch=Data&127;
 
@@ -129,8 +132,10 @@ void ace_writebyte(int Address, int Data)
 
         if (Address>=0x2400 && Address<=0x27ff) acecolour[Address-0x2400]=acelatch;
 
-        if ( (Address<=zx81.ROMTOP && machine.protectROM) || Address>zx81.RAMTOP)
+        if (Address>zx81.RAMTOP)
+        {
                 return;
+        }
 
         if (machine.ace96k && z80.r7 && Address>=16384)
                 Address+=65536;

@@ -101,7 +101,12 @@ int nmiWaitPositionEnd;
 int nmiWaitPositionAfter;
 
 // Clock positions count down from 207 to 1 in EO
+
 const int ZX80HSyncDuration = 20;
+const int ZX80HSyncPositionStart = ZX80HSyncDuration;
+const int ZX80HSyncPositionEnd = ZX80HSyncPositionStart - ZX80HSyncDuration + 1;
+const int ZX80HSyncPositionAfter = ZX80HSyncPositionEnd - 1;
+const int ZX80HSyncPositionAcceptanceStart = ((3 * ZX80HSyncDuration) / 2) + ZX80HSyncPositionEnd;
 
 const int ZX81HSyncDuration = 16;
 const int ZX81BackporchDuration = 16;
@@ -117,7 +122,7 @@ const int InterruptAcknowledgementOffsetToHSync = 16;
 const int InterruptAcknowledgementPositionStart = ZX81HSyncPositionStart + InterruptAcknowledgementOffsetToHSync;
 const int InterruptResponsePositionStart = InterruptAcknowledgementPositionStart + InterruptAcknowledgementOffsetEndIntoInterruptResponse;
 
-const int NMIDetectionOffsetFromEndOfInstruction = 2; // The NMI is detected at the start of the final clock of an instruction so must have been active within the clock beforehand 
+const int NMIDetectionOffsetFromEndOfInstruction = 2; // The NMI is detected at the start of the final clock of an instruction so must have been active within the clock beforehand
 const int NMIDetectionPositionStart = ZX81HSyncPositionStart - NMIDetectionOffsetFromEndOfInstruction;
 
 const int PortActiveDuration = 3;
@@ -1841,6 +1846,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         return tstotal;
 }
 
+/*
 void zx80_DrawPixel(SCANLINE* CurScanLine, BYTE pixelColour, InterruptResponseType interruptResponse = NoInterrupt, bool halted = false, bool inOperationActive = false)
 {
         if (pixelColour == (paper << 4))
@@ -2170,6 +2176,405 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
         }
 
 //####        CurScanLine->scanline_len = scanlinePixelLength;
+
+        return tstotal;
+}
+*/
+
+void zx80_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, InterruptResponseType interruptResponse = NoInterrupt, bool halted = false, bool inOperationActive = false)
+{
+        if (position < ZX80HSyncPositionEnd)
+        {
+                position += machine.tperscanline;
+        }
+
+        if (pixelColour == (paper << 4))
+        {
+                if ((interruptResponse == MaskableInterrupt) && emulator.ColouriseMaskableInterruptResponse)
+                {
+                        pixelColour = BrightCyan;
+                }
+                else if (intISR && emulator.ColouriseMaskableInterruptServiceRoutine)
+                {
+                        pixelColour = Cyan;
+                }
+                else
+                {
+                        bool vsyncPeriod = inOperationActive || !syncOutputWhite;
+
+                        if (withinDisplayDriver && emulator.ColouriseRomDisplayDriver)
+                        {
+                                pixelColour = (vsyncPeriod && emulator.ColouriseVerticalSyncPulse) ? Red : BrightRed;
+                        }
+                        else if (vsyncPeriod)
+                        {
+                                pixelColour = emulator.ColouriseVerticalSyncPulse ? Red : Black;
+                        }
+                        else if (position <= ZX80HSyncPositionStart && position >= ZX80HSyncPositionEnd)
+                        {
+                                pixelColour = emulator.ColouriseHorizontalSyncPulse ? Blue : Black;
+
+                                if (allowSoundOutput && position == ZX80HSyncPositionStart && !vsyncPeriod && !chromaSelected && syncOutputWhite)
+                                {
+                                        Sound.Beeper(0, frametstates);
+                                }
+                                else if (allowSoundOutput && position == ZX81BackporchPositionEnd && !vsyncPeriod && !chromaSelected && syncOutputWhite)       // This should really be on the clock after
+                                {
+                                        Sound.Beeper(1, frametstates);
+                                }
+                        }
+                        else if (emulator.ColouriseZ80Halted && halted)
+                        {
+                                pixelColour = White;
+                        }
+                }
+        }
+
+        CurScanLine->scanline[CurScanLine->scanline_len++] = pixelColour;
+}
+
+// This is not how a real ZX80 beahaves, but works well enough i the majority of cases
+int zx80_do_scanline(SCANLINE *CurScanLine)
+{
+        int PrevRev = 0;
+        int PrevBit = 0;
+        int PrevGhost = 0;
+        int tstotal = 0;
+        int scanlinesPerFrame = 0;
+
+        int scanlineActivePixelLength = emulator.single_step ? 1 : scanlinePixelLength;
+
+        CurScanLine->scanline_len = 0;
+
+        if (CurScanLine->sync_type != SYNCNONE)
+        {
+                CurScanLine->sync_type = SYNCNONE;
+                CurScanLine->sync_len = 0;
+        }
+
+        if (lineClockCarryCounter > 0)
+        {
+                int lineClockCarryCounterPixels = lineClockCarryCounter * 2;
+                memcpy(CurScanLine->scanline, carryOverScanlineBuffer, lineClockCarryCounterPixels);
+                CurScanLine->scanline_len = lineClockCarryCounterPixels;
+                lineClockCarryCounter = 0;
+        }
+
+        do
+        {
+                if (emulator.ColouriseRomDisplayDriver && annotatableROM)
+                {
+                        withinDisplayDriver = ((z80.pc.w >= 0x013C) && (z80.pc.w <= 0x01B5));
+                }
+                
+                if (emulator.ColouriseMaskableInterruptServiceRoutine && annotatableROM)
+                {
+                        if (z80.pc.w == 0x0038)
+                        {
+                                intISR = true;
+                        }
+                        else if ((z80.pc.w < 0x0038) || (z80.pc.w > 0x0048))
+                        {
+                                intISR = false;
+                        }
+                }
+
+                LastInstruction = LASTINSTNONE;
+                z80.pc.w = PatchTest(z80.pc.w);
+                int ts = z80_do_opcode();
+
+                int lineClockCounterAfterInstruction = (lineClockCounter - ts);
+
+                bool instructionOverlapsHSync = (lineClockCounterAfterInstruction < ZX80HSyncPositionStart);
+                bool startOfHSyncPulse = (lineClockCounter >= ZX80HSyncPositionStart) && instructionOverlapsHSync;
+                if (syncOutputWhite && startOfHSyncPulse)
+                {
+                        lineCounter = (++lineCounter) & 7;
+                }
+
+                int interruptResponseDuration = 0;
+
+                if (interruptPending)
+                {
+                        interruptResponseDuration = z80_interrupt(idleDataBus);
+
+                        if (interruptResponseDuration > 0)
+                        {
+                                // Immediately after the instruction is the interrupt response. This should occur at a known position relative to the HSync pulse.
+                                // If it does not then the line clock counter is adjusted.
+                                if (lineClockCounterAfterInstruction != InterruptResponsePositionStart)
+                                {
+                                        int lineCounterAdjustment = InterruptResponsePositionStart - lineClockCounterAfterInstruction;
+                                        lineClockCounter += lineCounterAdjustment;
+                                        lineClockCounterAfterInstruction += lineCounterAdjustment;
+
+                                        int lineCounterAdjustmentPixels = (lineCounterAdjustment * 2);
+                                        scanlineActivePixelLength += lineCounterAdjustmentPixels;
+                                        if (scanlineActivePixelLength > MaxScanlineActivePixelLength)
+                                        {
+                                                scanlineActivePixelLength = MaxScanlineActivePixelLength;
+                                        }
+                                }
+
+                                ts += interruptResponseDuration;
+                        }
+
+                        interruptPending = false;
+                }
+
+                int pixels = ts << 1;
+
+                shift_store = shift_register;
+
+                bool inFE = (LastInstruction == LASTINSTINFE);
+                int interruptResponsePixels = interruptResponseDuration << 1;
+
+                for (int i = 0; i < pixels; i++)
+                {
+                        int bit = (shift_register ^ shift_reg_inv) & 0x8000;
+                        int colour = (bit ? ink : paper) << 4;
+
+                        if (emulator.dirtydisplay)
+                        {
+                                if (PrevGhost)
+                                {
+                                        colour |= 4;
+                                }
+                                PrevGhost = 0;
+
+                                if (PrevBit && (PrevRev || emulator.simpleghost))
+                                {
+                                        colour |= 2;
+                                        PrevGhost = 1;
+                                }
+
+                                if (noise & 1)
+                                {
+                                        colour |= 1;
+                                }
+
+                                noise >>= 1;
+                                PrevRev = shift_reg_inv & 0x8000;
+                                PrevBit = bit;
+                        }
+
+                        bool inOperationActive = inFE && (i >= (pixels - PortActiveDurationPixels));
+                        bool interruptResponseActive = (i >= (pixels - interruptResponsePixels));
+                        InterruptResponseType interruptResponse = interruptResponseActive ? MaskableInterrupt : NoInterrupt;
+
+                        zx80_DrawPixel(CurScanLine, lineClockCounter - (i/2), colour, interruptResponse, z80.halted, inOperationActive);
+                        
+                        shift_register <<= 1;
+                        shift_reg_inv <<= 1;
+
+                        if (chromaSelected && ((i & 7) == 7))
+                        {
+                                if (frameSynchronised)
+                                {
+                                        GetChromaColours(&ink, &paper);
+                                }
+                                else
+                                {
+                                        ink = colourBlack;
+                                        paper = colourBrightWhite;
+                                }
+                        }
+                }
+
+                if (!(z80.r & 0x40))
+                {
+                        interruptPending = true;
+                }
+
+                frametstates += ts;
+                tStatesCount += ts;
+
+                WavClockTick(ts, !syncOutputWhite);
+
+                if (machine.zxprinter)
+                {
+                        ZXPrinterClockTick(ts);
+                }
+
+                if (spectrum.floppytype == FLOPPYZX1541)
+                {
+                        IECClockTick(ts);
+                }
+
+                bool previousSyncOutputWhite = syncOutputWhite;
+
+                switch (LastInstruction)
+                {
+                case LASTINSTOUTFD:
+                case LASTINSTOUTFE:
+                case LASTINSTOUTFF:     // VSync end
+                        syncOutputWhite = true;
+                        break;
+
+                case LASTINSTINFE:      // VSync start
+                        if (!nmiGeneratorEnabled)
+                        {
+                                if (syncOutputWhite)
+                                {
+                                        CurScanLine->sync_len = PortActiveDuration;
+                                }
+                                else
+                                {
+                                        CurScanLine->sync_len += ts;
+                                }
+
+                                syncOutputWhite = false;
+                                lineCounter = 0;
+                        }
+                        break;
+
+                default:
+                        if (!syncOutputWhite)
+                        {
+                                CurScanLine->sync_len += ts;
+                        }
+                        break;
+                }
+
+                if (syncOutputWhite && !previousSyncOutputWhite)
+                {
+                        int portActivePositionStart = lineClockCounterAfterInstruction + PortActiveDuration;
+                        if (portActivePositionStart <= ZX80HSyncPositionStart)
+                        {
+                                int remainingHSyncDuration = portActivePositionStart - ZX80HSyncPositionAfter;
+                                if (remainingHSyncDuration >= PortActiveDuration)
+                                {
+                                        CurScanLine->sync_len += ts;
+                                }
+                                else
+                                {
+                                        int durationBeyondHSync = PortActiveDuration - remainingHSyncDuration;
+                                        int portInactiveDuration = ts - durationBeyondHSync;
+                                        CurScanLine->sync_len += portInactiveDuration;
+                                }
+                        }
+                        else
+                        {
+                                int portInactiveDuration = ts - PortActiveDuration;
+                                CurScanLine->sync_len += portInactiveDuration;
+                        }
+
+                        if (CurScanLine->sync_len > ZX80HSyncDuration)
+                        {
+                                // If the VSync pulse has ended prior to the HSync period then move it to the start of the next frame
+                                if (frameSynchronised && (portActivePositionStart > ZX80HSyncPositionStart))
+                                {
+                                        BYTE* startScanline = CurScanLine->scanline + CurScanLine->scanline_len;
+                                        BYTE* afterScanline = CurScanLine->scanline + scanlineActivePixelLength;
+                                        memcpy(afterScanline, startScanline, CurScanLine->scanline_len);
+
+                                        memset(CurScanLine->scanline, BLANKCOLOUR, scanlinePixelLength);
+
+                                        lineClockCounter = ts - (CurScanLine->scanline_len / 2);
+
+                                        CurScanLine->scanline_len += scanlineActivePixelLength;
+                                }
+                        }
+                        // If a software generated pulse is close to the hardware generated HSync pulse then treat it as the HSync pulse,
+                        // which is required to achieve the underdulating pattern when loading (else straight diagonal lines appear)
+                        else if ((CurScanLine->sync_len > 0) && (lineClockCounter <= ZX80HSyncPositionAcceptanceStart))
+                        {
+                                CurScanLine->sync_type = SYNCTYPEH;
+                        }
+                        else
+                        {
+                                CurScanLine->sync_len = 0;
+                        }
+                }
+
+                lineClockCounter -= ts;
+
+                if (lineClockCounter < ZX80HSyncPositionEnd)
+                {
+                        lineClockCarryCounter = -lineClockCounter;
+
+                        // If the end of a scanline has been reached and not a VSync pulse in progress then flag that a HSync pulse would have been output
+                        if (syncOutputWhite)
+                        {
+                                if (CurScanLine->sync_len <= ZX80HSyncDuration)
+                                {
+                                        CurScanLine->sync_len = ZX80HSyncDuration;
+                                        CurScanLine->sync_type = SYNCTYPEH;
+                                }
+                                else
+                                {
+                                        scanlinesPerFrame = RasterY + 1;
+                                        CurScanLine->sync_type = SYNCTYPEV;
+                                }
+                        }
+
+                        int overhangPixels = (CurScanLine->scanline_len - scanlineActivePixelLength);
+
+                        // If more pixels have been drawn than expected for the scanline, move the excess into a buffer for drawing at the start of the next scanline.
+                        if (overhangPixels > 0)
+                        {
+                                memcpy(carryOverScanlineBuffer, CurScanLine->scanline + scanlineActivePixelLength, overhangPixels);
+
+                                if ((CurScanLine->sync_type == SYNCTYPEV) && (overhangPixels / 2) > ts)
+                                {
+                                        scanlinesPerFrame--;
+                                }
+
+                                // If the line clock counter was moved forwards, i.e. shortening the scanline, then blank out the remainder of the visible line.
+                                if (frameSynchronised && (scanlineActivePixelLength < scanlinePixelLength))
+                                {
+                                        int endOfLinePixels = scanlinePixelLength - scanlineActivePixelLength;
+                                        memset(CurScanLine->scanline + scanlineActivePixelLength, BLANKCOLOUR, endOfLinePixels);
+                                }
+
+                                CurScanLine->scanline_len -= overhangPixels;
+
+                                // Ensure an exit from the loop check below
+                                scanlineActivePixelLength = CurScanLine->scanline_len;
+                        }
+
+                        lineClockCounter += machine.tperscanline;
+                }
+
+                tstotal += ts;
+
+                DebugUpdate();
+        }
+        while ((CurScanLine->scanline_len < scanlineActivePixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
+
+        if (CurScanLine->sync_type == SYNCTYPEV)
+        {
+                if (vsyncFound)
+                {
+                        frameSynchronised = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);
+                        vsyncFound = frameSynchronised;
+
+                        emulator.scanlinesPerFrame = frameSynchronised ? scanlinesPerFrame : 0;
+                }
+                else
+                {
+                        vsyncFound = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);
+                }
+                frameSynchronisedCounter = 0;
+
+                allowSoundOutput = zx81.vsyncsound && (!chromaSelected || (chromaSelected && !frameSynchronised));
+        }
+        else
+        {
+                if (frameSynchronisedCounter < VSYNC_TOLERANCEMAX_QS)
+                {
+                        frameSynchronisedCounter++;
+                }
+                else
+                {
+                        frameSynchronised = false;
+                        vsyncFound = false;
+                        allowSoundOutput = zx81.vsyncsound;
+                        emulator.scanlinesPerFrame = 0;
+                }
+        }
+
+        CurScanLine->scanline_len = scanlinePixelLength;
 
         return tstotal;
 }

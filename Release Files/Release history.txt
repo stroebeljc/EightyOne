@@ -13,9 +13,9 @@ Version 1.29 - 17/05/2022 (by Paul Farrow)
 * Changes:
   - Retired support for the homebrew Spectrum SE.
 * Enhancements:
-  - Clock accurate emulation accuracy of the display mechanism for the ZX81 family of models.
-  - Improved emulation accuracy of the display mechanism for the ZX80.
-  - Added colourisation support of display elements for ZX80 and ZX81 family of models.
+  - Clock accurate emulation of the display mechanism of the ZX81 family of models.
+  - Improved emulation accuracy of the display mechanism of the ZX80.
+  - Annotation facility of display elements for ZX80 and ZX81 family of models.
 
 Version 1.28 - 31/03/2022 (by Paul Farrow)
 * Bug fixes:

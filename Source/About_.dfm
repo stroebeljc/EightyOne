@@ -4,7 +4,7 @@ object About: TAbout
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'About'
-  ClientHeight = 420
+  ClientHeight = 429
   ClientWidth = 336
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,9 @@ object About: TAbout
   object Image1: TImage
     Left = 8
     Top = 8
-    Width = 65
-    Height = 57
+    Width = 64
+    Height = 58
+    AutoSize = True
     Picture.Data = {
       07544269746D6170B62B0000424DB62B00000000000036000000280000004000
       00003A0000000100180000000000802B0000120B0000120B0000000000000000
@@ -375,22 +376,22 @@ object About: TAbout
       0000}
   end
   object Label1: TLabel
-    Left = 88
-    Top = 48
+    Left = 81
+    Top = 36
     Width = 151
     Height = 13
-    Caption = '© 2003-2022 Michael D Wynne'
+    Caption = '© 2003-2008 Michael D Wynne'
   end
   object Label2: TLabel
     Left = 8
-    Top = 136
+    Top = 144
     Width = 289
     Height = 13
     Caption = 'This program is released under the GNU GPL. Please see the'
   end
   object Label3: TLabel
     Left = 7
-    Top = 152
+    Top = 160
     Width = 320
     Height = 13
     Caption = 
@@ -399,21 +400,21 @@ object About: TAbout
   end
   object Label5: TLabel
     Left = 8
-    Top = 176
+    Top = 184
     Width = 300
     Height = 13
     Caption = 'Z80 core and DirectSound code taken from fuse, the free UNIX'
   end
   object Version: TLabel
-    Left = 88
-    Top = 32
-    Width = 84
-    Height = 13
+    Left = 178
+    Top = 10
+    Width = 145
+    Height = 17
     Caption = 'Unknown Version'
   end
   object Label8: TLabel
-    Left = 88
-    Top = 8
+    Left = 80
+    Top = 6
     Width = 84
     Height = 20
     Caption = 'EightyOne'
@@ -426,21 +427,21 @@ object About: TAbout
   end
   object Label6: TLabel
     Left = 8
-    Top = 192
+    Top = 200
     Width = 196
     Height = 13
     Caption = 'Spectrum emulator © 2003 Philip Kendall.'
   end
   object Label9: TLabel
     Left = 8
-    Top = 240
+    Top = 248
     Width = 276
     Height = 13
     Caption = 'Many thanks to Wilf Rigter for providing essential technical'
   end
   object Label10: TLabel
     Left = 8
-    Top = 216
+    Top = 224
     Width = 279
     Height = 13
     Caption = 'AY8910 Code taken from Z81 © 1995-2001 Russell Marks.'
@@ -453,7 +454,7 @@ object About: TAbout
   end
   object Label4: TLabel
     Left = 8
-    Top = 256
+    Top = 264
     Width = 295
     Height = 13
     Caption = 
@@ -462,28 +463,28 @@ object About: TAbout
   end
   object Label12: TLabel
     Left = 8
-    Top = 272
+    Top = 280
     Width = 303
     Height = 13
     Caption = 'various add-ons including the Memotech and G007 Hi-res cards.'
   end
   object Label13: TLabel
     Left = 8
-    Top = 312
+    Top = 320
     Width = 303
     Height = 13
     Caption = 'dk'#39'tronics graphics ROM dump and several bug reports provided'
   end
   object Label14: TLabel
     Left = 8
-    Top = 328
+    Top = 336
     Width = 108
     Height = 13
     Caption = 'by Simon Holdsworth.  '
   end
   object Label15: TLabel
     Left = 8
-    Top = 72
+    Top = 80
     Width = 286
     Height = 13
     Hint = 'Click to visit the EightyOne home page'
@@ -502,28 +503,28 @@ object About: TAbout
   end
   object Label16: TLabel
     Left = 8
-    Top = 288
+    Top = 296
     Width = 196
     Height = 13
     Caption = 'G007 information also provided by Kryton.'
   end
   object Label17: TLabel
     Left = 8
-    Top = 375
+    Top = 383
     Width = 151
     Height = 13
     Caption = 'Icon designed by Paul E Collins.'
   end
   object Label7: TLabel
     Left = 8
-    Top = 352
+    Top = 360
     Width = 199
     Height = 13
     Caption = 'lib765 and libdsk © 2000-2005 John Elliot.'
   end
   object Label18: TLabel
     Left = 8
-    Top = 397
+    Top = 405
     Width = 225
     Height = 16
     AutoSize = False
@@ -537,23 +538,30 @@ object About: TAbout
   end
   object Label19: TLabel
     Left = 8
-    Top = 96
-    Width = 321
-    Height = 26
+    Top = 104
+    Width = 300
+    Height = 13
     Caption = 'Releases up to 1.0a were created by Michael D Wynne, with all'
     WordWrap = True
   end
   object Label20: TLabel
     Left = 8
-    Top = 112
+    Top = 120
     Width = 321
-    Height = 13
-    Caption = 'subsequent releases created by Paul Farrow and Charlie Robson.'
+    Height = 17
+    Caption = 'subsequent releases created by Charlie Robson and Paul Farrow.'
     WordWrap = True
+  end
+  object Label21: TLabel
+    Left = 81
+    Top = 52
+    Width = 218
+    Height = 13
+    Caption = '© 2011-2022 Charlie Robson and Paul Farrow'
   end
   object Button1: TButton
     Left = 248
-    Top = 387
+    Top = 396
     Width = 81
     Height = 26
     Anchors = [akRight, akBottom]

@@ -1411,7 +1411,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         z80_reset();
         AccurateInit(false);
         machine.initialise();
-        Sound.AYReset(); //sound_ay_reset();
+        Sound.AYReset();
         emulation_stop=initialStopState;
         DebugUpdate();
         LiveMemoryWindow->Reset();

@@ -426,14 +426,12 @@ int CSound::AYRead(int reg)
 
 void CSound::AYReset(void)
 {
-
         int f;
 
         for(f=0;f<16;f++)
                 AYWrite(f,0,0);
 
         AYOverlay();
-
 }
 
 
@@ -472,8 +470,7 @@ void CSound::AYReset(void)
 
 
 void CSound::Frame(void)
-{
-
+{                  
         unsigned char *ptr;
         int f;
 
@@ -494,7 +491,7 @@ void CSound::Frame(void)
                 // must be AY then, so `zero' buffer ready for it
         //        memset(Buffer,128,FrameSize*m_Channels);
 
-        if(machine.aysound ) AYOverlay();
+        if (machine.aysound) AYOverlay();
 
         DXSound.Frame(Buffer, FrameSize*m_Channels);
         SoundOutput->UpdateImage(Buffer,FrameSize*m_Channels);
@@ -504,7 +501,6 @@ void CSound::Frame(void)
         SoundPtr=Buffer;
 
         AYChangeCount=0;
-
 }
 
 void CSound::Beeper(int on, int frametstates)

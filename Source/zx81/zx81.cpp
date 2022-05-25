@@ -1305,11 +1305,11 @@ void zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                 }
                 else if ((interruptResponse == MaskableInterrupt) && emulator.ColouriseMaskableInterruptResponse)
                 {
-                        pixelColour = BrightCyan;
+                        pixelColour = Cyan;
                 }
                 else if (intISR && emulator.ColouriseMaskableInterruptServiceRoutine)
                 {
-                        pixelColour = Cyan;
+                        pixelColour = BrightCyan;
                 }
                 else
                 {
@@ -1349,7 +1349,7 @@ void zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         {
                                 pixelColour = White;
                         }
-                        else if (emulator.ColouriseUserProgramInstructionPositions && firstInstructionPixel && (nmiLevel == 0) && !withinDisplayDriver)
+                        else if (emulator.ColouriseUserProgramInstructionStartPositions && firstInstructionPixel && (nmiLevel == 0) && !withinDisplayDriver)
                         {
                                 pixelColour = Yellow;
                         }
@@ -1393,7 +1393,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         do
         {
-//####                if ((emulator.ColouriseNonMaskableInterruptServiceRoutine || emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion) && annotatableROM)
                 if (annotatableROM)
                 {
                         if (z80.pc.w == 0x0000)
@@ -1420,7 +1419,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
-//####                if (emulator.ColouriseRomDisplayDriver &&
                 if (annotatableROM)
                 {
                         if (!lambdaSelected)
@@ -1574,7 +1572,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         int clockIndex = i/2;
                         bool firstUserProgramInstructionClock = nmiGeneratorEnabled && (clockIndex == 0);
                         zx81_DrawPixel(CurScanLine, lineClockCounter - clockIndex, colour, nmiDetectedDuringInstruction, interruptResponse, z80Halted, inOperationActive, outOperationActive, firstUserProgramInstructionClock);
-                      //####  zx81_DrawPixel(CurScanLine, lineClockCounter - (i/2), colour, nmiDetectedDuringInstruction, interruptResponse, z80Halted, inOperationActive, outOperationActive);
+
                         shift_register <<= 1;
                         shift_reg_inv <<= 1;
 
@@ -1846,341 +1844,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         return tstotal;
 }
 
-/*
-void zx80_DrawPixel(SCANLINE* CurScanLine, BYTE pixelColour, InterruptResponseType interruptResponse = NoInterrupt, bool halted = false, bool inOperationActive = false)
-{
-        if (pixelColour == (paper << 4))
-        {
-                if ((interruptResponse == MaskableInterrupt) && emulator.ColouriseMaskableInterruptResponse)
-                {
-                        pixelColour = BrightCyan;
-                }
-                else if (intISR && emulator.ColouriseMaskableInterruptServiceRoutine)
-                {
-                        pixelColour = Cyan;
-                }
-                else
-                {
-                        bool vsyncPeriod = inOperationActive || !videoFlipFlop3Clear;
-
-                        if (withinDisplayDriver && emulator.ColouriseRomDisplayDriver)
-                        {
-                                pixelColour = (vsyncPeriod && emulator.ColouriseVerticalSyncPulse) ? Red : BrightRed;
-                        }
-                        else if (vsyncPeriod)
-                        {
-                                pixelColour = emulator.ColouriseVerticalSyncPulse ? Red : Black;
-                        }
-                        else if (!videoFlipFlop3Q)
-                        {
-                                pixelColour = emulator.ColouriseHorizontalSyncPulse ? Blue : Black;
-                        }
-                        else if (emulator.ColouriseZ80Halted && halted)
-                        {
-                                pixelColour = White;
-                        }
-                }
-        }
-
-        CurScanLine->scanline[CurScanLine->scanline_len++] = pixelColour;
-}
-
-int zx80_do_scanline(SCANLINE *CurScanLine)
-{
-        int PrevRev = 0;
-        int PrevBit = 0;
-        int PrevGhost = 0;
-        int tstotal = 0;
-
-        int scanlineThresholdPixelLength = emulator.single_step ? 1 : scanlinePixelLength + (ZX80HSyncDuration * 2);
-
-        CurScanLine->scanline_len = 0;
-
-        if (CurScanLine->sync_type != SYNCNONE)
-        {
-                CurScanLine->sync_type = SYNCNONE;
-                CurScanLine->sync_len = 0;
-        }
-
-        if (lineClockCarryCounter > 0)
-        {
-                int lineClockCarryCounterPixels = lineClockCarryCounter * 2;
-                memcpy(CurScanLine->scanline, carryOverScanlineBuffer, lineClockCarryCounterPixels);
-                CurScanLine->scanline_len = lineClockCarryCounterPixels;
-                lineClockCarryCounter = 0;
-        }
-
-        do
-        {
-                if (emulator.ColouriseRomDisplayDriver && annotatableROM)
-                {
-                        withinDisplayDriver = ((z80.pc.w >= 0x013C) && (z80.pc.w <= 0x01B5));
-                }
-                
-                if (emulator.ColouriseMaskableInterruptServiceRoutine && annotatableROM)
-                {
-                        if (z80.pc.w == 0x0038)
-                        {
-                                intISR = true;
-                        }
-                        else if ((z80.pc.w < 0x0038) || (z80.pc.w > 0x0048))
-                        {
-                                intISR = false;
-                        }
-                }
-
-                LastInstruction = LASTINSTNONE;
-                z80.pc.w = PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
-
-                prevVideoFlipFlop3Q = videoFlipFlop3Q;
-                int numberOfM1Cycles = z80_NumberOfM1Cycles();
-
-                for (int i = 0; i < numberOfM1Cycles; i++)
-                {
-                        if (videoFlipFlop3Clear)
-                        {
-                                videoFlipFlop3Q = videoFlipFlop2Q;
-                        }
-                        
-                        videoFlipFlop2Q = !videoFlipFlop1Q;
-                }
-
-                if (!videoFlipFlop3Q)
-                {
-                        videoFlipFlop1Q = 0;
-
-                        if (prevVideoFlipFlop3Q)
-                        {
-                                lineCounter = (++lineCounter) & 7;
-                        }
-                }
-
-                int interruptResponseDuration = 0;
-
-                if (interruptPending)
-                {
-                        interruptResponseDuration = z80_interrupt(idleDataBus);
-
-                        if (interruptResponseDuration > 0)
-                        {
-                                if (videoFlipFlop3Clear)
-                                {
-                                        videoFlipFlop3Q = videoFlipFlop2Q;
-                                }
-
-                                videoFlipFlop2Q = !videoFlipFlop1Q;
-                                videoFlipFlop1Q = 1;
-                                
-                                ts += interruptResponseDuration;
-                        }
-
-                        interruptPending = false;
-                }
-
-                int instructionPixels = ts << 1;
-
-                shift_store = shift_register;
-
-                bool inFE = (LastInstruction == LASTINSTINFE);
-                int interruptResponsePixels = interruptResponseDuration << 1;
-
-                for (int i = 0; i < instructionPixels; i++)
-                {
-                        int bit = (shift_register ^ shift_reg_inv) & 0x8000;
-                        int colour = (bit ? ink : paper) << 4;
-
-                        if (emulator.dirtydisplay)
-                        {
-                                if (PrevGhost)
-                                {
-                                        colour |= 4;
-                                }
-                                PrevGhost = 0;
-
-                                if (PrevBit && (PrevRev || emulator.simpleghost))
-                                {
-                                        colour |= 2;
-                                        PrevGhost = 1;
-                                }
-
-                                if (noise & 1)
-                                {
-                                        colour |= 1;
-                                }
-
-                                noise >>= 1;
-                                PrevRev = shift_reg_inv & 0x8000;
-                                PrevBit = bit;
-                        }
-
-                        bool inOperationActive = inFE && (i >= (instructionPixels - PortActiveDurationPixels));
-                        bool interruptResponseActive = (i >= (instructionPixels - interruptResponsePixels));
-                        InterruptResponseType interruptResponse = interruptResponseActive ? MaskableInterrupt : NoInterrupt;
-
-                        zx80_DrawPixel(CurScanLine, colour, interruptResponse, z80.halted, inOperationActive);
-
-                        shift_register <<= 1;
-                        shift_reg_inv <<= 1;
-
-                        if (chromaSelected && ((i & 7) == 7))
-                        {
-                                if (frameSynchronised)
-                                {
-                                        GetChromaColours(&ink, &paper);
-                                }
-                                else
-                                {
-                                        ink = colourBlack;
-                                        paper = colourBrightWhite;
-                                }
-                        }
-                }
-
-                if (!(z80.r & 0x40))
-                {
-                        interruptPending = true;
-                }
-
-                frametstates += ts;
-                tStatesCount += ts;
-
-                WavClockTick(ts, !videoFlipFlop3Q);
-
-                if (machine.zxprinter)
-                {
-                        ZXPrinterClockTick(ts);
-                }
-
-                if (spectrum.floppytype == FLOPPYZX1541)
-                {
-                        IECClockTick(ts);
-                }
-
-                switch (LastInstruction)
-                {
-                case LASTINSTOUTFD:
-                case LASTINSTOUTFE:
-                case LASTINSTOUTFF:     // VSync end
-                        videoFlipFlop1Q = 0;
-                        videoFlipFlop3Clear = 1;
-                        CurScanLine->sync_len += ts;
-                        break;
-
-                case LASTINSTINFE:      // VSync start
-                        if (videoFlipFlop3Q)
-                        {
-                                CurScanLine->sync_len = PortActiveDuration;
-                        }
-                        else
-                        {
-                                CurScanLine->sync_len += ts;
-                        }
-
-                        videoFlipFlop1Q = 1;
-                        videoFlipFlop3Clear = 0;
-                        videoFlipFlop3Q = 0;
-                        lineCounter = 0;
-                        break;
-
-                default:
-                        if (!videoFlipFlop3Q)
-                        {
-                                CurScanLine->sync_len += ts;
-                        }
-                        break;
-                }
-
-                if (allowSoundOutput && !chromaSelected && (prevVideoFlipFlop3Q != videoFlipFlop3Q))
-                {
-                        Sound.Beeper(videoFlipFlop3Q, frametstates);
-                }
-
-                if (videoFlipFlop3Q && CurScanLine->sync_len > 0)
-                {
-                        if (CurScanLine->sync_len <= ZX80HSyncDuration)
-                        {
-                                //#### check scanline_len and only accept as HSync if close to edge of screen
-
-                                CurScanLine->sync_type = SYNCTYPEH;
-                        }
-                        else
-                        {
-                                CurScanLine->sync_type = SYNCTYPEV;
-                        }
-
-                        int scanlineLength = CurScanLine->scanline_len - instructionPixels;
-                        memcpy(carryOverScanlineBuffer, CurScanLine->scanline + scanlineLength, instructionPixels);
-
-                        int pixelsToBlank = (machine.tperscanline * 2) - scanlineLength;
-                        if (pixelsToBlank > 0)
-                        {
-                                memset(CurScanLine->scanline + scanlineLength, BLANKCOLOUR, pixelsToBlank);
-                        }
-
-                        lineClockCarryCounter = ts;
-                        CurScanLine->scanline_len = scanlineLength;
-                }
-
-                tstotal += ts;
-
-                DebugUpdate();
-        }
-        while ((CurScanLine->scanline_len < scanlineThresholdPixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
-
-        if (CurScanLine->sync_type == SYNCTYPEV)
-        {
-                if (vsyncFound)
-                {
-                        frameSynchronised = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);
-                        vsyncFound = frameSynchronised;
-
-                        emulator.scanlinesPerFrame = frameSynchronised ? RasterY + 1 : 0;
-                }
-                else
-                {
-                        vsyncFound = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);
-                }
-                frameSynchronisedCounter = 0;
-
-                allowSoundOutput = zx81.vsyncsound && (!chromaSelected || (chromaSelected && !frameSynchronised));
-        }
-        else
-        {
-                if (frameSynchronisedCounter < VSYNC_TOLERANCEMAX_QS)
-                {
-                        frameSynchronisedCounter++;
-                }
-                else
-                {
-                        frameSynchronised = false;
-                        vsyncFound = false;
-                        allowSoundOutput = zx81.vsyncsound;
-                        emulator.scanlinesPerFrame = 0;
-                }
-
-                if (CurScanLine->sync_type == SYNCNONE)
-                {
-                        int overhangPixels = CurScanLine->scanline_len - scanlinePixelLength;;
-                        if (overhangPixels > 0)
-                        {
-                                memcpy(carryOverScanlineBuffer, CurScanLine->scanline + scanlinePixelLength, overhangPixels);
-                                lineClockCarryCounter = overhangPixels / 2;
-                                CurScanLine->scanline_len = scanlinePixelLength;
-                        }
-                }
-                else
-                {
-                        CurScanLine->scanline_len = scanlinePixelLength;
-                }
-        }
-
-//####        CurScanLine->scanline_len = scanlinePixelLength;
-
-        return tstotal;
-}
-*/
-
 void zx80_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, InterruptResponseType interruptResponse = NoInterrupt, bool halted = false, bool inOperationActive = false)
 {
         if (position < ZX80HSyncPositionEnd)
@@ -2192,11 +1855,11 @@ void zx80_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, Inter
         {
                 if ((interruptResponse == MaskableInterrupt) && emulator.ColouriseMaskableInterruptResponse)
                 {
-                        pixelColour = BrightCyan;
+                        pixelColour = Cyan;
                 }
                 else if (intISR && emulator.ColouriseMaskableInterruptServiceRoutine)
                 {
-                        pixelColour = Cyan;
+                        pixelColour = BrightCyan;
                 }
                 else
                 {

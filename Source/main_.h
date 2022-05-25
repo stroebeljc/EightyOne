@@ -38,6 +38,7 @@
 #include "AnimTimer.h"
 #include "ThemeMgr.hpp"
 
+
 #define RENDERGDI 0
 #define RENDERDDRAW 1
 
@@ -165,7 +166,8 @@ __published:	// IDE-managed Components
         TMenuItem *NonMaskableInterruptServiceRoutineRecursion;
         TMenuItem *RomDisplayDriver;
         TMenuItem *NonMaskableInterruptResponseWaitStates;
-        TMenuItem *UserProgramInstructionPositions;
+        TMenuItem *UserProgramInstructionStartPositions;
+        TImageList *ImageList2;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -268,7 +270,7 @@ __published:	// IDE-managed Components
         void __fastcall RomDisplayDriverClick(TObject *Sender);
         void __fastcall NonMaskableInterruptServiceRoutineRecursionClick(TObject *Sender);
         void __fastcall NonMaskableInterruptResponseWaitStatesClick(TObject *Sender);
-        void __fastcall UserProgramInstructionPositionsClick(
+        void __fastcall UserProgramInstructionStartPositionsClick(
           TObject *Sender);
 private:	// User declarations
         int fps;
@@ -282,6 +284,11 @@ private:	// User declarations
         Graphics::TBitmap *LEDGreenOff;
         Graphics::TBitmap *LEDRedOn;
         Graphics::TBitmap *LEDRedOff;
+        void UpdateAnnotationImages();
+        void UpdateAnnotationImage(TMenuItem* item);
+        void UpdateEmulatorAnnotationSettings();
+
+
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
         virtual void __fastcall WndProc(TMessage &Msg);

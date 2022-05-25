@@ -298,7 +298,7 @@ typedef struct
         CFGBYTE ColouriseInstructionStraddlingNMI;
         CFGBYTE ColouriseInstructionStraddlingNMIWaitStates;
         CFGBYTE ColouriseZ80Halted;
-        CFGBYTE ColouriseUserProgramInstructionPositions;
+        CFGBYTE ColouriseUserProgramInstructionStartPositions;
 
         char ROM80[256];
         char ROM81[256];

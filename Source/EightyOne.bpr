@@ -109,8 +109,8 @@
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=28
-Release=10
+MinorVer=29
+Release=0
 Build=0
 Debug=0
 PreRelease=0
@@ -123,7 +123,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Michael D Wynne
 FileDescription=EightyOne Emulator
-FileVersion=1.28.10.0
+FileVersion=1.29.0.0
 InternalName=
 LegalCopyright=Michael D Wynne
 LegalTrademarks=
@@ -134,8 +134,8 @@ Comments=
 
 [HistoryLists\hlIncludePath]
 Count=30
-Item0=ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
-Item1=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
+Item0=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
+Item1=ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
 Item2=ql\;C:\;Display;peripherals\zxprinter;ql;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
 Item3=C:\;Display;peripherals\zxprinter;ql\;ql;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
 Item4=ql\;ql;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\CBuilder;..\Components\Theme Manager\TMSourceOnly\Source
@@ -167,8 +167,8 @@ Item29=ql\;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:
 
 [HistoryLists\hlLibraryPath]
 Count=30
-Item0=ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\DirectSound
-Item1=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\DirectSound
+Item0=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\DirectSound
+Item1=ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\DirectSound
 Item2=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;C:\EightyOne\Components\DirectSound
 Item3=ql\;ql;C:\;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library
 Item4=ql\;C:\;Display;peripherals\zxprinter;ql;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library

@@ -1186,22 +1186,10 @@ void TForm1::LoadSettings(TIniFile *ini)
         InstructionStraddlingNMI->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
         InstructionStraddlingNMIWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
         Z80Halted->Checked = ini->ReadBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
-        UserProgramInstructionPositions->Checked = ini->ReadBool("MAIN", "ColouriseUserProgramInstructionPositions", UserProgramInstructionPositions->Checked);
+        UserProgramInstructionStartPositions->Checked = ini->ReadBool("MAIN", "ColouriseUserProgramInstructionStartPositions", UserProgramInstructionStartPositions->Checked);
 
-        emulator.ColouriseHorizontalSyncPulse = HorizontalSyncPulse->Checked;
-        emulator.ColouriseVerticalSyncPulse = VerticalSyncPulse->Checked;
-        emulator.ColouriseRomDisplayDriver = RomDisplayDriver->Checked;
-        emulator.ColouriseBackPorch = BackPorch->Checked;
-        emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
-        emulator.ColouriseNonMaskableInterruptResponseWaitStates = NonMaskableInterruptResponseWaitStates->Checked;
-        emulator.ColouriseNonMaskableInterruptServiceRoutine = NonMaskableInterruptServiceRoutine->Checked;
-        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = NonMaskableInterruptServiceRoutineRecursion->Checked;
-        emulator.ColouriseMaskableInterruptResponse = MaskableInterruptResponse->Checked;
-        emulator.ColouriseMaskableInterruptServiceRoutine = MaskableInterruptServiceRoutine->Checked;
-        emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
-        emulator.ColouriseInstructionStraddlingNMIWaitStates = InstructionStraddlingNMIWaitStates->Checked;
-        emulator.ColouriseZ80Halted = Z80Halted->Checked;
-        emulator.ColouriseUserProgramInstructionPositions = UserProgramInstructionPositions->Checked;
+        UpdateEmulatorAnnotationSettings();
+        UpdateAnnotationImages();
 
         if (None1->Checked) { emulator.bordersize=BORDERNONE; None1Click(NULL); }
         if (Small1->Checked) { emulator.bordersize=BORDERSMALL; Small1Click(NULL); }
@@ -1298,7 +1286,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
         ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
         ini->WriteBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
-        ini->WriteBool("MAIN", "ColouriseUserProgramInstructionPositions", UserProgramInstructionPositions->Checked);
+        ini->WriteBool("MAIN", "ColouriseUserProgramInstructionStartPositions", UserProgramInstructionStartPositions->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);
@@ -2201,76 +2189,22 @@ void __fastcall TForm1::RunFrame()
 
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::HorizontalSyncPulseClick(TObject *Sender)
-{
-        HorizontalSyncPulse->Checked = !HorizontalSyncPulse->Checked;
-        emulator.ColouriseHorizontalSyncPulse = HorizontalSyncPulse->Checked;
-}
-//---------------------------------------------------------------------------
+const int ColourIndex_HorizontalSyncPulse = 1;
+const int ColourIndex_VerticalSyncPulse = 2;
+const int ColourIndex_NonMaskableInterruptResponse = 3;
+const int ColourIndex_NonMaskableInterruptServiceRoutine = 4;
+const int ColourIndex_MaskableInterruptServiceRoutine = 5;
+const int ColourIndex_InstructionStraddlingNMI = 6;
+const int ColourIndex_Z80Halted = 7;
+const int ColourIndex_BackPorch = 9;
+const int ColourIndex_RomDisplayDriver = 10;
+const int ColourIndex_NonMaskableInterruptResponseWaitStates = 11;
+const int ColourIndex_NonMaskableInterruptServiceRoutineRecursion = 12;
+const int ColourIndex_MaskableInterruptResponse = 13;
+const int ColourIndex_InstructionStraddlingNMIWaitStates = 14;
+const int ColourIndex_UserProgramInstructionPositions = 15;
+const int ColourIndex_Tick = 16;
 
-void __fastcall TForm1::VerticalSyncPulseClick(TObject *Sender)
-{
-        VerticalSyncPulse->Checked = !VerticalSyncPulse->Checked;
-        emulator.ColouriseVerticalSyncPulse = VerticalSyncPulse->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::BackPorchClick(TObject *Sender)
-{
-        BackPorch->Checked = !BackPorch->Checked;
-        emulator.ColouriseBackPorch = BackPorch->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::NonMaskableInterruptResponseClick(TObject *Sender)
-{
-        NonMaskableInterruptResponse->Checked = !NonMaskableInterruptResponse->Checked;
-        emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::NonMaskableInterruptServiceRoutineClick(
-      TObject *Sender)
-{
-        NonMaskableInterruptServiceRoutine->Checked = !NonMaskableInterruptServiceRoutine->Checked;
-        emulator.ColouriseNonMaskableInterruptServiceRoutine = NonMaskableInterruptServiceRoutine->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::MaskableInterruptResponseClick(TObject *Sender)
-{
-        MaskableInterruptResponse->Checked = !MaskableInterruptResponse->Checked;
-        emulator.ColouriseMaskableInterruptResponse = MaskableInterruptResponse->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::MaskableInterruptServiceRoutineClick(
-      TObject *Sender)
-{
-        MaskableInterruptServiceRoutine->Checked = !MaskableInterruptServiceRoutine->Checked;
-        emulator.ColouriseMaskableInterruptServiceRoutine = MaskableInterruptServiceRoutine->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::InstructionStraddlingNMIClick(TObject *Sender)
-{
-        InstructionStraddlingNMI->Checked = !InstructionStraddlingNMI->Checked;
-        emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::InstructionStraddlingNMIWaitStatesClick(TObject *Sender)
-{
-        InstructionStraddlingNMIWaitStates->Checked = !InstructionStraddlingNMIWaitStates->Checked;
-        emulator.ColouriseInstructionStraddlingNMIWaitStates = InstructionStraddlingNMIWaitStates->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::Z80HaltedClick(TObject *Sender)
-{
-        Z80Halted->Checked = !Z80Halted->Checked;
-        emulator.ColouriseZ80Halted = Z80Halted->Checked;
-}
 //---------------------------------------------------------------------------
 
 void TForm1::EnableColourisationOptions()
@@ -2286,26 +2220,14 @@ void TForm1::EnableColourisationOptions()
                 HorizontalSyncPulse->Checked = false;
                 VerticalSyncPulse->Checked = false;
                 RomDisplayDriver->Checked = false;
-                BackPorch->Checked = false;
                 Z80Halted->Checked = false;
                 MaskableInterruptResponse->Checked = false;
                 MaskableInterruptServiceRoutine->Checked = false;
-
-                emulator.ColouriseHorizontalSyncPulse = false;
-                emulator.ColouriseVerticalSyncPulse = false;
-                emulator.ColouriseRomDisplayDriver = false;
-                emulator.ColouriseBackPorch = false;
-                emulator.ColouriseZ80Halted = false;
-                emulator.ColouriseMaskableInterruptResponse = false;
-                emulator.ColouriseMaskableInterruptServiceRoutine = false;
         }
         else if (!annotatableROM)
         {
                 RomDisplayDriver->Checked = false;
                 MaskableInterruptServiceRoutine->Checked = false;
-
-                emulator.ColouriseRomDisplayDriver = false;
-                emulator.ColouriseMaskableInterruptServiceRoutine = false;
         }
 
         HorizontalSyncPulse->Enabled = enableOption;
@@ -2323,7 +2245,7 @@ void TForm1::EnableColourisationOptions()
         NonMaskableInterruptServiceRoutineRecursion->Enabled = enableOption && annotatableROM;
         InstructionStraddlingNMI->Enabled = enableOption;
         InstructionStraddlingNMIWaitStates->Enabled = enableOption;
-        UserProgramInstructionPositions->Enabled = enableOption;
+        UserProgramInstructionStartPositions->Enabled = enableOption;
 
         if (!enableOption)
         {
@@ -2334,25 +2256,19 @@ void TForm1::EnableColourisationOptions()
                 NonMaskableInterruptServiceRoutineRecursion->Checked = false;
                 InstructionStraddlingNMI->Checked = false;
                 InstructionStraddlingNMIWaitStates->Checked = false;
-                UserProgramInstructionPositions->Checked = false;
-
-                emulator.ColouriseNonMaskableInterruptResponse = false;
-                emulator.ColouriseNonMaskableInterruptResponseWaitStates = false;
-                emulator.ColouriseNonMaskableInterruptServiceRoutine = false;
-                emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
-                emulator.ColouriseInstructionStraddlingNMI = false;
-                emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
-                emulator.ColouriseUserProgramInstructionPositions = false;
+                UserProgramInstructionStartPositions->Checked = false;
         }
         else if (!annotatableROM)
         {
                 NonMaskableInterruptServiceRoutine->Checked = false;
                 NonMaskableInterruptServiceRoutineRecursion->Checked = false;
-
-                emulator.ColouriseNonMaskableInterruptServiceRoutine = false;
-                emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
         }
+
+        UpdateEmulatorAnnotationSettings();
+        UpdateAnnotationImages();
 }
+
+//---------------------------------------------------------------------------
 
 void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
 {
@@ -2365,13 +2281,6 @@ void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
         MaskableInterruptServiceRoutine->Checked = selectOption;
         Z80Halted->Checked = selectOption;
 
-        emulator.ColouriseHorizontalSyncPulse = selectOption;
-        emulator.ColouriseVerticalSyncPulse = selectOption;
-        emulator.ColouriseRomDisplayDriver = selectOption;
-        emulator.ColouriseMaskableInterruptResponse = selectOption;
-        emulator.ColouriseMaskableInterruptServiceRoutine = selectOption;
-        emulator.ColouriseZ80Halted = selectOption;
-
         selectOption = selectOption && (emulator.machine != MACHINEZX80);
 
         BackPorch->Checked = selectOption;
@@ -2381,16 +2290,10 @@ void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
         NonMaskableInterruptServiceRoutineRecursion->Checked = selectOption;
         InstructionStraddlingNMI->Checked = selectOption;
         InstructionStraddlingNMIWaitStates->Checked = selectOption;
-        UserProgramInstructionPositions->Checked = selectOption;
+        UserProgramInstructionStartPositions->Checked = selectOption;
 
-        emulator.ColouriseBackPorch = selectOption;
-        emulator.ColouriseNonMaskableInterruptResponse = selectOption;
-        emulator.ColouriseNonMaskableInterruptResponseWaitStates = selectOption;
-        emulator.ColouriseNonMaskableInterruptServiceRoutine = selectOption;
-        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = selectOption;
-        emulator.ColouriseInstructionStraddlingNMI = selectOption;
-        emulator.ColouriseInstructionStraddlingNMIWaitStates = selectOption;
-        emulator.ColouriseUserProgramInstructionPositions = selectOption;
+        UpdateEmulatorAnnotationSettings();
+        UpdateAnnotationImages();
 }
 //---------------------------------------------------------------------------
 
@@ -2409,22 +2312,103 @@ void __fastcall TForm1::DeselectAllColourisationsClick(TObject *Sender)
         InstructionStraddlingNMI->Checked = false;
         InstructionStraddlingNMIWaitStates->Checked = false;
         Z80Halted->Checked = false;
-        UserProgramInstructionPositions->Checked = false;
+        UserProgramInstructionStartPositions->Checked = false;
 
-        emulator.ColouriseHorizontalSyncPulse = false;
-        emulator.ColouriseVerticalSyncPulse = false;
-        emulator.ColouriseRomDisplayDriver = false;
-        emulator.ColouriseBackPorch = false;
-        emulator.ColouriseNonMaskableInterruptResponse = false;
-        emulator.ColouriseNonMaskableInterruptResponseWaitStates = false;
-        emulator.ColouriseNonMaskableInterruptServiceRoutine = false;
-        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = false;
-        emulator.ColouriseMaskableInterruptResponse = false;
-        emulator.ColouriseMaskableInterruptServiceRoutine = false;
-        emulator.ColouriseInstructionStraddlingNMI = false;
-        emulator.ColouriseInstructionStraddlingNMIWaitStates = false;
-        emulator.ColouriseZ80Halted = false;
-        emulator.ColouriseUserProgramInstructionPositions = false;
+        UpdateEmulatorAnnotationSettings();
+        UpdateAnnotationImages();
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::HorizontalSyncPulseClick(TObject *Sender)
+{
+        HorizontalSyncPulse->Checked = !HorizontalSyncPulse->Checked;
+        emulator.ColouriseHorizontalSyncPulse = HorizontalSyncPulse->Checked;
+
+        UpdateAnnotationImage(HorizontalSyncPulse);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::VerticalSyncPulseClick(TObject *Sender)
+{
+        VerticalSyncPulse->Checked = !VerticalSyncPulse->Checked;
+        emulator.ColouriseVerticalSyncPulse = VerticalSyncPulse->Checked;
+
+        UpdateAnnotationImage(VerticalSyncPulse);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BackPorchClick(TObject *Sender)
+{
+        BackPorch->Checked = !BackPorch->Checked;
+        emulator.ColouriseBackPorch = BackPorch->Checked;
+
+        UpdateAnnotationImage(BackPorch);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::NonMaskableInterruptResponseClick(TObject *Sender)
+{
+        NonMaskableInterruptResponse->Checked = !NonMaskableInterruptResponse->Checked;
+        emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
+
+        UpdateAnnotationImage(NonMaskableInterruptResponse);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::NonMaskableInterruptServiceRoutineClick(
+      TObject *Sender)
+{
+        NonMaskableInterruptServiceRoutine->Checked = !NonMaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = NonMaskableInterruptServiceRoutine->Checked;
+
+        UpdateAnnotationImage(NonMaskableInterruptServiceRoutine);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::MaskableInterruptResponseClick(TObject *Sender)
+{
+        MaskableInterruptResponse->Checked = !MaskableInterruptResponse->Checked;
+        emulator.ColouriseMaskableInterruptResponse = MaskableInterruptResponse->Checked;
+
+        UpdateAnnotationImage(MaskableInterruptResponse);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::MaskableInterruptServiceRoutineClick(
+      TObject *Sender)
+{
+        MaskableInterruptServiceRoutine->Checked = !MaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseMaskableInterruptServiceRoutine = MaskableInterruptServiceRoutine->Checked;
+
+        UpdateAnnotationImage(MaskableInterruptServiceRoutine);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::InstructionStraddlingNMIClick(TObject *Sender)
+{
+        InstructionStraddlingNMI->Checked = !InstructionStraddlingNMI->Checked;
+        emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
+
+        UpdateAnnotationImage(InstructionStraddlingNMI);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::InstructionStraddlingNMIWaitStatesClick(TObject *Sender)
+{
+        InstructionStraddlingNMIWaitStates->Checked = !InstructionStraddlingNMIWaitStates->Checked;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = InstructionStraddlingNMIWaitStates->Checked;
+
+        UpdateAnnotationImage(InstructionStraddlingNMIWaitStates);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Z80HaltedClick(TObject *Sender)
+{
+        Z80Halted->Checked = !Z80Halted->Checked;
+        emulator.ColouriseZ80Halted = Z80Halted->Checked;
+
+        UpdateAnnotationImage(Z80Halted);
 }
 //---------------------------------------------------------------------------
 
@@ -2432,6 +2416,8 @@ void __fastcall TForm1::RomDisplayDriverClick(TObject *Sender)
 {
         RomDisplayDriver->Checked = !RomDisplayDriver->Checked;
         emulator.ColouriseRomDisplayDriver = RomDisplayDriver->Checked;
+
+        UpdateAnnotationImage(RomDisplayDriver);
 }
 //---------------------------------------------------------------------------
 
@@ -2439,6 +2425,8 @@ void __fastcall TForm1::NonMaskableInterruptServiceRoutineRecursionClick(TObject
 {
         NonMaskableInterruptServiceRoutineRecursion->Checked = !NonMaskableInterruptServiceRoutineRecursion->Checked;
         emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = NonMaskableInterruptServiceRoutineRecursion->Checked;
+
+        UpdateAnnotationImage(NonMaskableInterruptServiceRoutineRecursion);
 }
 //---------------------------------------------------------------------------
 
@@ -2446,14 +2434,59 @@ void __fastcall TForm1::NonMaskableInterruptResponseWaitStatesClick(TObject *Sen
 {
         NonMaskableInterruptResponseWaitStates->Checked = !NonMaskableInterruptResponseWaitStates->Checked;
         emulator.ColouriseNonMaskableInterruptResponseWaitStates = NonMaskableInterruptResponseWaitStates->Checked;
+
+        UpdateAnnotationImage(NonMaskableInterruptResponseWaitStates);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::UserProgramInstructionPositionsClick(
+void __fastcall TForm1::UserProgramInstructionStartPositionsClick(
       TObject *Sender)
 {
-        UserProgramInstructionPositions->Checked = !UserProgramInstructionPositions->Checked;
-        emulator.ColouriseUserProgramInstructionPositions = UserProgramInstructionPositions->Checked;
+        UserProgramInstructionStartPositions->Checked = !UserProgramInstructionStartPositions->Checked;
+        emulator.ColouriseUserProgramInstructionStartPositions = UserProgramInstructionStartPositions->Checked;
+        
+        UpdateAnnotationImage(UserProgramInstructionStartPositions);
 }
 //---------------------------------------------------------------------------
+
+void TForm1::UpdateAnnotationImages()
+{
+        UpdateAnnotationImage(HorizontalSyncPulse);
+        UpdateAnnotationImage(VerticalSyncPulse);
+        UpdateAnnotationImage(RomDisplayDriver);
+        UpdateAnnotationImage(BackPorch);
+        UpdateAnnotationImage(NonMaskableInterruptResponse);
+        UpdateAnnotationImage(NonMaskableInterruptResponseWaitStates);
+        UpdateAnnotationImage(NonMaskableInterruptServiceRoutine);
+        UpdateAnnotationImage(NonMaskableInterruptServiceRoutineRecursion);
+        UpdateAnnotationImage(MaskableInterruptResponse);
+        UpdateAnnotationImage(MaskableInterruptServiceRoutine);
+        UpdateAnnotationImage(InstructionStraddlingNMI);
+        UpdateAnnotationImage(InstructionStraddlingNMIWaitStates);
+        UpdateAnnotationImage(Z80Halted);
+        UpdateAnnotationImage(UserProgramInstructionStartPositions);
+}
+
+void TForm1::UpdateAnnotationImage(TMenuItem* item)
+{
+        item->ImageIndex = item->Checked? item->ImageIndex | ColourIndex_Tick : item->ImageIndex & ~ColourIndex_Tick;
+}
+
+void TForm1::UpdateEmulatorAnnotationSettings()
+{
+        emulator.ColouriseHorizontalSyncPulse = HorizontalSyncPulse->Checked;
+        emulator.ColouriseVerticalSyncPulse = VerticalSyncPulse->Checked;
+        emulator.ColouriseRomDisplayDriver = RomDisplayDriver->Checked;
+        emulator.ColouriseBackPorch = BackPorch->Checked;
+        emulator.ColouriseNonMaskableInterruptResponse = NonMaskableInterruptResponse->Checked;
+        emulator.ColouriseNonMaskableInterruptResponseWaitStates = NonMaskableInterruptResponseWaitStates->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutine = NonMaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseNonMaskableInterruptServiceRoutineRecursion = NonMaskableInterruptServiceRoutineRecursion->Checked;
+        emulator.ColouriseMaskableInterruptResponse = MaskableInterruptResponse->Checked;
+        emulator.ColouriseMaskableInterruptServiceRoutine = MaskableInterruptServiceRoutine->Checked;
+        emulator.ColouriseInstructionStraddlingNMI = InstructionStraddlingNMI->Checked;
+        emulator.ColouriseInstructionStraddlingNMIWaitStates = InstructionStraddlingNMIWaitStates->Checked;
+        emulator.ColouriseZ80Halted = Z80Halted->Checked;
+        emulator.ColouriseUserProgramInstructionStartPositions = UserProgramInstructionStartPositions->Checked;
+}
 

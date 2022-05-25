@@ -679,11 +679,10 @@ int AccurateDraw(SCANLINE *Line)
 
                         if (RasterY>=TVH)
                         {
-                                //RasterX=0;
-                                //RasterY=0;
-                                //dest=buffer;
                                 i=Line->scanline_len+1;
                                 Line->sync_type=SYNCTYPEV;
+                                if (Line->sync_len < HSYNC_MINLEN)
+                                        Line->sync_len=HSYNC_MINLEN;
                         }
                 }
         }
@@ -692,7 +691,6 @@ int AccurateDraw(SCANLINE *Line)
         {
                 if (RasterX>(HSYNC_TOLLERANCE*BPP))
                 {
-                        //scanlen[RasterY]=RasterX;
                         RasterX=0;
                         RasterY+= Scale;
                         if ((!tv.AdvancedEffects) && (machine.colour != COLOURSPECTRA)) Shade=8-Shade;

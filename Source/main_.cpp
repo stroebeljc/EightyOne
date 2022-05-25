@@ -115,7 +115,7 @@ int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 int AutoLoadCount=0;
 char TEMP1[256];
 
-SCANLINE Video[2], *BuildLine, *DisplayLine;
+SCANLINE *BuildLine, Video;
 
 static bool iniFileExists = false;
 
@@ -205,8 +205,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         Application->OnDeactivate=FormDeactivate;
         DrivesChanged=false;
 
-        BuildLine=&Video[0];
-        DisplayLine=&Video[1];
+        BuildLine=&Video;
 
         SpecStartUp();
 }

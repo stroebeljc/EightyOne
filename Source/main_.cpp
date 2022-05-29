@@ -2272,12 +2272,13 @@ void TForm1::EnableColourisationOptions()
 void __fastcall TForm1::SelectAllColourisationsClick(TObject *Sender)
 {
         BOOL selectOption = (emulator.machine != MACHINEZX97LE && emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINEACE);
-
+        BOOL annotatableROM = IsAnnotatableROM();
+        
         HorizontalSyncPulse->Checked = selectOption;
         VerticalSyncPulse->Checked = selectOption;
-        RomDisplayDriver->Checked = selectOption;
+        RomDisplayDriver->Checked = selectOption && annotatableROM;
         MaskableInterruptResponse->Checked = selectOption;
-        MaskableInterruptServiceRoutine->Checked = selectOption;
+        MaskableInterruptServiceRoutine->Checked = selectOption && annotatableROM;
         Z80Halted->Checked = selectOption;
 
         selectOption = selectOption && (emulator.machine != MACHINEZX80);

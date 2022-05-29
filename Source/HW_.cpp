@@ -160,6 +160,8 @@ AnsiString getMachineRoot(AnsiString fullRomName)
 
 void __fastcall THW::OKClick(TObject *Sender)
 {
+        RomBox->Text = RomBox->Text.LowerCase();
+
         AnsiString Name=NewMachineName;
 
         //First put the new machine name in the status panel
@@ -1912,27 +1914,27 @@ void THW::LoadSettings(TIniFile *ini)
         if (ini->ReadBool("HWARE","Advanced",Advanced->Visible))
                 AdvancedBtnClick(NULL);
 
-        Rom=emulator.ROM80; Rom=ini->ReadString("HWARE","ROM80",Rom); strcpy(emulator.ROM80, Rom.c_str());
-        Rom=emulator.ROM81; Rom=ini->ReadString("HWARE","ROM81",Rom); strcpy(emulator.ROM81, Rom.c_str());
-        Rom=emulator.ROMACE; Rom=ini->ReadString("HWARE","ROMACE",Rom); strcpy(emulator.ROMACE, Rom.c_str());
-        Rom=emulator.ROMTS1000; Rom=ini->ReadString("HWARE","ROMTS1000",Rom); strcpy(emulator.ROMTS1000, Rom.c_str());
-        Rom=emulator.ROMTS1500; Rom=ini->ReadString("HWARE","ROMTS1500",Rom); strcpy(emulator.ROMTS1500, Rom.c_str());
-        Rom=emulator.ROMLAMBDA; Rom=ini->ReadString("HWARE","ROMLAMBDA",Rom); strcpy(emulator.ROMLAMBDA, Rom.c_str());
-        Rom=emulator.ROMPC8300; Rom=ini->ReadString("HWARE","ROMPC8300",Rom); strcpy(emulator.ROMPC8300, Rom.c_str());
-        Rom=emulator.ROMTK85; Rom=ini->ReadString("HWARE","ROMTK85",Rom); strcpy(emulator.ROMTK85, Rom.c_str());
-        Rom=emulator.ROM97LE; Rom=ini->ReadString("HWARE","ROM97LE",Rom); strcpy(emulator.ROM97LE, Rom.c_str());
-        Rom=emulator.ROMR470; Rom=ini->ReadString("HWARE","ROMR470",Rom); strcpy(emulator.ROMR470, Rom.c_str());
-        Rom=emulator.ROMSP48; Rom=ini->ReadString("HWARE","ROMSP48",Rom); strcpy(emulator.ROMSP48, Rom.c_str());
-        Rom=emulator.ROMSP128; Rom=ini->ReadString("HWARE","ROMSP128",Rom); strcpy(emulator.ROMSP128, Rom.c_str());
-        Rom=emulator.ROMSPP2; Rom=ini->ReadString("HWARE","ROMSPP2",Rom); strcpy(emulator.ROMSPP2, Rom.c_str());
-        Rom=emulator.ROMSPP3; Rom=ini->ReadString("HWARE","ROMSPP3",Rom); strcpy(emulator.ROMSPP3, Rom.c_str());
-        Rom=emulator.ROMSPP3E; Rom=ini->ReadString("HWARE","ROMSPP3E",Rom); strcpy(emulator.ROMSPP3E, Rom.c_str());
-        Rom=emulator.ROMSPP3ECF; Rom=ini->ReadString("HWARE","ROMSPP3ECF",Rom); strcpy(emulator.ROMSPP3ECF, Rom.c_str());
-        Rom=emulator.ROMDock; Rom=ini->ReadString("HWARE","Dock",Rom); strcpy(emulator.ROMDock, Rom.c_str());
-        Rom=emulator.ROMZX8BIT; Rom=ini->ReadString("HWARE","ZX8BIT",Rom); strcpy(emulator.ROMZX8BIT, Rom.c_str());
-        Rom=emulator.ROMZX16BIT; Rom=ini->ReadString("HWARE","ZX16BIT",Rom); strcpy(emulator.ROMZX16BIT, Rom.c_str());
-        Rom=emulator.ROMZXCF; Rom=ini->ReadString("HWARE","ZXCF",Rom); strcpy(emulator.ROMZXCF, Rom.c_str());
-        Rom=emulator.ROMQL; Rom=ini->ReadString("HWARE","ROMQL",Rom); strcpy(emulator.ROMQL, Rom.c_str());
+        Rom=emulator.ROM80; Rom=ini->ReadString("HWARE","ROM80",Rom).LowerCase(); strcpy(emulator.ROM80, Rom.c_str());
+        Rom=emulator.ROM81; Rom=ini->ReadString("HWARE","ROM81",Rom).LowerCase(); strcpy(emulator.ROM81, Rom.c_str());
+        Rom=emulator.ROMACE; Rom=ini->ReadString("HWARE","ROMACE",Rom).LowerCase(); strcpy(emulator.ROMACE, Rom.c_str());
+        Rom=emulator.ROMTS1000; Rom=ini->ReadString("HWARE","ROMTS1000",Rom).LowerCase(); strcpy(emulator.ROMTS1000, Rom.c_str());
+        Rom=emulator.ROMTS1500; Rom=ini->ReadString("HWARE","ROMTS1500",Rom).LowerCase(); strcpy(emulator.ROMTS1500, Rom.c_str());
+        Rom=emulator.ROMLAMBDA; Rom=ini->ReadString("HWARE","ROMLAMBDA",Rom).LowerCase(); strcpy(emulator.ROMLAMBDA, Rom.c_str());
+        Rom=emulator.ROMPC8300; Rom=ini->ReadString("HWARE","ROMPC8300",Rom).LowerCase(); strcpy(emulator.ROMPC8300, Rom.c_str());
+        Rom=emulator.ROMTK85; Rom=ini->ReadString("HWARE","ROMTK85",Rom).LowerCase(); strcpy(emulator.ROMTK85, Rom.c_str());
+        Rom=emulator.ROM97LE; Rom=ini->ReadString("HWARE","ROM97LE",Rom).LowerCase(); strcpy(emulator.ROM97LE, Rom.c_str());
+        Rom=emulator.ROMR470; Rom=ini->ReadString("HWARE","ROMR470",Rom).LowerCase(); strcpy(emulator.ROMR470, Rom.c_str());
+        Rom=emulator.ROMSP48; Rom=ini->ReadString("HWARE","ROMSP48",Rom).LowerCase(); strcpy(emulator.ROMSP48, Rom.c_str());
+        Rom=emulator.ROMSP128; Rom=ini->ReadString("HWARE","ROMSP128",Rom).LowerCase(); strcpy(emulator.ROMSP128, Rom.c_str());
+        Rom=emulator.ROMSPP2; Rom=ini->ReadString("HWARE","ROMSPP2",Rom).LowerCase(); strcpy(emulator.ROMSPP2, Rom.c_str());
+        Rom=emulator.ROMSPP3; Rom=ini->ReadString("HWARE","ROMSPP3",Rom).LowerCase(); strcpy(emulator.ROMSPP3, Rom.c_str());
+        Rom=emulator.ROMSPP3E; Rom=ini->ReadString("HWARE","ROMSPP3E",Rom).LowerCase(); strcpy(emulator.ROMSPP3E, Rom.c_str());
+        Rom=emulator.ROMSPP3ECF; Rom=ini->ReadString("HWARE","ROMSPP3ECF",Rom).LowerCase(); strcpy(emulator.ROMSPP3ECF, Rom.c_str());
+        Rom=emulator.ROMDock; Rom=ini->ReadString("HWARE","Dock",Rom).LowerCase(); strcpy(emulator.ROMDock, Rom.c_str());
+        Rom=emulator.ROMZX8BIT; Rom=ini->ReadString("HWARE","ZX8BIT",Rom).LowerCase(); strcpy(emulator.ROMZX8BIT, Rom.c_str());
+        Rom=emulator.ROMZX16BIT; Rom=ini->ReadString("HWARE","ZX16BIT",Rom).LowerCase(); strcpy(emulator.ROMZX16BIT, Rom.c_str());
+        Rom=emulator.ROMZXCF; Rom=ini->ReadString("HWARE","ZXCF",Rom).LowerCase(); strcpy(emulator.ROMZXCF, Rom.c_str());
+        Rom=emulator.ROMQL; Rom=ini->ReadString("HWARE","ROMQL",Rom).LowerCase(); strcpy(emulator.ROMQL, Rom.c_str());
 
         if (ini->ReadBool("HWARE","ZX80",ZX80Btn->Down)) ZX80BtnClick(NULL);
         if (ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)) ZX81BtnClick(NULL);
@@ -2461,7 +2463,7 @@ void __fastcall THW::ColourBoxChange(TObject *Sender)
 
 void __fastcall THW::RomBoxChange(TObject *Sender)
 {
-        AnsiString romFile = RomBox->Text;
+        AnsiString romFile = RomBox->Text.LowerCase();
         ButtonAdvancedMore->Visible = romFile == "zx97.rom";
 
         ResetRequired=true;

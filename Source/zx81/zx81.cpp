@@ -353,7 +353,7 @@ void zx81_initialise(void)
         nmiLevel = 0;
         withinDisplayDriver = false;
         intISR = false;
-        allowSoundOutput = true;
+        allowSoundOutput = false;
         scanlineCounter = 0;
         vsyncFound = false;
 

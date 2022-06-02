@@ -317,7 +317,7 @@ void DDAccurateInit(int resize)
                 break;
         case BORDERFULL:
                 WinL=FuWinL; WinR=FuWinR; WinT=FuWinT; WinB=FuWinB;
-                if (machine.NTSC) { WinB-=51; }
+                if (machine.NTSC) { WinB-=49; }
                 break;
         }
 
@@ -503,9 +503,10 @@ void GDIAccurateInit(int resize)
                 break;
         case BORDERFULL:
                 WinL=FuWinL; WinR=FuWinR; WinT=FuWinT; WinB=FuWinB;
-                if (machine.NTSC) { WinB-=51; }
+                if (machine.NTSC) { WinB-=49; }
                 break;
         }
+        
         if (emulator.bordersize <= BORDERNORMAL)
         {
                 if (emulator.machine == MACHINEZX80)

@@ -407,9 +407,9 @@ object About: TAbout
   end
   object Version: TLabel
     Left = 178
-    Top = 10
-    Width = 145
-    Height = 17
+    Top = 11
+    Width = 84
+    Height = 13
     Caption = 'Unknown Version'
   end
   object Label8: TLabel
@@ -547,8 +547,8 @@ object About: TAbout
   object Label20: TLabel
     Left = 8
     Top = 120
-    Width = 321
-    Height = 17
+    Width = 308
+    Height = 13
     Caption = 'subsequent releases created by Charlie Robson and Paul Farrow.'
     WordWrap = True
   end

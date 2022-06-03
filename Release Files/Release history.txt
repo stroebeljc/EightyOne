@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.29 - 01/06/2022 (by Paul Farrow)
+Version 1.29 - 03/06/2022 (by Paul Farrow)
 * Bug fixes:
   - The Jupiter Ace beeper port now partially decoded.
   - The Jupiter Ace ROM can now be overwritten if the 'Protect ROM from Writes' option is not

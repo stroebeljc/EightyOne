@@ -17,6 +17,7 @@ Version 1.29 - 03/06/2022 (by Paul Farrow)
   - Clock accurate emulation of the display mechanism of the ZX81 family of models.
   - Accurate emulation of the display mechanism of the ZX80.
   - Annotation facility of display elements for ZX80 and ZX81 family of models.
+  - Displays the number of scanlines in the status bar.
 
 Version 1.28 - 31/03/2022 (by Paul Farrow)
 * Bug fixes:

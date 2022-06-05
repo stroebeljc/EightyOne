@@ -163,6 +163,8 @@ typedef struct
         int RAMTOP;
         int ROMTOP;
         int m1not;
+        CFGBYTE improvedWait;
+        CFGBYTE beeperExcludeHSyncs;
         CFGBYTE chromaMode;
         CFGBYTE chromaColourSwitchOn;
         CFGBYTE FloatingPointHardwareFix;

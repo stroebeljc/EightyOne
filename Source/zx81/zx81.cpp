@@ -85,6 +85,7 @@ static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0xFF;
 
 static const BYTE colourBlack = 0;
+static const BYTE colourWhite = 7;
 static const BYTE colourBrightWhite = 15;
 
 static const BYTE idleDataBus80 = 0x40;
@@ -93,6 +94,7 @@ static const BYTE idleDataBus81 = 0xFF;
 bool frameSynchronised;
 bool vsyncFound;
 int scanlineCounter;
+bool z80Halted;
 
 int ZX81BackporchPositionStart;
 int ZX81BackporchPositionEnd;
@@ -275,9 +277,6 @@ void zx81_initialise(void)
         if (zx81.truehires==HIRESMEMOTECH) memory_load("memohrg.rom", 8192, 2048);
         if (zx81.truehires==HIRESG007) memory_load("g007hrg.rom",10240,2048);
 
-        if (lambdaSelected) { ink=7; paper=border=0; }
-        else { ink=0; paper=border=15; }
-
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
                 memory_load("larken81.rom", 14336, 2048);
@@ -357,9 +356,14 @@ void zx81_initialise(void)
         scanlineCounter = 0;
         vsyncFound = false;
 
-        border = colourBrightWhite;
-        ink = colourBlack;
-        paper = colourBrightWhite;
+        if (lambdaSelected)
+        {
+                ink=colourWhite; paper=border=colourBlack;
+        }
+        else
+        {
+                ink=colourBlack; paper=border=colourBrightWhite;
+        }
 
         videoFlipFlop1Q = 1;
         videoFlipFlop2Q = 0;
@@ -392,6 +396,7 @@ BOOL IsAnnotatableROM()
         case MACHINEZX81:
         case MACHINETS1000:
         case MACHINETK85:
+        case MACHINER470:
         case MACHINETS1500:
                 annotatableROM = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
                                  !strcmp(machine.CurRom, "ringo470.rom") || !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
@@ -1130,7 +1135,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         }
 
         if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
-        if ((!lambdaSelected) && allowSoundOutput)
+        if (!lambdaSelected && allowSoundOutput)
                 Sound.Beeper(1,frametstates);
 }
 
@@ -1289,7 +1294,7 @@ void zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         nmiWaitPositionStart = 0;
                 }
 
-                bool instructionWaitState = ((position <= nmiWaitPositionStart) || (position >= nmiWaitPositionEnd));
+                bool instructionWaitState = ((position <= nmiWaitPositionStart) || (position >= nmiWaitPositionEnd)) && (!zx81.improvedWait || (z80Halted && zx81.improvedWait));
 
                 if (emulator.ColouriseInstructionStraddlingNMIWaitStates && instructionStraddlesNMI && instructionWaitState)
                 {
@@ -1339,7 +1344,7 @@ void zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         {
                                 pixelColour = emulator.ColouriseHorizontalSyncPulse ? Blue : Black;
 
-                                if (allowSoundOutput && position == ZX81HSyncPositionStart && !vsyncPeriod && !chromaSelected && syncOutputWhite)
+                                if (allowSoundOutput && !zx81.beeperExcludeHSyncs && !lambdaSelected && position == ZX81HSyncPositionStart && !vsyncPeriod && !chromaSelected && syncOutputWhite)
                                 {
                                         Sound.Beeper(0, frametstates);
                                 }
@@ -1348,7 +1353,7 @@ void zx81_DrawPixel(SCANLINE* CurScanLine, int position, BYTE pixelColour, bool 
                         {
                                 pixelColour = emulator.ColouriseBackPorch ? BrightBlue : Black;
 
-                                if (allowSoundOutput && position == ZX81BackporchPositionEnd && !vsyncPeriod && !chromaSelected && syncOutputWhite)       // This should really be on the clock after
+                                if (allowSoundOutput && !zx81.beeperExcludeHSyncs && !lambdaSelected && position == ZX81BackporchPositionEnd && !vsyncPeriod && !chromaSelected && syncOutputWhite)       // This should really be on the clock after
                                 {
                                         Sound.Beeper(1, frametstates);
                                 }
@@ -1443,7 +1448,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                                        (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) ||  withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2));
                         }
                 }
-                
+
                 if (emulator.ColouriseMaskableInterruptServiceRoutine && annotatableROM)
                 {
                         if (z80.pc.w == 0x0038)
@@ -1469,12 +1474,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         lineCounter = (++lineCounter) & 7;
                 }
 
-                bool z80Halted = z80.halted;
-                bool nmiDetectableDuringInstruction = (lineClockCounterAfterInstruction <= NMIDetectionPositionStart);
+                z80Halted = z80.halted;
+                bool nmiDetectableDuringInstruction = (lineClockCounter >= ZX81HSyncPositionStart) && (lineClockCounterAfterInstruction <= NMIDetectionPositionStart);
                 bool nmiDetectedDuringInstruction = nmiGeneratorEnabled && nmiDetectableDuringInstruction;
                 bool nmiOnInstruction = (LastInstruction == LASTINSTOUTFE);
                 bool nmiGeneratorTurnedOn = !nmiGeneratorEnabled && nmiOnInstruction;
-                bool checkForWaitInsertion = !z80Halted && nmiDetectableDuringInstruction && (nmiGeneratorEnabled || nmiGeneratorTurnedOn);
+                bool checkForWaitInsertion = (!z80Halted && nmiDetectableDuringInstruction && (nmiGeneratorEnabled || nmiGeneratorTurnedOn) && !zx81.improvedWait);
 
                 if (checkForWaitInsertion)
                 {
@@ -1718,8 +1723,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 lineClockCounter -= ts;
 
-                bool OtherInstructionOverlapsHSync = !nmiOnInstruction && instructionOverlapsHSync;
-                bool nmiOnInstructionOverlapsHSync = nmiOnInstruction && (lineClockCounterAfterInstruction + PortActiveDuration >= ZX81HSyncPositionEnd) && instructionOverlapsHSync;
+                bool OtherInstructionOverlapsHSync = !nmiOnInstruction && startOfHSyncPulse;
+                bool nmiOnInstructionOverlapsHSync = nmiOnInstruction && (lineClockCounterAfterInstruction + PortActiveDuration >= ZX81HSyncPositionEnd) && startOfHSyncPulse;
 
                 if (nmiGeneratorEnabled && (OtherInstructionOverlapsHSync || nmiOnInstructionOverlapsHSync))
                 {
@@ -1731,8 +1736,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (nmiResponsePositionT2 >= ZX81HSyncPositionEnd)
                         {
-                                nmiResponseWaitDuration = nmiResponsePositionT2 - ZX81HSyncPositionAfter;
-                                nmiWaitPositionStart = nmiResponsePositionT2 - 1;
+                                if (!zx81.improvedWait || z80Halted)
+                                {
+                                        nmiResponseWaitDuration = nmiResponsePositionT2 - ZX81HSyncPositionAfter;
+                                        nmiWaitPositionStart = nmiResponsePositionT2 - 1;
+                                }
                         }
 
                         int nmiResponseActualDuration = nmiResponseDuration + nmiResponseWaitDuration;
@@ -1742,6 +1750,10 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (lineClockCounter >= ZX81HSyncPositionEnd)
                         {
                                 lineClockCarryCounter += nmiResponseActualDuration - remainingHSyncDuration;
+                                if (lineClockCarryCounter < 0)
+                                {
+                                        lineClockCarryCounter = 0;
+                                }
                         }
                         else
                         {
@@ -2269,5 +2281,4 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
         return tstotal;
 }
-
 

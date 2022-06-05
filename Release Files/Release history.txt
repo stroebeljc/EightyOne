@@ -3,13 +3,12 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.29 - 03/06/2022 (by Paul Farrow)
+Version 1.29 - 05/06/2022 (by Paul Farrow)
 * Bug fixes:
   - The Jupiter Ace beeper port now partially decoded.
   - The Jupiter Ace ROM can now be overwritten if the 'Protect ROM from Writes' option is not
     selected.
   - Beeper sound setting now restored from the .ini file.
-  - Beeper sound for ZX81 models now includes rendering of HSync pulses.
   - Now insensitive to the case of the ROM file name.
 * Changes:
   - Retired support for the homebrew Spectrum SE.
@@ -18,6 +17,8 @@ Version 1.29 - 03/06/2022 (by Paul Farrow)
   - Accurate emulation of the display mechanism of the ZX80.
   - Annotation facility of display elements for ZX80 and ZX81 family of models.
   - Displays the number of scanlines in the status bar.
+  - Beeper sound for ZX81 models now optionally includes rendering of HSync pulses.
+  - Support for Wilf Rigter's Improved Wait circuit.
 
 Version 1.28 - 31/03/2022 (by Paul Farrow)
 * Bug fixes:
@@ -53,7 +54,7 @@ Version 1.26 - 03/02/2022 (by Mike Wynne, SirMorris and Paul Farrow)
 Version 1.25 - 16/01/2022 (by Paul Farrow)
 * Bug fixes:
   - Resolved an issue affecting specific pseudo hi-res display driver implementations that would
-    cause the first line to mis-aligned.
+    cause the first line to misaligned.
 
 Version 1.24 - 05/01/2022 (by Paul Farrow and SirMorris)
 * Bug fixes:

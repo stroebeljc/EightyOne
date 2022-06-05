@@ -1393,7 +1393,7 @@ object HW: THW
     Top = 140
     Width = 391
     Height = 169
-    ActivePage = AdvSettings
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1864,13 +1864,13 @@ object HW: THW
       end
       object NTSC: TCheckBox
         Left = 232
-        Top = 48
+        Top = 64
         Width = 113
         Height = 17
         Caption = '60Hz Frame Rate'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 7
+        TabOrder = 8
         OnClick = NTSCClick
       end
       object EnableLowRAM: TCheckBox
@@ -1889,15 +1889,18 @@ object HW: THW
         Top = 80
         Width = 145
         Height = 17
+        Hint = 'Allows unrestricted machine code to run from the 32k-48k range'
         Caption = 'Enable M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 4
         OnClick = M1NotClick
       end
       object Issue2: TCheckBox
-        Left = 72
-        Top = 112
+        Left = 232
+        Top = 48
         Width = 105
         Height = 17
         BiDiMode = bdLeftToRight
@@ -1905,17 +1908,22 @@ object HW: THW
         Color = clBtnFace
         ParentBiDiMode = False
         ParentColor = False
-        TabOrder = 6
+        TabOrder = 7
       end
       object FloatingPointHardwareFix: TCheckBox
         Left = 72
-        Top = 96
+        Top = 112
         Width = 153
         Height = 17
+        Hint = 
+          'Sinclair released strap-on board to the Z80 to overcome the floa' +
+          'ting point maths bug in the edition 1 ROM'
         Caption = 'Floating Point Hardware Fix'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 5
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 6
         OnClick = FloatingPointHardwareFixClick
       end
       object ButtonAdvancedMore: TButton
@@ -1924,9 +1932,25 @@ object HW: THW
         Width = 75
         Height = 25
         Caption = 'More...'
-        TabOrder = 8
+        TabOrder = 9
         Visible = False
         OnClick = ButtonAdvancedMoreClick
+      end
+      object ImprovedWait: TCheckBox
+        Left = 72
+        Top = 96
+        Width = 161
+        Height = 17
+        Hint = 
+          'Wilf Rigter'#39's modification to prevent Wait state insertion at ev' +
+          'ery NMI'
+        Caption = 'Enable Improved Wait Circuit'
+        Color = clBtnFace
+        ParentColor = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnClick = ImprovedWaitClick
       end
     end
   end

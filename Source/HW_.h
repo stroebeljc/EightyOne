@@ -102,6 +102,7 @@ __published:	// IDE-managed Components
         TButton *ButtonZXpandSDCard;
         TComboBox *ZXC1ConfigurationBox;
         TButton *ButtonAdvancedMore;
+        TCheckBox *ImprovedWait;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -151,6 +152,7 @@ __published:	// IDE-managed Components
         void __fastcall FloatingPointHardwareFixClick(TObject *Sender);
         void __fastcall ButtonZXpandSDCardClick(TObject *Sender);
         void __fastcall ButtonAdvancedMoreClick(TObject *Sender);
+        void __fastcall ImprovedWaitClick(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;

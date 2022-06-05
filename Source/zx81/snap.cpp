@@ -554,6 +554,10 @@ void load_snap_advanced(FILE* f)
                 {
                         HW->M1Not->Checked = hex2dec(get_token(f));
                 }
+                else if (!strcmp(tok,"IMPROVED_WAIT"))
+                {
+                        HW->ImprovedWait->Checked = hex2dec(get_token(f));
+                }
                 else if (!strcmp(tok,"FLOATING_POINT_FIX"))
                 {
                         HW->FloatingPointHardwareFix->Checked = hex2dec(get_token(f));
@@ -698,6 +702,7 @@ void InitialiseHardware()
         HW->ProtectROM->Checked=true;
         HW->EnableLowRAM->Checked=false;
         HW->M1Not->Checked=false;
+        HW->ImprovedWait->Checked=false;
         HW->FloatingPointHardwareFix->Checked=false;
         HW->NTSC->Checked=false;
 
@@ -896,6 +901,7 @@ int save_snap(char *filename)
                 fprintf(f,"ROM %s\n", HW->RomBox->Text.c_str());
                 fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
                 fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
+                fprintf(f,"IMPROVED_WAIT %02X\n", (zx81.improvedWait == 0xC000));
                 fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
                 fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
 

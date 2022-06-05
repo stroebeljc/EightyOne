@@ -32,9 +32,12 @@ __published:	// IDE-managed Components
         TLabel *Label7;
         TRadioButton *RadioButtonMono;
         TRadioButton *RadioButtonACB;
+        TGroupBox *BeeperSettingsGroupBox;
+        TCheckBox *BeeperExcludeHSyncs;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
         void __fastcall MidiChange(TObject *Sender);
+        void __fastcall BeeperExcludeHSyncsClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TMidiForm(TComponent* Owner);

@@ -590,6 +590,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case 4: spectrum.drivebtype=DRIVE35INCHDS; break;
         }
         zx81.m1not = M1Not->Checked? 49152 : 32768;
+        zx81.improvedWait = ImprovedWait->Checked;
 
         if (emulator.machine==MACHINEZX97LE)
         {
@@ -1077,6 +1078,7 @@ void THW::SetupForZX81(void)
         NTSC->Enabled=true;
         EnableLowRAM->Enabled=true;
         M1Not->Enabled=true;
+        ImprovedWait->Enabled=true;
         TS2050->Enabled=true;
         TS2050Config->Enabled=TS2050->Enabled && TS2050->Checked;
 
@@ -1150,6 +1152,7 @@ void THW::SetupForSpectrum(void)
         QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
+        FloatingPointHardwareFix->Checked = false;
 
         SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
@@ -1211,7 +1214,11 @@ void THW::SetupForSpectrum(void)
         NTSC->Enabled=false;
         NTSC->Checked=false;
         EnableLowRAM->Enabled=false;
+        EnableLowRAM->Checked=false;
         M1Not->Enabled=false;
+        M1Not->Checked=false;
+        ImprovedWait->Enabled=false;
+        ImprovedWait->Checked=false;
         TS2050->Enabled=true;
         TS2050Config->Enabled=TS2050->Enabled && TS2050->Checked;
 
@@ -1319,6 +1326,7 @@ void THW::SetupForQL(void)
         NTSC->Checked=false;
         EnableLowRAM->Enabled=false;
         M1Not->Enabled=false;
+        ImprovedWait->Enabled=false;
         TS2050->Enabled=false;
         TS2050Config->Enabled=TS2050->Enabled && TS2050->Checked;
 
@@ -1378,6 +1386,8 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Text = emulator.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
+        ImprovedWait->Enabled = false;
+        ImprovedWait->Checked = false;
         Form1->EnableColourisationOptions();
 
         IDEBoxChange(NULL);
@@ -1574,6 +1584,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         NewMachine=MACHINETS1000;
         NewMachineName=TS1000Btn->Caption;
         Form1->EnableColourisationOptions();
+        FloatingPointHardwareFix->Checked = false;
         RomBox->Text = emulator.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<1) RamPackBox->ItemIndex=1;
@@ -1591,6 +1602,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         NewMachine=MACHINETS1500;
         NewMachineName=TS1500Btn->Caption;
         Form1->EnableColourisationOptions();
+        FloatingPointHardwareFix->Checked = false;
         RomBox->Text = emulator.ROMTS1500;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (RamPackBox->ItemIndex<4) RamPackBox->ItemIndex=4;
@@ -1627,6 +1639,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        FloatingPointHardwareFix->Checked = false;
         Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
@@ -1653,6 +1666,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        FloatingPointHardwareFix->Checked = false;
         Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
@@ -1677,6 +1691,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
+        FloatingPointHardwareFix->Checked = false;
         Form1->EnableColourisationOptions();
         IDEBoxChange(NULL);
 }
@@ -1701,6 +1716,9 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         EnableLowRAM->Enabled=false;
         M1Not->Checked=false;
         M1Not->Enabled=false;
+        ImprovedWait->Checked=false;
+        ImprovedWait->Enabled=false;
+        FloatingPointHardwareFix->Checked = false;
         HiResBox->ItemIndex=0;
         HiResBox->Enabled=false;
         HiResLbl->Enabled=false;
@@ -1838,6 +1856,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","NTSC",NTSC->Checked);
         ini->WriteBool("HWARE","LowRAM",EnableLowRAM->Checked);
         ini->WriteBool("HWARE","M1NOT",M1Not->Checked);
+        ini->WriteBool("HWARE","IMPROVED_WAIT",ImprovedWait->Checked);
         ini->WriteBool("HWARE","TS2050",TS2050->Checked);
         ini->WriteBool("HWARE","Iss2Kb",Issue2->Checked);
         ini->WriteBool("HWARE","KMouse",KMouse->Checked);
@@ -2015,6 +2034,7 @@ void THW::LoadSettings(TIniFile *ini)
         NTSC->Checked=ini->ReadBool("HWARE","NTSC",NTSC->Checked);
         EnableLowRAM->Checked=ini->ReadBool("HWARE","LowRAM",EnableLowRAM->Checked);
         M1Not->Checked=ini->ReadBool("HWARE","M1NOT",M1Not->Checked);
+        ImprovedWait->Checked=ini->ReadBool("HWARE","IMPROVED_WAIT",ImprovedWait->Checked);
         TS2050->Checked=ini->ReadBool("HWARE","TS2050",TS2050->Checked);
         Issue2->Checked=ini->ReadBool("HWARE","Iss2Kb",Issue2->Checked);
         KMouse->Checked=ini->ReadBool("HWARE","KMouse",KMouse->Checked);
@@ -2165,6 +2185,9 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         EnableLowRAM->Enabled=false;
         M1Not->Checked=true;
         M1Not->Enabled=false;
+        ImprovedWait->Checked=false;
+        ImprovedWait->Enabled=false;
+        FloatingPointHardwareFix->Checked = false;
         RamPackBox->ItemIndex=0;
         RamPackBox->Enabled=false;
         ColourBox->Items->Clear();
@@ -2492,10 +2515,15 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
         ZX97Dialog->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::ImprovedWaitClick(TObject *Sender)
+{
+        ResetRequired=true;
 }
 //---------------------------------------------------------------------------
 

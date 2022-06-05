@@ -4,8 +4,8 @@ object MidiForm: TMidiForm
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
-  ClientHeight = 258
-  ClientWidth = 289
+  ClientHeight = 312
+  ClientWidth = 273
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,14 @@ object MidiForm: TMidiForm
   object GroupBox1: TGroupBox
     Left = 8
     Top = 184
-    Width = 201
+    Width = 257
     Height = 65
     Caption = 'Send MIDI Output to:'
     TabOrder = 1
     object MidiBox: TComboBox
       Left = 16
       Top = 24
-      Width = 169
+      Width = 225
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akRight]
@@ -37,19 +37,19 @@ object MidiForm: TMidiForm
     end
   end
   object OK: TButton
-    Left = 216
-    Top = 224
+    Left = 199
+    Top = 278
     Width = 67
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
-    TabOrder = 2
+    TabOrder = 3
     OnClick = OKClick
   end
   object GroupBox2: TGroupBox
     Left = 8
     Top = 8
-    Width = 273
+    Width = 257
     Height = 169
     Caption = 'Mix'
     TabOrder = 0
@@ -98,7 +98,7 @@ object MidiForm: TMidiForm
       Caption = '-   Mute   -'
     end
     object Label7: TLabel
-      Left = 193
+      Left = 177
       Top = 20
       Width = 61
       Height = 13
@@ -185,7 +185,7 @@ object MidiForm: TMidiForm
       OnClick = MidiChange
     end
     object RadioButtonMono: TRadioButton
-      Left = 200
+      Left = 184
       Top = 41
       Width = 63
       Height = 17
@@ -195,12 +195,29 @@ object MidiForm: TMidiForm
       TabStop = True
     end
     object RadioButtonACB: TRadioButton
-      Left = 200
+      Left = 184
       Top = 58
       Width = 63
       Height = 17
       Caption = 'ACB'
       TabOrder = 7
+    end
+  end
+  object BeeperSettingsGroupBox: TGroupBox
+    Left = 8
+    Top = 256
+    Width = 177
+    Height = 49
+    Caption = 'Beeper Settings'
+    TabOrder = 2
+    object BeeperExcludeHSyncs: TCheckBox
+      Left = 8
+      Top = 24
+      Width = 161
+      Height = 17
+      Caption = 'Exclude ZX81 HSync Pulses'
+      TabOrder = 0
+      OnClick = BeeperExcludeHSyncsClick
     end
   end
 end

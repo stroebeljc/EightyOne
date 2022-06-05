@@ -92,6 +92,7 @@ void TMidiForm::SaveSettings(TIniFile *ini)
         ini->WriteBool("MIDI","AYMute",AYMute->Checked);
         ini->WriteBool("MIDI","BeeperMute",BeeperMute->Checked);
         ini->WriteBool("MIDI","AYMixACB",RadioButtonACB->Checked);
+        ini->WriteBool("MIDI","BeeperExcludeHSyncs",BeeperExcludeHSyncs->Checked);
 }
 
 void TMidiForm::LoadSettings(TIniFile *ini)
@@ -106,9 +107,17 @@ void TMidiForm::LoadSettings(TIniFile *ini)
         AYMute->Checked=ini->ReadBool("MIDI","AYMute",AYMute->Checked);
         BeeperMute->Checked=ini->ReadBool("MIDI","BeeperMute",BeeperMute->Checked);
         RadioButtonACB->Checked=ini->ReadBool("MIDI","AYMixACB",RadioButtonACB->Checked);
+        BeeperExcludeHSyncs->Checked=ini->ReadBool("MIDI","BeeperExcludeHSyncs",BeeperExcludeHSyncs->Checked);
 
         OKClick(NULL);
 
         MidiChange(NULL);
 }
+
+void __fastcall TMidiForm::BeeperExcludeHSyncsClick(TObject *Sender)
+{
+        zx81.beeperExcludeHSyncs = BeeperExcludeHSyncs->Checked;
+}
+//---------------------------------------------------------------------------
+
 

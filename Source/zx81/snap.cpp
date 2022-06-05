@@ -901,7 +901,7 @@ int save_snap(char *filename)
                 fprintf(f,"ROM %s\n", HW->RomBox->Text.c_str());
                 fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
                 fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
-                fprintf(f,"IMPROVED_WAIT %02X\n", (zx81.improvedWait == 0xC000));
+                fprintf(f,"IMPROVED_WAIT %02X\n", zx81.improvedWait);
                 fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
                 fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
 

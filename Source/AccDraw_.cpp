@@ -64,9 +64,9 @@ int VSYNC_MINLEN=VMIN;
 #define NoWinL  42
 #define NoWinR  (NoWinL+320)
 
-#define LaWinT 0
+#define LaWinT 6
 #define LaWinB (LaWinT+300)
-#define LaWinL 0
+#define LaWinL 7
 #define LaWinR (LaWinL+400)
 
 #define FuWinT 0

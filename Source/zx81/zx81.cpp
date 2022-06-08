@@ -118,7 +118,7 @@ const int ZX81BackporchDuration = 16;
 const int ZX81HSyncPositionStart = ZX81HSyncDuration;
 const int ZX81HSyncPositionEnd = ZX81HSyncPositionStart - ZX81HSyncDuration + 1;
 const int ZX81HSyncPositionAfter = ZX81HSyncPositionEnd - 1;
-const int ZX81HSyncPositionAcceptanceStart = ((3 * ZX81HSyncDuration) / 2) + ZX81HSyncPositionEnd;
+const int ZX81HSyncPositionAcceptanceStart = ((7 * ZX81HSyncDuration) / 4) + ZX81HSyncPositionEnd;
 
 const int InterruptAcknowledgementDuration = 3; // The acknowledgement spans 3 clock cycles
 const int InterruptAcknowledgementOffsetStartIntoInterruptResponse = 2; // The acknowledgement spans into the first TW cycle
@@ -1135,8 +1135,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
         }
 
         if (!LastInstruction) LastInstruction=LASTINSTOUTFF;
-        if (!lambdaSelected && allowSoundOutput)
-                Sound.Beeper(1,frametstates);
+        if (!lambdaSelected && allowSoundOutput) Sound.Beeper(1,frametstates);
 }
 
 BYTE zx81_readport(int Address, int *tstates)
@@ -1164,8 +1163,7 @@ BYTE ReadInputPort(int Address, int *tstates)
         {
                 BYTE keyb;
                 int i;
-                if (!lambdaSelected && allowSoundOutput)
-                        Sound.Beeper(0,frametstates);
+                if (!lambdaSelected && allowSoundOutput) Sound.Beeper(0,frametstates);
                 if (machine.NTSC) data|=64;
                 if (!GetEarState()) data |= 128;
 
@@ -1680,11 +1678,25 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 {
                                         CurScanLine->sync_len += ts;
                                 }
+                                else if (remainingHSyncDuration > 0)
+                                {
+                                        int effectivePortActiveDuration = PortActiveDuration - remainingHSyncDuration;
+                                        int effectivePortInactiveDuration = ts - effectivePortActiveDuration;
+                                        CurScanLine->sync_len += effectivePortInactiveDuration;
+                                }
                                 else
                                 {
-                                        int durationBeyondHSync = PortActiveDuration - remainingHSyncDuration;
-                                        int portInactiveDuration = ts - durationBeyondHSync;
+                                        int portInactiveDuration = ts - PortActiveDuration;
                                         CurScanLine->sync_len += portInactiveDuration;
+                                }
+
+                                // If a software pulse has occurred and ended within the hardware generated HSync period then it will
+                                // effectively merge with the HSync pulse and the end of the HSync pulse defines the end of the scanline.
+                                // Therefore the software generated pulse can be ignored (which is required for a check that occurs when
+                                // the end of line is reached).
+                                if (portActivePositionStart >= ZX81HSyncPositionEnd && CurScanLine->sync_len <= ZX81HSyncDuration * 2)
+                                {
+                                        CurScanLine->sync_len = 0;
                                 }
                         }
                         else
@@ -1709,11 +1721,14 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                         CurScanLine->scanline_len += scanlineActivePixelLength;
                                 }
                         }
-                        // If a software generated pulse is close to the hardware generated HSync pulse then treat it as the HSync pulse,
-                        // which is required to achieve the underdulating pattern when loading (else straight diagonal lines appear)
-                        else if ((CurScanLine->sync_len > 0) && (lineClockCounter <= ZX81HSyncPositionAcceptanceStart))
+                        // If a software generated pulse is close to and ends before the hardware generated HSync pulse then treat it as the HSync pulse,
+                        // which is required to achieve the slightly underdulating pattern when loading (else completely straight diagonal lines appear)
+                        else if ((CurScanLine->sync_len > 0) && (portActivePositionStart + CurScanLine->sync_len <= ZX81HSyncPositionAcceptanceStart))
                         {
-                                CurScanLine->sync_type = SYNCTYPEH;
+                                if (portActivePositionStart > ZX81HSyncPositionStart)
+                                {
+                                        CurScanLine->sync_type = SYNCTYPEH;
+                                }
                         }
                         else
                         {
@@ -1782,11 +1797,25 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 if (lineClockCounter < ZX81HSyncPositionEnd)
                 {
-                        // If the end of a scanline has been reached and not a VSync pulse in progress then flag that a HSync pulse would have been output
+                        // If the end of a scanline has been reached and a VSync pulse is not in progress then flag
+                        // that a HSync pulse would have been output by the hardware.
                         if (syncOutputWhite)
                         {
                                 if (CurScanLine->sync_len <= ZX81HSyncDuration)
                                 {
+                                        // If a software generated pulse was output then discard any portion that
+                                        // straddles beyond the end of the hardware generated HSync.
+                                        if (frameSynchronised && CurScanLine->sync_len > 0)
+                                        {
+                                                int pulseDurationBeyondHSync = -lineClockCounter - PortActiveDuration;
+
+                                                if (pulseDurationBeyondHSync > 0)
+                                                {
+                                                        scanlineActivePixelLength += pulseDurationBeyondHSync * 2;
+                                                        lineClockCarryCounter -= pulseDurationBeyondHSync;
+                                                }
+                                        }
+                                        
                                         CurScanLine->sync_len = ZX81HSyncDuration;
                                         CurScanLine->sync_type = SYNCTYPEH;
                                 }

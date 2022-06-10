@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.29 - 09/06/2022 (by Paul Farrow)
+Version 1.29 - 10/06/2022 (by Paul Farrow)
 * Bug fixes:
   - The Jupiter Ace beeper port now partially decoded.
   - The Jupiter Ace ROM can now be overwritten if the 'Protect ROM from Writes' option is not
@@ -19,6 +19,7 @@ Version 1.29 - 09/06/2022 (by Paul Farrow)
   - Displays the number of scanlines in the status bar.
   - Beeper sound for ZX81 models now optionally includes rendering of HSync pulses.
   - Support for Wilf Rigter's Improved Wait circuit.
+  - The main window now always gains focus at start up.
 
 Version 1.28 - 31/03/2022 (by Paul Farrow)
 * Bug fixes:

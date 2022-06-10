@@ -1,29 +1,43 @@
 #include <windows.h>
 
-static JOYCAPS caps;
+static DWORD xPosMinTrip;
+static DWORD xPosMaxTrip;
+static DWORD yPosMinTrip;
+static DWORD yPosMaxTrip;
 
 void initJoy(void)
 {
    // don't bother with error checking;
-   // if this fails the joyGetPos call will fail too.
-   //
-   joyGetDevCaps(0, &caps, sizeof(JOYCAPS));
+   // if this fails the joyGetPosEx call will fail too.
+
+   JOYCAPS caps;
+   joyGetDevCaps(JOYSTICKID1, &caps, sizeof(JOYCAPS));
+
+   DWORD xTripOffset = (caps.wXmax - caps.wXmin) / 4;
+   DWORD yTripOffset = (caps.wYmax - caps.wYmin) / 4;
+
+   xPosMinTrip = caps.wXmin + xTripOffset;
+   xPosMaxTrip = caps.wXmax - xTripOffset;
+
+   yPosMinTrip = caps.wYmin + yTripOffset;
+   yPosMaxTrip = caps.wYmax - yTripOffset;
 }
 
 unsigned char readJoy(void)
 {
    JOYINFOEX joyInfo;
    joyInfo.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY;
+   joyInfo.dwSize = sizeof(joyInfo);
 
    unsigned char joypos = 0xfe;
 
-   if (JOYERR_NOERROR == joyGetPosEx(0, &joyInfo))
+   if (JOYERR_NOERROR == joyGetPosEx(JOYSTICKID1, &joyInfo))
    {
-      if (joyInfo.dwYpos == caps.wYmin) joypos &= 0x7f;
-      if (joyInfo.dwYpos == caps.wYmax) joypos &= 0xbf;
-      if (joyInfo.dwXpos == caps.wXmin) joypos &= 0xdf;
-      if (joyInfo.dwXpos == caps.wXmax) joypos &= 0xef;
-      if (joyInfo.dwButtons != 0) joypos &= 0xf7;
+      if (joyInfo.dwYpos <= yPosMinTrip) joypos &= 0x7f;     // up
+      if (joyInfo.dwYpos >= yPosMaxTrip) joypos &= 0xbf;     // down
+      if (joyInfo.dwXpos <= xPosMinTrip) joypos &= 0xdf;     // left
+      if (joyInfo.dwXpos >= xPosMaxTrip) joypos &= 0xef;     // right
+      if (joyInfo.dwButtons != 0)        joypos &= 0xf7;     // fire
    }
 
    if (GetKeyState(VK_NUMPAD8) & 0x8000)

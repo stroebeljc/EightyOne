@@ -20,6 +20,7 @@ Version 1.29 - 10/06/2022 (by Paul Farrow)
   - Beeper sound for ZX81 models now optionally includes rendering of HSync pulses.
   - Support for Wilf Rigter's Improved Wait circuit.
   - The main window now always gains focus at start up.
+  - More robust joystick movement detection.
 
 Version 1.28 - 31/03/2022 (by Paul Farrow)
 * Bug fixes:

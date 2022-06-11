@@ -59,9 +59,9 @@
       Fullscreen.dfm Artifacts_.dfm sound\SoundForm.dfm Interface1.dfm"/>
     <LIBFILES value="ddraw.lib libdsk.lib zlib.lib ..\components\directsound\dsound.lib"/>
     <LIBRARIES value="OfficeButton97.lib VCLX50.lib VCLDB50.lib THEMEMANAGERC5.lib 
-      CPORTLIBCB5.lib AnimTimer.lib Vcl50.lib"/>
-    <SPARELIBS value="Vcl50.lib AnimTimer.lib CPORTLIBCB5.lib THEMEMANAGERC5.lib VCLDB50.lib 
-      VCLX50.lib OfficeButton97.lib"/>
+      CPORTLIBCB5.lib Vcl50.lib"/>
+    <SPARELIBS value="Vcl50.lib CPORTLIBCB5.lib THEMEMANAGERC5.lib VCLDB50.lib VCLX50.lib 
+      OfficeButton97.lib"/>
     <PACKAGES value="Vcl50.bpi Vclx50.bpi bcbsmp50.bpi Qrpt50.bpi Vcldb50.bpi Vclbde50.bpi 
       ibsmp50.bpi vcldbx50.bpi TeeUI50.bpi TeeDB50.bpi Tee50.bpi TeeQR50.bpi 
       VCLIB50.bpi bcbie50.bpi vclie50.bpi Inetdb50.bpi Inet50.bpi NMFast50.bpi 
@@ -159,11 +159,11 @@ Item21=ql\;ql;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81
 Item22=ql\;Spectra;RomCartridge;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\CBuilder;..\Components\Theme Manager\Source
 Item23=Spectra;RomCartridge;ql\;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\CBuilder;..\Components\Theme Manager\Source
 Item24=ql\;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\CBuilder;..\Components\Theme Manager\Source
-Item25=ql\;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;C:\Program Files\Soft Gems\Theme Manager\Source\;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;..\Components\Animtimer\lib;..\Components\offbtn97;..\Components\TComPort
-Item26=ql\;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\Animtimer\lib;..\Components\offbtn97;..\Components\TComPort
-Item27=ql\;$(BCB)\include;$(BCB)\include\vcl;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\Animtimer\lib;..\Components\offbtn97;..\Components\TComPort
-Item28=$(BCB)\include;$(BCB)\include\vcl;ql\;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\Animtimer\lib;..\Components\offbtn97;..\Components\TComPort
-Item29=ql\;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\Animtimer\lib;..\Components\offbtn97;..\Components\TComPort
+Item25=ql\;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;C:\Program Files\Soft Gems\Theme Manager\Source\;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;..\Components\offbtn97;..\Components\TComPort
+Item26=ql\;ql;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\offbtn97;..\Components\TComPort
+Item27=ql\;$(BCB)\include;$(BCB)\include\vcl;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\offbtn97;..\Components\TComPort
+Item28=$(BCB)\include;$(BCB)\include\vcl;ql\;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\offbtn97;..\Components\TComPort
+Item29=ql\;ql;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;C:\DXSDK\Include\;C:\Program Files\Soft Gems\Theme Manager\Source\;ide;libdsk;lib765;$(BCB)\projects\offbtn97;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;C:\Program Files\Borland\CBuilder5\Projects\;z80;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files\Soft Gems\Theme Manager\CBuilder\;C:\Program Files\Borland\CBuilder5\Projects\TComPort\;..\Components\offbtn97;..\Components\TComPort
 
 [HistoryLists\hlLibraryPath]
 Count=30
@@ -196,27 +196,28 @@ Item25=ql\;ql;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IEC
 Item26=ql\;ql;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw
 Item27=ql\;ql;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;C:\EightyOne\Components\DirectDraw
 Item28=ql\;ql;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80
-Item29=ql\;ql;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;C:\Program Files\Soft Gems\Theme Manager\Source\;..\Components\offbtn97;..\Components\TComPort;..\Components\Animtimer\lib
+Item29=ql\;ql;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;Debug68k;zlib\minizip;zlib;1772;68k;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;C:\Program Files\Soft Gems\Theme Manager\Source\;..\Components\offbtn97;..\Components\TComPort
 
 [HistoryLists\hlDebugSourcePath]
-Count=10
-Item0=$(BCB)\Source\Vcl;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\Source;..\Components\Theme Manager\TMSourceOnly\CBuilder
-Item1=$(BCB)\Source\Vcl;..\Components\Animation-Timer;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\Source;..\Components\Theme Manager\CBuilder
-Item2=$(BCB)\Source\Vcl;..\Components\Animation-Timer\lib;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\Source;..\Components\Theme Manager\CBuilder
-Item3=c:\program files\borland\cbuilder5\source\vcl;C:\Program Files\Soft Gems\Theme Manager\Source\;C:\Documents and Settings\Mike\My Documents\Components\Animtimer\lib\
-Item4=c:\program files\borland\cbuilder5\source\vcl;C:\Program Files\Soft Gems\Theme Manager\Source\;C:\Documents and Settings\Mike\My Documents\Programming\Animtimer\lib\
+Count=11
+Item0=$(BCB)\Source\Vcl;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\Source;..\Components\Theme Manager\TMSourceOnly\CBuilder
+Item1=$(BCB)\Source\Vcl;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\Source;..\Components\Theme Manager\TMSourceOnly\CBuilder
+Item2=$(BCB)\Source\Vcl;..\Components\Animation-Timer;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\Source;..\Components\Theme Manager\CBuilder
+Item3=$(BCB)\Source\Vcl;..\Components\Animation-Timer\lib;..\Components\Office Button 97;..\Components\ComPort Library;..\Components\Theme Manager\Source;..\Components\Theme Manager\CBuilder
+Item4=c:\program files\borland\cbuilder5\source\vcl;C:\Program Files\Soft Gems\Theme Manager\Source\
 Item5=c:\program files\borland\cbuilder5\source\vcl;C:\Program Files\Soft Gems\Theme Manager\Source\
-Item6=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\;C:\Documents and Settings\mike.CHUNTEY\My Documents\Programming\Dbits\lib\;C:\Program Files\Soft Gems\Theme Manager\Source\
-Item7=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\;C:\Documents and Settings\mike.CHUNTEY\My Documents\Programming\Dbits\lib\
-Item8=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\
-Item9=$(BCB)\source\vcl
+Item6=c:\program files\borland\cbuilder5\source\vcl;C:\Program Files\Soft Gems\Theme Manager\Source\
+Item7=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\;C:\Documents and Settings\mike.CHUNTEY\My Documents\Programming\Dbits\lib\;C:\Program Files\Soft Gems\Theme Manager\Source\
+Item8=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\;C:\Documents and Settings\mike.CHUNTEY\My Documents\Programming\Dbits\lib\
+Item9=c:\program files\borland\cbuilder5\source\vcl;C:\dbits\lib\
+Item10=$(BCB)\source\vcl
 
 [HistoryLists\hlConditionals]
 Count=1
 Item0=_DEBUG
 
 [Debugging]
-DebugSourceDirs=$(BCB)\Source\Vcl;..\Components\Animation-Timer\lib;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\Source;..\Components\Theme Manager\TMSourceOnly\CBuilder
+DebugSourceDirs=$(BCB)\Source\Vcl;..\Components\Office Button 97\OffBtn97;..\Components\Office Button 97\OffBtn97\32-Bit;..\Components\ComPort Library;..\Components\Theme Manager\TMSourceOnly\Source;..\Components\Theme Manager\TMSourceOnly\CBuilder
 
 [Parameters]
 RunParams=

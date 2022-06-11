@@ -35,7 +35,6 @@
 #include <ToolWin.hpp>
 #include <ImgList.hpp>
 #include <IniFiles.hpp>
-#include "AnimTimer.h"
 #include "ThemeMgr.hpp"
 
 

@@ -57,7 +57,7 @@ void ProcessTag(char* tok, FILE* f);
 void InitialiseHardware();
 
 extern void HWSetMachine(int machine, int speccy);
-extern DebugUpdate();
+extern void DebugUpdate();
 
 char *get_token(FILE *f)
 {

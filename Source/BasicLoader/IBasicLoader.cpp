@@ -531,6 +531,10 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
 {
         char* pEnd;
         double value = strtod((char*)(mLineBuffer + index), &pEnd);
+        if (pEnd == (mLineBuffer + index))
+        {
+                pEnd++;
+        }
 
         while ((mLineBuffer + index) < pEnd)
         {
@@ -539,7 +543,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
                 index++;
         }
 
-        while ((mLineBuffer[index] != '\0') && (mLineBuffer[index] == ' '))
+        while (mLineBuffer[index] == ' ')
         {
                 OutputByte(addressOffset, AsciiToZX(' '));
                 index++;

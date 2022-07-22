@@ -300,7 +300,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 CreateBasicLister();
 
                 zx81.zxpand = (ZXpand->Checked == true);
-                ZXpand->Caption = "ZXpand+";            
+                ZXpand->Caption = "ZXpand+";
                 break;
 
         case MACHINEACE:

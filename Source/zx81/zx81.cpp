@@ -700,7 +700,7 @@ BYTE zx81_ReadByte(int Address)
                 // CR  reads from ROM whilst zxpand is disabled will return
                 // normal ROM content, else overlay ROM
 
-                if (zx81.zxpand && emulator.machine==MACHINEZX81)
+                if (zx81.zxpand && (emulator.machine==MACHINEZX81 || emulator.machine==MACHINETS1000))
                 {
                         int zxpConfigData;
                         zxpand->GetConfig(zxpConfigData);

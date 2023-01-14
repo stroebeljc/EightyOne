@@ -3,11 +3,13 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.30 - 22/07/2022 (by Paul Farrow)
+Version 1.30 - ##/##/2023 (by Paul Farrow)
 * Bug fixes:
   - The BASIC Listing Import facility did not handle numeric values consisting of just a decimal
     point.
   - ZXpand support was not being enabled for the TS1000.
+  - The BASIC Listing window was not nicely handling invalid embedded Spectrum colour control
+    codes.
 
 Version 1.29 - 10/06/2022 (by Paul Farrow)
 * Bug fixes:

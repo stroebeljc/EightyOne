@@ -37,7 +37,7 @@ spec128BasicLister::spec128BasicLister()
         mColours[4] = RGB(0, 206, 0);
         mColours[5] = RGB(0, 206, 206);
         mColours[6] = RGB(206, 206, 0);
-        mColours[7] = RGB(206, 203, 206);
+        mColours[7] = RGB(206, 206, 206);
         mColours[8] = RGB(0, 0, 0);
         mColours[9] = RGB(0, 0, 255);
         mColours[10] = RGB(255, 0, 0);
@@ -131,11 +131,17 @@ void spec128BasicLister::ProcessControlCode(unsigned char code, unsigned char ar
         switch (code)
         {
                 case Ink:
-                        mInkValue = arg1;
+                        if (arg1 <= 7)
+                        {
+                                mInkValue = arg1;
+                        }
                         break;
 
                 case Paper:
-                        mPaperValue = arg1;
+                        if (arg1 <= 7)
+                        {
+                                mPaperValue = arg1;
+                        }
                         break;
 
                 case Bright:
@@ -150,14 +156,14 @@ void spec128BasicLister::ProcessControlCode(unsigned char code, unsigned char ar
 
 COLORREF spec128BasicLister::GetInkColour()
 {
-        int bright = (mBrightValue == 1) ? 8 : 0;
+        int bright = (mBrightValue != 0) ? 8 : 0;
         COLORREF ink = mInverseValue ? mColours[mPaperValue + bright] : mColours[mInkValue + bright];
         return ink;
 }
 
 COLORREF spec128BasicLister::GetPaperColour()
 {
-        int bright = (mBrightValue == 1) ? 8 : 0;
+        int bright = (mBrightValue != 0) ? 8 : 0;
         COLORREF paper = mInverseValue ? mColours[mInkValue + bright] : mColours[mPaperValue + bright];
         return paper;
 }

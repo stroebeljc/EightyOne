@@ -307,7 +307,6 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                 address += mEmbeddedNumberSize;
                 lengthRemaining -= mEmbeddedNumberSize;
                 
-                lastKeywordEndedWithSpace = false;
                 return;
         }
 
@@ -324,9 +323,9 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                         address++;
                         lengthRemaining--;
                 }
+
                 ProcessControlCode(c, arg1, arg2);
 
-                lastKeywordEndedWithSpace = false;
                 return;
         }
 

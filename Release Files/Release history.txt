@@ -10,6 +10,8 @@ Version 1.30 - ##/##/2023 (by Paul Farrow)
   - ZXpand support was not being enabled for the TS1000.
   - The BASIC Listing window was not nicely handling invalid embedded Spectrum colour control
     codes.
+  - The BASIC Listing window was not suppressing a surplus space between keywords if there was
+    also an embedded number or embedded control code between the keywords.
 
 Version 1.29 - 10/06/2022 (by Paul Farrow)
 * Bug fixes:

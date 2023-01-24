@@ -3,6 +3,10 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.31 - 24/01/2023 (by Paul Farrow)
+* Bug fixes:
+  - Some ZxToken characters were still not being recognised by the BASIC Listing import facility.
+
 Version 1.30 - 22/01/2023 (by Paul Farrow)
 * Bug fixes:
   - The BASIC Listing import facility did not handle numeric values consisting of just a decimal

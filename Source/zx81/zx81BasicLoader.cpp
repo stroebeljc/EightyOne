@@ -536,6 +536,8 @@ void zx81BasicLoader::ExtractZxTokenCharacterCodes()
 {
         map<unsigned char, unsigned char> zxTokenChars;
 
+        //        ZxToken    ZX81
+        //           Code    Code
         zxTokenChars[0xB6] = 1;         // ¶
         zxTokenChars[0xB7] = 2;         // ·
         zxTokenChars[0xB8] = 3;         // ¸
@@ -564,7 +566,10 @@ void zx81BasicLoader::ExtractZxTokenCharacterCodes()
         zxTokenChars[0x8A] = 143;       // Š
         zxTokenChars[0x8B] = 144;       // ‹
         zxTokenChars[0x8C] = 145;       // Œ
+        zxTokenChars[0x8D] = 146;
         zxTokenChars[0x8E] = 147;       // Ž
+        zxTokenChars[0x8F] = 148;
+        zxTokenChars[0x90] = 149;
         zxTokenChars[0x91] = 150;       // ‘
         zxTokenChars[0x92] = 151;       // ’
         zxTokenChars[0x93] = 152;       // “
@@ -577,8 +582,10 @@ void zx81BasicLoader::ExtractZxTokenCharacterCodes()
         zxTokenChars[0x9A] = 159;       // š
         zxTokenChars[0x9B] = 160;       // ›
         zxTokenChars[0x9C] = 161;       // œ
+        zxTokenChars[0x9D] = 162;
         zxTokenChars[0x9E] = 163;       // ž
         zxTokenChars[0x9F] = 164;       // Ÿ
+        zxTokenChars[0xA0] = 162;
         zxTokenChars[0xC0] = 192;       // À
                                         
         for (unsigned char c = 'a'; c <= 'z'; c++)

@@ -506,7 +506,7 @@ bool specBasicLoader::SingleEscapeSequence(unsigned char chr, unsigned char& zxC
 
 bool specBasicLoader::NoEscapeSequence(unsigned char chr)
 {
-        string escapeSequenceChars = "\\_\n1234567890ABCDEFabcdef'.:;@#~!";
+        string escapeSequenceChars = "\\_\n1234567890ABCDEFabcdef'.:;@#~! ";
 
         string zxChr;
         zxChr = chr;

@@ -202,15 +202,11 @@ void DebugUpdate(void)
         Dbg->SymApp->Enabled = symbolstore::fileLoaded();
 }
 
-bool TDbg::AddBreakPoint(struct breakpoint& bp)
+int TDbg::FindBreakPointEntry(struct breakpoint& bp)
 {
-        const int maxBreakpoints = 99;
+        int breakpointIndex = -1;
 
-        if (Breakpoints == maxBreakpoints)
-                return false;
-
-        int i;
-        for(i=0; i<Breakpoints; i++)
+        for (int i=0; i<Breakpoints; i++)
         {
                 bool existingBreakpoint;
 
@@ -242,8 +238,10 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
                         case BP_RD:
                         case BP_WR:
                         case BP_EXE:
+                        case BP_OUT:
                         case BP_OUTL:
                         case BP_OUTH:
+                        case BP_IN:
                         case BP_INL:
                         case BP_INH:
                                 existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
@@ -256,10 +254,24 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
 
                 if (existingBreakpoint)
                 {
-                        DelBreakPoint(i);
+                        breakpointIndex = i;
                         break;
                 }
         }
+
+        return breakpointIndex;
+}
+
+bool TDbg::AddBreakPoint(struct breakpoint& bp)
+{
+        const int maxBreakpoints = 99;
+
+        if (Breakpoints == maxBreakpoints)
+                return false;
+
+        int breakpointIndex = FindBreakPointEntry(bp);
+        if (breakpointIndex != -1)
+                DelBreakPoint(breakpointIndex);
 
         Breakpoint[Breakpoints] = bp;
 
@@ -1869,8 +1881,8 @@ void __fastcall TDbg::EditBrkBtnClick(TObject *Sender)
 
         int idx = BPList->Row;
         breakpoint bp = Breakpoint[idx];
-        
-        if (SetBreakpoint->EditBreakpoint(bp))
+
+        if (SetBreakpoint->EditBreakpoint(bp) && FindBreakPointEntry(bp) == -1)
         {
                 Breakpoint[idx] = bp;
 

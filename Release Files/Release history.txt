@@ -8,6 +8,10 @@ Version 1.31 - 01/02/2023 (by Paul Farrow)
   - Some ZxToken characters were still not being recognised by the BASIC Listing import facility.
   - Some graphic character encodings were not being recognised by the BASIC Listing import
     facility when loading a program into the Spectrum.
+  - Duplicate IN and OUT breakpoints could be added.
+  - IN and OUT breakpoints could be edited to become duplicates of existing breakpoints.
+* Enhancements:
+  - Added support for IN and OUT breakpoints to the Jupiter Ace.
 
 Version 1.30 - 22/01/2023 (by Paul Farrow)
 * Bug fixes:

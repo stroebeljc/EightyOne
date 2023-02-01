@@ -50,6 +50,9 @@ extern "C"
 
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
+extern void LogOutAccess(int address, BYTE data);
+extern void LogInAccess(int address, BYTE data);
+extern void ResetLastIOAccesses();
 extern void DebugUpdate(void);
 
 extern int RasterY;
@@ -62,6 +65,7 @@ extern BYTE ZXKeyboard[8];
 int ACEMICState, ACETopBorder, ACELeftBorder;
 BYTE acecolour[1024], acelatch=4;
 
+static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0x20;
 
 extern void ZXPrinterWritePort(unsigned char Data);
@@ -80,6 +84,8 @@ void ace_initialise(void)
         int i, romlen;
         z80_init();
         tStatesCount = 0;
+
+        ResetLastIOAccesses();
 
         for(i=0;i<65536;i++) memory[i]=random(255);
 
@@ -190,6 +196,8 @@ BYTE ace_opcode_fetch(int Address)
 
 void ace_writeport(int Address, int Data, int *tstates)
 {
+        LogOutAccess(Address, Data);
+
         static int beeper=0;
 
         if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
@@ -263,6 +271,14 @@ void ace_writeport(int Address, int Data, int *tstates)
 }
 
 BYTE ace_readport(int Address, int *tstates)
+{
+        BYTE data = ReadInputPort(Address, tstates);
+        LogInAccess(Address, data);
+
+        return data;
+}
+
+BYTE ReadInputPort(int Address, int *tstates)
 {
         if (!(Address&1))
         {

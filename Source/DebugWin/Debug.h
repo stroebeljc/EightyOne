@@ -331,6 +331,7 @@ public:		// User declarations
         bool BPExeHit(int addr, breakpoint* const bp, int idx);
 
         bool AddBreakPoint(struct breakpoint& bp);
+        int FindBreakPointEntry(struct breakpoint& bp);
         void DelBreakPoint(int index);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

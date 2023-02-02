@@ -12,6 +12,8 @@ Version 1.31 - 01/02/2023 (by Paul Farrow)
   - IN and OUT breakpoints could be edited to become duplicates of existing breakpoints.
 * Enhancements:
   - Added support for IN and OUT breakpoints to the Jupiter Ace.
+  - Selecting ZXpand+ in the Hardware dialog now prompts whether to automatically select all
+    facilities provided by the ZXpand+.
 
 Version 1.30 - 22/01/2023 (by Paul Farrow)
 * Bug fixes:

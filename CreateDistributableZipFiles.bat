@@ -3,6 +3,7 @@ setlocal enabledelayedexpansion
 cls
 
 set SourceFolder=%cd%\Source
+set SourceBackupFolder=%cd%\SourceBackup
 set ComponentsFolder=%cd%\Components
 set InstallationFilesFolder=%cd%\Installation Files
 set ReleaseFilesFolder=%cd%\Release Files
@@ -15,6 +16,7 @@ echo EightyOne Distributable Files Creator
 echo =====================================
 echo.
 echo Source folder             = %SourceFolder%
+echo Source backup folder      = %SourceBackupFolder%
 echo Components folder         = %ComponentsFolder%
 echo Installation files folder = %InstallationFilesFolder%
 echo Documentation folder      = %DocumentationFolder%
@@ -55,13 +57,6 @@ if not exist "%TestFolder%" goto :ErrorFolderNotFound
 set TestFolder=%ComponentsFolder%\Theme Manager
 if not exist "%TestFolder%" goto :ErrorFolderNotFound
 
-rem ---- Check ZXpand SD Card subfolder does not exist
-
-set TestFolder=%SourceFolder%\ZXpand_SD_Card
-git clean -f -d -x "%TestFolder%"
-
-if exist "%TestFolder%" goto :ErrorZXpandFolderFound
-
 rem ---- Check EightyOne executable exists
 
 if not exist "%SourceFolder%\EightyOne.exe" goto :ErrorExecutableNotFound
@@ -84,6 +79,21 @@ set /p revision="Build version number 1.x (e.g. enter 10 for version 1.10): "
 
 set /a val=%revision% 2>nul
 if not %val%==%revision% goto :InvalidVersionNumber
+
+rem ---- Create a backup of the Source folder
+
+rmdir /s /q "%SourceBackupFolder%" > nul 2>&1
+
+if exist "%SourceBackupFolder%" goto :ErrorSourceBackupFailed
+
+xcopy /e /q "%SourceFolder%\*.*" "%SourceBackupFolder%\" > nul 2>&1
+if not %errorlevel%==0 goto :ErrorSourceBackupFailed
+
+if not exist "%SourceBackupFolder%" goto :ErrorSourceBackupFailed
+
+rem ---- Clean the source folder
+
+git clean -q -f -d -x "%SourceFolder%"
 
 rem ---- Create the output folder structure
 
@@ -113,37 +123,15 @@ xcopy /y "%DocumentationFolder%\*.*" "%OutputDevEnvFolder%\" > nul 2>&1
 
 rem ---- Clean the Development Environment source folder
 
-set OutputDevEnvSourceFolder=%OutputFolder%\%eoDevEnv%\Source
-
-del /s /q "%OutputDevEnvSourceFolder%\*.p" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.p81" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.o" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.tzx" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.tap" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.t81" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.sna" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.z81" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.ace" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.exe" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.lib" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.tds" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.obj" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.bak" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.~*" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.*$$$" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.gitattributes" > nul 2>&1
-del /s /q "%OutputDevEnvSourceFolder%\*.gitignore" > nul 2>&1
-rmdir /s /q "%OutputDevEnvSourceFolder%\.git" > nul 2>&1
-
 del /s /q "%ReleaseFilesFolder%\*.bak" > nul 2>&1
 
 rem ---- Create the release folder contents
 
 echo Constructing the Release folder...
 
-xcopy /e "%ReleaseFilesFolder%\*.*"     "%OutputReleaseFolder%\" > nul 2>&1
-xcopy /e "%SourceFolder%\ROM\*.*"       "%OutputReleaseFolder%\ROM\" > nul 2>&1
-xcopy /y "%SourceFolder%\EightyOne.exe" "%OutputReleaseFolder%\" > nul 2>&1
+xcopy /e "%ReleaseFilesFolder%\*.*"           "%OutputReleaseFolder%\" > nul 2>&1
+xcopy /e "%SourceFolder%\ROM\*.*"             "%OutputReleaseFolder%\ROM\" > nul 2>&1
+xcopy /y "%SourceBackupFolder%\EightyOne.exe" "%OutputReleaseFolder%\" > nul 2>&1
 
 rem ---- Unzip the FatTest.vhd zip file
 
@@ -170,6 +158,15 @@ echo %OutputDistributionFolder%
 echo.
 echo ** Check that the distributable zip files have been created correctly **
 
+rem ---- Restore from the backup of the Source folder
+
+xcopy /e /q /r /y "%SourceBackupFolder%\*.*" "%SourceFolder%\" > nul 2>&1
+if not %errorlevel%==0 goto :ErrorSourceBackupRestorationFailed
+
+rmdir /s /q "%SourceBackupFolder%" > nul 2>&1
+
+if exist "%SourceBackupFolder%" goto :ErrorSourceBackupRestorationFailed
+
 goto :end
 
 :ErrorFolderNotFound
@@ -177,9 +174,13 @@ echo Could not find folder:
 echo %TestFolder%
 goto :ErrorCreationAborted
 
-:ErrorZXpandFolderFound
-echo The following folder should not exist:
-echo %TestFolder%
+:ErrorSourceBackupFailed
+echo Failed to create backup of the source folder
+goto :ErrorCreationAborted
+
+:ErrorSourceBackupRestorationFailed
+echo.
+echo Failed to restore the source folder from the backup
 goto :ErrorCreationAborted
 
 :ErrorExecutableNotFound

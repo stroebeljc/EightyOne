@@ -55,6 +55,13 @@ if not exist "%TestFolder%" goto :ErrorFolderNotFound
 set TestFolder=%ComponentsFolder%\Theme Manager
 if not exist "%TestFolder%" goto :ErrorFolderNotFound
 
+rem ---- Check ZXpand SD Card subfolder does not exist
+
+set TestFolder=%SourceFolder%\ZXpand_SD_Card
+git clean -f -d -x "%TestFolder%"
+
+if exist "%TestFolder%" goto :ErrorZXpandFolderFound
+
 rem ---- Check EightyOne executable exists
 
 if not exist "%SourceFolder%\EightyOne.exe" goto :ErrorExecutableNotFound
@@ -108,6 +115,15 @@ rem ---- Clean the Development Environment source folder
 
 set OutputDevEnvSourceFolder=%OutputFolder%\%eoDevEnv%\Source
 
+del /s /q "%OutputDevEnvSourceFolder%\*.p" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.p81" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.o" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.tzx" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.tap" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.t81" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.sna" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.z81" > nul 2>&1
+del /s /q "%OutputDevEnvSourceFolder%\*.ace" > nul 2>&1
 del /s /q "%OutputDevEnvSourceFolder%\*.exe" > nul 2>&1
 del /s /q "%OutputDevEnvSourceFolder%\*.lib" > nul 2>&1
 del /s /q "%OutputDevEnvSourceFolder%\*.tds" > nul 2>&1
@@ -158,6 +174,11 @@ goto :end
 
 :ErrorFolderNotFound
 echo Could not find folder:
+echo %TestFolder%
+goto :ErrorCreationAborted
+
+:ErrorZXpandFolderFound
+echo The following folder should not exist:
 echo %TestFolder%
 goto :ErrorCreationAborted
 

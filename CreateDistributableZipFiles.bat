@@ -94,6 +94,7 @@ if not exist "%SourceBackupFolder%" goto :ErrorSourceBackupFailed
 rem ---- Clean the source folder
 
 git clean -q -f -d -x "%SourceFolder%"
+if not %errorlevel%==0 goto :ErrorCleaningSourceFolder
 
 rem ---- Create the output folder structure
 
@@ -181,6 +182,13 @@ goto :ErrorCreationAborted
 :ErrorSourceBackupRestorationFailed
 echo.
 echo Failed to restore the source folder from the backup
+goto :ErrorCreationAborted
+
+:ErrorCleaningSourceFolder
+echo.
+echo Failed to clean the source folder
+echo.
+echo ** Make sure to manually restore the source folder from the backup **
 goto :ErrorCreationAborted
 
 :ErrorExecutableNotFound

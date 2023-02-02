@@ -242,16 +242,17 @@ void zx81_initialise(void)
 
         AnsiString romname = machine.CurRom;
 
-        // horrible cheesy hack
+        AnsiString romRoot = LowerCase(getMachineRoot(romname));
+
         //  to prevent zxpand from interfering with - say - aszmic
-        if (romname.SubString(1,3) != "zx8")
+        if (romRoot != "zx80" && romRoot != "zx81" && romRoot != "ts1500")
                 zx81.zxpand = 0;
 
         if (zx81.zxpand)
         {
-                AnsiString romRoot = LowerCase(getMachineRoot(romname));
                 AnsiString overlayName = romRoot + ".zxpand.ovl";
-                if (romRoot == "zx81") {
+                if (romRoot == "zx81" || romRoot == "ts1500")
+                {
                         memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
                 } else if (romRoot == "zx80") {
                         romname = overlayName;
@@ -678,7 +679,7 @@ BYTE zx81_ReadByte(int Address)
         {
                 data=memory[Address];
         }
-        else if (zx81.zxpand && (emulator.machine==MACHINEZX81 || emulator.machine==MACHINETS1000 || emulator.machine==MACHINEZX80) && video && Address>=0x1E00 && Address<0x2000)
+        else if (zx81.zxpand && (emulator.machine==MACHINEZX81 || emulator.machine==MACHINETS1000 || emulator.machine==MACHINETS1500 || emulator.machine==MACHINEZX80) && video && Address>=0x1E00 && Address<0x2000)
         {
                 // CR  zxpand enables the ROM for character access
                 data=memory[Address];
@@ -700,7 +701,7 @@ BYTE zx81_ReadByte(int Address)
                 // CR  reads from ROM whilst zxpand is disabled will return
                 // normal ROM content, else overlay ROM
 
-                if (zx81.zxpand && (emulator.machine==MACHINEZX81 || emulator.machine==MACHINETS1000))
+                if (zx81.zxpand && (emulator.machine==MACHINEZX81 || emulator.machine==MACHINETS1000 || emulator.machine==MACHINETS1500))
                 {
                         int zxpConfigData;
                         zxpand->GetConfig(zxpConfigData);

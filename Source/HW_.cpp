@@ -310,6 +310,9 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINETS1500:
                 strcpy(emulator.ROMTS1500, machine.CurRom);
                 CreateBasicLister();
+
+                zx81.zxpand = (ZXpand->Checked == true);
+                ZXpand->Caption = "ZXpand+";
                 break;
 
         case MACHINELAMBDA:
@@ -1597,7 +1600,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
 {
         if (TS1500Btn->Down) return;
         SetupForZX81();
-        SetZXpandState(false,false);
+        ZXpand->Enabled=true;
         TS1500Btn->Down=true;
         NewMachine=MACHINETS1500;
         NewMachineName=TS1500Btn->Caption;
@@ -2029,7 +2032,7 @@ void THW::LoadSettings(TIniFile *ini)
         if (Rom!="NULL") IF1->MDVSetFileName(7,Rom.c_str());
 
         SetZXpandState(ini->ReadBool("HWARE","ZXpand",ZXpand->Checked),
-                        ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)||ini->ReadBool("HWARE","ZX80",ZX81Btn->Down));
+                        ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)||ini->ReadBool("HWARE","ZX80",ZX81Btn->Down)||ini->ReadBool("HWARE","TS1500",TS1500Btn->Down)); 
         ProtectROM->Checked=ini->ReadBool("HWARE","ProtectRom",ProtectROM->Checked);
         NTSC->Checked=ini->ReadBool("HWARE","NTSC",NTSC->Checked);
         EnableLowRAM->Checked=ini->ReadBool("HWARE","LowRAM",EnableLowRAM->Checked);

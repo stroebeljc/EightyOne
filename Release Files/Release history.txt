@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.31 - 01/02/2023 (by Paul Farrow)
+Version 1.31 - 02/02/2023 (by Paul Farrow)
 * Bug fixes:
   - Some ZxToken characters were still not being recognised by the BASIC Listing import facility.
   - Some graphic character encodings were not being recognised by the BASIC Listing import
@@ -15,11 +15,11 @@ Version 1.31 - 01/02/2023 (by Paul Farrow)
   - Keyboard dialog was not correctly selecting between displaying the Symbol Shift key checkbox
     applicable to all Spectrum models / Jupiter Ace and the CTRL key selection suitable for all
     ZX80 / ZX81 models.
-
 * Enhancements:
   - Added support for IN and OUT breakpoints to the Jupiter Ace.
   - Selecting ZXpand+ in the Hardware dialog now prompts whether to automatically select all
     facilities provided by the ZXpand+.
+  - Added ZXpand+ support to the TS1500.
 
 Version 1.30 - 22/01/2023 (by Paul Farrow)
 * Bug fixes:

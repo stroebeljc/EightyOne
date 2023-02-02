@@ -20,6 +20,8 @@ Version 1.31 - 02/02/2023 (by Paul Farrow)
   - Selecting ZXpand+ in the Hardware dialog now prompts whether to automatically select all
     facilities provided by the ZXpand+.
   - Added ZXpand+ support to the TS1500.
+  - The Hardware dialog now provides a selection list of the officially released ROMs for the
+    chosen computer.
 
 Version 1.30 - 22/01/2023 (by Paul Farrow)
 * Bug fixes:

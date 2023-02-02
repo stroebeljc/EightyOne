@@ -1832,15 +1832,6 @@ object HW: THW
         Height = 13
         Caption = 'ROM File:'
       end
-      object RomBox: TEdit
-        Left = 128
-        Top = 16
-        Width = 185
-        Height = 21
-        TabOrder = 0
-        Text = 'RomBox'
-        OnChange = RomBoxChange
-      end
       object BrowseROM: TButton
         Left = 314
         Top = 16
@@ -1951,6 +1942,15 @@ object HW: THW
         ShowHint = True
         TabOrder = 5
         OnClick = ImprovedWaitClick
+      end
+      object RomBox: TComboBox
+        Left = 128
+        Top = 16
+        Width = 185
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 0
+        OnChange = RomBoxChange
       end
     end
   end

@@ -68,7 +68,6 @@ __published:	// IDE-managed Components
         TOffice97Button *QLBtn;
         TTabSheet *AdvSettings;
         TLabel *Label1;
-        TEdit *RomBox;
         TButton *BrowseROM;
         TCheckBox *ProtectROM;
         TCheckBox *NTSC;
@@ -103,6 +102,7 @@ __published:	// IDE-managed Components
         TComboBox *ZXC1ConfigurationBox;
         TButton *ButtonAdvancedMore;
         TCheckBox *ImprovedWait;
+        TComboBox *RomBox;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);

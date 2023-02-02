@@ -27,6 +27,7 @@
 #include "kb_.h"
 #include "kbstatus.h"
 #include "zx81config.h"
+#include "main_.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -72,13 +73,13 @@ void __fastcall TKb::OKClick(TObject *Sender)
 
         if (RadioButton1->Checked) PCKeySetCTRL(0);
         if (RadioButton2->Checked) PCKeySetCTRL('0');
-        //if (RadioButton3->Checked) PCKeySetCTRL('.');
 
         if (CheckBox1->Checked && (emulator.machine==MACHINESPECTRUM
                                     || emulator.machine==MACHINEACE)) emulator.UseRShift=true;
         else emulator.UseRShift=false;
 
-        if (Sender) Close();
+        Form1->Keyboard1->Checked=false;
+        Close();
 }
 //---------------------------------------------------------------------------
 void __fastcall TKb::CursorModeChange(TObject *Sender)
@@ -97,16 +98,12 @@ void __fastcall TKb::CursorModeChange(TObject *Sender)
                 CustomUp->Enabled=false;
                 CustomDown->Enabled=false;
         }
-
 }
 //---------------------------------------------------------------------------
 void TKb::LoadSettings(TIniFile *ini)
 {
         Top = ini->ReadInteger("KB","Top",Top);
         Left = ini->ReadInteger("KB","Left",Left);
-
-        //ini->ReadInteger("KB","Height",Height);
-        //ini->ReadInteger("KB","Width",Width);
 
         CustomLeft->Text = ini->ReadString("KB","CustomLeft", CustomLeft->Text);
         CustomDown->Text = ini->ReadString("KB","CustomDown", CustomDown->Text);
@@ -116,7 +113,6 @@ void TKb::LoadSettings(TIniFile *ini)
         RadioButton1->Checked = ini->ReadBool("KB","CTRLFunc", RadioButton1->Checked);
         RadioButton2->Checked = ini->ReadBool("KB","CTRL0", RadioButton2->Checked);
         CheckBox1->Checked = ini->ReadBool("KB","RIGHTSHIFT", CheckBox1->Checked);
-        //RadioButton3->Checked = ini->ReadBool("KB","SYMSHIFT", RadioButton3->Checked);
         CursorMode->ItemIndex = ini->ReadInteger("KB","CursorMode", CursorMode->ItemIndex);
 
         CursorModeChange(NULL);
@@ -127,8 +123,6 @@ void TKb::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("KB","Top",Top);
         ini->WriteInteger("KB","Left",Left);
-        //ini->WriteInteger("KB","Height",Height);
-        //ini->WriteInteger("KB","Width",Width);
 
         ini->WriteInteger("KB","CursorMode", CursorMode->ItemIndex);
         ini->WriteString("KB","CustomLeft", CustomLeft->Text);
@@ -139,10 +133,7 @@ void TKb::SaveSettings(TIniFile *ini)
         ini->WriteBool("KB","CTRLFunc", RadioButton1->Checked);
         ini->WriteBool("KB","CTRL0", RadioButton2->Checked);
         ini->WriteBool("KB","RIGHTSHIFT", CheckBox1->Checked);
-        //ini->WriteBool("KB","SYMSHIFT", RadioButton3->Checked);
 }
-
-
 
 void __fastcall TKb::FormShow(TObject *Sender)
 {
@@ -159,7 +150,7 @@ void __fastcall TKb::FormShow(TObject *Sender)
                 Label2->Visible=true;
                 RadioButton1->Visible=true;
                 RadioButton2->Visible=true;
-                CheckBox1->Visible=true;
+                CheckBox1->Visible=false;
         }
 }
 //---------------------------------------------------------------------------

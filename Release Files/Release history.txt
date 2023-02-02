@@ -10,6 +10,12 @@ Version 1.31 - 01/02/2023 (by Paul Farrow)
     facility when loading a program into the Spectrum.
   - Duplicate IN and OUT breakpoints could be added.
   - IN and OUT breakpoints could be edited to become duplicates of existing breakpoints.
+  - The Options menu was still showing the Keyboard dialog as selected even after it had been
+    closed.
+  - Keyboard dialog was not correctly selecting between displaying the Symbol Shift key checkbox
+    applicable to all Spectrum models / Jupiter Ace and the CTRL key selection suitable for all
+    ZX80 / ZX81 models.
+
 * Enhancements:
   - Added support for IN and OUT breakpoints to the Jupiter Ace.
   - Selecting ZXpand+ in the Hardware dialog now prompts whether to automatically select all

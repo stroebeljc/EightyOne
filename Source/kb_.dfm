@@ -4,7 +4,7 @@ object Kb: TKb
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Keyboard'
-  ClientHeight = 111
+  ClientHeight = 97
   ClientWidth = 288
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -49,12 +49,12 @@ object Kb: TKb
   end
   object OK: TButton
     Left = 200
-    Top = 80
+    Top = 64
     Width = 81
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 8
+    TabOrder = 7
     OnClick = OKClick
   end
   object CustomUp: TEdit
@@ -102,7 +102,7 @@ object Kb: TKb
     Caption = 'Function'
     Checked = True
     ParentBiDiMode = False
-    TabOrder = 9
+    TabOrder = 8
     TabStop = True
   end
   object RadioButton2: TRadioButton
@@ -112,16 +112,6 @@ object Kb: TKb
     Height = 17
     Caption = '0 (Zero)'
     TabOrder = 6
-  end
-  object RadioButton3: TRadioButton
-    Left = 112
-    Top = 88
-    Width = 81
-    Height = 17
-    Caption = 'Symbol Shift'
-    Enabled = False
-    TabOrder = 7
-    Visible = False
   end
   object CheckBox1: TCheckBox
     Left = 8

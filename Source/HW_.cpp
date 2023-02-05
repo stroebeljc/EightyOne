@@ -996,7 +996,27 @@ void THW::CreateBasicLister()
 }
 
 //---------------------------------------------------------------------------
+void THW::SetZX80Icon()
+{
+        AnsiString romName;
 
+        if (ZX80Btn->Down)
+        {
+                romName = RomBox->Text;
+        }
+        else
+        {
+                romName = emulator.ROM80;
+        }
+
+        AnsiString romRoot = LowerCase(getMachineRoot(romName));
+        Graphics::TBitmap* zx80Icon = new Graphics::TBitmap;
+        int iconIndex = (romRoot== "zx81" || romRoot == "ts1500") ? 1 : 0;
+        ZX80Icons->GetBitmap(iconIndex, zx80Icon);
+        ZX80Btn->InactiveGlyph = zx80Icon;
+}
+
+//---------------------------------------------------------------------------
 void THW::SetupForZX81(void)
 {
         int i;
@@ -1120,6 +1140,8 @@ void THW::SetupForZX81(void)
         {
                 RomCartridgeBox->Items->Delete(ROMCARTRIDGEZXC1);
         }
+
+        SetZX80Icon();
 }
 
 void THW::SetZXpandState(bool checked, bool enabled)
@@ -1264,6 +1286,8 @@ void THW::SetupForSpectrum(void)
         {
                 RomCartridgeBox->Items->Add("ZXC1");
         }
+
+        SetZX80Icon();
 }
 
 void THW::SetupForQL(void)
@@ -2159,6 +2183,8 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         RomBox->Text=Path;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         ResetRequired=true;
+
+        SetZX80Icon();
 }
 //---------------------------------------------------------------------------
 
@@ -2568,7 +2594,10 @@ void __fastcall THW::ColourBoxChange(TObject *Sender)
 void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         ResetRequired=true;
+
+        SetZX80Icon();
 }
+//---------------------------------------------------------------------------
 
 void __fastcall THW::ZXPrinterClick(TObject *Sender)
 {

@@ -3,6 +3,11 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.32 - ##/##/2023 (by Paul Farrow)
+* Enhancements:
+  - The ZX80 icon in the Hardware dialog now indicates whether the computer is configured to use
+    the 4K ROM or the 8K ROM.
+
 Version 1.31 - 02/02/2023 (by Paul Farrow)
 * Bug fixes:
   - Some ZxToken characters were still not being recognised by the BASIC Listing import facility.

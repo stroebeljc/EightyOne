@@ -13,6 +13,7 @@
 #include <Dialogs.hpp>
 #include <ExtCtrls.hpp>
 #include <Buttons.hpp>
+#include <ImgList.hpp>
 
 //---------------------------------------------------------------------------
 class THW : public TForm
@@ -103,6 +104,7 @@ __published:	// IDE-managed Components
         TButton *ButtonAdvancedMore;
         TCheckBox *ImprovedWait;
         TComboBox *RomBox;
+        TImageList *ZX80Icons;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -164,6 +166,7 @@ private:	// User declarations
         bool ResetRequired;
         void CreateBasicLister();
         void ResetDisplaySize();
+        void SetZX80Icon();
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

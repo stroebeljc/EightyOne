@@ -83,6 +83,7 @@ int displayedTStatesCount;
 int StepOverStack;
 int StepOverInstructionSize;
 int StepOverAddr;
+int StepOverStartAddr;
 bool StepOverInstruction;
 int StepOutRequested;
 int RetExecuted;
@@ -942,7 +943,7 @@ void TDbg::UpdateVals(void)
 
         default:
                 RowCount->Caption = lineCounter;
-                Scanline->Caption = RasterY;
+                Scanline->Caption = ScanlineNumber;
                 ShiftReg->Caption = Bin8(shift_store);
                 TStates->Caption = frametstates;
                 NMIGen->Caption = nmiGeneratorEnabled ? "On":"Off";
@@ -1023,13 +1024,9 @@ void TDbg::UpdateVals(void)
         i = recentHistory[(recentHistoryPos+2)&3];
         Disass2->Caption = Disassemble(&i);
         i=z80.pc.w;
-        int stepOverStartAddr=i;
+        StepOverStartAddr=i;
         StepOverInstruction = IsStepOverInstruction(i);
         Disass3->Caption = (Disassemble(&i) + "                ").SetLength(50);
-        StepOverAddr = i;
-        StepOverStack=z80.sp.w;
-        StepOverInstructionSize = StepOverAddr - stepOverStartAddr;
-        StepOutRequested = 0;
         Disass4->Caption = Disassemble(&i);
         Disass5->Caption = Disassemble(&i);
         Disass6->Caption = Disassemble(&i);
@@ -1306,6 +1303,8 @@ __fastcall TDbg::TDbg(TComponent* Owner)
 
 void __fastcall TDbg::RunStopClick(TObject *Sender)
 {
+        StepOutRequested = 0;
+
         emulation_stop = !emulation_stop;
         if(!emulation_stop)
         {
@@ -1357,6 +1356,7 @@ void __fastcall TDbg::ContinuousClick(TObject *Sender)
 
 void __fastcall TDbg::SingleStepClick(TObject *Sender)
 {
+        StepOutRequested = 0;
         MemoryWindow->ClearChanges();
         emulation_stop=0;
         emulator.single_step=1;
@@ -1366,11 +1366,22 @@ void __fastcall TDbg::SingleStepClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TDbg::StepOverClick(TObject *Sender)
 {
+        StepOutRequested = 0;
+
         if (!StepOverInstruction)
         {
                 SingleStepClick(Sender);
                 return;
         }
+
+        int i = z80.pc.w;
+    //    Disassemble(&i);
+    //    int stepOverStartAddr = i;
+   //     StepOverInstruction = IsStepOverInstruction(i);
+        Disassemble(&i);
+        StepOverAddr = i;
+        StepOverStack = z80.sp.w;
+        StepOverInstructionSize = StepOverAddr - StepOverStartAddr;
 
         MemoryWindow->ClearChanges();
         breakpoint bp(StepOverAddr, BP_EXE);

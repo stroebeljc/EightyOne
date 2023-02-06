@@ -4,6 +4,8 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Version 1.32 - ##/##/2023 (by Paul Farrow)
+* Bug fixes:
+  - The Debugger facilities Step Over and Step Out now work when Continuous mode is active.
 * Enhancements:
   - The ZX80 icon in the Hardware dialog now indicates whether the computer is configured to use
     the 4K ROM or the 8K ROM.

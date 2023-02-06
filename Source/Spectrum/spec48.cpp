@@ -1531,7 +1531,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (LastPC==0x1748) PlusDPaged=0;
                 }
 
-
                 if (spectrum.HDType==HDDIVIDE && !spectrum.UploadJumper)
                 {
                         if (LastPC==0x00

@@ -1816,7 +1816,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                                         lineClockCarryCounter -= pulseDurationBeyondHSync;
                                                 }
                                         }
-                                        
+
                                         CurScanLine->sync_len = ZX81HSyncDuration;
                                         CurScanLine->sync_type = SYNCTYPEH;
                                 }
@@ -1861,7 +1861,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
         }
         while ((CurScanLine->scanline_len < scanlineActivePixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
 
-        if (CurScanLine->sync_type == SYNCTYPEV)
+        bool emulationStopped = ((CurScanLine->scanline_len < scanlineActivePixelLength) && (CurScanLine->sync_type == SYNCNONE));
+
+        if (!emulationStopped && CurScanLine->sync_type == SYNCTYPEV)
         {
                 if (vsyncFound)
                 {
@@ -1878,7 +1880,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 allowSoundOutput = zx81.vsyncsound && (!chromaSelected || (chromaSelected && !frameSynchronised));
         }
-        else
+        else if (!emulationStopped)
         {
                 if (scanlineCounter < VSYNC_TOLERANCEMAX_QS)
                 {
@@ -2024,7 +2026,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         {
                                 videoFlipFlop3Q = videoFlipFlop2Q;
                         }
-                        
+
                         videoFlipFlop2Q = !videoFlipFlop1Q;
                 }
 
@@ -2254,7 +2256,9 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
         }
         while ((CurScanLine->scanline_len < scanlineThresholdPixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
 
-        if (CurScanLine->sync_type == SYNCTYPEV)
+        bool emulationStopped = ((CurScanLine->scanline_len < scanlineThresholdPixelLength) && (CurScanLine->sync_type == SYNCNONE));
+
+        if (!emulationStopped && CurScanLine->sync_type == SYNCTYPEV)
         {
                 if (vsyncFound)
                 {
@@ -2278,7 +2282,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         CurScanLine->sync_len = 0;
                 }
         }
-        else
+        else if (!emulationStopped)
         {
                 if (scanlineCounter < VSYNC_TOLERANCEMAX_QS)
                 {

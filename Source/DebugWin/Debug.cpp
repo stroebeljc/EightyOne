@@ -943,7 +943,7 @@ void TDbg::UpdateVals(void)
 
         default:
                 RowCount->Caption = lineCounter;
-                Scanline->Caption = ScanlineNumber;
+                Scanline->Caption = RasterY;
                 ShiftReg->Caption = Bin8(shift_store);
                 TStates->Caption = frametstates;
                 NMIGen->Caption = nmiGeneratorEnabled ? "On":"Off";

@@ -167,6 +167,7 @@ __published:	// IDE-managed Components
         TMenuItem *NonMaskableInterruptResponseWaitStates;
         TMenuItem *UserProgramInstructionStartPositions;
         TImageList *ImageList2;
+        TMenuItem *BringWindowsToFront;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -271,6 +272,7 @@ __published:	// IDE-managed Components
         void __fastcall NonMaskableInterruptResponseWaitStatesClick(TObject *Sender);
         void __fastcall UserProgramInstructionStartPositionsClick(
           TObject *Sender);
+        void __fastcall BringWindowsToFrontClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

@@ -103,7 +103,7 @@
 #define CRCZX80		0x3a68
 #define CRCZX97LE	0x68bb
 #define CRCZX81_ED1	0x29E8
-#define CRCZX81_ED2	0x2914
+#define CRCZX81_ED2_3	0x2914
 #define CRCLAMBDA	0x4d3c
 #define CRC8300		0x0d4e
 #define CRCR470         0x5413

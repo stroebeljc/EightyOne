@@ -2001,26 +2001,25 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
 
 void MoveWindow(TForm* form, int& x, int& y)
 {
-        form->Left = x;
-        form->Top = y;
-        form->BringToFront();
-
-        if (form->Visible)
+        if (x != -1 && y != -1)
         {
-                x += 20;
-                y += 20;
+                form->Left = x;
+                form->Top = y;
+
+                if (form->Visible)
+                {
+                        x += 20;
+                        y += 20;
+                }
         }
+        
+        form->BringToFront();
 }
 
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
+void MoveWindows(int l = -1, int t = -1)
 {
-        int l = 0;
-        int t = 0;
-        MoveWindow(this, l, t);
-        l = (this->Width / 2);
-        t = (this->Height / 2);
         MoveWindow(Dbg, l, t);
         MoveWindow(MemoryWindow, l, t);
         MoveWindow(SymbolBrowser, l, t);
@@ -2030,7 +2029,6 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(Speed, l, t);
         MoveWindow(Artifacts, l, t);
         MoveWindow(Keyboard, l, t);
-        Keyboard->KbChange();
         MoveWindow(FSSettings, l, t);
         MoveWindow(Printer, l, t);
         MoveWindow(MidiForm, l, t);
@@ -2048,7 +2046,22 @@ void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
         MoveWindow(LiveMemoryWindow, l, t);
         MoveWindow(ProfilePlot, l, t);
         MoveWindow(Profiler, l, t);
-        MoveWindow(BasicLister, l, t);
+        MoveWindow(BasicLister, l, t);}
+
+void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
+{
+        int l = 0;
+        int t = 0;
+        MoveWindow(this, l, t);
+        l = (this->Width / 2);
+        t = (this->Height / 2);
+        MoveWindows(l, t);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::BringWindowsToFrontClick(TObject *Sender)
+{
+        MoveWindows();
 }
 //---------------------------------------------------------------------------
 

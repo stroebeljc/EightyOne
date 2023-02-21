@@ -9,6 +9,11 @@ Version 1.32 - ##/##/2023 (by Paul Farrow)
 * Enhancements:
   - The ZX80 icon in the Hardware dialog now indicates whether the computer is configured to use
     the 4K ROM or the 8K ROM.
+  - The Wav Loader facility "Convert Next Block to TZX" nows supports ZX80 files.
+  - Wav Loader and Tape Manager buttons now get disabled if their functions are not supported in
+    the current mode of operation.
+  - Added a 'Bring Windows to Front' option to View menu to position all dialogs above the main
+    emulation window.
 
 Version 1.31 - 02/02/2023 (by Paul Farrow)
 * Bug fixes:

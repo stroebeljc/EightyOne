@@ -44,7 +44,6 @@ extern int AutoLoadCount;
 
 #define  TSClick 4
 
-
 bool TWavLoad::IsWav(AnsiString FileName)
 {
         if (FileNameGetExt(FileName)==".WAV") return(true);
@@ -138,10 +137,6 @@ __fastcall TWavLoad::TWavLoad(TComponent* Owner)
         Threshold=12;
         Channel=0;
         StatusText="Stopped";
-        //UseLeftChannel1->Enabled=false;
-        //UseRightChannel1->Enabled=false;
-        //UseLeftChannel1->Checked=false;
-        //UseRightChannel1->Checked=false;
 
         IgnoreZX81=false;
 
@@ -150,7 +145,6 @@ __fastcall TWavLoad::TWavLoad(TComponent* Owner)
         delete ini;
 
         NewClick(this);
-        //ClearImage();
 }
 //---------------------------------------------------------------------------
 
@@ -180,18 +174,6 @@ void TWavLoad::LoadFile(AnsiString FName)
         ScrollBar->Max = Wav.NoSamples;
         ScrollBar->Position = 0;
 
-        //UseLeftChannel1->Enabled=false;
-        //UseRightChannel1->Enabled=false;
-        //UseLeftChannel1->Checked=false;
-        //UseRightChannel1->Checked=false;
-        //if (Wav.Stereo)
-        //{
-        //        UseLeftChannel1->Enabled=true;
-        //        UseRightChannel1->Enabled=true;
-        //        UseLeftChannel1->Checked=true;
-        //        UseRightChannel1->Checked=false;
-        //}
-
         Caption="Wave Loader - "+FileNameGetFname(FileName)+FileNameGetExt(FileName);
 
         UpdateImage();
@@ -211,8 +193,12 @@ void __fastcall TWavLoad::LoadClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TWavLoad::ScrollBarChange(TObject *Sender)
 {
-        if (!Playing && !Recording) TapePos=ScrollBar->Position;
-        UpdateImage();
+        if (!Playing && !Recording)
+        {
+                TapePos=ScrollBar->Position;
+                UpdateImage();
+        }
+        else ScrollBar->Position=TapePos;
 }
 //---------------------------------------------------------------------------
 
@@ -224,7 +210,6 @@ bool TWavLoad::GetEarState()
         
         i=128-Wav.Sample(TapePos+200,Channel);
 
-        //if (i<0) i=-i;
         if (    (Threshold>=0 && i>=Threshold)
              || (Threshold<0 && i<Threshold) ) return(1);
         else return(0);
@@ -279,7 +264,6 @@ void TWavLoad::ClockTick(int TStates, bool ZX81, bool MicState)
 
                 Wav.SetSample(TapePos, level);
                 lastbit=MicState;
-                //ScrollBar->Max=Wav.NoSamples;
         }
         else    if (SoundOn->Down) Sound.Beeper(GetEarState(), frametstates);
 
@@ -354,8 +338,7 @@ void TWavLoad::DoCaption(AnsiString Message)
         else Caption=FileNameGetFname(FileName)+FileNameGetExt(FileName)+" - Wave";
 }
 
-void __fastcall TWavLoad::Image1MouseMove(TObject *Sender,
-      TShiftState Shift, int X, int Y)
+void __fastcall TWavLoad::Image1MouseMove(TObject *Sender, TShiftState Shift, int X, int Y)
 {
         if (Shift.Contains(ssLeft))
         {
@@ -414,9 +397,7 @@ void TWavLoad::SaveSettings(TIniFile *ini)
 
         ini->WriteString("WAVLOAD","Filename",LoadWavDialog->FileName);
         ini->WriteString("WAVLOAD","Dir",LoadWavDialog->InitialDir);
-
 }
-
 
 void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
 {
@@ -432,7 +413,6 @@ void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
         if (!SaveWavDialog->Execute()) return;
 
         Wav.SaveFile(SaveWavDialog->FileName);
-        //Changed=false;
 }
 //---------------------------------------------------------------------------
 AnsiString TWavLoad::RemoveExt(AnsiString Fname)
@@ -458,75 +438,6 @@ AnsiString TWavLoad::RemoveExt(AnsiString Fname)
 
         return(Fname);
 }
-
-/*void __fastcall TWavLoad::Send2TapeManClick(TObject *Sender)
-{
-	unsigned long  	i;
-	BYTE	*inbuf, *dataptr;
-	long	ByteCount, DataCount;
-	unsigned 	buffersize = (1024 * 64);
-        bool    PlayingSave,  start;
-        int byte, Silence;
-        BYTE  *Data;
-
-        int StartTapePos;
-
-        int E_LINE;
-
-        IgnoreZX81=true;
-        PlayingSave = Playing;
-        //Playing=true;
-
-        if (!Playing) PlayBtnClick(this);
-
-	inbuf =(unsigned char *) malloc(buffersize);
-
-        memset(inbuf, 0, buffersize);
-
-        dataptr = inbuf;
-        Data=NULL;
-        ByteCount=0;
-        DataCount=0;
-
-        E_LINE=-1;
-        start=true;
-
-        StartTapePos=TapePos;
-
-        do
-        {
-                byte=GetByte(start);
-        }
-        while((byte==-1) && Playing);
-
-        Silence = (TapePos - StartTapePos) * TStatesSample;
-
-        while(byte!=-1 && DataCount!=E_LINE)
-        {
-                if (start) start=false;
-                ByteCount++;
-                *(dataptr++) = byte;
-                if (!Data)
-                {
-                        if (byte & 0x80) Data=dataptr;
-                }
-                else    DataCount++;
-
-                if (DataCount==16) E_LINE= (Data[11]+Data[12]*256) - 16392;
-
-                Application->ProcessMessages();
-                byte=GetByte(start);
-         }
-
-        Tape->AddBlock(NULL, NULL, Silence);
-        if (ByteCount>32) Tape->AddBlock(inbuf, Data, DataCount);
-
-        if (!PlayingSave) PlayBtnClick(this);
-
-        free(inbuf);
-        IgnoreZX81=false;
-}
-*/
 
 int TWavLoad::GetByte(bool start)
 {
@@ -595,25 +506,13 @@ void __fastcall TWavLoad::NewClick(TObject *Sender)
 
         FileName="";
 
-        TStatesSample=((machine.clockspeed / Wav.SampleRate));//*7)/8;
+        TStatesSample=((machine.clockspeed / Wav.SampleRate));
         TapePos=0;
         CurrentTStates=0;
         Playing=0;
         Channel=0;
         ScrollBar->Max = Wav.NoSamples;
         ScrollBar->Position = 0;
-
-        //UseLeftChannel1->Enabled=false;
-        //UseRightChannel1->Enabled=false;
-        //UseLeftChannel1->Checked=false;
-        //UseRightChannel1->Checked=false;
-        //if (Wav.Stereo)
-        //{
-        //        UseLeftChannel1->Enabled=true;
-        //        UseRightChannel1->Enabled=true;
-        //        UseLeftChannel1->Checked=true;
-        //        UseRightChannel1->Checked=true;
-        //}
 
         Caption="Wave Loader";
 
@@ -679,6 +578,8 @@ void TWavLoad::EncodeBlock(char *Data, int Len)
         StopBtnClick(this);
         IgnoreZX81=false;
 }
+//---------------------------------------------------------------------------
+
 void __fastcall TWavLoad::VolumeChange(TObject *Sender)
 {
         Wav.Volume=-Volume->Position;
@@ -692,7 +593,6 @@ void __fastcall TWavLoad::BiasChange(TObject *Sender)
         UpdateImage(); Application->ProcessMessages();
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
 {
@@ -708,8 +608,6 @@ void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
         if (!SaveWavDialog->Execute()) return;
 
         Wav.SaveFile(SaveWavDialog->FileName);
-        //Changed=false;
-        
 }
 //---------------------------------------------------------------------------
 
@@ -736,7 +634,7 @@ void __fastcall TWavLoad::NewWav1Click(TObject *Sender)
 
         FileName="";
 
-        TStatesSample=((machine.clockspeed / Wav.SampleRate));//*7)/8;
+        TStatesSample=((machine.clockspeed / Wav.SampleRate));
         TapePos=0;
         CurrentTStates=0;
         Playing=0;
@@ -744,24 +642,11 @@ void __fastcall TWavLoad::NewWav1Click(TObject *Sender)
         ScrollBar->Max = Wav.NoSamples;
         ScrollBar->Position = 0;
 
-        //UseLeftChannel1->Enabled=false;
-        //UseRightChannel1->Enabled=false;
-        //UseLeftChannel1->Checked=false;
-        //UseRightChannel1->Checked=false;
-        //if (Wav.Stereo)
-        //{
-        //        UseLeftChannel1->Enabled=true;
-        //        UseRightChannel1->Enabled=true;
-        //        UseLeftChannel1->Checked=true;
-        //        UseRightChannel1->Checked=false;
-        //}
-
         Caption="Wave Loader";
 
         UpdateImage();
         DoCaption("Stopped");
         RecordBtn->Enabled=Wav.CanRecord();
-
 }
 //---------------------------------------------------------------------------
 
@@ -774,13 +659,14 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
         int byte, Silence;
         BYTE  *Data;
 
+        if (emulator.machine == MACHINESPECTRUM || emulator.machine == MACHINESPECTRUM) return;
+        
         int StartTapePos;
 
         int E_LINE;
 
         IgnoreZX81=true;
         PlayingSave = Playing;
-        //Playing=true;
 
         if (!Playing) PlayBtnClick(this);
 
@@ -806,6 +692,8 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
 
         Silence = (TapePos - StartTapePos) * TStatesSample;
 
+        bool zx81File = (emulator.machine != MACHINEZX80 || (emulator.machine == MACHINEZX80 && (LowerCase(machine.CurRom) != "zx80.rom")));
+
         while(byte!=-1 && DataCount!=E_LINE)
         {
                 if (start) start=false;
@@ -813,11 +701,14 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
                 *(dataptr++) = byte;
                 if (!Data)
                 {
-                        if (byte & 0x80) Data=dataptr;
+                        if ((zx81File && byte & 0x80) || !zx81File) Data=dataptr;
                 }
                 else    DataCount++;
 
-                if (DataCount==16) E_LINE= (Data[11]+Data[12]*256) - 16392;
+                if (zx81File && DataCount==16)
+                        E_LINE = (Data[11]+Data[12]*256) - 16392;
+                else
+                        E_LINE = (Data[10]+Data[11]*256) - 16383;
 
                 Application->ProcessMessages();
                 byte=GetByte(start);
@@ -832,7 +723,6 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
 
         free(inbuf);
         IgnoreZX81=false;
-
 }
 //---------------------------------------------------------------------------
 
@@ -846,48 +736,42 @@ void __fastcall TWavLoad::AutoStartStop1Click(TObject *Sender)
 
 void __fastcall TWavLoad::PlayBtnClick(TObject *Sender)
 {
+        if (Playing || Recording) return;
+
         if (Wav.NoSamples==0) return;
 
-        RecordBtn->Enabled=false;
         PlayBtn->Down=true;
         StopBtn->Down=false;
         RecordBtn->Down=false;
+        RewStart->Enabled = false;
+        Rewind->Enabled = false;
+        FastForward->Enabled = false;
+        FFEnd->Enabled = false;
+        RecordBtn->Enabled = false;
         Playing=true;
-
-        /*
-        Playing=!Playing;
-
-        if (Playing)
-        {
-                PlayBtn->Caption="Stop";
-                RecBtn->Enabled=false;
-                DoCaption("Playing...");
-        }
-        else
-        {
-                PlayBtn->Caption="Play";
-                RecBtn->Enabled = Wav.CanRecord();
-                DoCaption("Stopped");
-                ScrollBar->Position = TapePos;
-                UpdateImage();
-        }
-        */
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TWavLoad::RecordBtnClick(TObject *Sender)
 {
+        if (Playing || Recording || !Wav.CanRecord()) return;
+
         PlayBtn->Down=false;
         StopBtn->Down=false;
         RecordBtn->Down=true;
-        PlayBtn->Enabled=false;
+        RewStart->Enabled = false;
+        Rewind->Enabled = false;
+        FastForward->Enabled = false;
+        FFEnd->Enabled = false;
+        PlayBtn->Enabled = false;
         Recording=true;
-
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TWavLoad::StopBtnClick(TObject *Sender)
 {
+        if (!Playing && !Recording) return;
+        
         if (Recording)
         {
                 ScrollBar->Max = Wav.NoSamples;
@@ -901,11 +785,15 @@ void __fastcall TWavLoad::StopBtnClick(TObject *Sender)
         Playing=false;
         Recording=false;
 
-        PlayBtn->Enabled=true;
-        RecordBtn->Enabled=Wav.CanRecord();
         PlayBtn->Down=false;
         StopBtn->Down=true;
         RecordBtn->Down=false;
+        RecordBtn->Enabled = true;
+        RewStart->Enabled = true;
+        Rewind->Enabled = true;
+        FastForward->Enabled = true;
+        FFEnd->Enabled = true;
+        PlayBtn->Enabled = true;
 
         UpdateImage();
         DoCaption("Stopped");
@@ -914,6 +802,8 @@ void __fastcall TWavLoad::StopBtnClick(TObject *Sender)
 
 void __fastcall TWavLoad::RewStartClick(TObject *Sender)
 {
+        if (Playing || Recording) return;
+
         TapePos=0;
         ScrollBar->Position = TapePos;
         UpdateImage();
@@ -922,6 +812,8 @@ void __fastcall TWavLoad::RewStartClick(TObject *Sender)
 
 void __fastcall TWavLoad::FFEndClick(TObject *Sender)
 {
+        if (Playing || Recording) return;
+
         TapePos=ScrollBar->Max;
         ScrollBar->Position = TapePos;
         UpdateImage();
@@ -930,6 +822,8 @@ void __fastcall TWavLoad::FFEndClick(TObject *Sender)
 
 void __fastcall TWavLoad::RewindClick(TObject *Sender)
 {
+        if (Playing || Recording) return;
+
         int delta;
 
         delta=ScrollBar->Max /20 ;
@@ -942,9 +836,9 @@ void __fastcall TWavLoad::RewindClick(TObject *Sender)
 
 void __fastcall TWavLoad::FastForwardClick(TObject *Sender)
 {
-        int delta;
+        if (Playing || Recording) return;
 
-        if (Playing || Recording) StopBtnClick(NULL);
+        int delta;
 
         delta=ScrollBar->Max /20 ;
         TapePos += delta;
@@ -982,13 +876,12 @@ void __fastcall TWavLoad::FormResize(TObject *Sender)
         w-=StatusBar1->Panels->Items[1]->Width;
         w-=StatusBar1->Panels->Items[2]->Width;
         StatusBar1->Panels->Items[3]->Width=w;
-
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TWavLoad::FormPaint(TObject *Sender)
 {
-        UpdateImage();        
+        UpdateImage();
 }
 //---------------------------------------------------------------------------
 
@@ -1015,7 +908,6 @@ void __fastcall TWavLoad::FormCreate(TObject *Sender)
                 Panel1->Top=ScrollBar->Top + ScrollBar->Height;
                 Panel1->Left = (Panel3->Width)/2 - (Panel1->Width)/2;
 
-
                 Bevel3->Height = ScrollBar->Top - (Bevel3->Top+4);
                 Bevel2->Top = Bevel3->Top+Bevel3->Height+1;
 
@@ -1024,7 +916,6 @@ void __fastcall TWavLoad::FormCreate(TObject *Sender)
 
                 Bevel4->Left = Bevel1->Left + Bevel1->Width+1;
                 Bevel4->Height = Bevel3->Height;
-
         }
 
         if (Panel2->Width>ClientWidth) Panel2->Width=ClientWidth;
@@ -1034,8 +925,6 @@ void __fastcall TWavLoad::FormCreate(TObject *Sender)
                 Bias->Left = ClientWidth - Bias->Width;
                 Volume->Left = Bias->Left - Volume->Width;
         }
-
-
 }
 //---------------------------------------------------------------------------
 

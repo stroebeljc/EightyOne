@@ -203,18 +203,19 @@ void DebugUpdate(void)
         Dbg->SymApp->Enabled = symbolstore::fileLoaded();
 }
 
-int TDbg::FindBreakPointEntry(struct breakpoint& bp)
+int TDbg::FindBreakPointEntry(struct breakpoint& bp, bool editing)
 {
         int breakpointIndex = -1;
 
         for (int i=0; i<Breakpoints; i++)
         {
-                bool existingBreakpoint;
+                bool existingBreakpoint = false;
 
                 switch (bp.Type)
                 {
                         case BP_TSTATES:
-                                existingBreakpoint = (Breakpoint[i].Type == bp.Type);
+                                existingBreakpoint = !editing &&
+                                                     (Breakpoint[i].Type == bp.Type);
                                 break;
 
                         case BP_REGISTER:
@@ -225,7 +226,8 @@ int TDbg::FindBreakPointEntry(struct breakpoint& bp)
                                 break;
 
                         case BP_FLAG:
-                                existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
+                                existingBreakpoint = !editing &&
+                                                     (Breakpoint[i].Type == bp.Type) &&
                                                      (Breakpoint[i].FlagId == bp.FlagId);
                                 break;
 
@@ -270,7 +272,8 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         if (Breakpoints == maxBreakpoints)
                 return false;
 
-        int breakpointIndex = FindBreakPointEntry(bp);
+        const bool editingState = false;
+        int breakpointIndex = FindBreakPointEntry(bp, editingState);
         if (breakpointIndex != -1)
                 DelBreakPoint(breakpointIndex);
 
@@ -1893,7 +1896,8 @@ void __fastcall TDbg::EditBrkBtnClick(TObject *Sender)
         int idx = BPList->Row;
         breakpoint bp = Breakpoint[idx];
 
-        if (SetBreakpoint->EditBreakpoint(bp) && FindBreakPointEntry(bp) == -1)
+        const bool editingState = true;
+        if (SetBreakpoint->EditBreakpoint(bp) && FindBreakPointEntry(bp, editingState) == -1)
         {
                 Breakpoint[idx] = bp;
 

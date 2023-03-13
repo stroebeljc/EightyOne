@@ -2,6 +2,13 @@
 
 #ifndef HW_H
 #define HW_H
+#include "OffBtn.hpp"
+#include <Classes.hpp>
+#include <ComCtrls.hpp>
+#include <Controls.hpp>
+#include <Dialogs.hpp>
+#include <ImgList.hpp>
+#include <StdCtrls.hpp>
 //---------------------------------------------------------------------------
 #include <Classes.hpp>
 #include <Controls.hpp>
@@ -105,6 +112,7 @@ __published:	// IDE-managed Components
         TCheckBox *ImprovedWait;
         TComboBox *RomBox;
         TImageList *ZX80Icons;
+        TComboBox *ComboBoxRomCartridgeFileBox;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -155,6 +163,7 @@ __published:	// IDE-managed Components
         void __fastcall ButtonZXpandSDCardClick(TObject *Sender);
         void __fastcall ButtonAdvancedMoreClick(TObject *Sender);
         void __fastcall ImprovedWaitClick(TObject *Sender);
+        void __fastcall ComboBoxRomCartridgeFileBoxChange(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;
@@ -167,6 +176,9 @@ private:	// User declarations
         void CreateBasicLister();
         void ResetDisplaySize();
         void SetZX80Icon();
+        void PopulateRomCartridgeSinclairList();
+        void AddRomCartridgeFile(AnsiString fileName);
+        void SelectRomCartridge();
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

@@ -51,6 +51,7 @@ extern int RomCartridgeCapacity;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
+#pragma link "OffBtn"
 #pragma resource "*.dfm"
 THW *HW;
 //---------------------------------------------------------------------------
@@ -91,13 +92,13 @@ __fastcall THW::THW(TComponent* Owner)
         TIniFile *ini;
 
         RomCartridgeCapacity = 0;
+        PopulateRomCartridgeSinclairList();
         AdvancedHeight=Advanced->Height;
         RamPackHeight=RamPackBox->Height;
         AdvancedBtnClick(NULL);
         Machine->ActivePage=Sinclair;
         Advanced->ActivePage=Interfaces;
         FloppyDrives->TabVisible=true;
-        //Height -= RamPackHeight;
         DriveAType->ItemIndex=1;
         DriveBType->ItemIndex=0;
         QLCPU->ItemIndex=0;
@@ -434,28 +435,31 @@ void __fastcall THW::OKClick(TObject *Sender)
         {
                 RomCartridgeCapacity = 0;
                 RomCartridgeFileBox->Enabled = false;
+                ComboBoxRomCartridgeFileBox->Enabled = false;
                 BrowseRomCartridge->Enabled = false;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
                 ZXC1ConfigurationBox->Visible = false;
                 RomCartridgeFileBox->Left = 188;
-                RomCartridgeFileBox->Width = 166;
+                RomCartridgeFileBox->Width = 181;
         }
         else
         {
+                SelectRomCartridge();
                 LoadRomCartridgeFile(RomCartridgeFileBox->Text.c_str());
                 RomCartridgeFileBox->Enabled = true;
+                ComboBoxRomCartridgeFileBox->Enabled = true;
                 BrowseRomCartridge->Enabled = true;
                 if (romcartridge.type == ROMCARTRIDGEZXC1)
                 {
                         ZXC1ConfigurationBox->Visible = true;
                         RomCartridgeFileBox->Left = 281;
-                        RomCartridgeFileBox->Width = 73;
+                        RomCartridgeFileBox->Width = 88;
                 }
                 else
                 {
                         ZXC1ConfigurationBox->Visible = false;
                         RomCartridgeFileBox->Left = 188;
-                        RomCartridgeFileBox->Width = 166;
+                        RomCartridgeFileBox->Width = 181;
                 }
                 ResetRequired=true;
         }
@@ -1140,6 +1144,8 @@ void THW::SetupForZX81(void)
         {
                 RomCartridgeBox->Items->Delete(ROMCARTRIDGEZXC1);
         }
+        RomCartridgeFileBox->Visible = true;
+        ComboBoxRomCartridgeFileBox->Visible = false;
 
         SetZX80Icon();
 }
@@ -1286,6 +1292,9 @@ void THW::SetupForSpectrum(void)
         {
                 RomCartridgeBox->Items->Add("ZXC1");
         }
+        bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
+        RomCartridgeFileBox->Visible = !sinclairSelected;
+        ComboBoxRomCartridgeFileBox->Visible = sinclairSelected;
 
         SetZX80Icon();
 }
@@ -1707,6 +1716,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         HiResLbl->Enabled=false;
         RomCartridgeBox->Enabled = false;
         RomCartridgeFileBox->Enabled = false;
+        ComboBoxRomCartridgeFileBox->Enabled = false;
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
@@ -1827,6 +1837,7 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
+        NewMachine = emulator.machine;
         FloatingPointHardwareFix->Enabled = false;
 
         if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down || Spec128Btn->Down || QLBtn->Down)
@@ -2299,10 +2310,11 @@ void THW::EnableRomCartridgeOption(bool enable)
         RomCartridgeFileBox->Text = "";
         RomCartridgeBox->Enabled = enable;
         RomCartridgeFileBox->Enabled = enable;
+        ComboBoxRomCartridgeFileBox->Enabled = enable;
         BrowseRomCartridge->Enabled = enable;
         ZXC1ConfigurationBox->Visible = false;
         RomCartridgeFileBox->Left = 188;
-        RomCartridgeFileBox->Width = 166;
+        RomCartridgeFileBox->Width = 181;
 }
 
 //---------------------------------------------------------------------------
@@ -2551,6 +2563,10 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
         RomCartridgeFileBox->SelLength=0;
 
+        ComboBoxRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        ComboBoxRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
+        ComboBoxRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
+
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------
@@ -2558,9 +2574,11 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
 {
         RomCartridgeFileBox->Text = "";
+        ComboBoxRomCartridgeFileBox->Text = "";
 
         bool romCartridgeSelected = (RomCartridgeBox->Text != "None");
         RomCartridgeFileBox->Enabled = romCartridgeSelected;
+        ComboBoxRomCartridgeFileBox->Enabled = romCartridgeSelected;
         BrowseRomCartridge->Enabled = romCartridgeSelected;
 
         bool zxc1Selected = (RomCartridgeBox->Text == "ZXC1");
@@ -2568,7 +2586,7 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         if (zxc1Selected)
         {
                 RomCartridgeFileBox->Left = 281;
-                RomCartridgeFileBox->Width = 73;
+                RomCartridgeFileBox->Width = 88;
 
                 if (ZXC1ConfigurationBox->ItemIndex == -1)
                 {
@@ -2578,10 +2596,44 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         else
         {
                 RomCartridgeFileBox->Left = 188;
-                RomCartridgeFileBox->Width = 166;
+                RomCartridgeFileBox->Width = 181;
         }
 
+        bool spectrumSinclairSelected = (RomCartridgeBox->Text == "Sinclair") && (NewMachine == MACHINESPECTRUM);
+        RomCartridgeFileBox->Visible = !spectrumSinclairSelected;
+        ComboBoxRomCartridgeFileBox->Visible = spectrumSinclairSelected;
+
         ResetRequired=true;
+}
+
+void THW::SelectRomCartridge()
+{
+        AnsiString romCartridgePath;
+
+        if (ComboBoxRomCartridgeFileBox->Visible)
+        {
+                romCartridgePath = ComboBoxRomCartridgeFileBox->Text;
+        }
+        else
+        {
+                romCartridgePath = RomCartridgeFileBox->Text;
+        }
+
+        RomCartridgeFileBox->Text = romCartridgePath;
+        ComboBoxRomCartridgeFileBox->Text = romCartridgePath;
+
+        bool spectrumSinclairSelected = (RomCartridgeBox->Text == "Sinclair") && (emulator.machine == MACHINESPECTRUM);
+        RomCartridgeFileBox->Visible = !spectrumSinclairSelected;
+        ComboBoxRomCartridgeFileBox->Visible = spectrumSinclairSelected;
+}
+//---------------------------------------------------------------------------
+void __fastcall THW::ComboBoxRomCartridgeFileBoxChange(TObject *Sender)
+{
+        if (ComboBoxRomCartridgeFileBox->Visible)
+        {
+                RomCartridgeFileBox->Text = ComboBoxRomCartridgeFileBox->Text;
+                ResetRequired=true;
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -2633,4 +2685,39 @@ void __fastcall THW::ImprovedWaitClick(TObject *Sender)
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------
+
+void THW::PopulateRomCartridgeSinclairList()
+{
+        ComboBoxRomCartridgeFileBox->Items->Clear();
+
+        AddRomCartridgeFile("G9R Space Raiders.rom");
+        AddRomCartridgeFile("G10R Chess.rom");
+        AddRomCartridgeFile("G12R Planetoids.rom");
+        AddRomCartridgeFile("G13R Hungry Horace.rom");
+        AddRomCartridgeFile("G22R Backgammon.rom");
+        AddRomCartridgeFile("G24R Horace & The Spiders.rom");
+        AddRomCartridgeFile("G27R Jet Pac.rom");
+        AddRomCartridgeFile("G28R Pssst.rom");
+        AddRomCartridgeFile("G29R Tranz Am.rom");
+        AddRomCartridgeFile("G30R Cookie.rom");
+        AddRomCartridgeFile("Gyruss.rom");
+        AddRomCartridgeFile("Loco Motion.rom");
+        AddRomCartridgeFile("Montezuma's Revenge #1.rom");
+        AddRomCartridgeFile("Montezuma's Revenge #2.rom");
+        AddRomCartridgeFile("Popeye.rom");
+        AddRomCartridgeFile("Q-Bert.rom");
+        AddRomCartridgeFile("Return Of The Jedi.rom");
+        AddRomCartridgeFile("Star Wars.rom");
+}
+
+void THW::AddRomCartridgeFile(AnsiString fileName)
+{
+        AnsiString romBase = emulator.cwd;
+        romBase += "ROM\\";
+
+        if (FileExists(romBase + fileName))
+        {
+                ComboBoxRomCartridgeFileBox->Items->Add(fileName);
+        }
+}
 

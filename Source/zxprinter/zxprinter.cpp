@@ -172,7 +172,7 @@ void TPrinter::ClockTick(int ts)
 }
 void TPrinter::WritePort(unsigned char Data)
 {
-        const int motorSlow = 1;
+//        const int motorSlow = 1;
         const int motorOn = 2;
         const int stylusOnPaper = 7;
 

@@ -3,24 +3,27 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.32 - ##/##/2023 (by Paul Farrow)
+Version 1.32 - 13/02/2023 (by Paul Farrow)
 * Bug fixes:
   - The Debugger facilities Step Over and Step Out now work when Continuous mode is active.
   - It was not possible to edit an existing 'Clock' or 'Flag' breakpoint.
-  - A 'Range' option was incorrectly being made available as a Breakpoint value condition.
-  - Adding a Read or Write breakpoint via the right click context menu would incorrectly set up
-    the breakpoint.
-  - ZX Printer support on ZX80 with 8K ROM.
+  - The 'Range' option was incorrectly being made available as a Breakpoint value condition.
+  - Adding a Read Memory or Write Memory breakpoint via the right click context menu would
+    set up the breakpoint incorrectly.
+  - The ZX Printer was not functioning for a ZX80 configured to use the 8K ROM.
 * Enhancements:
-  - The ZX80 icon in the Hardware dialog now indicates whether the computer is configured to use
-    the 4K ROM or the 8K ROM.
-  - The Wav Loader facility "Convert Next Block to TZX" nows supports ZX80 files.
-  - Wav Loader and Tape Manager buttons now get disabled if their functions are not supported in
-    the current mode of operation.
-  - Added a 'Bring Windows to Front' option to View menu to position all dialogs above the main
-    emulation window.
-  - Right click breakpoint context menu added to I/O group box entries in the Debugger window.
-
+  - The ZX80 icon in the Hardware dialog now indicates whether the computer is configured to
+    use the 4K ROM or the 8K ROM.
+  - Added support for ZX80 files to the Wav Loader facility 'Convert Next Block to TZX'.
+  - Wav Loader and Tape Manager buttons now get disabled if their functions are not supported
+    in the current mode of operation.
+  - Added a 'Bring Windows to Front' option to View menu to position all dialogs above the
+    main emulation window.
+  - Added a right click context menu to the I/O entries in the Debugger window to set
+    breakpoints.
+  - Added a drop down selection list to the Hardware dialog of the Interface 2 ROM cartridge
+    titles released by Sinclair Research, along with the unreleased prototypes produced by
+    Parker Brothers.
 Version 1.31 - 02/02/2023 (by Paul Farrow)
 * Bug fixes:
   - Some ZxToken characters were still not being recognised by the BASIC Listing import facility.

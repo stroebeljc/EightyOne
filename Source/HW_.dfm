@@ -5,7 +5,7 @@ object HW: THW
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
   ClientHeight = 344
-  ClientWidth = 398
+  ClientWidth = 408
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,7 +27,7 @@ object HW: THW
   object Machine: TPageControl
     Left = 3
     Top = 8
-    Width = 392
+    Width = 402
     Height = 93
     ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
@@ -37,7 +37,7 @@ object HW: THW
       object QLBtn: TOffice97Button
         Left = 320
         Top = 0
-        Width = 65
+        Width = 70
         Height = 65
         Caption = 'QL'
         Color = 13434879
@@ -182,7 +182,7 @@ object HW: THW
         OnClick = ZX80BtnClick
       end
       object ZX81Btn: TOffice97Button
-        Left = 64
+        Left = 65
         Top = 0
         Width = 65
         Height = 65
@@ -270,7 +270,7 @@ object HW: THW
         OnClick = ZX81BtnClick
       end
       object Spec48Btn: TOffice97Button
-        Left = 192
+        Left = 195
         Top = 0
         Width = 65
         Height = 65
@@ -358,7 +358,7 @@ object HW: THW
         OnClick = Spec48BtnClick
       end
       object Spec128Btn: TOffice97Button
-        Left = 320
+        Left = 325
         Top = 0
         Width = 65
         Height = 65
@@ -416,7 +416,7 @@ object HW: THW
         OnClick = Spec128BtnClick
       end
       object Spec16Btn: TOffice97Button
-        Left = 128
+        Left = 130
         Top = 0
         Width = 65
         Height = 65
@@ -504,7 +504,7 @@ object HW: THW
         OnClick = Spec16BtnClick
       end
       object SpecPlusBtn: TOffice97Button
-        Left = 256
+        Left = 260
         Top = 0
         Width = 65
         Height = 65
@@ -608,7 +608,7 @@ object HW: THW
         OnClick = SpecP2BtnClick
       end
       object SpecP2aBtn: TOffice97Button
-        Left = 64
+        Left = 65
         Top = 0
         Width = 65
         Height = 65
@@ -666,7 +666,7 @@ object HW: THW
         OnClick = SpecP2aBtnClick
       end
       object SpecP3Btn: TOffice97Button
-        Left = 128
+        Left = 130
         Top = 0
         Width = 65
         Height = 65
@@ -816,7 +816,7 @@ object HW: THW
         OnClick = TS1000BtnClick
       end
       object TS1500Btn: TOffice97Button
-        Left = 64
+        Left = 65
         Top = 0
         Width = 65
         Height = 65
@@ -874,7 +874,7 @@ object HW: THW
         OnClick = TS1500BtnClick
       end
       object TC2048Btn: TOffice97Button
-        Left = 128
+        Left = 130
         Top = 0
         Width = 65
         Height = 65
@@ -932,7 +932,7 @@ object HW: THW
         OnClick = TC2048BtnClick
       end
       object TS2068Btn: TOffice97Button
-        Left = 192
+        Left = 195
         Top = 0
         Width = 65
         Height = 65
@@ -1052,7 +1052,7 @@ object HW: THW
         OnClick = LambdaBtnClick
       end
       object R470Btn: TOffice97Button
-        Left = 64
+        Left = 65
         Top = 0
         Width = 65
         Height = 65
@@ -1110,7 +1110,7 @@ object HW: THW
         OnClick = R470BtnClick
       end
       object TK85Btn: TOffice97Button
-        Left = 128
+        Left = 130
         Top = 0
         Width = 65
         Height = 65
@@ -1168,7 +1168,7 @@ object HW: THW
         OnClick = TK85BtnClick
       end
       object AceBtn: TOffice97Button
-        Left = 192
+        Left = 195
         Top = 0
         Width = 65
         Height = 65
@@ -1350,7 +1350,7 @@ object HW: THW
     end
   end
   object OK: TButton
-    Left = 318
+    Left = 329
     Top = 315
     Width = 75
     Height = 25
@@ -1391,7 +1391,7 @@ object HW: THW
   object Advanced: TPageControl
     Left = 3
     Top = 140
-    Width = 391
+    Width = 401
     Height = 169
     ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
@@ -1437,6 +1437,17 @@ object HW: THW
         Height = 13
         Alignment = taRightJustify
         Caption = 'ROM Cartridge:'
+      end
+      object ComboBoxRomCartridgeFileBox: TComboBox
+        Left = 188
+        Top = 112
+        Width = 181
+        Height = 21
+        DropDownCount = 10
+        ItemHeight = 13
+        TabOrder = 14
+        Visible = False
+        OnChange = ComboBoxRomCartridgeFileBoxChange
       end
       object SoundCardBox: TComboBox
         Left = 88
@@ -1517,9 +1528,9 @@ object HW: THW
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 280
+        Left = 296
         Top = 30
-        Width = 75
+        Width = 74
         Height = 16
         Caption = 'Configure'
         TabOrder = 7
@@ -1584,28 +1595,28 @@ object HW: THW
       object RomCartridgeFileBox: TEdit
         Left = 188
         Top = 112
-        Width = 166
+        Width = 181
         Height = 21
         Enabled = False
         TabOrder = 13
       end
       object BrowseRomCartridge: TButton
-        Left = 356
+        Left = 372
         Top = 112
         Width = 19
         Height = 21
         Caption = '...'
         Enabled = False
-        TabOrder = 14
+        TabOrder = 15
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 280
+        Left = 296
         Top = 94
-        Width = 75
+        Width = 74
         Height = 16
         Caption = 'SD Card'
-        TabOrder = 15
+        TabOrder = 16
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
@@ -1967,7 +1978,7 @@ object HW: THW
     Left = 360
     Top = 104
     Bitmap = {
-      494C010102000400040020002000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010102000400040020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000002000000001001000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2243,6 +2254,7 @@ object HW: THW
       FE00007FFE00007F0000000000000000FFFFFFFFFFFFFFFF0000000000000000
       FFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF0000000000000000
       FFFFFFFFFFFFFFFF0000000000000000FFFFFFFFFFFFFFFF0000000000000000
-      FFFFFFFFFFFFFFFF0000000000000000}
+      FFFFFFFFFFFFFFFF000000000000000000000000000000000000000000000000
+      000000000000}
   end
 end

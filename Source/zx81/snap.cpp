@@ -293,6 +293,7 @@ void load_snap_romcartridge(FILE *f)
 
         bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
         HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
+        HW->ComboBoxRomCartridgeFileBox->Enabled = romCartridgeSelected;
         HW->BrowseRomCartridge->Enabled = romCartridgeSelected;
 
         bool zxc1Selected = (HW->RomCartridgeBox->Text == "ZXC1");
@@ -300,7 +301,7 @@ void load_snap_romcartridge(FILE *f)
         if (zxc1Selected)
         {
                 HW->RomCartridgeFileBox->Left = 281;
-                HW->RomCartridgeFileBox->Width = 73;
+                HW->RomCartridgeFileBox->Width = 88;
 
                 if (HW->ZXC1ConfigurationBox->ItemIndex == -1)
                 {
@@ -310,7 +311,7 @@ void load_snap_romcartridge(FILE *f)
         else
         {
                 HW->RomCartridgeFileBox->Left = 188;
-                HW->RomCartridgeFileBox->Width = 166;
+                HW->RomCartridgeFileBox->Width = 181;
         }
 }
 
@@ -694,7 +695,7 @@ void InitialiseHardware()
         SetComboBox(HW->ZXC1ConfigurationBox, "32K");
         HW->ZXC1ConfigurationBox->Visible = false;
         HW->RomCartridgeFileBox->Left = 188;
-        HW->RomCartridgeFileBox->Width = 166;
+        HW->RomCartridgeFileBox->Width = 181;
         HW->RomCartridgeFileBox->Text = "";
         HW->BrowseRomCartridge->Enabled = false;
         HW->ZXPrinter->Checked = false;

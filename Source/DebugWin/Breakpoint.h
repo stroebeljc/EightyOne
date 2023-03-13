@@ -85,7 +85,7 @@ struct breakpoint
                 ConditionAddr = Equal;
                 Addr = addr;
                 ConditionValue = GreaterThanEquals;
-                Value = addr;
+                Value = (type == BP_EXE) ? addr : 0x00;
                 Permanent = true;
         }
 

@@ -1809,6 +1809,8 @@ object Dbg: TDbg
       Width = 35
       Height = 14
       Caption = '$FFFF'
+      PopupMenu = InputContextPopup
+      OnMouseDown = IOPort0AddressMouseDown
     end
     object IOPort2Address: TLabel
       Left = 39
@@ -1816,6 +1818,8 @@ object Dbg: TDbg
       Width = 35
       Height = 14
       Caption = '$FFFF'
+      PopupMenu = InputContextPopup
+      OnMouseDown = IOPort2AddressMouseDown
     end
     object IOPort1Address: TLabel
       Left = 39
@@ -1823,6 +1827,8 @@ object Dbg: TDbg
       Width = 35
       Height = 14
       Caption = '$FFFF'
+      PopupMenu = InputContextPopup
+      OnMouseDown = IOPort1AddressMouseDown
     end
     object IOPort3Address: TLabel
       Left = 39
@@ -1830,6 +1836,8 @@ object Dbg: TDbg
       Width = 35
       Height = 14
       Caption = '$FFFF'
+      PopupMenu = InputContextPopup
+      OnMouseDown = IOPort3AddressMouseDown
     end
     object IOPort0Data: TLabel
       Left = 90
@@ -2021,25 +2029,63 @@ object Dbg: TDbg
     end
   end
   object MemDumpPopup: TPopupMenu
-    Left = 234
-    Top = 211
+    Left = 202
+    Top = 216
     object MemDumpFromHere1: TMenuItem
       Caption = 'Show Memory'
       OnClick = MemDumpFromHere1Click
     end
     object OnExecute1: TMenuItem
-      Caption = 'BP On Execute'
+      Caption = 'Break On Execute'
       OnClick = AddBreak1Click
     end
     object OnRead1: TMenuItem
       Tag = 1
-      Caption = 'BP On Read'
+      Caption = 'Break On Read'
       OnClick = AddBreak1Click
     end
     object OnWrite1: TMenuItem
       Tag = 2
-      Caption = 'BP On Write'
+      Caption = 'Break On Write'
       OnClick = AddBreak1Click
+    end
+  end
+  object InputContextPopup: TPopupMenu
+    Left = 232
+    Top = 216
+    object BreakOnInput: TMenuItem
+      Tag = 6
+      Caption = 'Break on Input A15-0'
+      OnClick = BreakonInputOutputClick
+    end
+    object BreakOnInputHigh: TMenuItem
+      Tag = 7
+      Caption = 'Break on Input A15-8'
+      OnClick = BreakonInputOutputHighClick
+    end
+    object BreakOnInputLow: TMenuItem
+      Tag = 8
+      Caption = 'Break on Input A7-0'
+      OnClick = BreakonInputOutputLowClick
+    end
+  end
+  object OutputContextPopup: TPopupMenu
+    Left = 264
+    Top = 216
+    object BreakOnOutput: TMenuItem
+      Tag = 3
+      Caption = 'Break on Output A15-0'
+      OnClick = BreakonInputOutputClick
+    end
+    object BreakOnOutputHigh: TMenuItem
+      Tag = 4
+      Caption = 'Break on Output A15-8'
+      OnClick = BreakonInputOutputHighClick
+    end
+    object BreakOnOutputLow: TMenuItem
+      Tag = 5
+      Caption = 'Break on Output A7-0'
+      OnClick = BreakonInputOutputLowClick
     end
   end
 end

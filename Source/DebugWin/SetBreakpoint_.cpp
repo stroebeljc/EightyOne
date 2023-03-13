@@ -478,7 +478,7 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
                                 case BP_IN:
                                 case BP_OUT:
                                         SetEditBoxLabels("Address", "Value");
-                                        SetConditionList(BreakConditionValue, "=,<>,<=,>=,->");
+                                        SetConditionList(BreakConditionValue, "=,<>,<=,>=");
                                         BreakConditionValue->ItemIndex = GreaterThanEquals;
                                         SetEditBox(BreakValue, "$00");
                                         break;
@@ -772,4 +772,5 @@ void TSetBreakpoint::EnableOkButton()
 }
 
 //---------------------------------------------------------------------------
+
 

@@ -7,6 +7,10 @@ Version 1.32 - ##/##/2023 (by Paul Farrow)
 * Bug fixes:
   - The Debugger facilities Step Over and Step Out now work when Continuous mode is active.
   - It was not possible to edit an existing 'Clock' or 'Flag' breakpoint.
+  - A 'Range' option was incorrectly being made available as a Breakpoint value condition.
+  - Adding a Read or Write breakpoint via the right click context menu would incorrectly set up
+    the breakpoint.
+  - ZX Printer support on ZX80 with 8K ROM.
 * Enhancements:
   - The ZX80 icon in the Hardware dialog now indicates whether the computer is configured to use
     the 4K ROM or the 8K ROM.
@@ -15,6 +19,7 @@ Version 1.32 - ##/##/2023 (by Paul Farrow)
     the current mode of operation.
   - Added a 'Bring Windows to Front' option to View menu to position all dialogs above the main
     emulation window.
+  - Right click breakpoint context menu added to I/O group box entries in the Debugger window.
 
 Version 1.31 - 02/02/2023 (by Paul Farrow)
 * Bug fixes:

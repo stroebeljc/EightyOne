@@ -212,6 +212,14 @@ __published:	// IDE-managed Components
         TLabel *TStatesCount;
         TButton *ButtonProfiler;
         TButton *StepOut;
+        TPopupMenu *InputContextPopup;
+        TMenuItem *BreakOnInput;
+        TMenuItem *BreakOnInputLow;
+        TMenuItem *BreakOnInputHigh;
+        TPopupMenu *OutputContextPopup;
+        TMenuItem *BreakOnOutput;
+        TMenuItem *BreakOnOutputHigh;
+        TMenuItem *BreakOnOutputLow;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -283,11 +291,23 @@ __published:	// IDE-managed Components
         void __fastcall StepOutClick(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
+        void __fastcall BreakOnInputOutputClick(TObject *Sender);
+        void __fastcall BreakOnInputOutputHighClick(TObject *Sender);
+        void __fastcall BreakOnInputOutputLowClick(TObject *Sender);
+        void __fastcall IOPort0AddressMouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall IOPort1AddressMouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall IOPort2AddressMouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall IOPort3AddressMouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);
         void DisableVals(void);
         void SetMenuContent(int memloc);
+        void SetIoContextPopupContent(AnsiString ioPort);
         AnsiString StrRep(AnsiString Text, int Pos, int Len, AnsiString NewText);
 
         struct breakpoint Breakpoint[99];

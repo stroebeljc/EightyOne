@@ -172,25 +172,59 @@ void TPrinter::ClockTick(int ts)
 }
 void TPrinter::WritePort(unsigned char Data)
 {
-        if (Data&4) ResetPrinter();
-        else MotorOn=true;
+        const int motorSlow = 1;
+        const int motorOn = 2;
+        const int stylusOnPaper = 7;
 
-        if (Data&128) StylusActive=true;
-        else StylusActive=false;
+        if (Data & (1 << motorOn))
+        {
+                ResetPrinter();
+        }
+        else
+        {
+                MotorOn = true;
+        }
 
-        OnPaper=StylusActive;
-        EncoderWheel=false;
+        if (Data & (1 << stylusOnPaper))
+        {
+                StylusActive = true;
+        }
+        else
+        {
+                StylusActive = false;
+        }
+
+        OnPaper = StylusActive;
+        EncoderWheel = false;
 }
 
 unsigned char TPrinter::ReadPort(BYTE idleDataBus)
 {
-        unsigned char Data=idleDataBus;
+        const int encoderState = 0;
+        const int printerPresent = 6;
+        const int stylusOnPaper = 7;
 
-        Data &= 0xBF;
+        unsigned char Data = idleDataBus;
 
-        if (!OnPaper) Data &= 0x7F;
+        Data &= ~(1 << printerPresent);
 
-        if (!EncoderWheel) Data &= 0xFE;
+        if (OnPaper)
+        {
+                Data |= (1 << stylusOnPaper);
+        }
+        else
+        {
+                Data &= ~(1 << stylusOnPaper);
+        }
+
+        if (EncoderWheel)
+        {
+                Data |= (1 << encoderState);
+        }
+        else
+        {
+                Data &= ~(1 << encoderState);
+        }
 
         return(Data);
 }

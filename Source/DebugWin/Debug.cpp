@@ -1059,12 +1059,16 @@ void TDbg::UpdateVals(void)
                 if (lastIOAccess[0].direction == IO_IN) IOPort0Direction->Caption = "IN"; else IOPort0Direction->Caption = "OUT";
                 IOPort0Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[0].address, 4);
                 IOPort0Data->Caption = "$"+Hex8(lastIOAccess[0].data);
+
+                IOPort0Address->PopupMenu = (lastIOAccess[0].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
         }
         else
         {
                 IOPort0Direction->Caption = "-";
                 IOPort0Address->Caption = "-";
                 IOPort0Data->Caption = "-";
+
+                IOPort0Address->PopupMenu = NULL;
         }
 
         if (lastIOAccess[1].direction != IO_NONE)
@@ -1072,12 +1076,16 @@ void TDbg::UpdateVals(void)
                 if (lastIOAccess[1].direction == IO_IN) IOPort1Direction->Caption = "IN"; else IOPort1Direction->Caption = "OUT";
                 IOPort1Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[1].address, 4);
                 IOPort1Data->Caption = "$"+Hex8(lastIOAccess[1].data);
+
+                IOPort1Address->PopupMenu = (lastIOAccess[1].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
         }
         else
         {
                 IOPort1Direction->Caption = "-";
                 IOPort1Address->Caption = "-";
                 IOPort1Data->Caption = "-";
+
+                IOPort1Address->PopupMenu = NULL;
         }
 
         if (lastIOAccess[2].direction != IO_NONE)
@@ -1085,12 +1093,16 @@ void TDbg::UpdateVals(void)
                 if (lastIOAccess[2].direction == IO_IN) IOPort2Direction->Caption = "IN"; else IOPort2Direction->Caption = "OUT";
                 IOPort2Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[2].address, 4);
                 IOPort2Data->Caption = "$"+Hex8(lastIOAccess[2].data);
+
+                IOPort2Address->PopupMenu = (lastIOAccess[2].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
         }
         else
         {
                 IOPort2Direction->Caption = "-";
                 IOPort2Address->Caption = "-";
                 IOPort2Data->Caption = "-";
+
+                IOPort2Address->PopupMenu = NULL;
         }
 
         if (lastIOAccess[3].direction != IO_NONE)
@@ -1098,12 +1110,16 @@ void TDbg::UpdateVals(void)
                 if (lastIOAccess[3].direction == IO_IN) IOPort3Direction->Caption = "IN"; else IOPort3Direction->Caption = "OUT";
                 IOPort3Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[3].address, 4);
                 IOPort3Data->Caption = "$"+Hex8(lastIOAccess[3].data);
+
+                IOPort3Address->PopupMenu = (lastIOAccess[3].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
         }
         else
         {
                 IOPort3Direction->Caption = "-";
                 IOPort3Address->Caption = "-";
                 IOPort3Data->Caption = "-";
+
+                IOPort3Address->PopupMenu = NULL;
         }
 
         if (emulation_stop)
@@ -1748,7 +1764,6 @@ void __fastcall TDbg::F_Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void TDbg::SetMenuContent(int memloc)
 {
      MemDumpFromHere1->Tag = memloc;
@@ -2010,6 +2025,81 @@ void __fastcall TDbg::FormKeyDown(TObject *Sender, WORD &Key,
                         break;
                 }
         }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::IOPort0AddressMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+        SetIoContextPopupContent(IOPort0Address->Caption);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::IOPort1AddressMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+        SetIoContextPopupContent(IOPort1Address->Caption);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::IOPort2AddressMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+        SetIoContextPopupContent(IOPort2Address->Caption);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::IOPort3AddressMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+        SetIoContextPopupContent(IOPort3Address->Caption);
+}
+//---------------------------------------------------------------------------
+void TDbg::SetIoContextPopupContent(AnsiString ioPort)
+{
+        if (ioPort != "-")
+        {
+                AnsiString val = "0x" + ioPort.SubString(2, 4);
+                int portNumber = StrToInt(val);
+                InputContextPopup->Tag = portNumber;
+                OutputContextPopup->Tag = portNumber;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::BreakOnInputOutputClick(TObject *Sender)
+{
+        TMenuItem* mi = (TMenuItem*)Sender;
+        breakpoint bp(InputContextPopup->Tag, (BreakpointType)mi->Tag);
+        AddBreakPoint(bp);
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+}
+
+//---------------------------------------------------------------------------
+void __fastcall TDbg::BreakOnInputOutputHighClick(TObject *Sender)
+{
+        InputContextPopup->Tag = InputContextPopup->Tag & 0xFF00;
+        OutputContextPopup->Tag = OutputContextPopup->Tag & 0xFF00;
+
+        TMenuItem* mi = (TMenuItem*)Sender;
+        breakpoint bp(InputContextPopup->Tag, (BreakpointType)mi->Tag);
+        AddBreakPoint(bp);
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::BreakOnInputOutputLowClick(TObject *Sender)
+{
+        InputContextPopup->Tag = InputContextPopup->Tag & 0x00FF;
+        OutputContextPopup->Tag = OutputContextPopup->Tag & 0x00FF;
+
+        TMenuItem* mi = (TMenuItem*)Sender;
+        breakpoint bp(InputContextPopup->Tag, (BreakpointType)mi->Tag);
+        AddBreakPoint(bp);
+        DelBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 

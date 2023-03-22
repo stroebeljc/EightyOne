@@ -915,7 +915,41 @@ void __fastcall THW::OKClick(TObject *Sender)
         if (Sender) Close();
 
         if (Dbg->Visible) Dbg->UpdateVals();
-        Sound.ReInitialise(NULL, machine.fps,0,0,0);
+        int r = Sound.ReInitialise(NULL, machine.fps,0,0,0);
+        if (r)
+        {
+                AnsiString err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
+                MessageBox(NULL, err.c_str(), "Error", 0);
+                Application->Terminate();
+        }
+}
+
+AnsiString THW::DirectSoundError(int errorCode)
+{
+        AnsiString errorText;
+        switch (errorCode)
+        {
+        case 0x8878000A:
+                errorText = "DSERR_ALLOCATED:\n\nThe request failed because resources, such as a priority level, were already in use by another caller.";
+                break;
+        case 0x80070057:
+                errorText = "DSERR_INVALIDPARAM:\n\nAn invalid parameter was passed to the returning function.";
+                break;
+        case 0x80040110:
+                errorText = "DSERR_NOAGGREGATION:\n\nThe object does not support aggregation.";
+                break;
+        case 0x88780078:
+                errorText = "DSERR_NODRIVER:\n\nNo sound driver is available for use, or the given GUID is not a valid DirectSound device ID.";
+                break;
+        case 0x00000007:
+                errorText = "DSERR_OUTOFMEMORY:\n\nThe DirectSound subsystem could not allocate sufficient memory to complete the caller's request.";
+                break;
+        default:
+                errorText = "0x" + AnsiString::IntToHex(errorCode, 8);
+                break;
+        }
+
+        return errorText;
 }
 
 void THW::ResetDisplaySize()

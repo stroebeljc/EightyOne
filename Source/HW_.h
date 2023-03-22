@@ -179,6 +179,7 @@ private:	// User declarations
         void PopulateRomCartridgeSinclairList();
         void AddRomCartridgeFile(AnsiString fileName);
         void SelectRomCartridge();
+        AnsiString DirectSoundError(int errorCode);
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

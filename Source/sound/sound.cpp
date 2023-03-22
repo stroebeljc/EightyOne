@@ -81,7 +81,11 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         // Start by initialsing DirectSound
 
-        DXSound.Initialise(m_hWnd, m_FPS, m_BitsPerSample, m_SampleRate, m_Channels);
+        int r = DXSound.Initialise(m_hWnd, m_FPS, m_BitsPerSample, m_SampleRate, m_Channels);
+        if (r)
+        {
+                return(r);
+        }
 
         // get a 1 frame size buffer
 
@@ -91,8 +95,8 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         if(Buffer==NULL)
         {
-              DXSound.End();
-                return(1); // Oh dear, malloc failed
+                DXSound.End();
+                return(-1); // Oh dear, malloc failed
         }
 
         OldVal=OldValOrig=128;
@@ -112,7 +116,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 // Reinitialise gets called if something changes... we lose the window handle,
 // The user changes the sample rats - that kind of thing.
 
-void CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
         if (!hWnd) hWnd = m_hWnd;
         if (!FPS) FPS = m_FPS;
@@ -121,7 +125,7 @@ void CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate,
         if (!Channels) Channels = m_Channels;
 
         End();
-        Initialise(hWnd,FPS,BitsPerSample,SampleRate,Channels);
+        return Initialise(hWnd,FPS,BitsPerSample,SampleRate,Channels);
 }
 
 // End() - free the sound buffer and tell DirectSould it's all over.

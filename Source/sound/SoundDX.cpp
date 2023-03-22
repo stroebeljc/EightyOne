@@ -75,8 +75,9 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_QueueLen = m_DXBufLen * 40;
 
 	//Create DirectSound
-        if (DirectSoundCreate(NULL, &m_lpDS, NULL))
-                return(-1); // Create DirectSound Failed
+        int r = DirectSoundCreate(NULL, &m_lpDS, NULL);
+        if (r)
+                return(r); // Create DirectSound Failed
 
 	//Set Cooperative Level
         if (m_lpDS->SetCooperativeLevel(m_hWnd, DSSCL_PRIORITY))
@@ -171,7 +172,7 @@ int CDSnd::Play()
                 return(0);
 
         ResumeThread(m_ThreadHandle);    // Start/Resume the Audio Thread
-	m_lpDSB->Play(0, 0, DSBPLAY_LOOPING);
+        m_lpDSB->Play(0, 0, DSBPLAY_LOOPING);
         return 0;
 }
 

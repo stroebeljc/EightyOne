@@ -71,7 +71,7 @@ class CSound
 public:
 	void AYInit(void);
         int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
-        void ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
+        int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
 
 	void End(void);
 	void AYWrite(int reg,int val, int frametstates);

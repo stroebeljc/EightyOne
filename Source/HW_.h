@@ -58,8 +58,8 @@ __published:	// IDE-managed Components
         TPageControl *Advanced;
         TTabSheet *Interfaces;
         TTabSheet *FloppyDrives;
-        TLabel *Label2;
-        TLabel *Label3;
+        TLabel *LabelA;
+        TLabel *LabelB;
         TComboBox *DriveAType;
         TComboBox *DriveBType;
         TTabSheet *QLSettings;
@@ -75,7 +75,7 @@ __published:	// IDE-managed Components
         TButton *TS2050Config;
         TOffice97Button *QLBtn;
         TTabSheet *AdvSettings;
-        TLabel *Label1;
+        TLabel *LabelRomFile;
         TButton *BrowseROM;
         TCheckBox *ProtectROM;
         TCheckBox *NTSC;
@@ -84,9 +84,9 @@ __published:	// IDE-managed Components
         TCheckBox *Issue2;
         TComboBox *QLCPU;
         TComboBox *QLMem;
-        TLabel *Label5;
-        TLabel *Label6;
-        TLabel *Label7;
+        TLabel *LabelProcessor;
+        TLabel *LabelMemory;
+        TLabel *LabelFDC;
         TComboBox *FDC;
         TCheckBox *Autoboot;
         TButton *IF1Config;
@@ -94,7 +94,7 @@ __published:	// IDE-managed Components
         TComboBox *ZXCFRAM;
         TCheckBox *Upload;
         TCheckBox *WriteProtect;
-        TLabel *Label4;
+        TLabel *LabelIDE;
         TLabel *ZXCFLabel;
         TCheckBox *uSpeech;
         TCheckBox *ZXPrinter;
@@ -113,6 +113,7 @@ __published:	// IDE-managed Components
         TComboBox *RomBox;
         TImageList *ZX80Icons;
         TComboBox *ComboBoxRomCartridgeFileBox;
+        TLabel *LabelTotalRAM;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -177,9 +178,12 @@ private:	// User declarations
         void ResetDisplaySize();
         void SetZX80Icon();
         void PopulateRomCartridgeSinclairList();
+        void PopulateRomCartridgeTimexList();
         void AddRomCartridgeFile(AnsiString fileName);
         void SelectRomCartridge();
         AnsiString DirectSoundError(int errorCode);
+        void SetUpRamSettings();
+        void DisplayTotalRam();
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

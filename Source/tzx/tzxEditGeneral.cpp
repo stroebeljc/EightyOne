@@ -302,7 +302,6 @@ void __fastcall TEditGeneralForm::SaveZX80File()
 
 //---------------------------------------------------------------------------
 
-
 void __fastcall TEditGeneralForm::FormShow(TObject *Sender)
 {
         ButtonSave->Visible = (emulator.machine == MACHINEZX81) || (emulator.machine == MACHINEZX80) ||

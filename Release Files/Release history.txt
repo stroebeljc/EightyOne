@@ -3,9 +3,16 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.33 - ##/##/2023 (by Paul Farrow)
+Version 1.33 - 22/03/2023 (by Paul Farrow)
+* Bug fixes:
+  - A crash would occur at start up if no card sound was found. An error message is now displayed
+    instead.
 * Enhancements:
-  - A crash would occur if DirectSound creation failed. Now an error message is displayed instead.
+  - Added Timex Sinclair TS1510 ROM cartridge support, with 3 of the 4 released ROMs.
+  - The RAM pack option in the Hardware dialog now adds to the base level RAM applicable to the
+    selected computer. A new display shows the total amount of RAM (excluding any RAM present in
+    the 8k-16k region).
+  - Mirroring of the ROM in the memory map no longer occurs for the TS1500.
 
 Version 1.32 - 13/02/2023 (by Paul Farrow)
 * Bug fixes:
@@ -28,6 +35,7 @@ Version 1.32 - 13/02/2023 (by Paul Farrow)
   - Added a drop down selection list to the Hardware dialog of the Interface 2 ROM cartridge
     titles released by Sinclair Research, along with the unreleased prototypes produced by
     Parker Brothers.
+
 Version 1.31 - 02/02/2023 (by Paul Farrow)
 * Bug fixes:
   - Some ZxToken characters were still not being recognised by the BASIC Listing import facility.

@@ -90,6 +90,7 @@
 #define ROMCARTRIDGEZXC3     3
 #define ROMCARTRIDGEZXC2     4
 #define ROMCARTRIDGEZXC1     5
+#define ROMCARTRIDGETIMEX    6
 
 #define CRCACE		0x0a09
 #define CRCASZMIC	0xcac9
@@ -242,6 +243,9 @@ typedef struct
 
         void* cset;
 
+        int ramPackSupplementsInternalRam;
+        int baseRamSize;
+        int defaultRamPackIndex;
         int clockspeed;
         int tperscanline;
         int tperframe;
@@ -267,6 +271,7 @@ typedef struct
 {
         CFGBYTE emuid, major,minor,testver;
         CFGBYTE machine;
+        CFGBYTE newMachine;
 
         CFGBYTE single_step;
         int frameskip;

@@ -19,6 +19,7 @@
 /* Information on the Interface 2 ROM Cartridge mechanism and the ZXC1, ZXC2,
    ZXC3 and ZXC4 ROM cartridges can be found at www.fruitcake.plus.com */
     
+#include <sys/stat.h>
 #include <io.h>
 #include <fcntl.h>
 #include <vcl.h>
@@ -61,6 +62,7 @@ const int zxc4BankSetShift = 3;
 const BYTE idleDataBus = 0xFF;
 
 BYTE AccessRomCartridgeSinclair(int Address);
+bool AccessRomCartridgeTimex(int Address, BYTE* Data);
 bool AccessRomCartridgeZXC1(int Address, BYTE* Data);
 bool AccessRomCartridgeZXC2(int Address, BYTE* Data);
 bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess);
@@ -196,6 +198,7 @@ bool RomCartridgePagedIn()
         switch (romcartridge.type)
         {
         case ROMCARTRIDGESINCLAIR:
+        case ROMCARTRIDGETIMEX:
                 pageIn = true;
                 break;
 
@@ -242,7 +245,12 @@ bool LoadRomCartridgeFile(char *filename)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1) return false;
 
-        if ((RomCartridgeCapacity = read(fptr, RomCartridgeMemory, MaxRomCartridgeCapacity))==-1)
+        struct stat st;
+        if (stat(file, &st)) return false;
+
+        int offset = (st.st_size < 16384) ? 16384 - st.st_size : 0;
+
+        if ((RomCartridgeCapacity = read(fptr, RomCartridgeMemory + offset, MaxRomCartridgeCapacity))==-1)
         {
                 close(fptr);
 
@@ -288,6 +296,10 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
                         readStatus = true;
                         break;
 
+                case ROMCARTRIDGETIMEX:
+                        readStatus = AccessRomCartridgeTimex(Address, Data);
+                        break;
+
                 case ROMCARTRIDGEZXC1:
                         readStatus = AccessRomCartridgeZXC1(Address, Data);
                         break;
@@ -306,6 +318,22 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
                 }
         }
         return readStatus;
+}
+
+static inline bool AccessRomCartridgeTimex(int Address, BYTE* Data)
+{
+        bool dataRead = false;
+
+        if (Address < 0x2000)
+        {
+                return dataRead;
+        }
+
+        const int bank = 0;
+        *Data = AccessRomCartridgeBank(bank, Address);
+        dataRead = true;
+
+        return dataRead;
 }
 
 static inline BYTE AccessRomCartridgeSinclair(int Address)

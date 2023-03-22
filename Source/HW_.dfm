@@ -24,12 +24,19 @@ object HW: THW
     Height = 13
     Caption = 'RAM Pack:'
   end
+  object LabelTotalRAM: TLabel
+    Left = 280
+    Top = 114
+    Width = 69
+    Height = 13
+    Caption = 'Total RAM: 1k'
+  end
   object Machine: TPageControl
     Left = 3
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Timex
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -1510,9 +1517,9 @@ object HW: THW
       object TS2050: TCheckBox
         Left = 188
         Top = 30
-        Width = 73
+        Width = 101
         Height = 17
-        Caption = 'TS2050'
+        Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
         TabOrder = 6
@@ -1641,7 +1648,7 @@ object HW: THW
     object FloppyDrives: TTabSheet
       Caption = 'Drives'
       ImageIndex = 1
-      object Label2: TLabel
+      object LabelA: TLabel
         Left = 207
         Top = 20
         Width = 10
@@ -1649,7 +1656,7 @@ object HW: THW
         Alignment = taRightJustify
         Caption = 'A:'
       end
-      object Label3: TLabel
+      object LabelB: TLabel
         Left = 207
         Top = 44
         Width = 10
@@ -1657,14 +1664,14 @@ object HW: THW
         Alignment = taRightJustify
         Caption = 'B:'
       end
-      object Label7: TLabel
+      object LabelFDC: TLabel
         Left = 32
         Top = 20
         Width = 24
         Height = 13
         Caption = 'FDC:'
       end
-      object Label4: TLabel
+      object LabelIDE: TLabel
         Left = 36
         Top = 72
         Width = 21
@@ -1789,7 +1796,7 @@ object HW: THW
     object QLSettings: TTabSheet
       Caption = 'QL'
       ImageIndex = 3
-      object Label5: TLabel
+      object LabelProcessor: TLabel
         Left = 120
         Top = 20
         Width = 50
@@ -1797,7 +1804,7 @@ object HW: THW
         Alignment = taRightJustify
         Caption = 'Processor:'
       end
-      object Label6: TLabel
+      object LabelMemory: TLabel
         Left = 130
         Top = 52
         Width = 40
@@ -1836,7 +1843,7 @@ object HW: THW
     object AdvSettings: TTabSheet
       Caption = 'Advanced Settings'
       ImageIndex = 3
-      object Label1: TLabel
+      object LabelRomFile: TLabel
         Left = 72
         Top = 20
         Width = 47

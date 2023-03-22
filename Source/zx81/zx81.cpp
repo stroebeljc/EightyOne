@@ -732,10 +732,14 @@ BYTE zx81_ReadByte(int Address)
                 {
                         data = idleDataBus;
                 }
-                else
+                else if (emulator.machine != MACHINETS1500)
                 {
                         // Shadow the ROM at 32-48K
                         data=memory[Address & zx81.ROMTOP];
+                }
+                else
+                {
+                        data = idleDataBus;
                 }
         }
 

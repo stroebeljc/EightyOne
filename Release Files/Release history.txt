@@ -8,7 +8,7 @@ Version 1.33 - 22/03/2023 (by Paul Farrow)
   - A crash would occur at start up if no card sound was found. An error message is now displayed
     instead.
 * Enhancements:
-  - Added Timex Sinclair TS1510 ROM cartridge support, with 3 of the 4 released ROMs.
+  - Added Timex Sinclair TS1510 ROM cartridge support, with 3 of the 4 released ROM cartridges.
   - The RAM pack option in the Hardware dialog now adds to the base level RAM applicable to the
     selected computer. A new display shows the total amount of RAM (excluding any RAM present in
     the 8k-16k region).

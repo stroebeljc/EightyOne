@@ -27,16 +27,16 @@ object HW: THW
   object LabelTotalRAM: TLabel
     Left = 280
     Top = 114
-    Width = 69
+    Width = 70
     Height = 13
-    Caption = 'Total RAM: 1k'
+    Caption = 'Total RAM: 1K'
   end
   object Machine: TPageControl
     Left = 3
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Timex
+    ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -281,7 +281,7 @@ object HW: THW
         Top = 0
         Width = 65
         Height = 65
-        Caption = '48k Spectrum'
+        Caption = '48K Spectrum'
         Color = 13434879
         HoverFont.Charset = DEFAULT_CHARSET
         HoverFont.Color = clWindowText
@@ -427,7 +427,7 @@ object HW: THW
         Top = 0
         Width = 65
         Height = 65
-        Caption = '16k Spectrum'
+        Caption = '16K Spectrum'
         Color = 13434879
         HoverFont.Charset = DEFAULT_CHARSET
         HoverFont.Color = clWindowText
@@ -1378,12 +1378,12 @@ object HW: THW
     OnChange = RamPackBoxChange
     Items.Strings = (
       'None'
-      '2k'
-      '4k'
-      '8k'
-      '16k'
-      '32k'
-      '48k')
+      '2K'
+      '4K'
+      '8K'
+      '16K'
+      '32K'
+      '48K')
   end
   object AdvancedBtn: TButton
     Left = 3
@@ -1536,9 +1536,9 @@ object HW: THW
       end
       object TS2050Config: TButton
         Left = 296
-        Top = 30
+        Top = 28
         Width = 74
-        Height = 16
+        Height = 20
         Caption = 'Configure'
         TabOrder = 7
         OnClick = TS2050ConfigClick
@@ -1619,9 +1619,9 @@ object HW: THW
       end
       object ButtonZXpandSDCard: TButton
         Left = 296
-        Top = 94
+        Top = 90
         Width = 74
-        Height = 16
+        Height = 20
         Caption = 'SD Card'
         TabOrder = 16
         OnClick = ButtonZXpandSDCardClick
@@ -1885,9 +1885,9 @@ object HW: THW
       object EnableLowRAM: TCheckBox
         Left = 72
         Top = 64
-        Width = 129
+        Width = 137
         Height = 17
-        Caption = 'Enable RAM in 8k-16k'
+        Caption = 'Enable RAM in 8K-16K'
         Color = clBtnFace
         ParentColor = False
         TabOrder = 3

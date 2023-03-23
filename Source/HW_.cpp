@@ -174,7 +174,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         i+=atoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
 
                 Name=i;
-                Name += "k Jupiter Ace";
+                Name += "K Jupiter Ace";
         }
         else if (QLBtn->Down)
         {
@@ -191,7 +191,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
                 AnsiString ramSize = totalRam;
-                Name = ramSize + "k " + Name;
+                Name = ramSize + "K " + Name;
         }
 
         zx81.zxpand = 0;
@@ -1564,7 +1564,7 @@ void THW::DisplayTotalRam()
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
         AnsiString ramSize = totalRam;
-        LabelTotalRAM->Caption = "Total RAM: " + ramSize + "k";
+        LabelTotalRAM->Caption = "Total RAM: " + ramSize + "K";
 }
 //---------------------------------------------------------------------------
 

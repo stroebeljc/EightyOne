@@ -87,11 +87,12 @@ struct breakpoint
                 ConditionValue = GreaterThanEquals;
                 Value = (type == BP_EXE) ? addr : 0x00;
                 Permanent = true;
+                Enabled = true;
         }
 
         bool HitExe(BreakpointType reqType, int curAddr)
         {
-                if (Type != reqType) return false;
+                if (Type != reqType || !Enabled) return false;
 
                 bool addrMatch = false;
 
@@ -123,7 +124,7 @@ struct breakpoint
 
         bool HitRdWrInOut(BreakpointType reqType, int curAddr, int curValue)
         {
-                if (Type != reqType) return false;
+                if (Type != reqType || !Enabled) return false;
 
                 bool match = false;
 
@@ -191,6 +192,7 @@ struct breakpoint
                 int TStates;
         };
         bool Permanent;
+        bool Enabled;
 };
 
 #endif // __breakpoint_h

@@ -203,7 +203,7 @@ void DebugUpdate(void)
         Dbg->SymApp->Enabled = symbolstore::fileLoaded();
 }
 
-int TDbg::FindBreakPointEntry(struct breakpoint& bp, bool editing)
+int TDbg::FindBreakPointEntry(int index, struct breakpoint& bp, bool editing)
 {
         int breakpointIndex = -1;
 
@@ -255,7 +255,7 @@ int TDbg::FindBreakPointEntry(struct breakpoint& bp, bool editing)
                                 break;
                 }
 
-                if (existingBreakpoint)
+                if (existingBreakpoint && (!editing || (editing && (index != i))))
                 {
                         breakpointIndex = i;
                         break;
@@ -273,7 +273,7 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
                 return false;
 
         const bool editingState = false;
-        int breakpointIndex = FindBreakPointEntry(bp, editingState);
+        int breakpointIndex = FindBreakPointEntry(-1, bp, editingState);
         if (breakpointIndex != -1)
                 DelBreakPoint(breakpointIndex);
 
@@ -281,7 +281,7 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
 
         AnsiString str = GetBreakpointText(&bp);
 
-        BPList->Cells[0][Breakpoints] = str;
+        BPList->Rows[Breakpoints]->Text = str;
 
         Breakpoints++;
         BPList->RowCount++;
@@ -617,7 +617,7 @@ bool TDbg::BPReadWriteHit(BreakpointType type, int addr, int value, breakpoint* 
 
 bool TDbg::BPClockHit(int addr, breakpoint* const bp)
 {
-        if (bp->Type != BP_TSTATES)
+        if (bp->Type != BP_TSTATES || !bp->Enabled)
         {
                 return false;
         }
@@ -638,7 +638,7 @@ bool TDbg::BPClockHit(int addr, breakpoint* const bp)
 
 bool TDbg::BPFlagValueHit(breakpoint* const bp)
 {
-        if (bp->Type != BP_FLAG)
+        if (bp->Type != BP_FLAG || !bp->Enabled)
         {
                 return false;
         }
@@ -660,7 +660,7 @@ bool TDbg::BPFlagValueHit(breakpoint* const bp)
 
 bool TDbg::BPMemoryValueHit(breakpoint* const bp)
 {
-        if (bp->Type != BP_MEMORY)
+        if (bp->Type != BP_MEMORY || !bp->Enabled)
         {
                 return false;
         }
@@ -687,7 +687,7 @@ bool TDbg::BPMemoryValueHit(breakpoint* const bp)
 
 bool TDbg::BPRegisterValueHit(breakpoint* const bp)
 {
-        if (bp->Type != BP_REGISTER)
+        if (bp->Type != BP_REGISTER || !bp->Enabled)
         {
                 return false;
         }
@@ -1906,13 +1906,18 @@ void __fastcall TDbg::MemoryClick(TObject *Sender)
 
 void __fastcall TDbg::EditBrkBtnClick(TObject *Sender)
 {
+        EditBreakpoint();
+}
+
+void TDbg::EditBreakpoint()
+{
        SetBreakpoint->CentreOn(this);
 
         int idx = BPList->Row;
         breakpoint bp = Breakpoint[idx];
 
         const bool editingState = true;
-        if (SetBreakpoint->EditBreakpoint(bp) && FindBreakPointEntry(bp, editingState) == -1)
+        if (SetBreakpoint->EditBreakpoint(bp) && FindBreakPointEntry(idx, bp, editingState) == -1)
         {
                 Breakpoint[idx] = bp;
 
@@ -1967,7 +1972,9 @@ void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
       bool &CanSelect)
 {
         if ((ARow + 1) >= BPList->RowCount)
+        {
                 CanSelect = false;
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -2100,6 +2107,75 @@ void __fastcall TDbg::BreakOnInputOutputLowClick(TObject *Sender)
         AddBreakPoint(bp);
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
         EditBrkBtn->Enabled = (BPList->RowCount > 1);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::BPListDrawCell(TObject *Sender, int ACol, int ARow,
+      TRect &Rect, TGridDrawState State)
+{
+        if (Breakpoint[ARow].Enabled)
+        {
+                if (State.Contains(gdSelected))
+                {
+                        BPList->Canvas->Font->Color = clHighlightText;
+                }
+                else
+                {
+                        BPList->Canvas->Font->Color = clWindowText;
+                }
+        }
+        else
+        {
+                BPList->Canvas->Font->Color = clGrayText;
+        }
+
+        BPList->Canvas->TextRect(Rect, Rect.Left + 2, Rect.Top, BPList->Cells[ACol][ARow]);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::BPListDblClick(TObject *Sender)
+{
+        EditBreakpoint();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::DisableClick(TObject *Sender)
+{
+        Breakpoint[BPList->Row].Enabled = false;
+        BPList->Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::EnableClick(TObject *Sender)
+{
+        Breakpoint[BPList->Row].Enabled = true;
+        BPList->Invalidate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
+      bool &Handled)
+{
+        int col, row;
+        BPList->MouseToCell(MousePos.x, MousePos.y, col, row);
+
+        TGridRect rect;
+        rect.Top = row;
+        rect.Bottom = row;
+        rect.Left = 0;
+        rect.Right = 0;
+        BPList->Selection = rect;
+
+        if (Breakpoint[BPList->Row].Enabled)
+        {
+                BreakpointWindowPopup->Items->Items[0]->Visible = true;
+                BreakpointWindowPopup->Items->Items[1]->Visible = false;
+        }
+        else
+        {
+                BreakpointWindowPopup->Items->Items[0]->Visible = false;
+                BreakpointWindowPopup->Items->Items[1]->Visible = true;
+        }
 }
 //---------------------------------------------------------------------------
 

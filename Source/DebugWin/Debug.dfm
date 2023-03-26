@@ -1039,8 +1039,12 @@ object Dbg: TDbg
       RowCount = 1
       FixedRows = 0
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRowSelect]
+      PopupMenu = BreakpointWindowPopup
       ScrollBars = ssVertical
       TabOrder = 3
+      OnContextPopup = BPListContextPopup
+      OnDblClick = BPListDblClick
+      OnDrawCell = BPListDrawCell
       OnSelectCell = BPListSelectCell
     end
     object EditBrkBtn: TButton
@@ -2086,6 +2090,18 @@ object Dbg: TDbg
       Tag = 5
       Caption = 'Break on Output A7-0'
       OnClick = BreakonInputOutputLowClick
+    end
+  end
+  object BreakpointWindowPopup: TPopupMenu
+    Left = 295
+    Top = 216
+    object Disable: TMenuItem
+      Caption = 'Disable'
+      OnClick = DisableClick
+    end
+    object Enable: TMenuItem
+      Caption = 'Enable'
+      OnClick = EnableClick
     end
   end
 end

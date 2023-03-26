@@ -39,8 +39,8 @@ void __fastcall TSetBreakpoint::FormKeyPress(TObject *Sender, char &Key)
 
 void TSetBreakpoint::CentreOn(TForm* parent)
 {
-        Top = parent->Top + (parent->Height - Height) /2;
-        Left = parent->Left + (parent->Width - Width) /2;
+        Top = parent->Top + (parent->Height - Height) / 2;
+        Left = parent->Left + (parent->Width - Width) / 2;
 }
 //---------------------------------------------------------------------------
 void TSetBreakpoint::SetTitle(AnsiString& title)
@@ -222,6 +222,8 @@ void TSetBreakpoint::ConfigureBreakpointFields(struct breakpoint& bp)
                 BreakValue->Text = "$" + IntToHex(bp.Value, GetBreakValueMaxDigits(bp.Type, bp.ConditionAddr, bp.RegisterId));
         }
 
+        ComboBoxBreakEnabled->Text = bp.Enabled ? "Yes" : "No";
+
         if (BreakAddress->Visible)
         {
                 ActiveControl = BreakAddress;
@@ -294,7 +296,8 @@ bool TSetBreakpoint::GetBreakpointFields(struct breakpoint& bp)
         bp.ConditionValue = (BreakpointCondition)BreakConditionValue->ItemIndex;
         bp.Value = value;
         bp.Permanent = true;
-
+        bp.Enabled = (ComboBoxBreakEnabled->Text == "Yes");
+        
         return true;
 }
 
@@ -770,7 +773,4 @@ void TSetBreakpoint::EnableOkButton()
 {
         OK->Enabled = (BreakAddress->Font->Color == clWindowText) && (BreakValue->Font->Color == clWindowText);
 }
-
-//---------------------------------------------------------------------------
-
 

@@ -32,6 +32,7 @@
 #include <IniFiles.hpp>
 #include <Menus.hpp>
 #include "breakpoint.h"
+#include <ComCtrls.hpp>
 
 //---------------------------------------------------------------------------
 
@@ -220,6 +221,9 @@ __published:	// IDE-managed Components
         TMenuItem *BreakOnOutput;
         TMenuItem *BreakOnOutputHigh;
         TMenuItem *BreakOnOutputLow;
+        TPopupMenu *BreakpointWindowPopup;
+        TMenuItem *Disable;
+        TMenuItem *Enable;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -302,6 +306,13 @@ __published:	// IDE-managed Components
           TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall IOPort3AddressMouseDown(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall BPListDrawCell(TObject *Sender, int ACol, int ARow,
+          TRect &Rect, TGridDrawState State);
+        void __fastcall BPListDblClick(TObject *Sender);
+        void __fastcall DisableClick(TObject *Sender);
+        void __fastcall EnableClick(TObject *Sender);
+        void __fastcall BPListContextPopup(TObject *Sender,
+          TPoint &MousePos, bool &Handled);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);
@@ -338,6 +349,7 @@ private:	// User declarations
         bool BPMemoryValueHit(breakpoint* const bp);
         bool BPRegisterValueHit(breakpoint* const bp);
         bool IsStepOverInstruction(int Addr);
+        void EditBreakpoint();
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
@@ -351,7 +363,7 @@ public:		// User declarations
         bool BPExeHit(int addr, breakpoint* const bp, int idx);
 
         bool AddBreakPoint(struct breakpoint& bp);
-        int FindBreakPointEntry(struct breakpoint& bp, bool editing);
+        int FindBreakPointEntry(int index, struct breakpoint& bp, bool editing);
         void DelBreakPoint(int index);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

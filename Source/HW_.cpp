@@ -1137,7 +1137,7 @@ void THW::SetupForZX81(void)
                 RamPackBox->Items->Delete(RamPackBox->Items->Count-1);
 
         RamPackLbl->Enabled=true; RamPackBox->Enabled=true;
-        RamPackBox->ItemIndex = machine.defaultRamPackIndex;     //####
+        RamPackBox->ItemIndex = machine.defaultRamPackIndex;
         DisplayTotalRam();
         SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
         SoundCardBox->ItemIndex=0;

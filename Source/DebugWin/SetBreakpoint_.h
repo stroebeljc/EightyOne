@@ -27,6 +27,8 @@ __published:	// IDE-managed Components
         TComboBox *FlagList;
         TComboBox *BreakConditionValue;
         TLabel *LabelConditionAddr;
+        TComboBox *ComboBoxBreakEnabled;
+        TLabel *LabelBreakEnabled;
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);

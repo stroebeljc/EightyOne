@@ -6,6 +6,8 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 Version 1.34 - ##/##/2023 (by Paul Farrow)
 * Changes:
   - Changed display of RAM sizes from 'k' to 'K'.
+* Enhancements:
+  - Added a facility to disable breakpoints.
 
 Version 1.33 - 22/03/2023 (by Paul Farrow)
 * Bug fixes:

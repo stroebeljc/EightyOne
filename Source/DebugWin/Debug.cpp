@@ -2135,6 +2135,21 @@ void __fastcall TDbg::BPListDrawCell(TObject *Sender, int ACol, int ARow,
 
 void __fastcall TDbg::BPListDblClick(TObject *Sender)
 {
+        if (Breakpoints == 0 || BPList->Row == -1)
+        {
+                return;
+        }
+
+        int col, row;
+
+        TPoint p = BPList->ScreenToClient(Mouse->CursorPos);
+        BPList->MouseToCell(p.x, p.y, col, row);
+
+        if (row == -1 || row >= Breakpoints)
+        {
+                return;
+        }
+
         EditBreakpoint();
 }
 //---------------------------------------------------------------------------
@@ -2156,8 +2171,19 @@ void __fastcall TDbg::EnableClick(TObject *Sender)
 void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
       bool &Handled)
 {
+        if (Breakpoints == 0)
+        {
+                Handled = true;
+                return;
+        }
+
         int col, row;
         BPList->MouseToCell(MousePos.x, MousePos.y, col, row);
+        if (row == -1 || row >= Breakpoints)
+        {
+                Handled = true;
+                return;
+        }
 
         TGridRect rect;
         rect.Top = row;

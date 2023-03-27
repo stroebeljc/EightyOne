@@ -7,7 +7,9 @@ Version 1.34 - ##/##/2023 (by Paul Farrow)
 * Changes:
   - Changed display of RAM sizes from 'k' to 'K'.
 * Enhancements:
-  - Added a facility to disable breakpoints.
+  - Double clicking an existing breakpoint will open it for editing.
+  - The breakpoint set/edit dialog now has an option to enable/disable the breakpoint.
+  - Right clicking an existing breakpoint allows it to be disabled/enabled.
 
 Version 1.33 - 22/03/2023 (by Paul Farrow)
 * Bug fixes:

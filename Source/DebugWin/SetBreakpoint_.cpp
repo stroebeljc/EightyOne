@@ -237,6 +237,8 @@ void TSetBreakpoint::ConfigureBreakpointFields(struct breakpoint& bp)
         {
                 ActiveControl = FlagList;
         }
+
+        BreakHitCount->ItemIndex = bp.HitCount - 1;
 }
 
 bool SymbolLookUpRequired(int breakType)
@@ -297,7 +299,9 @@ bool TSetBreakpoint::GetBreakpointFields(struct breakpoint& bp)
         bp.Value = value;
         bp.Permanent = true;
         bp.Enabled = (ComboBoxBreakEnabled->Text == "Yes");
-        
+        bp.HitCount = StrToInt(BreakHitCount->Text);
+        bp.Hits = 0;
+
         return true;
 }
 
@@ -773,4 +777,16 @@ void TSetBreakpoint::EnableOkButton()
 {
         OK->Enabled = (BreakAddress->Font->Color == clWindowText) && (BreakValue->Font->Color == clWindowText);
 }
+
+//---------------------------------------------------------------------------
+void __fastcall TSetBreakpoint::FormCreate(TObject *Sender)
+{
+        for (int i = 1; i <= 999; i++)
+        {
+                BreakHitCount->Items->Add(i);
+        }
+
+        BreakHitCount->ItemIndex = 0;
+}
+//---------------------------------------------------------------------------
 

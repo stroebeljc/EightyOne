@@ -1393,6 +1393,7 @@ void __fastcall TForm1::SaveMemoryBlock1Click(TObject *Sender)
 void __fastcall TForm1::HardReset1Click(TObject *Sender)
 {
         int initialStopState = emulation_stop;
+
         rzx_close();
         emulation_stop=1;
         z80_reset();
@@ -1400,6 +1401,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         machine.initialise();
         Sound.AYReset();
         emulation_stop=initialStopState;
+        Dbg->ResetBreakpointHitCounts();
         DebugUpdate();
         LiveMemoryWindow->Reset();
         if (BasicLister->ListerAvailable())

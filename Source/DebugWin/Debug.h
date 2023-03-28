@@ -224,6 +224,10 @@ __published:	// IDE-managed Components
         TPopupMenu *BreakpointWindowPopup;
         TMenuItem *Disable;
         TMenuItem *Enable;
+        TButton *ZeroBrkBtn;
+        TMenuItem *ResetHitCount;
+        TMenuItem *N1;
+        TMenuItem *CurrentHitCount;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -288,7 +292,6 @@ __published:	// IDE-managed Components
         void __fastcall EditBrkBtnClick(TObject *Sender);
         void __fastcall BPListSelectCell(TObject *Sender, int ACol,
           int ARow, bool &CanSelect);
-        void __fastcall GroupBox5Click(TObject *Sender);
         void __fastcall Disass3MouseDown(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall ButtonProfilerClick(TObject *Sender);
@@ -313,6 +316,8 @@ __published:	// IDE-managed Components
         void __fastcall EnableClick(TObject *Sender);
         void __fastcall BPListContextPopup(TObject *Sender,
           TPoint &MousePos, bool &Handled);
+        void __fastcall ZeroBrkBtnClick(TObject *Sender);
+        void __fastcall ResetHitCountClick(TObject *Sender);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);
@@ -350,6 +355,7 @@ private:	// User declarations
         bool BPRegisterValueHit(breakpoint* const bp);
         bool IsStepOverInstruction(int Addr);
         void EditBreakpoint();
+        void UpdateBreakpointButtons();
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
@@ -361,6 +367,8 @@ public:		// User declarations
         void DelTempBreakPoints(void);
         bool BreakPointHit();
         bool BPExeHit(int addr, breakpoint* const bp, int idx);
+        void RefreshBreakpointList();
+        void ResetBreakpointHitCounts();
 
         bool AddBreakPoint(struct breakpoint& bp);
         int FindBreakPointEntry(int index, struct breakpoint& bp, bool editing);

@@ -1,10 +1,10 @@
 object SetBreakpoint: TSetBreakpoint
-  Left = 296
-  Top = 189
+  Left = 269
+  Top = 208
   BorderStyle = bsToolWindow
-  Caption = 'Set Breakpoint'
+  Caption = 'Configure Breakpoint'
   ClientHeight = 90
-  ClientWidth = 384
+  ClientWidth = 422
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,25 +13,26 @@ object SetBreakpoint: TSetBreakpoint
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object LabelBreakAddress: TLabel
-    Left = 144
+    Left = 138
     Top = 8
     Width = 41
     Height = 13
     Caption = 'Address:'
   end
   object LabelConditionValue: TLabel
-    Left = 208
+    Left = 199
     Top = 8
     Width = 47
     Height = 13
     Caption = 'Condition:'
   end
   object LabelBreakValue: TLabel
-    Left = 264
+    Left = 252
     Top = 8
     Width = 30
     Height = 13
@@ -45,21 +46,28 @@ object SetBreakpoint: TSetBreakpoint
     Caption = 'Type:'
   end
   object LabelConditionAddr: TLabel
-    Left = 88
+    Left = 85
     Top = 8
     Width = 47
     Height = 13
     Caption = 'Condition:'
   end
   object LabelBreakEnabled: TLabel
-    Left = 328
+    Left = 365
     Top = 8
     Width = 42
     Height = 13
     Caption = 'Enabled:'
   end
+  object LabelBreakHitcount: TLabel
+    Left = 313
+    Top = 8
+    Width = 21
+    Height = 13
+    Caption = 'Hits:'
+  end
   object FlagList: TComboBox
-    Left = 144
+    Left = 138
     Top = 24
     Width = 57
     Height = 21
@@ -78,7 +86,7 @@ object SetBreakpoint: TSetBreakpoint
       '7: S')
   end
   object RegisterList: TComboBox
-    Left = 144
+    Left = 138
     Top = 24
     Width = 57
     Height = 21
@@ -121,26 +129,26 @@ object SetBreakpoint: TSetBreakpoint
       'L'#39)
   end
   object OK: TButton
-    Left = 119
+    Left = 137
     Top = 56
     Width = 73
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 6
+    TabOrder = 7
     OnClick = OKClick
   end
   object Cancel: TButton
-    Left = 200
+    Left = 220
     Top = 56
     Width = 73
     Height = 25
     Caption = 'Cancel'
-    TabOrder = 7
+    TabOrder = 8
     OnClick = CancelClick
   end
   object BreakAddress: TEdit
-    Left = 144
+    Left = 138
     Top = 24
     Width = 57
     Height = 21
@@ -151,7 +159,7 @@ object SetBreakpoint: TSetBreakpoint
     OnChange = BreakAddressChange
   end
   object BreakValue: TEdit
-    Left = 264
+    Left = 252
     Top = 24
     Width = 57
     Height = 21
@@ -162,7 +170,7 @@ object SetBreakpoint: TSetBreakpoint
     OnChange = BreakValueChange
   end
   object BreakConditionAddr: TComboBox
-    Left = 88
+    Left = 85
     Top = 24
     Width = 49
     Height = 21
@@ -175,7 +183,7 @@ object SetBreakpoint: TSetBreakpoint
     Font.Style = []
     ItemHeight = 13
     ParentFont = False
-    TabOrder = 9
+    TabOrder = 10
     OnChange = BreakConditionAddrChange
   end
   object BreakType: TComboBox
@@ -186,7 +194,7 @@ object SetBreakpoint: TSetBreakpoint
     Style = csDropDownList
     DropDownCount = 13
     ItemHeight = 13
-    TabOrder = 8
+    TabOrder = 9
     OnChange = BreakTypeChange
     Items.Strings = (
       'Execute'
@@ -204,7 +212,7 @@ object SetBreakpoint: TSetBreakpoint
       'Flag')
   end
   object BreakConditionValue: TComboBox
-    Left = 208
+    Left = 199
     Top = 24
     Width = 49
     Height = 21
@@ -213,15 +221,24 @@ object SetBreakpoint: TSetBreakpoint
     TabOrder = 3
   end
   object ComboBoxBreakEnabled: TComboBox
-    Left = 328
+    Left = 365
     Top = 24
     Width = 49
     Height = 21
     ItemHeight = 13
-    TabOrder = 5
+    TabOrder = 6
     Text = 'ComboBoxBreakEnabled'
     Items.Strings = (
       'Yes'
       'No')
+  end
+  object BreakHitCount: TComboBox
+    Left = 313
+    Top = 24
+    Width = 48
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    TabOrder = 5
   end
 end

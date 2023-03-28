@@ -5,11 +5,17 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 Version 1.34 - ##/##/2023 (by Paul Farrow)
 * Changes:
+  - Amended ZX81 symbol names to match those in The Complete Timex TS1000/Sinclair ZX81 ROM
+    Disassembly by Dr Ian Logan and Dr Frank O'Hara.
   - Changed display of RAM sizes from 'k' to 'K'.
 * Enhancements:
   - Double clicking an existing breakpoint will open it for editing.
-  - The breakpoint set/edit dialog now has an option to enable/disable the breakpoint.
+  - The configure breakpoint dialog now has an option to enable/disable the breakpoint.
+  - The configure breakpoint dialog now has an option to set a hit count for the breakpoint.
   - Right clicking an existing breakpoint allows it to be disabled/enabled.
+  - Right clicking an existing breakpoint with a hit count specified allows the number of hits to
+    be seen and to be reset.
+  - Added a button to allow the number of hits to be reset for all breakpoints.
 
 Version 1.33 - 22/03/2023 (by Paul Farrow)
 * Bug fixes:

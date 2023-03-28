@@ -1,11 +1,11 @@
 object Dbg: TDbg
-  Left = 288
-  Top = 145
+  Left = 195
+  Top = 114
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
   ClientHeight = 468
-  ClientWidth = 567
+  ClientWidth = 626
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -764,7 +764,7 @@ object Dbg: TDbg
   object GroupBoxZX81: TGroupBox
     Left = 378
     Top = 346
-    Width = 185
+    Width = 243
     Height = 119
     Caption = 'Display Generation'
     Font.Charset = ANSI_CHARSET
@@ -775,7 +775,7 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 10
     object Label39: TLabel
-      Left = 5
+      Left = 37
       Top = 18
       Width = 105
       Height = 14
@@ -790,7 +790,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label10: TLabel
-      Left = 5
+      Left = 37
       Top = 34
       Width = 105
       Height = 14
@@ -805,7 +805,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label19: TLabel
-      Left = 5
+      Left = 37
       Top = 50
       Width = 105
       Height = 14
@@ -820,7 +820,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label21: TLabel
-      Left = 5
+      Left = 37
       Top = 66
       Width = 105
       Height = 14
@@ -835,7 +835,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label23: TLabel
-      Left = 5
+      Left = 37
       Top = 82
       Width = 105
       Height = 14
@@ -849,7 +849,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object NMIGen: TLabel
-      Left = 115
+      Left = 147
       Top = 18
       Width = 57
       Height = 14
@@ -864,7 +864,7 @@ object Dbg: TDbg
       OnClick = NMIGenClick
     end
     object Scanline: TLabel
-      Left = 115
+      Left = 147
       Top = 50
       Width = 57
       Height = 14
@@ -878,7 +878,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object RowCount: TLabel
-      Left = 115
+      Left = 147
       Top = 66
       Width = 57
       Height = 13
@@ -892,7 +892,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object ShiftReg: TLabel
-      Left = 115
+      Left = 147
       Top = 82
       Width = 57
       Height = 13
@@ -906,7 +906,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object SyncOutput: TLabel
-      Left = 115
+      Left = 147
       Top = 34
       Width = 57
       Height = 14
@@ -921,7 +921,7 @@ object Dbg: TDbg
       OnClick = SyncOutputClick
     end
     object Label27: TLabel
-      Left = 47
+      Left = 79
       Top = 98
       Width = 63
       Height = 14
@@ -935,7 +935,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object TStates: TLabel
-      Left = 115
+      Left = 147
       Top = 98
       Width = 57
       Height = 13
@@ -952,7 +952,7 @@ object Dbg: TDbg
   object GroupBox4: TGroupBox
     Left = 378
     Top = 3
-    Width = 185
+    Width = 243
     Height = 222
     Caption = 'Breakpoints'
     Font.Charset = ANSI_CHARSET
@@ -1030,7 +1030,7 @@ object Dbg: TDbg
     object BPList: TStringGrid
       Left = 7
       Top = 36
-      Width = 170
+      Width = 228
       Height = 145
       ColCount = 1
       DefaultColWidth = 10
@@ -1041,7 +1041,7 @@ object Dbg: TDbg
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRowSelect]
       PopupMenu = BreakpointWindowPopup
       ScrollBars = ssVertical
-      TabOrder = 3
+      TabOrder = 4
       OnContextPopup = BPListContextPopup
       OnDblClick = BPListDblClick
       OnDrawCell = BPListDrawCell
@@ -1063,6 +1063,22 @@ object Dbg: TDbg
       TabOrder = 2
       OnClick = EditBrkBtnClick
     end
+    object ZeroBrkBtn: TButton
+      Left = 182
+      Top = 189
+      Width = 53
+      Height = 25
+      Caption = 'Zero'
+      Enabled = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = ZeroBrkBtnClick
+    end
   end
   object GroupBox5: TGroupBox
     Left = 314
@@ -1077,7 +1093,6 @@ object Dbg: TDbg
     Font.Style = []
     ParentFont = False
     TabOrder = 1
-    OnClick = GroupBox5Click
     object Stack0: TLabel
       Left = 11
       Top = 16
@@ -1195,7 +1210,7 @@ object Dbg: TDbg
   object GroupBoxAce: TGroupBox
     Left = 378
     Top = 307
-    Width = 185
+    Width = 243
     Height = 158
     Caption = 'Jupiter Ace Forth Stack'
     Font.Charset = ANSI_CHARSET
@@ -1206,7 +1221,7 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 7
     object AceStk0: TLabel
-      Left = 43
+      Left = 75
       Top = 20
       Width = 35
       Height = 14
@@ -1221,7 +1236,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk1: TLabel
-      Left = 43
+      Left = 75
       Top = 36
       Width = 35
       Height = 14
@@ -1235,7 +1250,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk2: TLabel
-      Left = 43
+      Left = 75
       Top = 52
       Width = 35
       Height = 14
@@ -1249,7 +1264,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk3: TLabel
-      Left = 43
+      Left = 75
       Top = 68
       Width = 35
       Height = 14
@@ -1263,7 +1278,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk4: TLabel
-      Left = 43
+      Left = 75
       Top = 84
       Width = 35
       Height = 14
@@ -1277,7 +1292,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk5: TLabel
-      Left = 43
+      Left = 75
       Top = 100
       Width = 35
       Height = 14
@@ -1291,7 +1306,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk6: TLabel
-      Left = 43
+      Left = 75
       Top = 116
       Width = 35
       Height = 14
@@ -1305,7 +1320,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object AceStk7: TLabel
-      Left = 43
+      Left = 75
       Top = 132
       Width = 35
       Height = 14
@@ -1319,7 +1334,7 @@ object Dbg: TDbg
       OnClick = AceStk0Click
     end
     object Label37: TLabel
-      Left = 83
+      Left = 115
       Top = 20
       Width = 7
       Height = 14
@@ -1334,7 +1349,7 @@ object Dbg: TDbg
       OnClick = Stack0Click
     end
     object Label38: TLabel
-      Left = 83
+      Left = 115
       Top = 36
       Width = 7
       Height = 14
@@ -1347,7 +1362,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label40: TLabel
-      Left = 83
+      Left = 115
       Top = 52
       Width = 7
       Height = 14
@@ -1360,7 +1375,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label41: TLabel
-      Left = 83
+      Left = 115
       Top = 68
       Width = 7
       Height = 14
@@ -1373,7 +1388,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label42: TLabel
-      Left = 83
+      Left = 115
       Top = 84
       Width = 7
       Height = 14
@@ -1386,7 +1401,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label43: TLabel
-      Left = 83
+      Left = 115
       Top = 100
       Width = 7
       Height = 14
@@ -1399,7 +1414,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label44: TLabel
-      Left = 83
+      Left = 115
       Top = 116
       Width = 7
       Height = 14
@@ -1412,7 +1427,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object Label45: TLabel
-      Left = 83
+      Left = 115
       Top = 132
       Width = 7
       Height = 14
@@ -1425,7 +1440,7 @@ object Dbg: TDbg
       ParentFont = False
     end
     object AceStkVal0: TLabel
-      Left = 99
+      Left = 131
       Top = 20
       Width = 35
       Height = 14
@@ -1440,7 +1455,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal1: TLabel
-      Left = 99
+      Left = 131
       Top = 36
       Width = 35
       Height = 14
@@ -1454,7 +1469,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal2: TLabel
-      Left = 99
+      Left = 131
       Top = 52
       Width = 35
       Height = 14
@@ -1468,7 +1483,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal3: TLabel
-      Left = 99
+      Left = 131
       Top = 68
       Width = 35
       Height = 14
@@ -1482,7 +1497,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal4: TLabel
-      Left = 99
+      Left = 131
       Top = 84
       Width = 35
       Height = 14
@@ -1496,7 +1511,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal5: TLabel
-      Left = 99
+      Left = 131
       Top = 100
       Width = 35
       Height = 14
@@ -1510,7 +1525,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal6: TLabel
-      Left = 99
+      Left = 131
       Top = 116
       Width = 35
       Height = 14
@@ -1524,7 +1539,7 @@ object Dbg: TDbg
       OnClick = AceStkVal0Click
     end
     object AceStkVal7: TLabel
-      Left = 99
+      Left = 131
       Top = 132
       Width = 35
       Height = 14
@@ -1683,7 +1698,7 @@ object Dbg: TDbg
   object GroupBox3: TGroupBox
     Left = 378
     Top = 227
-    Width = 185
+    Width = 243
     Height = 78
     Caption = 'View'
     Font.Charset = ANSI_CHARSET
@@ -1695,7 +1710,7 @@ object Dbg: TDbg
     TabOrder = 6
     object SymRom: TLabel
       Left = 125
-      Top = 52
+      Top = 53
       Width = 25
       Height = 13
       Caption = 'ROM'
@@ -1708,7 +1723,7 @@ object Dbg: TDbg
     end
     object SymApp: TLabel
       Left = 157
-      Top = 52
+      Top = 53
       Width = 21
       Height = 13
       Caption = 'APP'
@@ -1734,7 +1749,7 @@ object Dbg: TDbg
       TabOrder = 1
     end
     object History: TButton
-      Left = 7
+      Left = 8
       Top = 17
       Width = 53
       Height = 25
@@ -1764,7 +1779,7 @@ object Dbg: TDbg
       OnClick = MemoryClick
     end
     object Symbols: TButton
-      Left = 125
+      Left = 124
       Top = 17
       Width = 53
       Height = 25
@@ -1779,8 +1794,8 @@ object Dbg: TDbg
       OnClick = SymbolsClick
     end
     object ButtonProfiler: TButton
-      Left = 66
-      Top = 46
+      Left = 182
+      Top = 17
       Width = 53
       Height = 25
       Caption = 'Profiler'
@@ -1931,9 +1946,9 @@ object Dbg: TDbg
   object GroupBoxChroma: TGroupBox
     Left = 378
     Top = 307
-    Width = 90
+    Width = 119
     Height = 36
-    Caption = 'Chroma'
+    Caption = 'Chroma Colour'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -1942,8 +1957,8 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 11
     object ChromaColourModeLabel: TLabel
-      Left = 14
-      Top = 15
+      Left = 30
+      Top = 16
       Width = 35
       Height = 14
       Alignment = taRightJustify
@@ -1956,8 +1971,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object ChromaColourMode: TLabel
-      Left = 54
-      Top = 15
+      Left = 70
+      Top = 16
       Width = 21
       Height = 14
       Caption = '$00'
@@ -1970,11 +1985,11 @@ object Dbg: TDbg
     end
   end
   object GroupBoxZXC: TGroupBox
-    Left = 473
+    Left = 502
     Top = 307
-    Width = 90
+    Width = 119
     Height = 36
-    Caption = 'ZXC'
+    Caption = 'ZXC Cartridge'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -1983,8 +1998,8 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 9
     object ZXCModeLabel: TLabel
-      Left = 14
-      Top = 15
+      Left = 30
+      Top = 16
       Width = 35
       Height = 14
       Alignment = taRightJustify
@@ -1997,8 +2012,8 @@ object Dbg: TDbg
       ParentFont = False
     end
     object ZXCMode: TLabel
-      Left = 54
-      Top = 15
+      Left = 70
+      Top = 16
       Width = 21
       Height = 14
       Caption = '$00'
@@ -2007,9 +2022,9 @@ object Dbg: TDbg
   object GroupBoxSpectra: TGroupBox
     Left = 378
     Top = 307
-    Width = 90
+    Width = 119
     Height = 36
-    Caption = 'Spectra'
+    Caption = 'Spectra Colour'
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -2018,15 +2033,15 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 8
     object SpectraModeLabel: TLabel
-      Left = 14
-      Top = 15
+      Left = 30
+      Top = 16
       Width = 35
       Height = 14
       Caption = 'Mode:'
     end
     object SpectraMode: TLabel
-      Left = 54
-      Top = 15
+      Left = 70
+      Top = 16
       Width = 21
       Height = 14
       Caption = '$00'
@@ -2102,6 +2117,16 @@ object Dbg: TDbg
     object Enable: TMenuItem
       Caption = 'Enable'
       OnClick = EnableClick
+    end
+    object ResetHitCount: TMenuItem
+      Caption = 'Reset Hit Count'
+      OnClick = ResetHitCountClick
+    end
+    object N1: TMenuItem
+      Caption = '-'
+    end
+    object CurrentHitCount: TMenuItem
+      Caption = 'Hit Count = x of y'
     end
   end
 end

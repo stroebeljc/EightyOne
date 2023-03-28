@@ -29,6 +29,8 @@ __published:	// IDE-managed Components
         TLabel *LabelConditionAddr;
         TComboBox *ComboBoxBreakEnabled;
         TLabel *LabelBreakEnabled;
+        TComboBox *BreakHitCount;
+        TLabel *LabelBreakHitcount;
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormKeyPress(TObject *Sender, char &Key);
@@ -37,6 +39,7 @@ __published:	// IDE-managed Components
         void __fastcall BreakAddressChange(TObject *Sender);
         void __fastcall BreakTypeChange(TObject *Sender);
         void __fastcall RegisterListChange(TObject *Sender);
+        void __fastcall FormCreate(TObject *Sender);
 
 private:	// User declarations
         bool cancelled;

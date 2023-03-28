@@ -88,6 +88,8 @@ struct breakpoint
                 Value = (type == BP_EXE) ? addr : 0x00;
                 Permanent = true;
                 Enabled = true;
+                HitCount = 1;
+                Hits = 0;
         }
 
         bool HitExe(BreakpointType reqType, int curAddr)
@@ -193,6 +195,8 @@ struct breakpoint
         };
         bool Permanent;
         bool Enabled;
+        int HitCount;
+        int Hits;
 };
 
 #endif // __breakpoint_h

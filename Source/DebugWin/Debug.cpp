@@ -63,6 +63,7 @@ extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 const int maxInstructionBytes = 4;		// Max instruction size should be 4 but in theory could be longer if there are repeated prefixes
+const int maxBreakpoints = 99;
 
 struct InstructionEntry
 {
@@ -267,8 +268,6 @@ int TDbg::FindBreakPointEntry(int index, struct breakpoint& bp, bool editing)
 
 bool TDbg::AddBreakPoint(struct breakpoint& bp)
 {
-        const int maxBreakpoints = 99;
-
         if (Breakpoints == maxBreakpoints)
                 return false;
 
@@ -288,9 +287,7 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         if (BPList->RowCount > 1)
                 BPList->Row = BPList->RowCount - 2;
 
-        AddBrkBtn->Enabled = (Breakpoints < maxBreakpoints);
-        DelBrkBtn->Enabled = true;
-        EditBrkBtn->Enabled = true;
+        UpdateBreakpointButtons();
 
         return true;
 }
@@ -357,6 +354,17 @@ AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
         if (!bp->Permanent)
         {
                 str = "{" + str + "}";
+        }
+        else
+        {
+                str += "             ";
+                str = str.SubString(1, 23);
+
+                if (bp->HitCount > 1)
+                {
+                        str += " @ ";
+                        str += bp->HitCount;
+                }
         }
 
         return str;
@@ -543,7 +551,15 @@ bool TDbg::BreakPointHit()
                         {
                                 BPList->Row = idx;
                         }
-			return true;
+
+                        bp->Hits++;
+                        UpdateBreakpointButtons();
+
+                        if (bp->Hits == bp->HitCount)
+                        {
+                                bp->Hits = 0;
+                                return true;
+                        }
 		}
 	}
 
@@ -961,19 +977,19 @@ void TDbg::UpdateVals(void)
         switch (romcartridge.type)
         {
                 case ROMCARTRIDGEZXC1:
-                        GroupBoxZXC->Caption = "ZXC1";
+                        GroupBoxZXC->Caption = "ZXC1 Cartridge";
                         break;
                 case ROMCARTRIDGEZXC2:
-                        GroupBoxZXC->Caption = "ZXC2";
+                        GroupBoxZXC->Caption = "ZXC2 Cartridge";
                         break;
                 case ROMCARTRIDGEZXC3:
-                        GroupBoxZXC->Caption = "ZXC3";
+                        GroupBoxZXC->Caption = "ZXC3 Cartridge";
                         break;
                 case ROMCARTRIDGEZXC4:
-                        GroupBoxZXC->Caption = "ZXC4";
+                        GroupBoxZXC->Caption = "ZXC4 Cartridge";
                         break;
                 default:
-                        GroupBoxZXC->Caption = "ZXC";
+                        GroupBoxZXC->Caption = "ZXC Cartridge";
                         break;
         }
 
@@ -1312,7 +1328,7 @@ __fastcall TDbg::TDbg(TComponent* Owner)
         delete ini;
 
         ClientHeight=GroupBox2->Top+GroupBox2->Height+4;
-        ClientWidth=GroupBoxZX81->Left+GroupBoxZX81->Width+4;
+        ClientWidth=GroupBox4->Left+GroupBox4->Width+4;
 
         BPList->DefaultColWidth = BPList->Width;
 
@@ -1332,6 +1348,8 @@ void __fastcall TDbg::RunStopClick(TObject *Sender)
         UpdateVals();
         StepOutRequested = 0;
         StackChange = 0;
+
+        UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
 
@@ -1394,9 +1412,6 @@ void __fastcall TDbg::StepOverClick(TObject *Sender)
         }
 
         int i = z80.pc.w;
-    //    Disassemble(&i);
-    //    int stepOverStartAddr = i;
-   //     StepOverInstruction = IsStepOverInstruction(i);
         Disassemble(&i);
         StepOverAddr = i;
         StepOverStack = z80.sp.w;
@@ -1420,8 +1435,7 @@ void __fastcall TDbg::AddBrkBtnClick(TObject *Sender)
                 AddBreakPoint(bp);
         }
 
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+        UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
 
@@ -1435,8 +1449,7 @@ void __fastcall TDbg::DelBrkBtnClick(TObject *Sender)
                 BPList->Row -= 1;
         }
 
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+        UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
                                                 
@@ -1467,6 +1480,7 @@ void TDbg::LoadSettings(TIniFile *ini)
         Continuous->Checked = ini->ReadBool("DEBUG", "Continuous", true);
 }
 
+//---------------------------------------------------------------------------
 void TDbg::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("DEBUG","Top",Top);
@@ -1474,6 +1488,7 @@ void TDbg::SaveSettings(TIniFile *ini)
         ini->WriteBool("DEBUG", "Continuous", Continuous->Checked);
 }
 
+//---------------------------------------------------------------------------
 void TDbg::ClearHistoryWindow()
 {
         HistoryPos = 0;
@@ -1482,11 +1497,13 @@ void TDbg::ClearHistoryWindow()
         PopulateHistoryWindow();
 }
 
+//---------------------------------------------------------------------------
 void TDbg::ReloadHistoryWindow()
 {
         PopulateHistoryWindow();
 }
 
+//---------------------------------------------------------------------------
 void __fastcall TDbg::HistoryClick(TObject *Sender)
 {
         if (HistoryBox->Visible)
@@ -1499,6 +1516,7 @@ void __fastcall TDbg::HistoryClick(TObject *Sender)
         HistoryBox->Show();
 }
 
+//---------------------------------------------------------------------------
 void TDbg::PopulateHistoryWindow()
 {
         HistoryBox->Text->Enabled = false;
@@ -1572,6 +1590,8 @@ void __fastcall TDbg::DoEditReg(WORD& value)
                 UpdateVals();
         }
 }
+
+//---------------------------------------------------------------------------
 
 void __fastcall TDbg::DoEditReg(BYTE& value)
 {
@@ -1665,7 +1685,7 @@ void __fastcall TDbg::InterruptsClick(TObject *Sender)
         // DI - IFF1=IFF2=0
         // EI - IFF1=IFF2=1;
 
-        z80.iff1=z80.iff2= !z80.iff1;
+        z80.iff1 = z80.iff2 = !z80.iff1;
         UpdateVals();
 }
 //---------------------------------------------------------------------------
@@ -1766,8 +1786,8 @@ void __fastcall TDbg::F_Click(TObject *Sender)
 
 void TDbg::SetMenuContent(int memloc)
 {
-     MemDumpFromHere1->Tag = memloc;
-     MemDumpPopup->Tag = memloc;
+        MemDumpFromHere1->Tag = memloc;
+        MemDumpPopup->Tag = memloc;
 }
 //---------------------------------------------------------------------------
 
@@ -1775,14 +1795,14 @@ void TDbg::SetMenuContent(int memloc)
 void __fastcall TDbg::BCMouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.bc.w);
+        SetMenuContent(z80.bc.w);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::DEMouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.de.w);
+        SetMenuContent(z80.de.w);
 }
 //---------------------------------------------------------------------------
 
@@ -1796,35 +1816,35 @@ void __fastcall TDbg::HLMouseDown(TObject *Sender, TMouseButton Button,
 void __fastcall TDbg::BC_MouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.bc_.w);
+        SetMenuContent(z80.bc_.w);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::DE_MouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.de_.w);
+        SetMenuContent(z80.de_.w);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::HL_MouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.hl_.w);
+        SetMenuContent(z80.hl_.w);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::IXMouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.ix.w);
+        SetMenuContent(z80.ix.w);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::IYMouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.iy.w);
+        SetMenuContent(z80.iy.w);
 }
 //---------------------------------------------------------------------------
 
@@ -1839,7 +1859,7 @@ void __fastcall TDbg::IRMouseDown(TObject *Sender, TMouseButton Button,
 void __fastcall TDbg::SPMouseDown(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
-   SetMenuContent(z80.sp.w);
+        SetMenuContent(z80.sp.w);
 }
 //---------------------------------------------------------------------------
 
@@ -1862,8 +1882,8 @@ void __fastcall TDbg::AddBreak1Click(TObject *Sender)
         TMenuItem* mi = (TMenuItem*)Sender;
         breakpoint bp(MemDumpPopup->Tag, (BreakpointType)mi->Tag);
         AddBreakPoint(bp);
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+
+        UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
 
@@ -1907,6 +1927,7 @@ void __fastcall TDbg::MemoryClick(TObject *Sender)
 void __fastcall TDbg::EditBrkBtnClick(TObject *Sender)
 {
         EditBreakpoint();
+        UpdateBreakpointButtons();
 }
 
 void TDbg::EditBreakpoint()
@@ -1975,13 +1996,6 @@ void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
         {
                 CanSelect = false;
         }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TDbg::GroupBox5Click(TObject *Sender)
-{
-//        cacheMaxStack = 0;
-//        GroupBox5->Caption = AnsiString(cacheMaxStack);
 }
 //---------------------------------------------------------------------------
 
@@ -2079,8 +2093,8 @@ void __fastcall TDbg::BreakOnInputOutputClick(TObject *Sender)
         TMenuItem* mi = (TMenuItem*)Sender;
         breakpoint bp(InputContextPopup->Tag, (BreakpointType)mi->Tag);
         AddBreakPoint(bp);
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+
+        UpdateBreakpointButtons();
 }
 
 //---------------------------------------------------------------------------
@@ -2092,8 +2106,8 @@ void __fastcall TDbg::BreakOnInputOutputHighClick(TObject *Sender)
         TMenuItem* mi = (TMenuItem*)Sender;
         breakpoint bp(InputContextPopup->Tag, (BreakpointType)mi->Tag);
         AddBreakPoint(bp);
-        DelBrkBtn->Enabled = (BPList->RowCount > 1);
-        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+
+        UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
 
@@ -2105,8 +2119,28 @@ void __fastcall TDbg::BreakOnInputOutputLowClick(TObject *Sender)
         TMenuItem* mi = (TMenuItem*)Sender;
         breakpoint bp(InputContextPopup->Tag, (BreakpointType)mi->Tag);
         AddBreakPoint(bp);
+
+        UpdateBreakpointButtons();
+}
+//---------------------------------------------------------------------------
+void TDbg::UpdateBreakpointButtons()
+{
+        AddBrkBtn->Enabled = (Breakpoints < maxBreakpoints);
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
         EditBrkBtn->Enabled = (BPList->RowCount > 1);
+
+        bool breakpointWithHitCount = false;
+
+        for (int b = 0; b < Breakpoints; b++)
+        {
+                if (Breakpoint[b].HitCount > 1 && Breakpoint[b].Hits > 0)
+                {
+                        breakpointWithHitCount = true;
+                        break;
+                }
+        }
+
+        ZeroBrkBtn->Enabled = breakpointWithHitCount && (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -2151,6 +2185,7 @@ void __fastcall TDbg::BPListDblClick(TObject *Sender)
         }
 
         EditBreakpoint();
+        UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
 
@@ -2202,6 +2237,59 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
                 BreakpointWindowPopup->Items->Items[0]->Visible = false;
                 BreakpointWindowPopup->Items->Items[1]->Visible = true;
         }
+
+        if (Breakpoint[BPList->Row].HitCount > 1)
+        {
+                BreakpointWindowPopup->Items->Items[2]->Visible = true;
+                BreakpointWindowPopup->Items->Items[3]->Visible = true;
+                BreakpointWindowPopup->Items->Items[4]->Visible = true;
+
+                AnsiString hitCount = "Hit Count = ";
+                hitCount += Breakpoint[BPList->Row].Hits;
+                hitCount += " of ";
+                hitCount += Breakpoint[BPList->Row].HitCount;
+                BreakpointWindowPopup->Items->Items[4]->Caption = hitCount;
+
+                BreakpointWindowPopup->Items->Items[2]->Enabled = (Breakpoint[BPList->Row].Hits > 0);
+        }
+        else
+        {
+                BreakpointWindowPopup->Items->Items[2]->Visible = false;
+                BreakpointWindowPopup->Items->Items[3]->Visible = false;
+                BreakpointWindowPopup->Items->Items[4]->Visible = false;
+        }
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TDbg::ZeroBrkBtnClick(TObject *Sender)
+{
+        ResetBreakpointHitCounts();
+        UpdateBreakpointButtons();
+}
+//---------------------------------------------------------------------------
+void TDbg::ResetBreakpointHitCounts()
+{
+        for (int b = 0; b < Breakpoints; b++)
+        {
+                Breakpoint[b].Hits = 0;
+        }
+}
+
+//---------------------------------------------------------------------------
+void TDbg::RefreshBreakpointList()
+{
+        for (int b = 0; b < Breakpoints; b++)
+        {
+                AnsiString str = GetBreakpointText(&Breakpoint[b]);
+                BPList->Rows[b]->Text = str;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::ResetHitCountClick(TObject *Sender)
+{
+        Breakpoint[BPList->Row].Hits = 0;
 }
 //---------------------------------------------------------------------------
 

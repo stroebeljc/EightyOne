@@ -929,6 +929,9 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         ResetDisplaySize();
 
+        Dbg->ResetBreakpointHitCounts();
+        Dbg->RefreshBreakpointList();
+
         if (Sender) Close();
 
         if (Dbg->Visible) Dbg->UpdateVals();

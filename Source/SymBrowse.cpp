@@ -22,8 +22,7 @@ __fastcall TSymbolBrowser::TSymbolBrowser(TComponent* Owner)
         ListBox1->Height=ClientHeight;
 }
 //---------------------------------------------------------------------------
-
-
+                            
 void __fastcall TSymbolBrowser::RefreshContent(void)
 {
         ListBox1->Items->Clear();
@@ -43,9 +42,7 @@ void __fastcall TSymbolBrowser::RefreshContent(void)
 }
 
 //---------------------------------------------------------------------------
-
-
-
+              
 void __fastcall TSymbolBrowser::ListBox1ContextPopup(TObject *Sender,
       TPoint &MousePos, bool &Handled)
 {

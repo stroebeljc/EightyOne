@@ -1063,12 +1063,12 @@ object Dbg: TDbg
       TabOrder = 2
       OnClick = EditBrkBtnClick
     end
-    object ZeroBrkBtn: TButton
+    object ResetBrkBtn: TButton
       Left = 182
       Top = 189
       Width = 53
       Height = 25
-      Caption = 'Zero'
+      Caption = 'Reset'
       Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1077,7 +1077,7 @@ object Dbg: TDbg
       Font.Style = []
       ParentFont = False
       TabOrder = 3
-      OnClick = ZeroBrkBtnClick
+      OnClick = ResetBrkBtnClick
     end
   end
   object GroupBox5: TGroupBox
@@ -1631,7 +1631,6 @@ object Dbg: TDbg
       Width = 73
       Height = 17
       Caption = 'Continuous'
-      Checked = True
       Enabled = False
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1640,7 +1639,6 @@ object Dbg: TDbg
       Font.Pitch = fpFixed
       Font.Style = []
       ParentFont = False
-      State = cbChecked
       TabOrder = 6
       OnClick = ContinuousClick
     end

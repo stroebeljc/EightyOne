@@ -224,10 +224,10 @@ __published:	// IDE-managed Components
         TPopupMenu *BreakpointWindowPopup;
         TMenuItem *Disable;
         TMenuItem *Enable;
-        TButton *ZeroBrkBtn;
         TMenuItem *ResetHitCount;
         TMenuItem *N1;
         TMenuItem *CurrentHitCount;
+        TButton *ResetBrkBtn;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -316,7 +316,7 @@ __published:	// IDE-managed Components
         void __fastcall EnableClick(TObject *Sender);
         void __fastcall BPListContextPopup(TObject *Sender,
           TPoint &MousePos, bool &Handled);
-        void __fastcall ZeroBrkBtnClick(TObject *Sender);
+        void __fastcall ResetBrkBtnClick(TObject *Sender);
         void __fastcall ResetHitCountClick(TObject *Sender);
 private:	// User declarations
         void EnableValues(bool enable);

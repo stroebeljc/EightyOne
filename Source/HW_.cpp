@@ -800,7 +800,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         else
         {
                 Form1->PrinterPort1->Enabled=false;
-                Form1->PrinterPort1->Caption="Printer Port";
+                Form1->PrinterPort1->Caption="Centronics Printer Port";
         }
 
         symbolstore::reset();

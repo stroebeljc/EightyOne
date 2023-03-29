@@ -2140,7 +2140,7 @@ void TDbg::UpdateBreakpointButtons()
                 }
         }
 
-        ZeroBrkBtn->Enabled = breakpointWithHitCount && (BPList->RowCount > 1);
+        ResetBrkBtn->Enabled = breakpointWithHitCount && (BPList->RowCount > 1);
 }
 //---------------------------------------------------------------------------
 
@@ -2260,7 +2260,7 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
 //---------------------------------------------------------------------------
 
 
-void __fastcall TDbg::ZeroBrkBtnClick(TObject *Sender)
+void __fastcall TDbg::ResetBrkBtnClick(TObject *Sender)
 {
         ResetBreakpointHitCounts();
         UpdateBreakpointButtons();

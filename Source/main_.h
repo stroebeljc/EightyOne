@@ -168,6 +168,10 @@ __published:	// IDE-managed Components
         TMenuItem *UserProgramInstructionStartPositions;
         TImageList *ImageList2;
         TMenuItem *BringWindowsToFront;
+        TMenuItem *DeleteConfigurations;
+        TMenuItem *DeleteConfigItem1;
+        TMenuItem *DeleteAll;
+        TMenuItem *N12;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -273,6 +277,8 @@ __published:	// IDE-managed Components
         void __fastcall UserProgramInstructionStartPositionsClick(
           TObject *Sender);
         void __fastcall BringWindowsToFrontClick(TObject *Sender);
+        void __fastcall DeleteAllClick(TObject *Sender);
+        void __fastcall DeleteConfigItem1Click(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

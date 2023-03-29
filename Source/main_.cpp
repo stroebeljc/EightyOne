@@ -1773,12 +1773,13 @@ void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TForm1::BuildConfigMenu(void)
+void TForm1::BuildConfigMenu()
 {
         DIR *dir;
         struct dirent *ent;
 
-        while(Config1->Count >2) Config1->Delete(2);
+        while(Config1->Count > 3) Config1->Delete(3);
+        while(DeleteConfigurations->Count > 2) DeleteConfigurations->Delete(2);
 
         if ((dir = opendir(emulator.configpath)) != NULL)
         {
@@ -1792,15 +1793,26 @@ void TForm1::BuildConfigMenu(void)
                         if (Extension == ".INI" && !FileName.Pos("&"))
                         {
                                 TMenuItem *NewItem;
-
                                 NewItem = new TMenuItem(Config1);
                                 NewItem->Caption=RemoveExt(FileName);
                                 NewItem->OnClick=ConfigItem1Click;
                                 Config1->Add(NewItem);
+
+                                if (FileName != "EightyOne.ini")
+                                {
+                                        TMenuItem *NewItem;
+                                        NewItem = new TMenuItem(DeleteConfigurations);
+                                        NewItem->Caption=RemoveExt(FileName);
+                                        NewItem->OnClick=DeleteConfigItem1Click;
+                                        DeleteConfigurations->Add(NewItem);
+                                }
                         }
                 }
                 closedir(dir);
         }
+
+        DeleteConfigurations->Enabled = (DeleteConfigurations->Count > 2);
+        DeleteAll->Enabled = (DeleteConfigurations->Count > 2);
 }
 //---------------------------------------------------------------------------
 
@@ -2504,4 +2516,60 @@ void TForm1::UpdateEmulatorAnnotationSettings()
         emulator.ColouriseZ80Halted = Z80Halted->Checked;
         emulator.ColouriseUserProgramInstructionStartPositions = UserProgramInstructionStartPositions->Checked;
 }
+
+void __fastcall TForm1::DeleteAllClick(TObject *Sender)
+{
+        DIR *dir;
+        struct dirent *ent;
+
+        AnsiString iniFile;
+        char iniPath[256];
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
+        {
+                if ((dir = opendir(emulator.configpath)) != NULL)
+                {
+                        while ((ent = readdir(dir)) != NULL)
+                        {
+                                AnsiString FileName, Extension;
+
+                                FileName=ent->d_name;
+                                Extension=FileNameGetExt(FileName);
+
+                                if (Extension == ".INI" && !FileName.Pos("&") && FileName != "EightyOne.ini")
+                                {
+                                        iniFile = iniPath;
+                                        if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
+                                        iniFile += "EightyOne\\";
+                                        iniFile += FileName;
+
+                                        DeleteFile(iniFile);
+                                }
+                        }
+                        closedir(dir);
+                }
+
+                BuildConfigMenu();
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
+{
+        AnsiString iniFile;
+        char iniPath[256];
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
+        {
+                iniFile = iniPath;
+                if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
+                iniFile += "EightyOne\\";
+                AnsiString name = ((TMenuItem *)Sender)->Caption;
+                iniFile += name;
+                iniFile += ".ini";
+
+                DeleteFile(iniFile);
+
+                BuildConfigMenu();
+        }
+}
+//---------------------------------------------------------------------------
 

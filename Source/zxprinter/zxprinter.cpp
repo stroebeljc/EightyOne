@@ -375,7 +375,7 @@ void __fastcall TPrinter::StyleChange(TObject *Sender)
         case 2:
                 Fg=clBlack;
                 Bg=clWhite;
-                BitRate->Position=65;
+                BitRate->Position=60;
                 LineRate->Position=100;
                 break;
         default:

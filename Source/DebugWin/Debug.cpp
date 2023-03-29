@@ -2244,7 +2244,7 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
                 BreakpointWindowPopup->Items->Items[3]->Visible = true;
                 BreakpointWindowPopup->Items->Items[4]->Visible = true;
 
-                AnsiString hitCount = "Hits = ";
+                AnsiString hitCount = "Hit Count = ";
                 hitCount += Breakpoint[BPList->Row].Hits;
                 BreakpointWindowPopup->Items->Items[4]->Caption = hitCount;
 

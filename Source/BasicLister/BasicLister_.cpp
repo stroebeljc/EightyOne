@@ -569,8 +569,16 @@ void TBasicLister::SaveListingToFile()
 
         AnsiString machineName = mBasicLister->GetMachineName();
         AnsiString basicFileExtension = mBasicLister->GetBasicFileExtension();
+        bool zxTokenFormatSupported = mBasicLister->ZxTokenSupported();
 
-        SaveDialog->Filter = machineName + " BASIC File (*." + basicFileExtension + ")|*." + basicFileExtension + "|Bitmap File (*.bmp)|*.bmp";
+        AnsiString filter = machineName + " ZxText2P BASIC File (*." + basicFileExtension + ")|*." + basicFileExtension;
+        if (zxTokenFormatSupported)
+        {
+                filter += "|" + machineName + " ZxToken BASIC File (*." + basicFileExtension + ")|*." + basicFileExtension;
+        }
+        filter += "|Bitmap File (*.bmp)|*.bmp";
+
+        SaveDialog->Filter = filter;
         SaveDialog->DefaultExt = basicFileExtension;
         SaveDialog->FilterIndex = mLastFilterIndex;
         SaveDialog->FileName = "";
@@ -584,7 +592,9 @@ void TBasicLister::SaveListingToFile()
 
         mLastFilterIndex = SaveDialog->FilterIndex;
 
-        if (SaveDialog->FilterIndex == 1)
+        bool outputInZxTokenFormat = (zxTokenFormatSupported && SaveDialog->FilterIndex == 2);
+
+        if (SaveDialog->FilterIndex == 1 || outputInZxTokenFormat)
         {
                 GetSaveOptions();
 
@@ -592,7 +602,7 @@ void TBasicLister::SaveListingToFile()
                 ofs.open(SaveDialog->FileName.c_str());
                 for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
                 {
-                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputStringTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes, mOutputVariableNamesInLowercase, mLimitLineLengths, mOutputFullWidthLineNumbers);
+                        AnsiString lineText = mBasicLister->RenderLineAsText(*it, mOutputRemTokensAsCharacterCodes, mOutputStringTokensAsCharacterCodes, mOutputNonAsciiAsCharacterCodes, mOutputVariableNamesInLowercase, outputInZxTokenFormat, mLimitLineLengths, mOutputFullWidthLineNumbers);
                         ofs << lineText.c_str() << '\n';
                 }
 

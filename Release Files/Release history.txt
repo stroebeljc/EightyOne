@@ -3,10 +3,15 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.34 - ##/##/2023 (by Paul Farrow)
+Version 1.34 - 31/03/2023 (by Paul Farrow)
 * Bug fixes:
   - The printer output was not displaying correctly at the default carriage speed when the style
     was set to Plain Paper.
+  - A ZxToken character was not being recognised by the BASIC Listing import facility for the
+    ZX81.
+  - The BASIC Listing window did not support ZXpand keywords within a REM statement for the ZX80.
+  - The BASIC Listing window swapped ZXpand tokens CONFIG and DELETE for the ZX80.
+  - The BASIC Listing impact facility swapped ZXpand tokens CONFIG and DELETE for the ZX80.
 * Changes:
   - Amended ZX81 symbol names to match those in The Complete Timex TS1000/Sinclair ZX81 ROM
     Disassembly by Dr Ian Logan and Dr Frank O'Hara.
@@ -21,6 +26,8 @@ Version 1.34 - ##/##/2023 (by Paul Farrow)
     to be viewed and to be reset.
   - Added a button to allow the number of hits to be reset for all breakpoints.
   - Added facility to delete selected and all saved configurations.
+  - Added support for saving ZX80 and ZX81 BASIC listings to a text file in ZxToken format.
+  - Added Currah uSource ROM support.
 
 Version 1.33 - 22/03/2023 (by Paul Farrow)
 * Bug fixes:

@@ -18,6 +18,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "BasicLister\IBasicLister.h"
 #include <Classes.hpp>
 
@@ -27,6 +28,7 @@ public:
         zx81BasicLister(bool zxpandEnabled);
         virtual AnsiString GetMachineName();
         virtual AnsiString GetBasicFileExtension();
+        virtual bool ZxTokenSupported();
 
 private:
         static const unsigned char Space = 0;
@@ -42,6 +44,7 @@ private:
         static const unsigned char Number = 126;
 
         bool mZxpandEnabled;
+        std::map<AnsiString, AnsiString> mZxTokenChars;
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
@@ -50,5 +53,6 @@ private:
         virtual inline unsigned char GetLineEndingCode();
         virtual std::string GetKeywords();
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
+        virtual AnsiString TranslateToZxToken(AnsiString chr);
 };
 

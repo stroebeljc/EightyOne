@@ -277,6 +277,9 @@ void __fastcall THW::OKClick(TObject *Sender)
                 BasicLister->SetBasicLister(NULL);
         }
 
+        spectrum.MFVersion=MFNONE;
+        Multiface->Enabled = false;
+
         switch(NewMachine)
         {
         case MACHINEZX80:
@@ -339,6 +342,7 @@ void __fastcall THW::OKClick(TObject *Sender)
         case MACHINESPECTRUM:
                 Form1->RamPackWobble1->Enabled=false;
                 Form1->RamPackWobble1->Visible=false;
+
                 switch(NewSpec)
                 {
                 case SPECCY16:
@@ -349,6 +353,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP48, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        Multiface->Caption = "Multiface 128";
+                        Multiface->Enabled = true;
                         CreateBasicLister();
                         break;
 
@@ -361,6 +367,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP48, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        Multiface->Caption = "Multiface 128";
+                        Multiface->Enabled = true;
                         CreateBasicLister();
                         break;
 
@@ -372,6 +380,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         spectrum.ROMBanks=1;
                         strcpy(emulator.ROMTC2048, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        Multiface->Caption = "Multiface 128";
+                        Multiface->Enabled = true;
                         break;
 
                 case SPECCYTS2068:
@@ -381,7 +391,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
                         strcpy(emulator.ROMTS2068, machine.CurRom);
-                        spectrum.MFVersion=MF128;
+                        spectrum.MFVersion=MFNONE;
+                        Multiface->Enabled = false;
                         break;
 
                 case SPECCY128:
@@ -392,6 +403,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP128, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        Multiface->Caption = "Multiface 128";
+                        Multiface->Enabled = true;
                         CreateBasicLister();
                         break;
 
@@ -400,6 +413,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         spectrum.ROMBanks=1;
                         strcpy(emulator.ROMSPP2, machine.CurRom);
                         spectrum.MFVersion=MF128;
+                        Multiface->Caption = "Multiface 128";
+                        Multiface->Enabled = true;
                         CreateBasicLister();
                         break;
 
@@ -412,6 +427,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                                 strcpy(emulator.ROMSPP3E, machine.CurRom);
                         else strcpy(emulator.ROMSPP3, machine.CurRom);
                         spectrum.MFVersion=MFPLUS3;
+                        Multiface->Caption = "Multiface 3";
+                        Multiface->Enabled = true;
                         CreateBasicLister();
                         break;
 
@@ -423,6 +440,8 @@ void __fastcall THW::OKClick(TObject *Sender)
                         else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
                                 strcpy(emulator.ROMSPP3E, machine.CurRom);
                         spectrum.MFVersion=MFPLUS3;
+                        Multiface->Caption = "Multiface 3";
+                        Multiface->Enabled = true;
                         CreateBasicLister();
                         break;
                 }
@@ -449,7 +468,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                 BrowseRomCartridge->Enabled = false;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
                 ZXC1ConfigurationBox->Visible = false;
-                RomCartridgeFileBox->Left = 188;
+                RomCartridgeFileBox->Left = 184;
                 RomCartridgeFileBox->Width = 181;
         }
         else
@@ -462,13 +481,13 @@ void __fastcall THW::OKClick(TObject *Sender)
                 if (romcartridge.type == ROMCARTRIDGEZXC1)
                 {
                         ZXC1ConfigurationBox->Visible = true;
-                        RomCartridgeFileBox->Left = 281;
+                        RomCartridgeFileBox->Left = 277;
                         RomCartridgeFileBox->Width = 88;
                 }
                 else
                 {
                         ZXC1ConfigurationBox->Visible = false;
-                        RomCartridgeFileBox->Left = 188;
+                        RomCartridgeFileBox->Left = 184;
                         RomCartridgeFileBox->Width = 181;
                 }
                 ResetRequired=true;
@@ -476,8 +495,9 @@ void __fastcall THW::OKClick(TObject *Sender)
 
         if (!Multiface->Checked) spectrum.MFVersion=MFNONE;
 
-        spectrum.uspeech=uSpeech->Checked;
-
+        spectrum.uspeech = uSpeech->Checked;
+        spectrum.usource = uSource->Checked;
+        
         Form1->InWaveLoader->Enabled=true;
         Form1->OutWaveLoader->Enabled=true;
 
@@ -1110,6 +1130,7 @@ void THW::SetupForZX81(void)
         RomCartridgeLabel->Enabled=true;
 
         ZXpand->Caption = "ZXpand+";
+        Multiface->Caption = "Multiface 128";
 
         OldFloppy=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
@@ -1203,6 +1224,9 @@ void THW::SetupForZX81(void)
         uSpeech->Enabled=false;
         uSpeech->Checked=false;
 
+        uSource->Enabled=false;
+        uSource->Checked=false;
+
         if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "ZXC1")
         {
                 RomCartridgeBox->Items->Delete(RomCartridgeBox->Items->Count-1);
@@ -1271,6 +1295,7 @@ void THW::SetupForSpectrum(void)
 
         SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
+        Multiface->Caption = "Multiface 128";
 
         ResetRequired=true;
 
@@ -1297,6 +1322,9 @@ void THW::SetupForSpectrum(void)
 
         uSpeech->Checked=false;
         uSpeech->Enabled=false;
+
+        uSource->Checked=false;
+        uSource->Enabled=false;
 
         QLSettings->TabVisible=false;
 
@@ -1368,6 +1396,7 @@ void THW::SetupForSpectrum(void)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
 
         uSpeech->Enabled=true;
+        uSource->Enabled=true;
 
         if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "Timex")
         {
@@ -1394,6 +1423,7 @@ void THW::SetupForQL(void)
 
         SetZXpandState(false,false);
         ZXpand->Caption = "ZXpand+";
+        Multiface->Caption = "Multiface";
 
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled=false;
@@ -1426,6 +1456,9 @@ void THW::SetupForQL(void)
 
         uSpeech->Checked=false;
         uSpeech->Enabled=false;
+
+        uSource->Checked=false;
+        uSource->Enabled=false;
 
         QLSettings->TabVisible=true;
 
@@ -1631,6 +1664,7 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
         Spec48Btn->Down=true;
 
         uSpeech->Enabled=true;
+        uSource->Enabled=true;
 
         Issue2->Enabled=true;
         NewMachineName=Spec48Btn->Caption;
@@ -1684,6 +1718,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         SpecPlusBtn->Down=true;
 
         uSpeech->Enabled=true;
+        uSource->Enabled=true;
 
         Issue2->Enabled=true;
         NewMachineName=SpecPlusBtn->Caption;
@@ -1709,6 +1744,7 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         Spec16Btn->Down=true;
 
         uSpeech->Enabled=true;
+        uSource->Enabled=true;
 
         Issue2->Enabled=true;
         Issue2->Checked=true;
@@ -1763,6 +1799,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         SetUpRamSettings();
         SetupForSpectrum();
         SpecP2aBtn->Down=true;
+        Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex=4;
         SoundCardBox->Enabled=false;
@@ -1791,6 +1828,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         SetUpRamSettings();
         SetupForSpectrum();
         SpecP3Btn->Down=true;
+        Multiface->Caption = "Multiface 3";
 
         FloppyDrives->TabVisible=true;
 
@@ -2045,7 +2083,14 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         SetUpRamSettings();
         SetupForSpectrum();
         TS2068Btn->Down=true;
+        Multiface->Enabled = false;
 
+        uSpeech->Checked = false;
+        uSpeech->Enabled = false;
+
+        uSource->Checked = false;
+        uSource->Enabled = false;
+        
         SoundCardBox->ItemIndex = AY_TYPE_SINCLAIR;
 
         SoundCardBox->Enabled=false;
@@ -2223,6 +2268,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteInteger("HWARE","FDCType",FDC->ItemIndex);
         ini->WriteBool("HWARE","Autoboot",Autoboot->Checked);
         ini->WriteBool("HWARE","uSpeech",uSpeech->Checked);
+        ini->WriteBool("HWARE","uSource",uSource->Checked);
         ini->WriteBool("HWARE","ZXpand",ZXpand->Checked);
 
         if (ATA_GetHDF(0)) Rom=ATA_GetHDF(0); else Rom="NULL";
@@ -2444,6 +2490,7 @@ void THW::LoadSettings(TIniFile *ini)
         FDCChange(NULL);
 
         uSpeech->Checked=ini->ReadBool("HWARE","uSpeech",uSpeech->Checked);
+        uSource->Checked=ini->ReadBool("HWARE","uSource",uSource->Checked);
 
         strcpy(FileName,emulator.cwd);
         strcat(FileName,"NV_Memory\\zxcf.nv");
@@ -2514,7 +2561,7 @@ void THW::EnableRomCartridgeOption(bool enable)
         ComboBoxRomCartridgeFileBox->Enabled = enable;
         BrowseRomCartridge->Enabled = enable;
         ZXC1ConfigurationBox->Visible = false;
-        RomCartridgeFileBox->Left = 188;
+        RomCartridgeFileBox->Left = 184;
         RomCartridgeFileBox->Width = 181;
 }
 
@@ -2649,9 +2696,6 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
 void __fastcall THW::FDCChange(TObject *Sender)
 {
-        //uSpeech->Checked=false;
-        //uSpeech->Enabled=false;
-
         if (FDC->Items->Strings[FDC->ItemIndex]=="Larken")
                 EnableLowRAM->Checked=true;
 
@@ -2774,7 +2818,7 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         ZXC1ConfigurationBox->Visible = zxc1Selected;
         if (zxc1Selected)
         {
-                RomCartridgeFileBox->Left = 281;
+                RomCartridgeFileBox->Left = 277;
                 RomCartridgeFileBox->Width = 88;
 
                 if (ZXC1ConfigurationBox->ItemIndex == -1)
@@ -2784,7 +2828,7 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         }
         else
         {
-                RomCartridgeFileBox->Left = 188;
+                RomCartridgeFileBox->Left = 184;
                 RomCartridgeFileBox->Width = 181;
         }
 
@@ -2928,3 +2972,9 @@ void THW::AddRomCartridgeFile(AnsiString fileName)
                 ComboBoxRomCartridgeFileBox->Items->Add(fileName);
         }
 }
+void __fastcall THW::uSourceClick(TObject *Sender)
+{
+        ResetRequired=true;
+}
+//---------------------------------------------------------------------------
+

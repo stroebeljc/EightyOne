@@ -101,6 +101,7 @@ BYTE ZXCFMem[64*16384];  // ZXCF has 1024k arranged as 64 x 16k pages
 BYTE MFMem[16*1024]; // Multiface - 1 x 16k page
 BYTE PlusDMem[16*1024]; //Disciple/PlusD RAM - 8k RAM, 8k ROM
 BYTE uSpeechMem[16*1024];
+BYTE uSourceMem[16*1024];
 
 int divIDEPaged, divIDEPage0, divIDEPage1, divIDEPort, divIDEMapRam;
 int divIDEPage0WP, divIDEPage1WP;
@@ -109,6 +110,7 @@ int MFActive=0, MFLockout=0;
 int ZXCFPort=0;
 
 int uSpeechPaged=0;
+int uSourcePaged=0;
 
 int SPECMICState, SPECTopBorder, SPECLeftBorder, SPECBorder=7, FloatingBus;
 int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
@@ -250,6 +252,7 @@ extern "C"
 void spec48_nmi(void)
 {
         uSpeechPaged=0;
+        uSourcePaged=0;
 
         if (spectrum.MFVersion)
         {
@@ -298,6 +301,7 @@ void spec48_reset(void)
         TIMEXPage=0;
 
         uSpeechPaged=0;
+        uSourcePaged=0;
 
         ZXCFPort=128;
         if (spectrum.HDType==HDZXCF)
@@ -385,6 +389,12 @@ void spec48_initialise(void)
                 memcpy(uSpeechMem, memory, romlen);
         }
 
+        if (spectrum.usource)
+        {
+                romlen=memory_load(emulator.ROMUSOURCE,0,16384);
+                memcpy(uSourceMem, memory, romlen);
+        }
+
         if (spectrum.floppytype==FLOPPYIF1)
         {
                 if (IF1->RomEdition->Text == "Edition 3")
@@ -411,13 +421,11 @@ void spec48_initialise(void)
                 romlen=memory_load("mf128.rom",0,65536);
                 memcpy(MFMem,memory,romlen);
         }
-
-        if (spectrum.MFVersion == MFPLUS3)
+        else if (spectrum.MFVersion == MFPLUS3)
         {
                 romlen=memory_load("mfp3.rom",0,65536);
                 memcpy(MFMem,memory,romlen);
         }
-
 
         if (strlen(emulator.ROMDock)) LoadDock(emulator.ROMDock);
 
@@ -719,6 +727,13 @@ BYTE spec48_ReadByte(int Address)
                 if (uSpeechPaged)
                 {
                         data=uSpeechMem[Address];
+                        noise = (noise<<8) | data;
+                        return(data);
+                }
+
+                if (uSourcePaged)
+                {
+                        data=uSourceMem[Address & 0x1FFF];
                         noise = (noise<<8) | data;
                         return(data);
                 }
@@ -1495,6 +1510,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         }
 
                         if (spectrum.uspeech && LastPC==56) uSpeechPaged = !uSpeechPaged;
+                        if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
                 }
 
 

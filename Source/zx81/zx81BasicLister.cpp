@@ -19,9 +19,77 @@
 #include "zx81BasicLister.h"
 #include "zx81config.h"
 
+using namespace std;
+
 zx81BasicLister::zx81BasicLister(bool zxpandEnabled)
 {
         mZxpandEnabled = zxpandEnabled;
+
+        // Details on ZxToken format can be found: http://dskcenter.free.fr/zxtools.html
+        mZxTokenChars["\\' "] = "\xB6";
+        mZxTokenChars["\\ '"] = "\xB7";
+        mZxTokenChars["\\''"] = "\xB8";
+        mZxTokenChars["\\. "] = "\xB9";
+        mZxTokenChars["\\: "] = "\xBA";
+        mZxTokenChars["\\.'"] = "\xBB";
+        mZxTokenChars["\\:'"] = "\xBC";
+        mZxTokenChars["\\##"] = "\xBD";
+        mZxTokenChars["\\,,"] = "\xBE";
+        mZxTokenChars["\\~~"] = "\xBF";
+
+        for (int i = 0x43; i <= 0x7F; i++)
+        {
+                AnsiString hex = AnsiString::IntToHex(i, 4).UpperCase();
+                mZxTokenChars["\\" + hex] = "[HEX:" + hex + "]";
+        }
+
+        mZxTokenChars["% "] = "\xAB";
+        mZxTokenChars["\\.:"] = "\xAC";
+        mZxTokenChars["\\:."] = "\xAA";
+        mZxTokenChars["\\.."] = "\xAE";
+        mZxTokenChars["\\':"] = "\xAF";
+        mZxTokenChars["\\ :"] = "\xB0";
+        mZxTokenChars["\\'."] = "\xB1";
+        mZxTokenChars["\\ ."] = "\xB2";
+        mZxTokenChars["\\@@"] = "\xB3";
+        mZxTokenChars["\\;;"] = "\xB4";
+        mZxTokenChars["\\!!"] = "\xB5";
+        mZxTokenChars["%\""] = "\x86";
+        mZxTokenChars["%£"] = "\x87";
+        mZxTokenChars["%$"] = "\x88";
+        mZxTokenChars["%:"] = "\x89";
+        mZxTokenChars["%?"] = "\x8A";
+        mZxTokenChars["%("] = "\x8B";
+        mZxTokenChars["%)"] = "\x8C";
+        mZxTokenChars["%>"] = "\x8D";
+        mZxTokenChars["%<"] = "\x8E";
+        mZxTokenChars["%="] = "\x8F";
+        mZxTokenChars["%+"] = "\x90";
+        mZxTokenChars["%-"] = "\x91";
+        mZxTokenChars["%*"] = "\x92";
+        mZxTokenChars["%/"] = "\x93";
+        mZxTokenChars["%;"] = "\x94";
+        mZxTokenChars["%,"] = "\x95";
+        mZxTokenChars["%."] = "\x96";
+        mZxTokenChars["%0"] = "\x97";
+        mZxTokenChars["%1"] = "\x98";
+        mZxTokenChars["%2"] = "\x99";
+        mZxTokenChars["%3"] = "\x9A";
+        mZxTokenChars["%4"] = "\x9B";
+        mZxTokenChars["%5"] = "\x9C";
+        mZxTokenChars["%6"] = "\x9D";
+        mZxTokenChars["%7"] = "\x9E";
+        mZxTokenChars["%8"] = "\x9F";
+        mZxTokenChars["%9"] = "\xA0";
+
+        for (int i = 'A'; i <= 'Z'; i++)
+        {
+                AnsiString letter = (char)i;
+                mZxTokenChars["%" + letter] = letter.LowerCase();
+        }
+
+        mZxTokenChars["\"\""] = "\xC0";
+        mZxTokenChars["\\C3"] = "[HEX:C3]";
 }
 
 std::string zx81BasicLister::GetKeywords()
@@ -49,6 +117,24 @@ std::string zx81BasicLister::GetKeywords()
         }
         
         return keywords;
+}
+
+AnsiString zx81BasicLister::TranslateToZxToken(AnsiString chr)
+{
+        AnsiString translatedChr;
+
+        map<AnsiString, AnsiString>::const_iterator it = mZxTokenChars.find(chr);
+
+        if (it != mZxTokenChars.end())
+        {
+                translatedChr = it->second;
+        }
+        else
+        {
+                translatedChr = chr;
+        }
+
+        return translatedChr;
 }
 
 int zx81BasicLister::GetProgramStartAddress()
@@ -130,6 +216,11 @@ AnsiString zx81BasicLister::GetBasicFileExtension()
 {
         return "b81";
 }                           
+
+bool zx81BasicLister::ZxTokenSupported()
+{
+        return true;
+}
 
 bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes)
 {

@@ -585,7 +585,7 @@ void zx81BasicLoader::ExtractZxTokenCharacterCodes()
         zxTokenChars[0x9D] = 162;
         zxTokenChars[0x9E] = 163;       // ž
         zxTokenChars[0x9F] = 164;       // Ÿ
-        zxTokenChars[0xA0] = 162;
+        zxTokenChars[0xA0] = 165;
         zxTokenChars[0xC0] = 192;       // À
                                         
         for (unsigned char c = 'a'; c <= 'z'; c++)

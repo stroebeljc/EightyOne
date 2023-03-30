@@ -32,7 +32,7 @@ IBasicLister::IBasicLister() :
 
 void IBasicLister::PopulateKeywords()
 {
-        mKeywords = GetKeywords();
+        std::string keywords = GetKeywords();
 
         int keywordIndex = 0;
         int currPos = 0;
@@ -41,11 +41,11 @@ void IBasicLister::PopulateKeywords()
 
         do
         {
-                sepPos = mKeywords.find("¦", currPos);
+                sepPos = keywords.find("¦", currPos);
                 if (sepPos >= 0)
                 {
                         currPos = sepPos;
-                        mKeyword[keywordIndex] = mKeywords.substr(prevPos, currPos - prevPos);
+                        mKeyword[keywordIndex] = keywords.substr(prevPos, currPos - prevPos);
                         currPos++;
                         prevPos = currPos;
                         keywordIndex++;
@@ -429,7 +429,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 }
 
-AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool limitLineLengths, bool outputFullWidthLineNumbers)
+AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers)
 {
         AnsiString lineText = "";
 
@@ -459,7 +459,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         
         do
         {
-                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputStringTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, outputVariableNamesInLowercase, withinQuotes, withinRem))
+                if (RenderTokenAsText(address, lengthRemaining, lastKeywordEndedWithSpace, zxCharacter, outputLineAsControlCodes, outputRemTokensAsCharacterCodes, outputStringTokensAsCharacterCodes, outputNonAsciiAsCharacterCodes, outputVariableNamesInLowercase, outputInZxTokenFormat, withinQuotes, withinRem))
                 {
                         lineText += zxCharacter;
                         lineLength += zxCharacter.Length();
@@ -473,10 +473,17 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
         }
         while (lengthRemaining > 0);
 
+        if (outputInZxTokenFormat)
+        {
+                TReplaceFlags flags = TReplaceFlags() << rfReplaceAll;
+                lineText = StringReplace(lineText, "][HEX:", ",", flags);
+                lineText = StringReplace(lineText, "]\\\n[HEX:", ",\\\n", flags);
+        }
+
         return lineText;
 }
 
-bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool& withinQuotes, bool& withinRem)
+bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem)
 {
         unsigned char c = (unsigned char)getbyte(address);
         address++;
@@ -513,8 +520,17 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
 
         if ((outputStringTokensAsCharacterCodes && withinQuotes && token) || outputLineAsControlCodes || (((mKeyword[c] == "£") || (mKeyword[c] == "©")) && outputNonAsciiAsCharacterCodes))
         {
-                zxCharacter = mEscapeCharacter;
-                zxCharacter += UpperCase(IntToHex(c, 2));
+                if (!outputInZxTokenFormat)
+                {
+                        zxCharacter = mEscapeCharacter;
+                        zxCharacter += UpperCase(IntToHex(c, 2));
+                }
+                else
+                {
+                        zxCharacter = "[HEX:";
+                        zxCharacter += UpperCase(IntToHex(c, 2));
+                        zxCharacter += "]";
+                }
 
                 lastKeywordEndedWithSpace = false;
         }
@@ -553,12 +569,17 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                 else
                 {
                         zxCharacter = mKeyword[c].c_str();
+
+                        if (outputInZxTokenFormat)
+                        {
+                                zxCharacter = TranslateToZxToken(zxCharacter);
+                        }
                 }
 
                 lastKeywordEndedWithSpace = false;
 
                 if (zxCharacter == mEscapeCharacter)
-                {                        
+                {
                         zxCharacter += mEscapeCharacter;
 /*
                         unsigned char nc = (unsigned char)getbyte(address);

@@ -123,8 +123,8 @@ void zx80BasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
         {
                 tokens.clear();
 
-                tokens[241] = " DELETE ";
-                tokens[245] = " CONFIG ";
+                tokens[241] = " CONFIG ";
+                tokens[245] = " DELETE ";
                 tokens[255] = " CAT ";
 
                 DoTokenise(tokens);

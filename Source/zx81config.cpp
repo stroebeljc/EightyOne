@@ -152,6 +152,7 @@ void load_config(void)
         strcpy(emulator.ROMOPUSD,"opusd.rom");
         strcpy(emulator.ROMBETADISC,"trdos.rom");
         strcpy(emulator.ROMUSPEECH,"uspeech.rom");
+        strcpy(emulator.ROMUSOURCE,"usource.rom");
 
         strcpy(emulator.machinename, "EightyOne");
 
@@ -168,6 +169,7 @@ void load_config(void)
         tv.DisableAdvanced=0;
 
         spectrum.uspeech=0;
+        spectrum.usource=0;
         spectrum.kbissue=SPECKBISS3;
         spectrum.driveatype=DRIVE3INCHSS;
         spectrum.drivebtype=DRIVE3INCHSS;

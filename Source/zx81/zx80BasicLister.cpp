@@ -19,9 +19,85 @@
 #include "zx80BasicLister.h"
 #include "zx81config.h"
 
+using namespace std;
+
 zx80BasicLister::zx80BasicLister(bool zxpandEnabled)
 {
         mZxpandEnabled = zxpandEnabled;
+
+        // Details on ZxToken format can be found: http://dskcenter.free.fr/zxtools.html
+        mZxTokenChars["\\: "] = "\xBA";
+        mZxTokenChars["\\.."] = "\xAE";
+        mZxTokenChars["\\' "] = "\xB6";
+        mZxTokenChars["\\ '"] = "\xB7";
+        mZxTokenChars["\\. "] = "\xB9";
+        mZxTokenChars["\\ ."] = "\xB2";
+        mZxTokenChars["\\.'"] = "\xBB";
+        mZxTokenChars["\\##"] = "\xBD";
+        mZxTokenChars["\\,,"] = "\xBE";
+        mZxTokenChars["\\~~"] = "\xBF";
+
+        for (int i = 0x40; i <= 0x7F; i++)
+        {
+                AnsiString hex = AnsiString::IntToHex(i, 4).UpperCase();
+                mZxTokenChars["\\" + hex] = "[HEX:" + hex + "]";
+        }
+
+        mZxTokenChars["% "] = "\xAB";
+        mZxTokenChars["%\""] = "\x86";
+        mZxTokenChars["\\ :"] = "\xB0";
+        mZxTokenChars["\\''"] = "\xB8";
+        mZxTokenChars["\\.:"] = "\xAC";
+        mZxTokenChars["\\:."] = "\xAA";
+        mZxTokenChars["\\':"] = "\xAF";
+        mZxTokenChars["\\:'"] = "\xBC";
+        mZxTokenChars["\\'."] = "\xB1";
+        mZxTokenChars["\\@@"] = "\xB3";
+        mZxTokenChars["\\;;"] = "\xB4";
+        mZxTokenChars["\\!!"] = "\xB5";    
+        mZxTokenChars["%£"] = "\x87";
+        mZxTokenChars["%$"] = "\x88";
+        mZxTokenChars["%:"] = "\x89";
+        mZxTokenChars["%?"] = "\x8A";
+        mZxTokenChars["%("] = "\x8B";
+        mZxTokenChars["%)"] = "\x8C";
+        mZxTokenChars["%-"] = "\x91";
+        mZxTokenChars["%+"] = "\x90";
+        mZxTokenChars["%*"] = "\x92";
+        mZxTokenChars["%/"] = "\x93";
+        mZxTokenChars["%="] = "\x8F";
+        mZxTokenChars["%>"] = "\x8D";
+        mZxTokenChars["%<"] = "\x8E";
+        mZxTokenChars["%;"] = "\x94";
+        mZxTokenChars["%,"] = "\x95";
+        mZxTokenChars["%."] = "\x96";
+        mZxTokenChars["%0"] = "\x97";
+        mZxTokenChars["%1"] = "\x98";
+        mZxTokenChars["%2"] = "\x99";
+        mZxTokenChars["%3"] = "\x9A";
+        mZxTokenChars["%4"] = "\x9B";
+        mZxTokenChars["%5"] = "\x9C";
+        mZxTokenChars["%6"] = "\x9D";
+        mZxTokenChars["%7"] = "\x9E";
+        mZxTokenChars["%8"] = "\x9F";
+        mZxTokenChars["%9"] = "\xA0";
+
+        for (int i = 'A'; i <= 'Z'; i++)
+        {
+                AnsiString letter = (char)i;
+                mZxTokenChars["%" + letter] = letter.LowerCase();
+        }
+
+        for (int i = 0xC0; i <= 0xD3; i++)
+        {
+                AnsiString hex = AnsiString::IntToHex(i, 4).UpperCase();
+                mZxTokenChars["\\" + hex] = "[HEX:" + hex + "]";
+        }
+
+        mZxTokenChars["\\F1"] = "[HEX:F1]";
+        mZxTokenChars["\\F2"] = "[HEX:F2]";
+        mZxTokenChars["\\F5"] = "[HEX:F5]";
+        mZxTokenChars["\\FF"] = "[HEX:FF]";
 }
 
 std::string zx80BasicLister::GetKeywords()
@@ -46,10 +122,38 @@ std::string zx80BasicLister::GetKeywords()
                            "\\60¦\\61¦\\62¦\\63¦\\64¦\\65¦\\66¦\\67¦\\68¦\\69¦\\6A¦\\6B¦\\6C¦\\6D¦\\6E¦\\6F¦\\70¦\\71¦\\72¦\\73¦\\74¦\\75¦\\76¦\\77¦\\78¦\\79¦\\7A¦\\7B¦\\7C¦\\7D¦\\7E¦\\7F¦"
                            "% ¦%\"¦\\ :¦\\''¦\\.:¦\\:.¦\\':¦\\:'¦\\'.¦\\@@¦\\;;¦\\!!¦%£¦%$¦%:¦%?¦%(¦%)¦%-¦%+¦%*¦%/¦%=¦%>¦%<¦%;¦%,¦%.¦%0¦%1¦%2¦%3¦%4¦%5¦%6¦%7¦%8¦%9¦%A¦%B¦%C¦%D¦%E¦%F¦%G¦%H¦%I¦%J¦%K¦%L¦%M¦%N¦%O¦%P¦%Q¦%R¦%S¦%T¦%U¦%V¦%W¦%X¦%Y¦%Z¦"
                            "\\C0¦\\C1¦\\C2¦\\C3¦\\C4¦\\C5¦\\C6¦\\C7¦\\C8¦\\C9¦\\CA¦\\CB¦\\CC¦\\CD¦\\CE¦\\CF¦\\D0¦\\D1¦\\D2¦\\D3¦"
-                           "\"¦ THEN ¦ TO ¦;¦,¦)¦(¦NOT ¦-¦+¦*¦/¦ AND ¦ OR ¦**¦=¦>¦<¦ LIST ¦ RETURN ¦ CLS ¦ DIM ¦ SAVE ¦ FOR ¦ GO TO ¦ POKE ¦ INPUT ¦ RANDOMISE ¦ LET ¦ DELETE ¦\\F2¦ NEXT ¦ PRINT ¦ CONFIG ¦ NEW ¦ RUN ¦ STOP ¦ CONTINUE ¦ IF ¦ GO SUB ¦ LOAD ¦ CLEAR ¦ REM ¦ CAT ¦";
+                           "\"¦ THEN ¦ TO ¦;¦,¦)¦(¦NOT ¦-¦+¦*¦/¦ AND ¦ OR ¦**¦=¦>¦<¦ LIST ¦ RETURN ¦ CLS ¦ DIM ¦ SAVE ¦ FOR ¦ GO TO ¦ POKE ¦ INPUT ¦ RANDOMISE ¦ LET ¦ CONFIG ¦\\F2¦ NEXT ¦ PRINT ¦ DELETE ¦ NEW ¦ RUN ¦ STOP ¦ CONTINUE ¦ IF ¦ GO SUB ¦ LOAD ¦ CLEAR ¦ REM ¦ CAT ¦";
         }
 
         return keywords;
+}
+
+AnsiString zx80BasicLister::TranslateToZxToken(AnsiString chr)
+{
+        AnsiString translatedChr;
+
+        map<AnsiString, AnsiString>::const_iterator it = mZxTokenChars.find(chr);
+
+        if (it != mZxTokenChars.end())
+        {
+                translatedChr = it->second;
+
+                if (mZxpandEnabled)
+                {
+                        if (translatedChr == "[HEX:F1]")
+                                translatedChr = " DELETE ";
+                        else if (translatedChr == "[HEX:F5]")
+                                translatedChr = " CONFIG ";
+                        else if (translatedChr == "[HEX:FF]")
+                                translatedChr = " CAT ";
+                }
+        }
+        else
+        {
+                translatedChr = chr;
+        }
+
+        return translatedChr;
 }
 
 int zx80BasicLister::GetProgramStartAddress()
@@ -179,6 +283,11 @@ AnsiString zx80BasicLister::GetBasicFileExtension()
         return "b80";
 }
 
+bool zx80BasicLister::ZxTokenSupported()
+{
+        return true;
+}
+
 bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes)
 {
         bool containsMachineCode = false;
@@ -195,7 +304,10 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
                 if ((c >= 0x40 && c < 0x80 && !(c == 0x76 && endOfLine)) || (c >= 0xC0 && c <= 0xD3) ||
                      c == 0xF1 || c == 0xF2 || c == 0xF5 || c == 0xFF || (c >= 0x10 && c <= 0x1A))
                 {
-                        containsMachineCode = true;
+                        if (!mZxpandEnabled || (mZxpandEnabled && c != 0xF1 && c != 0xF5 && c != 0xFF))
+                        {
+                                containsMachineCode = true;
+                        }
                         break;
                 }
                 else if (outputRemTokensAsCharacterCodes && ( c == 0xD5 || c == 0xD6 || c == 0xDB || (c >= 0xE0 && c <= 0xE2) || c >= 0xE6))

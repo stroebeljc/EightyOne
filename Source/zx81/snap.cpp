@@ -300,7 +300,7 @@ void load_snap_romcartridge(FILE *f)
         HW->ZXC1ConfigurationBox->Visible = zxc1Selected;
         if (zxc1Selected)
         {
-                HW->RomCartridgeFileBox->Left = 281;
+                HW->RomCartridgeFileBox->Left = 277;
                 HW->RomCartridgeFileBox->Width = 88;
 
                 if (HW->ZXC1ConfigurationBox->ItemIndex == -1)
@@ -310,7 +310,7 @@ void load_snap_romcartridge(FILE *f)
         }
         else
         {
-                HW->RomCartridgeFileBox->Left = 188;
+                HW->RomCartridgeFileBox->Left = 184;
                 HW->RomCartridgeFileBox->Width = 181;
         }
 }
@@ -694,7 +694,7 @@ void InitialiseHardware()
         SetComboBox(HW->RomCartridgeBox, "None");
         SetComboBox(HW->ZXC1ConfigurationBox, "32K");
         HW->ZXC1ConfigurationBox->Visible = false;
-        HW->RomCartridgeFileBox->Left = 188;
+        HW->RomCartridgeFileBox->Left = 184;
         HW->RomCartridgeFileBox->Width = 181;
         HW->RomCartridgeFileBox->Text = "";
         HW->BrowseRomCartridge->Enabled = false;

@@ -114,6 +114,7 @@ __published:	// IDE-managed Components
         TImageList *ZX80Icons;
         TComboBox *ComboBoxRomCartridgeFileBox;
         TLabel *LabelTotalRAM;
+        TCheckBox *uSource;
         void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
@@ -165,6 +166,7 @@ __published:	// IDE-managed Components
         void __fastcall ButtonAdvancedMoreClick(TObject *Sender);
         void __fastcall ImprovedWaitClick(TObject *Sender);
         void __fastcall ComboBoxRomCartridgeFileBoxChange(TObject *Sender);
+        void __fastcall uSourceClick(TObject *Sender);
 private:	// User declarations
         int AdvancedHeight, RamPackHeight;
         int NewMachine, NewSpec;

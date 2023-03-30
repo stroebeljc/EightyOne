@@ -177,6 +177,7 @@ typedef struct
         int RAMBanks;
         int ROMBanks;
         int uspeech;
+        int usource;
         int kbissue;
         int kmouse;
         int floppytype, autoboot;
@@ -335,6 +336,7 @@ typedef struct
         char ROMOPUSD[256];
         char ROMBETADISC[256];
         char ROMUSPEECH[256];
+        char ROMUSOURCE[256];
 
         char cwd[256];
         char temppath[256];

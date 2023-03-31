@@ -88,10 +88,11 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
 
         Top = My - Height/2;
         Left = Mx - Width/2;
-        if (Top<0) Top=0;
-        if (Left<0) Left=0;
-        if (Left+Width > Screen->Width) Left = Screen->Width - Width;
-        if (Top+Height > Screen->Height) Top = Screen->Height - Height;
+        TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
+        if (Top<monitor->Top) Top=monitor->Top;
+        if (Left<monitor->Left) Left=monitor->Left;
+        if (Left+Width > monitor->Left+monitor->Width) Left = monitor->Left+monitor->Width - Width;
+        if (Top+Height > monitor->Top+monitor->Height) Top = monitor->Top+monitor->Height - Height;
 
         RadioButton4->Checked=true; RadioButton8->Checked=true; RadioButton12->Checked=true; RadioButton16->Checked=true;
         RadioButton20->Checked=true; RadioButton24->Checked=true; RadioButton84->Checked=true;

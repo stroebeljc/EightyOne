@@ -750,13 +750,12 @@ int save_snap(char *filename)
         if (strcmp(p,".Z81") && strcmp(p,".z81")
                 && strcmp(p,".ace") && strcmp(p,".ACE") ) return(0);
 
-
         if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
         {
                 f=fopen(filename,"wb");
                 if (!f)
                 {
-                        ShowMessage("Save failed.");
+                        ShowMessage("Save snapshot failed.");
                         return(0);
                 }
 
@@ -815,16 +814,17 @@ int save_snap(char *filename)
                 memory[memptr] = z80.iff1; memptr+=4;
                 memory[memptr] = z80.iff2; memptr+=4;
                 memory[memptr] = z80.i; memptr+=4;
-                memory[memptr] = z80.r;
+                memory[memptr] = z80.r; memptr+=4;
+                memory[memptr] = 0x80; memory[memptr+1] = 0x00; memory[memptr+2] = 0x00; memory[memptr+3] = 0x00;
 
                 Addr=0x2000;
 
-                while(Addr<32768)
+                while(Addr <= zx81.RAMTOP)
                 {
                         Chr=memory[Addr];
                         Count=1;
 
-                        while((memory[Addr+Count]==Chr) && ((Addr+Count)<=32768))
+                        while((memory[Addr+Count] == Chr) && ((Addr+Count) <= zx81.RAMTOP))
                                 Count++;
 
                         if (Count>240) Count=240;
@@ -1004,7 +1004,8 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1)
         {
-                ShowMessage("ROM load failed.");
+                AnsiString errMsg = "ROM load to address failed:\n" + AnsiString(filename);
+                ShowMessage(errMsg);
                 return(errno);
         }
 
@@ -1012,7 +1013,8 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         {
                 int err=errno;
                 close(fptr);
-                ShowMessage("ROM load failed.");
+                AnsiString errMsg = "ROM load to address failed:\n" + AnsiString(filename);
+                ShowMessage(errMsg);
                 return(err);
         }
 
@@ -1042,7 +1044,8 @@ int memory_load(char *filename, int address, int length)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1)
         {
-                ShowMessage("ROM load failed.");
+                AnsiString errMsg = "ROM load failed:\n" + AnsiString(filename);
+                ShowMessage(errMsg);
                 return(errno);
         }
 
@@ -1050,7 +1053,8 @@ int memory_load(char *filename, int address, int length)
         {
                 int err=errno;
                 close(fptr);
-                ShowMessage("ROM load failed.");
+                AnsiString errMsg = "ROM load failed:\n" + AnsiString(filename);
+                ShowMessage(errMsg);
                 return(err);
         }
 
@@ -1076,7 +1080,8 @@ int font_load(char *filename, char *address, int length)
         {
                 int err=errno;
                 close(fptr);
-                ShowMessage("Font load failed.");
+                AnsiString errMsg = "Font load failed:\n" + AnsiString(filename);
+                ShowMessage(errMsg);
                 return(err);
         }
 

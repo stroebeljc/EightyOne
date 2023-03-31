@@ -1,6 +1,6 @@
 object EditTextForm: TEditTextForm
-  Left = 378
-  Top = 157
+  Left = 382
+  Top = 161
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Edit Text Block'

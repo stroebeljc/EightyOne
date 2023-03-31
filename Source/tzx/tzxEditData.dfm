@@ -1,6 +1,6 @@
 object EditDataForm: TEditDataForm
-  Left = 139
-  Top = 517
+  Left = 143
+  Top = 521
   Width = 632
   Height = 322
   BorderIcons = []

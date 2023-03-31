@@ -171,6 +171,11 @@ void TBasicLister::HighlightRows(int startRow, int endRow)
 
 void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
 {
+        if (endRow - startRow > 20)
+        {
+                Screen->Cursor = crHourGlass;
+        }
+
         HDC hdc = (HDC)Canvas->Handle;
         HDC chdc = CreateCompatibleDC(hdc);
         HGDIOBJ oldbm = SelectObject(chdc, mBitmap);
@@ -183,15 +188,19 @@ void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
         int startY = startRow * PixelsPerCharacterHeight * mScaling;
         int endY = (endRow + 1) * PixelsPerCharacterHeight * mScaling;
 
+        bool doubleSize = (mScaling == 2);
+
         for (int y = startY; y < endY; y += mScaling)
         {
-                for (int x = 0; x < mBMWidth * mScaling; x += mScaling)
+                int xWidth = mBMWidth * mScaling;
+
+                for (int x = 0; x < xWidth; x += mScaling)
                 {
                         COLORREF pixelColor = GetPixel(chdc, x, y);
                         if (pixelColor == findColour)
                         {
                                 SetPixelV(chdc, x, y, replaceColour);
-                                if (mScaling == 2)
+                                if (doubleSize)
                                 {
                                         SetPixelV(chdc, x+1, y, replaceColour);
                                         SetPixelV(chdc, x, y+1, replaceColour);
@@ -203,6 +212,8 @@ void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+
+        Screen->Cursor = crDefault;
 }
 
 void TBasicLister::HighlightLine(int lineNumber)

@@ -1,6 +1,6 @@
 object BasicLister: TBasicLister
-  Left = 237
-  Top = 121
+  Left = 242
+  Top = 124
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'BASIC Listing'

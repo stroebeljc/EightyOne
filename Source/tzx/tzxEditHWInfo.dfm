@@ -1,6 +1,6 @@
 object EditHWInfoForm: TEditHWInfoForm
-  Left = 418
-  Top = 102
+  Left = 421
+  Top = 106
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Edit Hardware Information'

@@ -1,6 +1,6 @@
 object EditPauseForm: TEditPauseForm
-  Left = 200
-  Top = 123
+  Left = 203
+  Top = 127
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Edit Pause Block'

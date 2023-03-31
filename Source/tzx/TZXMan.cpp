@@ -517,7 +517,9 @@ void __fastcall TTZX::TableContextPopup(TObject *Sender, TPoint &MousePos,
         Mx=Left+MousePos.x;
         My=32+Top+MousePos.y;
 
-        line=Table->TopRow + MousePos.y / (Table->DefaultRowHeight+Table->GridLineWidth) - 1;
+        TPoint Pt = this->ScreenToClient(Mouse->CursorPos);
+        line=Table->TopRow + (Pt.y - Table->Top) / (Table->DefaultRowHeight+Table->GridLineWidth) - 1;
+
         if (line<1 || line>TZXFile.Blocks)
         {
                 EditBlock1->Enabled=false;
@@ -597,8 +599,8 @@ void __fastcall TTZX::DeleteBlock1Click(TObject *Sender)
 void __fastcall TTZX::EditBlock1Click(TObject *Sender)
 {
         Mx = TZX->Left + Table->Left + (Table->Width/2);
-        My = TZX->Top + Table->Top + (
-                Table->Row - Table->TopRow)*(Table->DefaultRowHeight*Table->GridLineWidth);
+        My = TZX->Top + Table->Top + (Table->Height/2);
+//####                Table->Row - Table->TopRow)*(Table->DefaultRowHeight*Table->GridLineWidth);
 
         TZXFile.EditBlock(Table->Row-1, Mx, My);
         UpdateTable(false);
@@ -916,13 +918,11 @@ void __fastcall TTZX::SoundOnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-
 void __fastcall TTZX::FormCreate(TObject *Sender)
 {
         if (Panel1->Top > (ClientHeight-Panel1->Height))
         {
-                Panel1->Top = ClientHeight-(Panel1->Height + 5);
+                Panel1->Top = ClientHeight - (Panel1->Height + 5);
                 Panel1->Left = (ClientWidth/2) - (Panel1->Width/2);
         }
 
@@ -942,16 +942,8 @@ void __fastcall TTZX::FormCreate(TObject *Sender)
         }
 
         if (Panel2->Width > ClientWidth) Panel2->Width = ClientWidth - (Panel2->Left*2);
-        //if ((AutoLoadBtn->Left+AutoLoadBtn->Width) > (ClientWidth-10))
-        //{
-        //        AutoLoadBtn->Left = ClientWidth - (AutoLoadBtn->Width+10);
-        //        AutoStartBtn->Left = AutoLoadBtn->Left - AutoStartBtn->Width;
-        //        FlashLoadBtn->Left = AutoStartBtn->Left - FlashLoadBtn->Width;
-        //        SoundOn->Left = FlashLoadBtn->Left - SoundOn->Width;
-        //}
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall TTZX::ConvertTapetoWave1Click(TObject *Sender)
 {
@@ -1060,5 +1052,7 @@ void __fastcall TTZX::GroupEnd1Click(TObject *Sender)
         UpdateTable(false);
 }
 //---------------------------------------------------------------------------
+
+
 
 

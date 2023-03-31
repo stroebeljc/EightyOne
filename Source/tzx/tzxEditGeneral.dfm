@@ -1,6 +1,6 @@
 object EditGeneralForm: TEditGeneralForm
-  Left = 233
-  Top = 24
+  Left = 238
+  Top = 28
   Width = 647
   Height = 663
   BorderIcons = [biSystemMenu]

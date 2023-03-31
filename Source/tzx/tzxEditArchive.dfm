@@ -1,6 +1,6 @@
 object EditArchiveInfo: TEditArchiveInfo
-  Left = 462
-  Top = 135
+  Left = 466
+  Top = 139
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Edit Archive Information'

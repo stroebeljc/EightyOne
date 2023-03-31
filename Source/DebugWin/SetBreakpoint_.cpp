@@ -213,7 +213,7 @@ void TSetBreakpoint::ConfigureBreakpointFields(struct breakpoint& bp)
 
         BreakConditionValue->ItemIndex = bp.ConditionValue;
 
-        if ((BreakType->ItemIndex == BP_TSTATES) || (BreakType->ItemIndex == BP_FLAG))
+        if ((BreakType->ItemIndex == BP_TCYCLES) || (BreakType->ItemIndex == BP_FLAG))
         {
                 BreakValue->Text = bp.Value;
         }
@@ -287,6 +287,7 @@ bool TSetBreakpoint::GetBreakpointFields(struct breakpoint& bp)
 
         bp.Type = (BreakpointType)BreakType->ItemIndex;
         bp.ConditionAddr = (BreakpointCondition)BreakConditionAddr->ItemIndex;
+
         if ((bp.Type == BP_INH) || (bp.Type == BP_OUTH))
         {
                 bp.Addr = addr << 8;
@@ -341,7 +342,7 @@ void __fastcall TSetBreakpoint::BreakTypeChange(TObject *Sender)
                         BreakTypeChangeRegister();
                         break;
 
-                case BP_TSTATES:
+                case BP_TCYCLES:
                         BreakTypeChangeTStates();
                         break;
 
@@ -375,6 +376,16 @@ void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, AnsiString
         conditionList->Items->Add(lastCondition);
         conditionList->ItemIndex = 0;
         conditionList->Enabled = (conditionList->Items->Count > 1);
+
+        if (lastCondition == "@")
+        {
+                conditionList->Items->Add(lastCondition);
+                conditionList->Items->Add(lastCondition);
+                conditionList->Items->Add(lastCondition);
+                conditionList->Items->Add(lastCondition);
+                conditionList->Items->Add(lastCondition);
+                conditionList->ItemIndex = 5;
+        }
 }
 
 void TSetBreakpoint::SetEditBox(TEdit* const editBox, AnsiString defaultText)
@@ -440,7 +451,7 @@ void TSetBreakpoint::BreakTypeChangeFlag()
 
 void TSetBreakpoint::BreakTypeChangeTStates()
 {
-        SetConditionList(BreakConditionAddr, "=");
+        SetConditionList(BreakConditionAddr, "@");
         SetEditBox(BreakAddress, "$0000");
         SetConditionList(BreakConditionValue, "<>");
         SetEditBox(BreakValue, "0    ");
@@ -506,7 +517,7 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
                                         BreakConditionValue->ItemIndex = GreaterThanEquals;
                                         break;
 
-                                case BP_TSTATES:
+                                case BP_TCYCLES:
                                         SetEditBoxLabels("Address", "T-States");
                                         break;
 
@@ -665,7 +676,7 @@ int TSetBreakpoint::GetBreakValueMaxDigits(BreakpointType type, BreakpointCondit
                         limit = 2;
                         break;
 
-                case BP_TSTATES:
+                case BP_TCYCLES:
                         limit = 5;
                         break;
 
@@ -726,7 +737,7 @@ void TSetBreakpoint::GetBreakValueLimits(BreakpointType type, BreakpointConditio
         
         switch (type)
         {
-                case BP_TSTATES:
+                case BP_TCYCLES:
                         upperLimit = 999999;
                         break;
 

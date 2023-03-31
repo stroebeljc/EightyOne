@@ -348,7 +348,7 @@ private:	// User declarations
         AnsiString GetBreakpointText(breakpoint* const bp);
 
         bool BPInOutHit(BreakpointType type, int addr, int value, breakpoint* const bp);
-        bool BPClockHit(int addr, breakpoint* const bp);
+        bool BPTCyclesHit(int addr, breakpoint* const bp);
         bool BPReadWriteHit(BreakpointType type, int addr, int value, breakpoint* const bp);
         bool BPFlagValueHit(breakpoint* const bp);
         bool BPMemoryValueHit(breakpoint* const bp);

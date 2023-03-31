@@ -214,7 +214,7 @@ int TDbg::FindBreakPointEntry(int index, struct breakpoint& bp, bool editing)
 
                 switch (bp.Type)
                 {
-                        case BP_TSTATES:
+                        case BP_TCYCLES:
                                 existingBreakpoint = !editing &&
                                                      (Breakpoint[i].Type == bp.Type);
                                 break;
@@ -338,7 +338,7 @@ AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
                         str = ConstructHighIOBreakpointText("OUT", bp);
                         break;
 
-                case BP_TSTATES:
+                case BP_TCYCLES:
                         str = ConstructTStatesBreakpointText(bp);
                         break;
 
@@ -362,7 +362,7 @@ AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
 
                 if (bp->HitCount > 1)
                 {
-                        str += " @ ";
+                        str += " * ";
                         str += bp->HitCount;
                 }
         }
@@ -372,7 +372,7 @@ AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
 
 static AnsiString GetConditionAddr(BreakpointCondition condition)
 {
-        const AnsiString conditions[] = { " = ", " <>", " <=", " >=", " ->" };
+        const AnsiString conditions[] = { " = ", " <>", " <=", " >=", " ->", " @ " };
 
         return conditions[condition];
 }
@@ -387,7 +387,7 @@ static AnsiString GetConditionValue(BreakpointCondition condition)
 AnsiString TDbg::ConstructTStatesBreakpointText(breakpoint* const bp)
 {
         AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString str = "CLK" + ca + "$" + Hex16(bp->Addr) + " <>" + bp->TStates;
+        AnsiString str = "CYC" + ca + "$" + Hex16(bp->Addr) + " <>" + bp->TStates;
         return str;
 }
 
@@ -545,7 +545,7 @@ bool TDbg::BreakPointHit()
                     Dbg->BPRegisterValueHit(bp) ||
                     Dbg->BPFlagValueHit(bp) ||
                     Dbg->BPMemoryValueHit(bp) ||
-                    Dbg->BPClockHit(z80.pc.w, bp))
+                    Dbg->BPTCyclesHit(z80.pc.w, bp))
 		{
                         if (bp->Permanent)
                         {
@@ -631,9 +631,9 @@ bool TDbg::BPReadWriteHit(BreakpointType type, int addr, int value, breakpoint* 
         return false;
 }
 
-bool TDbg::BPClockHit(int addr, breakpoint* const bp)
+bool TDbg::BPTCyclesHit(int addr, breakpoint* const bp)
 {
-        if (bp->Type != BP_TSTATES || !bp->Enabled)
+        if (bp->Type != BP_TCYCLES || !bp->Enabled)
         {
                 return false;
         }
@@ -1477,7 +1477,7 @@ void TDbg::LoadSettings(TIniFile *ini)
                 Form1->DebugWin->Checked=false;
         }
 
-        Continuous->Checked = ini->ReadBool("DEBUG", "Continuous", true);
+        Continuous->Checked = ini->ReadBool("DEBUG", "Continuous", false);
 }
 
 //---------------------------------------------------------------------------

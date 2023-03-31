@@ -15,7 +15,7 @@ enum BreakpointType
         BP_IN,
         BP_INH,
         BP_INL,
-        BP_TSTATES,
+        BP_TCYCLES,
         BP_MEMORY,
         BP_REGISTER,
         BP_FLAG
@@ -27,7 +27,8 @@ enum BreakpointCondition
         NotEqual,
         LessThanEquals,
         GreaterThanEquals,
-        Range
+        Range,
+        At
 };
 
 enum RegisterType

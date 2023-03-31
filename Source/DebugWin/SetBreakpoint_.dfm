@@ -206,7 +206,7 @@ object SetBreakpoint: TSetBreakpoint
       'In A15-0'
       'In A15-8'
       'In A7-0'
-      'Clock '
+      'T-Cycles'
       'Memory'
       'Register'
       'Flag')

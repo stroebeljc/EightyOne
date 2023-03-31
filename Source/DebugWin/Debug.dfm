@@ -926,7 +926,7 @@ object Dbg: TDbg
       Width = 63
       Height = 14
       Alignment = taRightJustify
-      Caption = 'T-States:'
+      Caption = 'T-Cycles:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -967,7 +967,7 @@ object Dbg: TDbg
       Top = 16
       Width = 105
       Height = 14
-      Caption = 'T-States Count:'
+      Caption = 'T-Cycles Count:'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

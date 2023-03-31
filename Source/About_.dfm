@@ -564,7 +564,7 @@ object About: TAbout
     Top = 404
     Width = 15
     Height = 15
-    Hint = 'Mike'#39's daughter'
+    Hint = 'Michael'#39's daughter'
     AutoSize = True
     ParentShowHint = False
     Picture.Data = {

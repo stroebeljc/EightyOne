@@ -47,7 +47,6 @@ __published:	// IDE-managed Components
         TButton *OK;
         TLabel *RamPackLbl;
         TComboBox *RamPackBox;
-        TButton *AdvancedBtn;
         TOffice97Button *SpecP3Btn;
         TOffice97Button *Spec16Btn;
         TOpenDialog *RomSelect;
@@ -115,7 +114,6 @@ __published:	// IDE-managed Components
         TComboBox *ComboBoxRomCartridgeFileBox;
         TLabel *LabelTotalRAM;
         TCheckBox *uSource;
-        void __fastcall AdvancedBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -168,7 +166,7 @@ __published:	// IDE-managed Components
         void __fastcall ComboBoxRomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall uSourceClick(TObject *Sender);
 private:	// User declarations
-        int AdvancedHeight, RamPackHeight;
+        int RamPackHeight;
         int NewMachine, NewSpec;
         AnsiString NewMachineName;
         void SetupForZX81(void);

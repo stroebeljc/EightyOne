@@ -145,7 +145,14 @@ void TPrinter::ClockTick(int ts)
         if (!MotorOn) return;
         Counter1-=ts;
         if (Counter1>0) return;
-        Counter1 += 1016 - ((100-BitSpeed) * 10);
+        if (MotorSlow)
+        {
+                Counter1 += 4064 - ((100-BitSpeed) * 10);
+        }
+        else
+        {
+                Counter1 += 1016 - ((100-BitSpeed) * 10);
+        }
 
         if (Counter2)
         {
@@ -166,13 +173,20 @@ void TPrinter::ClockTick(int ts)
                         OnPaper=StylusActive;
                         EncoderWheel=false;
                         XPos=0;
-                        Counter2=1+LineSpeed*10;
+                        if (MotorSlow)
+                        {
+                                Counter2=1+LineSpeed;
+                        }
+                        else
+                        {
+                                Counter2=1+LineSpeed*10;
+                        }
                 }
         }
 }
 void TPrinter::WritePort(unsigned char Data)
 {
-//        const int motorSlow = 1;
+        const int motorSlow = 1;
         const int motorOn = 2;
         const int stylusOnPaper = 7;
 
@@ -183,6 +197,15 @@ void TPrinter::WritePort(unsigned char Data)
         else
         {
                 MotorOn = true;
+        }
+
+        if (Data & (1 << motorSlow))
+        {
+                MotorSlow = true;
+        }
+        else
+        {
+                MotorSlow = false;
         }
 
         if (Data & (1 << stylusOnPaper))

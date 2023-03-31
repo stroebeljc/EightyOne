@@ -1364,7 +1364,7 @@ object HW: THW
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 4
+    TabOrder = 3
     OnClick = OKClick
   end
   object RamPackBox: TComboBox
@@ -1384,16 +1384,6 @@ object HW: THW
       '16K'
       '32K'
       '48K')
-  end
-  object AdvancedBtn: TButton
-    Left = 3
-    Top = 315
-    Width = 73
-    Height = 25
-    Anchors = [akLeft, akBottom]
-    Caption = 'Settings'
-    TabOrder = 3
-    OnClick = AdvancedBtnClick
   end
   object Advanced: TPageControl
     Left = 3

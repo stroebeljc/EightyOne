@@ -92,9 +92,7 @@ __fastcall THW::THW(TComponent* Owner)
         TIniFile *ini;
 
         RomCartridgeCapacity = 0;
-        AdvancedHeight=Advanced->Height;
         RamPackHeight=RamPackBox->Height;
-        AdvancedBtnClick(NULL);
         Machine->ActivePage=Sinclair;
         Advanced->ActivePage=Interfaces;
         FloppyDrives->TabVisible=true;
@@ -111,14 +109,6 @@ __fastcall THW::THW(TComponent* Owner)
 
         ResetRequired=true;
         OKClick(NULL);
-}
-//---------------------------------------------------------------------------
-void __fastcall THW::AdvancedBtnClick(TObject *Sender)
-{
-        if (!Advanced->Visible) Height += AdvancedHeight;
-        else Height -= AdvancedHeight;
-
-        Advanced->Visible = !Advanced->Visible;
 }
 //---------------------------------------------------------------------------
 
@@ -2229,7 +2219,6 @@ void THW::SaveSettings(TIniFile *ini)
 
         ini->WriteInteger("HWARE","Top",Top);
         ini->WriteInteger("HWARE","Left",Left);
-        ini->WriteBool("HWARE","Advanced",Advanced->Visible);
         ini->WriteBool("HWARE","ZX80",ZX80Btn->Down);
         ini->WriteBool("HWARE","ZX81",ZX81Btn->Down);
         ini->WriteBool("HWARE","Spec16",Spec16Btn->Down);
@@ -2369,9 +2358,6 @@ void THW::LoadSettings(TIniFile *ini)
 
         Top=ini->ReadInteger("HWARE","Top",Top);
         Left=ini->ReadInteger("HWARE","Left",Left);
-
-        if (ini->ReadBool("HWARE","Advanced",Advanced->Visible))
-                AdvancedBtnClick(NULL);
 
         Rom=emulator.ROM80; Rom=ini->ReadString("HWARE","ROM80",Rom).LowerCase(); strcpy(emulator.ROM80, Rom.c_str());
         Rom=emulator.ROM81; Rom=ini->ReadString("HWARE","ROM81",Rom).LowerCase(); strcpy(emulator.ROM81, Rom.c_str());

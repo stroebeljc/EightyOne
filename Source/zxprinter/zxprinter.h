@@ -67,7 +67,7 @@ private:	// User declarations
         void ResetPrinter(void);
         void ClearBitmap(Graphics::TBitmap *Bitmap);
         Graphics::TBitmap *PrinterOutput;
-        bool MotorOn, StylusActive, OnPaper, EncoderWheel;
+        bool MotorOn, MotorSlow, StylusActive, OnPaper, EncoderWheel;
         int XPos, YPos, Counter1, Counter2;
 public:		// User declarations
         __fastcall TPrinter(TComponent* Owner);

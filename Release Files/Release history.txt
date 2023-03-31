@@ -16,6 +16,7 @@ Version 1.34 - 31/03/2023 (by Paul Farrow)
   - Amended ZX81 symbol names to match those in The Complete Timex TS1000/Sinclair ZX81 ROM
     Disassembly by Dr Ian Logan and Dr Frank O'Hara.
   - Changed display of RAM sizes from 'k' to 'K'.
+  - Removed Settings button on the Hardware dialog.
 * Enhancements:
   - Double clicking an existing breakpoint now opens it for editing.
   - The configure breakpoint dialog now has an option to enable/disable the selected breakpoint.

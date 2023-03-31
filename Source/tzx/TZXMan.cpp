@@ -600,7 +600,6 @@ void __fastcall TTZX::EditBlock1Click(TObject *Sender)
 {
         Mx = TZX->Left + Table->Left + (Table->Width/2);
         My = TZX->Top + Table->Top + (Table->Height/2);
-//####                Table->Row - Table->TopRow)*(Table->DefaultRowHeight*Table->GridLineWidth);
 
         TZXFile.EditBlock(Table->Row-1, Mx, My);
         UpdateTable(false);
@@ -702,8 +701,7 @@ void TTZX::RecStopCheck(void)
         UpdateTable(false);
         Table->Row ++;
 }
-
-
+                        
 void __fastcall TTZX::Data1Click(TObject *Sender)
 {
         int i;
@@ -784,7 +782,6 @@ void __fastcall TTZX::AutoLoadonInsert1Click(TObject *Sender)
 
 void __fastcall TTZX::ScrollBar1Change(TObject *Sender)
 {
-        //ScrollBar1->Max=Table->RowCount - Table->VisibleRowCount ;
         Table->TopRow = ScrollBar1->Position;
 }
 //---------------------------------------------------------------------------
@@ -871,9 +868,7 @@ void __fastcall TTZX::FFEndClick(TObject *Sender)
         UpdateButtons();
 }
 //---------------------------------------------------------------------------
-
-
-
+              
 void __fastcall TTZX::SaveDialogTypeChange(TObject *Sender)
 {
         int i,p;
@@ -941,7 +936,7 @@ void __fastcall TTZX::FormCreate(TObject *Sender)
                 ScrollBar1->Height = Table->Height;
         }
 
-        if (Panel2->Width > ClientWidth) Panel2->Width = ClientWidth - (Panel2->Left*2);
+        if (Panel2->Width > ClientWidth) Panel2->Width = ClientWidth - (Panel2->Left*2);   
 }
 //---------------------------------------------------------------------------
 

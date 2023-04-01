@@ -33,6 +33,7 @@
 #include <Menus.hpp>
 #include "breakpoint.h"
 #include <ComCtrls.hpp>
+#include <ExtCtrls.hpp>
 
 //---------------------------------------------------------------------------
 
@@ -228,6 +229,8 @@ __published:	// IDE-managed Components
         TMenuItem *N1;
         TMenuItem *CurrentHitCount;
         TButton *ResetBrkBtn;
+        TCheckBox *AutoUpdateMemory;
+        TTimer *MemoryWindowTimer;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -318,6 +321,8 @@ __published:	// IDE-managed Components
           TPoint &MousePos, bool &Handled);
         void __fastcall ResetBrkBtnClick(TObject *Sender);
         void __fastcall ResetHitCountClick(TObject *Sender);
+        void __fastcall AutoUpdateMemoryClick(TObject *Sender);
+        void __fastcall MemoryWindowTimerExpired(TObject *Sender);
 private:	// User declarations
         void EnableValues(bool enable);
         void EnableVals(void);

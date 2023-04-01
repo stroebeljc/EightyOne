@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 195
-  Top = 114
+  Left = 198
+  Top = 117
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -15,6 +15,7 @@ object Dbg: TDbg
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
+  ShowHint = False
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnShow = FormShow
@@ -1737,6 +1738,7 @@ object Dbg: TDbg
       Top = 51
       Width = 57
       Height = 17
+      Hint = 'Enable History Capture'
       Caption = 'Enable'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1744,6 +1746,8 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
     end
     object History: TButton
@@ -1805,6 +1809,18 @@ object Dbg: TDbg
       ParentFont = False
       TabOrder = 4
       OnClick = ButtonProfilerClick
+    end
+    object AutoUpdateMemory: TCheckBox
+      Left = 69
+      Top = 51
+      Width = 55
+      Height = 17
+      Hint = 'Auto Refresh Memory Window'
+      Caption = 'Auto'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      OnClick = AutoUpdateMemoryClick
     end
   end
   object IOPorts: TGroupBox
@@ -2124,7 +2140,14 @@ object Dbg: TDbg
       Caption = '-'
     end
     object CurrentHitCount: TMenuItem
-      Caption = 'Hit Count = x of y'
+      Caption = 'Hit Count = x'
     end
+  end
+  object MemoryWindowTimer: TTimer
+    Enabled = False
+    Interval = 200
+    OnTimer = MemoryWindowTimerExpired
+    Left = 326
+    Top = 216
   end
 end

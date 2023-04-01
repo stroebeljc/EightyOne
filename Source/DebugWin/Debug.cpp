@@ -1478,6 +1478,10 @@ void TDbg::LoadSettings(TIniFile *ini)
         }
 
         Continuous->Checked = ini->ReadBool("DEBUG", "Continuous", false);
+        SkipNMIBtn->Checked = ini->ReadBool("DEBUG", "SkipNMI", false);
+        SkipINTBtn->Checked = ini->ReadBool("DEBUG", "SkipINT", false);
+        EnableHistory->Checked = ini->ReadBool("DEBUG", "EnableHistory", false);
+        AutoUpdateMemory->Checked = ini->ReadBool("DEBUG", "AutoUpdateMemory", false);
 }
 
 //---------------------------------------------------------------------------
@@ -1486,6 +1490,10 @@ void TDbg::SaveSettings(TIniFile *ini)
         ini->WriteInteger("DEBUG","Top",Top);
         ini->WriteInteger("DEBUG","Left",Left);
         ini->WriteBool("DEBUG", "Continuous", Continuous->Checked);
+        ini->WriteBool("DEBUG", "SkipNMI", SkipNMIBtn->Checked);
+        ini->WriteBool("DEBUG", "SkipINT", SkipINTBtn->Checked);
+        ini->WriteBool("DEBUG", "EnableHistory", EnableHistory->Checked);
+        ini->WriteBool("DEBUG", "AutoUpdateMemory", AutoUpdateMemory->Checked);
 }
 
 //---------------------------------------------------------------------------
@@ -2212,8 +2220,11 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
                 return;
         }
 
+        TPoint p = BPList->ScreenToClient(Mouse->CursorPos);
+
         int col, row;
-        BPList->MouseToCell(MousePos.x, MousePos.y, col, row);
+        BPList->MouseToCell(p.x, p.y, col, row);
+
         if (row == -1 || row >= Breakpoints)
         {
                 Handled = true;
@@ -2227,34 +2238,40 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
         rect.Right = 0;
         BPList->Selection = rect;
 
+        const int Disable = 0;
+        const int Enable = 1;
+        const int Reset = 2;
+        const int Separator = 3;
+        const int Count = 4;
+
         if (Breakpoint[BPList->Row].Enabled)
         {
-                BreakpointWindowPopup->Items->Items[0]->Visible = true;
-                BreakpointWindowPopup->Items->Items[1]->Visible = false;
+                BreakpointWindowPopup->Items->Items[Disable]->Visible = true;
+                BreakpointWindowPopup->Items->Items[Enable]->Visible = false;
         }
         else
         {
-                BreakpointWindowPopup->Items->Items[0]->Visible = false;
-                BreakpointWindowPopup->Items->Items[1]->Visible = true;
+                BreakpointWindowPopup->Items->Items[Disable]->Visible = false;
+                BreakpointWindowPopup->Items->Items[Enable]->Visible = true;
         }
 
         if (Breakpoint[BPList->Row].HitCount > 1)
         {
-                BreakpointWindowPopup->Items->Items[2]->Visible = true;
-                BreakpointWindowPopup->Items->Items[3]->Visible = true;
-                BreakpointWindowPopup->Items->Items[4]->Visible = true;
+                BreakpointWindowPopup->Items->Items[Reset]->Visible = true;
+                BreakpointWindowPopup->Items->Items[Separator]->Visible = true;
+                BreakpointWindowPopup->Items->Items[Count]->Visible = true;
 
                 AnsiString hitCount = "Hit Count = ";
                 hitCount += Breakpoint[BPList->Row].Hits;
-                BreakpointWindowPopup->Items->Items[4]->Caption = hitCount;
+                BreakpointWindowPopup->Items->Items[Count]->Caption = hitCount;
 
-                BreakpointWindowPopup->Items->Items[2]->Enabled = (Breakpoint[BPList->Row].Hits > 0);
+                BreakpointWindowPopup->Items->Items[Reset]->Enabled = (Breakpoint[BPList->Row].Hits > 0);
         }
         else
         {
-                BreakpointWindowPopup->Items->Items[2]->Visible = false;
-                BreakpointWindowPopup->Items->Items[3]->Visible = false;
-                BreakpointWindowPopup->Items->Items[4]->Visible = false;
+                BreakpointWindowPopup->Items->Items[Reset]->Visible = false;
+                BreakpointWindowPopup->Items->Items[Separator]->Visible = false;
+                BreakpointWindowPopup->Items->Items[Count]->Visible = false;
         }
 }
 //---------------------------------------------------------------------------
@@ -2288,6 +2305,21 @@ void TDbg::RefreshBreakpointList()
 void __fastcall TDbg::ResetHitCountClick(TObject *Sender)
 {
         Breakpoint[BPList->Row].Hits = 0;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::AutoUpdateMemoryClick(TObject *Sender)
+{
+        MemoryWindowTimer->Enabled = AutoUpdateMemory->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDbg::MemoryWindowTimerExpired(TObject *Sender)
+{
+        if (MemoryWindow->Visible)
+        {
+                MemoryWindow->UpdateChanges();
+        }
 }
 //---------------------------------------------------------------------------
 

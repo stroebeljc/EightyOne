@@ -15,7 +15,6 @@ object Dbg: TDbg
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
-  ShowHint = False
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnShow = FormShow
@@ -2145,7 +2144,7 @@ object Dbg: TDbg
   end
   object MemoryWindowTimer: TTimer
     Enabled = False
-    Interval = 200
+    Interval = 50
     OnTimer = MemoryWindowTimerExpired
     Left = 326
     Top = 216

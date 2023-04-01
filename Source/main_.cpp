@@ -724,6 +724,8 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         struct dirent *ent;
 
+        Dbg->DisableMemoryWindowAutoUpdates();
+
         char escKey = 27;
         if (FullScreen) FormKeyPress(NULL, escKey);
         if (machine.exit) machine.exit();
@@ -742,7 +744,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         P3Drive->DriveAEjectBtnClick(NULL);
         P3Drive->DriveBEjectBtnClick(NULL);
 
-
         RenderEnd();
 
         if ((dir = opendir(emulator.temppath)) != NULL)
@@ -757,7 +758,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
                 closedir(dir);
                 _rmdir(emulator.temppath);
         }
-        //SHChangeNotifyDeregister(nID);
 }
 //---------------------------------------------------------------------------
 

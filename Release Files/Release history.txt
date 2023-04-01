@@ -8,7 +8,7 @@ Version 1.35 - ##/##/2023 (by Paul Farrow)
   - Right clicking on a breakpoint would not bring up the menu for monitors to the left of the
     primary monitor.
 * Enhancements:
-  - Added an auto refresh facility for the debugger's memory window.
+  - Added an 50ms auto refresh facility for the debugger's memory window.
 
 Version 1.34 - 31/03/2023 (by Paul Farrow)
 * Bug fixes:

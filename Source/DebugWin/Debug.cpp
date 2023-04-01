@@ -2323,3 +2323,11 @@ void __fastcall TDbg::MemoryWindowTimerExpired(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TDbg::DisableMemoryWindowAutoUpdates()
+{
+        if (MemoryWindow->Visible)
+        {
+                MemoryWindowTimer->Enabled = false;
+        }
+}
+

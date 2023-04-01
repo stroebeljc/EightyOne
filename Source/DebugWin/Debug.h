@@ -394,6 +394,7 @@ public:		// User declarations
 
         void ReloadHistoryWindow();
         void ClearHistoryWindow();
+        void DisableMemoryWindowAutoUpdates();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

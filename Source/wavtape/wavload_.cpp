@@ -134,7 +134,7 @@ __fastcall TWavLoad::TWavLoad(TComponent* Owner)
         CurrentTStates=0;
         ScreenCounter=0;
         Playing=0;
-        Threshold=12;
+        Threshold=50;
         Channel=0;
         StatusText="Stopped";
 

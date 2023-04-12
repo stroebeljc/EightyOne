@@ -531,6 +531,8 @@ bool TDbg::BreakPointHit()
         {
 		breakpoint* bp = &Breakpoint[idx];
 
+                bool permanent = bp->Permanent;
+
 		if (Dbg->BPExeHit(z80.pc.w, bp, idx) ||
                     Dbg->BPInOutHit(BP_IN, lpi, lpiv, bp) ||
                     Dbg->BPInOutHit(BP_INL, lpi, lpiv, bp) ||
@@ -547,15 +549,17 @@ bool TDbg::BreakPointHit()
                     Dbg->BPMemoryValueHit(bp) ||
                     Dbg->BPTCyclesHit(z80.pc.w, bp))
 		{
-                        if (bp->Permanent)
+                        if (!permanent)
                         {
-                                BPList->Row = idx;
+                                return true;
                         }
+
+                        BPList->Row = idx;
 
                         bp->Hits++;
                         UpdateBreakpointButtons();
 
-                        if (bp->Hits == bp->HitCount)
+                        if (bp->Hits >= bp->HitCount)
                         {
                                 bp->Hits = 0;
                                 return true;
@@ -2004,6 +2008,10 @@ void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
         {
                 CanSelect = false;
         }
+        else
+        {
+                EditBrkBtn->Enabled = (BPList->RowCount > 1) && BPList->Row >= 0 && Breakpoint[ARow].Permanent;
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -2135,7 +2143,7 @@ void TDbg::UpdateBreakpointButtons()
 {
         AddBrkBtn->Enabled = (Breakpoints < maxBreakpoints);
         DelBrkBtn->Enabled = (BPList->RowCount > 1);
-        EditBrkBtn->Enabled = (BPList->RowCount > 1);
+        EditBrkBtn->Enabled = (BPList->RowCount > 1) && BPList->Row >= 0 && Breakpoint[BPList->Row].Permanent;
 
         bool breakpointWithHitCount = false;
 
@@ -2279,11 +2287,11 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
 
 void __fastcall TDbg::ResetBrkBtnClick(TObject *Sender)
 {
-        ResetBreakpointHitCounts();
+        ResetBreakpointHits();
         UpdateBreakpointButtons();
 }
 //---------------------------------------------------------------------------
-void TDbg::ResetBreakpointHitCounts()
+void TDbg::ResetBreakpointHits()
 {
         for (int b = 0; b < Breakpoints; b++)
         {

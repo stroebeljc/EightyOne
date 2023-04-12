@@ -1401,7 +1401,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         machine.initialise();
         Sound.AYReset();
         emulation_stop=initialStopState;
-        Dbg->ResetBreakpointHitCounts();
+        Dbg->ResetBreakpointHits();
         DebugUpdate();
         LiveMemoryWindow->Reset();
         if (BasicLister->ListerAvailable())

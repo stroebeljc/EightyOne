@@ -7,6 +7,8 @@ Version 1.35 - ##/##/2023 (by Paul Farrow)
 * Bug fixes:
   - Right clicking on a breakpoint would not bring up the menu for monitors to the left of the
     primary monitor.
+  - The Debugger facility Step Over was broken in the previous version.
+  - Ensured temporary breakpoints cannot be edited.
 * Changes:
   - Increased the default threshold level in the Wave Manager.
 * Enhancements:

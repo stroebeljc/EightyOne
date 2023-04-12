@@ -373,7 +373,7 @@ public:		// User declarations
         bool BreakPointHit();
         bool BPExeHit(int addr, breakpoint* const bp, int idx);
         void RefreshBreakpointList();
-        void ResetBreakpointHitCounts();
+        void ResetBreakpointHits();
 
         bool AddBreakPoint(struct breakpoint& bp);
         int FindBreakPointEntry(int index, struct breakpoint& bp, bool editing);

@@ -1083,7 +1083,25 @@ void THW::SetZX80Icon()
         ZX80Icons->GetBitmap(iconIndex, zx80Icon);
         ZX80Btn->InactiveGlyph = zx80Icon;
 }
+//---------------------------------------------------------------------------
+void THW::SetSpectrum128Icon()
+{
+        AnsiString romName;
 
+        if (Spec128Btn->Down)
+        {
+                romName = RomBox->Text;
+        }
+        else
+        {
+                romName = emulator.ROMSP128;
+        }
+
+        Graphics::TBitmap* spec128Icon = new Graphics::TBitmap;
+        int iconIndex = (romName== "spec128.spanish.rom") ? 1 : 0;
+        Spec128Icons->GetBitmap(iconIndex, spec128Icon);
+        Spec128Btn->InactiveGlyph = spec128Icon;
+}
 //---------------------------------------------------------------------------
 void THW::SetupForZX81(void)
 {
@@ -1242,6 +1260,7 @@ void THW::SetupForZX81(void)
         ComboBoxRomCartridgeFileBox->Visible = timexSelected;
 
         SetZX80Icon();
+        SetSpectrum128Icon();
 }
 
 void THW::SetZXpandState(bool checked, bool enabled)
@@ -1402,6 +1421,7 @@ void THW::SetupForSpectrum(void)
         ComboBoxRomCartridgeFileBox->Visible = sinclairSelected;
 
         SetZX80Icon();
+        SetSpectrum128Icon();
 }
 
 void THW::SetupForQL(void)
@@ -2535,6 +2555,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         ResetRequired=true;
 
         SetZX80Icon();
+        SetSpectrum128Icon();
 }
 //---------------------------------------------------------------------------
 
@@ -2878,6 +2899,7 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
         ResetRequired=true;
 
         SetZX80Icon();
+        SetSpectrum128Icon();
 }
 //---------------------------------------------------------------------------
 

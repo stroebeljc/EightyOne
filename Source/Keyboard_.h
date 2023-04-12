@@ -46,6 +46,7 @@ __published:	// IDE-managed Components
         TImage *ts1000kb;
         TImage *spec48kb;
         TImage *spec128kb;
+        TImage *spec128kbSpanish;
         TImage *ts2068kb;
         TImage *ts2048kb;
         TImage *spec16kb;

@@ -114,6 +114,7 @@ __published:	// IDE-managed Components
         TComboBox *ComboBoxRomCartridgeFileBox;
         TLabel *LabelTotalRAM;
         TCheckBox *uSource;
+        TImageList *Spec128Icons;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -177,6 +178,7 @@ private:	// User declarations
         void CreateBasicLister();
         void ResetDisplaySize();
         void SetZX80Icon();
+        void SetSpectrum128Icon();
         void PopulateRomCartridgeSinclairList();
         void PopulateRomCartridgeTimexList();
         void AddRomCartridgeFile(AnsiString fileName);

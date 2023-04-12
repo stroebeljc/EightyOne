@@ -102,6 +102,7 @@ void TKeyboard::KbChange(void)
         Keyboard->spec16kb->Visible=false;
         Keyboard->spec48kb->Visible=false;
         Keyboard->spec128kb->Visible=false;
+        Keyboard->spec128kbSpanish->Visible=false;
         Keyboard->ts2048kb->Visible=false;
         Keyboard->ts2068kb->Visible=false;
         Keyboard->specPlus2kb->Visible=false;
@@ -167,6 +168,9 @@ void TKeyboard::KbChange(void)
         case CRCASZMIC:
                 if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
                 else Keyboard->zx81kb->Visible=true;
+                break;
+        case CRCSPANISH128:
+                Keyboard->spec128kbSpanish->Visible=true;
                 break;
         default:
                 switch(emulator.machine)
@@ -271,6 +275,7 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
         SetKeyboardSize(ts1000kb, large);
         SetKeyboardSize(spec48kb, large);
         SetKeyboardSize(spec128kb, large);
+        SetKeyboardSize(spec128kbSpanish, large);
         SetKeyboardSize(ts2068kb, large);
         SetKeyboardSize(ts2048kb, large);
         SetKeyboardSize(spec16kb, large);

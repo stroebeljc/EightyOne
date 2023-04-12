@@ -109,6 +109,7 @@
 #define CRC8300		0x0d4e
 #define CRCR470         0x5413
 #define CRCSP48         0xACE0
+#define CRCSPANISH128   0x4E9F
 
 #define FLOPPYNONE      0
 #define FLOPPYPLUS3     1

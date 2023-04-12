@@ -3,16 +3,17 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.35 - ##/##/2023 (by Paul Farrow)
+Version 1.35 - 13/04/2023 (by Paul Farrow)
 * Bug fixes:
-  - Right clicking on a breakpoint would not bring up the menu for monitors to the left of the
-    primary monitor.
-  - The Debugger facility Step Over was broken in the previous version.
-  - Ensured temporary breakpoints cannot be edited.
+  - Right clicking on a breakpoint would not bring up the menu if the debug window was on a
+    monitor to the left of the primary monitor.
+  - The Debugger facility Step Over became broken due to changes made in the previous release.
+  - Temporary breakpoints can now not be edited.
 * Changes:
   - Increased the default threshold level in the Wave Manager.
 * Enhancements:
-  - Added an 50ms auto refresh facility for the debugger's memory window.
+  - Added a 50ms auto refresh facility to the debugger's memory window.
+  - Added a keyboard layout image for the Spanish Spectrum 128.
 
 Version 1.34 - 31/03/2023 (by Paul Farrow)
 * Bug fixes:

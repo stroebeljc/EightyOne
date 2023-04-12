@@ -531,9 +531,7 @@ bool TDbg::BreakPointHit()
         {
 		breakpoint* bp = &Breakpoint[idx];
 
-                bool permanent = bp->Permanent;
-
-		if (Dbg->BPExeHit(z80.pc.w, bp, idx) ||
+ 		if (Dbg->BPExeHit(z80.pc.w, bp, idx) ||
                     Dbg->BPInOutHit(BP_IN, lpi, lpiv, bp) ||
                     Dbg->BPInOutHit(BP_INL, lpi, lpiv, bp) ||
                     Dbg->BPInOutHit(BP_INH, lpi, lpiv, bp) ||
@@ -549,8 +547,9 @@ bool TDbg::BreakPointHit()
                     Dbg->BPMemoryValueHit(bp) ||
                     Dbg->BPTCyclesHit(z80.pc.w, bp))
 		{
-                        if (!permanent)
+                        if (!bp->Permanent)
                         {
+                                DelBreakPoint(idx);
                                 return true;
                         }
 
@@ -588,7 +587,6 @@ bool TDbg::BPExeHit(int addr, breakpoint* const bp, int idx)
                 {
                         if (!bp->Permanent && (StepOverStack == z80.sp.w))
                         {
-                                DelBreakPoint(idx);
                                 return true;
                         }
                 }

@@ -52,8 +52,6 @@ BYTE GetMem(int Addr)
 	return byteVal;
 }
 
-// #define GetMem(Addr) (memory[(Addr)&32767])
-
 AnsiString TDbg::StrRep(AnsiString Text, int Pos, int Len, AnsiString NewText)
 {
         AnsiString t="";
@@ -64,8 +62,7 @@ AnsiString TDbg::StrRep(AnsiString Text, int Pos, int Len, AnsiString NewText)
         if (Len <= Text.Length()) t += Text.SubString(Pos, 1+Text.Length()-Len);
         return(t);
 }
-
-
+                           
 AnsiString TDbg::Disassemble(int addr, BYTE* bytes)
 {
 	readFromMemory = false;

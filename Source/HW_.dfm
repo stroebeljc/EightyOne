@@ -1390,7 +1390,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = AdvSettings
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet

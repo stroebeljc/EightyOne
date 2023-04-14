@@ -9,6 +9,7 @@ Version 1.36 - 15/04/2023 (by Paul Farrow)
   - The file handle used to read the ROM symbol file was not being released and after several
     hardware changes the error message "ROM load failed" could occur, which was caused by too
     many files having been left open.
+  - RAM pack list could show incorrect entries.
 * Enhancements:
   - Added a keyboard layout image for the Spanish Spectrum+.
   - Added a keyboard layout image for the Spanish Spectrum+2.

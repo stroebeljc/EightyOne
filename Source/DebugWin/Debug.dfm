@@ -1707,10 +1707,11 @@ object Dbg: TDbg
     ParentFont = False
     TabOrder = 6
     object SymRom: TLabel
-      Left = 125
+      Left = 126
       Top = 53
       Width = 25
       Height = 13
+      Hint = 'Indicates whether ROM symbols are loaded'
       Caption = 'ROM'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1718,12 +1719,15 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
     end
     object SymApp: TLabel
-      Left = 157
+      Left = 155
       Top = 53
       Width = 21
       Height = 13
+      Hint = 'Indicates whether application symbols are loaded'
       Caption = 'APP'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1731,13 +1735,15 @@ object Dbg: TDbg
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
     end
     object EnableHistory: TCheckBox
-      Left = 8
+      Left = 9
       Top = 51
       Width = 57
       Height = 17
-      Hint = 'Enable History Capture'
+      Hint = 'Enable history capture'
       Caption = 'Enable'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1810,12 +1816,18 @@ object Dbg: TDbg
       OnClick = ButtonProfilerClick
     end
     object AutoUpdateMemory: TCheckBox
-      Left = 69
+      Left = 66
       Top = 51
       Width = 55
       Height = 17
-      Hint = 'Auto Refresh Memory Window'
-      Caption = 'Auto'
+      Hint = 'Enable Memory window refreshing'
+      Caption = 'Refresh'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 5

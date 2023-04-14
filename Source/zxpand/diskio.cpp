@@ -102,9 +102,9 @@ DRESULT disk_write (
     FILE* f = fopen(filename, "rb+");
     if (f)
     {
-      fseek(f, sector*512, SEEK_SET);
-      fwrite(buff, 1, 512, f);
-      fclose(f);
+       fseek(f, sector*512, SEEK_SET);
+       fwrite(buff, 1, 512, f);
+       fclose(f);
        return RES_OK;
     }
     return RES_ERROR;

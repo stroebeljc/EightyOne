@@ -1004,9 +1004,10 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1)
         {
+                int err=errno;
                 AnsiString errMsg = "ROM load to address failed:\n" + AnsiString(filename);
                 ShowMessage(errMsg);
-                return(errno);
+                return(err);
         }
 
         if ((len=read(fptr, destAddress, length))==-1)
@@ -1044,9 +1045,10 @@ int memory_load(char *filename, int address, int length)
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1)
         {
+                int err=errno;
                 AnsiString errMsg = "ROM load failed:\n" + AnsiString(filename);
                 ShowMessage(errMsg);
-                return(errno);
+                return(err);
         }
 
         if ((len=read(fptr, memory+address, length))==-1)

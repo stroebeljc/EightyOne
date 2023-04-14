@@ -246,7 +246,11 @@ bool LoadRomCartridgeFile(char *filename)
         if (fptr<1) return false;
 
         struct stat st;
-        if (stat(file, &st)) return false;
+        if (stat(file, &st))
+        {
+                close(fptr);
+                return false;
+        }
 
         int offset = (st.st_size < 16384) ? 16384 - st.st_size : 0;
 

@@ -1932,14 +1932,12 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
                 f=fopen(Filename.c_str(), "wb");
                 if (f)
                 {
-
                         int i;
 
                         for(i=0;i<6912;i++)
                                 fputc(spec48_getbyte(16384+i),f);
                         fclose(f);
                 }
-                fclose(f);
                 break;
         default:
                 break;

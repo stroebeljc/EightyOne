@@ -107,6 +107,8 @@ void TKeyboard::KbChange(void)
         Keyboard->ts2068kb->Visible=false;
         Keyboard->specPlus2kb->Visible=false;
         Keyboard->specPlus3kb->Visible=false;
+        Keyboard->specPlus2kbSpanish->Visible=false;
+        Keyboard->specPlus3kbSpanish->Visible=false;
 
         KeyboardFunctions->Visible=false;
         KeyboardFunctions->EnableTimer(false);
@@ -170,7 +172,14 @@ void TKeyboard::KbChange(void)
                 else Keyboard->zx81kb->Visible=true;
                 break;
         case CRCSPANISH128:
+        case CRCSPANISH48:
                 Keyboard->spec128kbSpanish->Visible=true;
+                break;
+        case CRCSPANISHPLUS2:
+                Keyboard->specPlus2kbSpanish->Visible=true;
+                break;
+        case CRCSPANISHPLUS3:
+                Keyboard->specPlus3kbSpanish->Visible=true;
                 break;
         default:
                 switch(emulator.machine)

@@ -3,6 +3,18 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.36 - 15/04/2023 (by Paul Farrow)
+* Bug fixes:
+  - Attempting to load a ZX81 snapshot was throwing an exception.
+  - The file handle used to read the ROM symbol file was not being released and after several
+    hardware changes the error message "ROM load failed" could occur, which was caused by too
+    many files having been left open.
+* Enhancements:
+  - Added a keyboard layout image for the Spanish Spectrum+.
+  - Added a keyboard layout image for the Spanish Spectrum+2.
+  - Added a keyboard layout image for the Spanish Spectrum+2A/Spectrum+3.
+  - Added Spanish Spectrum+ ROM.
+
 Version 1.35 - 13/04/2023 (by Paul Farrow)
 * Bug fixes:
   - Right clicking on a breakpoint would not bring up the menu if the Debugger window was on a

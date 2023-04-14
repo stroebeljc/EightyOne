@@ -751,7 +751,7 @@ void __fastcall THW::OKClick(TObject *Sender)
                         int rp = atoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                         kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
                 }
-                zx81.RAMTOP = (1 << (kp + 10)) + 16383;
+                zx81.RAMTOP = (kp << 10) + 16383;
                 if (RamPackBox->ItemIndex == 6) zx81.RAMTOP = 65535;
                 if (emulator.machine==MACHINEACE && RamPackBox->ItemIndex==0) zx81.RAMTOP=16383;
                 machine.ace96k=0;
@@ -1044,7 +1044,8 @@ void THW::CreateBasicLister()
                 BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spec48.rom"))
+        else if (!strcmp(machine.CurRom, "spec48.rom") ||
+                 !strcmp(machine.CurRom, "spec48.spanish.rom"))
         {
                 BasicLister->SetBasicLister(new spec48BasicLister());
                 Form1->BasicListerOption->Enabled = true;
@@ -1157,12 +1158,12 @@ void THW::SetupForZX81(void)
         QLSettings->TabVisible=false;
         ResetRequired=true;
 
-        if (RamPackBox->Items->Strings[RamPackBox->Items->Count-1] == "96k")
+        if (RamPackBox->Items->Strings[RamPackBox->Items->Count-1] == "96K")
                 RamPackBox->Items->Delete(RamPackBox->Items->Count-1);
 
-        if (RamPackBox->Items->Strings[RamPackBox->Items->Count-1] != "48k")
+        if (RamPackBox->Items->Strings[RamPackBox->Items->Count-1] != "48K")
         {
-                RamPackBox->Items->Add("48k");
+                RamPackBox->Items->Add("48K");
         }
 
         if (NewMachine == MACHINETS1500 || NewMachine == MACHINER470 || NewMachine == MACHINETK85)
@@ -1735,6 +1736,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         Form1->EnableColourisationOptions();
         RomBox->Clear();
         RomBox->Items->Add("spec48.rom");
+        RomBox->Items->Add("spec48.spanish.rom");
         RomBox->Text = emulator.ROMSP48;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -2045,7 +2047,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
         IDEBox->Items->Add("AceCF");
-        RamPackBox->Items->Add("96k");
+        RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         SetZXpandState(false,false);

@@ -202,8 +202,7 @@ bool TWavFile::SaveFile(AnsiString FName)
         fwrite(Data.Data, Data.DataLen, 1, f);
 
         fclose(f);
-
-
+           
         return(true);
 }
 

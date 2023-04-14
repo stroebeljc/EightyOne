@@ -162,6 +162,8 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v,
                 s2v[sym] = v;
         }
 
+        fclose(symfile);
+        
         return true;
 }
 

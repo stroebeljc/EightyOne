@@ -10,7 +10,7 @@ Version 1.36 - 15/04/2023 (by Paul Farrow)
     hardware changes the error message "ROM load failed" could occur, which was caused by too
     many files having been left open.
   - RAM pack list could show incorrect entries.
-  - Loading a ZX80/Zx81 snapshot did not always restore the hardware settings.
+  - Loading a ZX80/ZX81 snapshot did not always restore the hardware settings.
   - Loading a .ace snapshot now automatically selects the Jupiter Ace.
   - Jupiter Ace snapshots were not being saved out correctly.
   - ZX80/Zx81 snapshots now support spaces in ROM file names.

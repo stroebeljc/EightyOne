@@ -13,8 +13,8 @@ Version 1.36 - 15/04/2023 (by Paul Farrow)
   - Loading a ZX80/ZX81 snapshot did not always restore the hardware settings.
   - Loading a .ace snapshot now automatically selects the Jupiter Ace.
   - Jupiter Ace snapshots were not being saved out correctly.
-  - ZX80/Zx81 snapshots now support spaces in ROM file names.
-  - ZX80/Zx81 snapshots now support spaces in ROM cartridge file names.
+  - ZX80/ZX81 snapshots now support spaces in ROM file names.
+  - ZX80/ZX81 snapshots now support spaces in ROM cartridge file names.
   - Loading a snapshot while the Debugger window was open could result in the Stop/Run button
     state being shown incorrectly.
 * Enhancements:

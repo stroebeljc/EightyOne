@@ -313,7 +313,7 @@ public:		// User declarations
         void GatherWindowsIfRequired();
         void __fastcall RunFrame();
         int RunFrameEnable;
-        void EnableColourisationOptions();
+        void EnableAnnotationOptions();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

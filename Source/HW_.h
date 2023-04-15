@@ -174,8 +174,6 @@ private:	// User declarations
         void SetupForSpectrum(void);
         void SetupForQL(void);
         void EnableRomCartridgeOption(bool enable);
-        bool ResetRequired;
-        void CreateBasicLister();
         void ResetDisplaySize();
         void SetZX80Icon();
         void SetSpectrum128Icon();
@@ -184,10 +182,46 @@ private:	// User declarations
         void AddRomCartridgeFile(AnsiString fileName);
         void SelectRomCartridge();
         AnsiString DirectSoundError(int errorCode);
-        void SetUpRamSettings();
+        void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
+
+        void ConfigureRzxSupport();
+        void ReInitialiseSound();
+        void ResetDebugger();
+        void ConfigureDisplayArtifacts();
+        void ConfigureM1Not();
+        void ConfigureModem();
+        void ConfigurePrinterCentronicsPort();
+        void SelectGroupboxVisibility();
+        void ConfigureRamTop();
+        void InitialiseSound(bool machineChanged);
+        void ConfigureDockCartridge();
+        void CloseLiveMemoryWindow(bool machineChanged);
+        void CloseOtherDebugWindow();
+        void DetermineRamSizeLabel(AnsiString newMachineName);
+        void ConfigureRamPackWobble();
+        void ConfigureMultifaceRom();
+        void ConfigureRom();
+        void ConfigureZXpand();
+        void ConfigureBasicLister();
+        void ConfigureColour();
+        void ConfigureChroma(bool prevChromaColourSwitchOn);
+        void ConfigureSpectra(bool prevSpectraColourSwitchOn);
+        void ConfigureRomCartridge();
+        void ConfigureCharacterGenerator();
+        void ConfigureHiRes();
+        void ConfigureSound();
+        void ConfigureSpectrumIDE();
+        void ConfigureFDC();
+        void ConfigureMachineSettings();
+        AnsiString DetermineRomBase();
+        void ConfigureSymbolFile(AnsiString romBase);
+        void ConfigureCharacterBitmapFile(AnsiString romBase);
+        
 public:		// User declarations
+        bool ResetRequired;
         __fastcall THW(TComponent* Owner);
+        void UpdateHardwareSettings(bool reinitialiseStatus, bool disableReset);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
         void SetZXpandState(bool checked, bool enabled);

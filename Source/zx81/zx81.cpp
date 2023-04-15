@@ -319,15 +319,7 @@ void zx81_initialise(void)
 
         tStatesCount = 0;
 
-        if (zxpand)
-        {
-                delete(zxpand);
-                zxpand = NULL;
-        }
-        if (zx81.zxpand)
-        {
-                zxpand = new ZXpand();
-        }
+        CreateZXpand();
 
         P3DriveMachineHasInitialised();
 
@@ -374,6 +366,19 @@ void zx81_initialise(void)
 
         zx80rom = !strcmp(machine.CurRom, "zx80.rom");
         annotatableROM = IsAnnotatableROM();
+}
+
+void CreateZXpand()
+{
+        if (zxpand)
+        {
+                delete(zxpand);
+                zxpand = NULL;
+        }
+        if (zx81.zxpand)
+        {
+                zxpand = new ZXpand();
+        }
 }
 
 BOOL IsAnnotatableROM()

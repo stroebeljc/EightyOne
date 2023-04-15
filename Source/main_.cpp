@@ -666,6 +666,8 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         if (Ext == ".Z80") spec_load_z80(Path.c_str());
         if (Ext == ".SNA") spec_load_sna(Path.c_str());
         emulation_stop=stopped;
+
+        Dbg->UpdateVals();
 }
 //---------------------------------------------------------------------------
 
@@ -1890,7 +1892,10 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 
         delete ini;
 
-        HW->OKClick(NULL);
+        const bool reinitialiseStatus = true;
+        const bool disableResetStatus = false;
+        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+
         HardReset1Click(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2231,7 +2236,7 @@ const int ColourIndex_Tick = 16;
 
 //---------------------------------------------------------------------------
 
-void TForm1::EnableColourisationOptions()
+void TForm1::EnableAnnotationOptions()
 {
         BOOL enableOption = (emulator.machine != MACHINEZX97LE && emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINEACE);
         BOOL annotatableROM = IsAnnotatableROM();

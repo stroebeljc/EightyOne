@@ -42,6 +42,8 @@ extern int lineCounter;
 extern int MemotechMode;
 extern BYTE font[1024];
 
+int save_snap_zx81(char* filename);
+int save_snap_ace(char* filename);
 void load_snap_cpu(FILE *f);
 void load_snap_mem(FILE *f);
 void load_snap_zx81(FILE *f);
@@ -53,6 +55,7 @@ void load_snap_colour(FILE *f);
 void load_snap_romcartridge(FILE *f);
 void load_snap_interfaces(FILE *f);
 void load_snap_advanced(FILE* f);
+void load_snap_drives(FILE* f);
 void ProcessTag(char* tok, FILE* f);
 void InitialiseHardware();
 
@@ -68,8 +71,6 @@ char *get_token(FILE *f)
         c=fgetc(f);
         while(isspace(c) && !feof(f)) c=fgetc(f);
 
-        //if (feof(f)) return(NULL);
-
         buflen=0;
         buffer[buflen++]=c;
 
@@ -82,7 +83,6 @@ char *get_token(FILE *f)
 
         buffer[buflen]='\0';
 
-        //if (!buflen) return(NULL);
         return(buffer);
 }
 
@@ -282,7 +282,8 @@ void load_snap_romcartridge(FILE *f)
                 else if (!strcmp(tok,"PATH"))
                 {
                         tok = get_token(f);
-                        HW->RomCartridgeFileBox->Text = tok;
+                        AnsiString path = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        HW->RomCartridgeFileBox->Text = path;
                 }
                 else if (!strcmp(tok,"CONFIGURATION"))
                 {
@@ -328,7 +329,6 @@ void load_snap_interfaces(FILE *f)
 
                 if (!strcmp(tok,"ZXPAND"))
                 {
-                        // hmmmmmm
                         HW->SetZXpandState(hex2dec(get_token(f)),true);
                 }
                 else if (!strcmp(tok,"ZX_PRINTER"))
@@ -439,7 +439,6 @@ void SetMachine(AnsiString machine)
 {
         if (machine == "ZX80") HWSetMachine(MACHINEZX80, NULL);
         else if (machine == "ZX81") HWSetMachine(MACHINEZX81, NULL);
-        else if (machine == "ACE") HWSetMachine(MACHINEACE, NULL);
         else if (machine == "1500") HWSetMachine(MACHINETS1500, NULL);
         else if (machine == "LAMDA") HWSetMachine(MACHINELAMBDA, NULL);
         else if (machine == "ZX97LE") HWSetMachine(MACHINEZX97LE, NULL);
@@ -506,6 +505,7 @@ void load_snap_mem(FILE *f)
                 if (!strcmp(tok,"RAM_PACK"))
                 {
                         tok = get_token(f);
+
                         SetComboBox(HW->RamPackBox, tok);
                 }
                 else if (!strcmp(tok,"MEMRANGE"))
@@ -545,7 +545,9 @@ void load_snap_advanced(FILE* f)
 
                 if (!strcmp(tok,"ROM"))
                 {
-                        HW->RomBox->Text = get_token(f);
+                        tok = get_token(f);
+                        AnsiString rom = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        HW->RomBox->Text = rom;
                 }
                 else if (!strcmp(tok,"PROTECT_ROM"))
                 {
@@ -570,6 +572,30 @@ void load_snap_advanced(FILE* f)
         }
 }
 
+void load_snap_drives(FILE* f)
+{
+        char *tok;
+
+        while(!feof(f))
+        {
+                tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"FDC"))
+                {
+                        SetComboBox(HW->FDC, get_token(f));
+                }
+                else if (!strcmp(tok,"IDE"))
+                {
+                        SetComboBox(HW->IDEBox, get_token(f));
+                }
+        }
+}
+
 void ProcessTag(char* tok, FILE* f)
 {             
         if (!strcmp(tok, "[CPU]")) load_snap_cpu(f);
@@ -583,6 +609,7 @@ void ProcessTag(char* tok, FILE* f)
         else if (!strcmp(tok, "[ROM_CARTRIDGE]")) load_snap_romcartridge(f);
         else if (!strcmp(tok, "[INTERFACES]")) load_snap_interfaces(f);
         else if (!strcmp(tok, "[ADVANCED]")) load_snap_advanced(f);
+        else if (!strcmp(tok, "[DRIVES]")) load_snap_drives(f);
 }
 
 void load_snap_ace(FILE *f)
@@ -613,8 +640,15 @@ void load_snap_ace(FILE *f)
                 if (feof(f)) eof=1;
         }
 
-        zx81.RAMTOP = (memory[0x2081]*256)-1;
+        int ramTop = memory[0x2081]*256;
+        int ramSize = (ramTop - 0x3400) >> 10;
+        int ramPackSize = ramSize - machine.baseRamSize;
+
+        zx81.RAMTOP = ramTop-1;
         if (zx81.RAMTOP == -1) zx81.RAMTOP=65535;
+
+        AnsiString ramPackText = IntToStr(ramPackSize) + "K";
+        SetComboBox(HW->RamPackBox, ramPackText.c_str());
 
         memptr=0x2100;
 
@@ -638,7 +672,7 @@ void load_snap_ace(FILE *f)
         z80.r = memory[memptr];
 }
 
-int do_load_snap(char *filename)
+int do_load_snap(char *filename, bool resetHardware)
 {
         char *p;
         FILE *f;
@@ -648,7 +682,6 @@ int do_load_snap(char *filename)
         if (strcmp(p,".Z81") && strcmp(p,".z81")
                 && strcmp(p,".ace") && strcmp(p,".ACE") ) return(0);
 
-
         if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
         {
                 f=fopen(filename,"rb");
@@ -657,11 +690,17 @@ int do_load_snap(char *filename)
                         ShowMessage("Snapshot load failed.");
                         return 0;
                 }
+
+                if (resetHardware)
+                {
+                        HWSetMachine(MACHINEACE, NULL);
+                        machine.initialise();
+                }
                 load_snap_ace(f);
         }
         else
         {
-                InitialiseHardware();
+                if (resetHardware) machine.initialise();
 
                 f=fopen(filename,"rt");
                 if (!f) return(0);
@@ -723,27 +762,22 @@ void InitialiseHardware()
 
 int load_snap(char *filename)
 {
-        // Read in the snapshot into memory and settings
-        int ret = do_load_snap(filename);
+        // Read in the snapshot into memory and settings (this also resets the computer)
+        int ret = do_load_snap(filename, true);
         if (!ret) return ret;
 
-        // Apply the settings
-        HW->OKClick(NULL);
-
-        // Re-read in the snapshot into memory
-        ret = do_load_snap(filename);
-        if (!ret) return ret;
-
-        Artifacts->ForceVibrantColours(machine.colour == COLOURCHROMA);
+        // Re-apply the settings without a reset
+        const bool reinitialiseStatus = true;
+        bool disableResetStatus = true;
+        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
 
         return true;
 }
 
 int save_snap(char *filename)
 {
-        FILE *f;
         char *p;
-        int Addr, Count, Chr, memptr;
+        int f;
 
         p=filename+strlen(filename)-4;
 
@@ -752,236 +786,269 @@ int save_snap(char *filename)
 
         if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
         {
-                f=fopen(filename,"wb");
-                if (!f)
-                {
-                        ShowMessage("Save snapshot failed.");
-                        return(0);
-                }
-
-                memptr=0x2000;
-                memory[memptr]=0x01; memory[memptr+1]=0x80;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x2080;
-                memory[memptr]=0x00; memory[memptr+1]=(zx81.RAMTOP+1)/256;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x0284;
-                memory[memptr]=0x00; memory[memptr+1]=0x00;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x0288;
-                memory[memptr]=0x00; memory[memptr+1]=0x00;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x028c;
-                memory[memptr]=0x03; memory[memptr+1]=0x00;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x0290;
-                memory[memptr]=0x03; memory[memptr+1]=0x00;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x0294;
-                memory[memptr]=0xfd; memory[memptr+1]=0xfd;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr+=0x0298;
-                memory[memptr]=0x01; memory[memptr+1]=0x00;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr+=0x029c;
-                memory[memptr]=0x00; memory[memptr+1]=0x00;
-                memory[memptr+2]=0x00; memory[memptr+3]=0x00;
-
-                memptr=0x2100;
-
-                memory[memptr] = z80.af.b.l; memory[memptr+1] = z80.af.b.h; memptr+=4;
-                memory[memptr] = z80.bc.b.l; memory[memptr+1] = z80.bc.b.h; memptr+=4;
-                memory[memptr] = z80.de.b.l; memory[memptr+1] = z80.de.b.h; memptr+=4;
-                memory[memptr] = z80.hl.b.l; memory[memptr+1] = z80.hl.b.h; memptr+=4;
-                memory[memptr] = z80.ix.b.l; memory[memptr+1] = z80.ix.b.h; memptr+=4;
-                memory[memptr] = z80.iy.b.l; memory[memptr+1] = z80.iy.b.h; memptr+=4;
-                memory[memptr] = z80.sp.b.l; memory[memptr+1] = z80.sp.b.h; memptr+=4;
-                memory[memptr] = z80.pc.b.l; memory[memptr+1] = z80.pc.b.h; memptr+=4;
-                memory[memptr] = z80.af_.b.l; memory[memptr+1] = z80.af_.b.h; memptr+=4;
-                memory[memptr] = z80.bc_.b.l; memory[memptr+1] = z80.bc.b.h ; memptr+=4;
-                memory[memptr] = z80.de_.b.l; memory[memptr+1] = z80.de_.b.h; memptr+=4;
-                memory[memptr] = z80.hl_.b.l; memory[memptr+1] = z80.hl_.b.h; memptr+=4;
-
-                memory[memptr] = z80.im ; memptr+=4;
-                memory[memptr] = z80.iff1; memptr+=4;
-                memory[memptr] = z80.iff2; memptr+=4;
-                memory[memptr] = z80.i; memptr+=4;
-                memory[memptr] = z80.r; memptr+=4;
-                memory[memptr] = 0x80; memory[memptr+1] = 0x00; memory[memptr+2] = 0x00; memory[memptr+3] = 0x00;
-
-                Addr=0x2000;
-
-                while(Addr <= zx81.RAMTOP)
-                {
-                        Chr=memory[Addr];
-                        Count=1;
-
-                        while((memory[Addr+Count] == Chr) && ((Addr+Count) <= zx81.RAMTOP))
-                                Count++;
-
-                        if (Count>240) Count=240;
-
-                        if (Count>3 || Chr==0xed)
-                        {
-                                fputc(0xed,f);
-                                fputc(Count,f);
-                        }
-                        else    Count=1;
-
-                        fputc(Chr,f);
-                        Addr+=Count;
-                }
-
-                fputc(0xed,f);
-                fputc(0x00,f);
+                f = save_snap_ace(filename);
         }
         else
         {
-                f=fopen(filename,"wt");
-                if (!f)
-                {
-                        ShowMessage("Save failed.");
-                        return(0);
-                }
+                f = save_snap_zx81(filename);
+        }
 
-                fprintf(f,"\n[MACHINE]\n");
-                fprintf(f,"MODEL %s\n", GetMachine().c_str());
+        if (f)
+        {
+                ShowMessage("Save snapshot failed.");
+        }
 
-                fprintf(f,"[CPU]\n");
-                fprintf(f,"PC %04X    SP  %04X\n", z80.pc.w,z80.sp.w);
-                fprintf(f,"HL %04X    HL_ %04X\n", z80.hl.w,z80.hl_.w);
-                fprintf(f,"DE %04X    DE_ %04X\n", z80.de.w,z80.de_.w);
-                fprintf(f,"BC %04X    BC_ %04X\n", z80.bc.w,z80.bc_.w);
-                fprintf(f,"AF %04X    AF_ %04X\n", z80.af.w,z80.af_.w);
-                fprintf(f,"IX %04X    IY  %04X\n", z80.ix.w,z80.iy.w);
-                fprintf(f,"IR %04X\n", (z80.i<<8) | (z80.r7 & 128) | ((z80.r) & 127));
+        return(0);
+}
 
-                fprintf(f,"IM %02X      IF1 %02X\n", z80.im, z80.iff1);
-                fprintf(f,"HT %02X      IF2 %02X\n", z80.halted, z80.iff2);
+int save_snap_zx81(char *filename)
+{
+        FILE *f;
+        int Addr, Count, Chr;
 
-                fprintf(f,"\n[ZX81]\n");
-                fprintf(f,"NMI %02X     SYNC %02X\n", nmiGeneratorEnabled, syncOutputWhite);
-                fprintf(f,"LINE %03X\n", lineCounter);
+	f=fopen(filename,"wt");
+	if (!f)
+	{
+	        return -1;
+	}
 
-                fprintf(f,"\n[MEMORY]\n");
-                fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
-                fprintf(f,"8K_RAM_ENABLED %02X\n", zx81.RAM816k);
+	fprintf(f,"[MACHINE]\n");
+	fprintf(f,"MODEL %s\n", GetMachine().c_str());
 
-                Addr = zx81.RAM816k || zx81.zxpand ? 8192 : zx81.ROMTOP+1;
-                int topOfRAM = zx81.RAMTOP;
-                if (zx81.zxpand && (topOfRAM < 0xBFFF))
-                {
-                        topOfRAM = 0xBFFF;
-                }
-                fprintf(f,"MEMRANGE %04X %04X\n", Addr, topOfRAM);
+	fprintf(f,"\n[CPU]\n");
+	fprintf(f,"PC %04X    SP  %04X\n", z80.pc.w,z80.sp.w);
+	fprintf(f,"HL %04X    HL_ %04X\n", z80.hl.w,z80.hl_.w);
+	fprintf(f,"DE %04X    DE_ %04X\n", z80.de.w,z80.de_.w);
+	fprintf(f,"BC %04X    BC_ %04X\n", z80.bc.w,z80.bc_.w);
+	fprintf(f,"AF %04X    AF_ %04X\n", z80.af.w,z80.af_.w);
+	fprintf(f,"IX %04X    IY  %04X\n", z80.ix.w,z80.iy.w);
+	fprintf(f,"IR %04X\n", (z80.i<<8) | (z80.r7 & 128) | ((z80.r) & 127));
 
-                while(Addr <= topOfRAM)
-                {
-                        Chr=memory[Addr];
-                        Count=1;
+	fprintf(f,"IM %02X      IF1 %02X\n", z80.im, z80.iff1);
+	fprintf(f,"HT %02X      IF2 %02X\n", z80.halted, z80.iff2);
 
-                        while((memory[Addr+Count]==Chr) && ((Addr+Count)<=topOfRAM))
-                                Count++;
+	fprintf(f,"\n[ZX81]\n");
+	fprintf(f,"NMI %02X     SYNC %02X\n", nmiGeneratorEnabled, syncOutputWhite);
+	fprintf(f,"LINE %03X\n", lineCounter);
+
+	fprintf(f,"\n[MEMORY]\n");
+	fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
+	fprintf(f,"8K_RAM_ENABLED %02X\n", zx81.RAM816k);
+
+	Addr = zx81.RAM816k || zx81.zxpand ? 8192 : zx81.ROMTOP+1;
+	int topOfRAM = zx81.RAMTOP;
+	if (zx81.zxpand && (topOfRAM < 0xBFFF))
+	{
+	        topOfRAM = 0xBFFF;
+	}
+	fprintf(f,"MEMRANGE %04X %04X\n", Addr, topOfRAM);
+
+	while(Addr <= topOfRAM)
+	{
+		Chr=memory[Addr];
+		Count=1;
+
+		while((memory[Addr+Count]==Chr) && ((Addr+Count)<=topOfRAM))
+		        Count++;
+
+                if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
+		else fprintf(f,"%02X ",Chr);
+
+		Addr += Count;
+	}
+	fprintf(f, "\n");
+
+	fprintf(f,"\n[ADVANCED]\n");
+	AnsiString rom = StringReplace(HW->RomBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
+	fprintf(f,"ROM %s\n", rom.c_str());
+	fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
+	fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
+	fprintf(f,"IMPROVED_WAIT %02X\n", zx81.improvedWait);
+	fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
+	fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
+
+	fprintf(f,"\n[SOUND]\n");
+	fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
+
+	// Must output this before the Chr$ Generator section
+	fprintf(f,"\n[COLOUR]\n");
+	fprintf(f,"TYPE %s\n", HW->ColourBox->Text.c_str());
+
+	if (machine.colour == COLOURCHROMA)
+	{
+                Addr = 0xC000;
+
+		while (Addr <= 0xFFFF)
+		{
+		        Chr=memory[Addr];
+			Count=1;
+
+                        while((memory[Addr+Count]==Chr) && ((Addr+Count)<=0xFFFF))
+			        Count++;
 
                         if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
-                        else fprintf(f,"%02X ",Chr);
+			else fprintf(f,"%02X ",Chr);
 
                         Addr += Count;
                 }
-                fprintf(f, "\n");
 
-                fprintf(f,"\n[ADVANCED]\n");
-                fprintf(f,"ROM %s\n", HW->RomBox->Text.c_str());
-                fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
-                fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
-                fprintf(f,"IMPROVED_WAIT %02X\n", zx81.improvedWait);
-                fprintf(f,"FLOATING_POINT_FIX %02X\n", zx81.FloatingPointHardwareFix);
-                fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
+		fprintf(f,"\nCHROMA_MODE %02X\n", zx81.chromaMode);
+		fprintf(f,"COLOUR_ENABLED %02X\n", zx81.chromaColourSwitchOn);
+	}
 
-                fprintf(f,"\n[SOUND]\n");
-                fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
+	fprintf(f,"\n[CHR$_GENERATOR]\n");
+	fprintf(f,"TYPE %s\n", HW->ChrGenBox->Text.c_str());
 
-                // Must output this before the Chr$ Generator section
-                fprintf(f,"\n[COLOUR]\n");
-                fprintf(f,"TYPE %s\n", HW->ColourBox->Text.c_str());
+	if (zx81.chrgen == CHRGENQS)
+	{
+		fprintf(f,"ENABLED %02X\n", zx81.enableQSchrgen);
 
-                if (machine.colour == COLOURCHROMA)
-                {
-                        Addr = 0xC000;
+		Addr = 0x8400;
 
-                        while (Addr <= 0xFFFF)
-                        {
-                                Chr=memory[Addr];
-                                Count=1;
+                while (Addr <= 0x8800)
+		{
+                        Chr=font[Addr-0x8400];
+			Count=1;
 
-                                while((memory[Addr+Count]==Chr) && ((Addr+Count)<=0xFFFF))
-                                        Count++;
+			while((font[Addr-0x8400+Count]==Chr) && ((Addr+Count)<=0x8800))
+			        Count++;
 
-                                if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
-                                else fprintf(f,"%02X ",Chr);
+			if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
+			else fprintf(f,"%02X ",Chr);
 
-                                Addr += Count;
-                        }
+		        Addr += Count;
+		}
+		fprintf(f, "\n");
+	}
 
-                        fprintf(f,"\nCHROMA_MODE %02X\n", zx81.chromaMode);
-                        fprintf(f,"COLOUR_ENABLED %02X\n", zx81.chromaColourSwitchOn);
-                }
+	fprintf(f,"\n[HIGH_RESOLUTION]\n");
+	fprintf(f,"TYPE %s\n", HW->HiResBox->Text.c_str());
 
-                fprintf(f,"\n[CHR$_GENERATOR]\n");
-                fprintf(f,"TYPE %s\n", HW->ChrGenBox->Text.c_str());
+	fprintf(f,"\n[ROM_CARTRIDGE]\n");
+	fprintf(f,"TYPE %s\n", HW->RomCartridgeBox->Text.c_str());
+	if (HW->RomCartridgeBox->Text != "None")
+	{
+	        AnsiString path = StringReplace(HW->RomCartridgeFileBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
+		fprintf(f,"PATH %s\n", path.c_str());
+		if (HW->RomCartridgeBox->Text == "ZXC1")
+		{
+		        fprintf(f,"CONFIGURATION %s\n", HW->ZXC1ConfigurationBox->Text.c_str());
+		}
+	}
 
-                if (zx81.chrgen == CHRGENQS)
-                {
-                        fprintf(f,"ENABLED %02X\n", zx81.enableQSchrgen);
+	fprintf(f,"\n[INTERFACES]\n");
+	fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
+	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
 
-                        Addr = 0x8400;
+	fprintf(f,"\n[DRIVES]\n");
+	fprintf(f,"FDC %s\n", HW->FDC->Text.c_str());
+	fprintf(f,"IDE %s\n", HW->IDEBox->Text.c_str());
 
-                        while (Addr <= 0x8800)
-                        {
-                                Chr=font[Addr-0x8400];
-                                Count=1;
+        fprintf(f,"\n[EOF]\n");
+	fclose(f);
 
-                                while((font[Addr-0x8400+Count]==Chr) && ((Addr+Count)<=0x8800))
-                                        Count++;
+        return 0;
+}
 
-                                if (Count>1) fprintf(f,"*%04X %02X ",Count, Chr);
-                                else fprintf(f,"%02X ",Chr);
+int save_snap_ace(char *filename)
+{
+	FILE *f;
+        int Addr, Count, Chr, memptr;
 
-                                Addr += Count;
-                        }
-                        fprintf(f, "\n");
-                }
+	f=fopen(filename,"wb");
+	if (!f)
+	{
+	        ShowMessage("Save snapshot failed.");
+		return -1;
+	}
 
-                fprintf(f,"\n[HIGH_RESOLUTION]\n");
-                fprintf(f,"TYPE %s\n", HW->HiResBox->Text.c_str());
+	memptr=0x2000;
+	memory[memptr]=0x01; memory[memptr+1]=0x80;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
 
-                fprintf(f,"\n[ROM_CARTRIDGE]\n");
-                fprintf(f,"TYPE %s\n", HW->RomCartridgeBox->Text.c_str());
-                if (HW->RomCartridgeBox->Text != "None")
-                {
-                        fprintf(f,"PATH %s\n", HW->RomCartridgeFileBox->Text.c_str());
-                        if (HW->RomCartridgeBox->Text == "ZXC1")
-                        {
-                                fprintf(f,"CONFIGURATION %s\n", HW->ZXC1ConfigurationBox->Text.c_str());
-                        }
-                }
+	memptr=0x2080;
+	memory[memptr]=0x00; memory[memptr+1]=(zx81.RAMTOP+1)/256;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
 
-                fprintf(f,"\n[INTERFACES]\n");
-                fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
-                fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
+	memptr=0x0284;
+	memory[memptr]=0x00; memory[memptr+1]=0x00;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
 
-                fprintf(f,"\n[EOF]\n");
-        }
+	memptr=0x0288;
+	memory[memptr]=0x00; memory[memptr+1]=0x00;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
+
+	memptr=0x028c;
+	memory[memptr]=0x03; memory[memptr+1]=0x00;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
+
+	memptr=0x0290;
+	memory[memptr]=0x03; memory[memptr+1]=0x00;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
+
+	memptr=0x0294;
+	memory[memptr]=0xfd; memory[memptr+1]=0xfd;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
+
+	memptr+=0x0298;
+	memory[memptr]=0x01; memory[memptr+1]=0x00;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
+
+	memptr+=0x029c;
+	memory[memptr]=0x00; memory[memptr+1]=0x00;
+	memory[memptr+2]=0x00; memory[memptr+3]=0x00;
+
+	memptr=0x2100;
+
+	memory[memptr] = z80.af.b.l; memory[memptr+1] = z80.af.b.h; memptr+=4;
+	memory[memptr] = z80.bc.b.l; memory[memptr+1] = z80.bc.b.h; memptr+=4;
+	memory[memptr] = z80.de.b.l; memory[memptr+1] = z80.de.b.h; memptr+=4;
+	memory[memptr] = z80.hl.b.l; memory[memptr+1] = z80.hl.b.h; memptr+=4;
+	memory[memptr] = z80.ix.b.l; memory[memptr+1] = z80.ix.b.h; memptr+=4;
+	memory[memptr] = z80.iy.b.l; memory[memptr+1] = z80.iy.b.h; memptr+=4;
+	memory[memptr] = z80.sp.b.l; memory[memptr+1] = z80.sp.b.h; memptr+=4;
+	memory[memptr] = z80.pc.b.l; memory[memptr+1] = z80.pc.b.h; memptr+=4;
+	memory[memptr] = z80.af_.b.l; memory[memptr+1] = z80.af_.b.h; memptr+=4;
+	memory[memptr] = z80.bc_.b.l; memory[memptr+1] = z80.bc.b.h ; memptr+=4;
+	memory[memptr] = z80.de_.b.l; memory[memptr+1] = z80.de_.b.h; memptr+=4;
+	memory[memptr] = z80.hl_.b.l; memory[memptr+1] = z80.hl_.b.h; memptr+=4;
+
+	memory[memptr] = z80.im ; memptr+=4;
+	memory[memptr] = z80.iff1; memptr+=4;
+	memory[memptr] = z80.iff2; memptr+=4;
+	memory[memptr] = z80.i; memptr+=4;
+	memory[memptr] = z80.r; memptr+=4;
+	memory[memptr] = 0x80; memory[memptr+1] = 0x00; memory[memptr+2] = 0x00; memory[memptr+3] = 0x00;
+
+	Addr=0x2000;
+
+	while(Addr <= zx81.RAMTOP)
+	{
+	        Chr=memory[Addr];
+		Count=1;
+
+		while((memory[Addr+Count] == Chr) && ((Addr+Count) <= zx81.RAMTOP))
+			Count++;
+
+		if (Count>240) Count=240;
+
+		if (Count>3 || Chr==0xed)
+		{
+			fputc(0xed,f);
+		        fputc(Count,f);
+		}
+		else    Count=1;
+
+		fputc(Chr,f);
+		Addr+=Count;
+	}
+
+	fputc(0xed,f);
+	fputc(0x00,f);
+
         fclose(f);
-        return(0);
+        
+	return 0;
 }
 
 int memoryLoadToAddress(char *filename, void* destAddress, int length)

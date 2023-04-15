@@ -83,7 +83,9 @@ void HWSetMachine(int machine, int speccy)
                 break;
         }
 
-        HW->OKClick(NULL);
+        const bool reinitialiseStatus = true;
+        const bool disableResetStatus = false;
+        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
 }
 
 __fastcall THW::THW(TComponent* Owner)
@@ -108,7 +110,9 @@ __fastcall THW::THW(TComponent* Owner)
         delete ini;
 
         ResetRequired=true;
-        OKClick(NULL);
+        const bool reinitialiseStatus = true;
+        const bool disableResetStatus = false;
+        UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
 }
 //---------------------------------------------------------------------------
 
@@ -150,10 +154,277 @@ AnsiString getMachineRoot(AnsiString fullRomName)
 
 void __fastcall THW::OKClick(TObject *Sender)
 {
-        RomBox->Text = RomBox->Text.LowerCase();
+        const bool reinitialiseStatus = false;
+        const bool disableResetStatus = false;
+        UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+}
 
-        AnsiString Name=NewMachineName;
+void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
+{
+        bool machineChanged = (NewMachine != emulator.machine);
         emulator.newMachine = NewMachine;
+        emulator.machine=NewMachine;
+        spectrum.model=NewSpec;
+
+        CloseLiveMemoryWindow(machineChanged);
+        CloseOtherDebugWindow();
+
+        RomBox->Text = RomBox->Text.LowerCase();
+        strcpy(machine.CurRom, RomBox->Text.c_str());
+
+        AnsiString romBase = DetermineRomBase();
+        ConfigureSymbolFile(romBase);
+        ConfigureCharacterBitmapFile(romBase);
+
+        ConfigureMachineSettings();
+        ConfigureRamTop();
+        ConfigureDefaultRamSettings();
+        DetermineRamSizeLabel(NewMachineName);
+
+        ConfigureColour();
+        ConfigureBasicLister();
+        ConfigureRom();
+        ConfigureDockCartridge();
+        ConfigureMultifaceRom();
+        ConfigureZXpand();
+        ConfigureRamPackWobble();
+        ConfigureRomCartridge();
+        ConfigureCharacterGenerator();
+        ConfigureHiRes();
+        ConfigureSound();
+        ConfigureM1Not();
+        ConfigureDisplayArtifacts();
+
+        ConfigureSpectrumIDE();
+        ConfigureFDC();
+        ConfigureModem();
+        ConfigurePrinterCentronicsPort();
+        ConfigureRzxSupport();
+
+        zx81.improvedWait = ImprovedWait->Checked;
+        zx81.shadowROM = !EnableLowRAM->Checked;
+        zx81.RAM816k = EnableLowRAM->Checked;
+        zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
+
+        machine.protectROM = ProtectROM->Checked;
+        machine.zxprinter = ZXPrinter->Checked;
+        machine.NTSC = NTSC->Checked;
+
+        spectrum.uspeech = uSpeech->Checked;
+        spectrum.usource = uSource->Checked;
+        spectrum.kbissue = Issue2->Checked;
+        spectrum.kmouse = KMouse->Checked;
+
+        Form1->InWaveLoader->Enabled=true;
+        Form1->OutWaveLoader->Enabled=true;
+
+        SelectGroupboxVisibility();
+
+        AccurateInit(false);
+        Speed->Recalc(NULL);
+        PCKbInit();
+        Kb->OKClick(NULL);
+
+        if (ResetRequired && !disableReset)
+        {
+                machine.initialise();
+                ResetRequired=false;
+        }
+
+        Keyboard->KbChange();
+
+        InitialiseSound(machineChanged);
+
+        Form1->EnableAnnotationOptions();
+
+        spectrum.drivebusy = -1;
+
+        InitPatches(NewMachine);
+
+        ResetDisplaySize();
+
+        ResetDebugger();
+
+        if (!reinitialise) Close();
+
+        if (Dbg->Visible) Dbg->UpdateVals();
+
+        ReInitialiseSound();
+}
+
+void THW::ConfigureRzxSupport()
+{
+        Form1->RZX1->Enabled=false;
+        if (emulator.machine==MACHINESPECTRUM) Form1->RZX1->Enabled=true;
+}
+
+void THW::ReInitialiseSound()
+{
+        int r = Sound.ReInitialise(NULL, machine.fps,0,0,0);
+        if (r)
+        {
+                AnsiString err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
+                MessageBox(NULL, err.c_str(), "Error", 0);
+                Application->Terminate();
+        }
+}
+
+void THW::ResetDebugger()
+{
+        Dbg->ResetBreakpointHits();
+        Dbg->RefreshBreakpointList();
+}
+
+void THW::ConfigureDisplayArtifacts()
+{
+        Artifacts->TrackBarChange(NULL);
+        Artifacts->ConfigureDotCrawlOption();
+
+        bool spec48 = (emulator.machine==MACHINESPECTRUM && spectrum.model<SPECCY128);
+        if (!spec48)
+        {
+                Artifacts->DotCrawl1->Checked = false;
+        }
+
+        Artifacts->ForceVibrantColours(machine.colour == COLOURCHROMA);
+}
+
+void THW::ConfigureM1Not()
+{
+        zx81.m1not = M1Not->Checked? 49152 : 32768;
+
+        if (emulator.machine==MACHINEZX97LE)
+        {
+                zx81.m1not=49152;
+        }
+}
+
+void THW::ConfigureModem()
+{
+        if (TS2050->Checked==1) { machine.ts2050=1; Form1->TS20501->Enabled=true; }
+        else { machine.ts2050=0; Form1->TS20501->Enabled=false; }
+}
+
+void THW::ConfigurePrinterCentronicsPort()
+{
+        if (spectrum.floppytype==FLOPPYOPUSD
+                || spectrum.floppytype==FLOPPYPLUSD
+                || spectrum.floppytype==FLOPPYDISCIPLE
+                || spectrum.model==SPECCYPLUS2A
+                || spectrum.model==SPECCYPLUS3)
+        {
+                Form1->PrinterPort1->Enabled=true;
+                if (spectrum.floppytype==FLOPPYOPUSD)
+                        Form1->PrinterPort1->Caption="Opus Printer Port";
+                if (spectrum.floppytype==FLOPPYDISCIPLE)
+                        Form1->PrinterPort1->Caption="Disciple Printer Port";
+                if (spectrum.floppytype==FLOPPYPLUSD)
+                        Form1->PrinterPort1->Caption="PlusD Printer Port";
+                if (spectrum.model==SPECCYPLUS2A)
+                        Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
+                if (spectrum.model==SPECCYPLUS3)
+                        Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
+        }
+        else
+        {
+                Form1->PrinterPort1->Enabled=false;
+                Form1->PrinterPort1->Caption="Centronics Printer Port";
+        }
+}
+
+void THW::SelectGroupboxVisibility()
+{
+        Dbg->GroupBoxZX81->Visible=false;
+        Dbg->GroupBoxAce->Visible=false;
+        Dbg->GroupBoxChroma->Visible=false;
+        Dbg->GroupBoxSpectra->Visible=false;
+        Dbg->GroupBoxZXC->Visible=false;
+
+        switch(emulator.machine)
+        {
+        case MACHINEACE:
+                Dbg->GroupBoxAce->Visible=true;
+                break;
+
+        case MACHINESPECTRUM:
+                Dbg->GroupBoxSpectra->Visible=Form1->SpectraColourEnable->Visible;
+                Dbg->GroupBoxZXC->Visible=Form1->SpectraColourEnable->Visible;
+                break;
+
+        default:
+                Dbg->GroupBoxZX81->Visible=Form1->ChromaColourEnable->Visible;
+                Dbg->GroupBoxChroma->Visible=Form1->ChromaColourEnable->Visible;
+                Dbg->GroupBoxZXC->Visible=Form1->ChromaColourEnable->Visible;
+                break;
+        }
+}
+
+void THW::ConfigureRamTop()
+{
+        if ((NewMachine == MACHINESPECTRUM) || (NewMachine == MACHINEQL))
+        {
+                zx81.RAMTOP = 65535;
+                machine.ace96k=0;
+        }
+        else if (RamPackBox->Items->Strings[RamPackBox->ItemIndex]=="96K")
+        {
+                zx81.RAMTOP = 65535;
+                machine.ace96k=1;
+        }
+        else if (emulator.machine==MACHINEZX97LE)
+        {
+                zx81.RAMTOP=65535;
+        }
+        else
+        {
+                int kp = machine.baseRamSize;
+                if (RamPackBox->ItemIndex!=0)
+                {
+                        int rp = atoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
+                }
+                zx81.RAMTOP = (kp << 10) + 16383;
+                if (RamPackBox->ItemIndex == 6) zx81.RAMTOP = 65535;
+                if (emulator.machine==MACHINEACE) zx81.RAMTOP -= 3072;
+                machine.ace96k=0;
+        }
+}
+
+void THW::InitialiseSound(bool machineChanged)
+{
+        Sound.AYInit();
+
+        if (machineChanged)
+        {
+                if ( ((emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE || emulator.machine==MACHINELAMBDA) && !Form1->Sound1->Checked)
+                || ( (emulator.machine!=MACHINESPECTRUM && emulator.machine!=MACHINEACE && emulator.machine!=MACHINELAMBDA) && (machine.colour != COLOURCHROMA) && Form1->Sound1->Checked) )
+                {
+                        Form1->Sound1Click(NULL);
+                }
+        }
+}
+
+void THW::CloseLiveMemoryWindow(bool machineChanged)
+{
+        if (machineChanged && LiveMemoryWindow && LiveMemoryWindow->Visible)
+                LiveMemoryWindow->Close();
+}
+
+void THW::CloseOtherDebugWindow()
+{
+        if (NewMachine == MACHINEQL)
+        {
+                if (Dbg && Dbg->Visible) Dbg->Close();
+        }
+        else
+        {
+                if (Debug68k && Debug68k->Visible) Debug68k->Close();
+        }
+}
+
+void THW::DetermineRamSizeLabel(AnsiString newMachineName)
+{
+        AnsiString name = newMachineName;
 
         if (AceBtn->Down)
         {
@@ -163,17 +434,15 @@ void __fastcall THW::OKClick(TObject *Sender)
                 if (RamPackBox->ItemIndex!=0)
                         i+=atoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
 
-                Name=i;
-                Name += "K Jupiter Ace";
+                name = i;
+                name += "K Jupiter Ace";
         }
         else if (QLBtn->Down)
         {
-                Name = QLMem->Items->Strings[QLMem->ItemIndex] + " " + NewMachineName;
+                name = QLMem->Items->Strings[QLMem->ItemIndex] + " " + newMachineName;
         }
         else if (RamPackBox->Visible)
         {
-                SetUpRamSettings();
-
                 int totalRam = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
@@ -181,38 +450,275 @@ void __fastcall THW::OKClick(TObject *Sender)
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
                 AnsiString ramSize = totalRam;
-                Name = ramSize + "K " + Name;
+                name = ramSize + "K " + name;
         }
 
-        zx81.zxpand = 0;
+        strcpy(emulator.machinename, name.c_str());
+        Form1->StatusBar1->Panels->Items[0]->Text = name;
+}
 
-        bool machineChanged = (NewMachine != emulator.machine);
-        if (machineChanged && LiveMemoryWindow && LiveMemoryWindow->Visible)
-                LiveMemoryWindow->Close();
+void THW::ConfigureRamPackWobble()
+{
+        Form1->RamPackWobble1->Enabled=false;
+        Form1->RamPackWobble1->Visible=false;
 
-        strcpy(emulator.machinename, Name.c_str());
-        Form1->StatusBar1->Panels->Items[0]->Text = Name;
+        switch(NewMachine)
+        {
+        case MACHINEZX80:
+        case MACHINEZX81:
+        case MACHINER470:
+        case MACHINETK85:
+        case MACHINETS1000:
+        case MACHINEACE:
+        case MACHINETS1500:
+        case MACHINELAMBDA:
+                Form1->RamPackWobble1->Enabled=true;
+                Form1->RamPackWobble1->Visible=true;
+                break;
+        }
+}
 
-        strcpy(machine.CurRom, RomBox->Text.c_str());
+void THW::ConfigureMultifaceRom()
+{
+        spectrum.MFVersion=MFNONE;
+        Multiface->Enabled = false;
 
-        emulator.machine=NewMachine;
-        spectrum.model=NewSpec;
+        if (NewMachine == MACHINESPECTRUM)
+        {
+                switch(NewSpec)
+                {
+                case SPECCY16:
+                case SPECCY48:
+                case SPECCYPLUS:
+                case SPECCYTC2048:
+                case SPECCY128:
+                case SPECCYPLUS2:
+                        spectrum.MFVersion=MF128;
+                        Multiface->Caption = "Multiface 128";
+                        Multiface->Enabled = true;
+                        break;
 
-        Form1->RamPackWobble1->Enabled=true;
-        Form1->RamPackWobble1->Visible=true;
+                case SPECCYPLUS2A:
+                case SPECCYPLUS3:
+                        spectrum.MFVersion=MFPLUS3;
+                        Multiface->Caption = "Multiface 3";
+                        Multiface->Enabled = true;
+                        break;
+                case SPECCYTS2068:
+                        spectrum.MFVersion=MFNONE;
+                        Multiface->Enabled = false;
+                        break;
+                }
+        }
+
+        if (!Multiface->Checked) spectrum.MFVersion=MFNONE;
+}
+
+void THW::ConfigureRom()
+{
+        switch(NewMachine)
+        {
+        case MACHINEZX80:
+                strcpy(emulator.ROM80, machine.CurRom);
+                break;
+
+        case MACHINEZX81:
+                strcpy(emulator.ROM81, machine.CurRom);
+                break;
+
+        case MACHINER470:
+                strcpy(emulator.ROMR470, machine.CurRom);
+                break;
+
+        case MACHINETK85:
+                strcpy(emulator.ROMTK85, machine.CurRom);
+                break;
+
+        case MACHINETS1000:
+                strcpy(emulator.ROM81, machine.CurRom);
+                break;
+
+        case MACHINEACE:
+                strcpy(emulator.ROMACE, machine.CurRom);
+                break;
+
+        case MACHINETS1500:
+                strcpy(emulator.ROMTS1500, machine.CurRom);
+                break;
+
+        case MACHINELAMBDA:
+                strcpy(emulator.ROMLAMBDA, machine.CurRom);
+                break;
+
+        case MACHINEZX97LE:
+                strcpy(emulator.ROM97LE, machine.CurRom);
+                break;
+
+        case MACHINEQL:
+                strcpy(emulator.ROMQL, machine.CurRom);
+                break;
+
+        case MACHINESPECTRUM:
+                switch(NewSpec)
+                {
+                case SPECCY16:
+                        spectrum.RAMBanks=1;
+                        spectrum.ROMBanks=1;
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else strcpy(emulator.ROMSP48, machine.CurRom);
+                        break;
+
+                case SPECCY48:
+                case SPECCYPLUS:
+                        spectrum.RAMBanks=3;
+                        spectrum.ROMBanks=1;
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else strcpy(emulator.ROMSP48, machine.CurRom);
+                        break;
+
+                case SPECCYTC2048:
+                        spectrum.RAMBanks=3;
+                        spectrum.ROMBanks=1;
+                        strcpy(emulator.ROMTC2048, machine.CurRom);
+                        break;
+
+                case SPECCYTS2068:
+                        spectrum.RAMBanks=3;
+                        spectrum.ROMBanks=1;
+                        strcpy(emulator.ROMTS2068, machine.CurRom);
+                        break;
+
+                case SPECCY128:
+                        spectrum.RAMBanks=8;
+                        spectrum.ROMBanks=1;
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else strcpy(emulator.ROMSP128, machine.CurRom);
+                        break;
+
+                case SPECCYPLUS2:
+                        spectrum.RAMBanks=8;
+                        spectrum.ROMBanks=1;
+                        strcpy(emulator.ROMSPP2, machine.CurRom);
+                        break;
+
+                case SPECCYPLUS2A:
+                        spectrum.RAMBanks=8;
+                        spectrum.ROMBanks=1;
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
+                                strcpy(emulator.ROMSPP3ECF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
+                                strcpy(emulator.ROMSPP3E, machine.CurRom);
+                        else strcpy(emulator.ROMSPP3, machine.CurRom);
+                        break;
+
+                case SPECCYPLUS3:
+                        spectrum.RAMBanks=8;
+                        spectrum.ROMBanks=1;
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
+                                strcpy(emulator.ROMSPP3ECF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
+                                strcpy(emulator.ROMSPP3E, machine.CurRom);
+                        break;
+                }
+                break;
+        }
+}
+
+void THW::ConfigureDockCartridge()
+{
         Form1->InsertDockCart1->Visible=false;
         Form1->RemoveDockCart1->Visible=false;
         Form1->DockSpacer->Visible=false;
 
-        if (NewMachine == MACHINEQL)
+        if (NewMachine == MACHINESPECTRUM)
         {
-                if (Dbg && Dbg->Visible) Dbg->Close();
+                if (NewSpec == SPECCYTC2048 || NewSpec == SPECCYTS2068)
+                {
+                        Form1->InsertDockCart1->Visible=true;
+                        Form1->RemoveDockCart1->Visible=true;
+                        Form1->DockSpacer->Visible=true;
+                }
         }
-        else
+}
+
+void THW::ConfigureZXpand()
+{
+        zx81.zxpand = 0;
+
+        switch(NewMachine)
         {
-                if (Debug68k && Debug68k->Visible) Debug68k->Close();
+        case MACHINEZX80:
+                zx81.zxpand = (ZXpand->Checked == true);
+                break;
+
+        case MACHINEZX81:
+        case MACHINETS1000:
+        case MACHINETS1500:
+                zx81.zxpand = (ZXpand->Checked == true);
+                ZXpand->Caption = "ZXpand+";
+                break;
         }
 
+        CreateZXpand();
+}
+
+void THW::ConfigureBasicLister()
+{
+        if (BasicLister->ListerAvailable())
+        {
+                BasicLister->Clear();
+                BasicLister->SetBasicLister(NULL);
+        }
+
+        Form1->BasicListerOption->Enabled = false;
+        
+        if (!strcmp(machine.CurRom, "zx80.rom"))
+        {
+                BasicLister->SetBasicLister(new zx80BasicLister(zx81.zxpand));
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
+                 !strcmp(machine.CurRom, "zx81.edition2.rom") ||
+                 !strcmp(machine.CurRom, "zx81.edition3.rom") ||
+                 !strcmp(machine.CurRom, "ts1500.rom") ||
+                 !strcmp(machine.CurRom, "tk85.rom"))
+        {
+                BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "spec48.rom") ||
+                 !strcmp(machine.CurRom, "spec48.spanish.rom"))
+        {
+                BasicLister->SetBasicLister(new spec48BasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "spec128.rom") ||
+                 !strcmp(machine.CurRom, "spec128.spanish.rom") ||
+                 !strcmp(machine.CurRom, "specp2.rom") ||
+                 !strcmp(machine.CurRom, "specp3.version4_0.rom") ||
+                 !strcmp(machine.CurRom, "specp3.version4_1.rom") ||
+                 !strcmp(machine.CurRom, "specp2.french.rom") ||
+                 !strcmp(machine.CurRom, "specp2.spanish.rom") ||
+                 !strcmp(machine.CurRom, "specp3.spanish.rom"))
+        {
+                BasicLister->SetBasicLister(new spec128BasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+        
+        if (!BasicLister->ListerAvailable() && BasicLister->Visible)
+        {
+                BasicLister->Close();
+        }
+}
+
+void THW::ConfigureColour()
+{
         bool prevChromaColourSwitchOn = (machine.colour == COLOURCHROMA);
         bool prevSpectraColourSwitchOn = (machine.colour == COLOURSPECTRA);
 
@@ -241,6 +747,12 @@ void __fastcall THW::OKClick(TObject *Sender)
         }
         Form1->DisplayArt->Enabled = (machine.colour != COLOURSPECTRA);
 
+        ConfigureChroma(prevChromaColourSwitchOn);
+        ConfigureSpectra(prevSpectraColourSwitchOn);
+}
+
+void THW::ConfigureChroma(bool prevChromaColourSwitchOn)
+{
         zx81.chromaColourSwitchOn = (machine.colour == COLOURCHROMA);
         if (!prevChromaColourSwitchOn && zx81.chromaColourSwitchOn)
         {
@@ -250,7 +762,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->ChromaColourEnable->Checked = zx81.chromaColourSwitchOn;
         Form1->ChromaColourEnable->Visible = (NewMachine == MACHINEZX80) || (NewMachine == MACHINEZX81) ||
                                              (NewMachine == MACHINETS1000) || (NewMachine == MACHINETS1500);
+}
 
+void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
+{
         spectrum.spectraColourSwitchOn = (machine.colour == COLOURSPECTRA);
         if (!prevSpectraColourSwitchOn && spectrum.spectraColourSwitchOn)
         {
@@ -259,190 +774,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->SpectraColourEnable->Enabled = spectrum.spectraColourSwitchOn;
         Form1->SpectraColourEnable->Checked = spectrum.spectraColourSwitchOn;
         Form1->SpectraColourEnable->Visible = (NewMachine == MACHINESPECTRUM) && ((NewSpec != SPECCYTC2048) && (NewSpec != SPECCYTS2068));
+}
 
-        Form1->BasicListerOption->Enabled = false;
-        if (BasicLister->ListerAvailable())
-        {
-                BasicLister->Clear();
-                BasicLister->SetBasicLister(NULL);
-        }
-
-        spectrum.MFVersion=MFNONE;
-        Multiface->Enabled = false;
-
-        switch(NewMachine)
-        {
-        case MACHINEZX80:
-                strcpy(emulator.ROM80, machine.CurRom);
-                zx81.zxpand = (ZXpand->Checked == true);
-                CreateBasicLister();
-                break;
-
-        case MACHINEZX81:
-                strcpy(emulator.ROM81, machine.CurRom);
-                CreateBasicLister();
-
-                zx81.zxpand = (ZXpand->Checked == true);
-                ZXpand->Caption = "ZXpand+";
-                break;
-
-        case MACHINER470:
-                strcpy(emulator.ROMR470, machine.CurRom);
-                break;
-
-        case MACHINETK85:
-                strcpy(emulator.ROMTK85, machine.CurRom);
-                CreateBasicLister();
-                break;
-
-        case MACHINETS1000:
-                strcpy(emulator.ROM81, machine.CurRom);
-                CreateBasicLister();
-
-                zx81.zxpand = (ZXpand->Checked == true);
-                ZXpand->Caption = "ZXpand+";
-                break;
-
-        case MACHINEACE:
-                strcpy(emulator.ROMACE, machine.CurRom);
-                break;
-
-        case MACHINETS1500:
-                strcpy(emulator.ROMTS1500, machine.CurRom);
-                CreateBasicLister();
-
-                zx81.zxpand = (ZXpand->Checked == true);
-                ZXpand->Caption = "ZXpand+";
-                break;
-
-        case MACHINELAMBDA:
-                strcpy(emulator.ROMLAMBDA, machine.CurRom);
-                break;
-
-        case MACHINEZX97LE:
-                strcpy(emulator.ROM97LE, machine.CurRom);
-                break;
-
-        case MACHINEQL:
-                Form1->RamPackWobble1->Enabled=false;
-                Form1->RamPackWobble1->Visible=false;
-                strcpy(emulator.ROMQL, machine.CurRom);
-                break;
-
-        case MACHINESPECTRUM:
-                Form1->RamPackWobble1->Enabled=false;
-                Form1->RamPackWobble1->Visible=false;
-
-                switch(NewSpec)
-                {
-                case SPECCY16:
-                        spectrum.RAMBanks=1;
-                        spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP48, machine.CurRom);
-                        spectrum.MFVersion=MF128;
-                        Multiface->Caption = "Multiface 128";
-                        Multiface->Enabled = true;
-                        CreateBasicLister();
-                        break;
-
-                case SPECCY48:
-                case SPECCYPLUS:
-                        spectrum.RAMBanks=3;
-                        spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP48, machine.CurRom);
-                        spectrum.MFVersion=MF128;
-                        Multiface->Caption = "Multiface 128";
-                        Multiface->Enabled = true;
-                        CreateBasicLister();
-                        break;
-
-                case SPECCYTC2048:
-                        Form1->InsertDockCart1->Visible=true;
-                        Form1->RemoveDockCart1->Visible=true;
-                        Form1->DockSpacer->Visible=true;
-                        spectrum.RAMBanks=3;
-                        spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMTC2048, machine.CurRom);
-                        spectrum.MFVersion=MF128;
-                        Multiface->Caption = "Multiface 128";
-                        Multiface->Enabled = true;
-                        break;
-
-                case SPECCYTS2068:
-                        Form1->InsertDockCart1->Visible=true;
-                        Form1->RemoveDockCart1->Visible=true;
-                        Form1->DockSpacer->Visible=true;
-                        spectrum.RAMBanks=3;
-                        spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMTS2068, machine.CurRom);
-                        spectrum.MFVersion=MFNONE;
-                        Multiface->Enabled = false;
-                        break;
-
-                case SPECCY128:
-                        spectrum.RAMBanks=8;
-                        spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP128, machine.CurRom);
-                        spectrum.MFVersion=MF128;
-                        Multiface->Caption = "Multiface 128";
-                        Multiface->Enabled = true;
-                        CreateBasicLister();
-                        break;
-
-                case SPECCYPLUS2:
-                        spectrum.RAMBanks=8;
-                        spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMSPP2, machine.CurRom);
-                        spectrum.MFVersion=MF128;
-                        Multiface->Caption = "Multiface 128";
-                        Multiface->Enabled = true;
-                        CreateBasicLister();
-                        break;
-
-                case SPECCYPLUS2A:
-                        spectrum.RAMBanks=8;
-                        spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
-                                strcpy(emulator.ROMSPP3ECF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
-                                strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        else strcpy(emulator.ROMSPP3, machine.CurRom);
-                        spectrum.MFVersion=MFPLUS3;
-                        Multiface->Caption = "Multiface 3";
-                        Multiface->Enabled = true;
-                        CreateBasicLister();
-                        break;
-
-                case SPECCYPLUS3:
-                        spectrum.RAMBanks=8;
-                        spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
-                                strcpy(emulator.ROMSPP3ECF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
-                                strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        spectrum.MFVersion=MFPLUS3;
-                        Multiface->Caption = "Multiface 3";
-                        Multiface->Enabled = true;
-                        CreateBasicLister();
-                        break;
-                }
-                break;
-        }
-
-        if (!BasicLister->ListerAvailable() && BasicLister->Visible)
-        {
-                BasicLister->Close();
-        }
-
+void THW::ConfigureRomCartridge()
+{
         romcartridge.type = RomCartridgeBox->ItemIndex;
         if (RomCartridgeBox->Text == "Timex")
         {
@@ -482,19 +817,10 @@ void __fastcall THW::OKClick(TObject *Sender)
                 }
                 ResetRequired=true;
         }
+}
 
-        if (!Multiface->Checked) spectrum.MFVersion=MFNONE;
-
-        spectrum.uspeech = uSpeech->Checked;
-        spectrum.usource = uSource->Checked;
-        
-        Form1->InWaveLoader->Enabled=true;
-        Form1->OutWaveLoader->Enabled=true;
-
-        zx81.shadowROM = !EnableLowRAM->Checked;
-        zx81.RAM816k = EnableLowRAM->Checked;
-        machine.protectROM = ProtectROM->Checked;
-
+void THW::ConfigureCharacterGenerator()
+{
         if ((zx81.chrgen != CHRGENQS) && (ChrGenBox->ItemIndex == CHRGENQS))
         {
                 zx81.enableQSchrgen = true;
@@ -508,18 +834,16 @@ void __fastcall THW::OKClick(TObject *Sender)
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
         Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
 
-        zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
-
-        machine.zxprinter = ZXPrinter->Checked;
         zx81.extfont=0;
         if ((zx81.chrgen==CHRGENDK) || (zx81.chrgen==CHRGENCHR128))
                 zx81.maxireg = 0x3F;
         else
                 zx81.maxireg = 0x1F;
         if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
+}
 
-        machine.NTSC = NTSC->Checked;
-
+void THW::ConfigureHiRes()
+{
         Form1->MemotechReset->Enabled = false;
         Form1->MemotechReset->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
 
@@ -533,7 +857,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         default:
         case 0: zx81.truehires = HIRESDISABLED; break;
         }
+}
 
+void THW::ConfigureSound()
+{
         switch(SoundCardBox->ItemIndex)
         {
         case 1: machine.aysound=1; machine.aytype=AY_TYPE_ACE; break;
@@ -546,7 +873,9 @@ void __fastcall THW::OKClick(TObject *Sender)
         case 0:
         default: machine.aysound=0; machine.aytype=0; break;
         }
-
+}
+void THW::ConfigureSpectrumIDE()
+{
         spectrum.HDType=HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF") spectrum.HDType=HDZXCF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V1") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=1; }
@@ -566,8 +895,10 @@ void __fastcall THW::OKClick(TObject *Sender)
         case 1: spectrum.ZXCFRAMSize=512/16; break;
         case 2: spectrum.ZXCFRAMSize=1024/16; break;
         }
+}
 
-        //spectrum.interface1=false;
+void THW::ConfigureFDC()
+{
         spectrum.floppytype=FLOPPYNONE;
         if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Disciple") spectrum.floppytype=FLOPPYDISCIPLE;
         if (FDC->Items->Strings[FDC->ItemIndex]=="MGT PlusD") spectrum.floppytype=FLOPPYPLUSD;
@@ -598,18 +929,13 @@ void __fastcall THW::OKClick(TObject *Sender)
         case 3: spectrum.drivebtype=DRIVE35INCHDS; break;
         case 4: spectrum.drivebtype=DRIVE35INCHDS; break;
         }
-        zx81.m1not = M1Not->Checked? 49152 : 32768;
-        zx81.improvedWait = ImprovedWait->Checked;
 
-        if (emulator.machine==MACHINEZX97LE)
-        {
-                zx81.RAMTOP=65535;
-                zx81.m1not=49152;
-        }
+        Form1->DiskDrives1->Visible=true;
+        P3Drive->FormShow(NULL);
+}
 
-        if (TS2050->Checked==1) { machine.ts2050=1; Form1->TS20501->Enabled=true; }
-        else { machine.ts2050=0; Form1->TS20501->Enabled=false; }
-
+void THW::ConfigureMachineSettings()
+{
         machine.clockspeed=3250000;
         machine.tperscanline=207;
         machine.scanlines=machine.NTSC ? 262:310;
@@ -686,14 +1012,6 @@ void __fastcall THW::OKClick(TObject *Sender)
                         machine.fps=50;
                         machine.tperframe= machine.tperscanline * machine.scanlines;
                 }
-                //else if (spectrum.model==SPECCYTC2048)
-                //{
-                //        machine.clockspeed=3528000;
-                //        machine.tperscanline=226;
-                //        spectrum.intposition=14336;
-                //        machine.scanlines=312;
-                //        machine.tperframe= machine.tperscanline * machine.scanlines;
-                //}
                 else if (spectrum.model==SPECCYTS2068)
                 {
                         machine.clockspeed=3528000;
@@ -732,89 +1050,10 @@ void __fastcall THW::OKClick(TObject *Sender)
                 machine.exit = NULL;
                 break;
         }
+}
 
-        if ((NewMachine == MACHINESPECTRUM) || (NewMachine == MACHINEQL))
-        {
-                zx81.RAMTOP = 65535;
-                machine.ace96k=0;
-        }
-        else if (RamPackBox->Items->Strings[RamPackBox->ItemIndex]=="96k")
-        {
-                zx81.RAMTOP = 65535;
-                machine.ace96k=1;
-        }
-        else
-        {
-                int kp = machine.baseRamSize;
-                if (RamPackBox->ItemIndex!=0)
-                {
-                        int rp = atoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
-                        kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
-                }
-                zx81.RAMTOP = (kp << 10) + 16383;
-                if (RamPackBox->ItemIndex == 6) zx81.RAMTOP = 65535;
-                if (emulator.machine==MACHINEACE && RamPackBox->ItemIndex==0) zx81.RAMTOP=16383;
-                machine.ace96k=0;
-        }
-
-        SetUpRamSettings();
-
-        spectrum.kbissue = Issue2->Checked;
-        spectrum.kmouse = KMouse->Checked;
-
-        Form1->DiskDrives1->Visible=true;
-        P3Drive->FormShow(NULL);
-
-        Dbg->GroupBoxZX81->Visible=false;
-        Dbg->GroupBoxAce->Visible=false;
-        Dbg->GroupBoxChroma->Visible=false;
-        Dbg->GroupBoxSpectra->Visible=false;
-        Dbg->GroupBoxZXC->Visible=false;
-
-        switch(emulator.machine)
-        {
-        case MACHINEACE:
-                Dbg->GroupBoxAce->Visible=true;
-                break;
-
-        case MACHINESPECTRUM:
-                Dbg->GroupBoxSpectra->Visible=Form1->SpectraColourEnable->Visible;
-                Dbg->GroupBoxZXC->Visible=Form1->SpectraColourEnable->Visible;
-                break;
-
-        default:
-                Dbg->GroupBoxZX81->Visible=Form1->ChromaColourEnable->Visible;
-                Dbg->GroupBoxChroma->Visible=Form1->ChromaColourEnable->Visible;
-                Dbg->GroupBoxZXC->Visible=Form1->ChromaColourEnable->Visible;
-                break;
-        }
-
-        if (spectrum.floppytype==FLOPPYOPUSD
-                || spectrum.floppytype==FLOPPYPLUSD
-                || spectrum.floppytype==FLOPPYDISCIPLE
-                || spectrum.model==SPECCYPLUS2A
-                || spectrum.model==SPECCYPLUS3)
-        {
-                Form1->PrinterPort1->Enabled=true;
-                if (spectrum.floppytype==FLOPPYOPUSD)
-                        Form1->PrinterPort1->Caption="Opus Printer Port";
-                if (spectrum.floppytype==FLOPPYDISCIPLE)
-                        Form1->PrinterPort1->Caption="Disciple Printer Port";
-                if (spectrum.floppytype==FLOPPYPLUSD)
-                        Form1->PrinterPort1->Caption="PlusD Printer Port";
-                if (spectrum.model==SPECCYPLUS2A)
-                        Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
-                if (spectrum.model==SPECCYPLUS3)
-                        Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
-        }
-        else
-        {
-                Form1->PrinterPort1->Enabled=false;
-                Form1->PrinterPort1->Caption="Centronics Printer Port";
-        }
-
-        symbolstore::reset();
-
+AnsiString THW::DetermineRomBase()
+{
         AnsiString romBase = emulator.cwd;
         romBase += "ROM\\";
 
@@ -830,11 +1069,20 @@ void __fastcall THW::OKClick(TObject *Sender)
                 "Options > Hardware > Advanced Settings > ROM File.");
         }
 
+        return romBase;
+}
+
+void THW::ConfigureSymbolFile(AnsiString romBase)
+{
         AnsiString sym = romBase;
         sym += ChangeFileExt(machine.CurRom, ".sym");
+        symbolstore::reset();
         symbolstore::loadROMSymbols(sym.c_str());
         SymbolBrowser->RefreshContent();
+}
 
+void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
+{
         AnsiString bmp = romBase;
         bmp += ChangeFileExt(machine.CurRom, ".bmp");
         delete (Graphics::TBitmap*)machine.cset;
@@ -900,57 +1148,6 @@ void __fastcall THW::OKClick(TObject *Sender)
                 Graphics::TBitmap* cset = new Graphics::TBitmap;
                 cset->LoadFromFile(bmp);
                 machine.cset = cset;
-        }
-
-        AccurateInit(false);
-        Speed->Recalc(NULL);
-        PCKbInit();
-        Kb->OKClick(NULL);
-        Artifacts->TrackBarChange(NULL);
-        Artifacts->ConfigureDotCrawlOption();
-
-        bool spec48 = (emulator.machine==MACHINESPECTRUM && spectrum.model<SPECCY128);
-        if (!spec48)
-        {
-                Artifacts->DotCrawl1->Checked = false;
-        }
-
-        if (ResetRequired) machine.initialise();
-        Sound.AYInit();
-        Keyboard->KbChange();
-
-        Form1->RZX1->Enabled=false;
-        if (emulator.machine==MACHINESPECTRUM) Form1->RZX1->Enabled=true;
-
-        if (machineChanged)
-        {
-                if ( ((emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE || emulator.machine==MACHINELAMBDA) && !Form1->Sound1->Checked)
-                || ( (emulator.machine!=MACHINESPECTRUM && emulator.machine!=MACHINEACE && emulator.machine!=MACHINELAMBDA) && (machine.colour != COLOURCHROMA) && Form1->Sound1->Checked) )
-                {
-                        Form1->Sound1Click(NULL);
-                }
-        }
-
-        Form1->EnableColourisationOptions();
-
-        spectrum.drivebusy = -1;
-
-        InitPatches(NewMachine);
-
-        ResetDisplaySize();
-
-        Dbg->ResetBreakpointHits();
-        Dbg->RefreshBreakpointList();
-
-        if (Sender) Close();
-
-        if (Dbg->Visible) Dbg->UpdateVals();
-        int r = Sound.ReInitialise(NULL, machine.fps,0,0,0);
-        if (r)
-        {
-                AnsiString err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
-                MessageBox(NULL, err.c_str(), "Error", 0);
-                Application->Terminate();
         }
 }
 
@@ -1027,44 +1224,6 @@ void THW::ResetDisplaySize()
         }
 }
 //---------------------------------------------------------------------------
-
-void THW::CreateBasicLister()
-{
-        if (!strcmp(machine.CurRom, "zx80.rom"))
-        {
-                BasicLister->SetBasicLister(new zx80BasicLister(zx81.zxpand));
-                Form1->BasicListerOption->Enabled = true;
-        }
-        else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
-                 !strcmp(machine.CurRom, "zx81.edition2.rom") ||
-                 !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                 !strcmp(machine.CurRom, "ts1500.rom") ||
-                 !strcmp(machine.CurRom, "tk85.rom"))
-        {
-                BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
-                Form1->BasicListerOption->Enabled = true;
-        }
-        else if (!strcmp(machine.CurRom, "spec48.rom") ||
-                 !strcmp(machine.CurRom, "spec48.spanish.rom"))
-        {
-                BasicLister->SetBasicLister(new spec48BasicLister());
-                Form1->BasicListerOption->Enabled = true;
-        }
-        else if (!strcmp(machine.CurRom, "spec128.rom") ||
-                 !strcmp(machine.CurRom, "spec128.spanish.rom") ||
-                 !strcmp(machine.CurRom, "specp2.rom") ||
-                 !strcmp(machine.CurRom, "specp3.version4_0.rom") ||
-                 !strcmp(machine.CurRom, "specp3.version4_1.rom") ||
-                 !strcmp(machine.CurRom, "specp2.french.rom") ||
-                 !strcmp(machine.CurRom, "specp2.spanish.rom") ||
-                 !strcmp(machine.CurRom, "specp3.spanish.rom"))
-        {
-                BasicLister->SetBasicLister(new spec128BasicLister());
-                Form1->BasicListerOption->Enabled = true;
-        }
-}
-
-//---------------------------------------------------------------------------
 void THW::SetZX80Icon()
 {
         AnsiString romName;
@@ -1140,6 +1299,9 @@ void THW::SetupForZX81(void)
 
         ZXpand->Caption = "ZXpand+";
         Multiface->Caption = "Multiface 128";
+
+        KMouse->Checked = false;
+        KMouse->Enabled = false;
 
         OldFloppy=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
@@ -1301,11 +1463,20 @@ void THW::SetupForSpectrum(void)
         FloatingPointHardwareFix->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
 
+        KMouse->Enabled = true;
+
         ButtonAdvancedMore->Visible = false;
 
         SetZXpandState(false, false);
         ZXpand->Caption = "ZXpand+";
-        Multiface->Caption = "Multiface 128";
+        if (NewSpec == SPECCYPLUS2A || NewSpec == SPECCYPLUS3)
+        {
+                Multiface->Caption = "Multiface 3";
+        }
+        else
+        {
+                Multiface->Caption = "Multiface 128";
+        }
 
         ResetRequired=true;
 
@@ -1487,6 +1658,9 @@ void THW::SetupForQL(void)
         HiResBox->ItemIndex=0;
         HiResLbl->Enabled=false; HiResBox->Enabled=false;
 
+        KMouse->Checked = false;
+        KMouse->Enabled = false;
+
         while(ColourBox->Items->Count>1) ColourBox->Items->Delete(ColourBox->Items->Count-1);
         ColourBox->Items->Strings[0]="Sinclair";
         ColourBox->ItemIndex=0;
@@ -1546,7 +1720,7 @@ void THW::SetupForQL(void)
         FDCChange(NULL);
 }
 //---------------------------------------------------------------------------
-void THW::SetUpRamSettings()
+void THW::ConfigureDefaultRamSettings()
 {
         switch (NewMachine)
         {
@@ -1602,6 +1776,7 @@ void THW::SetUpRamSettings()
 
         DisplayTotalRam();
 }
+
 void THW::DisplayTotalRam()
 {
         int totalRam = machine.baseRamSize;
@@ -1620,7 +1795,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         if (ZX80Btn->Down) return;
 
         NewMachine=MACHINEZX80;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
         ZXpand->Caption = "ZXpand";
@@ -1636,7 +1811,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         FloatingPointHardwareFix->Enabled = true;
         ImprovedWait->Enabled = false;
         ImprovedWait->Checked = false;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
 
         IDEBoxChange(NULL);
 }
@@ -1645,7 +1820,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
 void __fastcall THW::ZX81BtnClick(TObject *Sender)
 {
         NewMachine=MACHINEZX81;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
         ZX81Btn->Down=true;
@@ -1658,7 +1833,7 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
         NTSC->Checked=false;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
 
         IDEBoxChange(NULL);
 }
@@ -1670,7 +1845,7 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCY48;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         Spec48Btn->Down=true;
 
@@ -1679,7 +1854,7 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
 
         Issue2->Enabled=true;
         NewMachineName=Spec48Btn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         RomBox->Clear();
         RomBox->Items->Add("spec48.rom");
         RomBox->Text = emulator.ROMSP48;
@@ -1696,7 +1871,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCY128;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         Spec128Btn->Down=true;
 
@@ -1710,7 +1885,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         RomBox->Items->Add("spec128.spanish.rom");
         RomBox->Text = emulator.ROMSP128;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
 
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(1);
@@ -1724,7 +1899,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         SpecPlusBtn->Down=true;
 
@@ -1733,7 +1908,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
 
         Issue2->Enabled=true;
         NewMachineName=SpecPlusBtn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         RomBox->Clear();
         RomBox->Items->Add("spec48.rom");
         RomBox->Items->Add("spec48.spanish.rom");
@@ -1751,7 +1926,7 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCY16;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         Spec16Btn->Down=true;
 
@@ -1761,7 +1936,7 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         Issue2->Enabled=true;
         Issue2->Checked=true;
         NewMachineName=Spec16Btn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         RomBox->Clear();
         RomBox->Items->Add("spec48.rom");
         RomBox->Text = emulator.ROMSP48;
@@ -1778,7 +1953,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS2;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         SpecP2Btn->Down=true;
 
@@ -1786,7 +1961,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         NewMachineName=SpecP2Btn->Caption;
         RomBox->Clear();
         RomBox->Items->Add("specp2.rom");
@@ -1808,7 +1983,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS2A;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         SpecP2aBtn->Down=true;
         Multiface->Caption = "Multiface 3";
@@ -1817,7 +1992,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         NewMachineName=SpecP2aBtn->Caption;
         RomBox->Clear();
         RomBox->Items->Add("specp3.version4_0.rom");
@@ -1837,7 +2012,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYPLUS3;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         SpecP3Btn->Down=true;
         Multiface->Caption = "Multiface 3";
@@ -1848,7 +2023,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         NewMachineName=SpecP3Btn->Caption;
         RomBox->Clear();
         RomBox->Items->Add("specp3.version4_0.rom");
@@ -1874,12 +2049,12 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         if (TS1000Btn->Down) return;
 
         NewMachine=MACHINETS1000;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
         TS1000Btn->Down=true;
         NewMachineName=TS1000Btn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
         RomBox->Items->Add("zx81.edition1.rom");
@@ -1897,12 +2072,12 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         if (TS1500Btn->Down) return;
 
         NewMachine=MACHINETS1500;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
         TS1500Btn->Down=true;
         NewMachineName=TS1500Btn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
         RomBox->Items->Add("ts1500.rom");
@@ -1918,7 +2093,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         if (LambdaBtn->Down) return;
 
         NewMachine=MACHINELAMBDA;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         SetZXpandState(false,false);
         LambdaBtn->Down=true;
@@ -1946,7 +2121,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1956,7 +2131,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         if (R470Btn->Down) return;
 
         NewMachine=MACHINER470;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         SetZXpandState(false,false);
         R470Btn->Down=true;
@@ -1976,7 +2151,7 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1986,7 +2161,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         if (TK85Btn->Down) return;
 
         NewMachine=MACHINETK85;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         SetZXpandState(false,false);
         TK85Btn->Down=true;
@@ -2004,7 +2179,7 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2014,7 +2189,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         if (AceBtn->Down) return;
 
         NewMachine=MACHINEACE;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         IDEBox->Enabled=true;
         LabelIDE->Enabled=true;
@@ -2051,7 +2226,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
         SetZXpandState(false,false);
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2062,7 +2237,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYTC2048;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         TC2048Btn->Down=true;
 
@@ -2073,7 +2248,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         RomCartridgeLabel->Enabled = false;
 
         NewMachineName=TC2048Btn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         RomBox->Clear();
         RomBox->Items->Add("tc2048.rom");
         RomBox->Text = emulator.ROMTC2048;
@@ -2092,7 +2267,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
 
         NewMachine=MACHINESPECTRUM;
         NewSpec=SPECCYTS2068;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForSpectrum();
         TS2068Btn->Down=true;
         Multiface->Enabled = false;
@@ -2116,7 +2291,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         RomCartridgeLabel->Enabled = false;
 
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         NewMachineName=TS2068Btn->Caption;
         RomBox->Clear();
         RomBox->Items->Add("ts2068.rom");
@@ -2135,7 +2310,7 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         if (ZX97LEBtn->Down) return;
 
         NewMachine=MACHINEZX97LE;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForZX81();
         ZX97LEBtn->Down=true;
         NewMachineName=ZX97LEBtn->Caption;
@@ -2170,7 +2345,7 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         }
         ButtonAdvancedMore->Visible = true;
         IDEBoxChange(NULL);
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
 }
 //---------------------------------------------------------------------------
 
@@ -2179,12 +2354,12 @@ void __fastcall THW::QLBtnClick(TObject *Sender)
         if (QLBtn->Down) return;
 
         NewMachine=MACHINEQL;
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
         SetupForQL();
         QLBtn->Down=true;
 
         NewMachineName=QLBtn->Caption;
-        Form1->EnableColourisationOptions();
+        Form1->EnableAnnotationOptions();
         RomBox->Text = emulator.ROMQL;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
 }
@@ -2578,7 +2753,7 @@ void THW::EnableRomCartridgeOption(bool enable)
 
 void __fastcall THW::RamPackBoxChange(TObject *Sender)
 {
-        SetUpRamSettings();
+        ConfigureDefaultRamSettings();
 
         ResetRequired=true;
 }

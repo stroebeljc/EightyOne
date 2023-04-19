@@ -69,11 +69,11 @@
 #define HIRESMEMOTECH   3
 
 #define CHRGENSINCLAIR  0
+#define CHRGENLAMBDA    0
 #define CHRGENDK        1
 #define CHRGENQS        2
 #define CHRGENCHR128    3
-#define CHRGENLAMBDA    4
-#define CHRGENKAYDE     5
+#define CHRGENKAYDE     4
 
 #define COLOURDISABLED  0
 #define COLOURSINCLAIR  0

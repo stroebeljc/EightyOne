@@ -261,7 +261,7 @@ void zx81_initialise(void)
         romlen=memory_load(romname.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
-        if (zx81.extfont) font_load("lmbfnt.rom",font,512);
+        if (zx81.extfont) font_load("LambdaCharacterSet.bin",font,512);
         if ((zx81.chrgen==CHRGENDK) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
                 romlen+=memory_load("dktronicsgraphics.rom",8192,4096);
         else if ((zx81.chrgen==CHRGENKAYDE) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))

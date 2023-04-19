@@ -1374,10 +1374,9 @@ void THW::SetupForZX81(void)
         SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
         SoundCardBox->ItemIndex=0;
 
-        if (!ChrGenBox->Enabled) ChrGenBox->Items->Strings[0]="Sinclair";
+        ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenLbl->Enabled=true; ChrGenBox->Enabled=true;
-        if (ChrGenBox->ItemIndex==-1 || ChrGenBox->ItemIndex==4)
-                ChrGenBox->ItemIndex=0;
+        if (ChrGenBox->ItemIndex==-1) ChrGenBox->ItemIndex=0;
 
         if ((!HiResBox->Enabled) || (HiResBox->ItemIndex==-1))
         {
@@ -1548,7 +1547,7 @@ void THW::SetupForSpectrum(void)
         SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
         SoundCardBox->ItemIndex=0;
 
-        if (!ChrGenBox->Enabled) ChrGenBox->Items->Strings[0]="Sinclair";
+        ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenBox->ItemIndex=0;
         ChrGenLbl->Enabled=false; ChrGenBox->Enabled=false;
 
@@ -1679,7 +1678,7 @@ void THW::SetupForQL(void)
         SoundCardLbl->Enabled=false; SoundCardBox->Enabled=false;
         if (SoundCardBox->ItemIndex==-1) SoundCardBox->ItemIndex=5;
 
-        if (!ChrGenBox->Enabled) ChrGenBox->Items->Strings[0]="Sinclair";
+        ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenBox->ItemIndex=0;
         ChrGenLbl->Enabled=false; ChrGenBox->Enabled=false;
 
@@ -2138,7 +2137,8 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         RomBox->Text = emulator.ROMLAMBDA;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
-        ChrGenBox->ItemIndex=4;
+        ChrGenBox->Items->Strings[0] = "Lambda";
+        ChrGenBox->ItemIndex=0;
         ChrGenBox->Enabled=false;
         ChrGenLbl->Enabled=false;
         ColourBox->Items->Clear();

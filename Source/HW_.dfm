@@ -1064,7 +1064,7 @@ object HW: THW
         Top = 0
         Width = 65
         Height = 65
-        Caption = 'Ringo R470'
+        Caption = 'Ringo R-470'
         Color = 13434879
         HoverFont.Charset = DEFAULT_CHARSET
         HoverFont.Color = clWindowText
@@ -1491,7 +1491,6 @@ object HW: THW
           'dk'#39'tronics'
           'Quicksilva'
           'CHR$128'
-          'Lambda'
           'Kayde')
       end
       object HiResBox: TComboBox
@@ -1978,7 +1977,7 @@ object HW: THW
         Top = 16
         Width = 193
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

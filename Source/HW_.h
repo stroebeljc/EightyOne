@@ -111,10 +111,11 @@ __published:	// IDE-managed Components
         TCheckBox *ImprovedWait;
         TComboBox *RomBox;
         TImageList *ZX80Icons;
-        TComboBox *ComboBoxRomCartridgeFileBox;
+        TComboBox *SinclairRomCartridgeFileBox;
         TLabel *LabelTotalRAM;
         TCheckBox *uSource;
         TImageList *Spec128Icons;
+        TComboBox *TimexRomCartridgeFileBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -164,8 +165,10 @@ __published:	// IDE-managed Components
         void __fastcall ButtonZXpandSDCardClick(TObject *Sender);
         void __fastcall ButtonAdvancedMoreClick(TObject *Sender);
         void __fastcall ImprovedWaitClick(TObject *Sender);
-        void __fastcall ComboBoxRomCartridgeFileBoxChange(TObject *Sender);
+        void __fastcall SinclairRomCartridgeFileBoxChange(TObject *Sender);
+        void __fastcall TimexRomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall uSourceClick(TObject *Sender);
+        void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -179,12 +182,12 @@ private:	// User declarations
         void SetSpectrum128Icon();
         void PopulateRomCartridgeSinclairList();
         void PopulateRomCartridgeTimexList();
-        void AddRomCartridgeFile(AnsiString fileName);
-        void SelectRomCartridge();
+        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, AnsiString fileName);
         AnsiString DirectSoundError(int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
-
+        void UpdateRomCartridgeControls(int machine);
+        
         void ConfigureRzxSupport();
         void ReInitialiseSound();
         void ResetDebugger();

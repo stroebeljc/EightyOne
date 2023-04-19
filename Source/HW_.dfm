@@ -14,6 +14,7 @@ object HW: THW
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -515,7 +516,7 @@ object HW: THW
         Top = 0
         Width = 65
         Height = 65
-        Caption = 'Spectrum+'
+        Caption = '48K Spectrum+'
         Color = 13434879
         HoverFont.Charset = DEFAULT_CHARSET
         HoverFont.Color = clWindowText
@@ -1390,7 +1391,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = Interfaces
+    ActivePage = FloppyDrives
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1435,7 +1436,18 @@ object HW: THW
         Alignment = taRightJustify
         Caption = 'ROM Cartridge:'
       end
-      object ComboBoxRomCartridgeFileBox: TComboBox
+      object TimexRomCartridgeFileBox: TComboBox
+        Left = 184
+        Top = 112
+        Width = 181
+        Height = 21
+        DropDownCount = 10
+        ItemHeight = 13
+        TabOrder = 18
+        Visible = False
+        OnChange = TimexRomCartridgeFileBoxChange
+      end
+      object SinclairRomCartridgeFileBox: TComboBox
         Left = 184
         Top = 112
         Width = 181
@@ -1444,7 +1456,7 @@ object HW: THW
         ItemHeight = 13
         TabOrder = 16
         Visible = False
-        OnChange = ComboBoxRomCartridgeFileBoxChange
+        OnChange = SinclairRomCartridgeFileBoxChange
       end
       object SoundCardBox: TComboBox
         Left = 86
@@ -1479,7 +1491,8 @@ object HW: THW
           'dk'#39'tronics'
           'Quicksilva'
           'CHR$128'
-          'Lambda')
+          'Lambda'
+          'Kayde')
       end
       object HiResBox: TComboBox
         Left = 86
@@ -1538,7 +1551,7 @@ object HW: THW
         Top = 36
         Width = 97
         Height = 17
-        Caption = 'Currah uSpeech'
+        Caption = 'Currah µSpeech'
         TabOrder = 6
         OnClick = uSpeechClick
       end
@@ -1639,7 +1652,7 @@ object HW: THW
         Top = 17
         Width = 97
         Height = 17
-        Caption = 'Currah uSource'
+        Caption = 'Currah µSource'
         TabOrder = 5
         OnClick = uSourceClick
       end
@@ -1664,14 +1677,14 @@ object HW: THW
         Caption = 'B:'
       end
       object LabelFDC: TLabel
-        Left = 32
+        Left = 24
         Top = 20
         Width = 24
         Height = 13
         Caption = 'FDC:'
       end
       object LabelIDE: TLabel
-        Left = 36
+        Left = 28
         Top = 72
         Width = 21
         Height = 13
@@ -1717,9 +1730,9 @@ object HW: THW
           '5.25" Double Sided (720k)')
       end
       object FDC: TComboBox
-        Left = 64
+        Left = 56
         Top = 16
-        Width = 105
+        Width = 113
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1749,9 +1762,9 @@ object HW: THW
         OnClick = IF1ConfigClick
       end
       object IDEBox: TComboBox
-        Left = 64
+        Left = 56
         Top = 68
-        Width = 105
+        Width = 113
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1774,7 +1787,7 @@ object HW: THW
           '1024k')
       end
       object Upload: TCheckBox
-        Left = 64
+        Left = 56
         Top = 100
         Width = 97
         Height = 17
@@ -1784,7 +1797,7 @@ object HW: THW
         TabOrder = 7
       end
       object WriteProtect: TCheckBox
-        Left = 64
+        Left = 56
         Top = 116
         Width = 137
         Height = 17
@@ -1850,7 +1863,7 @@ object HW: THW
         Caption = 'ROM File:'
       end
       object BrowseROM: TButton
-        Left = 314
+        Left = 322
         Top = 16
         Width = 19
         Height = 21
@@ -1963,7 +1976,7 @@ object HW: THW
       object RomBox: TComboBox
         Left = 128
         Top = 16
-        Width = 185
+        Width = 193
         Height = 21
         ItemHeight = 13
         TabOrder = 0

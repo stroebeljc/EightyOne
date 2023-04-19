@@ -397,12 +397,10 @@ void spec48_initialise(void)
 
         if (spectrum.floppytype==FLOPPYIF1)
         {
-                if (IF1->RomEdition->Text == "Edition 3")
-                        romlen=memory_load("specif1.edition3.rom",0,65536);
-                else if (IF1->RomEdition->Text == "Edition 2")
-                        romlen=memory_load("specif1.edition2.rom",0,65536);
+                if (IF1->RomEdition->Text == "Edition 2")
+                        romlen=memory_load("interface1.edition2.rom",0,65536);
                 else
-                        romlen=memory_load("specif1.edition1.rom",0,65536);
+                        romlen=memory_load("interface1.edition1.rom",0,65536);
 
                 memcpy(SpecMem+32768,memory,romlen);
                 if (romlen<=8192) memcpy(SpecMem+32768+8192,memory,romlen);
@@ -418,12 +416,12 @@ void spec48_initialise(void)
 
         if (spectrum.MFVersion == MF128)
         {
-                romlen=memory_load("mf128.rom",0,65536);
+                romlen=memory_load("multiface128.87-2.rom",0,65536);
                 memcpy(MFMem,memory,romlen);
         }
         else if (spectrum.MFVersion == MFPLUS3)
         {
-                romlen=memory_load("mfp3.rom",0,65536);
+                romlen=memory_load("multiface3.3-c.rom",0,65536);
                 memcpy(MFMem,memory,romlen);
         }
 

@@ -263,7 +263,9 @@ void zx81_initialise(void)
 
         if (zx81.extfont) font_load("lmbfnt.rom",font,512);
         if ((zx81.chrgen==CHRGENDK) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
-                romlen+=memory_load("dkchr.rom",8192,4096);
+                romlen+=memory_load("dktronicsgraphics.rom",8192,4096);
+        else if ((zx81.chrgen==CHRGENKAYDE) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
+                romlen+=memory_load("kaydegraphics.rom",8192,4096);
 
         zx81.ROMTOP=romlen-1;
 
@@ -275,7 +277,7 @@ void zx81_initialise(void)
                 zx81.ROMTOP=8191;
         }
 
-        if (zx81.truehires==HIRESMEMOTECH) memory_load("memohrg.rom", 8192, 2048);
+        if (zx81.truehires==HIRESMEMOTECH) memory_load("memotechhrg.rom", 8192, 2048);
         if (zx81.truehires==HIRESG007) memory_load("g007hrg.rom",10240,2048);
 
         if (spectrum.floppytype==FLOPPYLARKEN81)

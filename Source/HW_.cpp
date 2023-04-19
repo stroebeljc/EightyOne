@@ -163,8 +163,8 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
 {
         bool machineChanged = (NewMachine != emulator.machine);
         emulator.newMachine = NewMachine;
-        emulator.machine=NewMachine;
-        spectrum.model=NewSpec;
+        emulator.machine = NewMachine;
+        spectrum.model = NewSpec;
 
         CloseLiveMemoryWindow(machineChanged);
         CloseOtherDebugWindow();
@@ -535,7 +535,7 @@ void THW::ConfigureRom()
                 break;
 
         case MACHINETS1000:
-                strcpy(emulator.ROM81, machine.CurRom);
+                strcpy(emulator.ROMTS1000, machine.CurRom);
                 break;
 
         case MACHINEACE:
@@ -564,20 +564,28 @@ void THW::ConfigureRom()
                 case SPECCY16:
                         spectrum.RAMBanks=1;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP48, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else strcpy(emulator.ROMSP16, machine.CurRom);
                         break;
 
                 case SPECCY48:
+                        spectrum.RAMBanks=3;
+                        spectrum.ROMBanks=1;
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else strcpy(emulator.ROMSP48, machine.CurRom);
+                        break;
+
                 case SPECCYPLUS:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP48, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else strcpy(emulator.ROMSPP, machine.CurRom);
                         break;
 
                 case SPECCYTC2048:
@@ -595,9 +603,9 @@ void THW::ConfigureRom()
                 case SPECCY128:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP128, machine.CurRom);
                         break;
 
@@ -612,9 +620,9 @@ void THW::ConfigureRom()
                         spectrum.ROMBanks=1;
                         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
                                 strcpy(emulator.ROMSPP3ECF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
                                 strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        else strcpy(emulator.ROMSPP3, machine.CurRom);
+                        else strcpy(emulator.ROMSPP2A, machine.CurRom);
                         break;
 
                 case SPECCYPLUS3:
@@ -622,8 +630,9 @@ void THW::ConfigureRom()
                         spectrum.ROMBanks=1;
                         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
                                 strcpy(emulator.ROMSPP3ECF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E")
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
                                 strcpy(emulator.ROMSPP3E, machine.CurRom);
+                        else strcpy(emulator.ROMSPP3, machine.CurRom);
                         break;
                 }
                 break;
@@ -692,20 +701,21 @@ void THW::ConfigureBasicLister()
                 BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spec48.rom") ||
-                 !strcmp(machine.CurRom, "spec48.spanish.rom"))
+        else if (!strcmp(machine.CurRom, "spectrum48.rom") ||
+                 !strcmp(machine.CurRom, "spectrum48.spanish.rom"))
         {
                 BasicLister->SetBasicLister(new spec48BasicLister());
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spec128.rom") ||
-                 !strcmp(machine.CurRom, "spec128.spanish.rom") ||
-                 !strcmp(machine.CurRom, "specp2.rom") ||
-                 !strcmp(machine.CurRom, "specp3.version4_0.rom") ||
-                 !strcmp(machine.CurRom, "specp3.version4_1.rom") ||
-                 !strcmp(machine.CurRom, "specp2.french.rom") ||
-                 !strcmp(machine.CurRom, "specp2.spanish.rom") ||
-                 !strcmp(machine.CurRom, "specp3.spanish.rom"))
+        else if (!strcmp(machine.CurRom, "spectrum128.rom") ||
+                 !strcmp(machine.CurRom, "spectrum128.spanish.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+2.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-0.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-1.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+2.french.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+2.spanish.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-0.spanish.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-1.spanish.rom"))
         {
                 BasicLister->SetBasicLister(new spec128BasicLister());
                 Form1->BasicListerOption->Enabled = true;
@@ -778,44 +788,72 @@ void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
 
 void THW::ConfigureRomCartridge()
 {
-        romcartridge.type = RomCartridgeBox->ItemIndex;
-        if (RomCartridgeBox->Text == "Timex")
-        {
-                romcartridge.type++;
-        }
-        romcartridge.zxc1Configuration = (ZXC1TYPE)ZXC1ConfigurationBox->ItemIndex;
+        UpdateRomCartridgeControls(emulator.machine);
 
         if ((romcartridge.type == ROMCARTRIDGENONE) || (RomCartridgeFileBox->Text.Trim() == ""))
         {
                 RomCartridgeCapacity = 0;
-                RomCartridgeFileBox->Enabled = false;
-                ComboBoxRomCartridgeFileBox->Enabled = false;
-                BrowseRomCartridge->Enabled = false;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
-                ZXC1ConfigurationBox->Visible = false;
-                RomCartridgeFileBox->Left = 184;
-                RomCartridgeFileBox->Width = 181;
         }
         else
         {
-                SelectRomCartridge();
                 LoadRomCartridgeFile(RomCartridgeFileBox->Text.c_str());
-                RomCartridgeFileBox->Enabled = true;
-                ComboBoxRomCartridgeFileBox->Enabled = true;
-                BrowseRomCartridge->Enabled = true;
-                if (romcartridge.type == ROMCARTRIDGEZXC1)
-                {
-                        ZXC1ConfigurationBox->Visible = true;
-                        RomCartridgeFileBox->Left = 277;
-                        RomCartridgeFileBox->Width = 88;
-                }
-                else
-                {
-                        ZXC1ConfigurationBox->Visible = false;
-                        RomCartridgeFileBox->Left = 184;
-                        RomCartridgeFileBox->Width = 181;
-                }
+
                 ResetRequired=true;
+        }
+}
+
+void THW::UpdateRomCartridgeControls(int machine)
+{
+        romcartridge.type = RomCartridgeBox->ItemIndex;
+
+        bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR) && (machine == MACHINESPECTRUM);
+        bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETIMEX) && (machine == MACHINEZX81 || machine == MACHINETS1000 || machine == MACHINETS1500);
+
+        bool noneSelected = (romcartridge.type == ROMCARTRIDGENONE);
+        bool zxc1Selected = (romcartridge.type == ROMCARTRIDGEZXC1);
+
+        SinclairRomCartridgeFileBox->Enabled = spectrumSinclairSelected;
+        SinclairRomCartridgeFileBox->Visible = spectrumSinclairSelected;
+
+        TimexRomCartridgeFileBox->Enabled = zx81TimexSelected;
+        TimexRomCartridgeFileBox->Visible = zx81TimexSelected;
+
+        if (spectrumSinclairSelected)
+        {
+                SinclairRomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text.Trim();
+                RomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text;
+        }
+        else if (zx81TimexSelected)
+        {
+                TimexRomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text.Trim();
+                RomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text;
+        }
+
+        RomCartridgeFileBox->Enabled = !spectrumSinclairSelected && !zx81TimexSelected;
+        RomCartridgeFileBox->Visible = !spectrumSinclairSelected && !zx81TimexSelected;
+
+        BrowseRomCartridge->Enabled = !noneSelected;
+
+        ZXC1ConfigurationBox->Enabled = zxc1Selected;
+        ZXC1ConfigurationBox->Visible = zxc1Selected;
+
+        if (zxc1Selected)
+        {
+                RomCartridgeFileBox->Left = 277;
+                RomCartridgeFileBox->Width = 88;
+
+                if (ZXC1ConfigurationBox->ItemIndex == -1)
+                {
+                        ZXC1ConfigurationBox->ItemIndex = 0;
+                }
+
+                romcartridge.zxc1Configuration = (ZXC1TYPE)ZXC1ConfigurationBox->ItemIndex;
+        }
+        else
+        {
+                RomCartridgeFileBox->Left = 184;
+                RomCartridgeFileBox->Width = 181;
         }
 }
 
@@ -880,11 +918,11 @@ void THW::ConfigureSpectrumIDE()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF") spectrum.HDType=HDZXCF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V1") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=1; }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V2") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=2; }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E") spectrum.HDType=HDPLUS3E;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit") spectrum.HDType=HDPLUS3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF") spectrum.HDType=HDACECF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") spectrum.HDType=HDPITERSCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") spectrum.HDType=HDPITERS8B;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") spectrum.HDType=HDPITERS16B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") spectrum.HDType=HDPITERSCF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") spectrum.HDType=HDPITERS8B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") spectrum.HDType=HDPITERS16B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde") spectrum.HDType=HDPITERSCF;
         spectrum.WriteProtectJumper=WriteProtect->Checked;
         spectrum.UploadJumper=Upload->Checked;
@@ -1100,7 +1138,7 @@ void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
                         bmp = romBase + "zx81.edition3.bmp";
                         break;
                 case MACHINEACE:
-                        bmp = romBase + "ace.bmp";
+                        bmp = romBase + "jupiterace.bmp";
                         break;
                 case MACHINETS1500:
                         bmp = romBase + "ts1500.bmp";
@@ -1118,7 +1156,7 @@ void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
                         switch (spectrum.model)
                         {
                         case SPECCY128:
-                                bmp = romBase + "spec128.bmp";
+                                bmp = romBase + "spectrum128.bmp";
                                 break;
                         case SPECCYTC2048:
                                 bmp = romBase + "tc2048.bmp";
@@ -1129,14 +1167,14 @@ void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
                         case SPECCY48:
                         case SPECCY16:
                         case SPECCYPLUS:
-                                bmp = romBase + "spec48.bmp";
+                                bmp = romBase + "spectrum48.bmp";
                                 break;
                         case SPECCYPLUS2:
-                                bmp = romBase + "specp2.bmp";
+                                bmp = romBase + "spectrum+2.bmp";
                                 break;
                         case SPECCYPLUS2A:
                         case SPECCYPLUS3:
-                                bmp = romBase + "specp3.version4_1.bmp";
+                                bmp = romBase + "spectrum+3.version4-1.bmp";
                                 break;
                         }
                         break;
@@ -1258,7 +1296,7 @@ void THW::SetSpectrum128Icon()
         }
 
         Graphics::TBitmap* spec128Icon = new Graphics::TBitmap;
-        int iconIndex = (romName== "spec128.spanish.rom") ? 1 : 0;
+        int iconIndex = (romName== "spectrum128.spanish.rom") ? 1 : 0;
         Spec128Icons->GetBitmap(iconIndex, spec128Icon);
         Spec128Btn->InactiveGlyph = spec128Icon;
 }
@@ -1295,7 +1333,6 @@ void THW::SetupForZX81(void)
         ButtonAdvancedMore->Visible = false;
 
         EnableRomCartridgeOption(true);
-        RomCartridgeLabel->Enabled=true;
 
         ZXpand->Caption = "ZXpand+";
         Multiface->Caption = "Multiface 128";
@@ -1398,11 +1435,6 @@ void THW::SetupForZX81(void)
         uSource->Enabled=false;
         uSource->Checked=false;
 
-        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "ZXC1")
-        {
-                RomCartridgeBox->Items->Delete(RomCartridgeBox->Items->Count-1);
-        }
-
         if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "Timex")
         {
                 if (NewMachine != MACHINETS1500 && NewMachine != MACHINETS1000 && NewMachine != MACHINEZX81)
@@ -1419,8 +1451,10 @@ void THW::SetupForZX81(void)
         }
 
         bool timexSelected = (RomCartridgeBox->Text == "Timex");
-        RomCartridgeFileBox->Visible = !timexSelected;
-        ComboBoxRomCartridgeFileBox->Visible = timexSelected;
+        bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
+        TimexRomCartridgeFileBox->Visible = timexSelected;
+        SinclairRomCartridgeFileBox->Visible = sinclairSelected;
+        RomCartridgeFileBox->Visible = !timexSelected && !sinclairSelected;
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -1481,7 +1515,6 @@ void THW::SetupForSpectrum(void)
         ResetRequired=true;
 
         EnableRomCartridgeOption(true);
-        RomCartridgeLabel->Enabled=true;
 
         OldFDC=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
@@ -1561,13 +1594,13 @@ void THW::SetupForSpectrum(void)
         OldIDE=IDEBox->Items->Strings[IDEBox->ItemIndex];
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
-        IDEBox->Items->Add("Plus 2/3E");
+        IDEBox->Items->Add("Simple +3e 8-Bit");
         IDEBox->Items->Add("divIDE V1");
         IDEBox->Items->Add("divIDE V2");
         IDEBox->Items->Add("ZXCF");
-        IDEBox->Items->Add("Piters CF");
-        IDEBox->Items->Add("Piters 8Bit");
-        IDEBox->Items->Add("Piters 16Bit");
+        IDEBox->Items->Add("Pera Putnik CF");
+        IDEBox->Items->Add("Pera Putnik 8-Bit");
+        IDEBox->Items->Add("Pera Putnik 16-Bit");
         IDEBox->ItemIndex=0;
         IDEBox->Enabled=true;
         LabelIDE->Enabled=true;
@@ -1584,13 +1617,10 @@ void THW::SetupForSpectrum(void)
                 RomCartridgeBox->Items->Delete(RomCartridgeBox->Items->Count-1);
         }
 
-        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] != "ZXC1")
-        {
-                RomCartridgeBox->Items->Add("ZXC1");
-        }
         bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
+        TimexRomCartridgeFileBox->Visible = false;
+        SinclairRomCartridgeFileBox->Visible = sinclairSelected;
         RomCartridgeFileBox->Visible = !sinclairSelected;
-        ComboBoxRomCartridgeFileBox->Visible = sinclairSelected;
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -1608,7 +1638,6 @@ void THW::SetupForQL(void)
         Multiface->Caption = "Multiface";
 
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled=false;
 
         ZX80Btn->Down=false;
         ZX81Btn->Down=false;
@@ -1691,14 +1720,17 @@ void THW::SetupForQL(void)
         OldIDE=IDEBox->Items->Strings[IDEBox->ItemIndex];
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
-        IDEBox->Items->Add("Plus 2/3E");
+        IDEBox->Items->Add("Simple +3e 8-Bit");
         IDEBox->Items->Add("divIDE V1");
         IDEBox->Items->Add("divIDE V2");
         IDEBox->Items->Add("ZXCF");
-        IDEBox->Items->Add("Piters CF");
+        IDEBox->Items->Add("Pera Putnik CF");
         IDEBox->ItemIndex=0;
         IDEBox->Enabled=false;
         LabelIDE->Enabled=false;
+
+        TimexRomCartridgeFileBox->Visible = false;
+        SinclairRomCartridgeFileBox->Visible = false;
 
         for(i=0;i<IDEBox->Items->Count;i++)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
@@ -1856,7 +1888,8 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
         NewMachineName=Spec48Btn->Caption;
         Form1->EnableAnnotationOptions();
         RomBox->Clear();
-        RomBox->Items->Add("spec48.rom");
+        RomBox->Items->Add("spectrum48.rom");
+        RomBox->Items->Add("spectrum48.nordic.rom");
         RomBox->Text = emulator.ROMSP48;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -1881,8 +1914,8 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
 
         NewMachineName=Spec128Btn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("spec128.rom");
-        RomBox->Items->Add("spec128.spanish.rom");
+        RomBox->Items->Add("spectrum128.rom");
+        RomBox->Items->Add("spectrum128.spanish.rom");
         RomBox->Text = emulator.ROMSP128;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         Form1->EnableAnnotationOptions();
@@ -1910,9 +1943,9 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         NewMachineName=SpecPlusBtn->Caption;
         Form1->EnableAnnotationOptions();
         RomBox->Clear();
-        RomBox->Items->Add("spec48.rom");
-        RomBox->Items->Add("spec48.spanish.rom");
-        RomBox->Text = emulator.ROMSP48;
+        RomBox->Items->Add("spectrum48.rom");
+        RomBox->Items->Add("spectrum48.spanish.rom");
+        RomBox->Text = emulator.ROMSPP;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(1);
@@ -1938,8 +1971,8 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         NewMachineName=Spec16Btn->Caption;
         Form1->EnableAnnotationOptions();
         RomBox->Clear();
-        RomBox->Items->Add("spec48.rom");
-        RomBox->Text = emulator.ROMSP48;
+        RomBox->Items->Add("spectrum48.rom");
+        RomBox->Text = emulator.ROMSP16;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(1);
@@ -1964,9 +1997,9 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         Form1->EnableAnnotationOptions();
         NewMachineName=SpecP2Btn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("specp2.rom");
-        RomBox->Items->Add("specp2.french.rom");
-        RomBox->Items->Add("specp2.spanish.rom");
+        RomBox->Items->Add("spectrum+2.rom");
+        RomBox->Items->Add("spectrum+2.french.rom");
+        RomBox->Items->Add("spectrum+2.spanish.rom");
         RomBox->Text = emulator.ROMSPP2;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -1995,10 +2028,11 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         Form1->EnableAnnotationOptions();
         NewMachineName=SpecP2aBtn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("specp3.version4_0.rom");
-        RomBox->Items->Add("specp3.version4_1.rom");
-        RomBox->Items->Add("specp3.spanish.rom");
-        RomBox->Text = emulator.ROMSPP3;
+        RomBox->Items->Add("spectrum+3.version4-0.rom");
+        RomBox->Items->Add("spectrum+3.version4-1.rom");
+        RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
+        RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
+        RomBox->Text = emulator.ROMSPP2A;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(4);
@@ -2026,9 +2060,10 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         Form1->EnableAnnotationOptions();
         NewMachineName=SpecP3Btn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("specp3.version4_0.rom");
-        RomBox->Items->Add("specp3.version4_1.rom");
-        RomBox->Items->Add("specp3.spanish.rom");
+        RomBox->Items->Add("spectrum+3.version4-0.rom");
+        RomBox->Items->Add("spectrum+3.version4-1.rom");
+        RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
+        RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
         RomBox->Text = emulator.ROMSPP3;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2116,10 +2151,10 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         HiResLbl->Enabled=false;
         RomCartridgeBox->Enabled = false;
         RomCartridgeFileBox->Enabled = false;
-        ComboBoxRomCartridgeFileBox->Enabled = false;
+        TimexRomCartridgeFileBox->Enabled = false;
+        SinclairRomCartridgeFileBox->Enabled = false;
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
         Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
@@ -2149,7 +2184,6 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
         Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
@@ -2177,7 +2211,6 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
         Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
@@ -2197,7 +2230,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         AceBtn->Down=true;
         NewMachineName=AceBtn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("ace.rom");
+        RomBox->Items->Add("jupiterace.rom");
         RomBox->Text = emulator.ROMACE;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=false;
@@ -2224,7 +2257,6 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         IDEBox->Items->Add("AceCF");
         RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled = false;
         SetZXpandState(false,false);
         Form1->EnableAnnotationOptions();
         IDEBoxChange(NULL);
@@ -2245,7 +2277,6 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         Issue2->Checked=false;
 
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled = false;
 
         NewMachineName=TC2048Btn->Caption;
         Form1->EnableAnnotationOptions();
@@ -2289,7 +2320,6 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         NTSC->Checked=true;
 
         EnableRomCartridgeOption(false);
-        RomCartridgeLabel->Enabled = false;
 
         Form1->EnableAnnotationOptions();
         NewMachineName=TS2068Btn->Caption;
@@ -2496,25 +2526,35 @@ void THW::SaveSettings(TIniFile *ini)
 
         Rom=emulator.ROM80; ini->WriteString("HWARE","ROM80",Rom);
         Rom=emulator.ROM81; ini->WriteString("HWARE","ROM81",Rom);
-        Rom=emulator.ROMACE; ini->WriteString("HWARE","ROMACE",Rom);
+        Rom=emulator.ROMSP16; ini->WriteString("HWARE","ROMSP16",Rom);
+        Rom=emulator.ROMSP48; ini->WriteString("HWARE","ROMSP48",Rom);
+        Rom=emulator.ROMSPP; ini->WriteString("HWARE","ROMSPP",Rom);
+        Rom=emulator.ROMSP128; ini->WriteString("HWARE","ROMSP128",Rom);
+        Rom=emulator.ROMQL; ini->WriteString("HWARE","ROMQL",Rom);
+
+        Rom=emulator.ROMSPP2; ini->WriteString("HWARE","ROMSPP2",Rom);
+        Rom=emulator.ROMSPP2A; ini->WriteString("HWARE","ROMSPP2A",Rom);
+        Rom=emulator.ROMSPP3; ini->WriteString("HWARE","ROMSPP3",Rom);
+
         Rom=emulator.ROMTS1000; ini->WriteString("HWARE","ROMTS1000",Rom);
         Rom=emulator.ROMTS1500; ini->WriteString("HWARE","ROMTS1500",Rom);
+        Rom=emulator.ROMTC2048; ini->WriteString("HWARE","ROMTC2048",Rom);
+        Rom=emulator.ROMTS2068; ini->WriteString("HWARE","ROMTS2068",Rom);
+
         Rom=emulator.ROMLAMBDA; ini->WriteString("HWARE","ROMLAMBDA",Rom);
         Rom=emulator.ROMPC8300; ini->WriteString("HWARE","ROMPC8300",Rom);
         Rom=emulator.ROMTK85; ini->WriteString("HWARE","ROMTK85",Rom);
-        Rom=emulator.ROM97LE; ini->WriteString("HWARE","ROM97LE",Rom);
+        Rom=emulator.ROMACE; ini->WriteString("HWARE","ROMACE",Rom);
         Rom=emulator.ROMR470; ini->WriteString("HWARE","ROMR470",Rom);
-        Rom=emulator.ROMSP48; ini->WriteString("HWARE","ROMSP48",Rom);
-        Rom=emulator.ROMSP128; ini->WriteString("HWARE","ROMSP128",Rom);
-        Rom=emulator.ROMSPP2; ini->WriteString("HWARE","ROMSPP2",Rom);
-        Rom=emulator.ROMSPP3; ini->WriteString("HWARE","ROMSPP3",Rom);
+
+        Rom=emulator.ROM97LE; ini->WriteString("HWARE","ROM97LE",Rom);
+
         Rom=emulator.ROMSPP3E; ini->WriteString("HWARE","ROMSPP3E",Rom);
         Rom=emulator.ROMSPP3ECF; ini->WriteString("HWARE","ROMSPP3ECF",Rom);
         Rom=emulator.ROMDock; ini->WriteString("HWARE","Dock",Rom);
         Rom=emulator.ROMZX8BIT; ini->WriteString("HWARE","ZX8BIT",Rom);
         Rom=emulator.ROMZX16BIT; ini->WriteString("HWARE","ZX16BIT",Rom);
         Rom=emulator.ROMZXCF; ini->WriteString("HWARE","ZXCF",Rom);
-        Rom=emulator.ROMQL; ini->WriteString("HWARE","ROMQL",Rom);
 
         strcpy(FileName,emulator.cwd);
         strcat(FileName,"NV_Memory\\divide.nv");
@@ -2561,14 +2601,19 @@ void THW::LoadSettings(TIniFile *ini)
         Rom=emulator.ROMACE; Rom=ini->ReadString("HWARE","ROMACE",Rom).LowerCase(); strcpy(emulator.ROMACE, Rom.c_str());
         Rom=emulator.ROMTS1000; Rom=ini->ReadString("HWARE","ROMTS1000",Rom).LowerCase(); strcpy(emulator.ROMTS1000, Rom.c_str());
         Rom=emulator.ROMTS1500; Rom=ini->ReadString("HWARE","ROMTS1500",Rom).LowerCase(); strcpy(emulator.ROMTS1500, Rom.c_str());
+        Rom=emulator.ROMTC2048; Rom=ini->ReadString("HWARE","ROMTC2048",Rom).LowerCase(); strcpy(emulator.ROMTC2048, Rom.c_str());
+        Rom=emulator.ROMTS2068; Rom=ini->ReadString("HWARE","ROMTS2068",Rom).LowerCase(); strcpy(emulator.ROMTS2068, Rom.c_str());
         Rom=emulator.ROMLAMBDA; Rom=ini->ReadString("HWARE","ROMLAMBDA",Rom).LowerCase(); strcpy(emulator.ROMLAMBDA, Rom.c_str());
         Rom=emulator.ROMPC8300; Rom=ini->ReadString("HWARE","ROMPC8300",Rom).LowerCase(); strcpy(emulator.ROMPC8300, Rom.c_str());
         Rom=emulator.ROMTK85; Rom=ini->ReadString("HWARE","ROMTK85",Rom).LowerCase(); strcpy(emulator.ROMTK85, Rom.c_str());
         Rom=emulator.ROM97LE; Rom=ini->ReadString("HWARE","ROM97LE",Rom).LowerCase(); strcpy(emulator.ROM97LE, Rom.c_str());
         Rom=emulator.ROMR470; Rom=ini->ReadString("HWARE","ROMR470",Rom).LowerCase(); strcpy(emulator.ROMR470, Rom.c_str());
+        Rom=emulator.ROMSP16; Rom=ini->ReadString("HWARE","ROMSP16",Rom).LowerCase(); strcpy(emulator.ROMSP16, Rom.c_str());
         Rom=emulator.ROMSP48; Rom=ini->ReadString("HWARE","ROMSP48",Rom).LowerCase(); strcpy(emulator.ROMSP48, Rom.c_str());
+        Rom=emulator.ROMSPP; Rom=ini->ReadString("HWARE","ROMSPP",Rom).LowerCase(); strcpy(emulator.ROMSPP, Rom.c_str());
         Rom=emulator.ROMSP128; Rom=ini->ReadString("HWARE","ROMSP128",Rom).LowerCase(); strcpy(emulator.ROMSP128, Rom.c_str());
         Rom=emulator.ROMSPP2; Rom=ini->ReadString("HWARE","ROMSPP2",Rom).LowerCase(); strcpy(emulator.ROMSPP2, Rom.c_str());
+        Rom=emulator.ROMSPP2A; Rom=ini->ReadString("HWARE","ROMSPP2A",Rom).LowerCase(); strcpy(emulator.ROMSPP2A, Rom.c_str());
         Rom=emulator.ROMSPP3; Rom=ini->ReadString("HWARE","ROMSPP3",Rom).LowerCase(); strcpy(emulator.ROMSPP3, Rom.c_str());
         Rom=emulator.ROMSPP3E; Rom=ini->ReadString("HWARE","ROMSPP3E",Rom).LowerCase(); strcpy(emulator.ROMSPP3E, Rom.c_str());
         Rom=emulator.ROMSPP3ECF; Rom=ini->ReadString("HWARE","ROMSPP3ECF",Rom).LowerCase(); strcpy(emulator.ROMSPP3ECF, Rom.c_str());
@@ -2613,6 +2658,8 @@ void THW::LoadSettings(TIniFile *ini)
                 RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
                 RomCartridgeFileBox->SelLength=0;
         }
+        SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        TimexRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
         
         DriveAType->ItemIndex=ini->ReadInteger("HWARE","DriveAType",DriveAType->ItemIndex);
         DriveBType->ItemIndex=ini->ReadInteger("HWARE","DriveBType",DriveBType->ItemIndex);
@@ -2738,15 +2785,13 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
 void THW::EnableRomCartridgeOption(bool enable)
 {
-        RomCartridgeBox->ItemIndex = 0;
+        RomCartridgeLabel->Enabled = enable;
+        RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
         RomCartridgeFileBox->Text = "";
-        RomCartridgeBox->Enabled = enable;
-        RomCartridgeFileBox->Enabled = enable;
-        ComboBoxRomCartridgeFileBox->Enabled = enable;
-        BrowseRomCartridge->Enabled = enable;
-        ZXC1ConfigurationBox->Visible = false;
-        RomCartridgeFileBox->Left = 184;
-        RomCartridgeFileBox->Width = 181;
+        TimexRomCartridgeFileBox->Text = "";
+        SinclairRomCartridgeFileBox->Text = "";
+
+        UpdateRomCartridgeControls(NewMachine);
 }
 
 //---------------------------------------------------------------------------
@@ -2858,10 +2903,10 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 WriteProtect->Visible=true;
                 Upload->Visible=true;
         }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Plus 2/3E") RomBox->Text = emulator.ROMSPP3E;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters CF") RomBox->Text = emulator.ROMZXCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 8Bit") RomBox->Text = emulator.ROMZX8BIT;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Piters 16Bit") RomBox->Text = emulator.ROMZX16BIT;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit") RomBox->Text = emulator.ROMSPP3E;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") RomBox->Text = emulator.ROMZXCF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") RomBox->Text = emulator.ROMZX8BIT;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") RomBox->Text = emulator.ROMZX16BIT;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="None")
         {
@@ -2980,9 +3025,13 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
         RomCartridgeFileBox->SelLength=0;
 
-        ComboBoxRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
-        ComboBoxRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
-        ComboBoxRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
+        TimexRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        TimexRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
+        TimexRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
+
+        SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        SinclairRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
+        SinclairRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
 
         ResetRequired=true;
 }
@@ -2991,75 +3040,27 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
 {
         RomCartridgeFileBox->Text = "";
-        ComboBoxRomCartridgeFileBox->Text = "";
-
-        bool romCartridgeSelected = (RomCartridgeBox->Text != "None");
-        RomCartridgeFileBox->Enabled = romCartridgeSelected;
-        ComboBoxRomCartridgeFileBox->Enabled = romCartridgeSelected;
-        BrowseRomCartridge->Enabled = romCartridgeSelected;
-
-        bool zxc1Selected = (RomCartridgeBox->Text == "ZXC1");
-        ZXC1ConfigurationBox->Visible = zxc1Selected;
-        if (zxc1Selected)
-        {
-                RomCartridgeFileBox->Left = 277;
-                RomCartridgeFileBox->Width = 88;
-
-                if (ZXC1ConfigurationBox->ItemIndex == -1)
-                {
-                        ZXC1ConfigurationBox->ItemIndex = 0;
-                }
-        }
-        else
-        {
-                RomCartridgeFileBox->Left = 184;
-                RomCartridgeFileBox->Width = 181;
-        }
-
-        bool spectrumSinclairSelected = (RomCartridgeBox->Text == "Sinclair") && (NewMachine == MACHINESPECTRUM);
-        bool timexSelected = (RomCartridgeBox->Text == "Timex");
-        RomCartridgeFileBox->Visible = !spectrumSinclairSelected && !timexSelected;
-        ComboBoxRomCartridgeFileBox->Visible = spectrumSinclairSelected || timexSelected;
-
-        if (timexSelected)
-        {
-                PopulateRomCartridgeTimexList();
-        }
-        else if (spectrumSinclairSelected)
-        {
-                PopulateRomCartridgeSinclairList();
-        }
-
+        SinclairRomCartridgeFileBox->Text = "";
+        TimexRomCartridgeFileBox->Text = "";
+        
+        UpdateRomCartridgeControls(NewMachine);
         ResetRequired=true;
 }
-
-void THW::SelectRomCartridge()
+//---------------------------------------------------------------------------
+void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
 {
-        AnsiString romCartridgePath;
-
-        if (ComboBoxRomCartridgeFileBox->Visible)
+        if (SinclairRomCartridgeFileBox->Visible)
         {
-                romCartridgePath = ComboBoxRomCartridgeFileBox->Text;
+                RomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text;
+                ResetRequired=true;
         }
-        else
-        {
-                romCartridgePath = RomCartridgeFileBox->Text;
-        }
-
-        RomCartridgeFileBox->Text = romCartridgePath;
-        ComboBoxRomCartridgeFileBox->Text = romCartridgePath;
-
-        bool spectrumSinclairSelected = (RomCartridgeBox->Text == "Sinclair") && (emulator.machine == MACHINESPECTRUM);
-        bool timexSelected = (RomCartridgeBox->Text == "Timex");
-        RomCartridgeFileBox->Visible = !spectrumSinclairSelected && !timexSelected;
-        ComboBoxRomCartridgeFileBox->Visible = spectrumSinclairSelected || timexSelected;
 }
 //---------------------------------------------------------------------------
-void __fastcall THW::ComboBoxRomCartridgeFileBoxChange(TObject *Sender)
+void __fastcall THW::TimexRomCartridgeFileBoxChange(TObject *Sender)
 {
-        if (ComboBoxRomCartridgeFileBox->Visible)
+        if (TimexRomCartridgeFileBox->Visible)
         {
-                RomCartridgeFileBox->Text = ComboBoxRomCartridgeFileBox->Text;
+                RomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text;
                 ResetRequired=true;
         }
 }
@@ -3091,8 +3092,7 @@ void __fastcall THW::FloatingPointHardwareFixClick(TObject *Sender)
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------
-
-
+                
 extern char* zxpandSDCardFolderRoot;
 
 void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
@@ -3113,53 +3113,64 @@ void __fastcall THW::ImprovedWaitClick(TObject *Sender)
 {
         ResetRequired=true;
 }
+void __fastcall THW::uSourceClick(TObject *Sender)
+{
+        ResetRequired=true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::FormCreate(TObject *Sender)
+{
+        PopulateRomCartridgeTimexList();
+        PopulateRomCartridgeSinclairList();
+}
 //---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeTimexList()
 {
-        ComboBoxRomCartridgeFileBox->Items->Clear();
+        TimexRomCartridgeFileBox->Items->Clear();
 
-        AddRomCartridgeFile("07-9001 Supermath.rom");
-        AddRomCartridgeFile("07-9002 States & Capitals.rom");
-        AddRomCartridgeFile("07-9003 Chess.rom");
+        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9001 Supermath.rom");
+        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9002 States & Capitals.rom");
+        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9003 Chess.rom");
+        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9004 Flight Simulation.rom");
 }
 //---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()
 {
-        ComboBoxRomCartridgeFileBox->Items->Clear();
+        SinclairRomCartridgeFileBox->Items->Clear();
 
-        AddRomCartridgeFile("G9R Space Raiders.rom");
-        AddRomCartridgeFile("G10R Chess.rom");
-        AddRomCartridgeFile("G12R Planetoids.rom");
-        AddRomCartridgeFile("G13R Hungry Horace.rom");
-        AddRomCartridgeFile("G22R Backgammon.rom");
-        AddRomCartridgeFile("G24R Horace & The Spiders.rom");
-        AddRomCartridgeFile("G27R Jet Pac.rom");
-        AddRomCartridgeFile("G28R Pssst.rom");
-        AddRomCartridgeFile("G29R Tranz Am.rom");
-        AddRomCartridgeFile("G30R Cookie.rom");
-        AddRomCartridgeFile("Gyruss.rom");
-        AddRomCartridgeFile("Loco Motion.rom");
-        AddRomCartridgeFile("Montezuma's Revenge #1.rom");
-        AddRomCartridgeFile("Montezuma's Revenge #2.rom");
-        AddRomCartridgeFile("Popeye.rom");
-        AddRomCartridgeFile("Q-Bert.rom");
-        AddRomCartridgeFile("Return Of The Jedi.rom");
-        AddRomCartridgeFile("Star Wars.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G9R Space Raiders.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G10R Chess.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G12R Planetoids.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G13R Hungry Horace.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G22R Backgammon.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G24R Horace & The Spiders.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G27R Jet Pac.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G28R Pssst.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G29R Tranz Am.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G30R Cookie.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Spectrum System Test.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Spectrum +2 Test Program.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Gyruss.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Loco Motion.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Montezuma's Revenge #1.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Montezuma's Revenge #2.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Popeye.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Q-Bert.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Return Of The Jedi.rom");
+        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Star Wars.rom");
 }
 //---------------------------------------------------------------------------
-void THW::AddRomCartridgeFile(AnsiString fileName)
+void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, AnsiString fileName)
 {
         AnsiString romBase = emulator.cwd;
         romBase += "ROM\\";
 
         if (FileExists(romBase + fileName))
         {
-                ComboBoxRomCartridgeFileBox->Items->Add(fileName);
+                romCartridgeFileBox->Items->Add(fileName);
         }
 }
-void __fastcall THW::uSourceClick(TObject *Sender)
-{
-        ResetRequired=true;
-}
 //---------------------------------------------------------------------------
+
 

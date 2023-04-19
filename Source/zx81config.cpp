@@ -127,26 +127,34 @@ void load_config(void)
 
         strcpy(emulator.ROM80, "zx80.rom");
         strcpy(emulator.ROM81, "zx81.edition3.rom");
-        strcpy(emulator.ROMACE, "ace.rom");
+        strcpy(emulator.ROMSP16, "spectrum48.rom");
+        strcpy(emulator.ROMSP48, "spectrum48.rom");
+        strcpy(emulator.ROMSPP, "spectrum48.rom");
+        strcpy(emulator.ROMSP128, "spectrum128.rom");
+        strcpy(emulator.ROMQL, "ql.js.rom");
+
+        strcpy(emulator.ROMSPP2, "spectrum+2.rom");
+        strcpy(emulator.ROMSPP2A, "spectrum+3.version4-1.rom");
+        strcpy(emulator.ROMSPP3, "spectrum+3.version4-1.rom");
+
         strcpy(emulator.ROMTS1000, "zx81.edition3.rom");
         strcpy(emulator.ROMTS1500, "ts1500.rom");
-        strcpy(emulator.ROMLAMBDA, "lambda.rom");
-        strcpy(emulator.ROMPC8300, "8300.rom");
-        strcpy(emulator.ROMTK85, "tk85.rom");
-        strcpy(emulator.ROM97LE, "zx97.rom");
-        strcpy(emulator.ROMR470, "ringo470.rom");
-        strcpy(emulator.ROMSP48, "spec48.rom");
-        strcpy(emulator.ROMSP128, "spec128.rom");
-        strcpy(emulator.ROMSPP2, "specp2.rom");
-        strcpy(emulator.ROMSPP3, "specp3.version4_1.rom");
-        strcpy(emulator.ROMSPP3E, "specp3e.rom");
-        strcpy(emulator.ROMSPP3ECF, "specp3ecf.rom");
         strcpy(emulator.ROMTC2048, "tc2048.rom");
         strcpy(emulator.ROMTS2068, "ts2068.rom");
+
+        strcpy(emulator.ROMLAMBDA, "lambda.rom");
+        strcpy(emulator.ROMPC8300, "8300.rom");
+        strcpy(emulator.ROMR470, "ringo470.rom");
+        strcpy(emulator.ROMTK85, "tk85.rom");
+        strcpy(emulator.ROMACE, "jupiterace.rom");
+
+        strcpy(emulator.ROM97LE, "zx97.rom");
+
+        strcpy(emulator.ROMSPP3E, "simple+3e8bit(sm8en3eE).rom");
+        strcpy(emulator.ROMSPP3ECF, "zxcf+3e(zxcen3eE).rom");
         strcpy(emulator.ROMZXCF, "zxcflba.rom");
         strcpy(emulator.ROMZX8BIT, "zx8blbs.rom");
         strcpy(emulator.ROMZX16BIT, "zxidelbs.rom");
-        strcpy(emulator.ROMQL, "ql_js.rom");
         strcpy(emulator.ROMPLUSD,"plusd.rom");
         strcpy(emulator.ROMDISCIPLE,"disciple.rom");
         strcpy(emulator.ROMOPUSD,"opusd.rom");

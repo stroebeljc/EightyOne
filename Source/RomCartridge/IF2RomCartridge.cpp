@@ -97,7 +97,7 @@ void InitialiseRomCartridge()
         {
                 zxcStartAddressRangeFull = 0x0000;
                 zxcEndAddressRangeFullWrite = 0x3FFF;
-                zxcEndAddressRangeFullRead = 0x3FFF;
+                zxcEndAddressRangeFullRead = (romcartridge.type == ROMCARTRIDGETIMEX) ? 0x7FFF + (RomCartridgeCapacity - 0x2000) : 0x3FFF;
                 zxcBaseAddressRangeWindow = 0x10000;
                 zxcStartAddressRangeWindow = 0x10000;   // Place outside the memory map
                 zxcEndAddressRangeWindow = 0x10000;
@@ -252,9 +252,7 @@ bool LoadRomCartridgeFile(char *filename)
                 return false;
         }
 
-        int offset = (st.st_size < 16384) ? 16384 - st.st_size : 0;
-
-        if ((RomCartridgeCapacity = read(fptr, RomCartridgeMemory + offset, MaxRomCartridgeCapacity))==-1)
+        if ((RomCartridgeCapacity = read(fptr, RomCartridgeMemory, MaxRomCartridgeCapacity))==-1)
         {
                 close(fptr);
 
@@ -328,13 +326,22 @@ static inline bool AccessRomCartridgeTimex(int Address, BYTE* Data)
 {
         bool dataRead = false;
 
-        if (Address < 0x2000)
+        if (Address < 0x2000 || (Address >= 0x4000 && Address < 0x8000))
         {
                 return dataRead;
         }
 
         const int bank = 0;
-        *Data = AccessRomCartridgeBank(bank, Address);
+
+        if (Address < 0x4000)
+        {
+                *Data = AccessRomCartridgeBank(bank, Address - 0x2000);
+        }
+        else
+        {
+                *Data = AccessRomCartridgeBank(bank, Address - 0x6000);
+        }
+
         dataRead = true;
 
         return dataRead;

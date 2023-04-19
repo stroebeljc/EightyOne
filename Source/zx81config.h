@@ -71,8 +71,9 @@
 #define CHRGENSINCLAIR  0
 #define CHRGENDK        1
 #define CHRGENQS        2
-#define CHRGENCHR128     3
+#define CHRGENCHR128    3
 #define CHRGENLAMBDA    4
+#define CHRGENKAYDE     5
 
 #define COLOURDISABLED  0
 #define COLOURSINCLAIR  0
@@ -113,6 +114,7 @@
 #define CRCSPANISH48    0x8b91
 #define CRCSPANISHPLUS2 0x0b4b
 #define CRCSPANISHPLUS3 0xec07
+#define CRCNORDIC48     0xe25a
 
 #define FLOPPYNONE      0
 #define FLOPPYPLUS3     1
@@ -322,9 +324,12 @@ typedef struct
         char ROMTK85[256];
         char ROM97LE[256];
         char ROMR470[256];
+        char ROMSP16[256];
         char ROMSP48[256];
+        char ROMSPP[256];
         char ROMSP128[256];
         char ROMSPP2[256];
+        char ROMSPP2A[256];
         char ROMSPP3[256];
         char ROMSPP3E[256];
         char ROMSPP3ECF[256];

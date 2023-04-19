@@ -293,8 +293,11 @@ void load_snap_romcartridge(FILE *f)
         }
 
         bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
+        bool sinclairSelected = (HW->RomCartridgeBox->Text == "Sinclair");
+        bool timexSelected = (HW->RomCartridgeBox->Text == "Timex");
         HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
-        HW->ComboBoxRomCartridgeFileBox->Enabled = romCartridgeSelected;
+        HW->SinclairRomCartridgeFileBox->Enabled = sinclairSelected;
+        HW->TimexRomCartridgeFileBox->Enabled = timexSelected;
         HW->BrowseRomCartridge->Enabled = romCartridgeSelected;
 
         bool zxc1Selected = (HW->RomCartridgeBox->Text == "ZXC1");

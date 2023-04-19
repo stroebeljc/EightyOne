@@ -101,6 +101,7 @@ void TKeyboard::KbChange(void)
         Keyboard->r470kb->Visible=false;
         Keyboard->spec16kb->Visible=false;
         Keyboard->spec48kb->Visible=false;
+        Keyboard->spec48kbNordic->Visible=false;
         Keyboard->spec128kb->Visible=false;
         Keyboard->spec128kbSpanish->Visible=false;
         Keyboard->ts2048kb->Visible=false;
@@ -180,6 +181,9 @@ void TKeyboard::KbChange(void)
                 break;
         case CRCSPANISHPLUS3:
                 Keyboard->specPlus3kbSpanish->Visible=true;
+                break;
+        case CRCNORDIC48:
+                Keyboard->spec48kbNordic->Visible=true;
                 break;
         default:
                 switch(emulator.machine)

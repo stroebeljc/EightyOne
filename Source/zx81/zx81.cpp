@@ -411,7 +411,7 @@ BOOL IsAnnotatableROM()
                 break;
 
         case MACHINELAMBDA:
-                annotatableROM = !strcmp(machine.CurRom, "lambda.rom");
+                annotatableROM = !strcmp(machine.CurRom, "lambda8300.rom");
                 break;
 
         default:

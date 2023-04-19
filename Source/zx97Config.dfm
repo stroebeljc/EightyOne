@@ -1,10 +1,10 @@
 object ZX97Dialog: TZX97Dialog
-  Left = 333
-  Top = 82
+  Left = 327
+  Top = 211
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'ZX97 Configuration'
-  ClientHeight = 112
+  ClientHeight = 119
   ClientWidth = 336
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -26,14 +26,14 @@ object ZX97Dialog: TZX97Dialog
   end
   object Label2: TLabel
     Left = 176
-    Top = 28
+    Top = 36
     Width = 66
     Height = 13
     Caption = 'Printer port to:'
   end
   object Label3: TLabel
     Left = 176
-    Top = 50
+    Top = 58
     Width = 45
     Height = 13
     Caption = 'Filename:'
@@ -93,7 +93,7 @@ object ZX97Dialog: TZX97Dialog
   end
   object PrinterOutput: TComboBox
     Left = 256
-    Top = 24
+    Top = 32
     Width = 73
     Height = 21
     Style = csDropDownList
@@ -119,7 +119,7 @@ object ZX97Dialog: TZX97Dialog
   end
   object FileName: TEdit
     Left = 224
-    Top = 48
+    Top = 56
     Width = 81
     Height = 21
     Enabled = False
@@ -127,7 +127,7 @@ object ZX97Dialog: TZX97Dialog
   end
   object FileNameSelector: TButton
     Left = 304
-    Top = 48
+    Top = 56
     Width = 25
     Height = 21
     Caption = '...'
@@ -137,7 +137,7 @@ object ZX97Dialog: TZX97Dialog
   end
   object OK: TButton
     Left = 256
-    Top = 80
+    Top = 88
     Width = 75
     Height = 25
     Caption = 'OK'

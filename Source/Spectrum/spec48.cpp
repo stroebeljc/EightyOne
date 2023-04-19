@@ -416,12 +416,12 @@ void spec48_initialise(void)
 
         if (spectrum.MFVersion == MF128)
         {
-                romlen=memory_load("multiface128.87-2.rom",0,65536);
+                romlen=memory_load("multiface128.rom",0,65536);
                 memcpy(MFMem,memory,romlen);
         }
         else if (spectrum.MFVersion == MFPLUS3)
         {
-                romlen=memory_load("multiface3.3-c.rom",0,65536);
+                romlen=memory_load("multiface3.rom",0,65536);
                 memcpy(MFMem,memory,romlen);
         }
 

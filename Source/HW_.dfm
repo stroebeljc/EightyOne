@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Others
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -1265,7 +1265,7 @@ object HW: THW
       end
     end
     object HomeBrew: TTabSheet
-      Caption = 'HomeBrew'
+      Caption = 'Homebrew'
       ImageIndex = 4
       object ZX97LEBtn: TOffice97Button
         Left = 0
@@ -1391,7 +1391,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = FloppyDrives
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet

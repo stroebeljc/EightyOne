@@ -856,7 +856,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         if (P3Drive->Height<80)
         {
                 P3Drive->Close();
-                DiskDrives1->Visible=false;
+                DiskDrives1->Enabled=false;
         }
 
         if (DrivesChanged)

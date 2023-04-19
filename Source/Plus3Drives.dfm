@@ -672,10 +672,10 @@ object P3Drive: TP3Drive
   object OpenDialog1: TOpenDialog
     Filter = 
       'Disk Images|*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.lar;*.zip|+3 D' +
-      'isk Images (*.dsk)|*.dsk|+D/Disciple Images (*.mgt, *.img)|*.mgt' +
-      ';*.img|Opus Discovery Images (*.opd, *.opu)|*.opd;*.opu|TR-DOS I' +
-      'mages (*.trd)|*.trd|Larken Images (*.lar)|*.lar|Compressed Image' +
-      's (*.zip)|*.zip'
+      'isk Images (*.dsk)|*.dsk|Plus D/Disciple Images (*.mgt, *.img)|*' +
+      '.mgt;*.img|Opus Discovery Images (*.opd, *.opu)|*.opd;*.opu|TR-D' +
+      'OS Images (*.trd)|*.trd|Larken Images (*.lar)|*.lar|Compressed I' +
+      'mages (*.zip)|*.zip'
     Left = 224
     Top = 392
   end

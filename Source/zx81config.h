@@ -320,7 +320,6 @@ typedef struct
         char ROMTS1000[256];
         char ROMTS1500[256];
         char ROMLAMBDA[256];
-        char ROMPC8300[256];
         char ROMTK85[256];
         char ROM97LE[256];
         char ROMR470[256];

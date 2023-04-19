@@ -319,7 +319,7 @@ void THW::ConfigurePrinterCentronicsPort()
                 if (spectrum.floppytype==FLOPPYDISCIPLE)
                         Form1->PrinterPort1->Caption="Disciple Printer Port";
                 if (spectrum.floppytype==FLOPPYPLUSD)
-                        Form1->PrinterPort1->Caption="PlusD Printer Port";
+                        Form1->PrinterPort1->Caption="Plus D Printer Port";
                 if (spectrum.model==SPECCYPLUS2A)
                         Form1->PrinterPort1->Caption="+2A/+3 Printer Port";
                 if (spectrum.model==SPECCYPLUS3)
@@ -641,16 +641,16 @@ void THW::ConfigureRom()
 
 void THW::ConfigureDockCartridge()
 {
-        Form1->InsertDockCart1->Visible=false;
-        Form1->RemoveDockCart1->Visible=false;
+        Form1->InsertDockCart1->Enabled=false;
+        Form1->RemoveDockCart1->Enabled=false;
         Form1->DockSpacer->Visible=false;
 
         if (NewMachine == MACHINESPECTRUM)
         {
                 if (NewSpec == SPECCYTC2048 || NewSpec == SPECCYTS2068)
                 {
-                        Form1->InsertDockCart1->Visible=true;
-                        Form1->RemoveDockCart1->Visible=true;
+                        Form1->InsertDockCart1->Enabled=true;
+                        Form1->RemoveDockCart1->Enabled=true;
                         Form1->DockSpacer->Visible=true;
                 }
         }
@@ -939,7 +939,7 @@ void THW::ConfigureFDC()
 {
         spectrum.floppytype=FLOPPYNONE;
         if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Disciple") spectrum.floppytype=FLOPPYDISCIPLE;
-        if (FDC->Items->Strings[FDC->ItemIndex]=="MGT PlusD") spectrum.floppytype=FLOPPYPLUSD;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Plus D") spectrum.floppytype=FLOPPYPLUSD;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Plus 3 FDC") spectrum.floppytype=FLOPPYPLUS3;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Opus Discovery") spectrum.floppytype=FLOPPYOPUSD;
         if (FDC->Items->Strings[FDC->ItemIndex]=="BetaDisc") spectrum.floppytype=FLOPPYBETA;
@@ -968,7 +968,7 @@ void THW::ConfigureFDC()
         case 4: spectrum.drivebtype=DRIVE35INCHDS; break;
         }
 
-        Form1->DiskDrives1->Visible=true;
+        Form1->DiskDrives1->Enabled=true;
         P3Drive->FormShow(NULL);
 }
 
@@ -1523,7 +1523,7 @@ void THW::SetupForSpectrum(void)
         FDC->Items->Add("BetaDisc");
         FDC->Items->Add("Opus Discovery");
         FDC->Items->Add("MGT Disciple");
-        FDC->Items->Add("MGT PlusD");
+        FDC->Items->Add("MGT Plus D");
 
         FDC->ItemIndex=0;
         for(i=0;i<FDC->Items->Count;i++)
@@ -1742,7 +1742,7 @@ void THW::SetupForQL(void)
         FDC->Items->Add("BetaDisc");
         FDC->Items->Add("Opus Discovery");
         FDC->Items->Add("MGT Disciple");
-        FDC->Items->Add("MGT PlusD");
+        FDC->Items->Add("MGT Plus D");
 
         FDC->ItemIndex=0;
         for(i=0;i<FDC->Items->Count;i++)
@@ -2134,7 +2134,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         LambdaBtn->Down=true;
         NewMachineName=LambdaBtn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("lambda.rom");
+        RomBox->Items->Add("lambda8300.rom");
         RomBox->Text = emulator.ROMLAMBDA;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
@@ -2542,7 +2542,6 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=emulator.ROMTS2068; ini->WriteString("HWARE","ROMTS2068",Rom);
 
         Rom=emulator.ROMLAMBDA; ini->WriteString("HWARE","ROMLAMBDA",Rom);
-        Rom=emulator.ROMPC8300; ini->WriteString("HWARE","ROMPC8300",Rom);
         Rom=emulator.ROMTK85; ini->WriteString("HWARE","ROMTK85",Rom);
         Rom=emulator.ROMACE; ini->WriteString("HWARE","ROMACE",Rom);
         Rom=emulator.ROMR470; ini->WriteString("HWARE","ROMR470",Rom);
@@ -2604,7 +2603,6 @@ void THW::LoadSettings(TIniFile *ini)
         Rom=emulator.ROMTC2048; Rom=ini->ReadString("HWARE","ROMTC2048",Rom).LowerCase(); strcpy(emulator.ROMTC2048, Rom.c_str());
         Rom=emulator.ROMTS2068; Rom=ini->ReadString("HWARE","ROMTS2068",Rom).LowerCase(); strcpy(emulator.ROMTS2068, Rom.c_str());
         Rom=emulator.ROMLAMBDA; Rom=ini->ReadString("HWARE","ROMLAMBDA",Rom).LowerCase(); strcpy(emulator.ROMLAMBDA, Rom.c_str());
-        Rom=emulator.ROMPC8300; Rom=ini->ReadString("HWARE","ROMPC8300",Rom).LowerCase(); strcpy(emulator.ROMPC8300, Rom.c_str());
         Rom=emulator.ROMTK85; Rom=ini->ReadString("HWARE","ROMTK85",Rom).LowerCase(); strcpy(emulator.ROMTK85, Rom.c_str());
         Rom=emulator.ROM97LE; Rom=ini->ReadString("HWARE","ROM97LE",Rom).LowerCase(); strcpy(emulator.ROM97LE, Rom.c_str());
         Rom=emulator.ROMR470; Rom=ini->ReadString("HWARE","ROMR470",Rom).LowerCase(); strcpy(emulator.ROMR470, Rom.c_str());

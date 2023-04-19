@@ -40,12 +40,6 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
         MicroTop=MicroGroup->Top;
 
         FormShow(Owner);
-
-        //if (spectrum.model==SPECCYPLUS3
-        //        || spectrum.HDType!=HDNONE)
-        //        Form1->DiskDrives1->Visible=true;
-        //else
-        //        Form1->DiskDrives1->Visible=false;
 }
 //---------------------------------------------------------------------------
 void TP3Drive::LoadSettings(TIniFile *ini)
@@ -392,8 +386,8 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
                 MicroGroup->Visible=false;
         }
 
-        if (Height<80) Form1->DiskDrives1->Visible=false;
-        else Form1->DiskDrives1->Visible=true;
+        if (Height<80) Form1->DiskDrives1->Enabled=false;
+        else Form1->DiskDrives1->Enabled=true;
 
         btnCreateCartridge->Visible = MicroGroup->Visible;
 }
@@ -402,8 +396,8 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
 void __fastcall TP3Drive::FormClose(TObject *Sender, TCloseAction &Action)
 {
         Form1->DiskDrives1->Checked=false;
-        if (Height<80) Form1->DiskDrives1->Visible=false;
-        else Form1->DiskDrives1->Visible=true;
+        if (Height<80) Form1->DiskDrives1->Enabled=false;
+        else Form1->DiskDrives1->Enabled=true;
 }
 //---------------------------------------------------------------------------
 

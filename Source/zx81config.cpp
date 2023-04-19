@@ -142,8 +142,7 @@ void load_config(void)
         strcpy(emulator.ROMTC2048, "tc2048.rom");
         strcpy(emulator.ROMTS2068, "ts2068.rom");
 
-        strcpy(emulator.ROMLAMBDA, "lambda.rom");
-        strcpy(emulator.ROMPC8300, "8300.rom");
+        strcpy(emulator.ROMLAMBDA, "lambda8300.rom");
         strcpy(emulator.ROMR470, "ringo470.rom");
         strcpy(emulator.ROMTK85, "tk85.rom");
         strcpy(emulator.ROMACE, "jupiterace.rom");
@@ -157,7 +156,7 @@ void load_config(void)
         strcpy(emulator.ROMZX16BIT, "zxidelbs.rom");
         strcpy(emulator.ROMPLUSD,"plusd.rom");
         strcpy(emulator.ROMDISCIPLE,"disciple.rom");
-        strcpy(emulator.ROMOPUSD,"opusd.rom");
+        strcpy(emulator.ROMOPUSD,"opusdiscovery.rom");
         strcpy(emulator.ROMBETADISC,"trdos.rom");
         strcpy(emulator.ROMUSPEECH,"uspeech.rom");
         strcpy(emulator.ROMUSOURCE,"usource.rom");

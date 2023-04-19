@@ -32,8 +32,7 @@ void dirGetExeLocation(char* buffer, int bufSize)
       *(lastSlash + 1) = 0;
    }
 }
-
-
+              
 int dirOpen(const char* path)
 {
    char pathPlusExt[MAX_PATH];

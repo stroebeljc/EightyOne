@@ -21,6 +21,7 @@
 #include <ExtCtrls.hpp>
 #include <Buttons.hpp>
 #include <ImgList.hpp>
+#include <Graphics.hpp>
 
 //---------------------------------------------------------------------------
 class THW : public TForm
@@ -116,6 +117,7 @@ __published:	// IDE-managed Components
         TCheckBox *uSource;
         TImageList *Spec128Icons;
         TComboBox *TimexRomCartridgeFileBox;
+        TImage *mwcfideHelp;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -169,6 +171,7 @@ __published:	// IDE-managed Components
         void __fastcall TimexRomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall uSourceClick(TObject *Sender);
         void __fastcall FormCreate(TObject *Sender);
+        void __fastcall mwcfideHelpClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

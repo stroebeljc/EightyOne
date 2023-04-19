@@ -863,7 +863,15 @@ void THW::ConfigureCharacterGenerator()
         {
                 zx81.enableQSchrgen = false;
         }
-        zx81.chrgen = ChrGenBox->ItemIndex;
+
+        if (ChrGenBox->Text == "Lambda")
+        {
+                zx81.chrgen == CHRGENLAMBDA;
+        }
+        else
+        {
+                zx81.chrgen = ChrGenBox->ItemIndex;
+        }
         Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
         Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
@@ -2884,8 +2892,13 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         {
                 RamPackBox->ItemIndex = RamPackBox->Items->Count-2;
                 M1Not->Checked=true;
-        }
 
+                mwcfideHelp->Visible = true;
+        }
+        else
+        {
+                mwcfideHelp->Visible = false;
+        }
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF")
                 RamPackBox->ItemIndex = RamPackBox->Items->Count-1;
@@ -3174,4 +3187,12 @@ void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, AnsiString fileNam
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall THW::mwcfideHelpClick(TObject *Sender)
+{
+        AnsiString path = emulator.cwd;
+        path += "\\Examples\\Drives\\";
+        ShellExecute(0, "open", "notepad.exe", "FAT.txt", path.c_str(), SW_SHOWNORMAL);
+}
+//---------------------------------------------------------------------------
 

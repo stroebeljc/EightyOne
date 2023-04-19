@@ -69,11 +69,11 @@
 #define HIRESMEMOTECH   3
 
 #define CHRGENSINCLAIR  0
-#define CHRGENLAMBDA    0
 #define CHRGENDK        1
 #define CHRGENQS        2
 #define CHRGENCHR128    3
 #define CHRGENKAYDE     4
+#define CHRGENLAMBDA    5
 
 #define COLOURDISABLED  0
 #define COLOURSINCLAIR  0
@@ -113,7 +113,7 @@
 #define CRCNORDIC48     0xe25a
 #define CRCSPANISHPLUS2 0x0b4b
 #define CRCSPANISHPLUS3 0xec07
-#define CRCARABICPLUS3  0x2     //####
+#define CRCARABICPLUS3  0x0000     //####
 
 #define FLOPPYNONE      0
 #define FLOPPYPLUS3     1

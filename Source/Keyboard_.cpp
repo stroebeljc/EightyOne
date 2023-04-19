@@ -88,28 +88,32 @@ void __fastcall TKeyboard::FormKeyUp(TObject *Sender, WORD &Key,
 void TKeyboard::KbChange(void)
 {
         Keyboard->zx80kb->Visible=false;
-        Keyboard->zx81kb->Visible=false;
         Keyboard->zx80zxpandkb->Visible=false;
+        Keyboard->zx81kb->Visible=false;
         Keyboard->zx81zxpandkb->Visible=false;
-        Keyboard->ts1000zxpandkb->Visible=false;
-        Keyboard->acekb->Visible=false;
-        Keyboard->ts1500kb->Visible=false;
         Keyboard->ts1000kb->Visible=false;
+        Keyboard->ts1000zxpandkb->Visible=false;
+        Keyboard->ts1500kb->Visible=false;
+        Keyboard->ts1500zxpandkb->Visible=false;
         Keyboard->lambdakb->Visible=false;
-        Keyboard->tk85kb->Visible=false;
-        Keyboard->zx97kb->Visible=false;
         Keyboard->r470kb->Visible=false;
+        Keyboard->tk85kb->Visible=false;
+        Keyboard->acekb->Visible=false;
+        Keyboard->zx97kb->Visible=false;
         Keyboard->spec16kb->Visible=false;
         Keyboard->spec48kb->Visible=false;
         Keyboard->spec48kbNordic->Visible=false;
         Keyboard->spec128kb->Visible=false;
         Keyboard->spec128kbSpanish->Visible=false;
-        Keyboard->ts2048kb->Visible=false;
+        Keyboard->spec128kbArabic->Visible=false;
+        Keyboard->tc2048kb->Visible=false;
         Keyboard->ts2068kb->Visible=false;
         Keyboard->specPlus2kb->Visible=false;
-        Keyboard->specPlus3kb->Visible=false;
         Keyboard->specPlus2kbSpanish->Visible=false;
+        Keyboard->specPlus2kbArabic->Visible=false;
+        Keyboard->specPlus3kb->Visible=false;
         Keyboard->specPlus3kbSpanish->Visible=false;
+        Keyboard->specPlus3kbArabic->Visible=false;
 
         KeyboardFunctions->Visible=false;
         KeyboardFunctions->EnableTimer(false);
@@ -149,42 +153,28 @@ void TKeyboard::KbChange(void)
 
         case CRCZX81_ED1:
         case CRCZX81_ED2_3:
-                if (machine.NTSC && zx81.zxpand) Keyboard->ts1000zxpandkb->Visible=true;
-                else if (machine.NTSC) Keyboard->ts1000kb->Visible=true;
-                else if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
-                else Keyboard->zx81kb->Visible=true;
+                if (emulator.machine == MACHINETS1000)
+                        if (zx81.zxpand)
+                                Keyboard->ts1000zxpandkb->Visible=true;
+                        else
+                                Keyboard->ts1000kb->Visible=true;
+                else if (emulator.machine == MACHINETS1500)
+                        if (zx81.zxpand)
+                                Keyboard->ts1500zxpandkb->Visible=true;
+                        else
+                                Keyboard->ts1500kb->Visible=true;
+                else
+                        if (zx81.zxpand)
+                                Keyboard->zx81zxpandkb->Visible=true;
+                        else
+                                Keyboard->zx81kb->Visible=true;
                 break;
 
-        case CRCSP48:
-        case CRCSP81:
-                if (spectrum.model == SPECCY16)
-                        Keyboard->spec16kb->Visible=true;
-                else if (emulator.machine == MACHINESPECTRUM && spectrum.model == SPECCYPLUS)
-                        Keyboard->spec128kb->Visible=true;
-                else
-                        Keyboard->spec48kb->Visible=true;
-                break;
         case CRCH4TH:
-        case CRCSG81:
         case CRCTREE4TH:
-        case CRC8300:
-        case CRCASZMIC:
-                if (zx81.zxpand) Keyboard->zx81zxpandkb->Visible=true;
-                else Keyboard->zx81kb->Visible=true;
+                Keyboard->zx81kb->Visible=true;
                 break;
-        case CRCSPANISH128:
-        case CRCSPANISH48:
-                Keyboard->spec128kbSpanish->Visible=true;
-                break;
-        case CRCSPANISHPLUS2:
-                Keyboard->specPlus2kbSpanish->Visible=true;
-                break;
-        case CRCSPANISHPLUS3:
-                Keyboard->specPlus3kbSpanish->Visible=true;
-                break;
-        case CRCNORDIC48:
-                Keyboard->spec48kbNordic->Visible=true;
-                break;
+
         default:
                 switch(emulator.machine)
                 {
@@ -221,32 +211,68 @@ void TKeyboard::KbChange(void)
                 case MACHINESPECTRUM:
                         switch (spectrum.model)
                         {
-                        case SPECCYPLUS:
                         case SPECCY128:
-                                Keyboard->spec128kb->Visible=true;
+                                if (emulator.romcrc == CRCARABIC48)
+                                        Keyboard->spec128kbArabic->Visible=true;
+                                else if (emulator.romcrc == CRCSPANISH128)
+                                        Keyboard->spec128kbSpanish->Visible=true;
+                                else
+                                        Keyboard->spec128kb->Visible=true;
                                 break;
                         case SPECCYTC2048:
-                                Keyboard->ts2048kb->Visible=true;
+                                Keyboard->tc2048kb->Visible=true;
                                 break;
                         case SPECCYTS2068:
                                 Keyboard->ts2068kb->Visible=true;
+                                break;
+                        case SPECCYPLUS:
+                                if (emulator.romcrc == CRCARABIC48)
+                                        Keyboard->spec128kbArabic->Visible=true;
+                                else if (emulator.romcrc == CRCSPANISH48)
+                                        Keyboard->spec128kbSpanish->Visible=true;
+                                else
+                                        Keyboard->spec128kb->Visible=true;
+                                break;
+                        case SPECCY48:
+                                if (emulator.romcrc == CRCNORDIC48)
+                                        Keyboard->spec48kbNordic->Visible=true;
+                                else
+                                        Keyboard->spec48kb->Visible=true;
                                 break;
                         case SPECCY16:
                                 Keyboard->spec16kb->Visible=true;
                                 break;
                         case SPECCYPLUS2:
-                                Keyboard->specPlus2kb->Visible=true;
+                                if (emulator.romcrc == CRCARABIC48)
+                                        Keyboard->specPlus2kbArabic->Visible=true;
+                                else if (emulator.romcrc == CRCSPANISHPLUS2)
+                                        Keyboard->specPlus2kbSpanish->Visible=true;
+                                else
+                                        Keyboard->specPlus2kb->Visible=true;
                                 break;
-
                         case SPECCYPLUS2A:
-                        case SPECCYPLUS3:
-                                Keyboard->specPlus3kb->Visible=true;
+                                if (emulator.romcrc == CRCARABIC48)
+                                        Keyboard->specPlus3kbArabic->Visible=true;
+                                else if (emulator.romcrc == CRCSPANISHPLUS3)
+                                        Keyboard->specPlus3kbSpanish->Visible=true;
+                                else
+                                        Keyboard->specPlus3kb->Visible=true;
                                 break;
-
+                        case SPECCYPLUS3:
+                                if (emulator.romcrc == CRCARABICPLUS3)
+                                        Keyboard->specPlus3kbArabic->Visible=true;
+                                else if (emulator.romcrc == CRCSPANISHPLUS3)
+                                        Keyboard->specPlus3kbSpanish->Visible=true;
+                                else
+                                        Keyboard->specPlus3kb->Visible=true;
+                                break;
                         default:
                                 Keyboard->spec48kb->Visible=true;
                                 break;
                         }
+                        break;
+                default:
+                        Keyboard->zx81kb->Visible=true;
                         break;
                 }
         }
@@ -274,26 +300,33 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
         const int normalWidth = 505;
         bool large = (zx81kb->Width == normalWidth);
 
-        SetKeyboardSize(r470kb, large);
-        SetKeyboardSize(zx80zxpandkb, large);
-        SetKeyboardSize(zx81zxpandkb, large);
-        SetKeyboardSize(ts1000zxpandkb, large);
         SetKeyboardSize(zx80kb, large);
+        SetKeyboardSize(zx80zxpandkb, large);
         SetKeyboardSize(zx81kb, large);
-        SetKeyboardSize(acekb, large);
-        SetKeyboardSize(ts1500kb, large);
-        SetKeyboardSize(lambdakb, large);
-        SetKeyboardSize(tk85kb, large);
-        SetKeyboardSize(zx97kb, large);
+        SetKeyboardSize(zx81zxpandkb, large);
         SetKeyboardSize(ts1000kb, large);
+        SetKeyboardSize(ts1000zxpandkb, large);
+        SetKeyboardSize(ts1500kb, large);
+        SetKeyboardSize(ts1500zxpandkb, large);
+        SetKeyboardSize(lambdakb, large);
+        SetKeyboardSize(r470kb, large);
+        SetKeyboardSize(tk85kb, large);
+        SetKeyboardSize(acekb, large);
+        SetKeyboardSize(zx97kb, large);
+        SetKeyboardSize(spec16kb, large);
         SetKeyboardSize(spec48kb, large);
+        SetKeyboardSize(spec48kbNordic, large);
         SetKeyboardSize(spec128kb, large);
         SetKeyboardSize(spec128kbSpanish, large);
+        SetKeyboardSize(spec128kbArabic, large);
+        SetKeyboardSize(tc2048kb, large);
         SetKeyboardSize(ts2068kb, large);
-        SetKeyboardSize(ts2048kb, large);
-        SetKeyboardSize(spec16kb, large);
         SetKeyboardSize(specPlus2kb, large);
+        SetKeyboardSize(specPlus2kbSpanish, large);
+        SetKeyboardSize(specPlus2kbArabic, large);
         SetKeyboardSize(specPlus3kb, large);
+        SetKeyboardSize(specPlus3kbSpanish, large);
+        SetKeyboardSize(specPlus3kbArabic, large);
 
         SetKeyboardSize(KeyboardFunctions->zx80IntegralFunctions, large);
 }

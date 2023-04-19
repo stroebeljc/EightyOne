@@ -1100,7 +1100,6 @@ int memory_load(char *filename, int address, int length)
         char file[256];
         int len;
 
-
         if (strchr(filename, '\\') || strchr(filename, '/'))
         {
                 strcpy(file, filename);

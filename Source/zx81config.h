@@ -94,11 +94,9 @@
 #define ROMCARTRIDGETIMEX    6
 
 #define CRCACE		0x0a09
-#define CRCASZMIC	0xcac9
-#define CRCASZMIC2	0x6fe5
+#define CRCASZMICE04	0xcac9
+#define CRCASZMICE07	0x6fe5
 #define CRCH4TH		0xa5cd
-#define CRCSG81		0x72f4
-#define CRCSP81		0x877d
 #define CRCTK85		0x28a9
 #define CRCTREE4TH	0x9dc7
 #define CRCTS1500	0x63b7
@@ -107,14 +105,15 @@
 #define CRCZX81_ED1	0x29E8
 #define CRCZX81_ED2_3	0x2914
 #define CRCLAMBDA	0x4d3c
-#define CRC8300		0x0d4e
 #define CRCR470         0x5413
 #define CRCSP48         0xace0
+#define CRCARABIC48     0x9945     //####
 #define CRCSPANISH128   0x4e9f
 #define CRCSPANISH48    0x8b91
+#define CRCNORDIC48     0xe25a
 #define CRCSPANISHPLUS2 0x0b4b
 #define CRCSPANISHPLUS3 0xec07
-#define CRCNORDIC48     0xe25a
+#define CRCARABICPLUS3  0x2     //####
 
 #define FLOPPYNONE      0
 #define FLOPPYPLUS3     1

@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Others
+    ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -1739,9 +1739,9 @@ object HW: THW
         OnChange = FDCChange
         Items.Strings = (
           'None'
-          'Plus 3'
+          '+3'
           'MGT Disciple'
-          'MGT PlusD')
+          'MGT Plus D')
       end
       object Autoboot: TCheckBox
         Left = 224
@@ -1770,7 +1770,7 @@ object HW: THW
         TabOrder = 5
         OnChange = IDEBoxChange
         Items.Strings = (
-          'Plus 2/3E')
+          'Simple +3e 8-Bit')
       end
       object ZXCFRAM: TComboBox
         Left = 224
@@ -1977,7 +1977,7 @@ object HW: THW
         Top = 16
         Width = 193
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

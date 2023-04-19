@@ -201,19 +201,15 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigurePrinterCentronicsPort();
         ConfigureRzxSupport();
 
-        zx81.improvedWait = ImprovedWait->Checked;
-        zx81.shadowROM = !EnableLowRAM->Checked;
-        zx81.RAM816k = EnableLowRAM->Checked;
-        zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
-
-        machine.protectROM = ProtectROM->Checked;
-        machine.zxprinter = ZXPrinter->Checked;
-        machine.NTSC = NTSC->Checked;
-
         spectrum.uspeech = uSpeech->Checked;
         spectrum.usource = uSource->Checked;
         spectrum.kbissue = Issue2->Checked;
         spectrum.kmouse = KMouse->Checked;
+
+        zx81.improvedWait = ImprovedWait->Checked;
+        zx81.shadowROM = !EnableLowRAM->Checked;
+        zx81.RAM816k = EnableLowRAM->Checked;
+        zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
 
         Form1->InWaveLoader->Enabled=true;
         Form1->OutWaveLoader->Enabled=true;
@@ -940,9 +936,9 @@ void THW::ConfigureFDC()
         spectrum.floppytype=FLOPPYNONE;
         if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Disciple") spectrum.floppytype=FLOPPYDISCIPLE;
         if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Plus D") spectrum.floppytype=FLOPPYPLUSD;
-        if (FDC->Items->Strings[FDC->ItemIndex]=="Plus 3 FDC") spectrum.floppytype=FLOPPYPLUS3;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="+3") spectrum.floppytype=FLOPPYPLUS3;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Opus Discovery") spectrum.floppytype=FLOPPYOPUSD;
-        if (FDC->Items->Strings[FDC->ItemIndex]=="BetaDisc") spectrum.floppytype=FLOPPYBETA;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="Beta Disk") spectrum.floppytype=FLOPPYBETA;
         if (FDC->Items->Strings[FDC->ItemIndex]=="ZX Interface 1") spectrum.floppytype=FLOPPYIF1;
         if (FDC->Items->Strings[FDC->ItemIndex]=="ZX1541") spectrum.floppytype=FLOPPYZX1541;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Larken") spectrum.floppytype=FLOPPYLARKEN81;
@@ -974,6 +970,10 @@ void THW::ConfigureFDC()
 
 void THW::ConfigureMachineSettings()
 {
+        machine.protectROM = ProtectROM->Checked;
+        machine.zxprinter = ZXPrinter->Checked;
+        machine.NTSC = NTSC->Checked;
+
         machine.clockspeed=3250000;
         machine.tperscanline=207;
         machine.scanlines=machine.NTSC ? 262:310;
@@ -1519,7 +1519,7 @@ void THW::SetupForSpectrum(void)
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
         FDC->Items->Strings[0]="None";
         FDC->Items->Add("ZX Interface 1");
-        FDC->Items->Add("BetaDisc");
+        FDC->Items->Add("Beta Disk");
         FDC->Items->Add("Opus Discovery");
         FDC->Items->Add("MGT Disciple");
         FDC->Items->Add("MGT Plus D");
@@ -1738,7 +1738,7 @@ void THW::SetupForQL(void)
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
         FDC->Items->Strings[0]="None";
         FDC->Items->Add("ZX Interface 1");
-        FDC->Items->Add("BetaDisc");
+        FDC->Items->Add("Beta Disk");
         FDC->Items->Add("Opus Discovery");
         FDC->Items->Add("MGT Disciple");
         FDC->Items->Add("MGT Plus D");
@@ -1915,6 +1915,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         RomBox->Clear();
         RomBox->Items->Add("spectrum128.rom");
         RomBox->Items->Add("spectrum128.spanish.rom");
+        RomBox->Items->Add("spectrum48.arabic.rom");
         RomBox->Text = emulator.ROMSP128;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         Form1->EnableAnnotationOptions();
@@ -1944,6 +1945,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         RomBox->Clear();
         RomBox->Items->Add("spectrum48.rom");
         RomBox->Items->Add("spectrum48.spanish.rom");
+        RomBox->Items->Add("spectrum48.arabic.rom");
         RomBox->Text = emulator.ROMSPP;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -1999,6 +2001,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+2.rom");
         RomBox->Items->Add("spectrum+2.french.rom");
         RomBox->Items->Add("spectrum+2.spanish.rom");
+        RomBox->Items->Add("spectrum48.arabic.rom");
         RomBox->Text = emulator.ROMSPP2;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2031,6 +2034,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
+        RomBox->Items->Add("spectrum48.arabic.rom");
         RomBox->Text = emulator.ROMSPP2A;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2063,6 +2067,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
+//        RomBox->Items->Add("spectrum+3.arabic.rom");
         RomBox->Text = emulator.ROMSPP3;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2070,7 +2075,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         IDEBoxChange(NULL);
 
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
-        FDC->Items->Strings[0]="Plus 3 FDC";
+        FDC->Items->Strings[0]="+3";
         FDC->ItemIndex=0;
 
         FDC->Enabled=false;
@@ -2091,8 +2096,6 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         Form1->EnableAnnotationOptions();
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
-        RomBox->Items->Add("zx81.edition1.rom");
-        RomBox->Items->Add("zx81.edition2.rom");
         RomBox->Items->Add("zx81.edition3.rom");
         RomBox->Text = emulator.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
@@ -2926,7 +2929,7 @@ void __fastcall THW::FDCChange(TObject *Sender)
         if (FDC->Items->Strings[FDC->ItemIndex]=="Larken")
                 EnableLowRAM->Checked=true;
 
-        if (FDC->Items->Strings[FDC->ItemIndex]=="Plus 3 FDC")
+        if (FDC->Items->Strings[FDC->ItemIndex]=="+3")
         {
                 DriveAType->Enabled=true;
                 DriveBType->Enabled=true;
@@ -2945,7 +2948,7 @@ void __fastcall THW::FDCChange(TObject *Sender)
                 LabelB->Visible=false;
         }
 
-        if (FDC->Items->Strings[FDC->ItemIndex]=="BetaDisc")
+        if (FDC->Items->Strings[FDC->ItemIndex]=="Beta Disk")
                 Autoboot->Visible=true;
         else    Autoboot->Visible=false;
 

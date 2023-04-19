@@ -48,7 +48,7 @@ __published:	// IDE-managed Components
         TImage *spec128kb;
         TImage *spec128kbSpanish;
         TImage *ts2068kb;
-        TImage *ts2048kb;
+        TImage *tc2048kb;
         TImage *spec16kb;
         TImage *zx81zxpandkb;
         TImage *zx80zxpandkb;
@@ -58,6 +58,10 @@ __published:	// IDE-managed Components
         TImage *specPlus2kbSpanish;
         TImage *specPlus3kbSpanish;
         TImage *spec48kbNordic;
+        TImage *ts1500zxpandkb;
+        TImage *spec128kbArabic;
+        TImage *specPlus2kbArabic;
+        TImage *specPlus3kbArabic;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);

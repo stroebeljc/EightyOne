@@ -409,6 +409,17 @@ void spec48_initialise(void)
         romlen=memory_load(machine.CurRom, 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
+        if ((spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2 || spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 16384)
+        {
+                memcpy(memory + 16384, memory, 16384);
+                romlen += 16384;
+        }
+        if ((spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 32768)
+        {
+                memcpy(memory + 32768, memory, 32768);
+                romlen += 32768;
+        }
+
         memcpy(SpecMem, memory, romlen);
 
         if (spectrum.model==SPECCYTS2068)

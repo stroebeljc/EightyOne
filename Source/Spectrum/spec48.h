@@ -70,7 +70,6 @@ extern BYTE ZXKeyboard[];
 extern int spec48_contend(int Address, int states, int time);
 extern int spec48_contendio(int Address, int states, int time);
 extern void spec48_reset(void);
-extern "C" void spec48_nmi(void);
 extern void spec48_exit(void);
 
 #endif

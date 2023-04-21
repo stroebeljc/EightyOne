@@ -150,7 +150,6 @@ void load_config(void)
         strcpy(emulator.ROM97LE, "zx97.rom");
 
         strcpy(emulator.ROMSPP3E, "simple+3e8bit(sm8en3eE).rom");
-        strcpy(emulator.ROMSPP3ECF, "zxcf+3e(zxcen3eE).rom");
         strcpy(emulator.ROMZXCF, "zxcflba.rom");
         strcpy(emulator.ROMZX8BIT, "zx8blbs.rom");
         strcpy(emulator.ROMZX16BIT, "zxidelbs.rom");
@@ -185,7 +184,8 @@ void load_config(void)
         spectrum.drivebusy=-1;
         spectrum.kmouse=0;
         spectrum.HDType=HDNONE;
-        spectrum.WriteProtectJumper=0;
+        spectrum.divIDEJumperEClosed=0;
+        spectrum.UploadJumperZXCF=0;
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;

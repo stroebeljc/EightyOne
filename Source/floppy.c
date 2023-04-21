@@ -13,10 +13,10 @@
 #include "wd1770.h"
 #include "zx81config.h"
 #include "parallel.h"
+#include "z80.h"
 
 extern void fdl_setfilename(FDRV_PTR fd, const char *s);
 extern FDRV_PTR fd_newldsk(void);
-extern void spec48_nmi(void);
 
 FDC_PTR p3_fdc=NULL;
 FDRV_PTR p3_drive_a=NULL;
@@ -81,7 +81,7 @@ void LoadFDC765DLL(void)
 
 void OpusNMI( wd1770_drive *d )
 {
-        spec48_nmi();
+        nmiOccurred = 1;
 }
 
 //

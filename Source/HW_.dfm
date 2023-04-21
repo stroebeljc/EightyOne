@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 287
-  Top = 130
+  Left = 290
+  Top = 132
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1391,7 +1391,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = FloppyDrives
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1850,12 +1850,14 @@ object HW: THW
         State = cbChecked
         TabOrder = 7
       end
-      object WriteProtect: TCheckBox
+      object divIDEJumperEClosed: TCheckBox
         Left = 56
-        Top = 116
+        Top = 100
         Width = 137
         Height = 17
-        Caption = 'Write Protect EEPROM'
+        Caption = 'Jumper E (J2)'
+        Checked = True
+        State = cbChecked
         TabOrder = 8
       end
     end

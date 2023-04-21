@@ -107,7 +107,9 @@
 #define CRCLAMBDA	0x4d3c
 #define CRCR470         0x5413
 #define CRCSP48         0xace0
-#define CRCARABIC48     0x9945     //####
+#define CRCARABIC48V1   0x236a
+#define CRCARABIC48V2   0x4a8e
+#define CRCARABIC48V31  0x9945
 #define CRCSPANISH128   0x4e9f
 #define CRCSPANISH48    0x8b91
 #define CRCNORDIC48     0xe25a
@@ -190,13 +192,13 @@ typedef struct
         char driveaimg[256], drivebimg[256];
         int drivebusy;
         int HDType;
-        int WriteProtectJumper;
-        int UploadJumper;
+        int divIDEJumperEClosed;
+        int UploadJumperZXCF;
         int ZXCFRAMSize;
         int MFActive;
         int MFLockout;
         int MFVersion;
-        int divIDEVersion;
+        int divIDEAllRamSupported;
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
         int intposition;
@@ -244,7 +246,6 @@ typedef struct
         int (*contendmem)(int Address, int states, int time);
         int (*contendio)(int Address, int states, int time);
         void (*reset)(void);
-        void (*nmi)(void);
         void (*exit)(void);
 
         void* cset;
@@ -330,7 +331,6 @@ typedef struct
         char ROMSPP2A[256];
         char ROMSPP3[256];
         char ROMSPP3E[256];
-        char ROMSPP3ECF[256];
         char ROMTC2048[256];
         char ROMTS2068[256];
         char ROMDock[256];

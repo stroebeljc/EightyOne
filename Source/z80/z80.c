@@ -50,6 +50,8 @@ BYTE sz53_table[0x100]; /* The S, Z, 5 and 3 bits of the lookup value */
 BYTE parity_table[0x100]; /* The parity of the lookup value */
 BYTE sz53p_table[0x100]; /* OR the above two tables together */
 
+int nmiOccurred;
+
 extern int StackChange;
 extern int StepOutRequested;
 
@@ -100,6 +102,7 @@ void z80_reset( void )
         z80.halted=0;
         StackChange=0;
         StepOutRequested=0;
+        nmiOccurred = 0;
 }
 
 /* Process a z80 maskable interrupt */
@@ -172,6 +175,8 @@ int z80_nmi()
         numberOfM1Cycles++;
         R++;
         PC = 0x0066;
+
+        nmiOccurred = 0;
 
         return 11;
 }

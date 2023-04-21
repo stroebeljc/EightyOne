@@ -104,7 +104,7 @@ BYTE uSpeechMem[16*1024];
 BYTE uSourceMem[16*1024];
 
 int divIDEPaged, divIDEPage0, divIDEPage1, divIDEPort, divIDEMapRam;
-int divIDEPage0WP, divIDEPage1WP;
+int divIDEPage0WP, divIDEPage1WP, divIDEAllRamMode, divIDEAllRamModeInvoked;
 
 int MFActive=0, MFLockout=0;
 int ZXCFPort=0;
@@ -220,54 +220,33 @@ int SPECShrink(int b)
 
 static void divIDEPage(void)
 {
+        // If CONMEM set
         if (divIDEPaged & 128)
         {
-                divIDEPage0=0;
-                divIDEPage1=1+(divIDEPort&3);
-                divIDEPage0WP=spectrum.WriteProtectJumper;
-                divIDEPage1WP=0;
+                divIDEPage0=0;                                // $0000-$1FFF = EEPROM bank
+                divIDEPage1=1+(divIDEPort&3);                 // $2000-$3FFF = RAM banks 0-3 (values 1-4)
+                divIDEPage0WP=spectrum.divIDEJumperEClosed;   // $0000-$1FFF write protected if jumper E option ticked
+                divIDEPage1WP=0;                              // $2000-$3FFF is unprotected
         }
+        // Else if memory has been paged in automatically
         else if (divIDEPaged & 1)
         {
                 if (divIDEMapRam)
                 {
-                        divIDEPage0=4;
-                        divIDEPage1=1+(divIDEPort&3);
-                        divIDEPage0WP=1;
-                        divIDEPage1WP=0;
-                        if (divIDEPage1==4) divIDEPage1WP=1;
+                        divIDEPage0=4;                        // $0000-$1FFF = RAM bank 3
+                        divIDEPage1=1+(divIDEPort&3);         // $2000-$3FFF = RAM banks 0-3 (values 1-4)
+                        divIDEPage0WP=1;                      // $0000-$1FFF write protected
+                        divIDEPage1WP=0;                      // $2000-$3FFF is unprotected
+                        if (divIDEPage1==4) divIDEPage1WP=1;  // $2000-$3FFF write protected if RAM bank 3 selected
                 }
                 else
                 {
-                        divIDEPage0=0;
-                        divIDEPage1=1+(divIDEPort&3);
-                        divIDEPage0WP=1;
-                        divIDEPage1WP=0;
+                        divIDEPage0=0;                        // $0000-$1FFF = EEPROM bank
+                        divIDEPage1=1+(divIDEPort&3);         // $2000-$3FFF = RAM banks 0-3 (values 1-4)
+                        divIDEPage0WP=1;                      // $0000-$1FFF write protected
+                        divIDEPage1WP=0;                      // $2000-$3FFF is unprotected
                 }
         }
-}
-
-extern "C"
-{
-void spec48_nmi(void)
-{
-        uSpeechPaged=0;
-        uSourcePaged=0;
-
-        if (spectrum.MFVersion)
-        {
-                MFActive=1;
-                MFLockout=0;
-        }
-        else if (spectrum.floppytype==FLOPPYDISCIPLE
-                || spectrum.floppytype==FLOPPYPLUSD
-                || spectrum.floppytype==FLOPPYBETA)
-        {
-                PlusDPaged=1;
-        }
-
-        z80_nmi();
-}
 }
 
 void spec48_exit(void)
@@ -285,7 +264,6 @@ void spec48_reset(void)
         SPECVideoBank=9;
         SPECLast7ffd=0;
         SPECLast1ffd=0;
-        if (spectrum.divIDEVersion==2) SPECLast7ffd=16;
 
         if (spectrum.model==SPECCYTS2068) SPECBankEnable=0;
         else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
@@ -306,7 +284,7 @@ void spec48_reset(void)
         ZXCFPort=128;
         if (spectrum.HDType==HDZXCF)
         {
-                if (spectrum.UploadJumper) ZXCFPort=192;
+                if (spectrum.UploadJumperZXCF) ZXCFPort=192;
                 else ZXCFPort=0;
         }
 
@@ -317,6 +295,8 @@ void spec48_reset(void)
         divIDEMapRam=0;
         divIDEPage0WP=0;
         divIDEPage1WP=0;
+        divIDEAllRamMode=0;
+        divIDEAllRamModeInvoked=0;
 
         MFActive=0;
         MFLockout=0;
@@ -619,8 +599,8 @@ void spec48_WriteByte(int Address, int Data)
                                         divIDEMem[(Address&8191)+(divIDEPage1*8192)]=Data;
                         }
                         return;
-                }  
-                
+                }
+
                 // The ROM cartridge socket does not differentiate between a memory read or write,
                 // so all accesses are treated as reads
                 if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
@@ -806,17 +786,51 @@ void spec48_writeport(int Address, int Data, int *tstates)
 {
         LogOutAccess(Address, Data);
 
-        if (spectrum.HDType==HDDIVIDE && ((Address&0xa3)==0xa3))
+        if (spectrum.HDType == HDDIVIDE)
         {
-                if (Address&64) // Control Register
+                if ((Address & 0xa3) == 0xa3)
                 {
-                        divIDEPort=Data;
-                        divIDEPaged=(Data&128) | (divIDEPaged&127);
-                        if (Data&64) divIDEMapRam=1;
-                        divIDEPage();
+                        if (Address&64) // Control Register
+                        {
+                                divIDEPort=Data;
+                                divIDEPaged=(Data&128) | (divIDEPaged&127);
+                                if (Data&64) divIDEMapRam=1;
+                                divIDEPage();
+                        }
+                        else    // IDE Interface
+                        {
+                                ATA_WriteRegister((Address>>2)&7,Data);
+                        }
                 }
-                else    // IDE Interface
-                        ATA_WriteRegister((Address>>2)&7,Data);
+                else if (spectrum.divIDEAllRamSupported && !spectrum.divIDEJumperEClosed)
+                {
+                        if (!divIDEAllRamMode)
+                        {
+                                if (Address == 66 || (divIDEAllRamModeInvoked && ((Address & 0x82) == 0x02)))
+                                {
+                                        divIDEAllRamMode = 1;
+                                        divIDEAllRamModeInvoked = 1;
+                                }
+                        }
+                        else
+                        {
+                                if ((Address & 0xFC) == 0x80)
+                                {
+                                        divIDEAllRamMode = 0;        
+                                        divIDEPage0 = 0;
+                                        divIDEPage1 = 1 + (Address & 0x03);
+                                        divIDEPage0WP = 0;
+                                        divIDEPage1WP = 0;
+                                }
+                                else
+                                {
+                                        divIDEPage0 = ((Address & 0x01) == 0x00) ? 1 : 3;
+                                        divIDEPage1 = ((Address & 0x01) == 0x00) ? 2 : 4;
+                                        divIDEPage0WP = ((Address & 0x40) == 0x00) ? 1 : 0;
+                                        divIDEPage1WP = divIDEPage0WP;
+                                }
+                        }
+                }
         }
 
         if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
@@ -1429,6 +1443,26 @@ BYTE ReadPort(int Address, int *tstates)
         return(idleDataBus);
 }
 
+void spec48_nmi(void)
+{
+        uSpeechPaged=0;
+        uSourcePaged=0;
+
+        if (spectrum.MFVersion)
+        {
+                MFActive=1;
+                MFLockout=0;
+        }
+        else if (spectrum.floppytype==FLOPPYDISCIPLE
+                || spectrum.floppytype==FLOPPYPLUSD
+                || spectrum.floppytype==FLOPPYBETA)
+        {
+                PlusDPaged=1;
+        }
+
+        z80_nmi();
+}
+
 int spec48_do_scanline(SCANLINE *CurScanLine)
 {
         int ts,i;
@@ -1509,12 +1543,12 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         PlusDPaged=1;
 
                         if (spectrum.floppytype==FLOPPYPLUSD
-                                && (LastPC==0x0008  || LastPC==0x003A  || LastPC==0x0066))
+                                && (LastPC==0x0008 || LastPC==0x003A || LastPC==0x0066))
                                         PlusDPaged=1;
 
                         if (spectrum.floppytype==FLOPPYBETA)
                         {
-                                if (LastPC>=0x3d00  && LastPC<=0x3dff) PlusDPaged=1;
+                                if (LastPC>=0x3d00 && LastPC<=0x3dff) PlusDPaged=1;
                                 if (LastPC>=0x4000) PlusDPaged=0;
                         }
 
@@ -1535,7 +1569,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (LastPC==0x0) WavStop();
 
                 i=70;
-                while(SPECFlashLoading && IsFlashLoadable() && i)
+                while (SPECFlashLoading && IsFlashLoadable() && i)
                 {
                         ts=z80_do_opcode();
                         WavClockTick(ts,0);
@@ -1552,34 +1586,28 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (spectrum.floppytype==FLOPPYOPUSD)
                 {
-                        if (LastPC==0x0008  || LastPC==0x0048  || LastPC==0x1708) PlusDPaged=1;
+                        if (LastPC==0x0008 || LastPC==0x0048 || LastPC==0x1708) PlusDPaged=1;
                         if (LastPC==0x1748) PlusDPaged=0;
                 }
 
-                if (spectrum.HDType==HDDIVIDE && !spectrum.UploadJumper)
+                if (spectrum.HDType==HDDIVIDE)
                 {
-                        if (LastPC==0x00
-                                || LastPC==0x08
-                                || LastPC==0x38
-                                || LastPC==0x66
-                                || LastPC==0x04c6
-                                || LastPC==0x0562
-                                || (z80.pc.w>=0x3d00 && z80.pc.w<=0x3dff))
+                        if (spectrum.divIDEJumperEClosed)
                         {
-                                if ((spectrum.divIDEVersion==1)
-                                        || ((spectrum.divIDEVersion==2)
-                                                && (SPECLast7ffd&16)))
+                                divIDEAllRamMode = 0;
+                                divIDEAllRamModeInvoked = 0;
+
+                                if (LastPC==0x00 || LastPC==0x08 || LastPC==0x38 || LastPC==0x66 ||
+                                    LastPC==0x04c6 || LastPC==0x0562 || (z80.pc.w>=0x3d00 && z80.pc.w<=0x3dff))
+                                {
                                         divIDEPaged |= 1;
                                         divIDEPage();
-                        }
-
-                        if (LastPC>=0x1ff8 && LastPC<=0x1fff)
-                        {
-                                if ((spectrum.divIDEVersion==1)
-                                        || ((spectrum.divIDEVersion==2)
-                                                && (SPECLast7ffd&16)))
+                                }
+                                else if (LastPC>=0x1ff8 && LastPC<=0x1fff)
+                                {
                                         divIDEPaged &= 254;
                                         divIDEPage();
+                                }
                         }
                 }
 
@@ -1781,12 +1809,18 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         }
                         if (loop<0) SpeedUpCount=SpeedUp;
                 }
-                else    SpeedUpCount -=ts;
+                else
+                        SpeedUpCount -=ts;
+
+                if (nmiOccurred)
+                {
+                        rzx_close();
+                        spec48_nmi();
+                }
+
                 DebugUpdate();
-
-
-        } while((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
-
+        }
+        while ((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
 
         if (loop<=0)
         {

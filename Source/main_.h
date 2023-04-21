@@ -295,7 +295,6 @@ private:	// User declarations
         void UpdateAnnotationImage(TMenuItem* item);
         void UpdateEmulatorAnnotationSettings();
 
-
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
         virtual void __fastcall WndProc(TMessage &Msg);

@@ -1769,9 +1769,7 @@ void __fastcall TForm1::FormMouseUp(TObject *Sender, TMouseButton Button,
 
 void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 {
-        rzx_close();
-        if (machine.nmi) machine.nmi();
-        else z80_nmi();
+        nmiOccurred = 1;
 }
 //---------------------------------------------------------------------------
 

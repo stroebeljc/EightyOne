@@ -614,9 +614,7 @@ void THW::ConfigureRom()
                 case SPECCYPLUS2A:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
-                                strcpy(emulator.ROMSPP3ECF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
                                 strcpy(emulator.ROMSPP3E, machine.CurRom);
                         else strcpy(emulator.ROMSPP2A, machine.CurRom);
                         break;
@@ -624,9 +622,7 @@ void THW::ConfigureRom()
                 case SPECCYPLUS3:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF")
-                                strcpy(emulator.ROMSPP3ECF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
                                 strcpy(emulator.ROMSPP3E, machine.CurRom);
                         else strcpy(emulator.ROMSPP3, machine.CurRom);
                         break;
@@ -920,16 +916,16 @@ void THW::ConfigureSpectrumIDE()
 {
         spectrum.HDType=HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="ZXCF") spectrum.HDType=HDZXCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V1") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=1; }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE V2") { spectrum.HDType=HDDIVIDE; spectrum.divIDEVersion=2; }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE 57 (R Gal)") { spectrum.HDType=HDDIVIDE; spectrum.divIDEAllRamSupported = false; }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="divIDE 57 (R'' Gal)") { spectrum.HDType=HDDIVIDE; spectrum.divIDEAllRamSupported = true; }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit") spectrum.HDType=HDPLUS3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF") spectrum.HDType=HDACECF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") spectrum.HDType=HDPITERSCF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") spectrum.HDType=HDPITERS8B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") spectrum.HDType=HDPITERS16B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde") spectrum.HDType=HDPITERSCF;
-        spectrum.WriteProtectJumper=WriteProtect->Checked;
-        spectrum.UploadJumper=Upload->Checked;
+        spectrum.divIDEJumperEClosed=divIDEJumperEClosed->Checked;
+        spectrum.UploadJumperZXCF=Upload->Checked;
 
         switch(ZXCFRAM->ItemIndex)
         {
@@ -1010,7 +1006,6 @@ void THW::ConfigureMachineSettings()
                 machine.contendmem = ace_contend;
                 machine.contendio = ace_contend;
                 machine.reset = NULL;
-                machine.nmi = NULL;
                 machine.exit = NULL;
                 break;
 
@@ -1028,7 +1023,6 @@ void THW::ConfigureMachineSettings()
                 machine.contendmem = ql_contend;
                 machine.contendio = ql_contend;
                 machine.reset = NULL;
-                machine.nmi = NULL;
                 machine.exit = NULL;
                 break;
 
@@ -1046,7 +1040,6 @@ void THW::ConfigureMachineSettings()
                 machine.contendmem = spec48_contend;
                 machine.contendio = spec48_contendio;
                 machine.reset = spec48_reset;
-                machine.nmi = spec48_nmi;
                 machine.exit = spec48_exit;
 
                 if (spectrum.model==SPECCY16 || spectrum.model==SPECCY48 || spectrum.model==SPECCYPLUS || spectrum.model==SPECCYTC2048)
@@ -1092,7 +1085,6 @@ void THW::ConfigureMachineSettings()
                 machine.contendio = zx81_contend;
                 machine.fps = machine.NTSC ? 60:50; // may be overwritten later
                 machine.reset = NULL;
-                machine.nmi = NULL;
                 machine.exit = NULL;
                 break;
         }
@@ -1602,8 +1594,8 @@ void THW::SetupForSpectrum(void)
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
         IDEBox->Items->Add("Simple +3e 8-Bit");
-        IDEBox->Items->Add("divIDE V1");
-        IDEBox->Items->Add("divIDE V2");
+        IDEBox->Items->Add("divIDE 57 (R Gal)");
+        IDEBox->Items->Add("divIDE 57 (R'' Gal)");
         IDEBox->Items->Add("ZXCF");
         IDEBox->Items->Add("Pera Putnik CF");
         IDEBox->Items->Add("Pera Putnik 8-Bit");
@@ -1728,8 +1720,8 @@ void THW::SetupForQL(void)
         while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
         IDEBox->Items->Add("None");
         IDEBox->Items->Add("Simple +3e 8-Bit");
-        IDEBox->Items->Add("divIDE V1");
-        IDEBox->Items->Add("divIDE V2");
+        IDEBox->Items->Add("divIDE 57 (R Gal)");
+        IDEBox->Items->Add("divIDE 57 (R'' Gal)");
         IDEBox->Items->Add("ZXCF");
         IDEBox->Items->Add("Pera Putnik CF");
         IDEBox->ItemIndex=0;
@@ -1843,8 +1835,6 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Clear();
         RomBox->Items->Add("zx80.rom");
         RomBox->Items->Add("zx81.edition1.rom");
-        RomBox->Items->Add("zx81.edition2.rom");
-        RomBox->Items->Add("zx81.edition3.rom");
         RomBox->Text = emulator.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
@@ -1868,6 +1858,9 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         RomBox->Items->Add("zx81.edition1.rom");
         RomBox->Items->Add("zx81.edition2.rom");
         RomBox->Items->Add("zx81.edition3.rom");
+        RomBox->Items->Add("zx81-forth.rom");
+        RomBox->Items->Add("aszmic.e04.rom");
+        RomBox->Items->Add("aszmic.e07.rom");
         RomBox->Text = emulator.ROM81;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
@@ -1923,7 +1916,8 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         RomBox->Clear();
         RomBox->Items->Add("spectrum128.rom");
         RomBox->Items->Add("spectrum128.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.rom");
+        RomBox->Items->Add("spectrum48.arabic.version2.rom");
+        RomBox->Items->Add("spectrum48.arabic.version3-1.rom");
         RomBox->Text = emulator.ROMSP128;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         Form1->EnableAnnotationOptions();
@@ -1953,7 +1947,7 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         RomBox->Clear();
         RomBox->Items->Add("spectrum48.rom");
         RomBox->Items->Add("spectrum48.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.rom");
+        RomBox->Items->Add("spectrum48.arabic.version1.rom");
         RomBox->Text = emulator.ROMSPP;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -2009,7 +2003,8 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+2.rom");
         RomBox->Items->Add("spectrum+2.french.rom");
         RomBox->Items->Add("spectrum+2.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.rom");
+        RomBox->Items->Add("spectrum48.arabic.version2.rom");
+        RomBox->Items->Add("spectrum48.arabic.version3-1.rom");
         RomBox->Text = emulator.ROMSPP2;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2042,7 +2037,8 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.rom");
+        RomBox->Items->Add("spectrum48.arabic.version2.rom");
+        RomBox->Items->Add("spectrum48.arabic.version3-1.rom");
         RomBox->Text = emulator.ROMSPP2A;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2105,6 +2101,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
         RomBox->Items->Add("zx81.edition3.rom");
+        RomBox->Items->Add("tree-forth.rom");
         RomBox->Text = emulator.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
@@ -2126,6 +2123,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
         RomBox->Items->Add("ts1500.rom");
+        RomBox->Items->Add("tree-forth.rom");
         RomBox->Text = emulator.ROMTS1500;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
@@ -2145,6 +2143,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         NewMachineName=LambdaBtn->Caption;
         RomBox->Clear();
         RomBox->Items->Add("lambda8300.rom");
+        RomBox->Items->Add("pc8300timex.rom");
         RomBox->Text = emulator.ROMLAMBDA;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
@@ -2527,7 +2526,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","TS2050",TS2050->Checked);
         ini->WriteBool("HWARE","Iss2Kb",Issue2->Checked);
         ini->WriteBool("HWARE","KMouse",KMouse->Checked);
-        ini->WriteBool("HWARE","divIDEWP",WriteProtect->Checked);
+        ini->WriteBool("HWARE","divIDEWP",divIDEJumperEClosed->Checked);
         ini->WriteBool("HWARE","ZXCFWP",Upload->Checked);
         ini->WriteBool("HWARE","MFace",Multiface->Checked);
         ini->WriteBool("HWARE","ZXPrinter",ZXPrinter->Checked);
@@ -2560,7 +2559,6 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=emulator.ROM97LE; ini->WriteString("HWARE","ROM97LE",Rom);
 
         Rom=emulator.ROMSPP3E; ini->WriteString("HWARE","ROMSPP3E",Rom);
-        Rom=emulator.ROMSPP3ECF; ini->WriteString("HWARE","ROMSPP3ECF",Rom);
         Rom=emulator.ROMDock; ini->WriteString("HWARE","Dock",Rom);
         Rom=emulator.ROMZX8BIT; ini->WriteString("HWARE","ZX8BIT",Rom);
         Rom=emulator.ROMZX16BIT; ini->WriteString("HWARE","ZX16BIT",Rom);
@@ -2625,7 +2623,6 @@ void THW::LoadSettings(TIniFile *ini)
         Rom=emulator.ROMSPP2A; Rom=ini->ReadString("HWARE","ROMSPP2A",Rom).LowerCase(); strcpy(emulator.ROMSPP2A, Rom.c_str());
         Rom=emulator.ROMSPP3; Rom=ini->ReadString("HWARE","ROMSPP3",Rom).LowerCase(); strcpy(emulator.ROMSPP3, Rom.c_str());
         Rom=emulator.ROMSPP3E; Rom=ini->ReadString("HWARE","ROMSPP3E",Rom).LowerCase(); strcpy(emulator.ROMSPP3E, Rom.c_str());
-        Rom=emulator.ROMSPP3ECF; Rom=ini->ReadString("HWARE","ROMSPP3ECF",Rom).LowerCase(); strcpy(emulator.ROMSPP3ECF, Rom.c_str());
         Rom=emulator.ROMDock; Rom=ini->ReadString("HWARE","Dock",Rom).LowerCase(); strcpy(emulator.ROMDock, Rom.c_str());
         Rom=emulator.ROMZX8BIT; Rom=ini->ReadString("HWARE","ZX8BIT",Rom).LowerCase(); strcpy(emulator.ROMZX8BIT, Rom.c_str());
         Rom=emulator.ROMZX16BIT; Rom=ini->ReadString("HWARE","ZX16BIT",Rom).LowerCase(); strcpy(emulator.ROMZX16BIT, Rom.c_str());
@@ -2717,7 +2714,7 @@ void THW::LoadSettings(TIniFile *ini)
         TS2050->Checked=ini->ReadBool("HWARE","TS2050",TS2050->Checked);
         Issue2->Checked=ini->ReadBool("HWARE","Iss2Kb",Issue2->Checked);
         KMouse->Checked=ini->ReadBool("HWARE","KMouse",KMouse->Checked);
-        WriteProtect->Checked=ini->ReadBool("HWARE","divIDEWP",WriteProtect->Checked);
+        divIDEJumperEClosed->Checked=ini->ReadBool("HWARE","divIDEWP",divIDEJumperEClosed->Checked);
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
@@ -2886,7 +2883,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         Upload->Visible=false;
         ZXCFLabel->Visible=false;
         ZXCFRAM->Visible=false;
-        WriteProtect->Visible=false;
+        divIDEJumperEClosed->Visible=false;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde")
         {
@@ -2908,14 +2905,11 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 Upload->Visible=true;
                 ZXCFLabel->Visible=true;
                 ZXCFRAM->Visible=true;
-
-                if (SpecP2aBtn->Down || SpecP3Btn->Down) RomBox->Text = emulator.ROMSPP3ECF;
         }
 
         if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
         {
-                WriteProtect->Visible=true;
-                Upload->Visible=true;
+                divIDEJumperEClosed->Visible=true;
         }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit") RomBox->Text = emulator.ROMSPP3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") RomBox->Text = emulator.ROMZXCF;

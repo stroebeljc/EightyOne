@@ -93,7 +93,7 @@ __published:	// IDE-managed Components
         TComboBox *IDEBox;
         TComboBox *ZXCFRAM;
         TCheckBox *Upload;
-        TCheckBox *WriteProtect;
+        TCheckBox *divIDEJumperEClosed;
         TLabel *LabelIDE;
         TLabel *ZXCFLabel;
         TCheckBox *uSpeech;

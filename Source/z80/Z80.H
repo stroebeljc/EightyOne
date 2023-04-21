@@ -86,6 +86,7 @@ extern int z80_InputOutputMCycle();
 extern int z80_NumberOfM1Cycles();
 
 extern int numberOfM1Cycles;
+extern int nmiOccurred;
 
 #ifdef __cplusplus
 }

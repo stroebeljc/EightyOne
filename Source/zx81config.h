@@ -162,7 +162,6 @@ typedef struct
         CFGBYTE shadowROM;
         CFGBYTE RAM816k;
         CFGBYTE truehires;
-        CFGBYTE wobble;
         CFGBYTE chrgen;
         CFGBYTE enableQSchrgen;
         CFGBYTE vsyncsound;

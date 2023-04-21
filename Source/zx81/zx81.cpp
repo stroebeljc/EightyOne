@@ -1270,19 +1270,6 @@ int zx81_contend(int Address, int states, int time)
         return(time);
 }
 
-void ramwobble(int now)
-{
-        int start, length, data;
-        int i;
-
-        start=zx81.ROMTOP+1;
-        length=zx81.RAMTOP-start;
-        data=random(256);
-
-        if (now || !random(64))
-                for(i=0;i<length;i++) memory[start+i] ^= data;
-}
-
 enum InterruptResponseType
 {
         NoInterrupt,

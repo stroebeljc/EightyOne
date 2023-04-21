@@ -187,7 +187,6 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigureDockCartridge();
         ConfigureMultifaceRom();
         ConfigureZXpand();
-        ConfigureRamPackWobble();
         ConfigureRomCartridge();
         ConfigureCharacterGenerator();
         ConfigureHiRes();
@@ -451,27 +450,6 @@ void THW::DetermineRamSizeLabel(AnsiString newMachineName)
 
         strcpy(emulator.machinename, name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = name;
-}
-
-void THW::ConfigureRamPackWobble()
-{
-        Form1->RamPackWobble1->Enabled=false;
-        Form1->RamPackWobble1->Visible=false;
-
-        switch(NewMachine)
-        {
-        case MACHINEZX80:
-        case MACHINEZX81:
-        case MACHINER470:
-        case MACHINETK85:
-        case MACHINETS1000:
-        case MACHINEACE:
-        case MACHINETS1500:
-        case MACHINELAMBDA:
-                Form1->RamPackWobble1->Enabled=true;
-                Form1->RamPackWobble1->Visible=true;
-                break;
-        }
 }
 
 void THW::ConfigureMultifaceRom()

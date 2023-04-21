@@ -102,7 +102,6 @@ extern int frametstates;
 extern "C" void z80_reset();
 extern "C" int z80_nmi();
 extern char **CommandLine;
-extern void ramwobble(int now);
 extern int LoadDock(char *Filename);
 extern void spec_load_z80(char *fname);
 extern void spec_load_sna(char *fname);
@@ -328,7 +327,6 @@ void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyDown(Key);
-        if (zx81.wobble) ramwobble(false);
 }
 //---------------------------------------------------------------------------
 
@@ -1443,19 +1441,6 @@ void __fastcall TForm1::OutTZXManagerClick(TObject *Sender)
         OutAudioOut->Checked=false;
         emulator.TZXout=1;
         emulator.audioout=0;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::RPWobble1Click(TObject *Sender)
-{
-        RPWobble1->Checked = !RPWobble1->Checked;
-        zx81.wobble = RPWobble1->Checked;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::WobbleNow1Click(TObject *Sender)
-{
-        ramwobble(true);
 }
 //---------------------------------------------------------------------------
 

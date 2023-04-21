@@ -76,7 +76,6 @@ void load_config(void)
         emulator.audioin=0;
         emulator.romcrc=-1;
         emulator.autoload=0;
-        zx81.wobble=0;
         zx81.chrgen=CHRGENSINCLAIR;
         zx81.enableQSchrgen=0;
         emulator.simpleghost=1;

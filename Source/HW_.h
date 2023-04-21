@@ -205,7 +205,6 @@ private:	// User declarations
         void CloseLiveMemoryWindow(bool machineChanged);
         void CloseOtherDebugWindow();
         void DetermineRamSizeLabel(AnsiString newMachineName);
-        void ConfigureRamPackWobble();
         void ConfigureMultifaceRom();
         void ConfigureRom();
         void ConfigureZXpand();

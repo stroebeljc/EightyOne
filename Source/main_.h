@@ -100,9 +100,6 @@ __published:	// IDE-managed Components
         TMenuItem *InTZXManager;
         TMenuItem *TZXMan;
         TMenuItem *OutTZXManager;
-        TMenuItem *RPWobble1;
-        TMenuItem *RamPackWobble1;
-        TMenuItem *WobbleNow1;
         TMenuItem *BorderSize1;
         TMenuItem *Normal1;
         TMenuItem *Large1;
@@ -219,8 +216,6 @@ __published:	// IDE-managed Components
         void __fastcall TZXManClick(TObject *Sender);
         void __fastcall InTZXManagerClick(TObject *Sender);
         void __fastcall OutTZXManagerClick(TObject *Sender);
-        void __fastcall RPWobble1Click(TObject *Sender);
-        void __fastcall WobbleNow1Click(TObject *Sender);
         void __fastcall Small1Click(TObject *Sender);
         void __fastcall Normal1Click(TObject *Sender);
         void __fastcall Large1Click(TObject *Sender);

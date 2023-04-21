@@ -128,29 +128,29 @@ object MemoryWindow: TMemoryWindow
   object PopupMenu1: TPopupMenu
     Left = 8
     Top = 160
+    object ViewTraditional1: TMenuItem
+      Tag = 4
+      Caption = 'View Hex Bytes and Characters'
+      Checked = True
+      OnClick = ViewBytes1Click
+    end
     object ViewBytes1: TMenuItem
-      Caption = 'View Bytes'
+      Caption = 'View Hex Bytes'
       OnClick = ViewBytes1Click
     end
     object ViewWords1: TMenuItem
       Tag = 1
-      Caption = 'View Words'
+      Caption = 'View Hex Words'
       OnClick = ViewBytes1Click
     end
     object ViewBinary1: TMenuItem
       Tag = 2
-      Caption = 'View Binary'
+      Caption = 'View Binary Bytes'
       OnClick = ViewBytes1Click
     end
     object ViewDecimal1: TMenuItem
       Tag = 3
-      Caption = 'View Decimal'
-      OnClick = ViewBytes1Click
-    end
-    object ViewTraditional1: TMenuItem
-      Tag = 4
-      Caption = 'View Traditional'
-      Checked = True
+      Caption = 'View Decimal Bytes'
       OnClick = ViewBytes1Click
     end
     object SetAddress1: TMenuItem

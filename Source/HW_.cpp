@@ -1964,9 +1964,6 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         RomBox->Items->Add("zx81.edition1.rom");
         RomBox->Items->Add("zx81.edition2.rom");
         RomBox->Items->Add("zx81.edition3.rom");
-        RomBox->Items->Add("zx81-forth.rom");
-        RomBox->Items->Add("aszmic.e04.rom");
-        RomBox->Items->Add("aszmic.e07.rom");
         RomBox->Text = emulator.ROM81;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         FloatingPointHardwareFix->Enabled = true;
@@ -2204,7 +2201,6 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
         RomBox->Items->Add("zx81.edition3.rom");
-        RomBox->Items->Add("tree-forth.rom");
         RomBox->Text = emulator.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
@@ -2226,7 +2222,6 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         FloatingPointHardwareFix->Checked = false;
         RomBox->Clear();
         RomBox->Items->Add("ts1500.rom");
-        RomBox->Items->Add("tree-forth.rom");
         RomBox->Text = emulator.ROMTS1500;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;

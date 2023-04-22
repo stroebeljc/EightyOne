@@ -53,6 +53,7 @@ const char* interfaceRomsFolder  = "ROMs\\Interfaces\\";
 const char* graphicRomsFolder    = "ROMs\\Graphics\\";
 const char* diagnosticRomsFolder = "ROMs\\Diagnostics\\";
 
+const char* romCartridgeFolder   = "ROM Cartridges\\";
 const char* if2RomsFolder        = "ROM Cartridges\\ZX Interface 2\\";
 const char* ts1510RomsFolder     = "ROM Cartridges\\TS1510\\";
 const char* ts2068RomsFolder     = "ROM Cartridges\\TS2068\\";

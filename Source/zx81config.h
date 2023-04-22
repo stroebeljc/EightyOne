@@ -407,6 +407,7 @@ extern const char* ideRomsFolder;
 extern const char* interfaceRomsFolder;
 extern const char* graphicRomsFolder;
 extern const char* diagnosticRomsFolder;
+extern const char* romCartridgeFolder;
 extern const char* if2RomsFolder;
 extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;

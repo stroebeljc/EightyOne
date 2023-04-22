@@ -926,7 +926,7 @@ void THW::UpdateRomCartridgeControls(int machine)
                 RomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text;
         }
 
-        RomCartridgeFileBox->Enabled = !spectrumSinclairSelected && !zx81TimexSelected;
+        RomCartridgeFileBox->Enabled = !spectrumSinclairSelected && !zx81TimexSelected && !noneSelected;
         RomCartridgeFileBox->Visible = !spectrumSinclairSelected && !zx81TimexSelected;
 
         BrowseRomCartridge->Enabled = !noneSelected;
@@ -2901,7 +2901,13 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 void THW::EnableRomCartridgeOption(bool enable)
 {
         RomCartridgeLabel->Enabled = enable;
+        RomCartridgeBox->Enabled = enable;
+        RomCartridgeFileBox->Enabled = enable;
+        TimexRomCartridgeFileBox->Enabled = enable;
+        SinclairRomCartridgeFileBox->Enabled = enable;
+
         RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
+
         RomCartridgeFileBox->Text = "";
         TimexRomCartridgeFileBox->Text = "";
         SinclairRomCartridgeFileBox->Text = "";
@@ -3124,7 +3130,19 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += (NewMachine == MACHINESPECTRUM) ? if2RomsFolder : ts1510RomsFolder;
+
+        if (NewMachine == MACHINESPECTRUM && romcartridge.type == ROMCARTRIDGESINCLAIR)
+        {
+                Path += if2RomsFolder;
+        }
+        else if (romcartridge.type == ROMCARTRIDGETIMEX)
+        {
+                Path += ts1510RomsFolder;
+        }
+        else
+        {
+                Path += romCartridgeFolder;
+        }
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;

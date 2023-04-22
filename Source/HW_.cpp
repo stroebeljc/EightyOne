@@ -3124,7 +3124,7 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += romCartridgesFolder;
+        Path += (NewMachine == MACHINESPECTRUM) ? if2RomsFolder : ts1510RomsFolder;
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;

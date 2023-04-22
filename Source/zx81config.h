@@ -402,7 +402,6 @@ extern const char* temporaryFolder;
 extern const char* romsFolder;
 extern const char* nvMemoryFolder;
 extern const char* examplesDrivesFolder;
-extern const char* romCartridgesFolder;
 extern const char* fdcRomsFolder;
 extern const char* ideRomsFolder;
 extern const char* interfaceRomsFolder;

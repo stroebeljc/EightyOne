@@ -3,6 +3,42 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.37 - ##/##/2023 (by Paul Farrow)
+* Bug fixes:
+  - The ROMs selected for use with the Spectrum 16K, Spectrum+, Spectrum+2A, Spectrum+3,
+    TS1000, TC2048 and TS2068 were not being saved correctly to the EightyOne.ini file.
+  - Not all keyboard layout images were changing size when double clicked.
+  - A breakpoint at $0066 on the Spectrum would never be hit.
+  - The emulator no longer crashes when attempting to load a non-valid Timex ROM cartridge file.
+* Changes:
+  - Renamed the various ROMs for improved clarity and consistency.
+  - Created subfolders to contain the various types of ROMs for improved clarity.
+  - Removed the non-functioning homebrew 'Spectrum emulator' ROM for the ZX81.
+  - Removed the homebew 'Shoulders of Giants' ZX81 ROM.
+  - Renamed IDE option 'divIDE V1' to divIDE 57 (R Gal)' and reduced the two option settings
+    checkboxes to a single one to reflect the behaviour of the real device.
+  - Removed IDE option 'divIDE V2' which did not reflect a real world divIDE device.
+  - Renamed the several display options for the debugger's Memory Window.
+  - Removed the RAM pack wobble facility.
+* Enhancements:
+  - Added support for 16K and 24K TS1510 ROM cartridges.
+  - Added the TS1510 ROM cartridge 'Flight Simulation'.
+  - Added the ZX Interface 2 ROM cartridge 'Sinclair ZX Spectrum System Test'.
+  - Added the 7 released Timex TS2068 ROM cartridges.
+  - Added the Timex TC2048 ROM cartridges 'Spectrum Emulator' and 'TimeWord V1.2'.
+  - Added the Kayde Graphics ROM.
+  - Added the ASZMIC ROM version E07 and renamed the existing one as ASZMIC version E04.
+  - Updated TR-DOS to version 5.03.
+  - updated 'Simple +3e 8-Bit' IDE ROM to version 1.43.
+  - Made corrections and improvements to various keyboard layout images.
+  - Added support for the divIDE 'AllRAM' mode (R'' Gal).
+  - Added the Arabic ROM for the Spectrum+ and Spectrum 128.
+  - Added the Arabic ROM for Spectrum+2.
+  - Added the Arabic ROM for Spectrum+2A.
+  - Added support for the Spectrum+3 Arabic ROM.
+  - Added Arabic keyboard layouts for the Spectrum+, Spectrum 128, Spectrum+2, Spectrum+2A,
+    Spectrum+3.
+
 Version 1.36 - 15/04/2023 (by Paul Farrow)
 * Bug fixes:
   - Attempting to load a ZX81 snapshot was throwing an exception.
@@ -387,8 +423,8 @@ Version 1.11 - 06/08/2018 (by Paul Farrow and SirMorris)
     - TS2068
     - TC2048
     - Spectrum 16K
-    - Spectrum +2
-    - Spectrum +2A/+3
+    - Spectrum+2
+    - Spectrum+2A/+3
     - TS1000 with ZXpand+
     - ZX81 with ZXpand+
     - ZX80 with ZXpand
@@ -481,12 +517,12 @@ Version 1.7 - 09/09/2017 (by SirMorris and Paul Farrow)
   - Integrated ZXpand V1.10 firmware changes.
   - Renamed ZXpand ROM overlay file for the ZX81.
   - Simplified the naming convention of character set bitmap files used by the debugger.
-  - Added character set bitmap files for the TS1500, Spectrum +2, Spectrum +3, TK85,
+  - Added character set bitmap files for the TS1500, Spectrum+2, Spectrum+3, TK85,
     Jupiter Ace, Lambda 8300, Ringo R470, TC2048 and TS2068.
-  - Renamed the Spectrum +3 ROM to include the version number, with the default now
+  - Renamed the Spectrum+3 ROM to include the version number, with the default now
     version 4.1.
-  - Included ROMs: Spectrum 128 Spanish, Spectrum +2 Spanish and French, Spectrum +3
-    Spanish, Spectrum +3 English versions 4.0 and 4.1.
+  - Included ROMs: Spectrum 128 Spanish, Spectrum+2 Spanish and French, Spectrum+3
+    Spanish, Spectrum+3 English versions 4.0 and 4.1.
 
 Version 1.6 - 11/08/2017 (by SirMorris and Paul Farrow)
 * Bug fixes:
@@ -779,7 +815,7 @@ Kempston Mouse, Plus3E, ZXCF and divIDE support added. Battery backed RAM
 images moved from the ROM folder to NVRAM.
 
 Version 0.42V
-Added Spectrum +3 disk drive emulation (Thanks to John Elliot for his excelent
+Added Spectrum+3 disk drive emulation (Thanks to John Elliot for his excelent
 lib765 & libdsk).  The emulator now saves the state of the status bar on exit.
 
 Version 0.42U

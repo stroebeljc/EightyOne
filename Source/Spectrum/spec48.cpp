@@ -854,9 +854,9 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         if (((Address & 0x20) == 0x00) && spectrum.model >= SPECCYPLUS2A && emulator.romcrc == CRCARABICPLUS3)
         {
-                if (machine.plus3arabicPagedOut != ~Data & 0x01)
+                if (machine.plus3arabicPagedOut != (~Data & 0x01))
                 {
-                        machine.plus3arabicPagedOut = ~Data & 0x01;
+                        machine.plus3arabicPagedOut = (~Data & 0x01);
 
                         int romlen;
 

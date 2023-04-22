@@ -411,6 +411,7 @@ extern const char* diagnosticRomsFolder;
 extern const char* if2RomsFolder;
 extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;
+extern const char* tc2048RomsFolder;
 
 extern void load_config();
 

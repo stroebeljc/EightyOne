@@ -2141,7 +2141,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version3-a.rom");
+        RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
         RomBox->Text = emulator.ROMSPP2A;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2174,7 +2174,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum+3.arabic.version3-a.rom");
+        RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
         RomBox->Text = emulator.ROMSPP3;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;

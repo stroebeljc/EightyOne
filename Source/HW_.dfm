@@ -1919,7 +1919,7 @@ object HW: THW
         Caption = 'ROM File:'
       end
       object BrowseROM: TButton
-        Left = 322
+        Left = 330
         Top = 16
         Width = 19
         Height = 21
@@ -2032,7 +2032,7 @@ object HW: THW
       object RomBox: TComboBox
         Left = 128
         Top = 16
-        Width = 193
+        Width = 201
         Height = 21
         ItemHeight = 13
         TabOrder = 0

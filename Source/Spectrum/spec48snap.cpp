@@ -66,11 +66,10 @@ int LoadDock(char *Filename)
 {
         FILE *f;
         int i,bank, chunks[8];
-        char *ptr;
+        char *ptr = NULL;
 
         if (spectrum.model!=SPECCYTC2048 && spectrum.model!=SPECCYTS2068)
                 return(0);
-
 
         if (!strlen(Filename))
         {
@@ -83,9 +82,15 @@ int LoadDock(char *Filename)
         if (!f) return(0);
 
         bank=fgetc(f);
+        if (feof(f)) return 0;
+
+        if (bank > 0 && bank < 254) return 0;
+
         for(i=0;i<8;i++)
         {
-                chunks[i]=fgetc(f);
+                int b = fgetc(f);
+                if (feof(f)) return 0;
+                chunks[i]=b;
                 if ((bank==0) && (chunks[i]&1))
                         TimexWritable[i]=1;
                 if ((bank==254) && (chunks[i]&1))
@@ -97,6 +102,9 @@ int LoadDock(char *Filename)
                 if (bank==0) ptr=TimexMem;  // Dock chunk
                 else if (bank==254) ptr=TimexMem+65536;  //ExROM chunk
                 else if (bank==255) ptr=SpecMem;  // Home chunk
+
+                if (ptr == NULL) return 0;
+                
                 ptr += i*8192;
                 if (chunks[i]&2) fread(ptr,1,8192,f);
         }

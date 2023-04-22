@@ -697,13 +697,13 @@ int do_load_snap(char *filename, bool resetHardware)
                 if (resetHardware)
                 {
                         HWSetMachine(MACHINEACE, NULL);
-                        machine.initialise();
+                        machine.initialise(HARDRESET);
                 }
                 load_snap_ace(f);
         }
         else
         {
-                if (resetHardware) machine.initialise();
+                if (resetHardware) machine.initialise(HARDRESET);
 
                 f=fopen(filename,"rt");
                 if (!f) return(0);
@@ -1067,8 +1067,8 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         else
         {
                 strcpy(file, emulator.cwd);
-                strcat(file,"ROM\\");
-                strcat(file,filename);
+                strcat(file, romsFolder);
+                strcat(file, filename);
         }
 
         fptr=open(file, O_RDONLY | O_BINARY);
@@ -1094,7 +1094,57 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         return(len);
 }
 
-int memory_load(char *filename, int address, int length)
+int do_memory_load(char *file, int address, int length, int secondBank)
+{
+        int fptr;
+        int len;
+
+        fptr=open(file, O_RDONLY | O_BINARY);
+        if (fptr<1)
+        {
+                int err=errno;
+                AnsiString errMsg = "ROM load failed:\n" + AnsiString(file);
+                ShowMessage(errMsg);
+                return(err);
+        }
+
+        if ((len=read(fptr, memory+address, length))==-1)
+        {
+                int err=errno;
+                close(fptr);
+                AnsiString errMsg = "ROM load failed:\n" + AnsiString(file);
+                ShowMessage(errMsg);
+                return(err);
+        }
+
+        if (secondBank)
+        {
+                if ((len=read(fptr, memory+address, length))==-1)
+                {
+                        int err=errno;
+                        close(fptr);
+                        AnsiString errMsg = "ROM load failed:\n" + AnsiString(file);
+                        ShowMessage(errMsg);
+                        return(err);
+                }
+        }
+
+        close(fptr);
+
+        return(len);
+}
+
+int memory_device_rom_load(char *filename, int address, int length)
+{
+        char file[256];
+
+        strcpy(file, emulator.cwd);
+        strcat(file, filename);
+
+        return do_memory_load(file, address, length, 0);
+}
+
+int memory_load(char *filename, int address, int length, int secondBank)
 {
         int fptr;
         char file[256];
@@ -1107,31 +1157,11 @@ int memory_load(char *filename, int address, int length)
         else
         {
                 strcpy(file, emulator.cwd);
-                strcat(file,"ROM\\");
-                strcat(file,filename);
+                strcat(file, romsFolder);
+                strcat(file, filename);
         }
 
-        fptr=open(file, O_RDONLY | O_BINARY);
-        if (fptr<1)
-        {
-                int err=errno;
-                AnsiString errMsg = "ROM load failed:\n" + AnsiString(filename);
-                ShowMessage(errMsg);
-                return(err);
-        }
-
-        if ((len=read(fptr, memory+address, length))==-1)
-        {
-                int err=errno;
-                close(fptr);
-                AnsiString errMsg = "ROM load failed:\n" + AnsiString(filename);
-                ShowMessage(errMsg);
-                return(err);
-        }
-
-        close(fptr);
-
-        return(len);
+        return do_memory_load(file, address, length, secondBank);
 }
 
 int font_load(char *filename, char *address, int length)
@@ -1141,8 +1171,8 @@ int font_load(char *filename, char *address, int length)
         int len;
 
         strcpy(file, emulator.cwd);
-        strcat(file,"ROM\\");
-        strcat(file,filename);
+        strcat(file, romsFolder);
+        strcat(file, filename);
 
         fptr=open(file, O_RDONLY | O_BINARY);
         if (fptr<1) return(errno);

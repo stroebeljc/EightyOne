@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include <dir.h>
+#include <vcl.h>
 
 #include "zx81config.h"
 
@@ -38,6 +39,24 @@ int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 bool directMemoryAccess;
+
+const char* iniFolder            = "EightyOne\\";
+const char* temporaryFolder      = "EightyOne\\";
+
+const char* nvMemoryFolder       = "NV_Memory\\";
+const char* examplesDrivesFolder = "Examples\\Drives\\";
+
+const char* romsFolder           = "ROMs\\";
+const char* fdcRomsFolder        = "ROMs\\FDCs\\";
+const char* ideRomsFolder        = "ROMs\\IDEs\\";
+const char* interfaceRomsFolder  = "ROMs\\Interfaces\\";
+const char* graphicRomsFolder    = "ROMs\\Graphics\\";
+const char* diagnosticRomsFolder = "ROMs\\Diagnostics\\";
+
+const char* romCartridgesFolder  = "ROM Cartridges\\";
+const char* if2RomsFolder        = "ROM Cartridges\\ZX Interface 2\\";
+const char* ts1510RomsFolder     = "ROM Cartridges\\TS1510\\";
+const char* ts2068RomsFolder     = "ROM Cartridges\\TS2068\\";
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 
@@ -70,6 +89,7 @@ void load_config(void)
         zx81.vsyncsound=0;
         emulator.beepersound=0;
         machine.ts2050=0;
+        machine.plus3arabicPagedOut=0;
         emulator.TZXin=0;
         emulator.TZXout=0;
         emulator.audioout=0;
@@ -148,16 +168,49 @@ void load_config(void)
 
         strcpy(emulator.ROM97LE, "zx97.rom");
 
-        strcpy(emulator.ROMSPP3E, "simple+3e8bit(sm8en3eE).rom");
-        strcpy(emulator.ROMZXCF, "zxcflba.rom");
-        strcpy(emulator.ROMZX8BIT, "zx8blbs.rom");
-        strcpy(emulator.ROMZX16BIT, "zxidelbs.rom");
-        strcpy(emulator.ROMPLUSD,"plusd.rom");
-        strcpy(emulator.ROMDISCIPLE,"disciple.rom");
-        strcpy(emulator.ROMOPUSD,"opusdiscovery.rom");
-        strcpy(emulator.ROMBETADISC,"trdos.rom");
-        strcpy(emulator.ROMUSPEECH,"uspeech.rom");
-        strcpy(emulator.ROMUSOURCE,"usource.rom");
+        AnsiString simplePlus3Rom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom");
+        strcpy(emulator.ROMSPP3E, simplePlus3Rom.c_str());
+        AnsiString zxcflbaRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zxcflba.rom");
+        strcpy(emulator.ROMZXCF, zxcflbaRom.c_str());
+        AnsiString zx8blbsRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zx8blbs.rom");
+        strcpy(emulator.ROMZX8BIT, zx8blbsRom.c_str());
+        AnsiString zxidelbsRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zxidelbs.rom");
+        strcpy(emulator.ROMZX16BIT, zxidelbsRom.c_str());
+
+        AnsiString plusdRom = fdcRomsFolder + AnsiString("plusd.rom");
+        strcpy(emulator.ROMPLUSD, plusdRom.c_str());
+        AnsiString discipleRom = fdcRomsFolder + AnsiString("disciple.rom");
+        strcpy(emulator.ROMDISCIPLE, discipleRom.c_str());
+        AnsiString opusdiscoveryRom = fdcRomsFolder + AnsiString("opusdiscovery.rom");
+        strcpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
+        AnsiString trdosRom = fdcRomsFolder + AnsiString("trdos.rom");
+        strcpy(emulator.ROMBETADISC, trdosRom.c_str());
+        AnsiString mwcfideRom = fdcRomsFolder + AnsiString("mwcfide.rom");
+        strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
+        AnsiString larken81Rom = fdcRomsFolder + AnsiString("larken81.rom");
+        strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());
+        AnsiString interface1Ed1Rom = interfaceRomsFolder + AnsiString("inteface1.edition1.rom");
+        strcpy(emulator.ROMINTERFACE1ED1, interface1Ed1Rom.c_str());
+        AnsiString interface1Ed2Rom = interfaceRomsFolder + AnsiString("inteface1.edition2.rom");
+        strcpy(emulator.ROMINTERFACE1ED2, interface1Ed2Rom.c_str());
+
+        AnsiString uSpeechRom = interfaceRomsFolder + AnsiString("uspeech.rom");
+        strcpy(emulator.ROMUSPEECH, uSpeechRom.c_str());
+        AnsiString uSourceRom = interfaceRomsFolder + AnsiString("usource.rom");
+        strcpy(emulator.ROMUSOURCE, uSourceRom.c_str());
+        AnsiString multiface128Rom = interfaceRomsFolder + AnsiString("multiface128.rom");
+        strcpy(emulator.ROMMULTIFACE128, multiface128Rom.c_str());
+        AnsiString multiface3Rom = interfaceRomsFolder + AnsiString("multiface3.rom");
+        strcpy(emulator.ROMMULTIFACE3, multiface3Rom.c_str());
+
+        AnsiString dktronicsRom = interfaceRomsFolder + AnsiString("dktronicsgraphics.rom");
+        strcpy(emulator.ROMDKTRONICS, dktronicsRom.c_str());
+        AnsiString kaydeRom = interfaceRomsFolder + AnsiString("kaydegraphics.rom");
+        strcpy(emulator.ROMKAYDE, kaydeRom.c_str());
+        AnsiString g007Rom = interfaceRomsFolder + AnsiString("g007hrg.rom");
+        strcpy(emulator.ROMG007, g007Rom.c_str());
+        AnsiString memotechRom = interfaceRomsFolder + AnsiString("memotechhrg.rom");
+        strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
 
         strcpy(emulator.machinename, "EightyOne");
 

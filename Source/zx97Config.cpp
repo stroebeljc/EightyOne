@@ -47,8 +47,9 @@ __fastcall TZX97Dialog::TZX97Dialog(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 
-        strcpy(filename,emulator.cwd);
-        strcat(filename,"NV_Memory\\zx97.nv");
+        strcpy(filename, emulator.cwd);
+        strcat(filename, nvMemoryFolder);
+        strcat(filename, "zx97.nv");
 
         f=fopen(filename,"rb");
         if (f)
@@ -120,8 +121,9 @@ void __fastcall TZX97Dialog::FormDestroy(TObject *Sender)
 
         if (SaveRAM->Checked)
         {
-                strcpy(filename,emulator.cwd);
-                strcat(filename,"NV_Memory\\zx97.nv");
+                strcpy(filename, emulator.cwd);
+                strcat(filename, nvMemoryFolder);
+                strcat(filename, "zx97.nv");
 
                 f=fopen(filename,"wb");
                 if (f)

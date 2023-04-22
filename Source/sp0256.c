@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <mmsystem.h>
-
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -20,8 +19,9 @@ void SP0256_Init(void)
         if (Phones) free(Phones);
         Phones=NULL;
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"ROM\\sp0256.bin");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, interfaceRomsFolder);
+        strcat(FileName, "sp0256.bin");
 
         f=fopen(FileName,"rb");
         if (!f) return;

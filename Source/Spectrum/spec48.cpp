@@ -321,12 +321,17 @@ void spec48_reset(void)
         mouse.buttons=255;
 }
 
-void spec48_initialise(void)
+void spec48_initialise(int hardReset)
 {
         int i, j, romlen, pos, delay;
         z80_init();
         tStatesCount = 0;
-        
+
+        if (hardReset)
+        {
+                machine.plus3arabicPagedOut = 0;
+        }
+
         directMemoryAccess = false;
         ResetLastIOAccesses();
         InitialiseRomCartridge();
@@ -341,46 +346,54 @@ void spec48_initialise(void)
 
         if (spectrum.floppytype==FLOPPYDISCIPLE)
         {
-                romlen=memory_load(emulator.ROMDISCIPLE,0,16384);
+                romlen=memory_device_rom_load(emulator.ROMDISCIPLE,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYPLUSD)
         {
-                romlen=memory_load(emulator.ROMPLUSD,0,16384);
+                romlen=memory_device_rom_load(emulator.ROMPLUSD,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYOPUSD)
         {
-                romlen=memory_load(emulator.ROMOPUSD,0,16384);
+                romlen=memory_device_rom_load(emulator.ROMOPUSD,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYBETA)
         {
-                romlen=memory_load(emulator.ROMBETADISC,0,16384);
+                romlen=memory_device_rom_load(emulator.ROMBETADISC,0,16384);
                 memcpy(PlusDMem, memory, romlen);
         }
 
         if (spectrum.uspeech)
         {
-                romlen=memory_load(emulator.ROMUSPEECH,0,16384);
+                romlen=memory_device_rom_load(emulator.ROMUSPEECH,0,16384);
                 memcpy(uSpeechMem, memory, romlen);
         }
 
         if (spectrum.usource)
         {
-                romlen=memory_load(emulator.ROMUSOURCE,0,16384);
+                romlen=memory_device_rom_load(emulator.ROMUSOURCE,0,16384);
                 memcpy(uSourceMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYIF1)
         {
+                AnsiString romPath = if2RomsFolder;
+
                 if (IF1->RomEdition->Text == "Edition 2")
-                        romlen=memory_load("interface1.edition2.rom",0,65536);
+                {
+                        romPath += emulator.ROMINTERFACE1ED2;
+                }
                 else
-                        romlen=memory_load("interface1.edition1.rom",0,65536);
+                {
+                        romPath += emulator.ROMINTERFACE1ED1;
+                }
+
+                romlen=memory_device_rom_load(romPath.c_str(),0,65536);
 
                 memcpy(SpecMem+32768,memory,romlen);
                 if (romlen<=8192) memcpy(SpecMem+32768+8192,memory,romlen);
@@ -407,12 +420,12 @@ void spec48_initialise(void)
 
         if (spectrum.MFVersion == MF128)
         {
-                romlen=memory_load("multiface128.rom",0,65536);
+                romlen=memory_device_rom_load(emulator.ROMMULTIFACE128,0,65536);
                 memcpy(MFMem,memory,romlen);
         }
         else if (spectrum.MFVersion == MFPLUS3)
         {
-                romlen=memory_load("multiface3.rom",0,65536);
+                romlen=memory_device_rom_load(emulator.ROMMULTIFACE3,0,65536);
                 memcpy(MFMem,memory,romlen);
         }
 
@@ -839,13 +852,34 @@ void spec48_writeport(int Address, int Data, int *tstates)
         if ((spectrum.HDType==HDPITERS16B) && ((Address&0xe9)==0x69))
                 ATA_WriteRegister(((Address>>4)&1) | (Address&6), Data);
 
+        if (((Address & 0x20) == 0x00) && spectrum.model >= SPECCYPLUS2A && emulator.romcrc == CRCARABICPLUS3)
+        {
+                if (machine.plus3arabicPagedOut != ~Data & 0x01)
+                {
+                        machine.plus3arabicPagedOut = ~Data & 0x01;
+
+                        int romlen;
+
+                        if (machine.plus3arabicPagedOut)
+                        {
+                                romlen = memory_load(machine.CurRom, 0, 65536, 1);
+                        }
+                        else
+                        {
+                                romlen = memory_load(machine.CurRom, 0, 65536, 0);
+                        }
+
+                        memcpy(SpecMem, memory, romlen);
+                }
+        }
+
         switch(Address&255)
         {
         case 0x1b:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_cmdreg(Data);
                 break;
 
-        case 0x1f:
+        case 0x1f:       
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_set_motor(Data);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg(Data);
                 break;

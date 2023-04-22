@@ -28,14 +28,16 @@
 extern "C" int load_snap(char *filename);
 extern "C" int save_snap(char *filename);
 extern "C" int load_file(char *filename);
-extern "C" int memory_load(char *filename, int address, int length);
+extern "C" int memory_load(char *filename, int address, int length, int secondbank = 0);
+extern "C" int memory_device_rom_load(char *filename, int address, int length);
 
 #else
 
 extern int load_snap(char *filename);
 extern int save_snap(char *filename);
 extern int load_file(char *filename);
-extern int memory_load(char *filename, int address, int length);
+extern int memory_load(char *filename, int address, int length, int secondbank = 0);
+extern int memory_device_rom_load(char *filename, int address, int length);
 
 #endif
 #endif

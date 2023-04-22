@@ -115,7 +115,8 @@
 #define CRCNORDIC48     0xe25a
 #define CRCSPANISHPLUS2 0x0b4b
 #define CRCSPANISHPLUS3 0xec07
-#define CRCARABICPLUS3  0x0000     //####
+#define CRCARABICPLUS3  0xdec6
+#define CRCPLUS3V4      0x0000
 
 #define FLOPPYNONE      0
 #define FLOPPYPLUS3     1
@@ -144,6 +145,9 @@
 #define MFNONE          0
 #define MF128           1
 #define MFPLUS3         2
+
+#define HARDRESET       0
+#define SOFTRESET       1
 
 typedef enum
 {
@@ -232,7 +236,7 @@ typedef struct
 
 typedef struct
 {
-        void (*initialise)(void);
+        void (*initialise)(int hardReset);
         int (*do_scanline)(SCANLINE *line);
         void (*writebyte)(int Address, int Data);
         void (*setbyte)(int Address, int Data);
@@ -269,7 +273,7 @@ typedef struct
 
         // Specific machine options
         CFGBYTE ace96k;
-
+        CFGBYTE plus3arabicPagedOut;
         CFGBYTE protectROM;
 } MACHINE;
 
@@ -343,12 +347,21 @@ typedef struct
         char ROMBETADISC[256];
         char ROMUSPEECH[256];
         char ROMUSOURCE[256];
+        char ROMMWCFIDE[256];
+        char ROMLARKEN81[256];
+        char ROMDKTRONICS[256];
+        char ROMKAYDE[256];
+        char ROMG007[256];
+        char ROMMEMOTECH[256];
+        char ROMMULTIFACE128[256];
+        char ROMMULTIFACE3[256];
+        char ROMINTERFACE1ED1[256];
+        char ROMINTERFACE1ED2[256];
 
         char cwd[256];
         char temppath[256];
         char inipath[256];
         char configpath[256];
-        char mydocs[256];
         char machinename[256];
 
         int scanlinesPerFrame;
@@ -382,6 +395,22 @@ extern MACHINE machine;
 extern MOUSE mouse;
 extern ROMCARTRIDGE romcartridge;
 extern EMULATOR emulator;
+
+extern const char* iniFolder;
+extern const char* temporaryFolder;
+
+extern const char* romsFolder;
+extern const char* nvMemoryFolder;
+extern const char* examplesDrivesFolder;
+extern const char* romCartridgesFolder;
+extern const char* fdcRomsFolder;
+extern const char* ideRomsFolder;
+extern const char* interfaceRomsFolder;
+extern const char* graphicRomsFolder;
+extern const char* diagnosticRomsFolder;
+extern const char* if2RomsFolder;
+extern const char* ts1510RomsFolder;
+extern const char* ts2068RomsFolder;
 
 extern void load_config();
 

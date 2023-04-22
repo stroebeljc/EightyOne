@@ -254,7 +254,7 @@ void spec_load_z80(char *fname)
                 }
         }
         HWSetMachine(MACHINESPECTRUM, speccy);
-        machine.initialise();
+        machine.initialise(HARDRESET);
 
         z80.af.b.h = buf[0]; z80.af.b.l = buf[1];
         z80.bc.w = buf[2] + 256*buf[3];
@@ -424,7 +424,7 @@ void spec_load_sna(char *fname)
 
         if (len>49179) HWSetMachine(MACHINESPECTRUM, SPECCY128);
         else HWSetMachine(MACHINESPECTRUM, SPECCY48);
-        machine.initialise();
+        machine.initialise(HARDRESET);
 
         z80.i = buf[0];
         z80.hl_.w=buf[1] + 256*buf[2];

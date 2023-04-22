@@ -212,7 +212,7 @@ BYTE get_i_reg(void)
         return(z80.i);
 }
 
-void zx81_initialise(void)
+void zx81_initialise(int hardReset)
 {
         int i, romlen;
         z80_init();
@@ -261,11 +261,16 @@ void zx81_initialise(void)
         romlen=memory_load(romname.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
-        if (zx81.extfont) font_load("LambdaCharacterSet.bin",font,512);
+        if (zx81.extfont) font_load("lambda8300characterset.bin",font,512);
+
         if ((zx81.chrgen==CHRGENDK) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
-                romlen+=memory_load("dktronicsgraphics.rom",8192,4096);
+        {
+                romlen += memory_device_rom_load(emulator.ROMDKTRONICS,8192,4096);
+        }
         else if ((zx81.chrgen==CHRGENKAYDE) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
-                romlen+=memory_load("kaydegraphics.rom",8192,4096);
+        {
+                romlen += memory_device_rom_load(emulator.ROMKAYDE,8192,4096);
+        }
 
         zx81.ROMTOP=romlen-1;
 
@@ -273,18 +278,23 @@ void zx81_initialise(void)
         {
                 for(i=0;i<8191;i++) memory[i+0xa000]=memory[i+0x2000];
                 for(i=0;i<16384;i++) zx97.bankmem[i]=memory[i+0x4000];
-                //for(i=8192;i<32768;i++) memory[i]=0x07;
                 zx81.ROMTOP=8191;
         }
 
-        if (zx81.truehires==HIRESMEMOTECH) memory_load("memotechhrg.rom", 8192, 2048);
-        if (zx81.truehires==HIRESG007) memory_load("g007hrg.rom",10240,2048);
+        if (zx81.truehires==HIRESMEMOTECH)
+        {
+                memory_device_rom_load(emulator.ROMMEMOTECH, 8192, 2048);
+        }
+        else if (zx81.truehires==HIRESG007)
+        {
+                memory_device_rom_load(emulator.ROMG007,10240,2048);
+        }
 
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
-                memory_load("larken81.rom", 14336, 2048);
+                memory_device_rom_load(emulator.ROMLARKEN81, 14336, 2048);
                 memory[0x38DB] = 0xCD;
-                memory[0x38DC] = 0x2B;
+                memory[0x38DC] = 0x2B;                              //####
                 memory[0x38DD] = 0x0F;
                 memory[0x38DE] = 0xC9;
 
@@ -301,11 +311,7 @@ void zx81_initialise(void)
         {
                 ATA_Reset();
                 ATA_SetMode(ATA_MODE_16BIT);
-                memory_load("mwcfide.rom", 32768, 32768);
-
-                //i=open("C:\\Documents and Settings\\Mike\\My Documents\\Programming\\ZXFat\\zxfat.bin",O_RDONLY);
-                //read(i, memory+32768, 32768);
-                //close(i);
+                memory_device_rom_load(emulator.ROMMWCFIDE, 32768, 32768);
         }
 
         ZX1541PORT=0;

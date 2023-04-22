@@ -9,6 +9,12 @@
 #include <Dialogs.hpp>
 #include <ImgList.hpp>
 #include <StdCtrls.hpp>
+#include <ExtCtrls.hpp>
+#include <Graphics.hpp>
+#include <vector>
+
+using namespace std;
+
 //---------------------------------------------------------------------------
 #include <Classes.hpp>
 #include <Controls.hpp>
@@ -24,6 +30,20 @@
 #include <Graphics.hpp>
 
 //---------------------------------------------------------------------------
+
+struct RomCartridgeEntry
+{
+public:
+        RomCartridgeEntry(AnsiString title, AnsiString path)
+        {
+                Title = title;
+                Path = path;
+        }
+
+        AnsiString Title;
+        AnsiString Path;
+};
+
 class THW : public TForm
 {
 __published:	// IDE-managed Components
@@ -185,7 +205,7 @@ private:	// User declarations
         void SetSpectrum128Icon();
         void PopulateRomCartridgeSinclairList();
         void PopulateRomCartridgeTimexList();
-        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, AnsiString fileName);
+        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry);
         AnsiString DirectSoundError(int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
@@ -222,7 +242,11 @@ private:	// User declarations
         AnsiString DetermineRomBase();
         void ConfigureSymbolFile(AnsiString romBase);
         void ConfigureCharacterBitmapFile(AnsiString romBase);
-        
+        void SetUpRomCartridges();
+
+        vector<RomCartridgeEntry> ts1510RomCartridges;
+        vector<RomCartridgeEntry> sinclairRomCartridges;
+
 public:		// User declarations
         bool ResetRequired;
         __fastcall THW(TComponent* Owner);

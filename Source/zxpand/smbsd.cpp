@@ -60,7 +60,8 @@ void saveEEPROM(void)
 {
    char file[256];
    strcpy(file, emulator.cwd);
-   strcat(file, "NV_Memory\\zxpand-eeprom.bin");
+   strcat(file, nvMemoryFolder);
+   strcat(file, "zxpand-eeprom.bin");
 
    FILE* eep = fopen(file,"wb");
    if (eep)
@@ -75,7 +76,8 @@ void LoadEEPROM(void)
 {
    char file[256];
    strcpy(file, emulator.cwd);
-   strcat(file, "NV_Memory\\zxpand-eeprom.bin");
+   strcat(file, nvMemoryFolder);
+   strcat(file, "zxpand-eeprom.bin");
 
    FILE* eep = fopen(file,"rb");
    if (eep)

@@ -155,14 +155,14 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 
         strcpy(TEMP1, emulator.cwd);
         GetTempPath(256, emulator.temppath);
-        strcat(emulator.temppath, "eo\\");
+        strcat(emulator.temppath, temporaryFolder);
         mkdir(emulator.temppath);
 
         if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, path))
         {
                 IniPath=path;
                 if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
-                IniPath += "EightyOne\\";
+                IniPath += iniFolder;
                 mkdir(IniPath.c_str());
                 strcpy(emulator.configpath, IniPath.c_str());
 
@@ -177,14 +177,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
                 IniPath=FileNameGetPath(Application->ExeName);
                 strcpy(emulator.configpath, IniPath.c_str());
         }
-
-        if (!SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, path))
-        {
-                IniPath=path;
-                if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
-                strcpy(emulator.mydocs, IniPath.c_str());
-        }
-        else    strcpy(emulator.mydocs, emulator.cwd);
 
         for(i=0; CommandLine[i]!=NULL; i++)
         {
@@ -217,34 +209,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         RunFrameEnable=false;
 
-//        LPITEMIDLIST ppidl;
-//
-//        if(SHGetSpecialFolderLocation(Application->Handle , CSIDL_DRIVES, &ppidl) == NOERROR)
-//        {
-//                SetLastError(0);
-                // Returns a positive integer registration identifier (ID).
-                // Returns zero if out of memory or in response to invalid parameters.
-//                SHChangeNotifyEntry shCNE;
-
-//                shCNE.pidl = ppidl;
-//                shCNE.fRecursive = TRUE;
-
-//                nID = SHChangeNotifyRegister(Application->Handle,
-//                                        SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
-//                                        SHCNE_MEDIAINSERTED |SHCNE_MEDIAREMOVED
-//                                        | SHCNE_DRIVEREMOVED |SHCNE_DRIVEADD,
-//                                        WM_DEVICE,
-//                                        1,
-//                                        &shCNE);
-//        }
-
-//        DragAcceptFiles(Handle, true);
         Application->OnMessage = AppMessage;
-
-        nosound=true;
-        strcpy(soundfile,emulator.cwd);
-        strcat(soundfile,"nosound");
-        if (access(soundfile,0)) nosound=false;
 
         ATA_Init();
         load_config();
@@ -690,7 +655,7 @@ void __fastcall TForm1::NewTape1Click(TObject *Sender)
 void __fastcall TForm1::ResetButtonClick(TObject *Sender)
 {
         emulation_stop=1;
-        machine.initialise();
+        machine.initialise(SOFTRESET);
         emulation_stop=0;
 }
 //---------------------------------------------------------------------------
@@ -735,7 +700,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         PCAllKeysUp();
 
-        if (!nosound) Sound.End();
+        Sound.End();
 
         ini = new TIniFile(emulator.inipath);
         SaveSettings(ini);
@@ -1398,7 +1363,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         emulation_stop=1;
         z80_reset();
         AccurateInit(false);
-        machine.initialise();
+        machine.initialise(HARDRESET);
         Sound.AYReset();
         emulation_stop=initialStopState;
         Dbg->ResetBreakpointHits();
@@ -1626,10 +1591,9 @@ void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
         AnsiString Path, Ext;
 
         Path = emulator.cwd;
-        Path += "Dock";
+        Path += ts2068RomsFolder;
 
         OpenDock->InitialDir = Path;
-        //RomSelect->FileName = RomBox->Text;
 
         if (!OpenDock->Execute()) return;
 
@@ -1643,14 +1607,14 @@ void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
                 Ext = FileNameGetExt(Path);
         }
 
-        if (LoadDock(Path.c_str())) machine.initialise();
+        if (LoadDock(Path.c_str())) machine.initialise(HARDRESET);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::RemoveDockCart1Click(TObject *Sender)
 {
         LoadDock("");
-        machine.initialise();
+        machine.initialise(HARDRESET);
 }
 //---------------------------------------------------------------------------
 
@@ -2142,8 +2106,7 @@ void __fastcall TForm1::RunFrame()
                 }
         }
 
-        // if (!nosound) ;
-        Sound.Frame(); //sound_frame();
+        Sound.Frame();
 
         if (emulation_stop)
         {
@@ -2525,7 +2488,7 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
                                 {
                                         iniFile = iniPath;
                                         if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
-                                        iniFile += "EightyOne\\";
+                                        iniFile += iniFolder;
                                         iniFile += FileName;
 
                                         DeleteFile(iniFile);
@@ -2547,7 +2510,7 @@ void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
         {
                 iniFile = iniPath;
                 if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
-                iniFile += "EightyOne\\";
+                iniFile += iniFolder;
                 AnsiString name = ((TMenuItem *)Sender)->Caption;
                 iniFile += name;
                 iniFile += ".ini";

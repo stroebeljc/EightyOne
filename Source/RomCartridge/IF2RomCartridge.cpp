@@ -18,7 +18,7 @@
 
 /* Information on the Interface 2 ROM Cartridge mechanism and the ZXC1, ZXC2,
    ZXC3 and ZXC4 ROM cartridges can be found at www.fruitcake.plus.com */
-    
+
 #include <sys/stat.h>
 #include <io.h>
 #include <fcntl.h>
@@ -228,25 +228,13 @@ bool LoadRomCartridgeFile(char *filename)
         RomCartridgeCapacity = 0;
 
         int fptr;
-        char file[256];
         int len;
 
-        if (strchr(filename, '\\') || strchr(filename, '/'))
-        {
-                strcpy(file, filename);
-        }
-        else
-        {
-                strcpy(file, emulator.cwd);
-                strcat(file,"ROM\\");
-                strcat(file,filename);
-        }
-
-        fptr=open(file, O_RDONLY | O_BINARY);
+        fptr=open(filename, O_RDONLY | O_BINARY);
         if (fptr<1) return false;
 
         struct stat st;
-        if (stat(file, &st))
+        if (stat(filename, &st))
         {
                 close(fptr);
                 return false;

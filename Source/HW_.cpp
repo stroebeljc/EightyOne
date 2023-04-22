@@ -1,5 +1,7 @@
 //--------------------------------------------------------------------------
 
+#include <dir.h>
+#include <dirent.h>
 #include <vcl.h>
 #pragma hdrstop
 
@@ -109,12 +111,117 @@ __fastcall THW::THW(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 
+        SetUpRomCartridges();
+
         ResetRequired=true;
         const bool reinitialiseStatus = true;
         const bool disableResetStatus = false;
         UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
 }
 //---------------------------------------------------------------------------
+
+AnsiString getMachineRoot(AnsiString fullRomName)
+{
+        // return the first part of the rom name up to but excluding the first '.'
+        char* p1 = fullRomName.c_str();
+        char* p2 = strchr(p1, '.');
+        if (p2 == NULL) return fullRomName;
+        int len = p2 - p1;
+        return fullRomName.SubString(1,len);
+}
+//---------------------------------------------------------------------------
+
+void THW::SetUpRomCartridges()
+{
+        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9001 Supermath", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9002 States & Capitals", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9003 Chess", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9004 Flight Simulation", ts1510RomsFolder));
+
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G9R Space Raiders", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G10R Chess", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G12R Planetoids", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G13R Hungry Horace", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G22R Backgammon", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G24R Horace & The Spiders", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G27R Jet Pac", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G28R Pssst", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G29R Tranz Am", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G30R Cookie", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum System Test", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum +2 Test Program", diagnosticRomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Gyruss", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Loco Motion", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #1", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #2", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Popeye", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Q-Bert", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Return Of The Jedi", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Star Wars", if2RomsFolder));
+                         
+        DIR* dir;
+        struct dirent *ent;
+
+        if ((dir = opendir(ts1510RomsFolder)) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                AnsiString title = getMachineRoot(ent->d_name);
+
+                                bool entryExists = false;
+                                vector<RomCartridgeEntry>::iterator iter;
+
+                                for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
+                                {
+                                        if (iter->Title == title)
+                                        {
+                                                entryExists = true;
+                                                break;
+                                        }
+                                }
+
+                                if (!entryExists)
+                                {
+                                        ts1510RomCartridges.push_back(RomCartridgeEntry(title.c_str(), ts1510RomsFolder));
+                                }
+                        }
+                }
+
+                closedir(dir);
+        }
+
+        if ((dir = opendir(if2RomsFolder)) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                AnsiString title = getMachineRoot(ent->d_name);
+
+                                bool entryExists = false;
+                                vector<RomCartridgeEntry>::iterator iter;
+
+                                for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
+                                {
+                                        if (iter->Title == title)
+                                        {
+                                                entryExists = true;
+                                                break;
+                                        }
+                                }
+
+                                if (!entryExists)
+                                {
+                                        sinclairRomCartridges.push_back(RomCartridgeEntry(title.c_str(), if2RomsFolder));
+                                }
+                        }
+                }
+
+                closedir(dir);
+        }
+}
 
 #include <set>
 extern std::set<int> dirtyBird;
@@ -140,16 +247,6 @@ void ql_writebyteProxy(int address, int data)
 {
         ql_writebyte(address, data);
         dirtyBird.insert(address);
-}
-
-AnsiString getMachineRoot(AnsiString fullRomName)
-{
-        // return the first part of the rom name up to but excluding the first '.'
-        char* p1 = fullRomName.c_str();
-        char* p2 = strchr(p1, '.');
-        if (p2 == NULL) return fullRomName;
-        int len = p2 - p1;
-        return fullRomName.SubString(1,len);
 }
 
 void __fastcall THW::OKClick(TObject *Sender)
@@ -222,7 +319,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
 
         if (ResetRequired && !disableReset)
         {
-                machine.initialise();
+                machine.initialise(HARDRESET);
                 ResetRequired=false;
         }
 
@@ -767,7 +864,36 @@ void THW::ConfigureRomCartridge()
         }
         else
         {
-                LoadRomCartridgeFile(RomCartridgeFileBox->Text.c_str());
+                AnsiString romCartridgePath = RomCartridgeFileBox->Text;
+
+                if (romcartridge.type == ROMCARTRIDGESINCLAIR)
+                {
+                        vector<RomCartridgeEntry>::iterator iter;
+
+                        for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
+                        {
+                                if (romCartridgePath == iter->Title)
+                                {
+                                        romCartridgePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        break;
+                                }
+                        }
+                }
+                else if (romcartridge.type == ROMCARTRIDGETIMEX)
+                {
+                        vector<RomCartridgeEntry>::iterator iter;
+
+                        for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
+                        {
+                                if (romCartridgePath == iter->Title)
+                                {
+                                        romCartridgePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        break;
+                                }
+                        }
+                }
+
+                LoadRomCartridgeFile(romCartridgePath.c_str());
 
                 ResetRequired=true;
         }
@@ -1071,7 +1197,7 @@ void THW::ConfigureMachineSettings()
 AnsiString THW::DetermineRomBase()
 {
         AnsiString romBase = emulator.cwd;
-        romBase += "ROM\\";
+        romBase += romsFolder;
 
         AnsiString rom = machine.CurRom;
 
@@ -1473,6 +1599,8 @@ void THW::SetupForSpectrum(void)
 
         FloatingPointHardwareFix->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
+
+        machine.plus3arabicPagedOut=0;
 
         KMouse->Enabled = true;
 
@@ -1894,8 +2022,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         RomBox->Clear();
         RomBox->Items->Add("spectrum128.rom");
         RomBox->Items->Add("spectrum128.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version2.rom");
-        RomBox->Items->Add("spectrum48.arabic.version3-1.rom");
+        RomBox->Items->Add("spectrum48.arabic.version1.rom");
         RomBox->Text = emulator.ROMSP128;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         Form1->EnableAnnotationOptions();
@@ -1982,7 +2109,6 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+2.french.rom");
         RomBox->Items->Add("spectrum+2.spanish.rom");
         RomBox->Items->Add("spectrum48.arabic.version2.rom");
-        RomBox->Items->Add("spectrum48.arabic.version3-1.rom");
         RomBox->Text = emulator.ROMSPP2;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2015,8 +2141,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version2.rom");
-        RomBox->Items->Add("spectrum48.arabic.version3-1.rom");
+        RomBox->Items->Add("spectrum48.arabic.version3-a.rom");
         RomBox->Text = emulator.ROMSPP2A;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2049,7 +2174,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-//        RomBox->Items->Add("spectrum+3.arabic.rom");
+        RomBox->Items->Add("spectrum+3.arabic.version3-a.rom");
         RomBox->Text = emulator.ROMSPP3;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2542,8 +2667,9 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=emulator.ROMZX16BIT; ini->WriteString("HWARE","ZX16BIT",Rom);
         Rom=emulator.ROMZXCF; ini->WriteString("HWARE","ZXCF",Rom);
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"NV_Memory\\divide.nv");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, nvMemoryFolder);
+        strcat(FileName, "divide.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -2552,8 +2678,9 @@ void THW::SaveSettings(TIniFile *ini)
                 fclose(f);
         }
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"NV_Memory\\zxcf.nv");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, nvMemoryFolder);
+        strcat(FileName, "zxcf.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -2562,8 +2689,9 @@ void THW::SaveSettings(TIniFile *ini)
                 fclose(f);
         }
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"NV_Memory\\zx1541.nv");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, nvMemoryFolder);
+        strcat(FileName, "zx1541.nv");
 
         f=fopen(FileName,"wb");
         if (f)
@@ -2706,8 +2834,9 @@ void THW::LoadSettings(TIniFile *ini)
         uSpeech->Checked=ini->ReadBool("HWARE","uSpeech",uSpeech->Checked);
         uSource->Checked=ini->ReadBool("HWARE","uSource",uSource->Checked);
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"NV_Memory\\zxcf.nv");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, nvMemoryFolder);
+        strcat(FileName, "zxcf.nv");
 
         f=fopen(FileName,"rb");
         if (f)
@@ -2716,8 +2845,9 @@ void THW::LoadSettings(TIniFile *ini)
                 fclose(f);
         }
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"NV_Memory\\divide.nv");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, nvMemoryFolder);
+        strcat(FileName, "divide.nv");
 
         f=fopen(FileName,"rb");
         if (f)
@@ -2726,8 +2856,9 @@ void THW::LoadSettings(TIniFile *ini)
                 fclose(f);
         }
 
-        strcpy(FileName,emulator.cwd);
-        strcat(FileName,"NV_Memory\\zx1541.nv");
+        strcpy(FileName, emulator.cwd);
+        strcat(FileName, nvMemoryFolder);
+        strcat(FileName, "zx1541.nv");
 
         f=fopen(FileName,"rb");
         if (f)
@@ -2743,7 +2874,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += "ROM";
+        Path += romsFolder;
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
@@ -2992,7 +3123,7 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += "ROM";
+        Path += romCartridgesFolder;
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;
@@ -3113,57 +3244,46 @@ void __fastcall THW::FormCreate(TObject *Sender)
 //---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeTimexList()
 {
+        vector<RomCartridgeEntry>::iterator iter;
+
         TimexRomCartridgeFileBox->Items->Clear();
 
-        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9001 Supermath.rom");
-        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9002 States & Capitals.rom");
-        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9003 Chess.rom");
-        AddRomCartridgeFile(TimexRomCartridgeFileBox, "07-9004 Flight Simulation.rom");
+        for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
+        {
+                AddRomCartridgeFile(TimexRomCartridgeFileBox, iter);
+        }
 }
 //---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()
 {
+        vector<RomCartridgeEntry>::iterator iter;
+
         SinclairRomCartridgeFileBox->Items->Clear();
 
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G9R Space Raiders.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G10R Chess.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G12R Planetoids.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G13R Hungry Horace.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G22R Backgammon.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G24R Horace & The Spiders.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G27R Jet Pac.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G28R Pssst.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G29R Tranz Am.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "G30R Cookie.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Spectrum System Test.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Spectrum +2 Test Program.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Gyruss.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Loco Motion.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Montezuma's Revenge #1.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Montezuma's Revenge #2.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Popeye.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Q-Bert.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Return Of The Jedi.rom");
-        AddRomCartridgeFile(SinclairRomCartridgeFileBox, "Star Wars.rom");
-}
-//---------------------------------------------------------------------------
-void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, AnsiString fileName)
-{
-        AnsiString romBase = emulator.cwd;
-        romBase += "ROM\\";
-
-        if (FileExists(romBase + fileName))
+        for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
         {
-                romCartridgeFileBox->Items->Add(fileName);
+                AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter);
         }
 }
 //---------------------------------------------------------------------------
+void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry)
+{                                                  
+        AnsiString romPath = emulator.cwd;
+        romPath += romCartridgeEntry->Path;
+        romPath += romCartridgeEntry->Title;
+        romPath += ".rom";
 
-
+        if (FileExists(romPath))
+        {
+                romCartridgeFileBox->Items->Add(romCartridgeEntry->Title);
+        }
+}
+//---------------------------------------------------------------------------
 void __fastcall THW::mwcfideHelpClick(TObject *Sender)
 {
         AnsiString path = emulator.cwd;
-        path += "\\Examples\\Drives\\";
+        path += examplesDrivesFolder;
+
         ShellExecute(0, "open", "notepad.exe", "FAT.txt", path.c_str(), SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------

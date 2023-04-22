@@ -277,7 +277,6 @@ __published:	// IDE-managed Components
 private:	// User declarations
         int fps;
         bool startup;
-        bool nosound;
         int StartUpWidth, StartUpHeight;
         void BuildConfigMenu(void);
         bool DrivesChanged;

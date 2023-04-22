@@ -51,7 +51,7 @@ extern BYTE ZXCFMem[];  // ZXCF has 1024k arranged as 64 x 16k pages
 
 extern int SPECNextBorder;
 extern BYTE memory[];
-extern void spec48_initialise(void);
+extern void spec48_initialise(int hardReset);
 extern int spec48_do_scanline(SCANLINE *CurScanLine);
 extern void spec48_writebyte(int Address, int Data);
 extern void spec48_setbyte(int Address, int Data);

@@ -294,7 +294,7 @@ void zx81_initialise(int hardReset)
         {
                 memory_device_rom_load(emulator.ROMLARKEN81, 14336, 2048);
                 memory[0x38DB] = 0xCD;
-                memory[0x38DC] = 0x2B;                              //####
+                memory[0x38DC] = 0x2B;
                 memory[0x38DD] = 0x0F;
                 memory[0x38DE] = 0xC9;
 

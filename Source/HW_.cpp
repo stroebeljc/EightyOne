@@ -3027,7 +3027,8 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="None")
         {
-                if (SpecP2aBtn->Down || SpecP3Btn->Down) RomBox->Text = emulator.ROMSPP3;
+                if (SpecP2aBtn->Down) RomBox->Text = emulator.ROMSPP2A;
+                if (SpecP3Btn->Down) RomBox->Text = emulator.ROMSPP3;
                 if (Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down) RomBox->Text = emulator.ROMSP48;
                 if (Spec128Btn->Down) RomBox->Text = emulator.ROMSP128;
                 if (SpecP2Btn->Down) RomBox->Text = emulator.ROMSPP2;

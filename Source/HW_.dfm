@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Amstrad
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet

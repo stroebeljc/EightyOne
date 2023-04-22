@@ -119,8 +119,8 @@ echo.
 echo Constructing the Development Environment folder...
 
 xcopy /e "%InstallationFilesFolder%\*.*" "%OutputDevEnvFolder%\Installation Files\" > nul 2>&1
-xcopy /e "%SourceFolder%\*.*"        "%OutputDevEnvFolder%\Source\" > nul 2>&1
-xcopy /y "%DocumentationFolder%\*.*" "%OutputDevEnvFolder%\" > nul 2>&1
+xcopy /e "%SourceFolder%\*.*"            "%OutputDevEnvFolder%\Source\" > nul 2>&1
+xcopy /y "%DocumentationFolder%\*.*"     "%OutputDevEnvFolder%\" > nul 2>&1
 
 rem ---- Clean the Development Environment source folder
 
@@ -131,7 +131,8 @@ rem ---- Create the release folder contents
 echo Constructing the Release folder...
 
 xcopy /e "%ReleaseFilesFolder%\*.*"           "%OutputReleaseFolder%\" > nul 2>&1
-xcopy /e "%SourceFolder%\ROM\*.*"             "%OutputReleaseFolder%\ROM\" > nul 2>&1
+xcopy /e "%SourceFolder%\ROMs\*.*"            "%OutputReleaseFolder%\ROMs\" > nul 2>&1
+xcopy /e "%SourceFolder%\ROM Cartridges\*.*"  "%OutputReleaseFolder%\ROM Cartridges\" > nul 2>&1
 xcopy /y "%SourceBackupFolder%\EightyOne.exe" "%OutputReleaseFolder%\" > nul 2>&1
 
 rem ---- Unzip the FatTest.vhd zip file

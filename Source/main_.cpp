@@ -1591,7 +1591,7 @@ void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
         AnsiString Path, Ext;
 
         Path = emulator.cwd;
-        Path += (spectrum.model == SPECCYTS2068) ? ts2068RomsFolder : tc2048RomsFolder;
+        Path += (spectrum.model == SPECCYTS2068) ? ts2068RomsFolder : ts2048RomsFolder;
 
         OpenDock->InitialDir = Path;
 

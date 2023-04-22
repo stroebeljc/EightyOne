@@ -3,7 +3,7 @@ to delete the file EightyOne.ini for the new version to operate correctly.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.37 - ##/##/2023 (by Paul Farrow)
+Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
 * Bug fixes:
   - The ROMs selected for use with the Spectrum 16K, Spectrum+, Spectrum+2A, Spectrum+3,
     TS1000, TC2048 and TS2068 were not being saved correctly to the EightyOne.ini file.
@@ -32,6 +32,7 @@ Version 1.37 - ##/##/2023 (by Paul Farrow)
   - updated 'Simple +3e 8-Bit' IDE ROM to version 1.43.
   - Made corrections and improvements to various keyboard layout images.
   - Added support for the divIDE 'AllRAM' mode (R'' Gal).
+  - Added Nordic ROM for the 48K Spectrum.
   - Added the Arabic ROM for the Spectrum+ and Spectrum 128.
   - Added the Arabic ROM for Spectrum+2.
   - Added the Arabic ROM for Spectrum+2A.

@@ -133,10 +133,10 @@ AnsiString getMachineRoot(AnsiString fullRomName)
 
 void THW::SetUpRomCartridges()
 {
-        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9001 Supermath", ts1510RomsFolder));
-        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9002 States & Capitals", ts1510RomsFolder));
-        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9003 Chess", ts1510RomsFolder));
-        ts1510RomCartridges.push_back(RomCartridgeEntry("07-9004 Flight Simulation", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("79001 Supermath", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("79002 States & Capitals", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("79003 Chess", ts1510RomsFolder));
+        ts1510RomCartridges.push_back(RomCartridgeEntry("79004 Flight Simulation", ts1510RomsFolder));
 
         sinclairRomCartridges.push_back(RomCartridgeEntry("G9R Space Raiders", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G10R Chess", if2RomsFolder));
@@ -981,7 +981,7 @@ void THW::ConfigureCharacterGenerator()
                 zx81.maxireg = 0x3F;
         else
                 zx81.maxireg = 0x1F;
-        if (zx81.chrgen == CHRGENLAMBDA) zx81.extfont=1;
+        if (ChrGenBox->Text == "Lambda") zx81.extfont=1;
 }
 
 void THW::ConfigureHiRes()
@@ -2141,7 +2141,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         RomBox->Items->Add("spectrum+3.version4-1.rom");
         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
+        RomBox->Items->Add("spectrum48.arabic.version2.rom");
         RomBox->Text = emulator.ROMSPP2A;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
@@ -2246,7 +2246,7 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         NewMachineName=LambdaBtn->Caption;
         RomBox->Clear();
         RomBox->Items->Add("lambda8300.rom");
-        RomBox->Items->Add("pc8300timex.rom");
+        RomBox->Items->Add("lambda8300colour.rom");
         RomBox->Text = emulator.ROMLAMBDA;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         NTSC->Checked=true;
@@ -2878,17 +2878,29 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
+        if (*(RomBox->Text.AnsiLastChar()) == '\\')
+        {
+                RomSelect->FileName = RomBox->Items->Strings[0];
+        }
 
-        if (!RomSelect->Execute()) return;
+        if (!RomSelect->Execute())
+        {
+                return;
+        }
+        
+        AnsiString selectedRomPath = FileNameGetPath(RomSelect->FileName);
 
-        strcpy(cPath,(RomSelect->FileName).c_str());
-        if (!strncmp(cPath,Path.c_str(),strlen(Path.c_str())))
+        strcpy(cPath, Path.c_str());
+        if (Path == selectedRomPath)
         {
                 Path=RomSelect->FileName;
                 Path=RemovePath(Path);
         }
-        else    Path=cPath;
-
+        else
+        {
+            Path = RomSelect->FileName;
+        }
+        
         RomBox->Text=Path;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         ResetRequired=true;
@@ -3035,7 +3047,9 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         {
                 if (SpecP2aBtn->Down) RomBox->Text = emulator.ROMSPP2A;
                 if (SpecP3Btn->Down) RomBox->Text = emulator.ROMSPP3;
-                if (Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down) RomBox->Text = emulator.ROMSP48;
+                if (Spec16Btn->Down) RomBox->Text = emulator.ROMSP16;
+                if (Spec48Btn->Down) RomBox->Text = emulator.ROMSP48;
+                if (SpecPlusBtn->Down) RomBox->Text = emulator.ROMSPP;
                 if (Spec128Btn->Down) RomBox->Text = emulator.ROMSP128;
                 if (SpecP2Btn->Down) RomBox->Text = emulator.ROMSPP2;
                 if (TC2048Btn->Down) RomBox->Text = emulator.ROMTC2048;

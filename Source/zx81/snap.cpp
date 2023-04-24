@@ -294,7 +294,7 @@ void load_snap_romcartridge(FILE *f)
 
         bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
         bool sinclairSelected = (HW->RomCartridgeBox->Text == "Sinclair");
-        bool timexSelected = (HW->RomCartridgeBox->Text == "Timex");
+        bool timexSelected = (HW->RomCartridgeBox->Text == "TS1510");
         HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
         HW->SinclairRomCartridgeFileBox->Enabled = sinclairSelected;
         HW->TimexRomCartridgeFileBox->Enabled = timexSelected;

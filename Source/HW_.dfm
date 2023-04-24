@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Timex
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -1855,7 +1855,7 @@ object HW: THW
         Top = 100
         Width = 137
         Height = 17
-        Caption = 'Jumper E (J2)'
+        Caption = 'Jumper E (J2) closed'
         Checked = True
         State = cbChecked
         TabOrder = 8

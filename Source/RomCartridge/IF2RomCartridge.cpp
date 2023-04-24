@@ -97,7 +97,7 @@ void InitialiseRomCartridge()
         {
                 zxcStartAddressRangeFull = 0x0000;
                 zxcEndAddressRangeFullWrite = 0x3FFF;
-                zxcEndAddressRangeFullRead = (romcartridge.type == ROMCARTRIDGETIMEX) ? 0x7FFF + (RomCartridgeCapacity - 0x2000) : 0x3FFF;
+                zxcEndAddressRangeFullRead = (romcartridge.type == ROMCARTRIDGETS1510) ? 0x7FFF + (RomCartridgeCapacity - 0x2000) : 0x3FFF;
                 zxcBaseAddressRangeWindow = 0x10000;
                 zxcStartAddressRangeWindow = 0x10000;   // Place outside the memory map
                 zxcEndAddressRangeWindow = 0x10000;
@@ -198,7 +198,7 @@ bool RomCartridgePagedIn()
         switch (romcartridge.type)
         {
         case ROMCARTRIDGESINCLAIR:
-        case ROMCARTRIDGETIMEX:
+        case ROMCARTRIDGETS1510:
                 pageIn = true;
                 break;
 
@@ -286,7 +286,7 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
                         readStatus = true;
                         break;
 
-                case ROMCARTRIDGETIMEX:
+                case ROMCARTRIDGETS1510:
                         readStatus = AccessRomCartridgeTimex(Address, Data);
                         break;
 

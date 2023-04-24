@@ -42,7 +42,7 @@
 
 extern BYTE memory[];
 extern BYTE acecolour[];
-extern void ace_initialise(int hardReset);
+extern void ace_initialise(int resetType);
 extern int ace_do_scanline(SCANLINE *CurScanLine);
 extern void ace_writebyte(int Address, int Data);
 extern BYTE ace_readbyte(int Address);

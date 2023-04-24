@@ -212,7 +212,7 @@ BYTE get_i_reg(void)
         return(z80.i);
 }
 
-void zx81_initialise(int hardReset)
+void zx81_initialise(int resetType)
 {
         int i, romlen;
         z80_init();

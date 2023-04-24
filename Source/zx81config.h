@@ -91,7 +91,7 @@
 #define ROMCARTRIDGEZXC3     3
 #define ROMCARTRIDGEZXC2     4
 #define ROMCARTRIDGEZXC1     5
-#define ROMCARTRIDGETIMEX    6
+#define ROMCARTRIDGETS1510   6
 
 #define CRCACE		0x0a09
 #define CRCASZMICE04	0xcac9
@@ -406,12 +406,12 @@ extern const char* fdcRomsFolder;
 extern const char* ideRomsFolder;
 extern const char* interfaceRomsFolder;
 extern const char* graphicRomsFolder;
-extern const char* diagnosticRomsFolder;
 extern const char* romCartridgeFolder;
 extern const char* if2RomsFolder;
 extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;
 extern const char* ts2048RomsFolder;
+extern const char* replacementRomsFolder;
 
 extern void load_config();
 

@@ -149,7 +149,6 @@ void THW::SetUpRomCartridges()
         sinclairRomCartridges.push_back(RomCartridgeEntry("G29R Tranz Am", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G30R Cookie", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum System Test", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum +2 Test Program", diagnosticRomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Gyruss", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Loco Motion", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #1", if2RomsFolder));
@@ -708,19 +707,11 @@ void THW::ConfigureRom()
 
 void THW::ConfigureDockCartridge()
 {
-        Form1->InsertDockCart1->Enabled=false;
-        Form1->RemoveDockCart1->Enabled=false;
-        Form1->DockSpacer->Visible=false;
+        bool enableDockOptions = (NewMachine == MACHINESPECTRUM && NewSpec == SPECCYTS2068);
 
-        if (NewMachine == MACHINESPECTRUM)
-        {
-                if (NewSpec == SPECCYTC2048 || NewSpec == SPECCYTS2068)
-                {
-                        Form1->InsertDockCart1->Enabled=true;
-                        Form1->RemoveDockCart1->Enabled=true;
-                        Form1->DockSpacer->Visible=true;
-                }
-        }
+        Form1->InsertDockCart1->Enabled = enableDockOptions;
+        Form1->RemoveDockCart1->Enabled = enableDockOptions;
+        Form1->DockSpacer->Visible = enableDockOptions;
 }
 
 void THW::ConfigureZXpand()
@@ -879,7 +870,7 @@ void THW::ConfigureRomCartridge()
                                 }
                         }
                 }
-                else if (romcartridge.type == ROMCARTRIDGETIMEX)
+                else if (romcartridge.type == ROMCARTRIDGETS1510)
                 {
                         vector<RomCartridgeEntry>::iterator iter;
 
@@ -904,7 +895,7 @@ void THW::UpdateRomCartridgeControls(int machine)
         romcartridge.type = RomCartridgeBox->ItemIndex;
 
         bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR) && (machine == MACHINESPECTRUM);
-        bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETIMEX) && (machine == MACHINEZX81 || machine == MACHINETS1000 || machine == MACHINETS1500);
+        bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETS1510) && (machine == MACHINEZX81 || machine == MACHINETS1000 || machine == MACHINETS1500);
 
         bool noneSelected = (romcartridge.type == ROMCARTRIDGENONE);
         bool zxc1Selected = (romcartridge.type == ROMCARTRIDGEZXC1);
@@ -1496,6 +1487,7 @@ void THW::SetupForZX81(void)
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=true;
         ColourLabel->Enabled=true;
+        ColourLabel->Caption = "Colour:";
 
         ProtectROM->Enabled=true;
         NTSC->Enabled=true;
@@ -1538,7 +1530,7 @@ void THW::SetupForZX81(void)
         uSource->Enabled=false;
         uSource->Checked=false;
 
-        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "Timex")
+        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "TS1510")
         {
                 if (NewMachine != MACHINETS1500 && NewMachine != MACHINETS1000 && NewMachine != MACHINEZX81)
                 {
@@ -1549,11 +1541,11 @@ void THW::SetupForZX81(void)
         {
                 if (NewMachine == MACHINETS1500 || NewMachine == MACHINETS1000 || NewMachine == MACHINEZX81)
                 {
-                        RomCartridgeBox->Items->Add("Timex");
+                        RomCartridgeBox->Items->Add("TS1510");
                 }
         }
 
-        bool timexSelected = (RomCartridgeBox->Text == "Timex");
+        bool timexSelected = (RomCartridgeBox->Text == "TS1510");
         bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
         TimexRomCartridgeFileBox->Visible = timexSelected;
         SinclairRomCartridgeFileBox->Visible = sinclairSelected;
@@ -1661,6 +1653,8 @@ void THW::SetupForSpectrum(void)
         HiResBox->ItemIndex=0;
         HiResLbl->Enabled=false; HiResBox->Enabled=false;
 
+        ColourLabel->Caption = "Colour:";
+
         bool spectraAlreadyAvailable = (ColourBox->Items->Strings[1] == "Spectra");
         if (!spectraAlreadyAvailable)
         {
@@ -1717,7 +1711,7 @@ void THW::SetupForSpectrum(void)
         uSpeech->Enabled=true;
         uSource->Enabled=true;
 
-        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "Timex")
+        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "TS1510")
         {
                 RomCartridgeBox->Items->Delete(RomCartridgeBox->Items->Count-1);
         }
@@ -1800,6 +1794,7 @@ void THW::SetupForQL(void)
         ColourBox->ItemIndex=0;
         ColourBox->Enabled=false;
         ColourLabel->Enabled=false;
+        ColourLabel->Caption = "Colour:";
 
         ProtectROM->Enabled=true;
         NTSC->Enabled=false;
@@ -2203,6 +2198,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         RomBox->Items->Add("zx81.edition3.rom");
         RomBox->Text = emulator.ROMTS1000;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        ColourLabel->Caption = "Color:";
         NTSC->Checked=true;
         IDEBoxChange(NULL);
 }
@@ -2224,6 +2220,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         RomBox->Items->Add("ts1500.rom");
         RomBox->Text = emulator.ROMTS1500;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        ColourLabel->Caption = "Color:";
         NTSC->Checked=true;
         IDEBoxChange(NULL);
 }
@@ -2392,6 +2389,15 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         RomBox->Items->Add("tc2048.rom");
         RomBox->Text = emulator.ROMTC2048;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        ChrGenBox->Items->Strings[0] = "Timex";
+        ChrGenBox->ItemIndex = 0;
+        HiResBox->Items->Strings[0] = "Timex";
+        HiResBox->ItemIndex = 0;
+        ColourBox->Items->Strings[0] = "Timex";
+        ColourBox->ItemIndex = 0;
+        ColourBox->Enabled = false;
+        ColourLabel->Caption = "Color:";
+        ColourLabel->Enabled = false;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(4);
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -2435,6 +2441,15 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         RomBox->Items->Add("ts2068.rom");
         RomBox->Text = emulator.ROMTS2068;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        ChrGenBox->Items->Strings[0] = "Timex";
+        ChrGenBox->ItemIndex = 0;
+        HiResBox->Items->Strings[0] = "Timex";
+        HiResBox->ItemIndex = 0;
+        ColourBox->Items->Strings[0] = "Timex";
+        ColourBox->ItemIndex = 0;
+        ColourBox->Enabled = false;
+        ColourLabel->Caption = "Color:";
+        ColourLabel->Enabled = false;
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(4);
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -2869,13 +2884,13 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += romsFolder;
+        Path += replacementRomsFolder;
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
-        if (*(RomBox->Text.AnsiLastChar()) == '\\')
+        if (*(RomSelect->FileName.AnsiLastChar()) == '\\')
         {
-                RomSelect->FileName = RomBox->Items->Strings[0];
+                RomSelect->FileName = "";
         }
 
         if (!RomSelect->Execute())
@@ -3144,7 +3159,7 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         {
                 Path += if2RomsFolder;
         }
-        else if (romcartridge.type == ROMCARTRIDGETIMEX)
+        else if (romcartridge.type == ROMCARTRIDGETS1510)
         {
                 Path += ts1510RomsFolder;
         }

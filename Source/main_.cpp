@@ -2522,3 +2522,5 @@ void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+

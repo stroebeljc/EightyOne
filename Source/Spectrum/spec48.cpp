@@ -321,13 +321,13 @@ void spec48_reset(void)
         mouse.buttons=255;
 }
 
-void spec48_initialise(int hardReset)
+void spec48_initialise(int resetType)
 {
         int i, j, romlen, pos, delay;
         z80_init();
         tStatesCount = 0;
 
-        if (hardReset)
+        if (resetType == HARDRESET)
         {
                 machine.plus3arabicPagedOut = 0;
         }
@@ -852,7 +852,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
         if ((spectrum.HDType==HDPITERS16B) && ((Address&0xe9)==0x69))
                 ATA_WriteRegister(((Address>>4)&1) | (Address&6), Data);
 
-        if (((Address & 0x20) == 0x00) && spectrum.model >= SPECCYPLUS2A && emulator.romcrc == CRCARABICPLUS3)
+        if (((Address & 0x20) == 0x00) && spectrum.model == SPECCYPLUS3 && emulator.romcrc == CRCARABICPLUS3)
         {
                 if (machine.plus3arabicPagedOut != (~Data & 0x01))
                 {

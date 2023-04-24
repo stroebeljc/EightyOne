@@ -9,36 +9,37 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
     TS1000, TC2048 and TS2068 were not being saved correctly to the EightyOne.ini file.
   - Not all keyboard layout images were changing size when double clicked.
   - A breakpoint at $0066 on the Spectrum would never be hit.
-  - The emulator no longer crashes when attempting to load a non-valid Timex ROM cartridge file.
+  - The emulator no longer crashes when attempting to load a invalid TS2068 ROM cartridge file.
 * Changes:
   - Renamed the various ROMs for improved clarity and consistency.
-  - Created subfolders to contain the various types of ROMs for improved clarity.
+  - Created subfolders to separate the various types of ROMs for improved clarity.
   - Removed the non-functioning homebrew 'Spectrum emulator' ROM for the ZX81.
   - Removed the homebew 'Shoulders of Giants' ZX81 ROM.
   - Renamed IDE option 'divIDE V1' to divIDE 57 (R Gal)' and reduced the two option settings
     checkboxes to a single one to reflect the behaviour of the real device.
   - Removed IDE option 'divIDE V2' which did not reflect a real world divIDE device.
-  - Renamed the several display options for the debugger's Memory Window.
+  - Renamed the several of the display options for the debugger's Memory Window.
   - Removed the RAM pack wobble facility.
 * Enhancements:
   - Added support for 16K and 24K TS1510 ROM cartridges.
   - Added the TS1510 ROM cartridge 'Flight Simulation'.
   - Added the ZX Interface 2 ROM cartridge 'Sinclair ZX Spectrum System Test'.
   - Added the 7 released Timex TS2068 ROM cartridges.
-  - Added the Timex TC2048 ROM cartridges 'Spectrum Emulator' and 'TimeWord V1.2'.
-  - Added the Kayde Graphics ROM.
+  - Added the Kayde Graphics ROM for the ZX81.
   - Added the ASZMIC ROM version E07 and renamed the existing one as ASZMIC version E04.
   - Updated TR-DOS to version 5.03.
   - updated 'Simple +3e 8-Bit' IDE ROM to version 1.43.
   - Made corrections and improvements to various keyboard layout images.
+  - Made improvements to the splash screen image.
   - Added support for the divIDE 'AllRAM' mode (R'' Gal).
-  - Added Nordic ROM for the 48K Spectrum.
+  - Added the Nordic ROM for the 48K Spectrum.
   - Added the Arabic ROM for the Spectrum+ and Spectrum 128.
-  - Added the Arabic ROM for Spectrum+2.
-  - Added the Arabic ROM for Spectrum+2A.
-  - Added support for the Spectrum+3 Arabic ROM.
+  - Added the Arabic ROM for the Spectrum+2.
+  - Added the Arabic ROM for the Spectrum+2A.
+  - Added the Arabic ROM for the Spectrum+3, along with support for its ROM selection daughter
+    board.
   - Added Arabic keyboard layouts for the Spectrum+, Spectrum 128, Spectrum+2, Spectrum+2A,
-    Spectrum+3.
+    and Spectrum+3.
 
 Version 1.36 - 15/04/2023 (by Paul Farrow)
 * Bug fixes:

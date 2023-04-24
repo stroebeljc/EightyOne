@@ -40,24 +40,24 @@ int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 bool directMemoryAccess;
 
-const char* iniFolder            = "EightyOne\\";
-const char* temporaryFolder      = "EightyOne\\";
+const char* iniFolder             = "EightyOne\\";
+const char* temporaryFolder       = "EightyOne\\";
 
-const char* nvMemoryFolder       = "NV_Memory\\";
-const char* examplesDrivesFolder = "Examples\\Drives\\";
+const char* nvMemoryFolder        = "NV_Memory\\";
+const char* examplesDrivesFolder  = "Examples\\Drives\\";
 
-const char* romsFolder           = "ROMs\\";
-const char* fdcRomsFolder        = "ROMs\\FDCs\\";
-const char* ideRomsFolder        = "ROMs\\IDEs\\";
-const char* interfaceRomsFolder  = "ROMs\\Interfaces\\";
-const char* graphicRomsFolder    = "ROMs\\Graphics\\";
-const char* diagnosticRomsFolder = "ROMs\\Diagnostics\\";
+const char* romsFolder            = "ROMs\\";
+const char* fdcRomsFolder         = "ROMs\\FDCs\\";
+const char* ideRomsFolder         = "ROMs\\IDEs\\";
+const char* interfaceRomsFolder   = "ROMs\\Interfaces\\";
+const char* graphicRomsFolder     = "ROMs\\Graphics\\";
+const char* replacementRomsFolder = "ROMs\\Replacement ROMs\\";
 
-const char* romCartridgeFolder   = "ROM Cartridges\\";
-const char* if2RomsFolder        = "ROM Cartridges\\ZX Interface 2\\";
-const char* ts1510RomsFolder     = "ROM Cartridges\\TS1510\\";
-const char* ts2068RomsFolder     = "ROM Cartridges\\TS2068\\";
-const char* ts2048RomsFolder     = "ROM Cartridges\\TS2048\\";
+const char* romCartridgeFolder    = "ROM Cartridges\\";
+const char* if2RomsFolder         = "ROM Cartridges\\ZX Interface 2\\";
+const char* ts1510RomsFolder      = "ROM Cartridges\\TS1510\\";
+const char* ts2068RomsFolder      = "ROM Cartridges\\TS2068\\";
+const char* ts2048RomsFolder      = "ROM Cartridges\\TS2048\\";
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 

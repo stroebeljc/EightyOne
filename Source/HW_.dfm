@@ -1596,10 +1596,10 @@ object HW: THW
         Items.Strings = (
           'None'
           'Sinclair'
-          'ZXC4'
-          'ZXC3'
+          'ZXC1'
           'ZXC2'
-          'ZXC1')
+          'ZXC3'
+          'ZXC4')
       end
       object RomCartridgeFileBox: TEdit
         Left = 184
@@ -2034,7 +2034,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

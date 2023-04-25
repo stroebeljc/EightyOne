@@ -2433,7 +2433,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
 
         NTSC->Checked=true;
 
-        EnableRomCartridgeOption(false);
+        EnableRomCartridgeOption(true);
 
         Form1->EnableAnnotationOptions();
         NewMachineName=TS2068Btn->Caption;

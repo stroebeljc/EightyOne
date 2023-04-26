@@ -853,6 +853,8 @@ void THW::ConfigureRomCartridge()
                         msg = "Failed to load cartridge file:\n\n";
                         msg += romCartridgePath;
                         Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
+                        
+                        LoadDock("");
                 }
 
                 ResetRequired=true;

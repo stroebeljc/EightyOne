@@ -277,7 +277,8 @@ void load_snap_romcartridge(FILE *f)
                 if (!strcmp(tok,"TYPE"))
                 {
                         tok = get_token(f);
-                        SetComboBox(HW->RomCartridgeBox, tok);
+                        AnsiString type = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        SetComboBox(HW->RomCartridgeBox, type.c_str());
                 }
                 else if (!strcmp(tok,"PATH"))
                 {
@@ -288,36 +289,9 @@ void load_snap_romcartridge(FILE *f)
                 else if (!strcmp(tok,"CONFIGURATION"))
                 {
                         tok = get_token(f);
-                        HW->ZXC1ConfigurationBox->Text = tok;
+                        AnsiString config = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        SetComboBox(HW->ZXC1ConfigurationBox, config.c_str());
                 }
-        }
-
-        bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
-        bool sinclairSelected = (HW->RomCartridgeBox->Text == "Sinclair");
-        bool ts1510Selected = (HW->RomCartridgeBox->Text == "TS1510");
-        bool ts2068Selected = (HW->RomCartridgeBox->Text == "TS2068");
-        HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
-        HW->SinclairRomCartridgeFileBox->Enabled = sinclairSelected;
-        HW->TS1510RomCartridgeFileBox->Enabled = ts1510Selected;
-        HW->TS2068RomCartridgeFileBox->Enabled = ts2068Selected;
-        HW->BrowseRomCartridge->Enabled = romCartridgeSelected;
-
-        bool zxc1Selected = (HW->RomCartridgeBox->Text == "ZXC1");
-        HW->ZXC1ConfigurationBox->Visible = zxc1Selected;
-        if (zxc1Selected)
-        {
-                HW->RomCartridgeFileBox->Left = 277;
-                HW->RomCartridgeFileBox->Width = 88;
-
-                if (HW->ZXC1ConfigurationBox->ItemIndex == -1)
-                {
-                        HW->ZXC1ConfigurationBox->ItemIndex = 0;
-                }
-        }
-        else
-        {
-                HW->RomCartridgeFileBox->Left = 184;
-                HW->RomCartridgeFileBox->Width = 181;
         }
 }
 
@@ -930,7 +904,8 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"TYPE %s\n", HW->HiResBox->Text.c_str());
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
-	fprintf(f,"TYPE %s\n", HW->RomCartridgeBox->Text.c_str());
+        AnsiString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
+	fprintf(f,"TYPE %s\n", type.c_str());
 	if (HW->RomCartridgeBox->Text != "None")
 	{
 	        AnsiString path = StringReplace(HW->RomCartridgeFileBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);

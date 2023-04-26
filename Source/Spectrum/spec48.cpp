@@ -615,7 +615,7 @@ void spec48_WriteByte(int Address, int Data)
 
                 // The ROM cartridge socket does not differentiate between a memory read or write,
                 // so all accesses are treated as reads
-                if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+                if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETS2068) && (RomCartridgeCapacity != 0))
                 {
                         BYTE data;
                         if (ReadRomCartridge(Address, (BYTE*)&data))
@@ -739,7 +739,7 @@ BYTE spec48_ReadByte(int Address)
                         return(data);
                 }
 
-                if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
+                if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETS2068)  && (RomCartridgeCapacity != 0))
                 {
                         if (ReadRomCartridge(Address, (BYTE*)&data))
                         {

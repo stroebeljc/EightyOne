@@ -7,7 +7,6 @@
 
 #include "HW_.h"
 #include "main_.h"
-
 #include "keyboard_.h"
 #include "kb_.h"
 #include "kbstatus.h"
@@ -49,6 +48,7 @@ extern int zx80_do_scanline(SCANLINE *CurScanLine);
 extern void InitPatches(int machineType);
 extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
+extern int LoadDock(char *Filename);
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -157,15 +157,6 @@ void THW::SetUpRomCartridges()
         sinclairRomCartridges.push_back(RomCartridgeEntry("G29R Tranz Am", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G30R Cookie", if2RomsFolder));              
         sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum System Test", if2RomsFolder));
-
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Gyruss", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Loco Motion", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #1", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #2", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Popeye", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Q-Bert", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Return Of The Jedi", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("Star Wars", if2RomsFolder));
 }
 
 #include <set>
@@ -798,6 +789,7 @@ void THW::ConfigureRomCartridge()
         {
                 RomCartridgeCapacity = 0;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
+                LoadDock("");
         }
         else
         {
@@ -829,20 +821,98 @@ void THW::ConfigureRomCartridge()
                                 }
                         }
                 }
+                else if (romcartridge.type == ROMCARTRIDGETS2068)
+                {
+                        vector<RomCartridgeEntry>::iterator iter;
 
-                LoadRomCartridgeFile(romCartridgePath.c_str());
+                        for (iter = ts2068RomCartridges.begin(); iter != ts2068RomCartridges.end(); iter++)
+                        {
+                                if (romCartridgePath == iter->Title)
+                                {
+                                        romCartridgePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".dck";
+                                        break;
+                                }
+                        }
+                }
+
+                int loadSuccessful;
+
+                if (emulator.machine == MACHINESPECTRUM && spectrum.model == SPECCYTS2068)
+                {
+                        loadSuccessful = LoadDock(romCartridgePath.c_str());
+                }
+                else
+                {
+                        LoadDock("");
+                        loadSuccessful = LoadRomCartridgeFile(romCartridgePath.c_str());
+                }
+
+                if (!loadSuccessful)
+                {
+                        AnsiString msg;
+                        msg = "Failed to load cartridge file:\n\n";
+                        msg += romCartridgePath;
+                        Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
+                }
 
                 ResetRequired=true;
         }
 }
 
+int THW::DetermineRomCartridgeType(AnsiString cartridgeText, int machine)
+{
+        int cartridgeType;
+
+        if (cartridgeText == "Sinclair")
+        {
+                cartridgeType = ROMCARTRIDGESINCLAIR;
+        }
+        else if (cartridgeText == "ZXC1")
+        {
+                cartridgeType = ROMCARTRIDGEZXC1;
+        }
+        else if (cartridgeText == "ZXC2")
+        {
+                cartridgeType = ROMCARTRIDGEZXC2;
+        }
+        else if (cartridgeText == "ZXC3")
+        {
+                cartridgeType = ROMCARTRIDGEZXC3;
+        }
+        else if (cartridgeText == "ZXC4")
+        {
+                cartridgeType = ROMCARTRIDGEZXC4;
+        }
+        else if (cartridgeText == "Standard 16K")
+        {
+                cartridgeType = ROMCARTRIDGE16K;
+        }
+        else if (cartridgeText == "Timex")
+        {
+                if (machine == MACHINESPECTRUM)
+                {
+                        cartridgeType = ROMCARTRIDGETS2068;
+                }
+                else
+                {
+                        cartridgeType = ROMCARTRIDGETS1510;
+                }
+        }
+        else
+        {
+                cartridgeType = ROMCARTRIDGENONE;
+        }
+
+        return cartridgeType;
+}
+
 void THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
 {
-        romcartridge.type = RomCartridgeBox->ItemIndex;
+        romcartridge.type = DetermineRomCartridgeType(RomCartridgeBox->Text, machine);
 
-        bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR) && (machine == MACHINESPECTRUM) && (spectrumModel != SPECCYTS2068);
-        bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETS1510) && (machine == MACHINEZX81 || machine == MACHINETS1000 || machine == MACHINETS1500);
-        bool ts2068Selected = (romcartridge.type == ROMCARTRIDGETS2068) && (machine == MACHINESPECTRUM) && (spectrumModel == SPECCYTS2068);
+        bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR);
+        bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETS1510);
+        bool ts2068Selected = (romcartridge.type == ROMCARTRIDGETS2068);
 
         bool noneSelected = (romcartridge.type == ROMCARTRIDGENONE);
         bool zxc1Selected = (romcartridge.type == ROMCARTRIDGEZXC1);
@@ -850,8 +920,8 @@ void THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
         SinclairRomCartridgeFileBox->Enabled = spectrumSinclairSelected;
         SinclairRomCartridgeFileBox->Visible = spectrumSinclairSelected;
 
-        TS2068RomCartridgeFileBox->Enabled = spectrumSinclairSelected;
-        TS2068RomCartridgeFileBox->Visible = spectrumSinclairSelected;
+        TS2068RomCartridgeFileBox->Enabled = ts2068Selected;
+        TS2068RomCartridgeFileBox->Visible = ts2068Selected;
 
         TS1510RomCartridgeFileBox->Enabled = zx81TimexSelected;
         TS1510RomCartridgeFileBox->Visible = zx81TimexSelected;
@@ -1485,28 +1555,26 @@ void THW::SetupForZX81(void)
         uSource->Enabled=false;
         uSource->Checked=false;
 
-        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "TS1510")
+        RomCartridgeBox->Items->Clear();
+        RomCartridgeBox->Items->Add("None");
+
+        if (NewMachine != MACHINETS1500)
         {
-                if (NewMachine != MACHINETS1500 && NewMachine != MACHINETS1000 && NewMachine != MACHINEZX81)
-                {
-                        RomCartridgeBox->Items->Delete(RomCartridgeBox->Items->Count-1);
-                }
-        }
-        else
-        {
-                if (NewMachine == MACHINETS1500 || NewMachine == MACHINETS1000 || NewMachine == MACHINEZX81)
-                {
-                        RomCartridgeBox->Items->Add("TS1510");
-                }
+                RomCartridgeBox->Items->Add("Standard 16K");
+                RomCartridgeBox->Items->Add("ZXC1");
+                RomCartridgeBox->Items->Add("ZXC2");
+                RomCartridgeBox->Items->Add("ZXC3");
+                RomCartridgeBox->Items->Add("ZXC4");
         }
 
-        bool ts1510Selected = (RomCartridgeBox->Text == "TS1510");
-        bool ts2068Selected = (RomCartridgeBox->Text == "TS2068");
-        bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
-        TS1510RomCartridgeFileBox->Visible = ts1510Selected;
-        TS2068RomCartridgeFileBox->Visible = ts2068Selected;
-        SinclairRomCartridgeFileBox->Visible = sinclairSelected;
-        RomCartridgeFileBox->Visible = !ts1510Selected && !ts2068Selected && !sinclairSelected;
+        if (NewMachine != MACHINEZX80)
+        {
+                RomCartridgeBox->Items->Add("Timex");
+        }
+
+        RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
+
+        UpdateRomCartridgeControls(NewMachine, NULL);
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -1668,17 +1736,25 @@ void THW::SetupForSpectrum(void)
         uSpeech->Enabled=true;
         uSource->Enabled=true;
 
-        if (RomCartridgeBox->Items->Strings[RomCartridgeBox->Items->Count-1] == "TS1510")
+        RomCartridgeBox->Items->Clear();
+        RomCartridgeBox->Items->Add("None");
+
+        if (NewSpec != SPECCYTS2068)
         {
-                RomCartridgeBox->Items->Delete(RomCartridgeBox->Items->Count-1);
+                RomCartridgeBox->Items->Add("Sinclair");
+                RomCartridgeBox->Items->Add("ZXC1");
+                RomCartridgeBox->Items->Add("ZXC2");
+                RomCartridgeBox->Items->Add("ZXC3");
+                RomCartridgeBox->Items->Add("ZXC4");
+        }
+        else
+        {
+                RomCartridgeBox->Items->Add("Timex");
         }
 
-        bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
-        bool ts2068Selected = (RomCartridgeBox->Text == "TS2068");
-        TS1510RomCartridgeFileBox->Visible = false;
-        SinclairRomCartridgeFileBox->Visible = sinclairSelected;
-        SinclairRomCartridgeFileBox->Visible = ts2068Selected;
-        RomCartridgeFileBox->Visible = !sinclairSelected && !ts2068Selected;
+        RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
+
+        UpdateRomCartridgeControls(NewMachine, NewSpec);
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -2411,6 +2487,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         ColourBox->Enabled = false;
         ColourLabel->Caption = "Color:";
         ColourLabel->Enabled = false;
+
         if (IDEBox->ItemIndex==4) IDEBox->ItemIndex=0;
         IDEBox->Items->Delete(4);
         if (IDEBox->ItemIndex==1) IDEBox->ItemIndex=0;
@@ -3119,13 +3196,17 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 
         Path = emulator.cwd;
 
-        if (NewMachine == MACHINESPECTRUM && romcartridge.type == ROMCARTRIDGESINCLAIR)
+        if (romcartridge.type == ROMCARTRIDGESINCLAIR)
         {
                 Path += if2RomsFolder;
         }
         else if (romcartridge.type == ROMCARTRIDGETS1510)
         {
                 Path += ts1510RomsFolder;
+        }
+        else if (romcartridge.type == ROMCARTRIDGETS2068)
+        {
+                Path += ts2068RomsFolder;
         }
         else
         {
@@ -3271,7 +3352,7 @@ void THW::PopulateRomCartridgeTS1510List()
 
         for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
         {
-                AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter);
+                AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter, ".rom");
         }
 }
 //---------------------------------------------------------------------------
@@ -3283,7 +3364,7 @@ void THW::PopulateRomCartridgeTS2068List()
 
         for (iter = ts2068RomCartridges.begin(); iter != ts2068RomCartridges.end(); iter++)
         {
-                AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter);
+                AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter, ".dck");
         }
 }//---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()
@@ -3294,16 +3375,16 @@ void THW::PopulateRomCartridgeSinclairList()
 
         for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
         {
-                AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter);
+                AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter, ".rom");
         }
 }
 //---------------------------------------------------------------------------
-void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry)
+void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, AnsiString fileExt)
 {                                                  
         AnsiString romPath = emulator.cwd;
         romPath += romCartridgeEntry->Path;
         romPath += romCartridgeEntry->Title;
-        romPath += ".rom";
+        romPath += fileExt;
 
         if (FileExists(romPath))
         {

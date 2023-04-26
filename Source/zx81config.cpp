@@ -57,7 +57,6 @@ const char* romCartridgeFolder    = "ROM Cartridges\\";
 const char* if2RomsFolder         = "ROM Cartridges\\ZX Interface 2\\";
 const char* ts1510RomsFolder      = "ROM Cartridges\\TS1510\\";
 const char* ts2068RomsFolder      = "ROM Cartridges\\TS2068\\";
-const char* ts2048RomsFolder      = "ROM Cartridges\\TS2048\\";
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 

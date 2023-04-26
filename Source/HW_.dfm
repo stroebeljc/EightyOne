@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 290
-  Top = 132
+  Left = 202
+  Top = 115
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1391,7 +1391,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = FloppyDrives
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -2042,9 +2042,9 @@ object HW: THW
     end
   end
   object RomSelect: TOpenDialog
-    DefaultExt = 'rom'
-    Filter = 'ROM Files|*.rom;*.bin'
+    Filter = 'Cartridge Files|*.rom;*.bin;*.dck'
     Options = [ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Title = 'Select Cartridge File'
     Left = 8
     Top = 104
   end

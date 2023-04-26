@@ -207,12 +207,13 @@ private:	// User declarations
         void PopulateRomCartridgeSinclairList();
         void PopulateRomCartridgeTS1510List();
         void PopulateRomCartridgeTS2068List();
-        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry);
+        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, AnsiString fileExt);
         AnsiString DirectSoundError(int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
         void UpdateRomCartridgeControls(int machine, int spectrumModel);
-        
+        int DetermineRomCartridgeType(AnsiString cartridgeText, int machine);
+
         void ConfigureRzxSupport();
         void ReInitialiseSound();
         void ResetDebugger();

@@ -62,6 +62,7 @@ extern int fts;
 
 extern SPECLast1ffd;
 
+//#### remove?
 int LoadDock(char *Filename)
 {
         FILE *f;

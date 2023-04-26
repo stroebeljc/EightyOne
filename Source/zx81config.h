@@ -87,12 +87,13 @@
 
 #define ROMCARTRIDGENONE     0
 #define ROMCARTRIDGESINCLAIR 1
-#define ROMCARTRIDGETS2068   1
 #define ROMCARTRIDGEZXC1     2
 #define ROMCARTRIDGEZXC2     3
 #define ROMCARTRIDGEZXC3     4
 #define ROMCARTRIDGEZXC4     5
-#define ROMCARTRIDGETS1510   6
+#define ROMCARTRIDGE16K      6
+#define ROMCARTRIDGETS1510   7
+#define ROMCARTRIDGETS2068   8
 
 #define CRCACE		0x0a09
 #define CRCASZMICE04	0xcac9
@@ -408,7 +409,6 @@ extern const char* romCartridgeFolder;
 extern const char* if2RomsFolder;
 extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;
-extern const char* ts2048RomsFolder;
 extern const char* replacementRomsFolder;
 
 extern void load_config();

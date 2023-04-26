@@ -203,6 +203,7 @@ bool RomCartridgePagedIn()
         switch (romcartridge.type)
         {
         case ROMCARTRIDGESINCLAIR:
+        case ROMCARTRIDGE16K:
         case ROMCARTRIDGETS1510:
                 pageIn = true;
                 break;
@@ -287,6 +288,7 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
                 switch (romcartridge.type)
                 {
                 case ROMCARTRIDGESINCLAIR:
+                case ROMCARTRIDGE16K:
                         *Data = AccessRomCartridgeSinclair(Address);
                         readStatus = true;
                         break;

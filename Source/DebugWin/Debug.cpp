@@ -995,7 +995,7 @@ void TDbg::UpdateVals(void)
                         break;
         }
 
-        bool zxcEnabled = (romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGESINCLAIR);
+        bool zxcEnabled = (romcartridge.type == ROMCARTRIDGEZXC1 || romcartridge.type == ROMCARTRIDGEZXC2 || romcartridge.type == ROMCARTRIDGEZXC3 || romcartridge.type == ROMCARTRIDGEZXC4);
         ZXCModeLabel->Enabled = zxcEnabled;
         ZXCMode->Enabled = zxcEnabled;
         if (romcartridge.type == ROMCARTRIDGEZXC1)

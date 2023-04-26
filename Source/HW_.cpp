@@ -138,6 +138,14 @@ void THW::SetUpRomCartridges()
         ts1510RomCartridges.push_back(RomCartridgeEntry("79003 Chess", ts1510RomsFolder));
         ts1510RomCartridges.push_back(RomCartridgeEntry("79004 Flight Simulation", ts1510RomsFolder));
 
+        ts2068RomCartridges.push_back(RomCartridgeEntry("72000 Budgeter", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("73000 Flight Simulator", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("73001 States & Capitals", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("74000 Pinball", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("74001 Androids", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("74004 Casino 1", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("74005 Crazybugs", ts2068RomsFolder));
+
         sinclairRomCartridges.push_back(RomCartridgeEntry("G9R Space Raiders", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G10R Chess", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G12R Planetoids", if2RomsFolder));
@@ -147,8 +155,9 @@ void THW::SetUpRomCartridges()
         sinclairRomCartridges.push_back(RomCartridgeEntry("G27R Jet Pac", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G28R Pssst", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G29R Tranz Am", if2RomsFolder));
-        sinclairRomCartridges.push_back(RomCartridgeEntry("G30R Cookie", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("G30R Cookie", if2RomsFolder));              
         sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum System Test", if2RomsFolder));
+
         sinclairRomCartridges.push_back(RomCartridgeEntry("Gyruss", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Loco Motion", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #1", if2RomsFolder));
@@ -157,69 +166,6 @@ void THW::SetUpRomCartridges()
         sinclairRomCartridges.push_back(RomCartridgeEntry("Q-Bert", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Return Of The Jedi", if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Star Wars", if2RomsFolder));
-                         
-        DIR* dir;
-        struct dirent *ent;
-
-        if ((dir = opendir(ts1510RomsFolder)) != NULL)
-        {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
-                        {
-                                AnsiString title = getMachineRoot(ent->d_name);
-
-                                bool entryExists = false;
-                                vector<RomCartridgeEntry>::iterator iter;
-
-                                for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
-                                {
-                                        if (iter->Title == title)
-                                        {
-                                                entryExists = true;
-                                                break;
-                                        }
-                                }
-
-                                if (!entryExists)
-                                {
-                                        ts1510RomCartridges.push_back(RomCartridgeEntry(title.c_str(), ts1510RomsFolder));
-                                }
-                        }
-                }
-
-                closedir(dir);
-        }
-
-        if ((dir = opendir(if2RomsFolder)) != NULL)
-        {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
-                        {
-                                AnsiString title = getMachineRoot(ent->d_name);
-
-                                bool entryExists = false;
-                                vector<RomCartridgeEntry>::iterator iter;
-
-                                for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
-                                {
-                                        if (iter->Title == title)
-                                        {
-                                                entryExists = true;
-                                                break;
-                                        }
-                                }
-
-                                if (!entryExists)
-                                {
-                                        sinclairRomCartridges.push_back(RomCartridgeEntry(title.c_str(), if2RomsFolder));
-                                }
-                        }
-                }
-
-                closedir(dir);
-        }
 }
 
 #include <set>
@@ -318,7 +264,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
 
         if (ResetRequired && !disableReset)
         {
-                machine.initialise(HARDRESET);
+                machine.initialise();
                 ResetRequired=false;
         }
 
@@ -846,7 +792,7 @@ void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
 
 void THW::ConfigureRomCartridge()
 {
-        UpdateRomCartridgeControls(emulator.machine);
+        UpdateRomCartridgeControls(emulator.machine, spectrum.model);
 
         if ((romcartridge.type == ROMCARTRIDGENONE) || (RomCartridgeFileBox->Text.Trim() == ""))
         {
@@ -890,12 +836,13 @@ void THW::ConfigureRomCartridge()
         }
 }
 
-void THW::UpdateRomCartridgeControls(int machine)
+void THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
 {
         romcartridge.type = RomCartridgeBox->ItemIndex;
 
-        bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR) && (machine == MACHINESPECTRUM);
+        bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR) && (machine == MACHINESPECTRUM) && (spectrumModel != SPECCYTS2068);
         bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETS1510) && (machine == MACHINEZX81 || machine == MACHINETS1000 || machine == MACHINETS1500);
+        bool ts2068Selected = (romcartridge.type == ROMCARTRIDGETS2068) && (machine == MACHINESPECTRUM) && (spectrumModel == SPECCYTS2068);
 
         bool noneSelected = (romcartridge.type == ROMCARTRIDGENONE);
         bool zxc1Selected = (romcartridge.type == ROMCARTRIDGEZXC1);
@@ -903,22 +850,30 @@ void THW::UpdateRomCartridgeControls(int machine)
         SinclairRomCartridgeFileBox->Enabled = spectrumSinclairSelected;
         SinclairRomCartridgeFileBox->Visible = spectrumSinclairSelected;
 
-        TimexRomCartridgeFileBox->Enabled = zx81TimexSelected;
-        TimexRomCartridgeFileBox->Visible = zx81TimexSelected;
+        TS2068RomCartridgeFileBox->Enabled = spectrumSinclairSelected;
+        TS2068RomCartridgeFileBox->Visible = spectrumSinclairSelected;
+
+        TS1510RomCartridgeFileBox->Enabled = zx81TimexSelected;
+        TS1510RomCartridgeFileBox->Visible = zx81TimexSelected;
 
         if (spectrumSinclairSelected)
         {
                 SinclairRomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text.Trim();
                 RomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text;
         }
+        if (ts2068Selected)
+        {
+                TS2068RomCartridgeFileBox->Text = TS2068RomCartridgeFileBox->Text.Trim();
+                RomCartridgeFileBox->Text = TS2068RomCartridgeFileBox->Text;
+        }
         else if (zx81TimexSelected)
         {
-                TimexRomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text.Trim();
-                RomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text;
+                TS1510RomCartridgeFileBox->Text = TS1510RomCartridgeFileBox->Text.Trim();
+                RomCartridgeFileBox->Text = TS1510RomCartridgeFileBox->Text;
         }
 
-        RomCartridgeFileBox->Enabled = !spectrumSinclairSelected && !zx81TimexSelected && !noneSelected;
-        RomCartridgeFileBox->Visible = !spectrumSinclairSelected && !zx81TimexSelected;
+        RomCartridgeFileBox->Enabled = !spectrumSinclairSelected && !zx81TimexSelected && !ts2068Selected && !noneSelected;
+        RomCartridgeFileBox->Visible = !spectrumSinclairSelected && !zx81TimexSelected && !ts2068Selected;
 
         BrowseRomCartridge->Enabled = !noneSelected;
 
@@ -1019,7 +974,7 @@ void THW::ConfigureSpectrumIDE()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") spectrum.HDType=HDPITERS8B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") spectrum.HDType=HDPITERS16B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde") spectrum.HDType=HDPITERSCF;
-        spectrum.divIDEJumperEClosed=divIDEJumperEClosed->Checked;
+        spectrum.divIDEJumperEClosed = Form1->divIDEJumperEClosed->Checked;
         spectrum.UploadJumperZXCF=Upload->Checked;
 
         switch(ZXCFRAM->ItemIndex)
@@ -1179,7 +1134,7 @@ void THW::ConfigureMachineSettings()
                 machine.contendmem = zx81_contend;
                 machine.contendio = zx81_contend;
                 machine.fps = machine.NTSC ? 60:50; // may be overwritten later
-                machine.reset = NULL;
+                machine.reset = zx81_reset;
                 machine.exit = NULL;
                 break;
         }
@@ -1545,11 +1500,13 @@ void THW::SetupForZX81(void)
                 }
         }
 
-        bool timexSelected = (RomCartridgeBox->Text == "TS1510");
+        bool ts1510Selected = (RomCartridgeBox->Text == "TS1510");
+        bool ts2068Selected = (RomCartridgeBox->Text == "TS2068");
         bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
-        TimexRomCartridgeFileBox->Visible = timexSelected;
+        TS1510RomCartridgeFileBox->Visible = ts1510Selected;
+        TS2068RomCartridgeFileBox->Visible = ts2068Selected;
         SinclairRomCartridgeFileBox->Visible = sinclairSelected;
-        RomCartridgeFileBox->Visible = !timexSelected && !sinclairSelected;
+        RomCartridgeFileBox->Visible = !ts1510Selected && !ts2068Selected && !sinclairSelected;
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -1717,9 +1674,11 @@ void THW::SetupForSpectrum(void)
         }
 
         bool sinclairSelected = (RomCartridgeBox->Text == "Sinclair");
-        TimexRomCartridgeFileBox->Visible = false;
+        bool ts2068Selected = (RomCartridgeBox->Text == "TS2068");
+        TS1510RomCartridgeFileBox->Visible = false;
         SinclairRomCartridgeFileBox->Visible = sinclairSelected;
-        RomCartridgeFileBox->Visible = !sinclairSelected;
+        SinclairRomCartridgeFileBox->Visible = ts2068Selected;
+        RomCartridgeFileBox->Visible = !sinclairSelected && !ts2068Selected;
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -1829,7 +1788,8 @@ void THW::SetupForQL(void)
         IDEBox->Enabled=false;
         LabelIDE->Enabled=false;
 
-        TimexRomCartridgeFileBox->Visible = false;
+        TS1510RomCartridgeFileBox->Visible = false;
+        TS2068RomCartridgeFileBox->Visible = false;
         SinclairRomCartridgeFileBox->Visible = false;
 
         for(i=0;i<IDEBox->Items->Count;i++)
@@ -2256,7 +2216,8 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         HiResLbl->Enabled=false;
         RomCartridgeBox->Enabled = false;
         RomCartridgeFileBox->Enabled = false;
-        TimexRomCartridgeFileBox->Enabled = false;
+        TS1510RomCartridgeFileBox->Enabled = false;
+        TS2068RomCartridgeFileBox->Enabled = false;
         SinclairRomCartridgeFileBox->Enabled = false;
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
@@ -2639,7 +2600,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","TS2050",TS2050->Checked);
         ini->WriteBool("HWARE","Iss2Kb",Issue2->Checked);
         ini->WriteBool("HWARE","KMouse",KMouse->Checked);
-        ini->WriteBool("HWARE","divIDEWP",divIDEJumperEClosed->Checked);
+        ini->WriteBool("HWARE","divIDEWP",Form1->divIDEJumperEClosed->Checked);
         ini->WriteBool("HWARE","ZXCFWP",Upload->Checked);
         ini->WriteBool("HWARE","MFace",Multiface->Checked);
         ini->WriteBool("HWARE","ZXPrinter",ZXPrinter->Checked);
@@ -2781,8 +2742,9 @@ void THW::LoadSettings(TIniFile *ini)
                 RomCartridgeFileBox->SelLength=0;
         }
         SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
-        TimexRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
-        
+        TS1510RomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        TS2068RomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+
         DriveAType->ItemIndex=ini->ReadInteger("HWARE","DriveAType",DriveAType->ItemIndex);
         DriveBType->ItemIndex=ini->ReadInteger("HWARE","DriveBType",DriveBType->ItemIndex);
         FDC->ItemIndex=ini->ReadInteger("HWARE","FDCType",FDC->ItemIndex);
@@ -2830,7 +2792,7 @@ void THW::LoadSettings(TIniFile *ini)
         TS2050->Checked=ini->ReadBool("HWARE","TS2050",TS2050->Checked);
         Issue2->Checked=ini->ReadBool("HWARE","Iss2Kb",Issue2->Checked);
         KMouse->Checked=ini->ReadBool("HWARE","KMouse",KMouse->Checked);
-        divIDEJumperEClosed->Checked=ini->ReadBool("HWARE","divIDEWP",divIDEJumperEClosed->Checked);
+        Form1->divIDEJumperEClosed->Checked=ini->ReadBool("HWARE","divIDEWP",Form1->divIDEJumperEClosed->Checked);
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
         FloatingPointHardwareFix->Checked=ini->ReadBool("HWARE","FloatingPointHardwareFix",FloatingPointHardwareFix->Checked);
@@ -2925,16 +2887,18 @@ void THW::EnableRomCartridgeOption(bool enable)
         RomCartridgeLabel->Enabled = enable;
         RomCartridgeBox->Enabled = enable;
         RomCartridgeFileBox->Enabled = enable;
-        TimexRomCartridgeFileBox->Enabled = enable;
+        TS1510RomCartridgeFileBox->Enabled = enable;
+        TS2068RomCartridgeFileBox->Enabled = enable;
         SinclairRomCartridgeFileBox->Enabled = enable;
 
         RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
 
         RomCartridgeFileBox->Text = "";
-        TimexRomCartridgeFileBox->Text = "";
+        TS1510RomCartridgeFileBox->Text = "";
+        TS2068RomCartridgeFileBox->Text = "";
         SinclairRomCartridgeFileBox->Text = "";
 
-        UpdateRomCartridgeControls(NewMachine);
+        UpdateRomCartridgeControls(NewMachine, NewSpec);
 }
 
 //---------------------------------------------------------------------------
@@ -3020,7 +2984,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         Upload->Visible=false;
         ZXCFLabel->Visible=false;
         ZXCFRAM->Visible=false;
-        divIDEJumperEClosed->Visible=false;
+        Form1->divIDEJumperEClosed->Visible=false;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="MWCFIde")
         {
@@ -3046,7 +3010,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
         if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
         {
-                divIDEJumperEClosed->Visible=true;
+                Form1->divIDEJumperEClosed->Visible=true;
         }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit") RomBox->Text = emulator.ROMSPP3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") RomBox->Text = emulator.ROMZXCF;
@@ -3185,9 +3149,13 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
         RomCartridgeFileBox->SelLength=0;
 
-        TimexRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
-        TimexRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
-        TimexRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
+        TS1510RomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        TS1510RomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
+        TS1510RomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
+
+        TS2068RomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
+        TS2068RomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
+        TS2068RomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
 
         SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
         SinclairRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
@@ -3201,9 +3169,10 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
 {
         RomCartridgeFileBox->Text = "";
         SinclairRomCartridgeFileBox->Text = "";
-        TimexRomCartridgeFileBox->Text = "";
-        
-        UpdateRomCartridgeControls(NewMachine);
+        TS1510RomCartridgeFileBox->Text = "";
+        TS2068RomCartridgeFileBox->Text = "";
+
+        UpdateRomCartridgeControls(NewMachine, NewSpec);
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------
@@ -3216,15 +3185,23 @@ void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
-void __fastcall THW::TimexRomCartridgeFileBoxChange(TObject *Sender)
+void __fastcall THW::TS2068RomCartridgeFileBoxChange(TObject *Sender)
 {
-        if (TimexRomCartridgeFileBox->Visible)
+        if (TS1510RomCartridgeFileBox->Visible)
         {
-                RomCartridgeFileBox->Text = TimexRomCartridgeFileBox->Text;
+                RomCartridgeFileBox->Text = TS1510RomCartridgeFileBox->Text;
                 ResetRequired=true;
         }
 }
 //---------------------------------------------------------------------------
+void __fastcall THW::TS1510RomCartridgeFileBoxChange(TObject *Sender)
+{
+        if (TS2068RomCartridgeFileBox->Visible)
+        {
+                RomCartridgeFileBox->Text = TS2068RomCartridgeFileBox->Text;
+                ResetRequired=true;
+        }
+}//---------------------------------------------------------------------------
 
 void __fastcall THW::ColourBoxChange(TObject *Sender)
 {
@@ -3281,22 +3258,34 @@ void __fastcall THW::uSourceClick(TObject *Sender)
 
 void __fastcall THW::FormCreate(TObject *Sender)
 {
-        PopulateRomCartridgeTimexList();
+        PopulateRomCartridgeTS1510List();
+        PopulateRomCartridgeTS2068List();
         PopulateRomCartridgeSinclairList();
 }
 //---------------------------------------------------------------------------
-void THW::PopulateRomCartridgeTimexList()
+void THW::PopulateRomCartridgeTS1510List()
 {
         vector<RomCartridgeEntry>::iterator iter;
 
-        TimexRomCartridgeFileBox->Items->Clear();
+        TS1510RomCartridgeFileBox->Items->Clear();
 
         for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
         {
-                AddRomCartridgeFile(TimexRomCartridgeFileBox, iter);
+                AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter);
         }
 }
 //---------------------------------------------------------------------------
+void THW::PopulateRomCartridgeTS2068List()
+{
+        vector<RomCartridgeEntry>::iterator iter;
+
+        TS2068RomCartridgeFileBox->Items->Clear();
+
+        for (iter = ts2068RomCartridges.begin(); iter != ts2068RomCartridges.end(); iter++)
+        {
+                AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter);
+        }
+}//---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()
 {
         vector<RomCartridgeEntry>::iterator iter;

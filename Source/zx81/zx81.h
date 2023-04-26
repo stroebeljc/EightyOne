@@ -42,7 +42,8 @@
 
 extern BYTE memory[];
 extern BYTE acecolour[];
-extern void zx81_initialise(int resetType);
+extern void zx81_initialise();
+extern void zx81_reset();
 extern void zx81_writebyte(int Address, int Data);
 extern void zx81_setbyte(int Address, int Data);
 extern BYTE zx81_readbyte(int Address);

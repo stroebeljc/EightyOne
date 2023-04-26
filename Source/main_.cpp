@@ -655,7 +655,7 @@ void __fastcall TForm1::NewTape1Click(TObject *Sender)
 void __fastcall TForm1::ResetButtonClick(TObject *Sender)
 {
         emulation_stop=1;
-        machine.initialise(SOFTRESET);
+        machine.reset();
         emulation_stop=0;
 }
 //---------------------------------------------------------------------------
@@ -1363,7 +1363,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         emulation_stop=1;
         z80_reset();
         AccurateInit(false);
-        machine.initialise(HARDRESET);
+        machine.initialise();
         Sound.AYReset();
         emulation_stop=initialStopState;
         Dbg->ResetBreakpointHits();
@@ -1607,14 +1607,14 @@ void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
                 Ext = FileNameGetExt(Path);
         }
 
-        if (LoadDock(Path.c_str())) machine.initialise(HARDRESET);
+        if (LoadDock(Path.c_str())) machine.initialise();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::RemoveDockCart1Click(TObject *Sender)
 {
         LoadDock("");
-        machine.initialise(HARDRESET);
+        machine.initialise();
 }
 //---------------------------------------------------------------------------
 
@@ -2521,6 +2521,10 @@ void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
-
-
+void __fastcall TForm1::divIDEJumperEClosedClick(TObject *Sender)
+{
+        divIDEJumperEClosed->Checked = !divIDEJumperEClosed->Checked;
+        spectrum.divIDEJumperEClosed = divIDEJumperEClosed->Checked;
+}
+//---------------------------------------------------------------------------
 

@@ -1391,7 +1391,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = Interfaces
+    ActivePage = FloppyDrives
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1436,7 +1436,18 @@ object HW: THW
         Alignment = taRightJustify
         Caption = 'ROM Cartridge:'
       end
-      object TimexRomCartridgeFileBox: TComboBox
+      object TS2068RomCartridgeFileBox: TComboBox
+        Left = 184
+        Top = 112
+        Width = 181
+        Height = 21
+        DropDownCount = 10
+        ItemHeight = 13
+        TabOrder = 19
+        Visible = False
+        OnChange = TS2068RomCartridgeFileBoxChange
+      end
+      object TS1510RomCartridgeFileBox: TComboBox
         Left = 184
         Top = 112
         Width = 181
@@ -1445,7 +1456,7 @@ object HW: THW
         ItemHeight = 13
         TabOrder = 18
         Visible = False
-        OnChange = TimexRomCartridgeFileBoxChange
+        OnChange = TS1510RomCartridgeFileBoxChange
       end
       object SinclairRomCartridgeFileBox: TComboBox
         Left = 184
@@ -1850,16 +1861,6 @@ object HW: THW
         State = cbChecked
         TabOrder = 7
       end
-      object divIDEJumperEClosed: TCheckBox
-        Left = 56
-        Top = 100
-        Width = 137
-        Height = 17
-        Caption = 'Jumper E (J2) closed'
-        Checked = True
-        State = cbChecked
-        TabOrder = 8
-      end
     end
     object QLSettings: TTabSheet
       Caption = 'QL'
@@ -2034,7 +2035,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

@@ -24,7 +24,7 @@
 
 extern BYTE memory[];
 extern BYTE acecolour[];
-extern void ql_initialise(int resetType);
+extern void ql_initialise();
 extern int ql_do_scanline(SCANLINE *CurScanLine);
 extern "C" void ql_writebyte(int Address, int Data);
 extern "C" BYTE ql_readbyte(int Address);

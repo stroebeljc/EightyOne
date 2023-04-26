@@ -212,7 +212,13 @@ BYTE get_i_reg(void)
         return(z80.i);
 }
 
-void zx81_initialise(int resetType)
+void zx81_reset()
+{
+        ResetRomCartridge();
+        DisableChroma();
+}
+
+void zx81_initialise()
 {
         int i, romlen;
         z80_init();

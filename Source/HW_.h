@@ -113,7 +113,6 @@ __published:	// IDE-managed Components
         TComboBox *IDEBox;
         TComboBox *ZXCFRAM;
         TCheckBox *Upload;
-        TCheckBox *divIDEJumperEClosed;
         TLabel *LabelIDE;
         TLabel *ZXCFLabel;
         TCheckBox *uSpeech;
@@ -136,8 +135,9 @@ __published:	// IDE-managed Components
         TLabel *LabelTotalRAM;
         TCheckBox *uSource;
         TImageList *Spec128Icons;
-        TComboBox *TimexRomCartridgeFileBox;
+        TComboBox *TS1510RomCartridgeFileBox;
         TImage *mwcfideHelp;
+        TComboBox *TS2068RomCartridgeFileBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -188,7 +188,8 @@ __published:	// IDE-managed Components
         void __fastcall ButtonAdvancedMoreClick(TObject *Sender);
         void __fastcall ImprovedWaitClick(TObject *Sender);
         void __fastcall SinclairRomCartridgeFileBoxChange(TObject *Sender);
-        void __fastcall TimexRomCartridgeFileBoxChange(TObject *Sender);
+        void __fastcall TS1510RomCartridgeFileBoxChange(TObject *Sender);
+        void __fastcall TS2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall uSourceClick(TObject *Sender);
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall mwcfideHelpClick(TObject *Sender);
@@ -204,12 +205,13 @@ private:	// User declarations
         void SetZX80Icon();
         void SetSpectrum128Icon();
         void PopulateRomCartridgeSinclairList();
-        void PopulateRomCartridgeTimexList();
+        void PopulateRomCartridgeTS1510List();
+        void PopulateRomCartridgeTS2068List();
         void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry);
         AnsiString DirectSoundError(int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
-        void UpdateRomCartridgeControls(int machine);
+        void UpdateRomCartridgeControls(int machine, int spectrumModel);
         
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -245,6 +247,7 @@ private:	// User declarations
         void SetUpRomCartridges();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
+        vector<RomCartridgeEntry> ts2068RomCartridges;
         vector<RomCartridgeEntry> sinclairRomCartridges;
 
 public:		// User declarations

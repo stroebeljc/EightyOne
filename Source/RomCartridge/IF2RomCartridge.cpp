@@ -70,17 +70,14 @@ bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess);
 BYTE AccessRomCartridgeBank(int bank, int Address);
 bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess);
 void ConfigureZXC1();
+void ResetRomCartridge();
 
 extern bool directMemoryAccess;
 
 void InitialiseRomCartridge()
 {
         ConfigureZXC1();
-
-        romcartridge.zxcPaging = 0;
-        romcartridge.zxcInterface1BankPagedIn = false;
-        romcartridge.zxcCassetteBankPagedIn = false;
-        romcartridge.zxcLowerControlAccessSelected = false;
+        ResetRomCartridge();
 
         if (emulator.machine == MACHINEZX80)
         {
@@ -104,6 +101,14 @@ void InitialiseRomCartridge()
                 zxcLowerControlLimit = 0x2000;
                 zxcUpperControlBase = 0x3FC0;
         }
+}
+
+void ResetRomCartridge()
+{
+        romcartridge.zxcPaging = 0;
+        romcartridge.zxcInterface1BankPagedIn = false;
+        romcartridge.zxcCassetteBankPagedIn = false;
+        romcartridge.zxcLowerControlAccessSelected = false;
 }
 
 void ConfigureZXC1()

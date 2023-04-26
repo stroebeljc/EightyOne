@@ -294,10 +294,12 @@ void load_snap_romcartridge(FILE *f)
 
         bool romCartridgeSelected = (HW->RomCartridgeBox->Text != "None");
         bool sinclairSelected = (HW->RomCartridgeBox->Text == "Sinclair");
-        bool timexSelected = (HW->RomCartridgeBox->Text == "TS1510");
+        bool ts1510Selected = (HW->RomCartridgeBox->Text == "TS1510");
+        bool ts2068Selected = (HW->RomCartridgeBox->Text == "TS2068");
         HW->RomCartridgeFileBox->Enabled = romCartridgeSelected;
         HW->SinclairRomCartridgeFileBox->Enabled = sinclairSelected;
-        HW->TimexRomCartridgeFileBox->Enabled = timexSelected;
+        HW->TS1510RomCartridgeFileBox->Enabled = ts1510Selected;
+        HW->TS2068RomCartridgeFileBox->Enabled = ts2068Selected;
         HW->BrowseRomCartridge->Enabled = romCartridgeSelected;
 
         bool zxc1Selected = (HW->RomCartridgeBox->Text == "ZXC1");
@@ -697,13 +699,13 @@ int do_load_snap(char *filename, bool resetHardware)
                 if (resetHardware)
                 {
                         HWSetMachine(MACHINEACE, NULL);
-                        machine.initialise(HARDRESET);
+                        machine.initialise();
                 }
                 load_snap_ace(f);
         }
         else
         {
-                if (resetHardware) machine.initialise(HARDRESET);
+                if (resetHardware) machine.initialise();
 
                 f=fopen(filename,"rt");
                 if (!f) return(0);

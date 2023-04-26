@@ -24,6 +24,7 @@
 
 extern int RomCartridgeCapacity;
 
+void ResetRomCartridge();
 void InitialiseRomCartridge();
 bool RomCartridgePagedIn();
 bool LoadRomCartridgeFile(char *filename);

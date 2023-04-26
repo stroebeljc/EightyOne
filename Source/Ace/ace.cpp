@@ -79,7 +79,7 @@ extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
-void ace_initialise(int resetType)
+void ace_initialise()
 {
         int i, romlen;
         z80_init();

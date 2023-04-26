@@ -53,7 +53,7 @@ extern BYTE memory[];
 int QLTopBorder, QLLeftBorder, QLFlash, QLFlashCount, QLMode=0;
 
 
-void ql_initialise(int resetType)
+void ql_initialise()
 {
         int i, romlen;
         for(i=0;i<(1024*1024);i++) memory[i]=random(256);

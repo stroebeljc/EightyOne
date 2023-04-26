@@ -288,16 +288,6 @@ void spec48_reset(void)
                 else ZXCFPort=0;
         }
 
-        divIDEPaged=0;
-        divIDEPage0=0;
-        divIDEPage1=1;
-        divIDEPort=0;
-        divIDEMapRam=0;
-        divIDEPage0WP=0;
-        divIDEPage1WP=0;
-        divIDEAllRamMode=0;
-        divIDEAllRamModeInvoked=0;
-
         MFActive=0;
         MFLockout=0;
 
@@ -319,18 +309,27 @@ void spec48_reset(void)
         if (spectrum.HDType==HDPITERS16B) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
         if (spectrum.HDType==HDPITERS8B) ATA_SetMode(ATA_MODE_8BIT);
         mouse.buttons=255;
+
+        ResetRomCartridge();
+        DisableSpectra();
 }
 
-void spec48_initialise(int resetType)
+void spec48_initialise()
 {
         int i, j, romlen, pos, delay;
         z80_init();
         tStatesCount = 0;
 
-        if (resetType == HARDRESET)
-        {
-                machine.plus3arabicPagedOut = 0;
-        }
+        machine.plus3arabicPagedOut = 0;
+        divIDEAllRamModeInvoked = 0;
+        divIDEPaged=0;
+        divIDEPage0=0;
+        divIDEPage1=1;
+        divIDEPort=0;
+        divIDEMapRam=0;
+        divIDEPage0WP=0;
+        divIDEPage1WP=0;
+        divIDEAllRamMode=0;
 
         directMemoryAccess = false;
         ResetLastIOAccesses();
@@ -801,47 +800,52 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         if (spectrum.HDType == HDDIVIDE)
         {
-                if ((Address & 0xa3) == 0xa3)
+                if ((Address & 0xA3) == 0xA3)
                 {
-                        if (Address&64) // Control Register
+                        if (Address & 0x40) // Control Register
                         {
-                                divIDEPort=Data;
-                                divIDEPaged=(Data&128) | (divIDEPaged&127);
-                                if (Data&64) divIDEMapRam=1;
-                                divIDEPage();
+                                if (divIDEAllRamMode)
+                                {
+                                        if (Data & 0x80)
+                                        {
+                                                divIDEAllRamMode = 0;
+                                                divIDEPage0 = 0;
+                                                divIDEPage1 = 1 + (Data & 0x03);
+                                                divIDEPage0WP = 0;
+                                                divIDEPage1WP = 0;
+                                                divIDEPaged = 128;
+                                        }
+                                        else
+                                        {
+                                                bool pages01 = (Data & 0x01) == 0x00;
+                                                bool readonly = (Data & 0x40) == 0x00;
+
+                                                divIDEPage0 = pages01 ? 1 : 3;
+                                                divIDEPage1 = pages01 ? 2 : 4;
+                                                divIDEPage0WP = readonly ? 1 : 0;
+                                                divIDEPage1WP = divIDEPage0WP;
+                                        }
+                                }
+                                else
+                                {
+                                        divIDEPort=Data;
+                                        divIDEPaged=(Data&128) | (divIDEPaged&127);
+                                        if (Data&64) divIDEMapRam=1;
+                                        divIDEPage();
+
+                                        bool allRamModeAvailable = spectrum.divIDEAllRamSupported && !spectrum.divIDEJumperEClosed;
+
+                                        if (allRamModeAvailable && (Data == 0x42 || (divIDEAllRamModeInvoked && (Data & 0x82) == 0x02)))
+                                        {
+                                                divIDEAllRamMode = 1;
+                                                divIDEAllRamModeInvoked = 1;
+                                                divIDEPaged=1;
+                                        }
+                                }
                         }
                         else    // IDE Interface
                         {
                                 ATA_WriteRegister((Address>>2)&7,Data);
-                        }
-                }
-                else if (spectrum.divIDEAllRamSupported && !spectrum.divIDEJumperEClosed)
-                {
-                        if (!divIDEAllRamMode)
-                        {
-                                if (Address == 66 || (divIDEAllRamModeInvoked && ((Address & 0x82) == 0x02)))
-                                {
-                                        divIDEAllRamMode = 1;
-                                        divIDEAllRamModeInvoked = 1;
-                                }
-                        }
-                        else
-                        {
-                                if ((Address & 0xFC) == 0x80)
-                                {
-                                        divIDEAllRamMode = 0;        
-                                        divIDEPage0 = 0;
-                                        divIDEPage1 = 1 + (Address & 0x03);
-                                        divIDEPage0WP = 0;
-                                        divIDEPage1WP = 0;
-                                }
-                                else
-                                {
-                                        divIDEPage0 = ((Address & 0x01) == 0x00) ? 1 : 3;
-                                        divIDEPage1 = ((Address & 0x01) == 0x00) ? 2 : 4;
-                                        divIDEPage0WP = ((Address & 0x40) == 0x00) ? 1 : 0;
-                                        divIDEPage1WP = divIDEPage0WP;
-                                }
                         }
                 }
         }
@@ -1373,7 +1377,7 @@ BYTE ReadPort(int Address, int *tstates)
                         break;
                 }
                 break;
-                
+
         case 0xe3:
                 if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_statusreg());
                 break;
@@ -1552,7 +1556,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         do
         {
                 LastPC=z80.pc.w;
-
+                
                 if (!(TIMEXPage&1)
                         && (ZXCFPort&128)
                         && spectrum.HDType!=HDPITERSCF
@@ -1628,8 +1632,11 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 {
                         if (spectrum.divIDEJumperEClosed)
                         {
-                                divIDEAllRamMode = 0;
-                                divIDEAllRamModeInvoked = 0;
+                                if (divIDEAllRamMode)
+                                {
+                                        divIDEAllRamMode = 0;
+                                        divIDEPage();
+                                }
 
                                 if (LastPC==0x00 || LastPC==0x08 || LastPC==0x38 || LastPC==0x66 ||
                                     LastPC==0x04c6 || LastPC==0x0562 || (z80.pc.w>=0x3d00 && z80.pc.w<=0x3dff))
@@ -1753,7 +1760,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                         int brightMask = 0x40;
                                                         int flashMask = 0x80;
                                                         int brightColour = 0x08;
-                                                        
+
                                                         if ((attr &  flashMask) && flashSwap) shift_register = ~shift_register;
                                                         ink = (attr & inkMask);
                                                         paper = ((attr & paperMask) >> 3);

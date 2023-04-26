@@ -87,6 +87,7 @@
 
 #define ROMCARTRIDGENONE     0
 #define ROMCARTRIDGESINCLAIR 1
+#define ROMCARTRIDGETS2068   1
 #define ROMCARTRIDGEZXC1     2
 #define ROMCARTRIDGEZXC2     3
 #define ROMCARTRIDGEZXC3     4
@@ -145,9 +146,6 @@
 #define MFNONE          0
 #define MF128           1
 #define MFPLUS3         2
-
-#define HARDRESET       0
-#define SOFTRESET       1
 
 typedef enum
 {
@@ -236,7 +234,7 @@ typedef struct
 
 typedef struct
 {
-        void (*initialise)(int hardReset);
+        void (*initialise)();
         int (*do_scanline)(SCANLINE *line);
         void (*writebyte)(int Address, int Data);
         void (*setbyte)(int Address, int Data);

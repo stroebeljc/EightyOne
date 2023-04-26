@@ -618,7 +618,7 @@ __fastcall TIF1::TIF1(TComponent* Owner)
 void __fastcall TIF1::OKClick(TObject *Sender)
 {
         IF1RomEdition=RomEdition->ItemIndex;
-        if (romEditionChanged) machine.initialise(HARDRESET);
+        if (romEditionChanged) machine.initialise();
 
         MDVNoDrives=NoMicroDrives->ItemIndex;
 

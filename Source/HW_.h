@@ -211,7 +211,7 @@ private:	// User declarations
         AnsiString DirectSoundError(int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
-        void UpdateRomCartridgeControls(int machine, int spectrumModel);
+        int UpdateRomCartridgeControls(int machine, int spectrumModel);
         int DetermineRomCartridgeType(AnsiString cartridgeText, int machine);
 
         void ConfigureRzxSupport();

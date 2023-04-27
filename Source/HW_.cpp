@@ -50,6 +50,8 @@ extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
 extern int LoadDock(char *Filename);
 
+int romcartridgetype;
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
@@ -773,7 +775,8 @@ void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
 
 void THW::ConfigureRomCartridge()
 {
-        UpdateRomCartridgeControls(emulator.machine, spectrum.model);
+        romcartridgetype = UpdateRomCartridgeControls(emulator.machine, spectrum.model);
+        romcartridge.type = romcartridgetype;
 
         if ((romcartridge.type == ROMCARTRIDGENONE) || (RomCartridgeFileBox->Text.Trim() == ""))
         {
@@ -783,7 +786,7 @@ void THW::ConfigureRomCartridge()
         }
         else
         {
-                AnsiString romCartridgePath = RomCartridgeFileBox->Text;
+                AnsiString romCartridgeFilePath = RomCartridgeFileBox->Text;
 
                 if (romcartridge.type == ROMCARTRIDGESINCLAIR)
                 {
@@ -791,11 +794,17 @@ void THW::ConfigureRomCartridge()
 
                         for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
                         {
-                                if (romCartridgePath == iter->Title)
+                                if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
                                         break;
                                 }
+                        }
+
+                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        if (path.Length() == 0)
+                        {
+                                romCartridgeFilePath = if2RomsFolder + romCartridgeFilePath;
                         }
                 }
                 else if (romcartridge.type == ROMCARTRIDGETS1510)
@@ -804,11 +813,17 @@ void THW::ConfigureRomCartridge()
 
                         for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
                         {
-                                if (romCartridgePath == iter->Title)
+                                if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
                                         break;
                                 }
+                        }
+
+                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        if (path.Length() == 0)
+                        {
+                                romCartridgeFilePath = ts1510RomsFolder + romCartridgeFilePath;
                         }
                 }
                 else if (romcartridge.type == ROMCARTRIDGETS2068)
@@ -817,11 +832,17 @@ void THW::ConfigureRomCartridge()
 
                         for (iter = ts2068RomCartridges.begin(); iter != ts2068RomCartridges.end(); iter++)
                         {
-                                if (romCartridgePath == iter->Title)
+                                if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".dck";
+                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".dck";
                                         break;
                                 }
+                        }
+
+                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        if (path.Length() == 0)
+                        {
+                                romCartridgeFilePath = ts2068RomsFolder + romCartridgeFilePath;
                         }
                 }
 
@@ -829,19 +850,19 @@ void THW::ConfigureRomCartridge()
 
                 if (emulator.machine == MACHINESPECTRUM && spectrum.model == SPECCYTS2068)
                 {
-                        loadSuccessful = LoadDock(romCartridgePath.c_str());
+                        loadSuccessful = LoadDock(romCartridgeFilePath.c_str());
                 }
                 else
                 {
                         LoadDock("");
-                        loadSuccessful = LoadRomCartridgeFile(romCartridgePath.c_str());
+                        loadSuccessful = LoadRomCartridgeFile(romCartridgeFilePath.c_str());
                 }
 
                 if (!loadSuccessful)
                 {
                         AnsiString msg;
                         msg = "Failed to load cartridge file:\n\n";
-                        msg += romCartridgePath;
+                        msg += romCartridgeFilePath;
                         Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
                         
                         LoadDock("");
@@ -898,16 +919,16 @@ int THW::DetermineRomCartridgeType(AnsiString cartridgeText, int machine)
         return cartridgeType;
 }
 
-void THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
+int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
 {
-        romcartridge.type = DetermineRomCartridgeType(RomCartridgeBox->Text, machine);
+        romcartridgetype = DetermineRomCartridgeType(RomCartridgeBox->Text, machine);
 
-        bool spectrumSinclairSelected = (romcartridge.type == ROMCARTRIDGESINCLAIR);
-        bool zx81TimexSelected = (romcartridge.type == ROMCARTRIDGETS1510);
-        bool ts2068Selected = (romcartridge.type == ROMCARTRIDGETS2068);
+        bool spectrumSinclairSelected = (romcartridgetype == ROMCARTRIDGESINCLAIR);
+        bool zx81TimexSelected = (romcartridgetype == ROMCARTRIDGETS1510);
+        bool ts2068Selected = (romcartridgetype == ROMCARTRIDGETS2068);
 
-        bool noneSelected = (romcartridge.type == ROMCARTRIDGENONE);
-        bool zxc1Selected = (romcartridge.type == ROMCARTRIDGEZXC1);
+        bool noneSelected = (romcartridgetype == ROMCARTRIDGENONE);
+        bool zxc1Selected = (romcartridgetype == ROMCARTRIDGEZXC1);
 
         SinclairRomCartridgeFileBox->Enabled = spectrumSinclairSelected;
         SinclairRomCartridgeFileBox->Visible = spectrumSinclairSelected;
@@ -959,6 +980,8 @@ void THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
                 RomCartridgeFileBox->Left = 184;
                 RomCartridgeFileBox->Width = 181;
         }
+
+        return romcartridgetype;
 }
 
 void THW::ConfigureCharacterGenerator()
@@ -2558,6 +2581,8 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
+        romcartridgetype = romcartridge.type;
+
         NewMachine = emulator.machine;
         FloatingPointHardwareFix->Enabled = false;
 
@@ -2915,11 +2940,11 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += replacementRomsFolder;
+        Path += romsFolder;
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
-        if (*(RomSelect->FileName.AnsiLastChar()) == '\\')
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
         {
                 RomSelect->FileName = "";
         }
@@ -3188,15 +3213,15 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 
         Path = emulator.cwd;
 
-        if (romcartridge.type == ROMCARTRIDGESINCLAIR)
+        if (romcartridgetype == ROMCARTRIDGESINCLAIR)
         {
                 Path += if2RomsFolder;
         }
-        else if (romcartridge.type == ROMCARTRIDGETS1510)
+        else if (romcartridgetype == ROMCARTRIDGETS1510)
         {
                 Path += ts1510RomsFolder;
         }
-        else if (romcartridge.type == ROMCARTRIDGETS2068)
+        else if (romcartridgetype == ROMCARTRIDGETS2068)
         {
                 Path += ts2068RomsFolder;
         }
@@ -3207,17 +3232,25 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;
-
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
+        {
+                RomSelect->FileName = "";
+        }
         if (!RomSelect->Execute()) return;
 
-        strcpy(cPath,(RomSelect->FileName).c_str());
-        if (!strncmp(cPath,Path.c_str(),strlen(Path.c_str())))
+        AnsiString selectedRomPath = FileNameGetPath(RomSelect->FileName);
+
+        strcpy(cPath, Path.c_str());
+        if (Path == selectedRomPath)
         {
                 Path=RomSelect->FileName;
                 Path=RemovePath(Path);
         }
-        else    Path=cPath;
-
+        else
+        {
+            Path = RomSelect->FileName;
+        }
+          
         RomCartridgeFileBox->Text=Path;
         RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
         RomCartridgeFileBox->SelLength=0;

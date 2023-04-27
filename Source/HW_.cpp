@@ -217,7 +217,6 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigureColour();
         ConfigureBasicLister();
         ConfigureRom();
-        ConfigureDockCartridge();
         ConfigureMultifaceRom();
         ConfigureZXpand();
         ConfigureRomCartridge();
@@ -640,15 +639,6 @@ void THW::ConfigureRom()
                 }
                 break;
         }
-}
-
-void THW::ConfigureDockCartridge()
-{
-        bool enableDockOptions = (NewMachine == MACHINESPECTRUM && NewSpec == SPECCYTS2068);
-
-        Form1->InsertDockCart1->Enabled = enableDockOptions;
-        Form1->RemoveDockCart1->Enabled = enableDockOptions;
-        Form1->DockSpacer->Visible = enableDockOptions;
 }
 
 void THW::ConfigureZXpand()

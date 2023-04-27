@@ -49,7 +49,6 @@ __published:	// IDE-managed Components
         TMenuItem *RemoveCart1;
         TMenuItem *NewTape1;
         TMenuItem *CloseTape1;
-        TMenuItem *N2;
         TMenuItem *N3;
         TMenuItem *Exit1;
         TMenuItem *View1;
@@ -111,10 +110,8 @@ __published:	// IDE-managed Components
         TStatusBar *StatusBar1;
         TMenuItem *StatusBar2;
         TMenuItem *IFace1;
-        TMenuItem *InsertDockCart1;
         TOpenDialog *OpenDock;
         TMenuItem *DockSpacer;
-        TMenuItem *RemoveDockCart1;
         TMenuItem *N6;
         TMenuItem *DiskDrives1;
         TImageList *ImageList1;
@@ -226,8 +223,6 @@ __published:	// IDE-managed Components
         void __fastcall StatusBar2Click(TObject *Sender);
         void __fastcall CloseTape1Click(TObject *Sender);
         void __fastcall IFace1Click(TObject *Sender);
-        void __fastcall InsertDockCart1Click(TObject *Sender);
-        void __fastcall RemoveDockCart1Click(TObject *Sender);
         void __fastcall SaveSnapDialogTypeChange(TObject *Sender);
         void __fastcall DiskDrives1Click(TObject *Sender);
         void __fastcall StatusBar1DrawPanel(TStatusBar *StatusBar,

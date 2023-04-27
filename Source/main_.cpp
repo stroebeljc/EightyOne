@@ -1584,40 +1584,8 @@ void __fastcall TForm1::IFace1Click(TObject *Sender)
 {
         IF1->ShowModal();
 }
+
 //---------------------------------------------------------------------------
-
-void __fastcall TForm1::InsertDockCart1Click(TObject *Sender)
-{
-        AnsiString Path, Ext;
-
-        Path = emulator.cwd;
-        Path += ts2068RomsFolder;
-
-        OpenDock->InitialDir = Path;
-
-        if (!OpenDock->Execute()) return;
-
-        Path=OpenDock->FileName;
-        Ext = FileNameGetExt(Path);
-
-        if (Ext == ".ZIP")
-        {
-                Path=ZipFile->ExpandZIP(Path, OpenDock->Filter);
-                if (Path=="") return;
-                Ext = FileNameGetExt(Path);
-        }
-
-        if (LoadDock(Path.c_str())) machine.initialise();
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::RemoveDockCart1Click(TObject *Sender)
-{
-        LoadDock("");
-        machine.initialise();
-}
-//---------------------------------------------------------------------------
-
 
 void __fastcall TForm1::SaveSnapDialogTypeChange(TObject *Sender)
 {

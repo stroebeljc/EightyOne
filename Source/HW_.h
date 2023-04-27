@@ -224,7 +224,6 @@ private:	// User declarations
         void SelectGroupboxVisibility();
         void ConfigureRamTop();
         void InitialiseSound(bool machineChanged);
-        void ConfigureDockCartridge();
         void CloseLiveMemoryWindow(bool machineChanged);
         void CloseOtherDebugWindow();
         void DetermineRamSizeLabel(AnsiString newMachineName);

@@ -20,6 +20,7 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
   - Removed IDE option 'divIDE V2' which did not reflect a real world divIDE device.
   - Renamed the several of the display options for the debugger's Memory Window.
   - Removed the RAM pack wobble facility.
+  - Moved selection of TS2068 ROM cartridges from the File menu to the Hardware dialog.
 * Enhancements:
   - Added support for 16K and 24K TS1510 ROM cartridges.
   - Added the TS1510 ROM cartridge 'Flight Simulation'.

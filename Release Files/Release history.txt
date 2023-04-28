@@ -25,7 +25,7 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
   - Added support for 16K and 24K TS1510 ROM cartridges.
   - Added the TS1510 ROM cartridge 'Flight Simulation'.
   - Added the ZX Interface 2 ROM cartridge 'Sinclair ZX Spectrum System Test'.
-  - Added the 7 released Timex TS2068 ROM cartridges.
+  - Added the 7 released TS2068 ROM cartridges.
   - Added the Kayde Graphics ROM for the ZX81.
   - Added the ASZMIC ROM version E07 and renamed the existing one as ASZMIC version E04.
   - Updated TR-DOS to version 5.03.
@@ -41,6 +41,8 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
     board.
   - Added Arabic keyboard layouts for the Spectrum+, Spectrum 128, Spectrum+2, Spectrum+2A,
     and Spectrum+3.
+  - Added emulation of the TC2068.
+  - Added the 2 released TC2068 ROM cartridges.
 
 Version 1.36 - 15/04/2023 (by Paul Farrow)
 * Bug fixes:

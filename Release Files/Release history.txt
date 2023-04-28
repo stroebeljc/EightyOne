@@ -9,7 +9,9 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
     TS1000, TC2048 and TS2068 were not being saved correctly to the EightyOne.ini file.
   - Not all keyboard layout images were changing size when double clicked.
   - A breakpoint at $0066 on the Spectrum would never be hit.
-  - The emulator no longer crashes when attempting to load a invalid TS2068 ROM cartridge file.
+  - The emulator no longer crashes when attempting to load an invalid TS2068 ROM cartridge file.
+  - The beeper sound option was not always being configured correctly after selecting to load a
+    configuration from the Options menu.
 * Changes:
   - Renamed the various ROMs for improved clarity and consistency.
   - Created subfolders to separate the various types of ROMs for improved clarity.

@@ -435,6 +435,8 @@ void THW::InitialiseSound(bool machineChanged)
                         Form1->Sound1Click(NULL);
                 }
         }
+
+        zx81.vsyncsound = Form1->Sound1->Checked;
 }
 
 void THW::CloseLiveMemoryWindow(bool machineChanged)

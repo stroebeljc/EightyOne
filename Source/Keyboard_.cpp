@@ -56,8 +56,6 @@ void TKeyboard::LoadSettings(TIniFile *ini)
 {
         Top = ini->ReadInteger("KBMAP","Top",Top);
         Left = ini->ReadInteger("KBMAP","Left",Left);
-
-        if (Form1->KeyboardMap1->Checked) Show();
 }
 
 void TKeyboard::SaveSettings(TIniFile *ini)
@@ -117,6 +115,8 @@ void TKeyboard::KbChange(void)
 
         KeyboardFunctions->Visible=false;
         KeyboardFunctions->EnableTimer(false);
+ 
+        if (Form1->KeyboardMap1->Checked) Show();
 
         switch(emulator.romcrc)
         {

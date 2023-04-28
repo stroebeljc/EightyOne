@@ -50,13 +50,9 @@ void __fastcall TSpeed::Button1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TSpeed::Recalc(TObject *Sender)
 {
         int speedup;
-
-        //AccurateTStates=zx81.clockspeed / 50;
-        //if (zx81.NTSC) AccurateTStates=zx81.clockspeed / 60;
 
         speedup=AccurateSpeed->Position * 32;
         emulator.speedup = (machine.tperscanline * speedup)/100;

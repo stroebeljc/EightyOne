@@ -138,6 +138,8 @@ __published:	// IDE-managed Components
         TComboBox *TS1510RomCartridgeFileBox;
         TImage *mwcfideHelp;
         TComboBox *TS2068RomCartridgeFileBox;
+        TOffice97Button *TC2068Btn;
+        TComboBox *TC2068RomCartridgeFileBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -193,6 +195,8 @@ __published:	// IDE-managed Components
         void __fastcall uSourceClick(TObject *Sender);
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall mwcfideHelpClick(TObject *Sender);
+        void __fastcall TC2068BtnClick(TObject *Sender);
+        void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -207,12 +211,13 @@ private:	// User declarations
         void PopulateRomCartridgeSinclairList();
         void PopulateRomCartridgeTS1510List();
         void PopulateRomCartridgeTS2068List();
+        void PopulateRomCartridgeTC2068List();
         void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, AnsiString fileExt);
         AnsiString DirectSoundError(int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
         int UpdateRomCartridgeControls(int machine, int spectrumModel);
-        int DetermineRomCartridgeType(AnsiString cartridgeText, int machine);
+        int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -248,6 +253,7 @@ private:	// User declarations
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;
+        vector<RomCartridgeEntry> tc2068RomCartridges;
         vector<RomCartridgeEntry> sinclairRomCartridges;
 
 public:		// User declarations

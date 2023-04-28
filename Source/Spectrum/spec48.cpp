@@ -265,7 +265,7 @@ void spec48_reset(void)
         SPECLast7ffd=0;
         SPECLast1ffd=0;
 
-        if (spectrum.model==SPECCYTS2068) SPECBankEnable=0;
+        if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068) SPECBankEnable=0;
         else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
         else SPECBankEnable=0;
 
@@ -414,7 +414,7 @@ void spec48_initialise()
 
         memcpy(SpecMem, memory, romlen);
 
-        if (spectrum.model==SPECCYTS2068)
+        if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                 memcpy(TimexMem+65536, memory+16384, 8192);
 
         if (spectrum.MFVersion == MF128)
@@ -615,7 +615,7 @@ void spec48_WriteByte(int Address, int Data)
 
                 // The ROM cartridge socket does not differentiate between a memory read or write,
                 // so all accesses are treated as reads
-                if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETS2068) && (RomCartridgeCapacity != 0))
+                if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETC2068) && (romcartridge.type != ROMCARTRIDGETS2068) && (RomCartridgeCapacity != 0))
                 {
                         BYTE data;
                         if (ReadRomCartridge(Address, (BYTE*)&data))
@@ -739,7 +739,7 @@ BYTE spec48_ReadByte(int Address)
                         return(data);
                 }
 
-                if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETS2068)  && (RomCartridgeCapacity != 0))
+                if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETC2068) && (romcartridge.type != ROMCARTRIDGETS2068)  && (RomCartridgeCapacity != 0))
                 {
                         if (ReadRomCartridge(Address, (BYTE*)&data))
                         {
@@ -1028,7 +1028,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xf4:
-                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                         TIMEXPage=Data;
                 break;
 
@@ -1121,7 +1121,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0xff:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_set_motor(Data);
 
-                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                 {
                         TIMEXByte=Data;
                         TIMEXMode=Data&7;
@@ -1409,7 +1409,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf4:
-                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                         return(TIMEXPage);
                 break;
 
@@ -1444,7 +1444,7 @@ BYTE ReadPort(int Address, int *tstates)
         case 0xff:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged)
                         return(floppy_get_state());
-                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
+                if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                         return(TIMEXByte);
                 break;
 
@@ -1457,7 +1457,7 @@ BYTE ReadPort(int Address, int *tstates)
                         if ( !(((SPECKb&16) && spectrum.kbissue==SPECKBISS2)
                                 || ((SPECKb&8) && spectrum.kbissue==SPECKBISS3))) data=64;
 
-                        if ((spectrum.model==SPECCYTC2048) || (spectrum.model==SPECCYTS2068)) data=160;
+                        if ((spectrum.model==SPECCYTC2048) || (spectrum.model==SPECCYTS2068) || (spectrum.model==SPECCYTC2068)) data=160;
 
                         SPECLoadCheck();
                         if (WavPlaying()) data = (data&~64) | (GetEarState() ? 64:0);

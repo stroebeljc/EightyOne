@@ -54,11 +54,12 @@
 #define SPECCY48        1
 #define SPECCYPLUS      3
 #define SPECCYTC2048    4
-#define SPECCYTS2068    5
-#define SPECCY128       6
-#define SPECCYPLUS2     7
-#define SPECCYPLUS2A    8
-#define SPECCYPLUS3     9
+#define SPECCYTC2068    5
+#define SPECCYTS2068    6
+#define SPECCY128       7
+#define SPECCYPLUS2     8
+#define SPECCYPLUS2A    9
+#define SPECCYPLUS3     10
 
 #define SPECKBISS2      0
 #define SPECKBISS3      1
@@ -93,7 +94,8 @@
 #define ROMCARTRIDGEZXC4     5
 #define ROMCARTRIDGE16K      6
 #define ROMCARTRIDGETS1510   7
-#define ROMCARTRIDGETS2068   8
+#define ROMCARTRIDGETC2068   8
+#define ROMCARTRIDGETS2068   9
 
 #define CRCACE		0x0a09
 #define CRCASZMICE04	0xcac9
@@ -334,6 +336,7 @@ typedef struct
         char ROMSPP3[256];
         char ROMSPP3E[256];
         char ROMTC2048[256];
+        char ROMTC2068[256];
         char ROMTS2068[256];
         char ROMDock[256];
         char ROMZXCF[256];
@@ -409,6 +412,7 @@ extern const char* romCartridgeFolder;
 extern const char* if2RomsFolder;
 extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;
+extern const char* tc2068RomsFolder;
 extern const char* replacementRomsFolder;
 
 extern void load_config();

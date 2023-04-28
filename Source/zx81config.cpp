@@ -57,6 +57,7 @@ const char* romCartridgeFolder    = "ROM Cartridges\\";
 const char* if2RomsFolder         = "ROM Cartridges\\ZX Interface 2\\";
 const char* ts1510RomsFolder      = "ROM Cartridges\\TS1510\\";
 const char* ts2068RomsFolder      = "ROM Cartridges\\TS2068\\";
+const char* tc2068RomsFolder      = "ROM Cartridges\\TC2068\\";
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 
@@ -159,6 +160,7 @@ void load_config(void)
         strcpy(emulator.ROMTS1000, "zx81.edition3.rom");
         strcpy(emulator.ROMTS1500, "ts1500.rom");
         strcpy(emulator.ROMTC2048, "tc2048.rom");
+        strcpy(emulator.ROMTC2068, "tc2068.rom");
         strcpy(emulator.ROMTS2068, "ts2068.rom");
 
         strcpy(emulator.ROMLAMBDA, "lambda8300.rom");

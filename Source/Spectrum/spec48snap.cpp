@@ -68,7 +68,7 @@ int LoadDock(char *Filename)
         int i,bank, chunks[8];
         char *ptr = NULL;
 
-        if (spectrum.model!=SPECCYTC2048 && spectrum.model!=SPECCYTS2068)
+        if (spectrum.model!=SPECCYTC2048 && spectrum.model!=SPECCYTS2068 && spectrum.model!=SPECCYTC2068)
                 return(0);
 
         if (!strlen(Filename))
@@ -223,7 +223,7 @@ void spec_load_z80(char *fname)
                 case 12: speccy=SPECCYPLUS2; break;
                 case 13: speccy=SPECCYPLUS2A; break;
                 case 14: speccy=SPECCYTC2048; break;
-                case 15: speccy=SPECCYTC2048; break;
+                case 15: speccy=SPECCYTC2068; break;
                 case 128: speccy=SPECCYTS2068; break;
                 default: speccy=SPECCY128; break;
                 }
@@ -246,7 +246,7 @@ void spec_load_z80(char *fname)
                 case 12: speccy=SPECCYPLUS2; break;
                 case 13: speccy=SPECCYPLUS2A; break;
                 case 14: speccy=SPECCYTC2048; break;
-                case 15: speccy=SPECCYTC2048; break;
+                case 15: speccy=SPECCYTC2068; break;
                 case 128: speccy=SPECCYTS2068; break;
                 default: speccy=SPECCY128; break;
                 }
@@ -321,7 +321,7 @@ void spec_load_z80(char *fname)
                         }
                         else
                         {
-                                if (speccy==SPECCY16 || speccy==SPECCY48 || speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
+                                if (speccy==SPECCY16 || speccy==SPECCY48 || speccy==SPECCYTC2048 || speccy==SPECCYTS2068 || speccy==SPECCYTC2068)
                                 {
                                         switch(page)
                                         {
@@ -399,7 +399,7 @@ void spec_load_z80(char *fname)
         Form1->DisplayArt->Enabled = (machine.colour != COLOURSPECTRA);
 
         z80.pc.w=buf[32]+ 256*buf[33];
-        if (speccy==SPECCYTC2048 || speccy==SPECCYTS2068)
+        if (speccy==SPECCYTC2048 || speccy==SPECCYTS2068 || speccy==SPECCYTC2068)
                 spec48_writeport(0xff,buf[36], &i);
         spec48_writeport(0x7ffd,buf[35], &i);
 
@@ -703,6 +703,7 @@ void spec_save_z80(char *fname)
         case SPECCY16: mode=0; flags=128; break;
         case SPECCY48: mode=0; flags=0; break;
         case SPECCYTC2048: mode=14; flags=0; break;
+        case SPECCYTC2068: mode=15; flags=0; break;
         case SPECCYTS2068: mode=128; flags=0; break;
         case SPECCY128: mode=3; flags=0; break;
         case SPECCYPLUS2: mode=12; flags=0; break;
@@ -720,8 +721,7 @@ void spec_save_z80(char *fname)
                         fputc(SPECLast7ffd,f);
         else    fputc(0,f);
 
-        if (spectrum.model==SPECCYTC2048
-                || spectrum.model==SPECCYTS2068)
+        if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                 fputc(TIMEXByte,f);
         else    fputc(0,f);
 
@@ -778,7 +778,7 @@ void spec_save_z80(char *fname)
         if (spectrum.model==SPECCY16)
                 z80_save_block(f,SPECBlk[1], 8);
         else if (spectrum.model==SPECCY48 || spectrum.model==SPECCYPLUS
-                || spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068)
+                || spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
         {
                 z80_save_block(f,SPECBlk[1], 8);
                 z80_save_block(f,SPECBlk[2], 4);

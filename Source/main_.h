@@ -167,6 +167,7 @@ __published:	// IDE-managed Components
         TMenuItem *DeleteAll;
         TMenuItem *N12;
         TMenuItem *divIDEJumperEClosed;
+        TMenuItem *N2;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,

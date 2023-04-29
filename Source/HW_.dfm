@@ -1,10 +1,10 @@
 object HW: THW
-  Left = 249
-  Top = 139
+  Left = 243
+  Top = 126
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
-  ClientHeight = 372
+  ClientHeight = 344
   ClientWidth = 408
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 402
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Timex
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -866,7 +866,7 @@ object HW: THW
         OnClick = TS1500BtnClick
       end
       object TC2048Btn: TOffice97Button
-        Left = 130
+        Left = 195
         Top = 0
         Width = 65
         Height = 65
@@ -908,7 +908,7 @@ object HW: THW
         OnClick = TC2048BtnClick
       end
       object TS2068Btn: TOffice97Button
-        Left = 260
+        Left = 130
         Top = 0
         Width = 65
         Height = 65
@@ -950,7 +950,7 @@ object HW: THW
         OnClick = TS2068BtnClick
       end
       object TC2068Btn: TOffice97Button
-        Left = 195
+        Left = 260
         Top = 0
         Width = 65
         Height = 65
@@ -964,21 +964,21 @@ object HW: THW
         InactiveColor = clBtnFace
         InactiveGlyph.Data = {
           76020000424D7602000000000000760000002800000020000000200000000100
-          04000000000000020000220B0000220B00001000000010000000000000001010
-          1000202020007B797B00FF4E000000C0000000008000C3C3C300FFC0FF00FFFF
+          04000000000000020000220B0000220B00001000000010000000000000007B79
+          7B00FF4E000000C0000000008000989A9900C3C3C300CDCDCD00FFC0FF00FFFF
           FF00000000000000000000000000000000000000000000000000888888888888
           8888888888888888888888888888888888888888888888888888888888888888
           8888888888888888888888888888888888888888888888888888888888888888
           8888888888888888888888888888888888888888888888888888888888888888
           8888888888888888888888888888888888888888888888888888888888888888
-          8888888888888888888888333333333333333333333333333388811111111111
-          1111111111100000003881965411177777777111111000066038811111111111
-          1111111111100000003881177171717171717171711000000038811111111111
-          1111111111100000003881111717171717171717711000000038811111111111
-          1111111111100000003881171717171717171717111000000038811111111111
-          1111111111100000003881111111111111111111111000000038822222222222
-          2222222222222222223880000000000000000000000000000038804449999000
-          0000000000000000003880000000000000000000000000000088888888888888
+          8888888888888888888888111111111111111111111111111188877777777777
+          7777777777766666661887743277755555555777777666644618877777777777
+          7777777777766666661887755757575757575757577666666618877777777777
+          7777777777766666661887777575757575757575577666666618877777777777
+          7777777777766666661887757575757575757575777666666618877777777777
+          7777777777766666661880000000000000000000000666666618855555555555
+          5555555555555555551886666666666666666666666666666618862229999666
+          6666666666666666661886666666666666666666666666666688888888888888
           8888888888888888888888888888888888888888888888888888888888888888
           8888888888888888888888888888888888888888888888888888888888888888
           8888888888888888888888888888888888888888888888888888888888888888
@@ -1353,7 +1353,7 @@ object HW: THW
   end
   object OK: TButton
     Left = 329
-    Top = 343
+    Top = 315
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -1384,7 +1384,7 @@ object HW: THW
     Left = 3
     Top = 140
     Width = 401
-    Height = 197
+    Height = 169
     ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
@@ -1486,7 +1486,7 @@ object HW: THW
         Width = 105
         Height = 17
         Caption = 'Kempston Mouse'
-        TabOrder = 14
+        TabOrder = 7
       end
       object TS2050: TCheckBox
         Left = 293
@@ -1496,7 +1496,7 @@ object HW: THW
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 17
+        TabOrder = 10
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
@@ -1505,16 +1505,16 @@ object HW: THW
         Width = 97
         Height = 17
         Caption = 'Multiface 128'
-        TabOrder = 15
+        TabOrder = 8
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
         Left = 293
         Top = 35
-        Width = 74
+        Width = 76
         Height = 20
         Caption = 'Configure'
-        TabOrder = 18
+        TabOrder = 11
         OnClick = TS2050ConfigClick
       end
       object uSpeech: TCheckBox
@@ -1523,7 +1523,7 @@ object HW: THW
         Width = 97
         Height = 17
         Caption = 'Currah µSpeech'
-        TabOrder = 13
+        TabOrder = 6
         OnClick = uSpeechClick
       end
       object ZXPrinter: TCheckBox
@@ -1532,7 +1532,7 @@ object HW: THW
         Width = 97
         Height = 17
         Caption = 'ZX Printer'
-        TabOrder = 16
+        TabOrder = 9
         OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
@@ -1541,7 +1541,7 @@ object HW: THW
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 19
+        TabOrder = 12
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
@@ -1574,32 +1574,32 @@ object HW: THW
           'ZXC4')
       end
       object BrowseRomCartridge: TButton
-        Left = 369
-        Top = 136
+        Left = 370
+        Top = 112
         Width = 19
         Height = 21
         Caption = '...'
         Enabled = False
-        TabOrder = 11
+        TabOrder = 20
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
         Left = 293
         Top = 89
-        Width = 74
+        Width = 76
         Height = 20
         Caption = 'SD Card'
-        TabOrder = 20
+        TabOrder = 13
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
-        Left = 86
-        Top = 136
+        Left = 184
+        Top = 112
         Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 5
+        TabOrder = 14
         Visible = False
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
@@ -1616,58 +1616,58 @@ object HW: THW
         Width = 97
         Height = 17
         Caption = 'Currah µSource'
-        TabOrder = 12
+        TabOrder = 5
         OnClick = uSourceClick
       end
       object RomCartridgeFileBox: TEdit
-        Left = 86
-        Top = 136
-        Width = 279
+        Left = 184
+        Top = 112
+        Width = 184
         Height = 21
         Enabled = False
-        TabOrder = 10
+        TabOrder = 15
       end
       object SinclairRomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 136
-        Width = 281
+        Left = 184
+        Top = 112
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 9
+        TabOrder = 16
         Visible = False
         OnChange = SinclairRomCartridgeFileBoxChange
       end
       object TS1510RomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 136
-        Width = 281
+        Left = 184
+        Top = 112
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 8
+        TabOrder = 17
         Visible = False
         OnChange = TS1510RomCartridgeFileBoxChange
       end
       object TC2068RomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 136
-        Width = 281
+        Left = 184
+        Top = 112
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 7
+        TabOrder = 18
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
       object TS2068RomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 136
-        Width = 281
+        Left = 184
+        Top = 112
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 6
+        TabOrder = 19
         Visible = False
         OnChange = TS2068RomCartridgeFileBoxChange
       end

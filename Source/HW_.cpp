@@ -796,6 +796,7 @@ void THW::ConfigureRomCartridge()
                 RomCartridgeCapacity = 0;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
                 LoadDock("");
+                *(emulator.romcartridgefilepath) = '\0';
         }
         else
         {
@@ -890,13 +891,15 @@ void THW::ConfigureRomCartridge()
                         loadSuccessful = LoadRomCartridgeFile(romCartridgeFilePath.c_str());
                 }
 
+                strcpy(emulator.romcartridgefilepath, romCartridgeFilePath.c_str());
+
                 if (!loadSuccessful)
                 {
                         AnsiString msg;
                         msg = "Failed to load cartridge file:\n\n";
                         msg += romCartridgeFilePath;
                         Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
-                        
+
                         LoadDock("");
                 }
 
@@ -1013,8 +1016,8 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
 
         if (zxc1Selected)
         {
-                RomCartridgeFileBox->Left = 178;
-                RomCartridgeFileBox->Width = 189;
+                RomCartridgeFileBox->Left = 277;
+                RomCartridgeFileBox->Width = 88;
 
                 if (ZXC1ConfigurationBox->ItemIndex == -1)
                 {
@@ -1025,8 +1028,8 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
         }
         else
         {
-                RomCartridgeFileBox->Left = 86;
-                RomCartridgeFileBox->Width = 281;
+                RomCartridgeFileBox->Left = 184;
+                RomCartridgeFileBox->Width = 184;
         }
 
         return romcartridgetype;
@@ -1227,11 +1230,20 @@ void THW::ConfigureMachineSettings()
                 machine.reset = spec48_reset;
                 machine.exit = spec48_exit;
 
-                if (spectrum.model==SPECCY16 || spectrum.model==SPECCY48 || spectrum.model==SPECCYPLUS || spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTC2068)
+                if (spectrum.model==SPECCY16 || spectrum.model==SPECCY48 || spectrum.model==SPECCYPLUS || spectrum.model==SPECCYTC2048)
                 {
                         machine.clockspeed=3500000;
                         machine.tperscanline=224;
                         spectrum.intposition=14336;
+                        machine.scanlines=312;
+                        machine.fps=50;
+                        machine.tperframe= machine.tperscanline * machine.scanlines;
+                }
+                else if (spectrum.model==SPECCYTC2068)
+                {
+                        machine.clockspeed=3528000;
+                        machine.tperscanline=226;
+                        spectrum.intposition=13560;
                         machine.scanlines=312;
                         machine.fps=50;
                         machine.tperframe= machine.tperscanline * machine.scanlines;
@@ -1347,8 +1359,6 @@ void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
                                 bmp = romBase + "tc2048.bmp";
                                 break;
                         case SPECCYTC2068:
-                                bmp = romBase + "tc2068.bmp";
-                                break;
                         case SPECCYTS2068:
                                 bmp = romBase + "ts2068.bmp";
                                 break;
@@ -2541,7 +2551,7 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         Form1->EnableAnnotationOptions();
         NewMachineName=TC2068Btn->Caption;
         RomBox->Clear();
-        RomBox->Items->Add("tc2068.rom");
+        RomBox->Items->Add("ts2068.rom");
         RomBox->Text = emulator.ROMTC2068;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
         ChrGenBox->Items->Strings[0] = "Timex";
@@ -2920,7 +2930,7 @@ void THW::LoadSettings(TIniFile *ini)
         if (ini->ReadBool("HWARE","TS1000",TS1000Btn->Down)) TS1000BtnClick(NULL);
         if (ini->ReadBool("HWARE","TS1500",TS1500Btn->Down)) TS1500BtnClick(NULL);
         if (ini->ReadBool("HWARE","TC2048",TC2048Btn->Down)) TC2048BtnClick(NULL);
-        if (ini->ReadBool("HWARE","TC2068",TS2068Btn->Down)) TC2068BtnClick(NULL);
+        if (ini->ReadBool("HWARE","TC2068",TC2068Btn->Down)) TC2068BtnClick(NULL);
         if (ini->ReadBool("HWARE","TS2068",TS2068Btn->Down)) TS2068BtnClick(NULL);
         if (ini->ReadBool("HWARE","Lambda",LambdaBtn->Down)) LambdaBtnClick(NULL);
         if (ini->ReadBool("HWARE","R470",R470Btn->Down)) R470BtnClick(NULL);
@@ -3078,7 +3088,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         }
         
         RomBox->Text=Path;
-        RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
+        RomBox->SelStart=0;
         ResetRequired=true;
 
         SetZX80Icon();
@@ -3370,8 +3380,7 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         }
           
         RomCartridgeFileBox->Text=Path;
-        RomCartridgeFileBox->SelStart=RomCartridgeFileBox->Text.Length()-1;
-        RomCartridgeFileBox->SelLength=0;
+        RomCartridgeFileBox->SelStart=0;
 
         TS1510RomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
         TS1510RomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;

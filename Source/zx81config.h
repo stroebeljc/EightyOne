@@ -365,6 +365,7 @@ typedef struct
         char inipath[256];
         char configpath[256];
         char machinename[256];
+        char romcartridgefilepath[256];
 
         int scanlinesPerFrame;
 } EMULATOR;

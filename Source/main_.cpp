@@ -252,7 +252,12 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         else HelpTopics2->Enabled=false;
 
         BuildConfigMenu();
-        if ( Sound.Initialise(Form1->Handle, machine.fps,0,0,0 )) MessageBox(NULL, "","Sound Error",0);
+        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "","Sound Error", 0);
+
+        //####
+     //   if (strlen(emulator.cwd) >= 180) MessageBox(NULL, "","Warning", 0);
+        //#### get result and write to ini file so only warned once
+
 }
 
 //---------------------------------------------------------------------------
@@ -2493,6 +2498,12 @@ void __fastcall TForm1::divIDEJumperEClosedClick(TObject *Sender)
 {
         divIDEJumperEClosed->Checked = !divIDEJumperEClosed->Checked;
         spectrum.divIDEJumperEClosed = divIDEJumperEClosed->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::CheckForUpdatesClick(TObject *Sender)
+{
+        ShellExecute(NULL, "open", "https://sourceforge.net/projects/eightyone-sinclair-emulator/", "", NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
 

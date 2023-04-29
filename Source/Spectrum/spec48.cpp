@@ -1562,7 +1562,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         && spectrum.HDType!=HDPITERSCF
                         && spectrum.HDType!=HDPITERS8B
                         && spectrum.HDType!=HDPITERS16B
-                        && (    (SPECBlk[0]==0 && spectrum.model<SPECCYTS2068)
+                        && (    (SPECBlk[0]==0 && spectrum.model<SPECCYTC2068)
                              || (SPECBlk[0]==1 && spectrum.model>SPECCYTS2068 && spectrum.model<SPECCYPLUS2A)
                              || (SPECBlk[0]==3 && spectrum.model>SPECCYPLUS2) ))
                 {

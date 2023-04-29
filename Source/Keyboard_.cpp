@@ -22,6 +22,7 @@
 //---------------------------------------------------------------------------
 
 #include <vcl.h>
+#include <string.h>
 #pragma hdrstop
 
 #include "Keyboard_.h"
@@ -105,6 +106,7 @@ void TKeyboard::KbChange(void)
         Keyboard->spec128kbSpanish->Visible=false;
         Keyboard->spec128kbArabic->Visible=false;
         Keyboard->tc2048kb->Visible=false;
+        Keyboard->tc2068kbTimeWord->Visible=false;
         Keyboard->ts2068kb->Visible=false;
         Keyboard->specPlus2kb->Visible=false;
         Keyboard->specPlus2kbSpanish->Visible=false;
@@ -220,11 +222,19 @@ void TKeyboard::KbChange(void)
                                         Keyboard->spec128kb->Visible=true;
                                 break;
                         case SPECCYTC2048:
-                        case SPECCYTC2068:
                                 Keyboard->tc2048kb->Visible=true;
                                 break;
+                        case SPECCYTC2068:
                         case SPECCYTS2068:
-                                Keyboard->ts2068kb->Visible=true;
+                                if (strstr(emulator.romcartridgefilepath, "TimeWord"))
+                                {
+                                        Keyboard->tc2068kbTimeWord->Visible=true;
+                                }
+                                else
+                                {
+                                        Keyboard->ts2068kb->Visible=true;
+                                }
+
                                 break;
                         case SPECCYPLUS:
                                 if (emulator.romcrc == CRCARABIC48V1 || emulator.romcrc == CRCARABIC48V2 || emulator.romcrc == CRCARABIC48V31)
@@ -321,6 +331,7 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
         SetKeyboardSize(spec128kbSpanish, large);
         SetKeyboardSize(spec128kbArabic, large);
         SetKeyboardSize(tc2048kb, large);
+        SetKeyboardSize(tc2068kbTimeWord, large);
         SetKeyboardSize(ts2068kb, large);
         SetKeyboardSize(specPlus2kb, large);
         SetKeyboardSize(specPlus2kbSpanish, large);

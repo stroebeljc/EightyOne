@@ -160,7 +160,7 @@ void load_config(void)
         strcpy(emulator.ROMTS1000, "zx81.edition3.rom");
         strcpy(emulator.ROMTS1500, "ts1500.rom");
         strcpy(emulator.ROMTC2048, "tc2048.rom");
-        strcpy(emulator.ROMTC2068, "tc2068.rom");
+        strcpy(emulator.ROMTC2068, "ts2068.rom");
         strcpy(emulator.ROMTS2068, "ts2068.rom");
 
         strcpy(emulator.ROMLAMBDA, "lambda8300.rom");

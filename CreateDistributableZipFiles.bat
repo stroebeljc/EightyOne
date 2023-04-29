@@ -143,6 +143,14 @@ set fatTestFile=%OutputReleaseFolder%\Examples\Drives\FatTest.zip
 call :unzip "%OutputReleaseFolder%\Examples\Drives\" "%fatTestFile%"
 del /f /q "%fatTestFile%" > nul 2>&1
 
+rem ---- Unzip the divIDETest.hdf zip file
+
+echo Inflating example file 'divIDETest.vhd'...
+
+set divIDETestFile=%OutputReleaseFolder%\Examples\Drives\divIDETest.zip
+call :unzip "%OutputReleaseFolder%\Examples\Drives\" "%divIDETestFile%"
+del /f /q "%divIDETestFile%" > nul 2>&1
+
 rem ---- Create the distribution files folder contents
 
 echo Creating Development Environment distributable zip file...

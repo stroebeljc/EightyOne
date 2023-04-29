@@ -564,7 +564,7 @@ void zx81_WriteByte(int Address, int Data)
                         // Shadowing 1K RAM at 17-18K, 18-19K, 19-20K ... 31-32K, and repeated within 48-64K region
                         Address = 0x4000 | (Address & zx81.RAMTOP & 0x3FFF);
                 }
-                else if (((Address & 0x7FFF) >= 0x2000) && zx81.RAM816k)
+                else if (((Address & 0x7FFF) >= 0x2000) && zx81.RAM816k && !zx81.RAM816kWriteProtected)
                 {
                         // Shadow the RAM at 40-48K
                         Address = Address & 0x7FFF;
@@ -581,6 +581,7 @@ void zx81_WriteByte(int Address, int Data)
         if (Address<=zx81.ROMTOP && machine.protectROM) return;
         if (Address>8191 && Address<16384 && zx81.shadowROM && machine.protectROM) return;
         if (Address>8191 && Address<16384 && !zx81.RAM816k) return;
+        if (Address>8191 && Address<16384 && zx81.RAM816k && zx81.RAM816kWriteProtected) return;
 
 writeMem:
         memory[Address]=Data;

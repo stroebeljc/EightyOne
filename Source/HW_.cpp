@@ -219,6 +219,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigureRamTop();
         ConfigureDefaultRamSettings();
         DetermineRamSizeLabel(NewMachineName);
+        Configure8K16KRam();
 
         ConfigureColour();
         ConfigureBasicLister();
@@ -246,6 +247,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         zx81.improvedWait = ImprovedWait->Checked;
         zx81.shadowROM = !EnableLowRAM->Checked;
         zx81.RAM816k = EnableLowRAM->Checked;
+        zx81.RAM816kWriteProtected = Form1->WriteProtect8KRAM->Checked;
         zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
 
         Form1->InWaveLoader->Enabled=true;
@@ -283,6 +285,16 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         if (Dbg->Visible) Dbg->UpdateVals();
 
         ReInitialiseSound();
+}
+
+void THW::Configure8K16KRam()
+{
+        bool enable8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
+        Form1->WriteProtect8KRAM->Enabled = enable8K16KProtectOption;
+        if (!Form1->WriteProtect8KRAM->Enabled)
+        {
+                Form1->WriteProtect8KRAM->Checked = false;
+        }
 }
 
 void THW::ConfigureRzxSupport()
@@ -1911,6 +1923,7 @@ void THW::SetupForQL(void)
         EnableLowRAM->Enabled=false;
         M1Not->Enabled=false;
         ImprovedWait->Enabled=false;
+        ImprovedWait->Checked=false;
         TS2050->Enabled=false;
         TS2050Config->Enabled=TS2050->Enabled && TS2050->Checked;
 

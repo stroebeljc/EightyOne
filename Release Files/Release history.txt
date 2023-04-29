@@ -45,6 +45,8 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
     and Spectrum+3.
   - Added emulation of the TC2068.
   - Added the 2 released TC2068 ROM cartridges.
+  - Added an entry under the Help menu to access the EightyOne release website.
+  - Added a facility to write protect RAM in the 8K-16K area (if enabled).
 
 Version 1.36 - 15/04/2023 (by Paul Farrow)
 * Bug fixes:

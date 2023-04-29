@@ -250,6 +250,7 @@ private:	// User declarations
         void ConfigureSymbolFile(AnsiString romBase);
         void ConfigureCharacterBitmapFile(AnsiString romBase);
         void SetUpRomCartridges();
+        void Configure8K16KRam();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

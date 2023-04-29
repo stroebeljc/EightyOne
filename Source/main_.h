@@ -169,6 +169,7 @@ __published:	// IDE-managed Components
         TMenuItem *divIDEJumperEClosed;
         TMenuItem *N2;
         TMenuItem *CheckForUpdates;
+        TMenuItem *WriteProtect8KRAM;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -274,6 +275,7 @@ __published:	// IDE-managed Components
         void __fastcall DeleteConfigItem1Click(TObject *Sender);
         void __fastcall divIDEJumperEClosedClick(TObject *Sender);
         void __fastcall CheckForUpdatesClick(TObject *Sender);
+        void __fastcall WriteProtect8KRAMClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

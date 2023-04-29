@@ -77,7 +77,8 @@ void load_config(void)
         emulator.machine=MACHINEZX81;
         
         zx81.shadowROM=0;
-        zx81.RAM816k=1;
+        zx81.RAM816k=0;
+        zx81.RAM816kWriteProtected=0;
         machine.protectROM=1;
         zx81.RAMTOP=32767;
         zx81.ROMTOP=8191;
@@ -107,7 +108,6 @@ void load_config(void)
         zx81.chromaMode=0x0F;
         zx81.chromaColourSwitchOn = 0;
         zx81.FloatingPointHardwareFix = 0;
-
         machine.NTSC=0;
         machine.clockspeed=3250000;
         machine.tperscanline=207;
@@ -215,6 +215,7 @@ void load_config(void)
         strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
 
         strcpy(emulator.machinename, "EightyOne");
+        *(emulator.romcartridgefilepath) = '\0';
 
         zx97.bankswitch=0;
         zx97.protect08=1;

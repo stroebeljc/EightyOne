@@ -166,6 +166,7 @@ typedef struct
         CFGBYTE extfont;
         CFGBYTE shadowROM;
         CFGBYTE RAM816k;
+        CFGBYTE RAM816kWriteProtected;
         CFGBYTE truehires;
         CFGBYTE chrgen;
         CFGBYTE enableQSchrgen;

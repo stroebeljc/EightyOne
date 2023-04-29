@@ -2514,3 +2514,10 @@ void __fastcall TForm1::CheckForUpdatesClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::WriteProtect8KRAMClick(TObject *Sender)
+{
+        WriteProtect8KRAM->Checked = !WriteProtect8KRAM->Checked;
+        zx81.RAM816kWriteProtected = WriteProtect8KRAM->Checked;
+}
+//---------------------------------------------------------------------------
+

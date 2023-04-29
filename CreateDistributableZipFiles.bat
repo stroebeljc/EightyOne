@@ -145,7 +145,7 @@ del /f /q "%fatTestFile%" > nul 2>&1
 
 rem ---- Unzip the divIDETest.hdf zip file
 
-echo Inflating example file 'divIDETest.vhd'...
+echo Inflating example file 'divIDETest.hdf'...
 
 set divIDETestFile=%OutputReleaseFolder%\Examples\Drives\divIDETest.zip
 call :unzip "%OutputReleaseFolder%\Examples\Drives\" "%divIDETestFile%"

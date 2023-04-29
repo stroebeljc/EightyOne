@@ -1,6 +1,6 @@
 object KeyboardFunctions: TKeyboardFunctions
-  Left = 748
-  Top = 147
+  Left = 742
+  Top = 135
   AutoSize = True
   BorderIcons = []
   BorderStyle = bsToolWindow

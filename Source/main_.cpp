@@ -252,12 +252,16 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         else HelpTopics2->Enabled=false;
 
         BuildConfigMenu();
-        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "","Sound Error", 0);
+        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
 
-        //####
-     //   if (strlen(emulator.cwd) >= 180) MessageBox(NULL, "","Warning", 0);
-        //#### get result and write to ini file so only warned once
-
+        if (emulator.checkInstallationPathLength && strlen(emulator.cwd) >= 180)
+        {
+                int ret = MessageBox(NULL, "The location of the EightyOne folder may cause selection of alternate ROMs\nor ROM cartridges to exceed to maximum path length supported by Windows.\n\nCheck and show this warning next time EightyOne is started?", "Warning", MB_YESNO |MB_ICONWARNING);
+                if (ret == IDNO)
+                {
+                        emulator.checkInstallationPathLength = 0;
+                }
+        }
 }
 
 //---------------------------------------------------------------------------
@@ -1107,6 +1111,8 @@ void TForm1::LoadSettings(TIniFile *ini)
 {
         if (ini->ReadBool("MAIN","InverseVideo",InverseVideo->Checked)) InverseVideoClick(NULL);
 
+        emulator.checkInstallationPathLength = ini->ReadBool("MAIN", "CheckInstallationPathLength", 1);
+
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
         Display1->Checked = ini->ReadBool("MAIN", "Display1", Display1->Checked);
         Speed1->Checked = ini->ReadBool("MAIN", "Speed1", Speed1->Checked);
@@ -1199,6 +1205,7 @@ void TForm1::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("MAIN", "ShowSplash", ShowSplash);
         ini->WriteInteger("MAIN","RenderMode", RenderMode);
+        ini->WriteInteger("MAIN","CheckInstallationPathLength", emulator.checkInstallationPathLength);
 
         ini->WriteBool("MAIN","N1001",N1001->Checked);
         ini->WriteBool("MAIN","N2001",N2001->Checked);

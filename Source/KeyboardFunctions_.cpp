@@ -5,6 +5,8 @@
 
 #include "KeyboardFunctions_.h"
 #include "Keyboard_.h"
+#include "main_.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -56,6 +58,27 @@ void __fastcall TKeyboardFunctions::TrackerTimer(TObject *Sender)
         {
                 Tracker->Interval *= 2;
         }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyboardFunctions::FormKeyDown(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+        Form1->FormKeyDown(Sender, Key, Shift);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyboardFunctions::FormKeyPress(TObject *Sender,
+      char &Key)
+{
+        Form1->FormKeyPress(Sender, Key);        
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKeyboardFunctions::FormKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+        Form1->FormKeyUp(Sender, Key, Shift);
 }
 //---------------------------------------------------------------------------
 

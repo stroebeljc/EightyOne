@@ -1,6 +1,6 @@
 object KeyboardFunctions: TKeyboardFunctions
-  Left = 192
-  Top = 144
+  Left = 748
+  Top = 147
   AutoSize = True
   BorderIcons = []
   BorderStyle = bsToolWindow
@@ -15,6 +15,9 @@ object KeyboardFunctions: TKeyboardFunctions
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
+  OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
+  OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 13
   object zx80IntegralFunctions: TImage

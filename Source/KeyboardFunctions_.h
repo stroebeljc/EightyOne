@@ -17,6 +17,11 @@ __published:	// IDE-managed Components
         TTimer *Tracker;
         void __fastcall zx80IntegralFunctionsDblClick(TObject *Sender);
         void __fastcall TrackerTimer(TObject *Sender);
+        void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+        void __fastcall FormKeyPress(TObject *Sender, char &Key);
+        void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
 private:	// User declarations
         int keyboardLeft;
         int keyboardTop;

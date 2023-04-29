@@ -220,9 +220,9 @@ void TKeyboard::KbChange(void)
                                         Keyboard->spec128kb->Visible=true;
                                 break;
                         case SPECCYTC2048:
-                        case SPECCYTC2068:
                                 Keyboard->tc2048kb->Visible=true;
                                 break;
+                        case SPECCYTC2068:
                         case SPECCYTS2068:
                                 Keyboard->ts2068kb->Visible=true;
                                 break;

@@ -219,9 +219,8 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigureRamTop();
         ConfigureDefaultRamSettings();
         DetermineRamSizeLabel(NewMachineName);
-        Configure8K16KRam();
-
         ConfigureColour();
+        Configure8K16KRam();
         ConfigureBasicLister();
         ConfigureRom();
         ConfigureMultifaceRom();
@@ -289,7 +288,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
 
 void THW::Configure8K16KRam()
 {
-        bool enable8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
+        bool enable8K16KProtectOption = EnableLowRAM->Checked && (machine.colour != COLOURCHROMA && emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
         Form1->WriteProtect8KRAM->Enabled = enable8K16KProtectOption;
         if (!Form1->WriteProtect8KRAM->Enabled)
         {

@@ -170,7 +170,7 @@ __published:	// IDE-managed Components
         TMenuItem *N2;
         TMenuItem *CheckForUpdates;
         TMenuItem *WriteProtect8KRAM;
-        TMenuItem *ResettoDefaultSettings;
+        TMenuItem *ResetToDefaultSettings;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -277,6 +277,7 @@ __published:	// IDE-managed Components
         void __fastcall divIDEJumperEClosedClick(TObject *Sender);
         void __fastcall CheckForUpdatesClick(TObject *Sender);
         void __fastcall WriteProtect8KRAMClick(TObject *Sender);
+        void __fastcall ResetToDefaultSettingsClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -291,6 +292,7 @@ private:	// User declarations
         void UpdateAnnotationImages();
         void UpdateAnnotationImage(TMenuItem* item);
         void UpdateEmulatorAnnotationSettings();
+        void LoadIniFile(AnsiString FileName);
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);

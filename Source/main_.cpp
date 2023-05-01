@@ -28,6 +28,7 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <dir.h>
+#include <stdio.h>
 
 #pragma hdrstop
 
@@ -108,6 +109,7 @@ extern void spec_load_sna(char *fname);
 extern void spec_save_z80(char *fname);
 extern void spec_save_sna(char *fname);
 extern "C" void rzx_close(void);
+extern bool Restart;
 
 int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 
@@ -711,9 +713,12 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Sound.End();
 
-        ini = new TIniFile(emulator.inipath);
-        SaveSettings(ini);
-        delete ini;
+        if (!Restart)
+        {
+                ini = new TIniFile(emulator.inipath);
+                SaveSettings(ini);
+                delete ini;
+        }
 
         P3Drive->DriveAEjectBtnClick(NULL);
         P3Drive->DriveBEjectBtnClick(NULL);
@@ -1770,7 +1775,6 @@ void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 
 void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 {
-        TIniFile *ini;
         AnsiString FileName;
         AnsiString ConfigName;
         int i;
@@ -1793,6 +1797,14 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         FileName = FileName + ConfigName;
         FileName = FileName + ".ini";
 
+        LoadIniFile(FileName);
+}
+//---------------------------------------------------------------------------
+
+void TForm1::LoadIniFile(AnsiString FileName)
+{                      
+        TIniFile *ini;
+        
         ini = new TIniFile(FileName);
 
         Form1->LoadSettings(ini);
@@ -2519,6 +2531,25 @@ void __fastcall TForm1::WriteProtect8KRAMClick(TObject *Sender)
 {
         WriteProtect8KRAM->Checked = !WriteProtect8KRAM->Checked;
         zx81.RAM816kWriteProtected = WriteProtect8KRAM->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
+{
+        AnsiString iniFile;
+        char iniPath[256];
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
+        {
+                iniFile = iniPath;
+                if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
+                iniFile += iniFolder;
+                iniFile += "EightyOne.ini";
+
+                DeleteFile(iniFile);
+
+                Restart = true;
+                Close();
+        }
 }
 //---------------------------------------------------------------------------
 

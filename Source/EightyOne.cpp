@@ -153,7 +153,7 @@ USEFORM("Interface1.cpp", IF1);
 char **CommandLine;
 TSplash *spl;
 bool ShowSplash=true;
-
+bool Restart=false;
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 {
@@ -212,20 +212,26 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 
         try
         {
-                 Application->Initialize();
-                 Application->Title = "EightyOne";
-                 #include "splashImpl.cpp"
+                Application->Initialize();
+                Application->Title = "EightyOne";
+                #include "splashImpl.cpp"
 
-                 Application->ProcessMessages();
-                 delete spl;
+                Application->ProcessMessages();
+                delete spl;
 
-                 Form1->GatherWindowsIfRequired();
-                 Form1->Caption = "EightyOne";
-                 Form1->Timer2->Enabled=true;
-                 Form1->RunFrameEnable=1;
-                 Form1->SetFocus();
+                Form1->GatherWindowsIfRequired();
+                Form1->Caption = "EightyOne";
+                Form1->Timer2->Enabled=true;
+                Form1->RunFrameEnable=1;
+                Form1->SetFocus();
 
-                 Application->Run();
+                Application->Run();
+
+                if (Restart)
+                {
+                        AnsiString exeFile = Application->ExeName;
+                        ShellExecute(NULL, "open", exeFile.c_str(), NULL, NULL, SW_SHOWNORMAL);
+                }
         }
         catch (Exception &exception)
         {

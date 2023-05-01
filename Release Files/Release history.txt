@@ -49,7 +49,6 @@ Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
   - Added an entry under the Help menu to access the EightyOne release website.
   - Added a facility to write protect RAM in the 8K-16K area (if enabled).
   - Added an option to delete the EightyOne.ini file and reset to default settings.
-  - Added a button to the Hardware dialog to reset to the default settings.
 
 Version 1.36 - 15/04/2023 (by Paul Farrow)
 * Bug fixes:

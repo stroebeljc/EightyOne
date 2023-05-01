@@ -3594,31 +3594,3 @@ void __fastcall THW::mwcfideHelpClick(TObject *Sender)
 
 //---------------------------------------------------------------------------
 
-void __fastcall THW::DefaultsBtnClick(TObject *Sender)
-{
-        SoundCardBox->ItemIndex =0;
-        ChrGenBox->ItemIndex = 0;
-        HiResBox->ItemIndex = 0;
-        ColourBox->ItemIndex = 0;
-        RomCartridgeBox->ItemIndex = 0;
-        uSource->Checked = false;
-        uSpeech->Checked = false;
-        KMouse->Checked = false;
-        Multiface->Checked = false;
-        ZXPrinter->Checked = false;
-        TS2050->Checked = false;
-        ZXpand->Checked = false;
-        RamPackBox->ItemIndex = 0;
-        FDC->ItemIndex = 0;
-        IDEBox->ItemIndex = 0;
-        RomBox->ItemIndex = 0;
-        ProtectROM->Checked = true;
-        EnableLowRAM->Checked = false;
-        M1Not->Checked = false;
-        ImprovedWait->Checked = false;
-        FloatingPointHardwareFix->Checked = false;
-        Issue2->Checked = false;
-        NTSC->Checked = false;
-}
-//---------------------------------------------------------------------------
-

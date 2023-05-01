@@ -1359,7 +1359,7 @@ object HW: THW
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 4
+    TabOrder = 3
     OnClick = OKClick
   end
   object RamPackBox: TComboBox
@@ -2045,17 +2045,6 @@ object HW: THW
         OnChange = RomBoxChange
       end
     end
-  end
-  object DefaultsBtn: TButton
-    Left = 4
-    Top = 315
-    Width = 75
-    Height = 25
-    Anchors = [akRight, akBottom]
-    Caption = 'Defaults'
-    Default = True
-    TabOrder = 3
-    OnClick = DefaultsBtnClick
   end
   object RomSelect: TOpenDialog
     Filter = 'Cartridge Files|*.rom;*.bin;*.dck'

@@ -127,7 +127,10 @@ void TKeyboard::KbChange(void)
                 break;
 
         case CRCTS1500:
-                Keyboard->ts1500kb->Visible=true;
+                if (zx81.zxpand)
+                        Keyboard->ts1500zxpandkb->Visible=true;
+                else
+                        Keyboard->ts1500kb->Visible=true;
                 break;
 
         case CRCZX80:

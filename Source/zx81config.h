@@ -420,6 +420,7 @@ extern const char* tc2068RomsFolder;
 extern const char* replacementRomsFolder;
 
 extern void load_config();
+extern void LoadMachineRoms();
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))

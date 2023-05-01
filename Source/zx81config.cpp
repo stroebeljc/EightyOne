@@ -61,6 +61,8 @@ const char* tc2068RomsFolder      = "ROM Cartridges\\TC2068\\";
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 
+void LoadMachineRoms();
+
 void load_config(void)
 {
         int versionNumberMajor;
@@ -145,30 +147,7 @@ void load_config(void)
 
         emulator.single_step=0;
 
-        strcpy(emulator.ROM80, "zx80.rom");
-        strcpy(emulator.ROM81, "zx81.edition3.rom");
-        strcpy(emulator.ROMSP16, "spectrum48.rom");
-        strcpy(emulator.ROMSP48, "spectrum48.rom");
-        strcpy(emulator.ROMSPP, "spectrum48.rom");
-        strcpy(emulator.ROMSP128, "spectrum128.rom");
-        strcpy(emulator.ROMQL, "ql.js.rom");
-
-        strcpy(emulator.ROMSPP2, "spectrum+2.rom");
-        strcpy(emulator.ROMSPP2A, "spectrum+3.version4-1.rom");
-        strcpy(emulator.ROMSPP3, "spectrum+3.version4-1.rom");
-
-        strcpy(emulator.ROMTS1000, "zx81.edition3.rom");
-        strcpy(emulator.ROMTS1500, "ts1500.rom");
-        strcpy(emulator.ROMTC2048, "tc2048.rom");
-        strcpy(emulator.ROMTC2068, "ts2068.rom");
-        strcpy(emulator.ROMTS2068, "ts2068.rom");
-
-        strcpy(emulator.ROMLAMBDA, "lambda8300colour.rom");
-        strcpy(emulator.ROMR470, "ringo470.rom");
-        strcpy(emulator.ROMTK85, "tk85.rom");
-        strcpy(emulator.ROMACE, "jupiterace.rom");
-
-        strcpy(emulator.ROM97LE, "zx97.rom");
+        LoadMachineRoms();
 
         AnsiString simplePlus3Rom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom");
         strcpy(emulator.ROMSPP3E, simplePlus3Rom.c_str());
@@ -252,3 +231,30 @@ void load_config(void)
         mouse.lasty=0;
 }
 
+void LoadMachineRoms()
+{
+        strcpy(emulator.ROM80, "zx80.rom");
+        strcpy(emulator.ROM81, "zx81.edition3.rom");
+        strcpy(emulator.ROMSP16, "spectrum48.rom");
+        strcpy(emulator.ROMSP48, "spectrum48.rom");
+        strcpy(emulator.ROMSPP, "spectrum48.rom");
+        strcpy(emulator.ROMSP128, "spectrum128.rom");
+        strcpy(emulator.ROMQL, "ql.js.rom");
+
+        strcpy(emulator.ROMSPP2, "spectrum+2.rom");
+        strcpy(emulator.ROMSPP2A, "spectrum+3.version4-1.rom");
+        strcpy(emulator.ROMSPP3, "spectrum+3.version4-1.rom");
+
+        strcpy(emulator.ROMTS1000, "zx81.edition3.rom");
+        strcpy(emulator.ROMTS1500, "ts1500.rom");
+        strcpy(emulator.ROMTC2048, "tc2048.rom");
+        strcpy(emulator.ROMTC2068, "ts2068.rom");
+        strcpy(emulator.ROMTS2068, "ts2068.rom");
+
+        strcpy(emulator.ROMLAMBDA, "lambda8300colour.rom");
+        strcpy(emulator.ROMR470, "ringo470.rom");
+        strcpy(emulator.ROMTK85, "tk85.rom");
+        strcpy(emulator.ROMACE, "jupiterace.rom");
+
+        strcpy(emulator.ROM97LE, "zx97.rom");
+}

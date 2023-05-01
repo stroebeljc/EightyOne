@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 166
-  Top = 182
+  Left = 200
+  Top = 123
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1359,7 +1359,7 @@ object HW: THW
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 3
+    TabOrder = 4
     OnClick = OKClick
   end
   object RamPackBox: TComboBox
@@ -2040,11 +2040,22 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end
     end
+  end
+  object DefaultsBtn: TButton
+    Left = 4
+    Top = 315
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Defaults'
+    Default = True
+    TabOrder = 3
+    OnClick = DefaultsBtnClick
   end
   object RomSelect: TOpenDialog
     Filter = 'Cartridge Files|*.rom;*.bin;*.dck'

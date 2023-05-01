@@ -1,9 +1,10 @@
 ﻿Please Note:  If Upgrading from an earlier version of EightyOne, you may have
 to delete the file EightyOne.ini for the new version to operate correctly.
+This can be done manually or via Options > Configuration > Reset To Default Settings.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
+Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
 * Bug fixes:
   - The ROMs selected for use with the Spectrum 16K, Spectrum+, Spectrum+2A, Spectrum+3,
     TS1000, TC2048 and TS2068 were not being saved correctly to the EightyOne.ini file.
@@ -41,13 +42,14 @@ Version 1.37 - ##/##/2023 (by Paul Farrow and Marc Kloosterman)
   - Added the Arabic ROM for the Spectrum+2A.
   - Added the Arabic ROM for the Spectrum+3, along with support for its ROM selection daughter
     board.
-  - Added Arabic keyboard layouts for the Spectrum+, Spectrum 128, Spectrum+2, Spectrum+2A,
-    and Spectrum+3.
+  - Added Arabic keyboard layouts for the Spectrum+, Spectrum 128, Spectrum+2, Spectrum+2A and
+    Spectrum+3.
   - Added emulation of the TC2068.
   - Added the 2 released TC2068 ROM cartridges.
   - Added an entry under the Help menu to access the EightyOne release website.
   - Added a facility to write protect RAM in the 8K-16K area (if enabled).
   - Added an option to delete the EightyOne.ini file and reset to default settings.
+  - Added a button to the Hardware dialog to reset to the default settings.
 
 Version 1.36 - 15/04/2023 (by Paul Farrow)
 * Bug fixes:

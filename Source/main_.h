@@ -170,6 +170,7 @@ __published:	// IDE-managed Components
         TMenuItem *N2;
         TMenuItem *CheckForUpdates;
         TMenuItem *WriteProtect8KRAM;
+        TMenuItem *ResettoDefaultSettings;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,

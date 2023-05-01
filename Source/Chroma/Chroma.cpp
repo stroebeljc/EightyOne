@@ -137,7 +137,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         writeHandled = true;
                 }
                 // Check for a write to the Chroma's 8K-16K RAM
-                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
+                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && !zx81.RAM816kWriteProtected && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         if (zx81.chrgen != CHRGENDK)
                         {

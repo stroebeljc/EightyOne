@@ -163,7 +163,7 @@ void load_config(void)
         strcpy(emulator.ROMTC2068, "ts2068.rom");
         strcpy(emulator.ROMTS2068, "ts2068.rom");
 
-        strcpy(emulator.ROMLAMBDA, "lambda8300.rom");
+        strcpy(emulator.ROMLAMBDA, "lambda8300colour.rom");
         strcpy(emulator.ROMR470, "ringo470.rom");
         strcpy(emulator.ROMTK85, "tk85.rom");
         strcpy(emulator.ROMACE, "jupiterace.rom");

@@ -262,17 +262,10 @@ void TKeyboard::KbChange(void)
                                         Keyboard->specPlus2kb->Visible=true;
                                 break;
                         case SPECCYPLUS2A:
-                                if (emulator.romcrc == CRCARABIC48V1 || emulator.romcrc == CRCARABIC48V2 || emulator.romcrc == CRCARABIC48V31 || emulator.romcrc == CRCARABICPLUS3)
-                                        Keyboard->specPlus3kbArabic->Visible=true;
-                                else if (emulator.romcrc == CRCSPANISHPLUS3)
-                                        Keyboard->specPlus3kbSpanish->Visible=true;
-                                else
-                                        Keyboard->specPlus3kb->Visible=true;
-                                break;
                         case SPECCYPLUS3:
                                 if (emulator.romcrc == CRCARABIC48V1 || emulator.romcrc == CRCARABIC48V2 || emulator.romcrc == CRCARABIC48V31 || emulator.romcrc == CRCARABICPLUS3)
                                         Keyboard->specPlus3kbArabic->Visible=true;
-                                else if (emulator.romcrc == CRCSPANISHPLUS3)
+                                else if (emulator.romcrc == CRCSPANISHPLUS3V40 || emulator.romcrc == CRCSPANISHPLUS3V41)
                                         Keyboard->specPlus3kbSpanish->Visible=true;
                                 else
                                         Keyboard->specPlus3kb->Visible=true;

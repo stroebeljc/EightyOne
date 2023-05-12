@@ -184,13 +184,13 @@ void load_config(void)
         AnsiString multiface3Rom = interfaceRomsFolder + AnsiString("multiface3.rom");
         strcpy(emulator.ROMMULTIFACE3, multiface3Rom.c_str());
 
-        AnsiString dktronicsRom = interfaceRomsFolder + AnsiString("dktronicsgraphics.rom");
+        AnsiString dktronicsRom = graphicRomsFolder + AnsiString("dktronicsgraphics.rom");
         strcpy(emulator.ROMDKTRONICS, dktronicsRom.c_str());
-        AnsiString kaydeRom = interfaceRomsFolder + AnsiString("kaydegraphics.rom");
+        AnsiString kaydeRom = graphicRomsFolder + AnsiString("kaydegraphics.rom");
         strcpy(emulator.ROMKAYDE, kaydeRom.c_str());
-        AnsiString g007Rom = interfaceRomsFolder + AnsiString("g007hrg.rom");
+        AnsiString g007Rom = graphicRomsFolder + AnsiString("g007hrg.rom");
         strcpy(emulator.ROMG007, g007Rom.c_str());
-        AnsiString memotechRom = interfaceRomsFolder + AnsiString("memotechhrg.rom");
+        AnsiString memotechRom = graphicRomsFolder + AnsiString("memotechhrg.rom");
         strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
 
         strcpy(emulator.machinename, "EightyOne");

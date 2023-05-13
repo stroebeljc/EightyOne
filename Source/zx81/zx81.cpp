@@ -193,7 +193,7 @@ int prevVideoFlipFlop3Q;
 BYTE zxpandROMOverlay[8192];
 BYTE memory[1024 * 1024];
 BYTE font[1024];                //Allows for both non-inverted and inverted for the QS Chars Board
-BYTE memhrg[1024];
+BYTE memhrg[1024];              //The internal ZX81 RAM is overlaid over the ROM at 0K-1K
 BYTE ZXKeyboard[8];
 BYTE ZX1541Mem[(8+32)*1024]; // ZX1541 has 8k EEPROM and 32k RAM
 BYTE ZX1541PORT=0;
@@ -540,14 +540,13 @@ void zx81_WriteByte(int Address, int Data)
                 if ((configLow && (Address >= 0x2000 && Address < 0xA000)) ||
                     (!configLow && (Address >= 0x4000 && Address < 0xC000)))
                 {
-                goto writeMem;
+                        goto writeMem;
                 }
         }
 
         // Memotech Hi-res board has 1k of RAM available at address 8192
         // permanently and overlaid the ROM at address 0 when z80.i is odd
-        // or data is written to address 0-1k
-
+        // or data is written to address 0-1k              
         if (Address<=zx81.ROMTOP && machine.protectROM)
         {
                 if ((zx81.truehires==HIRESMEMOTECH) && (Address<1024))
@@ -555,7 +554,7 @@ void zx81_WriteByte(int Address, int Data)
                 return;
         }
 
-        // Take into account RAM Shadows when writing beyond RAMTOP
+        // Take into account RAM shadows when writing beyond RAMTOP
         if (Address > zx81.RAMTOP)
         {
                 if ((Address & 0x7FFF) >= 0x4000)
@@ -708,6 +707,11 @@ BYTE zx81_ReadByte(int Address)
         {
                 data=memory[Address];
         }
+        else if (zx81.truehires==HIRESMEMOTECH && Address >= 0x2000 && Address < 0x2800)
+        {
+                // Memotech Hi-res board has 2K EPROM at addresses 8K-10K
+                data=memory[Address];
+        }
         else if (zx81.RAM816k && Address >= 0x2000 && Address < 0x4000)
         {
                 data=memory[Address];
@@ -763,14 +767,13 @@ BYTE zx81_ReadByte(int Address)
                 }
         }
 
-        // Memotech Hi-res board has 1k of RAM available at address 8192
-        // permanently and overlaid the ROM at address 0 when z80.i is odd
+        // Memotech Hi-res board uses the internal 1K of RAM to overlay the ROM at addresses 0K-1K when z80.i is odd
         if ((Address<1024 && (zx81.truehires==HIRESMEMOTECH)) && (z80.i&1))
         {
                 data=memhrg[Address];
         }
 
-        // G007 similarly overlays the ROM but a smaller range
+        // G007 similarly uses the internal 1K of RAM to overlay the ROM but over a smaller range
         if ((Address>=0x0c00 && Address<=0x0cff) && (zx81.truehires==HIRESG007))
         {
                 data=memory[Address+8192];
@@ -917,15 +920,11 @@ BYTE zx81_opcode_fetch(int Address)
                 data=zx81_ReadByte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
                 update=1;
         }
-        else if ((z80.i&1) && MemotechMode)
+        else if ((z80.i&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
-                // When the I register is odd.
-
-                extern int RasterY;
-                extern SCANLINE *BuildLine;
-
-                if ((opcode!=118 || BuildLine->scanline_len<66) && RasterY>=56 && RasterY<=(56+192))
+                // when the I register is odd.
+                if (opcode!=118)
                 {
                         inv=(MemotechMode==3);
                         update=1;
@@ -1042,7 +1041,7 @@ BYTE zx81_opcode_fetch(int Address)
                 // register, remembering to make some video noise too.
 
                 shift_register |= data;
-                shift_reg_inv |= inv? 255:0;
+                shift_reg_inv |= inv ? 255 : 0;
                 if (lambdaSelected) noise |= (Address>>8);
                 else noise |= z80.i;
                 return(0);

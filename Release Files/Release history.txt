@@ -4,6 +4,15 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.38 - ##/##/2023 (by Paul Farrow)
+* Bug fixes:
+  - ROM based graphic interfaces were not loading the ROMs from the correct subfolder.
+  - Memotech HRG could crash when running at 60Hz.
+  - Memotech HRG required the 8K-16K RAM option enabled even though it doesn't require RAM here.
+* Enhancements:
+  - Example programs included from Memotech HRG manual.
+  - Example programs included from G007 manual.
+
 Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
 * Bug fixes:
   - The ROMs selected for use with the Spectrum 16K, Spectrum+, Spectrum+2A, Spectrum+3,

@@ -1712,7 +1712,6 @@ void TForm1::BuildConfigMenu()
         DIR *dir;
         struct dirent *ent;
 
-        //####
         while(Config1->Count > 4) Config1->Delete(4);
         while(DeleteConfigurations->Count > 2) DeleteConfigurations->Delete(2);
 

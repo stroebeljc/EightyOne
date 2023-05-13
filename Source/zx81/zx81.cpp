@@ -439,6 +439,8 @@ BOOL IsAnnotatableROM()
 
 void zx81_WriteByte(int Address, int Data)
 {
+        bool g007RamWrite;
+
         LiveMemoryWindow->Write(Address);
 
         noise = (noise<<8) | Data;
@@ -575,13 +577,15 @@ void zx81_WriteByte(int Address, int Data)
                 }
         }
 
+        g007RamWrite = (zx81.truehires == HIRESG007 && Address >= 0x2000 && (Address < 0x2400 || (Address < 0x2800 && emulator.machine == MACHINETS1000)));
+
         if (Address<10240 && zx81.truehires==HIRESMEMOTECH) return;
         if (Address>=10240 && Address<12288 && zx81.truehires==HIRESG007) return;
         if (Address<=zx81.ROMTOP && machine.protectROM) return;
-        if (Address>8191 && Address<16384 && zx81.shadowROM && machine.protectROM) return;
-        if (Address>8191 && Address<16384 && !zx81.RAM816k) return;
-        if (Address>8191 && Address<16384 && zx81.RAM816k && zx81.RAM816kWriteProtected) return;
-
+        if (Address>8191 && Address<16384 && zx81.shadowROM && !g007RamWrite && machine.protectROM) return;
+        if (Address>8191 && Address<16384 && !zx81.RAM816k && !g007RamWrite) return;
+        if (Address>8191 && Address<16384 && zx81.RAM816k && zx81.RAM816kWriteProtected && !g007RamWrite) return;
+        
 writeMem:
         memory[Address]=Data;
 }
@@ -710,6 +714,12 @@ BYTE zx81_ReadByte(int Address)
         else if (zx81.truehires==HIRESMEMOTECH && Address >= 0x2000 && Address < 0x2800)
         {
                 // Memotech Hi-res board has 2K EPROM at addresses 8K-10K
+                data=memory[Address];
+        }
+        else if (zx81.truehires==HIRESG007 &&
+                 ((Address >= 0x2000 && (Address < 0x2400 || (Address < 0x2800 && emulator.machine == MACHINETS1000))) ||
+                 (Address >= 0x2800 && Address < 0x3000)))
+        {
                 data=memory[Address];
         }
         else if (zx81.RAM816k && Address >= 0x2000 && Address < 0x4000)

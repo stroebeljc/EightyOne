@@ -12,6 +12,7 @@ Version 1.38 - ##/##/2023 (by Paul Farrow)
     now automatically mapped.
   - G007 hi-res option required the 8K-16K RAM option enabled but the internal 1K RAM is now
     automatically mapped.
+  - Since v0.52 it hasn't been possible to select a USB disk for IDE drive HD0 or HD1.
 * Enhancements:
   - Example programs included from Memotech HRG manual.
   - Example programs included from G007 manual.

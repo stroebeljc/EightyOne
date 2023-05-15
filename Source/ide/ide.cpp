@@ -633,9 +633,8 @@ int ATA_LoadHDF(int drive, char *FileName)
         int sectors;
         ATA_DRIVE *Drv = &ATA_Channel.drive[drive];
 
-
         ATA_EjectHDF(drive);
-        if (!FileName) return(0);
+        if (!FileName) return(1);
 
         if (FileName[0]=='\\' && FileName[1]=='\\')
         {
@@ -658,7 +657,7 @@ int ATA_LoadHDF(int drive, char *FileName)
                                 if (Drv->h == INVALID_HANDLE_VALUE) // cannot open the drive
                                 {
                                         ATA_EjectHDF(drive);
-                                        return(0);
+                                        return(1);
                                 }
 
                                 Drv->cylinders = PhysDrives[i].Cylinders;
@@ -689,12 +688,13 @@ int ATA_LoadHDF(int drive, char *FileName)
 
                                 //memcpy(head+0x16+54, ModelName, 40);
                                 for(i=0;i<40;i++) Drv->drive_id[54+i]=ModelName[i];
-                                return(1);
+
+                                ATA_Reset();
+                                return(0);
                         }
                         i++;
                 }
-                ATA_Reset();
-                return(0);
+                return(1);
         }
 
         len=strlen(FileName);

@@ -624,8 +624,7 @@ void ATA_SetCHS(int Drive, int c, int h, int s)
                 WriteWord(ATA_Channel.drive[Drive].drive_id, 56, s);
         }
 }
-
-
+       
 int ATA_LoadHDF(int drive, char *FileName)
 {
         FILE *f;

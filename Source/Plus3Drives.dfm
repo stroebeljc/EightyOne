@@ -177,9 +177,9 @@ object P3Drive: TP3Drive
     end
     object RedetectDrives: TButton
       Left = 176
-      Top = 200
+      Top = 198
       Width = 137
-      Height = 17
+      Height = 20
       Caption = 'Redetect Physical Drives'
       TabOrder = 20
       OnClick = RedetectDrivesClick

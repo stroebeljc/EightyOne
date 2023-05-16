@@ -14,8 +14,12 @@ Version 1.38 - ##/##/2023 (by Paul Farrow)
     automatically mapped.
   - Since v0.52 it hasn't been possible to select a USB disk for IDE drive HD0 or HD1.
 * Enhancements:
-  - Example programs included from Memotech HRG manual.
-  - Example programs included from G007 manual.
+  - Example programs included from the Memotech HRG manual.
+  - Example programs included from the G007 manual.
+  - Example programs included from the dk'tronics Graphics ROM manual.
+  - Example programs included from the Quicksilva Chrs Demo cassette for the QS Character board.
+  - Example programs included from the ZON X-81 manual.
+  - Example programs included from the Quicksilva catalogue for the QS Sound Board.
 
 Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
 * Bug fixes:

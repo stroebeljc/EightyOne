@@ -1050,7 +1050,7 @@ void THW::ConfigureCharacterGenerator()
 {
         if ((zx81.chrgen != CHRGENQS) && (ChrGenBox->ItemIndex == CHRGENQS))
         {
-                zx81.enableQSchrgen = true;
+                zx81.enableQSchrgen = false;
         }
         else if (ChrGenBox->ItemIndex != CHRGENQS)
         {

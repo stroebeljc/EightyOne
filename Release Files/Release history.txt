@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.38 - ##/##/2023 (by Paul Farrow)
+Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:
   - ROM based graphic interfaces were not loading the ROMs from the correct subfolder.
   - Memotech HRG could crash when running at 60Hz.
@@ -13,13 +13,15 @@ Version 1.38 - ##/##/2023 (by Paul Farrow)
   - G007 hi-res option required the 8K-16K RAM option enabled but the internal 1K RAM is now
     automatically mapped.
   - Since v0.52 it hasn't been possible to select a USB disk for IDE drive HD0 or HD1.
+* Changes:
+  - QS Character Board switch now defaults to off.
 * Enhancements:
   - Example programs included from the Memotech HRG manual.
   - Example programs included from the G007 manual.
   - Example programs included from the dk'tronics Graphics ROM manual.
-  - Example programs included from the Quicksilva Chrs Demo cassette for the QS Character board.
   - Example programs included from the ZON X-81 manual.
   - Example programs included from the Quicksilva catalogue for the QS Sound Board.
+  - Example program created and added to demonstrate the QS Character board.
 
 Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
 * Bug fixes:

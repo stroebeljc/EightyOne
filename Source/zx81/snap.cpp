@@ -40,6 +40,7 @@
 
 extern int lineCounter;
 extern int MemotechMode;
+extern int QuicksilvaHiResMode;
 extern BYTE font[1024];
 
 int save_snap_zx81(char* filename);
@@ -744,10 +745,13 @@ void InitialiseHardware()
         Form1->QSChrEnable->Checked = false;
         Form1->QSChrEnable->Enabled = false;
         Form1->QSChrEnable->Visible = false;
-        Form1->MemotechReset->Visible = false;
-        Form1->MemotechReset->Enabled = false;
+        Form1->ResetMemotechHRG->Visible = false;
+        Form1->ResetMemotechHRG->Enabled = false;
+        Form1->ResetQuicksilvaHiRes->Visible = false;
+        Form1->ResetQuicksilvaHiRes->Enabled = false;
 
         MemotechMode = 0;
+        QuicksilvaHiResMode = 0;
         zx81.enableQSchrgen = false;
         zx81.chromaColourSwitchOn = false;
 }

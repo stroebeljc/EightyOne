@@ -68,6 +68,7 @@ BYTE acecolour[1024], acelatch=4;
 static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0x20;
 
+extern void ZXPrinterReset();
 extern void ZXPrinterWritePort(unsigned char Data);
 extern unsigned char ZXPrinterReadPort(BYTE idleDataBus);
 extern int ACEMICState, ACETopBorder, ACELeftBorder;
@@ -96,6 +97,11 @@ void ace_initialise()
         acelatch= (machine.colour==COLOURACE) ? 4:7;
         ACETopBorder= (machine.NTSC) ? 32:56;
         ACELeftBorder=37*2+1;
+
+        if (machine.zxprinter)
+        {
+                ZXPrinterReset();
+        }
 
         z80_reset();
         d8255_reset();

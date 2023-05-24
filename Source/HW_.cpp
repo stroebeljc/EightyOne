@@ -1079,15 +1079,21 @@ void THW::ConfigureCharacterGenerator()
 
 void THW::ConfigureHiRes()
 {
-        Form1->MemotechReset->Enabled = false;
-        Form1->MemotechReset->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
+        Form1->ResetMemotechHRG->Enabled = false;
+        Form1->ResetMemotechHRG->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
+
+        Form1->ResetQuicksilvaHiRes->Enabled = false;
+        Form1->ResetQuicksilvaHiRes->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
 
         switch(HiResBox->ItemIndex)
         {
         case 1: zx81.truehires = HIRESWRX; break;
         case 2: zx81.truehires = HIRESG007; break;
         case 3: zx81.truehires = HIRESMEMOTECH;
-                Form1->MemotechReset->Enabled = true;
+                Form1->ResetMemotechHRG->Enabled = true;
+                break;
+        case 4: zx81.truehires = HIRESQUICKSILVA;
+                Form1->ResetQuicksilvaHiRes->Enabled = true;
                 break;
         default:
         case 0: zx81.truehires = HIRESDISABLED; break;
@@ -3177,7 +3183,6 @@ void __fastcall THW::ChrGenBoxChange(TObject *Sender)
 
 void __fastcall THW::HiResBoxChange(TObject *Sender)
 {
-        //####
         if (HiResBox->Items->Strings[HiResBox->ItemIndex]=="Memotech") ProtectROM->Checked=true;
         ResetRequired=true;
 }

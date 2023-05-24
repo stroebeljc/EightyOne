@@ -71,6 +71,7 @@ private:	// User declarations
         int XPos, YPos, Counter1, Counter2;
 public:		// User declarations
         __fastcall TPrinter(TComponent* Owner);
+        void StopMotor();
         void WritePort(unsigned char Data);
         unsigned char ReadPort(BYTE idleDataBus);
         void ClockTick(int ts);

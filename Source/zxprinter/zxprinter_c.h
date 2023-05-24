@@ -25,6 +25,7 @@
 #define zxprinter_cH
 //---------------------------------------------------------------------------
 
+extern void ZXPrinterReset();
 extern void ZXPrinterClockTick(int ts);
 extern void ZXPrinterWritePort(unsigned char Data);
 extern unsigned char ZXPrinterReadPort(BYTE idleDataBus);

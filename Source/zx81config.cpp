@@ -192,6 +192,8 @@ void load_config(void)
         strcpy(emulator.ROMG007, g007Rom.c_str());
         AnsiString memotechRom = graphicRomsFolder + AnsiString("memotechhrg.rom");
         strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
+        AnsiString QuicksilvaHiResRom = graphicRomsFolder + AnsiString("quicksilvahires.rom");
+        strcpy(emulator.ROMQUICKSILVAHIRES, QuicksilvaHiResRom.c_str());
 
         strcpy(emulator.machinename, "EightyOne");
         *(emulator.romcartridgefilepath) = '\0';

@@ -171,6 +171,7 @@ int setborder=0;
 int emulation_stop=0;
 int LastInstruction;
 int MemotechMode=0;
+int QuicksilvaHiResMode=0;
 int SelectAYReg=0;
 bool allowSoundOutput;
 int nmiWaitPositionStart;
@@ -198,6 +199,8 @@ BYTE ZXKeyboard[8];
 BYTE ZX1541Mem[(8+32)*1024]; // ZX1541 has 8k EEPROM and 32k RAM
 BYTE ZX1541PORT=0;
 
+int QsHiResAddress;
+
 int shift_register=0, shift_reg_inv, shift_store=0;
 
 bool interruptPending = false;
@@ -214,6 +217,7 @@ BYTE get_i_reg(void)
 
 void zx81_reset()
 {
+        QuicksilvaHiResMode=0;
         ResetRomCartridge();
         DisableChroma();
 }
@@ -238,6 +242,11 @@ void zx81_initialise()
         else
         {
                 idleDataBus = idleDataBus81;
+        }
+
+        if (machine.zxprinter)
+        {
+                ZXPrinterReset();
         }
 
         InitialiseChroma();
@@ -291,6 +300,11 @@ void zx81_initialise()
         {
                 memory_device_rom_load(emulator.ROMMEMOTECH, 8192, 2048);
         }
+        else if (zx81.truehires==HIRESQUICKSILVA)
+        {
+                memory_device_rom_load(emulator.ROMQUICKSILVAHIRES, 10240, 2048);
+                for (i=0xA000; i<0xB800; i++) memory[i] = 0;
+        }
         else if (zx81.truehires==HIRESG007)
         {
                 memory_device_rom_load(emulator.ROMG007,10240,2048);
@@ -325,6 +339,8 @@ void zx81_initialise()
         nmiGeneratorEnabled = false;
         syncOutputWhite = false;
         MemotechMode=0;
+        QuicksilvaHiResMode=0;
+        QsHiResAddress = 0xA000;
 
         z80_reset();
         d8255_reset();
@@ -556,6 +572,17 @@ void zx81_WriteByte(int Address, int Data)
                 return;
         }
 
+        if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
+        {
+                QuicksilvaHiResMode = 0;
+                return;
+        }
+        else if (zx81.truehires == HIRESQUICKSILVA && Address >= 0xA000 && Address < 0xB800)
+        {
+                memory[Address] = Data;
+                goto writeMem;
+        }
+
         // Take into account RAM shadows when writing beyond RAMTOP
         if (Address > zx81.RAMTOP)
         {
@@ -714,6 +741,15 @@ BYTE zx81_ReadByte(int Address)
         else if (zx81.truehires==HIRESMEMOTECH && Address >= 0x2000 && Address < 0x2800)
         {
                 // Memotech Hi-res board has 2K EPROM at addresses 8K-10K
+                data=memory[Address];
+        }
+        else if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
+        {
+                QuicksilvaHiResMode = 1;
+                data=memory[Address];
+        }
+        else if (zx81.truehires == HIRESQUICKSILVA && Address >= 0xA000 && Address < 0xB800)
+        {
                 data=memory[Address];
         }
         else if (zx81.truehires==HIRESG007 &&
@@ -940,12 +976,26 @@ BYTE zx81_opcode_fetch(int Address)
                         update=1;
                 }
         }
+        else if (zx81.truehires==HIRESQUICKSILVA && QuicksilvaHiResMode && syncOutputWhite)
+        {
+                if (opcode!=118)
+                {
+                        inv=0;
+                        update=1;
+                        data=zx81_ReadByte(QsHiResAddress);
+                        QsHiResAddress++;
+                        if (QsHiResAddress == 0xB800)
+                        {
+                                QsHiResAddress = 0xA000;
+                        }
+                }
+        }
         else if ((z80.i&1) && (zx81.truehires==HIRESG007))
         {
                 // Like Memotech, G007 is enabled when I is odd.
                 // However, it is much simpler, in that it disables
                 // the bit 6 detection entirely and relies on the R
-                // register to generate an interupt at the right time.
+                // register to generate an interrupt at the right time.
 
                 inv=0;
                 update=1;
@@ -1653,15 +1703,18 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 case LASTINSTOUTFD:     // NMI generator off
                         nmiGeneratorEnabled = false;
                         syncOutputWhite = true;
+                        QsHiResAddress = 0xA000;
                         break;
 
                 case LASTINSTOUTFE:     // NMI generator on
                         nmiGeneratorEnabled = true;
                         syncOutputWhite = true;
+                        QsHiResAddress = 0xA000;
                         break;
 
                 case LASTINSTOUTFF:     // VSync end
                         syncOutputWhite = true;
+                        QsHiResAddress = 0xA000;
                         break;
 
                 case LASTINSTINFE:      // VSync start
@@ -2179,6 +2232,8 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                                         videoFlipFlop3Q = 1;
                                 }
                         }
+
+                        QsHiResAddress = 0xA000;
                         break;
 
                 case LASTINSTINFE:      // VSync start

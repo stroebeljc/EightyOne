@@ -170,7 +170,7 @@ void TPrinter::ClockTick(int ts)
                 if (XPos==(emulator.machine==MACHINESPECTRUM ? 257:258))
                 {
                         OutputLine();
-                        OnPaper=StylusActive;
+                        OnPaper=false;
                         EncoderWheel=false;
                         XPos=0;
                         if (MotorSlow)
@@ -251,7 +251,11 @@ unsigned char TPrinter::ReadPort(BYTE idleDataBus)
 
         return(Data);
 }
-
+//---------------------------------------------------------------------------
+void ZXPrinterReset()
+{
+        Printer->StopMotor();
+}
 //---------------------------------------------------------------------------
 void ZXPrinterClockTick(int ts)
 {
@@ -267,6 +271,10 @@ unsigned char ZXPrinterReadPort(BYTE idleDataBus)
         return(Printer->ReadPort(idleDataBus));
 }
 
+void TPrinter::StopMotor()
+{
+        MotorOn = false;
+}
 
 void __fastcall TPrinter::ScrollBarChange(TObject *Sender)
 {

@@ -4,6 +4,14 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.39 - ##/##/2023 (by Paul Farrow)
+* Bug fixes:
+  - Hard reset was not disabling the ZX Printer motor.
+  - The ZX Printer emulation was not signalling when the stylus was off the paper.
+  - The ZX Printer window was compressing the width of the paper by 2 pixels.
+* Enhancements:
+  - Support for Quicksilva Hi-Res Board.
+
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:
   - ROM based graphic interfaces were not loading the ROMs from the correct subfolder.

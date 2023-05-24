@@ -1839,12 +1839,20 @@ void TForm1::LoadIniFile(AnsiString FileName)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::MemotechResetClick(TObject *Sender)
+void __fastcall TForm1::ResetMemotechHRGClick(TObject *Sender)
 {
         extern int MemotechMode;
 
         MemotechMode=0;
         z80.i=0x1e;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ResetQuicksilvaHiResClick(TObject *Sender)
+{
+        extern int QuicksilvaHiResMode;
+
+        QuicksilvaHiResMode = 0;
 }
 //---------------------------------------------------------------------------
 
@@ -1856,8 +1864,7 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
         SaveScrDialog->Filter = "Windows Bitmap (.bmp)|*.bmp";
 
         if (emulator.machine==MACHINESPECTRUM)
-                SaveScrDialog->Filter += "|Spectrum Screen (.scr)|*.scr";
-
+                SaveScrDialog->Filter += "|Spectrum Screen (.scr)|*.scr";    
 
         if (!SaveScrDialog->Execute()) return;
 

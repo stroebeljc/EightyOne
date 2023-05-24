@@ -6,7 +6,7 @@ object Printer: TPrinter
   BorderStyle = bsToolWindow
   Caption = 'ZX Printer'
   ClientHeight = 453
-  ClientWidth = 271
+  ClientWidth = 273
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,12 +21,11 @@ object Printer: TPrinter
   object DisplayImage: TImage
     Left = 0
     Top = 0
-    Width = 254
+    Width = 256
     Height = 265
-    Anchors = [akLeft, akTop, akRight]
   end
   object ScrollBar: TScrollBar
-    Left = 254
+    Left = 256
     Top = 0
     Width = 17
     Height = 265

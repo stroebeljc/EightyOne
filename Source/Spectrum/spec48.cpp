@@ -117,6 +117,7 @@ int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
 int SPECKb, SPECNextBorder=7;
 int SPECVSync=0;
 BYTE SPECLast7ffd, SPECLast1ffd;
+extern void ZXPrinterReset();
 extern void ZXPrinterWritePort(unsigned char Data);
 extern unsigned char ZXPrinterReadPort(void);
 extern void TZXWriteByte(unsigned char Byte);
@@ -335,6 +336,11 @@ void spec48_initialise()
         ResetLastIOAccesses();
         InitialiseRomCartridge();
         InitialiseSpectra();
+
+        if (machine.zxprinter)
+        {
+                ZXPrinterReset();
+        }
 
         for(i=0;i<sizeof(SpecMem);i++) SpecMem[i]=random(256);
         for(i=0;i<sizeof(TimexMem);i++) TimexMem[i]=255;

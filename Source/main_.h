@@ -123,7 +123,7 @@ __published:	// IDE-managed Components
         TMenuItem *N7;
         TSaveDialog *SaveConfigDialog;
         TMenuItem *ConfigItem1;
-        TMenuItem *MemotechReset;
+        TMenuItem *ResetMemotechHRG;
         TMenuItem *SaveScreenshot1;
         TSaveDialog *SaveScrDialog;
         TMenuItem *PrinterPort1;
@@ -171,6 +171,7 @@ __published:	// IDE-managed Components
         TMenuItem *CheckForUpdates;
         TMenuItem *WriteProtect8KRAM;
         TMenuItem *ResetToDefaultSettings;
+        TMenuItem *ResetQuicksilvaHiRes;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -238,7 +239,7 @@ __published:	// IDE-managed Components
         void __fastcall GenerateNMI1Click(TObject *Sender);
         void __fastcall SaveCurrentConfigClick(TObject *Sender);
         void __fastcall ConfigItem1Click(TObject *Sender);
-        void __fastcall MemotechResetClick(TObject *Sender);
+        void __fastcall ResetMemotechHRGClick(TObject *Sender);
         void __fastcall SaveScreenshot1Click(TObject *Sender);
         void __fastcall PrinterPort1Click(TObject *Sender);
         void __fastcall Midi1Click(TObject *Sender);
@@ -278,6 +279,7 @@ __published:	// IDE-managed Components
         void __fastcall CheckForUpdatesClick(TObject *Sender);
         void __fastcall WriteProtect8KRAMClick(TObject *Sender);
         void __fastcall ResetToDefaultSettingsClick(TObject *Sender);
+        void __fastcall ResetQuicksilvaHiResClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

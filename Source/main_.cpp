@@ -254,6 +254,8 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         else HelpTopics2->Enabled=false;
 
         BuildConfigMenu();
+        BuildDocumentationMenu();
+
         if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
 
         if (emulator.checkInstallationPathLength && strlen(emulator.cwd) >= 180)
@@ -1749,7 +1751,75 @@ void TForm1::BuildConfigMenu()
         DeleteAll->Enabled = (DeleteConfigurations->Count > 2);
 }
 //---------------------------------------------------------------------------
+void TForm1::BuildDocumentationMenu()
+{
+        AnsiString Path = emulator.cwd;
+        Path += documentationFolder;
 
+        DIR* dir;
+        struct dirent *ent;
+
+        if ((dir = opendir(Path.c_str())) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                TMenuItem* CategorySubMenu = new TMenuItem(DocumentationMenuEntry);
+                                DocumentationMenuEntry->Add(CategorySubMenu);
+                                CategorySubMenu->Caption = ent->d_name;
+
+                                AnsiString CategoryFolder = Path;
+                                CategoryFolder += ent->d_name;
+                                CategoryFolder += "\\";
+
+                                AddInstructionFiles(CategorySubMenu, CategoryFolder);
+                        }
+                }
+
+                closedir(dir);
+        }
+}
+//---------------------------------------------------------------------------
+void TForm1::AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString SubFolder)
+{
+        DIR* dir;
+        struct dirent *ent;
+
+        if ((dir = opendir(SubFolder.c_str())) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                AnsiString FileName = ent->d_name;
+                                AnsiString Title = RemoveExt(FileName);
+
+                                TMenuItem* InstructionEntry = new TMenuItem(CategorySubMenu);
+                                CategorySubMenu->Add(InstructionEntry);
+                                InstructionEntry->Caption = Title;
+                                InstructionEntry->OnClick = InstructionMenuItemClick;
+                        }
+                }
+
+                closedir(dir);
+        }
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
+{
+        TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
+        TMenuItem* ParentItem = ClickedItem->Parent;
+
+        AnsiString Path = emulator.cwd;
+        Path += documentationFolder;
+        Path += ParentItem->Caption;
+        Path += "\\";
+        Path += ClickedItem->Caption + ".txt";
+
+        ShellExecuteA(NULL, "open", Path.c_str(), NULL, NULL, SW_SHOW);
+}
+//---------------------------------------------------------------------------
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 {
         TIniFile *ini;

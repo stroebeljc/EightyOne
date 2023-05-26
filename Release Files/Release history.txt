@@ -11,6 +11,9 @@ Version 1.39 - ##/##/2023 (by Paul Farrow)
   - The ZX Printer window was compressing the width of the paper by 2 pixels.
 * Enhancements:
   - Support for Quicksilva Hi-Res Board.
+  - Added a Feed button to the ZX Printer.
+  - Added documentation on the use of various hardware interfaces, based on original instruction
+    manuals where available.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

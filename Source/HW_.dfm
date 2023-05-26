@@ -1444,7 +1444,7 @@ object HW: THW
           'Ace User'
           'Boldfield'
           'Fuller Box'
-          'Sinclair 128k'
+          'Sinclair 128K'
           'Timex'
           'Quicksilva'
           'Zon X')

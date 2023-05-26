@@ -254,7 +254,7 @@ unsigned char TPrinter::ReadPort(BYTE idleDataBus)
 //---------------------------------------------------------------------------
 void ZXPrinterReset()
 {
-        Printer->StopMotor();
+        Printer->ResetPrinter();
 }
 //---------------------------------------------------------------------------
 void ZXPrinterClockTick(int ts)
@@ -269,11 +269,6 @@ void ZXPrinterWritePort(unsigned char Data)
 unsigned char ZXPrinterReadPort(BYTE idleDataBus)
 {
         return(Printer->ReadPort(idleDataBus));
-}
-
-void TPrinter::StopMotor()
-{
-        MotorOn = false;
 }
 
 void __fastcall TPrinter::ScrollBarChange(TObject *Sender)
@@ -416,6 +411,36 @@ void __fastcall TPrinter::StyleChange(TObject *Sender)
         }
         ClearImageClick(NULL);
 
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TPrinter::FeedMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+        FeedTimer->Enabled = true;
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TPrinter::FeedMouseUp(TObject *Sender, TMouseButton Button,
+      TShiftState Shift, int X, int Y)
+{
+        FeedTimer->Enabled = false;
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TPrinter::FeedTimerExpired(TObject *Sender)
+{
+        OutputLine();
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TPrinter::FeedClick(TObject *Sender)
+{
+        OutputLine();
 }
 //---------------------------------------------------------------------------
 

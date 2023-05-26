@@ -172,6 +172,8 @@ __published:	// IDE-managed Components
         TMenuItem *WriteProtect8KRAM;
         TMenuItem *ResetToDefaultSettings;
         TMenuItem *ResetQuicksilvaHiRes;
+        TMenuItem *N13;
+        TMenuItem *DocumentationMenuEntry;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -280,11 +282,14 @@ __published:	// IDE-managed Components
         void __fastcall WriteProtect8KRAMClick(TObject *Sender);
         void __fastcall ResetToDefaultSettingsClick(TObject *Sender);
         void __fastcall ResetQuicksilvaHiResClick(TObject *Sender);
+        void __fastcall InstructionMenuItemClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
         int StartUpWidth, StartUpHeight;
-        void BuildConfigMenu(void);
+        void BuildConfigMenu();
+        void BuildDocumentationMenu();
+        void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString SubFolder);
         bool DrivesChanged;
         bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;

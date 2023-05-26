@@ -50,6 +50,8 @@ __published:	// IDE-managed Components
         TTrackBar *LineRate;
         TLabel *Label1;
         TComboBox *Style;
+        TButton *Feed;
+        TTimer *FeedTimer;
         void __fastcall DrawImage(void);
         void __fastcall ScrollBarChange(TObject *Sender);
         void __fastcall ClearImageClick(TObject *Sender);
@@ -59,19 +61,24 @@ __published:	// IDE-managed Components
         void __fastcall BitRateChange(TObject *Sender);
         void __fastcall LineRateChange(TObject *Sender);
         void __fastcall StyleChange(TObject *Sender);
+        void __fastcall FeedMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall FeedTimerExpired(TObject *Sender);
+        void __fastcall FeedMouseUp(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+        void __fastcall FeedClick(TObject *Sender);
 private:	// User declarations
         int StaticWidth;
         void ScrollOutput(void);
         void OutputBit(void);
         void OutputLine(void);
-        void ResetPrinter(void);
         void ClearBitmap(Graphics::TBitmap *Bitmap);
         Graphics::TBitmap *PrinterOutput;
         bool MotorOn, MotorSlow, StylusActive, OnPaper, EncoderWheel;
         int XPos, YPos, Counter1, Counter2;
 public:		// User declarations
         __fastcall TPrinter(TComponent* Owner);
-        void StopMotor();
+        void ResetPrinter(void);
         void WritePort(unsigned char Data);
         unsigned char ReadPort(BYTE idleDataBus);
         void ClockTick(int ts);

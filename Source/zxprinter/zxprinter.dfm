@@ -38,28 +38,28 @@ object Printer: TPrinter
   object SaveImage: TButton
     Left = 8
     Top = 272
-    Width = 75
+    Width = 60
     Height = 25
-    Caption = 'Save Image'
+    Caption = 'Save'
     TabOrder = 1
     OnClick = SaveImageClick
   end
   object ClearImage: TButton
-    Left = 99
+    Left = 74
     Top = 272
-    Width = 75
+    Width = 60
     Height = 25
-    Caption = 'Clear Image'
+    Caption = 'Clear'
     TabOrder = 2
     OnClick = ClearImageClick
   end
   object OptionsBtn: TButton
-    Left = 190
+    Left = 208
     Top = 272
-    Width = 75
+    Width = 60
     Height = 25
     Caption = 'Options'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = OptionsBtnClick
   end
   object Panel1: TPanel
@@ -67,7 +67,7 @@ object Printer: TPrinter
     Top = 304
     Width = 257
     Height = 145
-    TabOrder = 4
+    TabOrder = 5
     object BitRateTxt: TLabel
       Left = 24
       Top = 5
@@ -136,10 +136,28 @@ object Printer: TPrinter
         'Plain Paper')
     end
   end
+  object Feed: TButton
+    Left = 141
+    Top = 272
+    Width = 60
+    Height = 25
+    Caption = 'Feed'
+    TabOrder = 3
+    OnClick = FeedClick
+    OnMouseDown = FeedMouseDown
+    OnMouseUp = FeedMouseUp
+  end
   object SaveDialog: TSaveDialog
     DefaultExt = 'bmp'
     Filter = 'Windows Bitmap (BMP)|*.bmp'
     Left = 8
     Top = 8
+  end
+  object FeedTimer: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = FeedTimerExpired
+    Left = 232
+    Top = 416
   end
 end

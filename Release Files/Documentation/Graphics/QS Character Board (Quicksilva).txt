@@ -1,0 +1,109 @@
+===============================
+QS Character Board for the ZX81
+Quicksilva
+===============================
+
+@@@@@@@@@@@@@ QS PROGRAMMABLE CHARACTER GENERATOR @@@@@@@@@@@@@
+
+A fully programmable character generator board with the following features - - - - - - - - - - - - - -
+
+128 FULLY PROGRAMMABLE CHARACTERS / ON-OFF SWITCH/ 1K OF ON BOARD RAM
+
+WORKS ON 1K MACHINES / WORKS WITH PRINTER / EASY AND FAST TO USE /
+
+DEMO CASSETTE OF FAST MACHINE CODE ROUTINES INCLUDED WITH BOARD
+
+
+The QS CHRS BD comprises a single circuit board which will plug into the QS MOTHER BD or with the
+aid of QS CONNECTOR direct into your ZX COMPUTER. NOTE For use with the ZX-80 the following
+Hardware mod will be required.
+
+1) The track going to pin 20 of the 24 pin ROM chip must be cut about 1/2 inch from the I.C.
+2) A 4k7 1/4 Watt resistor must be soldered across the cut track
+3) Finally a wire must be taken from the ROM side of this resistor to pin 23B of the expansion port
+
+The board will allow you to program your own characters to be displayed to the television or to the
+Printer. Instead of the existing rather limited character set of 64 chrs and their reversed counterparts you
+can now have 128 completely different chrs of your own design. Once programmed the CHRS BD will
+stay the same until loss of power of you program a new chr into it. LOADING another program will not
+affect the chrs. The switch mounted on the right hand side of the board is the ON-OFF switch. This switch
+can be used at any time to switch between the normal Sinclair chr set and the programmable chr set.
+Down is ON and Up is OFF.
+
+Included on the CHRS BD is 1K of RAM. This is the CHR RAM used to store the data for the chrs.
+The chr ram starts at address 33792 and ends at 34815. Because the CHRS BD has this on-board ram and
+also because the work is done by Hardware not Software all you get are advantages. You will still have
+the same amount of memory to write programs in. By using the M/C routines on the Demo cassette you
+can have virtually instant changes in character shape. You can use the board with existing Software
+without having to change your existing programs. Just LOAD the chr set you require then LOAD your
+program and run it as normal except for the changes in the chr set you want.
+
+Also mounted on the CHRS BD is a 4 way D.I.L. switch. This is to enable matching of the BD to any
+ZX-Computer used. For ZX-81 in slow mode all switches should be off. For ZX-80 and ZX-81 in
+fast mode switches 3 & 4 should be on. Play with these switches to get an idea of their function.
+
+
+@@@@@@@@@@@@ UNDERSTANDING CHARACTERS @@@@@@@@@@@@
+
+The Following information will, I hope, give yeu a clearer idea of how the choracters are generated
+and also help you to raalise the possibilities that being able to program your own characters creates.
+At present the ZX Computers get the information for displaying the characters from the top 512 bytes of
+the ROM. From Addresses 7680 to 8191 inclusive. Each character needs 8 bytes of data. To clearly
+understand how each character is made up I'm afraid a bit of Binary is called for. (See page 155 of the
+ZX-81 manual.).
+
+Each byte is stored in the ROM as an eight bit Binary number. Each bit con be 0 or 1. When the Computer
+is going to display a chr it will get one of the bytes stored in the ROM for that character and look at the
+eight bits one by one. Starting with the highest bit it will decide if this bit is a 0 or a 1. If it is a 0
+then the Computer will put a white dot on the screen, if it is a 1 the computer will put a black dot on
+the screen. Then the computer will move on to the next position on the screen and the next bit of the data.
+Eg. The 5th byte for the chr '+" is at the address 7852. PEEK this location and you will get 62,
+
+62 decimal = 00111110 binary = 3E hex = the following dots     +---+---+---+---+---+---+---+---+
+                                                               |   |   |###|###|###|###|###|   |
+                                                               +---+---+---+---+---+---+---+---+
+                                                           BIT   7   6   5   4   3   2   1   0
+
+Remember 0 = a white dot; 1 = a black dot. So each character is made up of an 8 * 8 matrix of dots
+(8 bits * 8 bytes). Each Binary bit represents 2 to the power of something, from 0 to 7. Bit 0 = 2 ** 0
+or 1; bit 1 = 2 ** 1 or 2; bit 2 = 2 ** 2 or 4; and soon. So each bit is equal to a decimal number.
+If the bit is a one then the equivalent decimal number is part of the binary number, if the bit is a 0
+then that equivalent decimal number is not part of the binary number, Eg.
+
+Decimal equivalent    128  64  32  16   8   4   2   1
+Binary bit              7   6   5   4   3   2   1   0   = 32 + 16 + 8 + 4 + 2
+Binary number           0   0   1   1   1   1   1   0   = 62
+
+The full 8 bytes for the chr '+' are given below.
+
+Address                  Video                  Binary      Hex   Decimal
+             7   6   5   4   3   2   1   0
+           +---+---+---+---+---+---+---+---+
+7848       |   |   |   |   |   |   |   |   |    00000000    00    0
+           +---+---+---+---+---+---+---+---+
+7849       |   |   |   |   |   |   |   |   |    00000000    00    0
+           +---+---+---+---+---+---+---+---+
+7850       |   |   |   |   |###|   |   |   |    00001000    08    8
+           +---+---+---+---+---+---+---+---+
+7851       |   |   |   |   |###|   |   |   |    00001000    08    8
+           +---+---+---+---+---+---+---+---+
+7852       |   |   |###|###|###|###|###|   |    00111110    3E    32 + 16 + 8 + 4 + 2 = 62
+           +---+---+---+---+---+---+---+---+
+7853       |   |   |   |   |###|   |   |   |    00001000    08    8
+           +---+---+---+---+---+---+---+---+
+7854       |   |   |   |   |###|   |   |   |    00001000    08    8
+           +---+---+---+---+---+---+---+---+
+7855       |   |   |   |   |   |   |   |   |    00000000    00    0
+           +---+---+---+---+---+---+---+---+
+
+--------------------------------------------------------------------------------
+
+TECHNICAL NOTES
+
+The 1K RAM appears at $8400-$87FF. The first 0.5K holds the pixel patterns for the non-inverted
+characters, and the second 0.5K holds the pixel patterns for the inverted characters. Note that
+the pixel patterns for the 'inverted' characters need to be stored in inverted form since the
+ZX81 display mechanism automatically inverts them due to bit 7 being set of the character code.
+
+Software cannot enable and disable the use of the the replacement character set; this must be manually
+done via the on board switch.

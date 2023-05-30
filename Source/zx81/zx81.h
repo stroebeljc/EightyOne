@@ -62,5 +62,6 @@ extern BYTE ZXKeyboard[];
 extern int ace_do_accurate();
 extern BOOL IsAnnotatableROM();
 extern void CreateZXpand();
+extern BOOL memotechResetPressed;
 
 #endif

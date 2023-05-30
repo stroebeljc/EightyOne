@@ -1934,12 +1934,7 @@ void TForm1::LoadIniFile(AnsiString FileName)
 
 void __fastcall TForm1::ResetMemotechHRGClick(TObject *Sender)
 {
-//####        extern int MemotechMode;
-
-      //####  MemotechMode=0;
-//####        z80.i=0x1e;
-
-        memotechResetRequested = true;
+        memotechResetPressed = true;
 }
 //---------------------------------------------------------------------------
 

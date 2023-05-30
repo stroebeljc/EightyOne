@@ -12,8 +12,8 @@ Version 1.39 - ##/##/2023 (by Paul Farrow)
 * Enhancements:
   - Support for Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.
-  - Added documentation on the use of various hardware interfaces, based on original instruction
-    manuals where available.
+  - Added documentation on the use of various ZX80/ZX81 hardware interfaces, based on original
+    instruction manuals where available.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

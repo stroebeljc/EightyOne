@@ -227,7 +227,7 @@ void __fastcall TAbout::Label15Click(TObject *Sender)
 {
         //  Original = http://www.chuntey.com/eightyone/
         
-        ShellExecute(0,NULL, "https://sourceforge.net/projects/eightyone-sinclair-emulator/", NULL, NULL, SW_SHOW);
+        ShellExecute(0,NULL, "https://sourceforge.net/projects/eightyone-sinclair-emulator/", NULL, NULL, SW_NORMAL);
 }
 //---------------------------------------------------------------------------
 

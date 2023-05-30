@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <dir.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 #pragma hdrstop
 
@@ -119,6 +120,9 @@ char TEMP1[256];
 SCANLINE *BuildLine, Video;
 
 static bool iniFileExists = false;
+
+const int bufferLength = 255;
+char webBuffer[bufferLength];
 
 //---------------------------------------------------------------------------
 
@@ -1815,9 +1819,28 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
         Path += documentationFolder;
         Path += ParentItem->Caption;
         Path += "\\";
-        Path += ClickedItem->Caption + ".txt";
 
-        ShellExecuteA(NULL, "open", Path.c_str(), NULL, NULL, SW_SHOW);
+        struct stat buffer;
+        AnsiString webPath = Path + ClickedItem->Caption + ".web";
+        if (stat(webPath.c_str(), &buffer) == 0)
+        {
+                FILE* filePointer = fopen(webPath.c_str(), "r");
+                if (filePointer)
+                {
+                        bool readText = (fgets(webBuffer, bufferLength, filePointer) != NULL);
+                        fclose(filePointer);
+
+                        if (readText)
+                        {
+                                ShellExecute(0, NULL, webBuffer, NULL, NULL, SW_NORMAL);
+                        }
+                }
+        }
+        else
+        {
+                Path += ClickedItem->Caption + ".txt";
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
@@ -2628,4 +2651,5 @@ void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+
 

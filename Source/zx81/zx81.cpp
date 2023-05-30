@@ -184,6 +184,8 @@ bool chromaSelected;
 BOOL annotatableROM;
 bool lambdaSelected;
 bool zx80rom;
+BOOL memotechResetPressed;
+BOOL memotechResetRequested;
 
 int videoFlipFlop1Q;
 int videoFlipFlop2Q;
@@ -1819,6 +1821,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 {
                         int nmiResponseDuration = z80_nmi();
 
+                        if (memotechResetRequested)
+                        {
+                                MemotechMode=0;
+                                z80.i=0x1e;
+                        }
+
                         int nmiResponseWaitDuration = 0;
 
                         int nmiResponsePositionT2 = lineClockCounter - 1;
@@ -1938,6 +1946,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
         if (!emulationStopped && CurScanLine->sync_type == SYNCTYPEV)
         {
+                if (memotechResetRequested)
+                {
+                        memotechResetRequested = false;
+                }
+                if (memotechResetPressed)
+                {
+                        memotechResetPressed = false;
+                        memotechResetRequested = true;
+                }
+
                 if (vsyncFound)
                 {
                         frameSynchronised = (RasterY >= VSYNC_TOLLERANCEMIN) && (RasterY <= VSYNC_TOLERANCEMAX_QS);

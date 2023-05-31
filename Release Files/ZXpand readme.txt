@@ -14,5 +14,4 @@ than the tape system. On a real ZXpand typing LOAD "" will invoke the tape loade
 and allow files to be loaded that way. Under EightyOne emulation however this does
 not work due to the way that the emulator handles the ROM patching.
 
-
 SirMorris

@@ -140,6 +140,7 @@ __published:	// IDE-managed Components
         TComboBox *TS2068RomCartridgeFileBox;
         TOffice97Button *TC2068Btn;
         TComboBox *TC2068RomCartridgeFileBox;
+        TImage *ZXpandEmulationInfo;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -197,6 +198,7 @@ __published:	// IDE-managed Components
         void __fastcall mwcfideHelpClick(TObject *Sender);
         void __fastcall TC2068BtnClick(TObject *Sender);
         void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
+        void __fastcall ZXpandEmulationInfoClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

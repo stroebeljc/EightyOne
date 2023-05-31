@@ -1677,6 +1677,7 @@ void THW::SetZXpandState(bool checked, bool enabled)
 {
         ZXpand->Checked=checked;
         ZXpand->Enabled=enabled;
+        ZXpandEmulationInfo->Visible=enabled;
         ButtonZXpandSDCard->Enabled = checked && enabled;
 }
 
@@ -2059,6 +2060,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
+        ZXpandEmulationInfo->Visible=true;
         ZXpand->Caption = "ZXpand";
         ZX80Btn->Down=true;
         NewMachineName=ZX80Btn->Caption;
@@ -2082,6 +2084,7 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
+        ZXpandEmulationInfo->Visible=true;
         ZX81Btn->Down=true;
         NewMachineName=ZX81Btn->Caption;
         RomBox->Clear();
@@ -2319,6 +2322,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
+        ZXpandEmulationInfo->Visible=true;
         TS1000Btn->Down=true;
         NewMachineName=TS1000Btn->Caption;
         Form1->EnableAnnotationOptions();
@@ -2341,6 +2345,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
+        ZXpandEmulationInfo->Visible=true;
         TS1500Btn->Down=true;
         NewMachineName=TS1500Btn->Caption;
         Form1->EnableAnnotationOptions();
@@ -3597,5 +3602,13 @@ void __fastcall THW::mwcfideHelpClick(TObject *Sender)
         ShellExecute(0, "open", "notepad.exe", "FAT.txt", path.c_str(), SW_SHOWNORMAL);
 }
 
+//---------------------------------------------------------------------------
+
+void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
+{
+        AnsiString path = emulator.cwd;
+
+        ShellExecute(0, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
+}
 //---------------------------------------------------------------------------
 

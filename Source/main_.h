@@ -174,6 +174,9 @@ __published:	// IDE-managed Components
         TMenuItem *ResetQuicksilvaHiRes;
         TMenuItem *N13;
         TMenuItem *DocumentationMenuEntry;
+        TMenuItem *ExamplePrograms;
+        TMenuItem *ReleaseHistoryNotes;
+        TMenuItem *N14;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -283,6 +286,8 @@ __published:	// IDE-managed Components
         void __fastcall ResetToDefaultSettingsClick(TObject *Sender);
         void __fastcall ResetQuicksilvaHiResClick(TObject *Sender);
         void __fastcall InstructionMenuItemClick(TObject *Sender);
+        void __fastcall ExampleProgramsClick(TObject *Sender);
+        void __fastcall ReleaseHistoryNotesClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

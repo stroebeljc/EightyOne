@@ -2648,5 +2648,20 @@ void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+                    
+void __fastcall TForm1::ExampleProgramsClick(TObject *Sender)
+{
+        AnsiString folder = emulator.cwd;
+        folder += "Examples\\";
+        ShellExecute(NULL, "open", folder.c_str(), "", NULL, SW_RESTORE);
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
+{
+        AnsiString releaseHistoryFile = emulator.cwd;
+        releaseHistoryFile += "Release history.txt";
+        ShellExecute(NULL, "open", releaseHistoryFile.c_str(), "", NULL, SW_RESTORE);
+}
+//---------------------------------------------------------------------------
 

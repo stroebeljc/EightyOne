@@ -1,9 +1,8 @@
-ZXpand Support
+ZXpand+ Support
 
 In real life this add-on for the ZX81 provides 32K of RAM, ZON-X compatible AY sound,
 and SD card reading support, controlled through a patched ROM. In EightyOne you can
-enable this board form the hardware menu by checking the ZXpand option. Ensure that
-wrx hires and zon-x sound are also enabled.
+enable this board from the Hardware dialog by checking the ZXpand+ option.
 
 Files placed in the folder 'ZXpand_SD_Card' are treated as a virtual SD card.
 
@@ -15,8 +14,5 @@ than the tape system. On a real ZXpand typing LOAD "" will invoke the tape loade
 and allow files to be loaded that way. Under EightyOne emulation however this does
 not work due to the way that the emulator handles the ROM patching.
 
-For full ZXpand instructions please see the online documentation:
-https://github.com/charlierobson/ZXpand-Vitamins/wiki/ZXpand---Online-Manual
 
-
-<3 SirMorris
+SirMorris

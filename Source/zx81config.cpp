@@ -45,7 +45,8 @@ const char* temporaryFolder       = "EightyOne\\";
 
 const char* nvMemoryFolder        = "NV_Memory\\";
 const char* examplesDrivesFolder  = "Examples\\Drives\\";
-const char* documentationFolder  = "Documentation\\";
+const char* documentationFolder   = "Documentation\\";
+const char* exampleProgramsFolder = "Examples\\Programs\\";
 
 const char* romsFolder            = "ROMs\\";
 const char* fdcRomsFolder         = "ROMs\\FDCs\\";

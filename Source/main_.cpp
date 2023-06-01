@@ -259,6 +259,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         BuildConfigMenu();
         BuildDocumentationMenu();
+        BuildExamplesMenu();
 
         if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
 
@@ -1843,6 +1844,72 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+void TForm1::BuildExamplesMenu()
+{
+        AnsiString Path = emulator.cwd;
+        Path += exampleProgramsFolder;
+
+        DIR* dir;
+        struct dirent *ent;
+
+        if ((dir = opendir(Path.c_str())) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                TMenuItem* CategorySubMenu = new TMenuItem(ExampleZX81ProgramsMenuEntry);
+                                ExampleZX81ProgramsMenuEntry->Add(CategorySubMenu);
+                                CategorySubMenu->Caption = ent->d_name;
+
+                                AnsiString CategoryFolder = Path;
+                                CategoryFolder += ent->d_name;
+                                CategoryFolder += "\\";
+
+                                AddExampleFolders(CategorySubMenu, CategoryFolder);
+                        }
+                }
+
+                closedir(dir);
+        }
+}
+//---------------------------------------------------------------------------
+void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString SubFolder)
+{
+        DIR* dir;
+        struct dirent *ent;
+
+        if ((dir = opendir(SubFolder.c_str())) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                TMenuItem* ExampleFolderEntry = new TMenuItem(CategorySubMenu);
+                                CategorySubMenu->Add(ExampleFolderEntry);
+                                ExampleFolderEntry->Caption = ent->d_name;
+                                ExampleFolderEntry->OnClick = ExampleZX81ProgramsMenuEntryClick;
+                        }
+                }
+
+                closedir(dir);
+        }
+}
+//---------------------------------------------------------------------------
+                    
+void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
+{
+        TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
+        TMenuItem* ParentItem = ClickedItem->Parent;
+
+        AnsiString Path = emulator.cwd;
+        Path += exampleProgramsFolder;
+        Path += ParentItem->Caption;
+        Path += "\\";
+
+        ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
+}
+//---------------------------------------------------------------------------
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 {
         TIniFile *ini;
@@ -2646,14 +2713,6 @@ void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
                 Restart = true;
                 Close();
         }
-}
-//---------------------------------------------------------------------------
-                    
-void __fastcall TForm1::ExampleProgramsClick(TObject *Sender)
-{
-        AnsiString folder = emulator.cwd;
-        folder += "Examples\\";
-        ShellExecute(NULL, "open", folder.c_str(), "", NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
 

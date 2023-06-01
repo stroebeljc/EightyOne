@@ -174,7 +174,7 @@ __published:	// IDE-managed Components
         TMenuItem *ResetQuicksilvaHiRes;
         TMenuItem *N13;
         TMenuItem *DocumentationMenuEntry;
-        TMenuItem *ExamplePrograms;
+        TMenuItem *ExampleZX81ProgramsMenuEntry;
         TMenuItem *ReleaseHistoryNotes;
         TMenuItem *N14;
         void __fastcall FormCreate(TObject *Sender);
@@ -286,7 +286,7 @@ __published:	// IDE-managed Components
         void __fastcall ResetToDefaultSettingsClick(TObject *Sender);
         void __fastcall ResetQuicksilvaHiResClick(TObject *Sender);
         void __fastcall InstructionMenuItemClick(TObject *Sender);
-        void __fastcall ExampleProgramsClick(TObject *Sender);
+        void __fastcall ExampleZX81ProgramsMenuEntryClick(TObject *Sender);
         void __fastcall ReleaseHistoryNotesClick(TObject *Sender);
 private:	// User declarations
         int fps;
@@ -294,7 +294,9 @@ private:	// User declarations
         int StartUpWidth, StartUpHeight;
         void BuildConfigMenu();
         void BuildDocumentationMenu();
+        void BuildExamplesMenu();
         void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString SubFolder);
+        void AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString SubFolder);
         bool DrivesChanged;
         bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;

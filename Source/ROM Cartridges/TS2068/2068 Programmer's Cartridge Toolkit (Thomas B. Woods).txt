@@ -1,0 +1,11 @@
+2068 Programmer's Cartridge toolkit (Thomas B. Woods, 1986)
+
+24K program has many built-in features (including tri-base arithmetic) and printer drivers.
+
+------------------------------
+
+Details available here:
+https://www.timexsinclair.com/product/aros-toolkit/
+
+Instruction manual available here:
+https://archive.org/details/thomas-woods/2068 Programmers Cartridge Toolkit by Tom Woods/mode/2up

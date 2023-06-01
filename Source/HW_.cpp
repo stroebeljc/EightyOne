@@ -1677,7 +1677,7 @@ void THW::SetZXpandState(bool checked, bool enabled)
 {
         ZXpand->Checked=checked;
         ZXpand->Enabled=enabled;
-        ZXpandEmulationInfo->Visible=enabled;
+        ZXpandEmulationInfo->Visible=checked;
         ButtonZXpandSDCard->Enabled = checked && enabled;
 }
 
@@ -2060,7 +2060,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
-        ZXpandEmulationInfo->Visible=true;
+        ZXpandEmulationInfo->Visible=ZXpand->Checked;
         ZXpand->Caption = "ZXpand";
         ZX80Btn->Down=true;
         NewMachineName=ZX80Btn->Caption;
@@ -2084,7 +2084,7 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
-        ZXpandEmulationInfo->Visible=true;
+        ZXpandEmulationInfo->Visible=ZXpand->Checked;
         ZX81Btn->Down=true;
         NewMachineName=ZX81Btn->Caption;
         RomBox->Clear();
@@ -2322,7 +2322,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
-        ZXpandEmulationInfo->Visible=true;
+        ZXpandEmulationInfo->Visible=ZXpand->Checked;
         TS1000Btn->Down=true;
         NewMachineName=TS1000Btn->Caption;
         Form1->EnableAnnotationOptions();
@@ -2345,7 +2345,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         ConfigureDefaultRamSettings();
         SetupForZX81();
         ZXpand->Enabled=true;
-        ZXpandEmulationInfo->Visible=true;
+        ZXpandEmulationInfo->Visible=ZXpand->Checked;
         TS1500Btn->Down=true;
         NewMachineName=TS1500Btn->Caption;
         Form1->EnableAnnotationOptions();
@@ -3338,7 +3338,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32k RAM Pack, RAM in 8k-16k Region, WRX High Resolution, ZonX Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
 
                         if (ret == IDYES)
                         {

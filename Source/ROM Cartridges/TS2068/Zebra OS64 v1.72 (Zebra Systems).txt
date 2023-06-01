@@ -2,4 +2,15 @@ Zebra OS64 (Zebra Systems, 1985)
 
 Cartridge based replacement for TS2000 Basic (the HOME ROM) offering 64 column text via 512x192 mode.
 
-LROS ROM extension cartridge which support 64-column writing on the screen. Only two screen colors is supported because the attribute file locations are not used. The colors can be changed using standard INK or PAPER commands. Cartridge is auto-boot, so after Timex initialization you will automatically enter 64-column mode.
+LROS ROM extension cartridge which support 64-column writing on the screen. Only two screen colors is
+supported because the attribute file locations are not used. The colors can be changed using standard
+INK or PAPER commands. Cartridge is auto-boot, so after Timex initialization you will automatically
+enter 64-column mode.
+
+------------------------------
+
+Details available here:
+https://www.timexsinclair.com/document/zebra-os-64-manual/
+
+Instruction manual available here:
+https://archive.org/details/zebrasystems/OS 64 Operating System Manual/

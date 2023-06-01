@@ -16,6 +16,7 @@ Version 1.39 - ##/##/2023 (by Paul Farrow)
     instruction manuals where available.
   - The Memotech Memopak HRG Reset button now only operates when in SLOW mode as stated in the
     interface's instruction manual.
+  - Add example programs from the ZX Printer manual.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

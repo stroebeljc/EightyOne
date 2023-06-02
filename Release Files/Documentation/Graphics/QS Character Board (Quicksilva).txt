@@ -43,7 +43,177 @@ ZX-Computer used. For ZX-81 in slow mode all switches should be off. For ZX-80 a
 fast mode switches 3 & 4 should be on. Play with these switches to get an idea of their function.
 
 
-@@@@@@@@@@@@ UNDERSTANDING CHARACTERS @@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@ QS CHRS BD DEMO CASSETTE @@@@@@@@@@@@@@@@@
+
+The demo cassette has two programs on it, each is recorded twice. The First two recordings are of a
+program called "CHRS". The last two recordings are of a program called "L-CASE".
+
+"CHRS" is a program which will fit into a 1K machine, consisting of the following M/C routines.
+Each routine has a start address and is given (in lines 10 to 14) a variable name set to the
+start address of the particular routine. This means that instead of calling the M/C routines
+with their start address (ie. 100 LET L=USR 16601) you can use easy to remember names (ie.
+100 LET L=USR SINC)
+
+--------------+---------------+-----------------------------------------------------------
+ ROUTINE NAME | START ADDRESS |                        DESCRIPTION
+--------------+---------------+-----------------------------------------------------------
+  CLR         |  16581        | Resets all the chr ram to white
+--------------+---------------+-----------------------------------------------------------
+  SINC        |  16600        | Copies the sinclair chr set into the chr ram
+--------------+---------------+-----------------------------------------------------------
+  QLOAD       |  16619        | Loads the chr ram from hex data in REM statements
+--------------+---------------+-----------------------------------------------------------
+  QPRNT       |  16689        | Provides the same function as LPRINT
+--------------+---------------+-----------------------------------------------------------
+  QCOPY       |  16728        | Provides the same function as COPY
+--------------+---------------+-----------------------------------------------------------
+
+
+CLR and SINC require one line of BASIC    ie.
+1) A line to call the M/C routine                                    95 LET L=USR CLR
+                                                                    100 LET L=USR SINC
+
+QLOAD requires at least three lines of BASIC    ie.
+
+1) A line to call the M/C routine                                   100 LET L=USR QLOAD
+2) 1 to 128 lines of chr data in REM Statements                     110 REM A0102040810204080
+3) A stop code to tell the QLOAD routine to return to BASIC         501 REM STOP
+
+As many chrs as you like may be programmed at one time by this routine. For each chr you will need
+one line containing a REM; The KBD chr; followed by 16 HEX numbers for the chr data.
+The last line (REM STOP) is ABSOLUTELY ESSENTIAL. This tells the routine when to return to BASIC
+without this the routine will never return to BASIC, so make SURE that you have one for each call of
+QLOAD routine. The STOP is made from the token 'STOP' (ie SHIFT A) not from the individual letters.
+Also the BASIC line number of the REM STOP should always be an odd number.
+
+
+QPRNT requires two lines of BASIC     ie.
+
+1) A line to call the M/C routing                                   600 LET L=USR QPRNT
+2) A REM statement containing the text you wish printed             610 REM AAAAA
+
+The REM statement following the USR call of the QPRNT routine may contain 1 to 255 chrs. These chrs
+can be any single chrs available on the Keyboard including the Quotes chr ("), but tokens may not be
+used. The routine will only print the text on the line following.
+
+
+QCOPY requires one line of BASIC    ie.
+
+1) A line to call the M/C routine                                   900 LET L=USR QCOPY
+
+Routines CLR and SINC may be used either in a BASIC program or in direct input mode. All other routines
+may only be used as part of a BASIC program (with a line number). The printer routines QPRNT and
+QCOPY may only be used when a printer is connected. Each USR call to the QLOAD routine MUST
+have its own REM STOP to enable return to BASIC. Failure to abide by the above rules will probably
+result in your program crashing. Sorry.
+
+
+"L-CASE"  Has the same program as "CHRS" plus the full HEX DATA in a series of REM statements to
+          load the chr ram with a complete lower case alphabet, in place of the inverse graphic
+          alphabet.
+
+To use this program first LOAD "L-CASE"; Then RUN the program; Then type in the following two
+direct commands.
+
+1) LET L=USR SINC
+2) GOTO 100
+
+This will load the lower case alphabet into the chr ram. With the chrs hoard switched on whenever you
+are in GRAPHICS mode you will get a lower case letter instead of an inverse one.
+
+You can of course change or add to any of the above programs. They are designed to be the basis of
+your chrs programs.
+
+
+@@@@@@@@@@@@@@@ USING THE CHRS BD AND M/C ROUTINES @@@@@@@@@@@@@@@
+
+TO CREATE A CHARACTER (pleose reod understanding chorocters)
+First orm yourself with o sheat of groph paper . Tenth inch squares ore obout right . Mork out on 8°8
+squore on the groph popoer with a thick ink line . Now divide this squore in holf vertically with a thin
+ink line .(see fig 1). Now with o pencil Fill in the small squores you want to be black dots in the chr ,
+ie. for a diagonal black line from the bottom left to the top right Fill in like FIG 2 .Eoch small sqvere
+on the graph poper represents one dot of the chr. Filling in a squore will give you o black dot and
+leaving o square blank will give yoy a white dot
+IO CONVERT TO HEX CODES. { using the dots ta hex conversion chart provided )
+Your drawing will now have fo be converted to tha 16 hex numbars needad by the QLOAD routine .
+This can be done quite ecsily using the dots to hax conversion chart at the foot of this poge . Each hex
+number will represent 4 dots of the chr ,There ae 8 dots on each hortzontal line , so you will need two "
+hex numbers for each line . There ore 8 lines which mokes 16 hex numbers for eoch chr . The correct
+order for these numbers is left to right , top to bottom, So in the exemple (fig 2 } look at the top left
+-group of 4 dots .They ore all white (not Filled in } ond locking at the dots to hex ehort you will see that
+the hex code for 4 white dots ts 'O'. This is the Firs: hex number for the che. Now look ot the top right S
+group of 4 dots . These oro 3 white dots ond one hiaek dot (Filled in) , ogain look at the chart to Find
+the hex code 'l’, This is the second hex number .Now look at the noxt line down on the exemple ,the
+First 4 dots ore ogain olf white so the hex code is again ‘0’. Continue in this way converting all the
+- groups of 4 dots to hex numbers. You should get tha following 16 hex numbers ,'0102040810204080"
+This is thechr data you will need to program the ches bd.
+TO PROGRAM A CHARACTER
+First plug in the ches bd. ond then load the progrom "CHRS” . Now type list 10. This will show the lines
+thot set the variable nomas te the stort addresso3 of the M/C routines, Now input the following lines of
+BASIC , If the display fs strange switeh off tho chrs bd, using the switch on the side .
+95 LET LeUSR SINC
+Now RUN the program . If you now switeh on the chrs bd. you will see that the normal chr set has been
+copied into the chr ram. You con use this routine a: ony tme in the progrom . Now type in - -
+100 LET LeUSk OLOAD
+501 REM STOP
+Line 100 is the USR call of the QLOAD routine : Line 501 is the ESSENTIAL. REM STOP (odd line number)
+Now inbetween these two fines you may put as mony Sines (Tline for each chorocteros you like . They
+shouid be layed out as follows = = ~
+LINE NUMBER REM KBO CHR - 16 HEX NUMBERS(CHR data }
+110 REM A 0302040310204080
+So now type in
+180 REM A0102040810204080
+Having got your hex ehr date yoy will need to hava a way of deciding which normal chr you wont it to
+replace . This is whot the K8D chr (in the oxompls 'A’) does . Each fine must be a line number ; then
+REM ; then the KBD ehre ; then the chr dato, Fint check to moke sure that eech USR coll te GLOAD
+is Followed by o REM STOP , Then RUM the progran ogain . Uf the chrs bd, is switched on
+all the characters thet were normally ‘A’ will hove changed to the exemple character(fig 2). if you hod '
+used ‘8! os the KBD chr the 'As® would have steyod the seme ond the ‘8s ' would have changed . :
+t =m sm
+|= Bape ee
+eS eee. a fee =| le ee 8
+FIG 1 FIG 2 DOTS TO HEX CONVERSICN CHART
+7 J
+
+
+@@@@@@@@@@@@@@@@@ USING THE QS PRINTER ROUTINES @@@@@@@@@@@@@@@@@
+
+The two QS Printer routines QPRNT and QCOPY are needed to enoble the progrommable chrs. to be
+printed on the Sinclair Printer , The noemal routines in the ROM thot they duplicote LPRINT ond COPY
+respectively will not operate on the chrs bd. They will continue to print tho Sinclair chr set .
+
+If you have the printer already connected corry on from the lost section , if net plug tho printer in os
+
+well and repeat the instruetiens given in “TO PROGRAM A CHARACTER "
+
+Now type in tha following lines - - -
+
+$00 LET L=USR QPRNT
+
+10 REM AAAAA
+
+The First line (600) is the USR call of the M/C routine QPRNT ; the second line is the REM statement
+
+containing the text to be printed, in the example ‘A4AAA’ , RUIN tha progrem again . The printer will
+
+stort up and print 5 diagonal lines , Note that there routines will alveys print the chrs in the chr rom
+
+even if the sereen disploy Is on normal . ,
+Finally type in the following lines - ~ -
+
+700 FOR Fe0 TO 255 -
+
+710 PRINT * AA”;
+
++ 720 NEXT F
+
+/ 730 LET L=USR QCOPY
+RUN the program again . The printer will copy the sereen using the ches in the chr bd rom .
+
+All of these routines can be called ony number of times in the program .
+
+
+@@@@@@@@@@@@ UNDERSTANDING CHARACTERS @@@@@@@@@@@@@@@@
 
 The Following information will, I hope, give yeu a clearer idea of how the choracters are generated
 and also help you to raalise the possibilities that being able to program your own characters creates.

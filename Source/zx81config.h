@@ -411,7 +411,7 @@ extern const char* romsFolder;
 extern const char* nvMemoryFolder;
 extern const char* examplesDrivesFolder;
 extern const char* documentationFolder;
-extern const char* exampleProgramsFolder;
+extern const char* exampleZX81ProgramsFolder;
 extern const char* fdcRomsFolder;
 extern const char* ideRomsFolder;
 extern const char* interfaceRomsFolder;

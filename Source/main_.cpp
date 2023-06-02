@@ -1847,7 +1847,7 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 void TForm1::BuildExamplesMenu()
 {
         AnsiString Path = emulator.cwd;
-        Path += exampleProgramsFolder;
+        Path += exampleZX81ProgramsFolder;
 
         DIR* dir;
         struct dirent *ent;
@@ -1903,8 +1903,10 @@ void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
         TMenuItem* ParentItem = ClickedItem->Parent;
 
         AnsiString Path = emulator.cwd;
-        Path += exampleProgramsFolder;
+        Path += exampleZX81ProgramsFolder;
         Path += ParentItem->Caption;
+        Path += "\\";
+        Path += ClickedItem->Caption;
         Path += "\\";
 
         ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);

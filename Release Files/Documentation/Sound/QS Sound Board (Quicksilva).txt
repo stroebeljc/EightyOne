@@ -343,5 +343,7 @@ The following programs were released by Quicksilva:
 - QS Asteroids
 - QS Defenda
 - QS Invaders
+- QS Scramble
 - QS Harmony
 - Cosmic Guerilla
+- Croaka-Crawla

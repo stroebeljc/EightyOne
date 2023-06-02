@@ -172,9 +172,9 @@ void load_config(void)
         strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
         AnsiString larken81Rom = fdcRomsFolder + AnsiString("larken81.rom");
         strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());
-        AnsiString interface1Ed1Rom = fdcRomsFolder + AnsiString("inteface1.edition1.rom");
+        AnsiString interface1Ed1Rom = fdcRomsFolder + AnsiString("interface1.edition1.rom");
         strcpy(emulator.ROMINTERFACE1ED1, interface1Ed1Rom.c_str());
-        AnsiString interface1Ed2Rom = fdcRomsFolder + AnsiString("inteface1.edition2.rom");
+        AnsiString interface1Ed2Rom = fdcRomsFolder + AnsiString("interface1.edition2.rom");
         strcpy(emulator.ROMINTERFACE1ED2, interface1Ed2Rom.c_str());
 
         AnsiString uSpeechRom = interfaceRomsFolder + AnsiString("uspeech.rom");

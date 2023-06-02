@@ -387,15 +387,15 @@ void spec48_initialise()
 
         if (spectrum.floppytype==FLOPPYIF1)
         {
-                AnsiString romPath = if2RomsFolder;
+                AnsiString romPath;
 
                 if (IF1->RomEdition->Text == "Edition 2")
                 {
-                        romPath += emulator.ROMINTERFACE1ED2;
+                        romPath = emulator.ROMINTERFACE1ED2;
                 }
                 else
                 {
-                        romPath += emulator.ROMINTERFACE1ED1;
+                        romPath = emulator.ROMINTERFACE1ED1;
                 }
 
                 romlen=memory_device_rom_load(romPath.c_str(),0,65536);
@@ -421,7 +421,9 @@ void spec48_initialise()
         memcpy(SpecMem, memory, romlen);
 
         if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
+        {
                 memcpy(TimexMem+65536, memory+16384, 8192);
+        }
 
         if (spectrum.MFVersion == MF128)
         {

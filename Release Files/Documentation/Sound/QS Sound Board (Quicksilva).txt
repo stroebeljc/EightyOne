@@ -340,6 +340,7 @@ TRAIN EFFECT
 COMMERCIAL PROGRAMS RELEASED SUPPORTING THE QS SOUND BOARD
 
 The following programs were released by Quicksilva:
+- QS Asteroids
 - QS Defenda
 - QS Invaders
 - QS Harmony

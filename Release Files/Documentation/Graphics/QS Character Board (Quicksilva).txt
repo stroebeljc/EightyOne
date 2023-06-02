@@ -127,90 +127,116 @@ your chrs programs.
 
 @@@@@@@@@@@@@@@ USING THE CHRS BD AND M/C ROUTINES @@@@@@@@@@@@@@@
 
-TO CREATE A CHARACTER (pleose reod understanding chorocters)
-First orm yourself with o sheat of groph paper . Tenth inch squares ore obout right . Mork out on 8°8
-squore on the groph popoer with a thick ink line . Now divide this squore in holf vertically with a thin
-ink line .(see fig 1). Now with o pencil Fill in the small squores you want to be black dots in the chr ,
-ie. for a diagonal black line from the bottom left to the top right Fill in like FIG 2 .Eoch small sqvere
-on the graph poper represents one dot of the chr. Filling in a squore will give you o black dot and
-leaving o square blank will give yoy a white dot
-IO CONVERT TO HEX CODES. { using the dots ta hex conversion chart provided )
-Your drawing will now have fo be converted to tha 16 hex numbars needad by the QLOAD routine .
-This can be done quite ecsily using the dots to hax conversion chart at the foot of this poge . Each hex
-number will represent 4 dots of the chr ,There ae 8 dots on each hortzontal line , so you will need two "
-hex numbers for each line . There ore 8 lines which mokes 16 hex numbers for eoch chr . The correct
-order for these numbers is left to right , top to bottom, So in the exemple (fig 2 } look at the top left
--group of 4 dots .They ore all white (not Filled in } ond locking at the dots to hex ehort you will see that
-the hex code for 4 white dots ts 'O'. This is the Firs: hex number for the che. Now look ot the top right S
-group of 4 dots . These oro 3 white dots ond one hiaek dot (Filled in) , ogain look at the chart to Find
-the hex code 'l’, This is the second hex number .Now look at the noxt line down on the exemple ,the
-First 4 dots ore ogain olf white so the hex code is again ‘0’. Continue in this way converting all the
-- groups of 4 dots to hex numbers. You should get tha following 16 hex numbers ,'0102040810204080"
-This is thechr data you will need to program the ches bd.
+TO CREATE A CHARACTER (please read understanding characters)
+
+First arm yourself with a sheet of graph paper. Tenth inch squares are about right. Mark out on 8*8
+square on the graph paper with a thick ink line. Now divide this square in half vertically with a thin
+ink line (see fig 1). Now with a pencil fill in the small squares you want to be black dots in the chr,
+ie. for a diagonal black line from the bottom left to the top right fill in like FIG 2. Each small square
+on the graph paper represents one dot of the chr. Filling in a square will give you a black dot and
+leaving a square blank will give you a white dot.
+
+
+TO CONVERT TO HEX CODES (using the dots to hex conversion chart provided)
+
+Your drawing will now have to be converted to the 16 hex numbers needed by the QLOAD routine.
+This can be done quite easily using the dots to hex conversion chart at the foot of this page. Each hex
+number will represent 4 dots of the chr. There are 8 dots on each horizontal line, so you will need two
+hex numbers for each line. There are 8 lines which makes 16 hex numbers for each chr. The correct
+order for these numbers is left to right, top to bottom. So in the example (fig 2) look at the top left
+group of 4 dots. They are all white (not filled in) and looking at the dots to hex chart you will see that
+the hex code for 4 white dots is '0'. This is the first hex number for the chr. Now look at the top right
+group of 4 dots. These are 3 white dots and one black dot (filled in), again look at the chart to find
+the hex code '1'. This is the second hex number. Now look at the next line down on the example, the
+first 4 dots are again all white so the hex code is again '0'. Continue in this way converting all the
+groups of 4 dots to hex numbers. You should get the following 16 hex numbers, '0102040810204080'.
+This is the chr data you will need to program the chrs bd.
+
+
 TO PROGRAM A CHARACTER
-First plug in the ches bd. ond then load the progrom "CHRS” . Now type list 10. This will show the lines
-thot set the variable nomas te the stort addresso3 of the M/C routines, Now input the following lines of
-BASIC , If the display fs strange switeh off tho chrs bd, using the switch on the side .
-95 LET LeUSR SINC
-Now RUN the program . If you now switeh on the chrs bd. you will see that the normal chr set has been
-copied into the chr ram. You con use this routine a: ony tme in the progrom . Now type in - -
-100 LET LeUSk OLOAD
-501 REM STOP
-Line 100 is the USR call of the QLOAD routine : Line 501 is the ESSENTIAL. REM STOP (odd line number)
-Now inbetween these two fines you may put as mony Sines (Tline for each chorocteros you like . They
-shouid be layed out as follows = = ~
-LINE NUMBER REM KBO CHR - 16 HEX NUMBERS(CHR data }
-110 REM A 0302040310204080
+
+First plug in the chrs bd and then load the program "CHRS". Now type list 10. This will show the lines
+that set the variable names to the start addresses of the M/C routines. Now input the following lines of
+BASIC. If the display is strange switch off the chrs bd, using the switch on the side.
+
+  95 LET L=USR SINC
+
+Now RUN the program. If you now switch on the chrs bd you will see that the normal chr set has been
+copied into the chr ram. You can use this routine at any time in the program. Now type in - -
+
+ 100 LET L=USR QLOAD
+ 501 REM STOP
+
+Line 100 is the USR call of the QLOAD routine : Line 501 is the ESSENTIAL REM STOP (odd line number)
+
+Now inbetween these two lines you may put as many lines (1 line for each character) you like. They
+shou;d be layed out as follows - - -
+
+LINE NUMBER  REM  KBD CHR  16 HEX NUMBERS (CHR data)
+ 110         REM     A     0102040810204080
+
 So now type in
-180 REM A0102040810204080
-Having got your hex ehr date yoy will need to hava a way of deciding which normal chr you wont it to
-replace . This is whot the K8D chr (in the oxompls 'A’) does . Each fine must be a line number ; then
-REM ; then the KBD ehre ; then the chr dato, Fint check to moke sure that eech USR coll te GLOAD
-is Followed by o REM STOP , Then RUM the progran ogain . Uf the chrs bd, is switched on
-all the characters thet were normally ‘A’ will hove changed to the exemple character(fig 2). if you hod '
-used ‘8! os the KBD chr the 'As® would have steyod the seme ond the ‘8s ' would have changed . :
-t =m sm
-|= Bape ee
-eS eee. a fee =| le ee 8
-FIG 1 FIG 2 DOTS TO HEX CONVERSICN CHART
-7 J
+
+ 180 REM A0102040810204080
+
+Having got your hex chr data you will need to have a way of deciding which normal chr you want it to
+replace. This is what the KBD chr (in the example 'A') does. Each line must be a line number; then
+REM; then the KBD chr; then the chr data. First check to make sure that each USR call to QLOAD
+is followed by a REM STOP. Then RUN the program again. If the chrs bd is switched on
+all the characters that were normally 'A' will have changed to the example character (fig 2). If you had
+used 'B' as the KBD chr the 'A's would have stayed the same and the 'Bs' would have changed.
+
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+
+|  :  :  :  |  :  :  :  |    |  :  :  :  |  :  :  :##|
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+
+|  :  :  :  |  :  :  :  |    |  :  :  :  |  :  :##:  |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+
+|  :  :  :  |  :  :  :  |    |  :  :  :  |  :##:  :  |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+
+|  :  :  :  |  :  :  :  |    |  :  :  :  |##:  :  :  |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+    +----------+----------+----------+----------+
+|  :  :  :  |  :  :  :  |    |  :  :  :##|  :  :  :  |    | .... = 0 | #... = 4 | #... = 8 | ##.. = C |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+    +----------+----------+----------+----------+
+|  :  :  :  |  :  :  :  |    |  :  :##:  |  :  :  :  |    | ...# = 1 | #..# = 5 | #..# = 9 | ##.# = D |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+    +----------+----------+----------+----------+
+|  :  :  :  |  :  :  :  |    |  :##:  :  |  :  :  :  |    | ..#. = 2 | #.#. = 6 | #.#. = A | ###. = E |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+    +----------+----------+----------+----------+
+|  :  :  :  |  :  :  :  |    |##:  :  :  |  :  :  :  |    | ..## = 3 | #.## = 7 | #.## = B | #### = F |
++--+--+--+--+--+--+--+--+    +--+--+--+--+--+--+--+--+    +----------+----------+----------+----------+
+
+          FIG 1                        FIG 2                      DOTS TO HEX CONVERSION CHART
 
 
 @@@@@@@@@@@@@@@@@ USING THE QS PRINTER ROUTINES @@@@@@@@@@@@@@@@@
 
-The two QS Printer routines QPRNT and QCOPY are needed to enoble the progrommable chrs. to be
-printed on the Sinclair Printer , The noemal routines in the ROM thot they duplicote LPRINT ond COPY
-respectively will not operate on the chrs bd. They will continue to print tho Sinclair chr set .
+The two QS Printer routines QPRNT and QCOPY are needed to enable the programmable chrs to be
+printed on the Sinclair Printer. The normal routines in the ROM that they duplicate LPRINT and COPY
+respectively will not operate on the chrs bd. They will continue to print the Sinclair chr set.
 
-If you have the printer already connected corry on from the lost section , if net plug tho printer in os
+If you have the printer already connected carry on from the last section, if not plug the printer in as
+well and repeat the instructions given in "TO PROGRAM A CHARACTER".
 
-well and repeat the instruetiens given in “TO PROGRAM A CHARACTER "
 
-Now type in tha following lines - - -
+Now type in the following lines - - -
 
-$00 LET L=USR QPRNT
+ 600 LET L=USR QPRNT
+ 610 REM AAAAA
 
-10 REM AAAAA
+The first line (600) is the USR call of the M/C routine QPRNT; the second line is the REM statement
+containing the text to be printed. In the example 'AAAAA'. RUN the program again. The printer will
+start up and print 5 diagonal lines. Note that these routines will always print the chrs in the chr rom
+even if the screen display is on normal.
 
-The First line (600) is the USR call of the M/C routine QPRNT ; the second line is the REM statement
+Finally type in the following lines - - -
 
-containing the text to be printed, in the example ‘A4AAA’ , RUIN tha progrem again . The printer will
+ 700 FOR F=0 TO 255
+ 710 PRINT " AA";
+ 720 NEXT F
+ 730 LET L=USR QCOPY
 
-stort up and print 5 diagonal lines , Note that there routines will alveys print the chrs in the chr rom
+RUN the program again. The printer will copy the screen using the chrs in the chr bd rom.
 
-even if the sereen disploy Is on normal . ,
-Finally type in the following lines - ~ -
-
-700 FOR Fe0 TO 255 -
-
-710 PRINT * AA”;
-
-+ 720 NEXT F
-
-/ 730 LET L=USR QCOPY
-RUN the program again . The printer will copy the sereen using the ches in the chr bd rom .
-
-All of these routines can be called ony number of times in the program .
+All of these routines can be called any number of times in the program.
 
 
 @@@@@@@@@@@@ UNDERSTANDING CHARACTERS @@@@@@@@@@@@@@@@

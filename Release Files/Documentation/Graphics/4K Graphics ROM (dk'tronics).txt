@@ -1070,7 +1070,9 @@ USR 11934
 |  0|        |  0|        |  0|        |  0|        | 48|  ##    |  0|        |
 +---+--------+---+--------+---+--------+---+--------+---+--------+---+--------+
 
---------------------------------------------------------------------------------
+
+===============================================================================
+
 
 TECHNICAL NOTES
 
@@ -1088,3 +1090,13 @@ $2A = Character set 7
 $2C = Character set 8
 $30 = U.D.G. set 1
 $32 = U.D.G. set 2
+
+
+COMMERCIAL PROGRAMS RELEASED FOR THE DK'TRONICS GRAPHICS ROM
+
+- Asteroids
+- Centipede
+- Defender
+- Meteor Storm
+- Space Invaders
+- UDG

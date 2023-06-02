@@ -122,3 +122,16 @@ USR 11924
 | 66| #    # | 60|  ####  | 62|  ##### |124| #####  |126| ###### | 24|   ##   |
 |129|#      #| 60|  ####  |  0|        |  0|        |  0|        |  0|        |
 +---+--------+---+--------+---+--------+---+--------+---+--------+---+--------+
+
+
+===============================================================================
+
+
+COMMERCIAL PROGRAMS RELEASED FOR THE KAYDE GRAPHICS ROM
+
+- Centipede
+- Peckman
+- Space Invaders
+- Character Generator (for use with 2K/4K RAM)
+
+Instead of fitting the board with 2K RAM, the board could be fitted with a 4K Toolkit ROM.

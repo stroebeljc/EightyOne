@@ -1,0 +1,11 @@
+============================================
+"Histogramme" from "Etudes Pour ZX81 Tome 2"
+By Jean-Francois Sehan, Published by P.S.I.
+============================================
+
+You are asked to enter three pieces of information: the title of the histogram,
+the maximum value for the vertical scale and the number of data values. When
+entering the data values, make sure they do not exceed the maximum.
+
+Once the histogram has been drawn, press key P to produce a copy to the ZX Printer,
+or any other key to create a new histogram.

@@ -59,8 +59,8 @@ the lo-res display and therefore will not be visible while the hi-res display is
 being shown. Likewise, new commands typed in will not be visible while the hi-res
 display is being shown.
 
-The only way to return to the normal lo-res display file is by pressing the Reset
-push button.
+Return to the normal lo-res display file is by pressing the Reset push button or by
+typing: POKE 10240,0
 
 
 ERROR CODES
@@ -89,7 +89,9 @@ The ROM for the QS Hi-Res board contains a self-test routine, which can be invok
 via RAND USR 10243. It will verify the on board 6K RAM is operational and will then
 draw a test screen.
 
---------------------------------------------------------------------------------
+
+===============================================================================
+
 
 TECHNICAL NOTES
 
@@ -104,3 +106,8 @@ Write to $2000-$2FFF (A13 = 1) selects the normal display mode.
 Push button forces a return back to normal display mode.
 
 The 2K ROM appears at $2800-$2FFF.
+
+
+COMMERCIAL PROGRAMS RELEASED FOR THE QS HI-RES BOARD
+
+- ZX Chess II (Artic Computing Ltd)

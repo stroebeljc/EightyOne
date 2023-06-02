@@ -1,0 +1,13 @@
+=========================================================
+"Generateur De Charactere" from "Etudes Pour ZX81 Tome 2"
+       By Jean-Francois Sehan, Published by P.S.I.
+=========================================================
+
+The program allows you to draw nine characters at the same time and will calculate
+the hexadecimal values that need to be used to define those characters via Quicksilva's
+CHRS utility. Run the program and then enable the QS Character Board.
+
+You draw the characters by moving the flashing cursor around using the keys 5, 6, 7 and
+8.You toggle between drawing black and white pixels using key B. Once the characters
+have been drawn, press key H and the hexadecimal values will be calculated. Press key C
+to create a copy of the screen to the ZX Printer.

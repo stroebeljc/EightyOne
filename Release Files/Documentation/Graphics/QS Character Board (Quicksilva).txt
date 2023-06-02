@@ -292,7 +292,9 @@ Address                  Video                  Binary      Hex   Decimal
 7855       |   |   |   |   |   |   |   |   |    00000000    00    0
            +---+---+---+---+---+---+---+---+
 
---------------------------------------------------------------------------------
+
+===============================================================================
+
 
 TECHNICAL NOTES
 
@@ -303,3 +305,16 @@ ZX81 display mechanism automatically inverts them due to bit 7 being set of the 
 
 Software cannot enable and disable the use of the the replacement character set; this must be manually
 done via the on board switch.
+
+
+COMMERCIAL PROGRAMS RELEASED FOR THE QS CHARACTER BOARD
+
+The following programs were released by Quicksilva:
+- QS Asteroids
+- QS Invaders
+- QS Scramble
+- Cosmic Guerilla
+
+The following programs were released by other companies:
+- Puckman (Hewson Consultants)
+- ZX-Forth (Artic Computing Ltd)

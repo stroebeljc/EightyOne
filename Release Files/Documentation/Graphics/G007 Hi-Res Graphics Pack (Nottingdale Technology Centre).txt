@@ -51,7 +51,7 @@ C   Example Programs
     Example 4.
     Example 5.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 CONDITIONS OF USE
 
@@ -69,7 +69,7 @@ The G007 requires the following:
    Add-ons available, we cannot guarantee the G007 to work with any add-on other than the Sinclair RAM pack and printer.
    However, most of the alternative RAM packs, including 64K ones, should be fine.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 1. INTRODUCTION
 
@@ -150,7 +150,7 @@ by the BASIC interpreter. This line cannot be listed, deleted or edited.
 
 You may wish to try some of the example programs in the appendix.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 2. THE BASIC STATEMENTS
 
@@ -422,7 +422,7 @@ Correcting Television Picture Distortion
 
 If you find the top of the TV picture bends slightly to the right, you may be able to correct this with POKE 8833,0.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 A. SUMMARY OF BASIC STATEMENTS
 
@@ -480,7 +480,7 @@ Has the following effects for the differen values of n:
 41-48   As 1 to 8, but draw and fill triangle between current and previous two PLOT positions
 73-80   As 41 to 48, but fill with texture (not avilable in invert mode)
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 B. G007 MEMORY
 
@@ -571,7 +571,7 @@ Setting The High/Low Resolution Mode
 There is no easily accessible routine for setting display mode. This can be done by loading the Z80 register I with 30 (1EH)
 for low-res display, or 31 (1FH) for hi-res display.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 C. EXAMPLE PROGRAMS
 
@@ -713,7 +713,9 @@ This program takes about 4 minutes to run, but the result is quite spectacular.
  150 NEXT Y
  160 NEXT X
 
---------------------------------------------------------------------------------
+
+===============================================================================
+
 
 TECHNICAL NOTES
 

@@ -640,7 +640,9 @@ C) Here is a program which shows a funny clock. We're sure you could make
 
 Good Luck from all at MEMOTECH
 
---------------------------------------------------------------------------------
+
+===============================================================================
+
 
 TECHNICAL NOTES
 

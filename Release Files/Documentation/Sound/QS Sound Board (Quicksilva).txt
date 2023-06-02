@@ -332,3 +332,15 @@ TRAIN EFFECT
  95 FOR G=0 TO 200                     (Delay loop)
  97 NEXT G
  99 NEXT F
+
+
+===============================================================================
+
+
+COMMERCIAL PROGRAMS RELEASED SUPPORTING THE QS SOUND BOARD
+
+The following programs were released by Quicksilva:
+- QS Defenda
+- QS Invaders
+- QS Harmony
+- Cosmic Guerilla

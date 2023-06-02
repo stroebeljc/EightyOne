@@ -13,10 +13,13 @@ Version 1.39 - ##/##/2023 (by Paul Farrow)
   - Support for Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.
   - Added documentation on the use of various ZX80/ZX81 hardware interfaces, based on original
-    instruction manuals where available.
+    instruction manuals where available, to the Help menu.
+  - Added shortcuts to the various example programs for the ZX81 to the Help menu.
   - The Memotech Memopak HRG Reset button now only operates when in SLOW mode as stated in the
     interface's instruction manual.
-  - Add example programs from the ZX Printer manual.
+  - Added example programs from the ZX Printer manual.
+  - Added the 'Chrs Demo' utility by Quicksilva for the QS Character Board.
+  - Added the 'UDG' utility by dk'tronics for the dk'tronics 4K Graphics ROM.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

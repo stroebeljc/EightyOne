@@ -29,7 +29,8 @@ PLOT x y   Plots the pixel at the coordinates held in the specified numeric
 DRAW x y   Draws a line from the current screen coordinates to the coordinates
            held in the specified variables
 PRINT n$   Prints a message held in the specified string variable to the hi-res
-           display at the current coordinates.
+           display at the row and column corresponding to the current screen
+           coordinates.
 SCROLL     Scrolls the bottom 24 lines (3 rows) of the hi-res display file up. The
            new screen coordinates are set to start of the last row of the display,
            i.e. the start of line 184.

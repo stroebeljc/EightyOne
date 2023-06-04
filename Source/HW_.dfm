@@ -1555,8 +1555,8 @@ object HW: THW
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
-        Left = 200
-        Top = 90
+        Left = 184
+        Top = 74
         Width = 97
         Height = 17
         Caption = 'Multiface 128'
@@ -1583,7 +1583,7 @@ object HW: THW
       end
       object ZXPrinter: TCheckBox
         Left = 184
-        Top = 74
+        Top = 93
         Width = 97
         Height = 17
         Caption = 'ZX Printer'

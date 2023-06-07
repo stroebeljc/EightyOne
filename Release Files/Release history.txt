@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.39 - ##/##/2023 (by Paul Farrow)
+Version 1.39 - ##/06/2023 (by Paul Farrow)
 * Bug fixes:
   - Hard reset was not disabling the ZX Printer motor.
   - The ZX Printer emulation was not signalling when the stylus was off the paper.
@@ -13,8 +13,8 @@ Version 1.39 - ##/##/2023 (by Paul Farrow)
 * Enhancements:
   - Support for Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.
-  - Added documentation on the use of various ZX80/ZX81 hardware interfaces, based on original
-    instruction manuals where available, to the Help menu.
+  - Added documentation on the use of various hardware interfaces to the Help menu, based on
+    original instruction manuals where available.
   - Added shortcuts to the various example programs for the ZX81 to the Help menu.
   - The Memotech Memopak HRG Reset button now only operates when in SLOW mode as stated in the
     interface's instruction manual.

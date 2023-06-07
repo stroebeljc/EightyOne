@@ -3228,12 +3228,6 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         {
                 RamPackBox->ItemIndex = RamPackBox->Items->Count-2;
                 M1Not->Checked=true;
-
-                mwcfideHelp->Visible = true;
-        }
-        else
-        {
-                mwcfideHelp->Visible = false;
         }
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="AceCF")
@@ -3593,15 +3587,6 @@ void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry*
                 romCartridgeFileBox->Items->Add(romCartridgeEntry->Title);
         }
 }
-//---------------------------------------------------------------------------
-void __fastcall THW::mwcfideHelpClick(TObject *Sender)
-{
-        AnsiString path = emulator.cwd;
-        path += examplesDrivesFolder;
-
-        ShellExecute(0, "open", "notepad.exe", "FAT.txt", path.c_str(), SW_SHOWNORMAL);
-}
-
 //---------------------------------------------------------------------------
 
 void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)

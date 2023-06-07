@@ -110,7 +110,7 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
 MinorVer=38
-Release=6
+Release=7
 Build=0
 Debug=0
 PreRelease=0
@@ -123,7 +123,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Michael D Wynne
 FileDescription=EightyOne Emulator
-FileVersion=1.38.6.0
+FileVersion=1.38.7.0
 InternalName=
 LegalCopyright=Michael D Wynne
 LegalTrademarks=

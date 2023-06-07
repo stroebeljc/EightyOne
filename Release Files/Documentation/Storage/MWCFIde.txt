@@ -1,3 +1,8 @@
+================
+MWCFIde for ZX81
+Mike Wynne
+================
+
 v0.01 Changes 4-Sept-07
 
 lots of changes, rewrites, features and bugs!

@@ -136,7 +136,6 @@ __published:	// IDE-managed Components
         TCheckBox *uSource;
         TImageList *Spec128Icons;
         TComboBox *TS1510RomCartridgeFileBox;
-        TImage *mwcfideHelp;
         TComboBox *TS2068RomCartridgeFileBox;
         TOffice97Button *TC2068Btn;
         TComboBox *TC2068RomCartridgeFileBox;
@@ -195,7 +194,6 @@ __published:	// IDE-managed Components
         void __fastcall TS2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall uSourceClick(TObject *Sender);
         void __fastcall FormCreate(TObject *Sender);
-        void __fastcall mwcfideHelpClick(TObject *Sender);
         void __fastcall TC2068BtnClick(TObject *Sender);
         void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall ZXpandEmulationInfoClick(TObject *Sender);

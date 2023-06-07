@@ -1,0 +1,13 @@
+================================================
+TS1510 ROM Cartridges for the TS1000/TS1500/ZX81
+Timex Sincalir
+================================================
+
+TS1510 ROM cartridges contain a non-pageable ROM that can be either 8K, 16K or 24K.
+
+For an 8K ROM cartridge, the 8K appears at $2000-$3FFF.
+
+For a 16K ROM Cartridge, the first 8K appears at $2000-$3FFF and the second 8K appears at $8000-$9FFF.
+
+For a 24K ROM cartridge, the first 8K appears at $2000-$3FFF, the second 8K appears at $8000-$9FFF and the
+third 8K appears at $A000-$BFFF.

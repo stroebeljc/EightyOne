@@ -1,6 +1,6 @@
 =======================
 WRX Hi-Res for the ZX81
-Wilf Rigter
+Wilf Rigter (1984)
 =======================
 
 Display file resolution: 256 x 192

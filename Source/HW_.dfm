@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 200
-  Top = 123
+  Left = 199
+  Top = 122
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'

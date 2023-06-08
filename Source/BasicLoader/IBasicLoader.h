@@ -88,7 +88,7 @@ protected:
         void ExtractEscapeCharacters();
         void MaskOutStrings(unsigned char* buffer);
         void ExtractSingleCharacters(bool discardRedundantSpaces);
-        void OutputEmbeddedNumber(int& index, int& addressOffset);
+        void OutputEmbeddedNumber(int& index, int& addressOffset, bool binaryFormat);
         void HandleTokenLineNumber(unsigned char* pStartToken, unsigned char* pLabelSearch, int outputIndex);
         int FindLabelDetails(string& label);
         string ExtractLabel(unsigned char* pLabelSearch);

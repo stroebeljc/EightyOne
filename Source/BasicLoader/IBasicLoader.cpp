@@ -527,10 +527,21 @@ bool IBasicLoader::StartOfNumber(int index)
         return !isalpha(mLineBuffer[index-1]) && ((mLineBuffer[index] == '.') || isdigit(mLineBuffer[index]));
 }
 
-void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset)
+void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool binaryFormatFlag)
 {
         char* pEnd;
-        double value = strtod((char*)(mLineBuffer + index), &pEnd);
+
+        double value;
+        if (binaryFormatFlag)
+        {
+                const int base = 2;
+                value = (double)strtol((char*)(mLineBuffer + index), &pEnd, base);
+        }
+        else
+        {
+                value = strtod((char*)(mLineBuffer + index), &pEnd);
+        }
+
         if (pEnd == (mLineBuffer + index))
         {
                 pEnd++;

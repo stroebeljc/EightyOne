@@ -10,6 +10,8 @@ Version 1.39 - ##/06/2023 (by Paul Farrow)
   - The ZX Printer emulation was not signalling when the stylus was off the paper.
   - The ZX Printer window was compressing the width of the paper by 2 pixels.
   - The wrong folder was being searched for the ZX Interface 1 ROM.
+  - The BASIC Listing import facility was incorrectly interpreting BIN values for
+    the Spectrum.
 * Enhancements:
   - Support for Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.

@@ -35,6 +35,7 @@ private:
         static const unsigned char Number = 0x0E;
         static const unsigned char Pound = 0x60;
         static const unsigned char Copyright = 0x7F;
+        static const unsigned char Bin = 0xC4;
         static const unsigned char Line = 0xCA;
         static const unsigned char DefFn = 0xCE;
         static const unsigned char LList = 0xE1;

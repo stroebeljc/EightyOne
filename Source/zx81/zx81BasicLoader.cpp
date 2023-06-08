@@ -259,7 +259,8 @@ void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset)
 
                         if (!withinQuotes && !withinRem && StartOfNumber(i))
                         {
-                                OutputEmbeddedNumber(i, addressOffset);
+                                const bool binaryFormatFlag = false;
+                                OutputEmbeddedNumber(i, addressOffset, binaryFormatFlag);
                         }
                         else
                         {

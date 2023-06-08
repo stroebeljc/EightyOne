@@ -303,6 +303,7 @@ void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)
         bool withinQuotes = false;
         bool withinRem = false;
         bool withinDefFn = false;
+        bool lastTokenWasBin = false;
 
         while (mLineBuffer[i] != '\0')
         {
@@ -339,11 +340,20 @@ void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)
                         }
                         else if (!withinDefFn && !withinQuotes && !withinRem && StartOfNumber(i))
                         {
-                                OutputEmbeddedNumber(i, addressOffset);
+                                OutputEmbeddedNumber(i, addressOffset, lastTokenWasBin);
                         }
                         else
                         {
                                 OutputByte(addressOffset, chr);
+                        }
+
+                        if (chr == Bin)
+                        {
+                                lastTokenWasBin = true;
+                        }
+                        else if (chr != ' ')
+                        {
+                                lastTokenWasBin = false;
                         }
                 }
 

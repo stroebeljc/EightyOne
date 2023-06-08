@@ -103,7 +103,10 @@ B:
 CD GAMES
 MANIC
 
-More to follow...
 
-Mike Wynne
+===============================================================================
 
+TECHNICAL NOTES
+
+MWCFIde is a theoretical Compact Flash IDE interface for the ZX81 and has never
+existed in reality.

@@ -1385,7 +1385,7 @@ object HW: THW
     Top = 140
     Width = 401
     Height = 169
-    ActivePage = Interfaces
+    ActivePage = AdvSettings
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1961,7 +1961,7 @@ object HW: THW
         Top = 64
         Width = 137
         Height = 17
-        Caption = 'Enable RAM in 8K-16K'
+        Caption = 'RAM in 8K-16K Region'
         Color = clBtnFace
         ParentColor = False
         TabOrder = 3
@@ -1973,7 +1973,7 @@ object HW: THW
         Width = 145
         Height = 17
         Hint = 'Allows unrestricted machine code to run from the 32k-48k range'
-        Caption = 'Enable M1Not Circuit'
+        Caption = 'M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
         ParentShowHint = False
@@ -1984,10 +1984,10 @@ object HW: THW
       object Issue2: TCheckBox
         Left = 232
         Top = 48
-        Width = 105
+        Width = 137
         Height = 17
         BiDiMode = bdLeftToRight
-        Caption = 'Issue 2 Keyboard'
+        Caption = 'Issue 2 EAR Behaviour'
         Color = clBtnFace
         ParentBiDiMode = False
         ParentColor = False
@@ -2027,7 +2027,7 @@ object HW: THW
         Hint = 
           'Wilf Rigter'#39's modification to prevent Wait state insertion at ev' +
           'ery NMI'
-        Caption = 'Enable Improved Wait Circuit'
+        Caption = 'Improved Wait Circuit'
         Color = clBtnFace
         ParentColor = False
         ParentShowHint = False
@@ -2040,7 +2040,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

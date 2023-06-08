@@ -1,16 +1,16 @@
-===========================================
-Issue 2 Ear State Issue for the ZX Spectrum
-===========================================
+===========================
+ZX Spectrum EAR Input State
+===========================
 
 The state of the EAR line can be set by writing out to port $xxFE, with the
 value held in bit 4 defining the state. A read back from port $xxFE returns
-the state of the EAR line in bit 6, and on all issues of Spectrum apart from
-the issue 2 the value returned matches the value previously written to the
-EAR line. On the issue 2 Spectrum, the state written to the MIC line (bit 3) 
-affects the actual value read back from the EAR line.
+the state of the EAR line in bit 6, and on issue 3 or later Spectrum the value
+returned matches the value previously written to the EAR line. On the issue 1
+and 2 Spectrums, the state written to the MIC line (bit 3) affects the actual
+value read back from the EAR line.
 
 +----------------+    +----------------+
-|     Issue 2    |    |  Other Issues  |
+|  Issue 1 & 2   |    |  Later Issues  |
 +--------+-------+    +--------+-------+
 | Output | Input |    | Output | Input |
 |  Bits  |  Bit  |    |  Bits  |  Bit  |
@@ -23,9 +23,9 @@ affects the actual value read back from the EAR line.
 +--------+-------+    +--------+-------+
 
 With no keys pressed, other issue Spectrums will always return 255 but for an
-issue 2 Spectrum the value return may be 191 or 255. The actual value returned
-depends on the time between writing to the port and reading it back - if the
-time is below a certain threshold then a value of 255 is returned, if above
+issue 1 or 2 Spectrum the value return may be 191 or 255. The actual value
+returned depends on the time between writing to the port and reading it back - if
+the time is below a certain threshold then a value of 255 is returned, if above
 the threshold then a value of 191 is returned.
 
 The following BASIC program demonstrates the difference between issues of
@@ -37,9 +37,9 @@ Spectrum:
   40 PRINT IN 254
   50 GO TO 10
 
-An output toggling between 191 and 255 only occurs on non-issue 2 Spectrums.
+An output toggling between 191 and 255 only occurs on issue 3 or above Spectrums.
 
-The following program is required for an issue 2 Spectrum to also produce an
+The following program is required for an issue 1 or 2 Spectrum to also produce an
 output that toggles between 191 and 255:
       
   10 OUT 254,BIN 11100111

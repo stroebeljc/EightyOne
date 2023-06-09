@@ -13,7 +13,7 @@ Version 1.39 - ##/06/2023 (by Paul Farrow)
   - The BASIC Listing import facility was incorrectly interpreting BIN values for
     the Spectrum.
 * Enhancements:
-  - Support for Quicksilva Hi-Res Board.
+  - Added emulation of Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.
   - Added documentation on the use of various hardware interfaces to the Help menu, based on
     original instruction manuals where available.
@@ -23,6 +23,11 @@ Version 1.39 - ##/06/2023 (by Paul Farrow)
   - Added example programs from the ZX Printer manual.
   - Added the 'Chrs Demo' utility by Quicksilva for the QS Character Board.
   - Added the 'UDG' utility by dk'tronics for the dk'tronics 4K Graphics ROM.
+  - The BASIC Listing window now refreshes automatically when adding or removing
+    BASIC lines for the ZX80, ZX81, TS1000, TS1500, TK85, 16K Spectrum (English),
+    48K Spectrum (English) Spectrum+ (English, Spanish), Spectrum 128 (English,
+    Spanish), Spectrum+2 (English, French, Spanish), Spectrum+2A (English, Spanish)
+    and Spectrum+3 (English, Spanish).
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

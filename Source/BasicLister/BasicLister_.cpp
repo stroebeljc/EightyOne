@@ -342,16 +342,24 @@ void __fastcall TBasicLister::ScrollBarChange(TObject *Sender)
 
 void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 {
-        Refresh();
+        const bool keepScrollbarPosition = false;
+        Refresh(keepScrollbarPosition);
 }
 //---------------------------------------------------------------------------
 
-void TBasicLister::Refresh()
+void TBasicLister::Refresh(bool keepScrollbarPosition)
 {
+        double relativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
+
         ClearBitmap();
         Invalidate();
 
         LoadProgram();
+
+        if (keepScrollbarPosition)
+        {
+                ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -685,7 +693,8 @@ void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
 
         EnableButtons();
 
-        Refresh();
+        const keepScrollbarPosition = false;
+        Refresh(keepScrollbarPosition);
 }
 
 void TBasicLister::GetSaveOptions()

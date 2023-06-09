@@ -44,12 +44,15 @@
 #include "RomCartridge\IF2RomCartridge.h"
 #include "Chroma\Chroma.h"
 #include "LiveMemoryWindow_.h"
+#include "BasicLister\BasicLister_.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
 #define LASTINSTOUTFE 2
 #define LASTINSTOUTFD 3
 #define LASTINSTOUTFF 4
+
+#define FLAG_Z	      0x40
 
 extern "C"
 {
@@ -184,6 +187,7 @@ bool chromaSelected;
 BOOL annotatableROM;
 bool lambdaSelected;
 bool zx80rom;
+bool zx81rom;
 BOOL memotechResetPressed;
 BOOL memotechResetRequested;
 
@@ -397,6 +401,9 @@ void zx81_initialise()
         prevVideoFlipFlop3Q = 0;
 
         zx80rom = !strcmp(machine.CurRom, "zx80.rom");
+        zx81rom = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
+                  !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
+
         annotatableROM = IsAnnotatableROM();
 }
 
@@ -436,8 +443,7 @@ BOOL IsAnnotatableROM()
         case MACHINETK85:
         case MACHINER470:
         case MACHINETS1500:
-                annotatableROM = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                                 !strcmp(machine.CurRom, "ringo470.rom") || !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
+                annotatableROM = zx81rom || !strcmp(machine.CurRom, "ringo470.rom");
                 break;
 
         case MACHINELAMBDA:
@@ -1536,6 +1542,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = PatchTest(z80.pc.w);
                 int ts = z80_do_opcode();
 
+                if (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B) && BasicLister->Visible)
+                {
+                        const bool keepScrollbarPosition = true;
+                        BasicLister->Refresh(keepScrollbarPosition);
+                }
+
                 int lineClockCounterAfterInstruction = (lineClockCounter - ts);
 
                 bool instructionOverlapsHSync = (lineClockCounterAfterInstruction < ZX81HSyncPositionStart);
@@ -2107,6 +2119,12 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = PatchTest(z80.pc.w);
                 int ts = z80_do_opcode();
+
+                if (zx80rom && z80.pc.w == 0x04F4 && BasicLister->Visible)
+                {
+                        const bool keepScrollbarPosition = true;
+                        BasicLister->Refresh(keepScrollbarPosition);
+                }
 
                 prevVideoFlipFlop3Q = videoFlipFlop3Q;
                 int numberOfM1Cycles = z80_NumberOfM1Cycles();

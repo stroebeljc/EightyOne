@@ -48,11 +48,14 @@
 #include "RomCartridge\IF2RomCartridge.h"
 #include "Spectra\Spectra.h"
 #include "LiveMemoryWindow_.h"
+#include "BasicLister\BasicLister_.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
 #define VSYNCCOLOUR     VBLANKCOLOUR
 #define BACKPORCHCOLOUR VBLANKCOLOUR
+
+#define FLAG_Z	      0x40
 
 extern "C"
 {
@@ -112,6 +115,14 @@ int ZXCFPort=0;
 int uSpeechPaged=0;
 int uSourcePaged=0;
 
+int spectrumBasicRomPagedIn = 0;
+int spectrum128BasicRomPagedIn = 0;
+int spanish128BasicRomPagedIn = 0;
+int spectrumPlus2BasicRomPagedIn = 0;
+int spectrumPlus3BasicRomPagedIn = 0;
+int spectrumPlus2AddLineAddress;
+int spectrumPlus3AddLineAddress;
+
 int SPECMICState, SPECTopBorder, SPECLeftBorder, SPECBorder=7, FloatingBus;
 int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
 int SPECKb, SPECNextBorder=7;
@@ -126,6 +137,12 @@ int InteruptPosition;
 int SPECFlashLoading=0;
 int fts=0;
 int flash=0;
+
+bool rom48;
+bool rom128;
+bool romSp128;
+bool romPlus2;
+bool romPlus3;
 
 extern unsigned short RZXCounter;
 extern RZX_INFO rzx;
@@ -462,6 +479,55 @@ void spec48_initialise()
 
         spec48_reset();
         P3DriveMachineHasInitialised();
+
+        rom48 = (emulator.romcrc == CRCSP48 || emulator.romcrc == CRCSPANISH48);
+        rom128 = (emulator.romcrc == CRCSP128);
+        romSp128 = (emulator.romcrc == CRCSPANISH128);
+        bool romEnglishPlus2 = (emulator.romcrc == CRCPLUS2);
+        bool romFrenchPlus2 = (emulator.romcrc == CRCFRENCHPLUS2);
+        bool romSpanishPlus2 = (emulator.romcrc == CRCSPANISHPLUS2);
+        romPlus2 = romEnglishPlus2 || romFrenchPlus2 || romSpanishPlus2;
+        bool romEnglishPlus3v40 = (emulator.romcrc == CRCPLUS3V40);
+        bool romEnglishPlus3v41 = (emulator.romcrc == CRCPLUS3V41);
+        bool romSpanishPlus3v40 = (emulator.romcrc == CRCSPANISHPLUS3V40);
+        bool romSpanishPlus3v41 = (emulator.romcrc == CRCSPANISHPLUS3V41);
+        romPlus3 = romEnglishPlus3v40 || romSpanishPlus3v40 || romEnglishPlus3v41 || romSpanishPlus3v41;
+
+        if (romPlus2)
+        {
+                if (romEnglishPlus2)
+                {
+                        spectrumPlus2AddLineAddress = 0x2D14;
+                }
+                else if (romFrenchPlus2)
+                {
+                        spectrumPlus2AddLineAddress = 0x2D29;
+                }
+                else
+                {
+                        spectrumPlus2AddLineAddress = 0x2D26;
+                }
+        }
+
+        if (romPlus3)
+        {
+                if (romEnglishPlus3v40)
+                {
+                        spectrumPlus3AddLineAddress = 0x0DBC;
+                }
+                else if (romEnglishPlus3v41)
+                {
+                        spectrumPlus3AddLineAddress = 0x0DC1;
+                }
+                else if (romSpanishPlus3v40)
+                {
+                        spectrumPlus3AddLineAddress = 0x0DD3;
+                }
+                else
+                {
+                        spectrumPlus3AddLineAddress = 0x0DD8;
+                }
+        }
 }
 
 void SPECLoadCheck(void)
@@ -676,6 +742,12 @@ BYTE spec48_ReadByte(int Address)
 {
         int data;
 
+        spectrumBasicRomPagedIn = false;
+        spectrum128BasicRomPagedIn = false;
+        spanish128BasicRomPagedIn = false;
+        spectrumPlus2BasicRomPagedIn = false;
+        spectrumPlus3BasicRomPagedIn = false;
+
         LiveMemoryWindow->Read(Address);
 
         if (Address<16384)
@@ -754,6 +826,18 @@ BYTE spec48_ReadByte(int Address)
                                 return data;
                         }
                 }
+        }
+
+        if (BasicLister->Visible)
+        {
+                spectrumBasicRomPagedIn = (rom48 && SPECBlk[0]==0 && spectrum.model<=SPECCYPLUS2) ||
+                                          ((rom128 || romSp128) && SPECBlk[0]==1 && spectrum.model==SPECCY128) ||
+                                          (romPlus2 && SPECBlk[0]==1 && spectrum.model==SPECCYPLUS2) ||
+                                          (romPlus3 && SPECBlk[0]==3 && spectrum.model>=SPECCYPLUS2A);
+                spectrum128BasicRomPagedIn = (rom128 && SPECBlk[0]==0 && spectrum.model==SPECCY128);
+                spanish128BasicRomPagedIn = (romSp128 && SPECBlk[0]==0 && spectrum.model==SPECCY128);
+                spectrumPlus2BasicRomPagedIn = (romPlus2 && SPECBlk[0]==0 && spectrum.model==SPECCYPLUS2);
+                spectrumPlus3BasicRomPagedIn = (romPlus3 && SPECBlk[0]==0 && spectrum.model>=SPECCYPLUS2A);
         }
 
         if ((1<<(Address>>13)) & TIMEXPage)
@@ -1564,7 +1648,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         do
         {
                 LastPC=z80.pc.w;
-                
+
                 if (!(TIMEXPage&1)
                         && (ZXCFPort&128)
                         && spectrum.HDType!=HDPITERSCF
@@ -1594,16 +1678,26 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                         if (spectrum.floppytype==FLOPPYBETA)
                         {
-                                if (LastPC>=0x3d00 && LastPC<=0x3dff) PlusDPaged=1;
+                                if (LastPC>=0x3D00 && LastPC<=0x3dff) PlusDPaged=1;
                                 if (LastPC>=0x4000) PlusDPaged=0;
                         }
 
                         if (spectrum.uspeech && LastPC==56) uSpeechPaged = !uSpeechPaged;
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
-                }
-
+                }                 
 
                 ts=z80_do_opcode();
+
+                if (BasicLister->Visible &&
+                    ((spectrumBasicRomPagedIn && z80.pc.w == 0x15AB) ||
+                     (spectrum128BasicRomPagedIn && z80.pc.w == 0x2CEE) ||
+                     (spanish128BasicRomPagedIn && z80.pc.w == 0x03E5) ||
+                     (spectrumPlus2BasicRomPagedIn && z80.pc.w == spectrumPlus2AddLineAddress) ||
+                     (spectrumPlus3BasicRomPagedIn && z80.pc.w == spectrumPlus3AddLineAddress)))
+                {
+                        const bool keepScrollbarPosition = true;
+                        BasicLister->Refresh(keepScrollbarPosition);
+                }
 
                 WavClockTick(ts, SPECMICState);
                 if (machine.zxprinter) ZXPrinterClockTick(ts);

@@ -118,11 +118,15 @@
 #define CRCSPANISH128      0x4e9f
 #define CRCSPANISH48       0x8b91
 #define CRCNORDIC48        0xe25a
-#define CRCSPANISHPLUS2    0x0b4b
 #define CRCSPANISHPLUS3V40 0x6db1
 #define CRCSPANISHPLUS3V41 0xec07
 #define CRCARABICPLUS3     0xdec6
-#define CRCPLUS3V4         0x0000
+#define CRCSP128           0x766a
+#define CRCPLUS2           0xe823
+#define CRCFRENCHPLUS2     0x6218
+#define CRCSPANISHPLUS2    0x0b4b
+#define CRCPLUS3V40        0x3e85
+#define CRCPLUS3V41        0x613b
 
 #define FLOPPYNONE      0
 #define FLOPPYPLUS3     1

@@ -295,8 +295,8 @@ private:	// User declarations
         void BuildConfigMenu();
         void BuildDocumentationMenu();
         void BuildExamplesMenu();
-        void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString SubFolder);
-        void AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString SubFolder);
+        void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString path);
+        void AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;
         bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;

@@ -84,6 +84,8 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "ThemeMgr"
+#pragma link "ThemeMgr"
+#pragma link "ThemeMgr"
 #pragma resource "*.dfm"
 
 #define ZXDB(msg) Application->MessageBox(msg, "Debug", MB_OK);
@@ -1713,43 +1715,65 @@ void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
         nmiOccurred = 1;
 }
 //---------------------------------------------------------------------------
+void FetchFolderList(vector<AnsiString>* pEntries, AnsiString path)
+{
+        DIR* dir;
+        struct dirent *ent;
+
+        if ((dir = opendir(path.c_str())) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
+                        {
+                                pEntries->push_back(AnsiString(ent->d_name));
+                        }
+                }
+
+                closedir(dir);
+        }
+
+        sort(pEntries->begin(), pEntries->end());
+}
+//---------------------------------------------------------------------------
 
 void TForm1::BuildConfigMenu()
 {
+        vector<AnsiString> files;
+        vector<AnsiString>::iterator iter;
+
         DIR *dir;
         struct dirent *ent;
 
         while(Config1->Count > 4) Config1->Delete(4);
         while(DeleteConfigurations->Count > 2) DeleteConfigurations->Delete(2);
 
-        if ((dir = opendir(emulator.configpath)) != NULL)
+        FetchFolderList(&files, emulator.configpath);
+
+        for (iter = files.begin(); iter != files.end(); iter++)
         {
-                while ((ent = readdir(dir)) != NULL)
+                AnsiString FileName, Extension;
+
+                FileName=(*iter);
+                Extension=FileNameGetExt(FileName);
+
+                if (Extension == ".INI" && !FileName.Pos("&"))
                 {
-                        AnsiString FileName, Extension;
+                        TMenuItem *NewItem;
+                        NewItem = new TMenuItem(Config1);
+                        NewItem->Caption=RemoveExt(FileName);
+                        NewItem->OnClick=ConfigItem1Click;
+                        Config1->Add(NewItem);
 
-                        FileName=ent->d_name;
-                        Extension=FileNameGetExt(FileName);
-
-                        if (Extension == ".INI" && !FileName.Pos("&"))
+                        if (FileName != "EightyOne.ini")
                         {
                                 TMenuItem *NewItem;
-                                NewItem = new TMenuItem(Config1);
+                                NewItem = new TMenuItem(DeleteConfigurations);
                                 NewItem->Caption=RemoveExt(FileName);
-                                NewItem->OnClick=ConfigItem1Click;
-                                Config1->Add(NewItem);
-
-                                if (FileName != "EightyOne.ini")
-                                {
-                                        TMenuItem *NewItem;
-                                        NewItem = new TMenuItem(DeleteConfigurations);
-                                        NewItem->Caption=RemoveExt(FileName);
-                                        NewItem->OnClick=DeleteConfigItem1Click;
-                                        DeleteConfigurations->Add(NewItem);
-                                }
+                                NewItem->OnClick=DeleteConfigItem1Click;
+                                DeleteConfigurations->Add(NewItem);
                         }
                 }
-                closedir(dir);
         }
 
         DeleteConfigurations->Enabled = (DeleteConfigurations->Count > 2);
@@ -1758,56 +1782,44 @@ void TForm1::BuildConfigMenu()
 //---------------------------------------------------------------------------
 void TForm1::BuildDocumentationMenu()
 {
-        AnsiString Path = emulator.cwd;
-        Path += documentationFolder;
+        vector<AnsiString> folders;
+        vector<AnsiString>::iterator iter;
 
-        DIR* dir;
-        struct dirent *ent;
+        AnsiString path = emulator.cwd;
+        path += documentationFolder;
 
-        if ((dir = opendir(Path.c_str())) != NULL)
+        FetchFolderList(&folders, path);
+
+        for (iter = folders.begin(); iter != folders.end(); iter++)
         {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
-                        {
-                                TMenuItem* CategorySubMenu = new TMenuItem(DocumentationMenuEntry);
-                                DocumentationMenuEntry->Add(CategorySubMenu);
-                                CategorySubMenu->Caption = ent->d_name;
+                TMenuItem* CategorySubMenu = new TMenuItem(DocumentationMenuEntry);
+                DocumentationMenuEntry->Add(CategorySubMenu);
+                CategorySubMenu->Caption = (*iter).c_str();
 
-                                AnsiString CategoryFolder = Path;
-                                CategoryFolder += ent->d_name;
-                                CategoryFolder += "\\";
+                AnsiString CategoryFolder = path;
+                CategoryFolder += (*iter).c_str();
+                CategoryFolder += "\\";
 
-                                AddInstructionFiles(CategorySubMenu, CategoryFolder);
-                        }
-                }
-
-                closedir(dir);
+                AddInstructionFiles(CategorySubMenu, CategoryFolder);
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString SubFolder)
+void TForm1::AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString path)
 {
-        DIR* dir;
-        struct dirent *ent;
+        vector<AnsiString> files;
+        vector<AnsiString>::iterator iter;
 
-        if ((dir = opendir(SubFolder.c_str())) != NULL)
+        FetchFolderList(&files, path);
+
+        for (iter = files.begin(); iter != files.end(); iter++)
         {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
-                        {
-                                AnsiString FileName = ent->d_name;
-                                AnsiString Title = RemoveExt(FileName);
+                AnsiString FileName = (*iter).c_str();
+                AnsiString Title = RemoveExt(FileName);
 
-                                TMenuItem* InstructionEntry = new TMenuItem(CategorySubMenu);
-                                CategorySubMenu->Add(InstructionEntry);
-                                InstructionEntry->Caption = Title;
-                                InstructionEntry->OnClick = InstructionMenuItemClick;
-                        }
-                }
-
-                closedir(dir);
+                TMenuItem* InstructionEntry = new TMenuItem(CategorySubMenu);
+                CategorySubMenu->Add(InstructionEntry);
+                InstructionEntry->Caption = Title;
+                InstructionEntry->OnClick = InstructionMenuItemClick;
         }
 }
 //---------------------------------------------------------------------------
@@ -1846,57 +1858,44 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void TForm1::BuildExamplesMenu()
 {
-        AnsiString Path = emulator.cwd;
-        Path += exampleZX81ProgramsFolder;
+        vector<AnsiString> folders;
+        vector<AnsiString>::iterator iter;
 
-        DIR* dir;
-        struct dirent *ent;
+        AnsiString path = emulator.cwd;
+        path += exampleZX81ProgramsFolder;
 
-        if ((dir = opendir(Path.c_str())) != NULL)
+        FetchFolderList(&folders, path);
+
+        for (iter = folders.begin(); iter != folders.end(); iter++)
         {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
-                        {
-                                TMenuItem* CategorySubMenu = new TMenuItem(ExampleZX81ProgramsMenuEntry);
-                                ExampleZX81ProgramsMenuEntry->Add(CategorySubMenu);
-                                CategorySubMenu->Caption = ent->d_name;
+                TMenuItem* CategorySubMenu = new TMenuItem(ExampleZX81ProgramsMenuEntry);
+                ExampleZX81ProgramsMenuEntry->Add(CategorySubMenu);
+                CategorySubMenu->Caption = (*iter).c_str();
 
-                                AnsiString CategoryFolder = Path;
-                                CategoryFolder += ent->d_name;
-                                CategoryFolder += "\\";
+                AnsiString CategoryFolder = path;
+                CategoryFolder += (*iter).c_str();
+                CategoryFolder += "\\";
 
-                                AddExampleFolders(CategorySubMenu, CategoryFolder);
-                        }
-                }
-
-                closedir(dir);
+                AddExampleFolders(CategorySubMenu, CategoryFolder);
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString SubFolder)
+void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString path)
 {
-        DIR* dir;
-        struct dirent *ent;
+        vector<AnsiString> files;
+        vector<AnsiString>::iterator iter;
 
-        if ((dir = opendir(SubFolder.c_str())) != NULL)
+        FetchFolderList(&files, path);
+
+        for (iter = files.begin(); iter != files.end(); iter++)
         {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
-                        {
-                                TMenuItem* ExampleFolderEntry = new TMenuItem(CategorySubMenu);
-                                CategorySubMenu->Add(ExampleFolderEntry);
-                                ExampleFolderEntry->Caption = ent->d_name;
-                                ExampleFolderEntry->OnClick = ExampleZX81ProgramsMenuEntryClick;
-                        }
-                }
-
-                closedir(dir);
+                TMenuItem* ExampleFolderEntry = new TMenuItem(CategorySubMenu);
+                CategorySubMenu->Add(ExampleFolderEntry);
+                ExampleFolderEntry->Caption = (*iter).c_str();
+                ExampleFolderEntry->OnClick = ExampleZX81ProgramsMenuEntryClick;
         }
 }
 //---------------------------------------------------------------------------
-                    
 void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
 {
         TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);

@@ -1,6 +1,6 @@
 object MemoryWindow: TMemoryWindow
-  Left = 462
-  Top = 544
+  Left = 450
+  Top = 469
   Width = 580
   Height = 302
   HorzScrollBar.Visible = False
@@ -31,10 +31,10 @@ object MemoryWindow: TMemoryWindow
   PixelsPerInch = 96
   TextHeight = 14
   object ScrollBar1: TScrollBar
-    Left = 555
+    Left = 547
     Top = 0
     Width = 17
-    Height = 249
+    Height = 245
     Align = alRight
     Kind = sbVertical
     LargeChange = 8
@@ -45,8 +45,8 @@ object MemoryWindow: TMemoryWindow
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 249
-    Width = 572
+    Top = 245
+    Width = 564
     Height = 19
     Panels = <
       item
@@ -165,6 +165,10 @@ object MemoryWindow: TMemoryWindow
     object Search1: TMenuItem
       Caption = 'Find...'
       OnClick = Search1Click
+    end
+    object ClearHighlights: TMenuItem
+      Caption = 'Clear Highlights'
+      OnClick = ClearHighlightsClick
     end
   end
 end

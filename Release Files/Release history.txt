@@ -12,6 +12,8 @@ Version 1.39 - ##/06/2023 (by Paul Farrow)
   - The wrong folder was being searched for the ZX Interface 1 ROM.
   - The BASIC Listing import facility was incorrectly interpreting BIN values for
     the Spectrum.
+  - Changed bytes were not being shown correctly in the Memory window when set to
+    display Hex Words.
 * Enhancements:
   - Added emulation of Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.
@@ -28,6 +30,7 @@ Version 1.39 - ##/06/2023 (by Paul Farrow)
     48K Spectrum (English) Spectrum+ (English, Spanish), Spectrum 128 (English,
     Spanish), Spectrum+2 (English, French, Spanish), Spectrum+2A (English, Spanish)
     and Spectrum+3 (English, Spanish).
+  - Added an option to the Memory window context menu to clear highlighted bytes.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

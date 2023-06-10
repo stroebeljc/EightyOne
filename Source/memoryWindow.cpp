@@ -84,12 +84,21 @@ void __fastcall TMemoryWindow::SetViewMode(int mode)
 }
 //---------------------------------------------------------------------------
 
-void RowRenderer::ChooseTextColour()
+void RowRenderer::ChooseTextColour(int itemSize = 1)
 {
-        if (mDirty != mLast && mAddress == *mDirty)
+        int i = *mDirty;
+
+        if (mDirty != mLast &&
+            (mAddress == *mDirty || (itemSize > 1 && (mAddress+1) == *mDirty)))
         {
                 SetTextColor(mCHDC, RGB(200,0,0));
+
                 ++mDirty;
+
+                if (itemSize > 1 && (mAddress+1) == *mDirty)
+                {
+                        ++mDirty;
+                }
         }
         else
         {
@@ -235,7 +244,13 @@ void WordRowRenderer::RenderRow(void)
         AddressOut();
         for (int x = 0; x < mDisplayCellsPerRow; ++x)
         {
-                ChooseTextColour();
+                std::set<int>::iterator curDirty = mDirty;
+                ChooseTextColour(2);
+                if (curDirty == mDirty)
+                {
+   //                     ++mDirty;
+                }
+
                 if ((mAddress >= 0x0000) && (mAddress <= 0xFFFF))
                 {
                         if (mSelectedAddress == mAddress)
@@ -257,7 +272,7 @@ void WordRowRenderer::RenderRow(void)
                         }
                 }
                 mAddress += 2;
-                ++mDirty;
+              //####  ++mDirty;
         }
 
         SetBkColor(mCHDC, prevBackgroundColour);
@@ -721,7 +736,6 @@ void __fastcall TMemoryWindow::JumpTo1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TMemoryWindow::SetSBButtonPosition(TButton* btn, int idx)
 {
         RECT r;
@@ -737,7 +751,6 @@ void __fastcall TMemoryWindow::SetSBButtonPosition(TButton* btn, int idx)
         btn->Width = r.right - r.left;
         btn->Height = r.bottom - r.top;
 }
-
 
 void __fastcall TMemoryWindow::FormShow(TObject *Sender)
 {
@@ -927,6 +940,12 @@ void __fastcall TMemoryWindow::FormMouseWheel(TObject *Sender,
         ScrollBar1->Position = newPos;
 
         Handled = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMemoryWindow::ClearHighlightsClick(TObject *Sender)
+{
+        ClearChanges();
 }
 //---------------------------------------------------------------------------
 

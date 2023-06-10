@@ -49,7 +49,7 @@ public:
 
 protected:
         void SetGeometry(int, const TSize&, int);
-        void ChooseTextColour();
+        void ChooseTextColour(int itemSize);
         void AddressOut();
         void SetCharacterBackgroundColour(int xpos, int ypos, COLORREF paper, COLORREF ink);
 
@@ -109,6 +109,7 @@ __published:	// IDE-managed Components
         TUpDown *IncDecAddress;
         TMenuItem *ViewDecimal1;
         TMenuItem *Search1;
+        TMenuItem *ClearHighlights;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall ScrollBar1Change(TObject *Sender);
@@ -134,6 +135,7 @@ __published:	// IDE-managed Components
         void __fastcall Search1Click(TObject *Sender);
         void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
           int WheelDelta, TPoint &MousePos, bool &Handled);
+        void __fastcall ClearHighlightsClick(TObject *Sender);
 
 private:
        void __fastcall OnEraseBkgnd (TMessage msg);

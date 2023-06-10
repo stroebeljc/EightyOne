@@ -86,8 +86,6 @@ void __fastcall TMemoryWindow::SetViewMode(int mode)
 
 void RowRenderer::ChooseTextColour(int itemSize = 1)
 {
-        int i = *mDirty;
-
         if (mDirty != mLast &&
             (mAddress == *mDirty || (itemSize > 1 && (mAddress+1) == *mDirty)))
         {

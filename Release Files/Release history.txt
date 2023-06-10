@@ -4,25 +4,24 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.39 - ##/06/2023 (by Paul Farrow)
+Version 1.39 - 10/06/2023 (by Paul Farrow)
 * Bug fixes:
   - Hard reset was not disabling the ZX Printer motor.
   - The ZX Printer emulation was not signalling when the stylus was off the paper.
   - The ZX Printer window was compressing the width of the paper by 2 pixels.
   - The wrong folder was being searched for the ZX Interface 1 ROM.
-  - The BASIC Listing import facility was incorrectly interpreting BIN values for
-    the Spectrum.
-  - Changed bytes were not being shown correctly in the Memory window when set to
-    display Hex Words.
+  - The BASIC Listing import facility was incorrectly interpreting BIN values for the Spectrum.
+  - Changed addresses location contents were not being shown correctly in the Memory window when
+    it was displaying Hex Words.
 * Enhancements:
   - Added emulation of Quicksilva Hi-Res Board.
   - Added a Feed button to the ZX Printer.
   - Added documentation on the use of various hardware interfaces to the Help menu, based on
     original instruction manuals where available.
-  - Added shortcuts to the various example programs for the ZX81 to the Help menu.
-  - The Memotech Memopak HRG Reset button now only operates when in SLOW mode as stated in the
-    interface's instruction manual.
-  - Added example programs from the ZX Printer manual.
+  - Added shortcuts to the various example programs for the ZX81 to the Help menu, based on
+    examples given in the original instruction manuals or books where available.
+  - The Memotech Memopak HRG Reset button now only operates when in SLOW mode the match the
+    behaviour stated in the interface's instruction manual.
   - Added the 'Chrs Demo' utility by Quicksilva for the QS Character Board.
   - Added the 'UDG' utility by dk'tronics for the dk'tronics 4K Graphics ROM.
   - The BASIC Listing window now refreshes automatically when adding or removing
@@ -30,7 +29,7 @@ Version 1.39 - ##/06/2023 (by Paul Farrow)
     48K Spectrum (English) Spectrum+ (English, Spanish), Spectrum 128 (English,
     Spanish), Spectrum+2 (English, French, Spanish), Spectrum+2A (English, Spanish)
     and Spectrum+3 (English, Spanish).
-  - Added an option to the Memory window context menu to clear highlighted bytes.
+  - Added an option to the Memory window's context menu to de-highlight changed values.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

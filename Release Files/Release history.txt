@@ -29,7 +29,7 @@ Version 1.39 - 10/06/2023 (by Paul Farrow)
     48K Spectrum (English) Spectrum+ (English, Spanish), Spectrum 128 (English,
     Spanish), Spectrum+2 (English, French, Spanish), Spectrum+2A (English, Spanish)
     and Spectrum+3 (English, Spanish).
-  - Added an option to the Memory window's context menu to de-highlight changed values.
+  - Added an option to the Memory window's context menu to dehighlight changed values.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:

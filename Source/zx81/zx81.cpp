@@ -1542,7 +1542,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = PatchTest(z80.pc.w);
                 int ts = z80_do_opcode();
 
-                if (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B) && BasicLister->Visible)
+                if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);
@@ -2120,7 +2120,9 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = PatchTest(z80.pc.w);
                 int ts = z80_do_opcode();
 
-                if (zx80rom && z80.pc.w == 0x04F4 && BasicLister->Visible)
+                if (BasicLister->Visible &&
+                    ((zx80rom && z80.pc.w == 0x04F4) ||
+                     (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);

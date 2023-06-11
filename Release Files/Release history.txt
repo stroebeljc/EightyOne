@@ -4,6 +4,11 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Version 1.40 - ##/##/2023 (by Paul Farrow)
+* Enhancements:
+  - The BASIC Listing window now refreshes automatically when adding or removing
+    BASIC lines for the ZX80 running the 8K ROM.
+
 Version 1.39 - 10/06/2023 (by Paul Farrow)
 * Bug fixes:
   - Hard reset was not disabling the ZX Printer motor.

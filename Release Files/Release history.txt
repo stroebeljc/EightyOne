@@ -4,10 +4,17 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.40 - ##/##/2023 (by Paul Farrow)
+Version 1.40 - ##/##/2024 (by Paul Farrow)
+* Bug fixes:
+  - The Enabled setting for a breakpoint in the 'Configure Breakpoint' window would allow a
+    value to be typed in instead of just selecting from the drop down list.
+  - The labels in the 'Configure breakpoint' window were not correctly being updated when the
+    breakpoint type was set to 'T-Cycles'.
+  - The 'Convert Next Block to TZX' facility in the Wave Manager could crash when converting a
+    ZX80 program.
 * Enhancements:
-  - The BASIC Listing window now refreshes automatically when adding or removing
-    BASIC lines for the ZX80 running the 8K ROM.
+  - The BASIC Listing window now refreshes automatically when adding or removing BASIC lines for
+    the ZX80 running the 8K ROM.
 
 Version 1.39 - 10/06/2023 (by Paul Farrow)
 * Bug fixes:
@@ -31,10 +38,10 @@ Version 1.39 - 10/06/2023 (by Paul Farrow)
   - Added the 'UDG' utility by dk'tronics for the dk'tronics 4K Graphics ROM.
   - The BASIC Listing window now refreshes automatically when adding or removing
     BASIC lines for the ZX80, ZX81, TS1000, TS1500, TK85, 16K Spectrum (English),
-    48K Spectrum (English) Spectrum+ (English, Spanish), Spectrum 128 (English,
+    48K Spectrum (English), Spectrum+ (English, Spanish), Spectrum 128 (English,
     Spanish), Spectrum+2 (English, French, Spanish), Spectrum+2A (English, Spanish)
     and Spectrum+3 (English, Spanish).
-  - Added an option to the Memory window's context menu to dehighlight changed values.
+  - Added an option to the Memory window's context menu to de-highlight changed values.
 
 Version 1.38 - 17/05/2023 (by Paul Farrow)
 * Bug fixes:
@@ -68,7 +75,7 @@ Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
   - Renamed the various ROMs for improved clarity and consistency.
   - Created subfolders to separate the various types of ROMs for improved clarity.
   - Removed the non-functioning homebrew 'Spectrum emulator' ROM for the ZX81.
-  - Removed the homebew 'Shoulders of Giants' ZX81 ROM.
+  - Removed the homebrew 'Shoulders of Giants' ZX81 ROM.
   - Renamed IDE option 'divIDE V1' to divIDE 57 (R Gal)' and reduced the two option settings
     checkboxes to a single one to reflect the behaviour of the real device.
   - Removed IDE option 'divIDE V2' which did not reflect a real world divIDE device.
@@ -83,7 +90,7 @@ Version 1.37 - 01/05/2023 (by Paul Farrow and Marc Kloosterman)
   - Added the Kayde Graphics ROM for the ZX81.
   - Added the ASZMIC ROM version E07 and renamed the existing one as ASZMIC version E04.
   - Updated TR-DOS to version 5.03.
-  - updated 'Simple +3e 8-Bit' IDE ROM to version 1.43.
+  - Updated 'Simple +3e 8-Bit' IDE ROM to version 1.43.
   - Made corrections and improvements to various keyboard layout images.
   - Made improvements to the splash screen image.
   - Added support for the divIDE 'AllRAM' mode (R'' Gal).

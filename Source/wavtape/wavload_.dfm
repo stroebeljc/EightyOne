@@ -633,8 +633,8 @@ object WavLoad: TWavLoad
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 178
-    Width = 336
+    Top = 174
+    Width = 328
     Height = 19
     BorderWidth = 1
     Panels = <

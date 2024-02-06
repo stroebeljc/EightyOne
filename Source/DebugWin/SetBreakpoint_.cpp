@@ -483,6 +483,7 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
                 case LessThanEquals:
                 case GreaterThanEquals:
                 case NotEqual:
+                case At:                
                         switch (BreakType->ItemIndex)
                         {
                                 case BP_EXE:

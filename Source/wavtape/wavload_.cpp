@@ -694,7 +694,7 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
 
         bool zx81File = (emulator.machine != MACHINEZX80 || (emulator.machine == MACHINEZX80 && (LowerCase(machine.CurRom) != "zx80.rom")));
 
-        while(byte!=-1 && DataCount!=E_LINE)
+        while (byte!=-1 && DataCount!=E_LINE)
         {
                 if (start) start=false;
                 ByteCount++;
@@ -705,10 +705,20 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
                 }
                 else    DataCount++;
 
-                if (zx81File && DataCount==16)
-                        E_LINE = (Data[11]+Data[12]*256) - 16392;
+                if (zx81File)
+                {
+                        if (DataCount == 12)
+                        {
+                                E_LINE = (Data[11] + Data[12]*256) - 16392;
+                        }
+                }
                 else
-                        E_LINE = (Data[10]+Data[11]*256) - 16383;
+                {
+                        if (DataCount == 11)
+                        {
+                                E_LINE = (Data[10]+Data[11]*256) - 16383;
+                        }
+                }
 
                 Application->ProcessMessages();
                 byte=GetByte(start);

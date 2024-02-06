@@ -225,9 +225,9 @@ object SetBreakpoint: TSetBreakpoint
     Top = 24
     Width = 49
     Height = 21
+    Style = csDropDownList
     ItemHeight = 13
     TabOrder = 6
-    Text = 'ComboBoxBreakEnabled'
     Items.Strings = (
       'Yes'
       'No')

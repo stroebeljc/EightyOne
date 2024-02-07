@@ -222,7 +222,9 @@ void TSetBreakpoint::ConfigureBreakpointFields(struct breakpoint& bp)
                 BreakValue->Text = "$" + IntToHex(bp.Value, GetBreakValueMaxDigits(bp.Type, bp.ConditionAddr, bp.RegisterId));
         }
 
-        ComboBoxBreakEnabled->Text = bp.Enabled ? "Yes" : "No";
+        const int Yes = 0;
+        const int No = 1;
+        ComboBoxBreakEnabled->ItemIndex = bp.Enabled ? Yes : No;
 
         if (BreakAddress->Visible)
         {

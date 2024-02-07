@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.40 - ##/##/2024 (by Paul Farrow)
+Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:
   - The Enabled setting for a breakpoint in the 'Configure Breakpoint' window would allow a
     value to be typed in instead of just selecting from the drop down list.

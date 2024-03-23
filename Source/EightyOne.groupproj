@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{77006656-E223-4AB8-8162-A46D6EADBAF7}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="EightyOne.cbproj">
+            <Dependencies>zlib\zlib.cbproj;libdsk\libdsk.cbproj</Dependencies>
+        </Projects>
+        <Projects Include="zlib\zlib.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="libdsk\libdsk.cbproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EightyOne" DependsOnTargets="zlib;libdsk">
+        <MSBuild Projects="EightyOne.cbproj"/>
+    </Target>
+    <Target Name="EightyOne:Clean" DependsOnTargets="zlib:Clean;libdsk:Clean">
+        <MSBuild Projects="EightyOne.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EightyOne:Make" DependsOnTargets="zlib:Make;libdsk:Make">
+        <MSBuild Projects="EightyOne.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="zlib">
+        <MSBuild Projects="zlib\zlib.cbproj"/>
+    </Target>
+    <Target Name="zlib:Clean">
+        <MSBuild Projects="zlib\zlib.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="zlib:Make">
+        <MSBuild Projects="zlib\zlib.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="libdsk">
+        <MSBuild Projects="libdsk\libdsk.cbproj"/>
+    </Target>
+    <Target Name="libdsk:Clean">
+        <MSBuild Projects="libdsk\libdsk.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="libdsk:Make">
+        <MSBuild Projects="libdsk\libdsk.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EightyOne;zlib;libdsk"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EightyOne:Clean;zlib:Clean;libdsk:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EightyOne:Make;zlib:Make;libdsk:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

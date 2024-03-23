@@ -23,201 +23,119 @@
 
 #include <vcl.h>
 #pragma hdrstop
-USERES("EightyOne.res");
-USEUNIT("z80\z80_ops.c");
-USEUNIT("z80\z80.c");
-USEUNIT("kbstatus.cpp");
-USEFORM("About_.cpp", About);
-USEFORM("Keyboard_.cpp", Keyboard);
-USEFORM("Speed_.cpp", Speed);
-USEFORM("kb_.cpp", Kb);
-USEFORM("DebugWin\Debug.cpp", Dbg);
-USEUNIT("Utils.cpp");
-USEFORM("sound\SoundOP.cpp", SoundOutput);
-USEFORM("DebugWin\Hist.cpp", HistoryBox);
-USEFORM("MemSave_.cpp", MemSave);
-USEFORM("zx97Config.cpp", ZX97Dialog);
-USEUNIT("peripherals\dev8255.c");
-USEFORM("SerialPort.cpp", SerialConfig);
-USEFORM("DebugWin\EditValue_.cpp", EditValue);
-USEFORM("DebugWin\SetBreakpoint_.cpp", SetBreakpoint);
-USEUNIT("zx81config.cpp");
-USERC("WinXP.rc");
-USEFORM("HW_.cpp", HW);
-USELIB("ddraw.lib");
-USEUNIT("68k\68000.c");
-USEUNIT("ql\ql.cpp");
-USEUNIT("68k\op68kadd.c");
-USEUNIT("68k\op68ksub.c");
-USEUNIT("68k\op68karith.c");
-USEUNIT("68k\op68klogop.c");
-USEUNIT("68k\op68kmisc.c");
-USEUNIT("68k\op68kmove.c");
-USEUNIT("68k\op68kshift.c");
-USEFORM("Parallel.cpp", ParallelPort);
-USEFORM("ZipFile_.cpp", ZipFile);
-USEFORM("Debug68k\debug68.cpp", Debug68k);
-USEFORM("SplashScreen.cpp", Splash);
-USEUNIT("rzx\rzx.c");
-USEUNIT("Debug68k\d68k.c");
-USEFORM("main_.cpp", Form1);
-USEUNIT("IECBus\iecbus.c");
-USEUNIT("1541\1541.c");
-USEFORM("memoryWindow.cpp", MemoryWindow);
-USEUNIT("symbolstore.cpp");
-USEFORM("SymBrowse.cpp", SymbolBrowser);
-USELIB("libdsk.lib");
-USELIB("zlib.lib");
-USEUNIT("RomCartridge\IF2RomCartridge.cpp");
-USEUNIT("Spectra\Spectra.cpp");
-USEUNIT("Chroma\Chroma.cpp");
-USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
-USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
-USEFORM("DebugWin\Profiler.cpp", Profiler);
-USEFORM("DebugWin\ProfSampEdit.cpp", ProfileSampleEdit);
-USEFORM("DebugWin\ProfilePlot_.cpp", ProfilePlot);
-USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
-USEFORM("BasicLister\BasicLister_.cpp", BasicLister);
-USEUNIT("BasicLister\IBasicLister.cpp");
-USEUNIT("BasicLoader\IBasicLoader.cpp");
-USEFORM("BasicLoader\BasicLoaderOptions_.cpp", LoadBasicListingOptionsForm);
-USEFORM("BasicLister\BasicListerOptions_.cpp", SaveBasicListingOptionsForm);
-USEFORM("BasicLister\BasicListingFormatInfo_.cpp", BasicListingFormatInfoForm);
-USELIB("..\components\directsound\dsound.lib");
-USEUNIT("sound\sound.cpp");
-USEUNIT("sound\midi.cpp");
-USEUNIT("sound\SoundDX.cpp");
-USEUNIT("Ace\ace.cpp");
-USEUNIT("zx81\rompatch.cpp");
-USEUNIT("zx81\snap.cpp");
-USEUNIT("zx81\zx80BasicLister.cpp");
-USEUNIT("zx81\zx80BasicLoader.cpp");
-USEUNIT("zx81\zx81.cpp");
-USEUNIT("zx81\zx81BasicLister.cpp");
-USEUNIT("zx81\zx81BasicLoader.cpp");
-USEUNIT("Spectrum\spec48.cpp");
-USEUNIT("Spectrum\spec48BasicLister.cpp");
-USEUNIT("Spectrum\spec48snap.cpp");
-USEUNIT("Spectrum\spec128BasicLister.cpp");
-USEUNIT("Spectrum\specBasicLoader.cpp");
-USEUNIT("1772\1770disk.c");
-USEUNIT("ide\ide.cpp");
-USEUNIT("zxpand\js.cpp");
-USEUNIT("tzx\tzxadd.cpp");
-USEFORM("tzx\tzxEditArchive.cpp", EditArchiveInfo);
-USEFORM("tzx\tzxEditData.cpp", EditDataForm);
 USEFORM("tzx\tzxEditGeneral.cpp", EditGeneralForm);
 USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditPause.cpp", EditPauseForm);
+USEFORM("tzx\tzxEditData.cpp", EditDataForm);
+USEFORM("SymBrowse.cpp", SymbolBrowser);
+USEFORM("tzx\tzxEditArchive.cpp", EditArchiveInfo);
 USEFORM("tzx\tzxEditText.cpp", EditTextForm);
-USEUNIT("tzx\tzxevent.cpp");
-USEUNIT("tzx\tzxEventGeneral.cpp");
-USEUNIT("tzx\tzxEventMisc.cpp");
-USEUNIT("tzx\tzxEventTurbo.cpp");
-USEUNIT("tzx\TZXFILE.cpp");
-USEUNIT("tzx\tzxload.cpp");
-USEFORM("tzx\TZXMan.cpp", TZX);
-USEUNIT("tzx\tzxsave.cpp");
-USEUNIT("wavtape\WavCInterface.cpp");
-USEUNIT("wavtape\WavFile.cpp");
-USEFORM("wavtape\wavload_.cpp", WavLoad);
-USEUNIT("1772\wd1770.c");
-USEUNIT("zxpand\dirlib.cpp");
-USEUNIT("zxpand\diskio.cpp");
-USEUNIT("zxpand\ff.cpp");
-USEUNIT("zxpand\smbsd.cpp");
-USEUNIT("zxpand\wildcard.cpp");
-USEUNIT("zxpand\zxpandclass.cpp");
-USEUNIT("zxpand\zxpandcom.cpp");
-USEUNIT("zxpand\zxpandcore.cpp");
-USEUNIT("zxpand\ZXpand-emu.cpp");
-USEUNIT("sp0256.c");
-USEFORM("zxprinter\zxprinter.cpp", Printer);
-USEFORM("Plus3Drives.cpp", P3Drive);
-USEUNIT("floppy.c");
-USEFORM("MakeHDF.cpp", CreateHDF);
-USEUNIT("lib765\765drive.c");
-USEUNIT("lib765\765dsk.c");
-USEUNIT("lib765\765fdc.c");
-USEUNIT("lib765\765ldsk.c");
-USEUNIT("lib765\error.c");
-USEUNIT("AccDraw_.cpp");
-USEFORM("Fullscreen.cpp", FSSettings);
-USEFORM("Artifacts_.cpp", Artifacts);
+USEFORM("sound\SoundOP.cpp", SoundOutput);
 USEFORM("sound\SoundForm.cpp", MidiForm);
+USEFORM("Speed_.cpp", Speed);
+USEFORM("SplashScreen.cpp", Splash);
+USEFORM("zx97Config.cpp", ZX97Dialog);
+USEFORM("zxprinter\zxprinter.cpp", ZXPrinter);
+USEFORM("wavtape\wavload_.cpp", WavLoad);
+USEFORM("tzx\TZXMan.cpp", TZX);
+USEFORM("ZipFile_.cpp", ZipFile);
+USEFORM("SerialPort.cpp", SerialConfig);
+USEFORM("BasicLoader\BasicLoaderOptions_.cpp", LoadBasicListingOptionsForm);
+USEFORM("BasicLister\BasicLister_.cpp", BasicLister);
+USEFORM("BasicLister\BasicListingFormatInfo_.cpp", BasicListingFormatInfoForm);
+USEFORM("DebugWin\ProfilePlot_.cpp", ProfilePlot);
+USEFORM("DebugWin\Profiler.cpp", Profiler);
+USEFORM("DebugWin\ProfSampEdit.cpp", ProfileSampleEdit);
+USEFORM("DebugWin\Hist.cpp", HistoryBox);
+USEFORM("Debug68k\debug68.cpp", Debug68k);
+USEFORM("DebugWin\Debug.cpp", Dbg);
+USEFORM("DebugWin\EditValue_.cpp", EditValue);
+USEFORM("BasicLister\BasicListerOptions_.cpp", SaveBasicListingOptionsForm);
+USEFORM("Artifacts_.cpp", Artifacts);
+USEFORM("About_.cpp", About);
+USEFORM("main_.cpp", Form1);
+USEFORM("MakeHDF.cpp", CreateHDF);
+USEFORM("memoryWindow.cpp", MemoryWindow);
+USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
+USEFORM("Plus3Drives.cpp", P3Drive);
+USEFORM("MemSave_.cpp", MemSave);
+USEFORM("Parallel.cpp", ParallelPort);
+USEFORM("FullScreen.cpp", FSSettings);
+USEFORM("HW_.cpp", HW);
+USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
+USEFORM("DebugWin\SetBreakpoint_.cpp", SetBreakpoint);
+USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
+USEFORM("Keyboard_.cpp", Keyboard);
+USEFORM("kb_.cpp", Kb);
 USEFORM("Interface1.cpp", IF1);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
 //---------------------------------------------------------------------------
 char **CommandLine;
-TSplash *spl;
 bool ShowSplash=true;
 bool Restart=false;
 //---------------------------------------------------------------------------
-WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 {
-        int i;
-        char *p, *CmdLineRaw;
-        bool quote;
+		int i;
+		char *p, *CmdLineRaw;
+		bool quote;
 
-        spl = new TSplash(Splash);
+		CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
+		strcpy(CmdLineRaw,cmdline);
 
-        CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
-        strcpy(CmdLineRaw,cmdline);
+		p=CmdLineRaw;
+		quote=false;
 
-        p=CmdLineRaw;
-        quote=false;
+		while(*p)
+		{
+				if (*p=='\"') quote=!quote;
+				if ((*p==' ') && (quote==false)) *p=0;
+				p++;
+		}
+		*++p=0;
 
-        while(*p)
-        {
-                if (*p=='\"') quote=!quote;
-                if ((*p==' ') && (quote==false)) *p=0;
-                p++;
-        }
-        *++p=0;
+		i=0;
+		p=CmdLineRaw;
+		while(strlen(p))
+		{
+				i++;
+				p+=strlen(p)+1;
+		}
+		i++;
 
-        i=0;
-        p=CmdLineRaw;
-        while(strlen(p))
-        {
-                i++;
-                p+=strlen(p)+1;
-        }
-        i++;
+		CommandLine=(char **)malloc(i*sizeof(char *));
 
-        CommandLine=(char **)malloc(i*sizeof(char *));
+		p=CmdLineRaw;
+		i=0;
+		while(strlen(p))
+		{
+				CommandLine[i++]=p;
+				p+=strlen(p)+1;
+		}
+		CommandLine[i]=NULL;
 
-        p=CmdLineRaw;
-        i=0;
-        while(strlen(p))
-        {
-                CommandLine[i++]=p;
-                p+=strlen(p)+1;
-        }
-        CommandLine[i]=NULL;
+		i=0;
+		while(CommandLine[i])
+		{
+				p=CommandLine[i];
 
-        i=0;
-        while(CommandLine[i])
-        {
-                p=CommandLine[i];
+				if ((p[0]=='\"') && (p[strlen(p)-1]=='\"'))
+				{
+						p[strlen(p)-1]=0;
+						CommandLine[i]++;
+				}
+				i++;
+		}
 
-                if ((p[0]=='\"') && (p[strlen(p)-1]=='\"'))
-                {
-                        p[strlen(p)-1]=0;
-                        CommandLine[i]++;
-                }
-                i++;
-        }
-
-        try
-        {
-                Application->Initialize();
-                Application->Title = "EightyOne";
-                #include "splashImpl.cpp"
-
-                Application->ProcessMessages();
-                delete spl;
+		try
+		{
+				Application->Initialize();
+				Application->Title = "EightyOne";
+				TSplash *spl = new TSplash(Application);
+				#include "splashImpl.cpp"
+				delete spl;
 
                 Form1->GatherWindowsIfRequired();
                 Form1->Caption = "EightyOne";

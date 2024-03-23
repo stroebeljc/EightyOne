@@ -88,7 +88,7 @@ void __fastcall TSymbolBrowser::ListBox1KeyPress(TObject *Sender,
         if (!isPrintable) {
                 if (0x03 == Key) {
                         // ctrl-c ... copy string to clipboard
-                        AnsiString x = ListBox1->Items->Strings[ListBox1->ItemIndex].SubString(5,24).Trim();
+                        UnicodeString x = ListBox1->Items->Strings[ListBox1->ItemIndex].SubString(5,24).Trim();
                         Clipboard()->SetTextBuf(x.c_str());
                 }
                 return;

@@ -59,8 +59,8 @@ void __fastcall TProfiler::UpdateItem(TListItem* item, AnsiString tag, ProfileDe
         item->Caption = tag;
         item->SubItems->Strings[START] = symbolstore::addressToSymbolOrHex(pd._start);
         item->SubItems->Strings[END] = symbolstore::addressToSymbolOrHex(pd._end);
-        item->SubItems->Strings[MIN] = pd.Min() == INT_MAX ? "--" : IntToStr(pd.Min()).c_str();
-        item->SubItems->Strings[MAX] = pd.Max() == INT_MIN ? "--" : IntToStr(pd.Max()).c_str();
+		item->SubItems->Strings[MIN] = pd.Min() == INT_MAX ? L"--" : IntToStr(pd.Min()).c_str();
+		item->SubItems->Strings[MAX] = pd.Max() == INT_MIN ? L"--" : IntToStr(pd.Max()).c_str();
         item->SubItems->Strings[COUNT] = pd.SampleCount();
 }
 //---------------------------------------------------------------------------
@@ -113,7 +113,7 @@ void __fastcall TProfiler::ButtonDeleteClick(TObject *Sender)
 
         Timer->Enabled = false;
 
-        int ret = Application->MessageBox("Are you sure you wish to delete this entry?", "Delete Profile Entry", MB_YESNO | MB_ICONQUESTION);
+        int ret = Application->MessageBox(L"Are you sure you wish to delete this entry?", L"Delete Profile Entry", MB_YESNO | MB_ICONQUESTION);
 
         if (ret == IDYES)
         {

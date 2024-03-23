@@ -34,7 +34,7 @@
 #include <IniFiles.hpp>
 #include <ComCtrls.hpp>
 //---------------------------------------------------------------------------
-class TPrinter : public TForm
+class TZXPrinter : public TForm
 {
 __published:	// IDE-managed Components
         TImage *DisplayImage;
@@ -77,7 +77,7 @@ private:	// User declarations
         bool MotorOn, MotorSlow, StylusActive, OnPaper, EncoderWheel;
         int XPos, YPos, Counter1, Counter2;
 public:		// User declarations
-        __fastcall TPrinter(TComponent* Owner);
+		__fastcall TZXPrinter(TComponent* Owner);
         void ResetPrinter(void);
         void WritePort(unsigned char Data);
         unsigned char ReadPort(BYTE idleDataBus);
@@ -88,6 +88,6 @@ public:		// User declarations
         int BitSpeed, LineSpeed;
 };
 //---------------------------------------------------------------------------
-extern PACKAGE TPrinter *Printer;
+extern PACKAGE TZXPrinter *ZXPrinter;
 //---------------------------------------------------------------------------
 #endif

@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <dir.h>
 #include <stdio.h>
+#include <algorithm>
 #include <sys/stat.h>
 
 #pragma hdrstop
@@ -80,12 +81,10 @@
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
 #include "sound\sound.h"
+#include <System.IOUtils.hpp>
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-#pragma link "ThemeMgr"
-#pragma link "ThemeMgr"
-#pragma link "ThemeMgr"
 #pragma resource "*.dfm"
 
 #define ZXDB(msg) Application->MessageBox(msg, "Debug", MB_OK);
@@ -98,7 +97,7 @@ extern void SpecStartUp(void);
 extern BYTE spec48_getbyte(int Address);
 extern void spec48_LoadRZX(char *FileName);
 extern int AccurateDraw(SCANLINE *Line);
-extern loadFileSymbolsProxy(const char*);
+extern void loadFileSymbolsProxy(const char*);
 
 extern bool ShowSplash;
 extern int frametstates;
@@ -734,18 +733,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         RenderEnd();
 
-        if ((dir = opendir(emulator.temppath)) != NULL)
-        {
-                while ((ent = readdir(dir)) != NULL)
-                {
-                        TempFile = emulator.temppath;
-                        TempFile += ent->d_name;
-                        DeleteFile(TempFile);
-                }
-
-                closedir(dir);
-                _rmdir(emulator.temppath);
-        }
+        TDirectory::Delete(emulator.temppath, true);
 }
 //---------------------------------------------------------------------------
 
@@ -756,9 +744,9 @@ void __fastcall TForm1::ViewPrinterClick(TObject *Sender)
         if (ViewPrinter->Checked)
         {
                 PCAllKeysUp();
-                Printer->Show();
-        }
-        else    Printer->Close();
+				ZXPrinter->Show();
+		}
+		else    ZXPrinter->Close();
 }
 //---------------------------------------------------------------------------
 
@@ -944,7 +932,7 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                                 DEVMODE Mode;
                                 int i, retval;
 
-                                POINT p={0,0};
+                                TPoint p={0,0};
 
                                 SaveScrW = GetSystemMetrics(SM_CXSCREEN);
                                 SaveScrH = GetSystemMetrics(SM_CYSCREEN);
@@ -1032,12 +1020,12 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
         if (Msg.message == WM_DROPFILES)
         {
-                QtyDroppedFiles = DragQueryFile((void *)Msg.wParam, -1,
+				QtyDroppedFiles = DragQueryFile((HDROP)Msg.wParam, -1,
                                                 pDroppedFilename, BufferLength);
 
                 for(FileIndex=0; FileIndex<=(QtyDroppedFiles - 1); FileIndex++)
                 {
-                        DragQueryFile((void *)Msg.wParam, FileIndex, pDroppedFilename, BufferLength);
+                        DragQueryFile((HDROP)Msg.wParam, FileIndex, pDroppedFilename, BufferLength);
 
                         Filename = pDroppedFilename;
                         Ext = GetExt(Filename);
@@ -1085,7 +1073,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                 }
 
-                DragFinish((void *)Msg.wParam);
+				DragFinish((HDROP)Msg.wParam);
                 Handled = true;
         }
 
@@ -1282,7 +1270,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         Speed->SaveSettings(ini);
         ZipFile->SaveSettings(ini);
         Kb->SaveSettings(ini);
-        Printer->SaveSettings(ini);
+		ZXPrinter->SaveSettings(ini);
         WavLoad->SaveSettings(ini);
         Dbg->SaveSettings(ini);
         HW->SaveSettings(ini);
@@ -1619,7 +1607,7 @@ void __fastcall TForm1::SaveSnapDialogTypeChange(TObject *Sender)
         AnsiString filter, newext;
         AnsiString Fname;
 
-        THandle *h;
+        HWND h;
         TSaveDialog *d;
 
         filter=SaveSnapDialog->Filter;
@@ -1645,7 +1633,7 @@ void __fastcall TForm1::SaveSnapDialogTypeChange(TObject *Sender)
         Fname = RemovePath(RemoveExt(SaveSnapDialog->FileName) + newext);
 
         d=(TSaveDialog *)Sender;
-        h=(THandle *)GetParent(d->Handle);
+        h=GetParent(d->Handle);
         SendMessage(h, CDM_SETCONTROLTEXT, edt1, (long)(Fname.c_str()));
 
 }
@@ -1973,7 +1961,7 @@ void TForm1::LoadIniFile(AnsiString FileName)
         Kb->LoadSettings(ini);
         WavLoad->LoadSettings(ini);
         Dbg->LoadSettings(ini);
-        Printer->LoadSettings(ini);
+		ZXPrinter->LoadSettings(ini);
         Artifacts->LoadSettings(ini);
         SerialConfig->LoadSettings(ini);
         TZX->LoadSettings(ini);
@@ -2081,7 +2069,9 @@ void __fastcall TForm1::Play1Click(TObject *Sender)
 {
         if (!OpenRZX->Execute()) return;
 
-        spec48_LoadRZX(OpenRZX->FileName.c_str());
+		char temp[256];
+		sprintf(temp, "%S", OpenRZX->FileName.c_str());
+		spec48_LoadRZX(temp);
 }
 //---------------------------------------------------------------------------
 
@@ -2151,7 +2141,7 @@ void MoveWindows(int l = -1, int t = -1)
         MoveWindow(Artifacts, l, t);
         MoveWindow(Keyboard, l, t);
         MoveWindow(FSSettings, l, t);
-        MoveWindow(Printer, l, t);
+		MoveWindow(ZXPrinter, l, t);
         MoveWindow(MidiForm, l, t);
         MoveWindow(MemSave, l, t);
         MoveWindow(SerialConfig, l, t);

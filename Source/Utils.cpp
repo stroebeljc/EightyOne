@@ -196,12 +196,12 @@ void ASCIIZX81(BYTE *in, BYTE *Out)
         char c, *p;
         unsigned int i;
 
-        if (!strlen(in)) return;
+		if (!strlen((const char *)in)) return;
 
         i=0;
         p=ZXCharTable;
 
-        while(i<strlen(in) && p)
+        while(i<strlen((const char *)in) && p)
         {
                 c = toupper(in[i]);
                 if (c==' ') c='_';

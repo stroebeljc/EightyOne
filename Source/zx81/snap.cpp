@@ -258,8 +258,8 @@ void load_snap_hires(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->HiResBox, tok);
                         
-                        if (tok=="G007") HW->EnableLowRAM->Checked=true;
-                        if (tok=="Memotech") HW->ProtectROM->Checked=true;
+						if (!strcmp(tok,"G007")) HW->EnableLowRAM->Checked=true;
+						if (!strcmp(tok,"Memotech")) HW->ProtectROM->Checked=true;
                 }
         }
 }
@@ -710,12 +710,12 @@ void InitialiseHardware()
 
         InitialiseChroma();
         
-        SetComboBox(HW->ColourBox, "None");
-        SetComboBox(HW->SoundCardBox, "None");
-        SetComboBox(HW->ChrGenBox, "Sinclair");
-        SetComboBox(HW->HiResBox, "None");
-        SetComboBox(HW->RomCartridgeBox, "None");
-        SetComboBox(HW->ZXC1ConfigurationBox, "32K");
+		SetComboBox(HW->ColourBox, (char *)"None");
+		SetComboBox(HW->SoundCardBox, (char *)"None");
+		SetComboBox(HW->ChrGenBox, (char *)"Sinclair");
+		SetComboBox(HW->HiResBox, (char *)"None");
+		SetComboBox(HW->RomCartridgeBox, (char *)"None");
+        SetComboBox(HW->ZXC1ConfigurationBox, (char *)"32K");
         HW->ZXC1ConfigurationBox->Visible = false;
         HW->RomCartridgeFileBox->Left = 86;
         HW->RomCartridgeFileBox->Width = 281;
@@ -828,7 +828,7 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"LINE %03X\n", lineCounter);
 
 	fprintf(f,"\n[MEMORY]\n");
-	fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
+	fprintf(f,"RAM_PACK %S\n", HW->RamPackBox->Text.c_str());
 	fprintf(f,"8K_RAM_ENABLED %02X\n", zx81.RAM816k);
 	fprintf(f,"8K_RAM_PROTECTED %02X\n", zx81.RAM816kWriteProtected);
 
@@ -865,11 +865,11 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
 
 	fprintf(f,"\n[SOUND]\n");
-	fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
+	fprintf(f,"TYPE %S\n", HW->SoundCardBox->Text.c_str());
 
 	// Must output this before the Chr$ Generator section
 	fprintf(f,"\n[COLOUR]\n");
-	fprintf(f,"TYPE %s\n", HW->ColourBox->Text.c_str());
+	fprintf(f,"TYPE %S\n", HW->ColourBox->Text.c_str());
 
 	if (machine.colour == COLOURCHROMA)
 	{
@@ -894,7 +894,7 @@ int save_snap_zx81(char *filename)
 	}
 
 	fprintf(f,"\n[CHR$_GENERATOR]\n");
-	fprintf(f,"TYPE %s\n", HW->ChrGenBox->Text.c_str());
+	fprintf(f,"TYPE %S\n", HW->ChrGenBox->Text.c_str());
 
 	if (zx81.chrgen == CHRGENQS)
 	{
@@ -919,7 +919,7 @@ int save_snap_zx81(char *filename)
 	}
 
 	fprintf(f,"\n[HIGH_RESOLUTION]\n");
-	fprintf(f,"TYPE %s\n", HW->HiResBox->Text.c_str());
+	fprintf(f,"TYPE %S\n", HW->HiResBox->Text.c_str());
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
         AnsiString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
@@ -930,7 +930,7 @@ int save_snap_zx81(char *filename)
 		fprintf(f,"PATH %s\n", path.c_str());
 		if (HW->RomCartridgeBox->Text == "ZXC1")
 		{
-		        fprintf(f,"CONFIGURATION %s\n", HW->ZXC1ConfigurationBox->Text.c_str());
+				fprintf(f,"CONFIGURATION %S\n", HW->ZXC1ConfigurationBox->Text.c_str());
 		}
 	}
 
@@ -939,8 +939,8 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
 
 	fprintf(f,"\n[DRIVES]\n");
-	fprintf(f,"FDC %s\n", HW->FDC->Text.c_str());
-	fprintf(f,"IDE %s\n", HW->IDEBox->Text.c_str());
+	fprintf(f,"FDC %S\n", HW->FDC->Text.c_str());
+	fprintf(f,"IDE %S\n", HW->IDEBox->Text.c_str());
 
         fprintf(f,"\n[EOF]\n");
 	fclose(f);
@@ -1159,7 +1159,7 @@ int memory_load(char *filename, int address, int length, int secondBank)
         return do_memory_load(file, address, length, secondBank);
 }
 
-int font_load(char *filename, char *address, int length)
+int font_load(const char *filename, char *address, int length)
 {
         int fptr;
         char file[256];

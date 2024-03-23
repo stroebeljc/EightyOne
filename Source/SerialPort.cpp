@@ -94,7 +94,7 @@ void TSerialConfig::WriteDATA(BYTE Data)
 
         if (SendTo==SERIALFILE)
         {
-                if (!File) File=fopen((FileNameBox->Text).c_str()  ,"ab");
+				if (!File) File=_wfopen((FileNameBox->Text).c_str()  ,L"ab");
                 if (File) fputc(Data,File);
                 return;
         }
@@ -288,8 +288,8 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
         else if (ComPortList->Items->Strings[ComPortList->ItemIndex]=="TCP/IP...")
         {
                 SendTo=SERIALTCPOUT;
-                ClientSocket->Host = TCPOutboundAddress->Text;
-                ClientSocket->Port = atoi((TCPOutboundPort->Text).c_str());
+				ClientSocket->Host = TCPOutboundAddress->Text;
+				ClientSocket->Port = _wtoi((TCPOutboundPort->Text).c_str());
 
                 if (( ClientSocket->Host == "") || (ClientSocket->Port==0))
                         Enabled->Checked=false;
@@ -306,9 +306,9 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
                         try { ComPort1->Open(); }
                         catch(EComPort &E)
                         {
-                                AnsiString Msg = "Could not open port ";
+								UnicodeString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
+								if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
                                 Enabled->Checked=false;
                                 Sender=NULL;
                         }
@@ -405,8 +405,8 @@ void __fastcall TSerialConfig::BrowseClick(TObject *Sender)
 void __fastcall TSerialConfig::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
-        AnsiString Msg = "Could not open port ";
-        Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
+        UnicodeString Msg = "Could not open port ";
+		Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
         Enabled->Checked=false;
         ErrorCode=0;
 }

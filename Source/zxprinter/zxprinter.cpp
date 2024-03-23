@@ -30,9 +30,9 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TPrinter *Printer;
+TZXPrinter *ZXPrinter;
 //---------------------------------------------------------------------------
-void TPrinter::ClearBitmap(Graphics::TBitmap *Bitmap)
+void TZXPrinter::ClearBitmap(Graphics::TBitmap *Bitmap)
 {
         int y;
 
@@ -44,7 +44,7 @@ void TPrinter::ClearBitmap(Graphics::TBitmap *Bitmap)
         }
 }
 //---------------------------------------------------------------------------
-void TPrinter::ResetPrinter(void)
+void TZXPrinter::ResetPrinter(void)
 {
         MotorOn=false;
         if (XPos) OutputLine();
@@ -52,20 +52,20 @@ void TPrinter::ResetPrinter(void)
         Counter2=16;
         StylusActive=false;
 }
-void TPrinter::OutputBit(void)
+void TZXPrinter::OutputBit(void)
 {
         if (XPos<1 || XPos>(PrinterOutput->Width)) return;
         PrinterOutput->Canvas->Pixels[XPos-1][YPos]= StylusActive?Fg:Bg;
 }
 
-void TPrinter::OutputLine(void)
+void TZXPrinter::OutputLine(void)
 {
         YPos++;
         if (YPos>=PrinterOutput->Height-1) ScrollOutput();
         DrawImage();
 }
 
-void TPrinter::ScrollOutput()
+void TZXPrinter::ScrollOutput()
 {
         int y;
         Graphics::TBitmap *Bitmap;
@@ -85,7 +85,7 @@ void TPrinter::ScrollOutput()
 }
 
 //---------------------------------------------------------------------------
-__fastcall TPrinter::TPrinter(TComponent* Owner)
+__fastcall TZXPrinter::TZXPrinter(TComponent* Owner)
         : TForm(Owner)
 {
         TIniFile *ini;
@@ -116,7 +116,7 @@ __fastcall TPrinter::TPrinter(TComponent* Owner)
         delete ini;
 }
 //---------------------------------------------------------------------------
-void __fastcall TPrinter::DrawImage()
+void __fastcall TZXPrinter::DrawImage()
 {
         TRect source,dest;
         int pos;
@@ -140,7 +140,7 @@ void __fastcall TPrinter::DrawImage()
         DisplayImage->Canvas->CopyRect(dest, PrinterOutput->Canvas, source);
 }
 //---------------------------------------------------------------------------
-void TPrinter::ClockTick(int ts)
+void TZXPrinter::ClockTick(int ts)
 {
         if (!MotorOn) return;
         Counter1-=ts;
@@ -184,7 +184,7 @@ void TPrinter::ClockTick(int ts)
                 }
         }
 }
-void TPrinter::WritePort(unsigned char Data)
+void TZXPrinter::WritePort(unsigned char Data)
 {
         const int motorSlow = 1;
         const int motorOn = 2;
@@ -221,7 +221,7 @@ void TPrinter::WritePort(unsigned char Data)
         EncoderWheel = false;
 }
 
-unsigned char TPrinter::ReadPort(BYTE idleDataBus)
+unsigned char TZXPrinter::ReadPort(BYTE idleDataBus)
 {
         const int encoderState = 0;
         const int printerPresent = 6;
@@ -254,30 +254,30 @@ unsigned char TPrinter::ReadPort(BYTE idleDataBus)
 //---------------------------------------------------------------------------
 void ZXPrinterReset()
 {
-        Printer->ResetPrinter();
+        ZXPrinter->ResetPrinter();
 }
 //---------------------------------------------------------------------------
 void ZXPrinterClockTick(int ts)
 {
-        Printer->ClockTick(ts);
+        ZXPrinter->ClockTick(ts);
 }
 void ZXPrinterWritePort(unsigned char Data)
 {
-        Printer->WritePort(Data);
+        ZXPrinter->WritePort(Data);
 }
 
 unsigned char ZXPrinterReadPort(BYTE idleDataBus)
 {
-        return(Printer->ReadPort(idleDataBus));
+        return(ZXPrinter->ReadPort(idleDataBus));
 }
 
-void __fastcall TPrinter::ScrollBarChange(TObject *Sender)
+void __fastcall TZXPrinter::ScrollBarChange(TObject *Sender)
 {
         DrawImage();
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::ClearImageClick(TObject *Sender)
+void __fastcall TZXPrinter::ClearImageClick(TObject *Sender)
 {
         PrinterOutput->Width = 256;
         PrinterOutput->Height = 8;
@@ -297,21 +297,21 @@ void __fastcall TPrinter::ClearImageClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::SaveImageClick(TObject *Sender)
+void __fastcall TZXPrinter::SaveImageClick(TObject *Sender)
 {
         if (SaveDialog->Execute())
                 PrinterOutput->SaveToFile(SaveDialog->FileName);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::FormClose(TObject *Sender, TCloseAction &Action)
+void __fastcall TZXPrinter::FormClose(TObject *Sender, TCloseAction &Action)
 {
         Form1->ViewPrinter->Checked=false;
 }
 //---------------------------------------------------------------------------
 
 
-void __fastcall TPrinter::OptionsBtnClick(TObject *Sender)
+void __fastcall TZXPrinter::OptionsBtnClick(TObject *Sender)
 {
         if (Panel1->Visible)
         {
@@ -326,7 +326,7 @@ void __fastcall TPrinter::OptionsBtnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TPrinter::LoadSettings(TIniFile *ini)
+void TZXPrinter::LoadSettings(TIniFile *ini)
 {
         OptionsBtnClick(NULL);
 
@@ -351,7 +351,7 @@ void TPrinter::LoadSettings(TIniFile *ini)
         if (Form1->ViewPrinter->Checked) Show();
 }
 
-void TPrinter::SaveSettings(TIniFile *ini)
+void TZXPrinter::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("PRINTER","Top",Top);
         ini->WriteInteger("PRINTER","Left",Left);
@@ -361,10 +361,10 @@ void TPrinter::SaveSettings(TIniFile *ini)
         ini->WriteInteger("PRINTER","SBitSpeed",BitRate->Position );
         ini->WriteInteger("PRINTER","SLineSpeed",LineRate->Position );
         ini->WriteInteger("Printer","Style",Style->ItemIndex );
-        ini->WriteBool("Printer","Options",Panel1->Visible );
+		ini->WriteBool("Printer","Options",Panel1->Visible );
 
 }
-void __fastcall TPrinter::BitRateChange(TObject *Sender)
+void __fastcall TZXPrinter::BitRateChange(TObject *Sender)
 {
         BitRateTxt->Caption = ((int) BitRate->Position);
         BitRateTxt->Caption = "Carriage Speed: "+BitRateTxt->Caption;
@@ -373,7 +373,7 @@ void __fastcall TPrinter::BitRateChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::LineRateChange(TObject *Sender)
+void __fastcall TZXPrinter::LineRateChange(TObject *Sender)
 {
         LineRateTxt->Caption = ((int) LineRate->Position);
         LineRateTxt->Caption = "Paper Feed Speed: "+LineRateTxt->Caption;
@@ -382,7 +382,7 @@ void __fastcall TPrinter::LineRateChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::StyleChange(TObject *Sender)
+void __fastcall TZXPrinter::StyleChange(TObject *Sender)
 {
         switch(Style->ItemIndex)
         {
@@ -415,7 +415,7 @@ void __fastcall TPrinter::StyleChange(TObject *Sender)
 
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::FeedMouseDown(TObject *Sender,
+void __fastcall TZXPrinter::FeedMouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
         FeedTimer->Enabled = true;
@@ -423,7 +423,7 @@ void __fastcall TPrinter::FeedMouseDown(TObject *Sender,
 
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::FeedMouseUp(TObject *Sender, TMouseButton Button,
+void __fastcall TZXPrinter::FeedMouseUp(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
         FeedTimer->Enabled = false;
@@ -431,14 +431,14 @@ void __fastcall TPrinter::FeedMouseUp(TObject *Sender, TMouseButton Button,
 
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::FeedTimerExpired(TObject *Sender)
+void __fastcall TZXPrinter::FeedTimerExpired(TObject *Sender)
 {
         OutputLine();
 }
 
 //---------------------------------------------------------------------------
 
-void __fastcall TPrinter::FeedClick(TObject *Sender)
+void __fastcall TZXPrinter::FeedClick(TObject *Sender)
 {
         OutputLine();
 }

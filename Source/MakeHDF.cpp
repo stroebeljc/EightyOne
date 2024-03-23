@@ -103,7 +103,7 @@ void __fastcall TCreateHDF::EightBitClick(TObject *Sender)
 void __fastcall TCreateHDF::CylTextChange(TObject *Sender)
 {
         int i;
-        i=atoi(CylText->Text.c_str());
+		i=_wtoi(CylText->Text.c_str());
 
         if (((i-32769)>=CylUpDown->Min) && ((i-32769)<=CylUpDown->Max))
         {
@@ -118,7 +118,7 @@ void __fastcall TCreateHDF::CylTextChange(TObject *Sender)
 void __fastcall TCreateHDF::HeadTextChange(TObject *Sender)
 {
         int i;
-        i=atoi(HeadText->Text.c_str());
+		i=_wtoi(HeadText->Text.c_str());
         if ((i>=HeadUpDown->Min) && (i<=HeadUpDown->Max))
         {
                 HeadText->Color = clWindow;
@@ -133,7 +133,7 @@ void __fastcall TCreateHDF::HeadTextChange(TObject *Sender)
 void __fastcall TCreateHDF::SecTextChange(TObject *Sender)
 {
         int i;
-        i=atoi(SecText->Text.c_str());
+        i=_wtoi(SecText->Text.c_str());
         if ((i>=SecUpDown->Min) && (i<=SecUpDown->Max))
         {
                 SecText->Color = clWindow;
@@ -175,7 +175,7 @@ void __fastcall TCreateHDF::OKClick(TObject *Sender)
         memset(track, 0, tracklen);
         memset(head, 0, 512+16);
 
-        strcpy(head,"RS-IDE");
+        strcpy((char *)head,"RS-IDE");
         head[0x06]=0x1a;
         head[0x07]=0x11;
         head[0x08]=EightBit->Checked ? 1:0;

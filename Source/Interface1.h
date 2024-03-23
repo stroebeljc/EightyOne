@@ -13,7 +13,7 @@
 #include <ExtCtrls.hpp>
 #include "CPort.hpp"
 #include <stdio.h>
-#include <ScktComp.hpp>
+#include <System.Win.ScktComp.hpp>
 #include <Dialogs.hpp>
 #include <IniFiles.hpp>
 

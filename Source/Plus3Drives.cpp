@@ -124,8 +124,8 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         //if (Ext!=".DSK") Filename += ".dsk";
 
         DriveAText->Text = Filename;
-        DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
-        strcpy(spectrum.driveaimg,DriveAText->Text.c_str());
+		DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
+		wcstombs(spectrum.driveaimg,DriveAText->Text.c_str(),sizeof(spectrum.driveaimg));
         floppy_setimage(0,spectrum.driveaimg);
 }
 //---------------------------------------------------------------------------
@@ -159,7 +159,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 
         DriveBText->Text = Filename;
         DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
-        strcpy(spectrum.drivebimg,DriveBText->Text.c_str());
+		wcstombs(spectrum.drivebimg,DriveBText->Text.c_str(),sizeof(spectrum.driveaimg));
         floppy_setimage(1,spectrum.drivebimg);
 }
 //---------------------------------------------------------------------------
@@ -422,7 +422,7 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                         HD0List->ItemIndex=0;
                         if (ATA_GetHDF(0)) OpenDialog2->FileName=ATA_GetHDF(0);
 
-                        if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+						if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.LastChar()) == '\\')
                         {
                                 OpenDialog2->FileName = "";
                         }
@@ -437,13 +437,13 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
 
                         if (access(Filename.c_str(), 0) && Ext==".HDF")
                         {
-                                char Message[256];
-                                int ret;
+								wchar_t Message[256];
+								int ret;
 
-                                strcpy(Message,Filename.c_str());
-                                strcat(Message," Does not exist.\nWould you like to create it?");
+								mbstowcs(Message,Filename.c_str(),256);
+								wcscat(Message,L" Does not exist.\nWould you like to create it?");
 
-                                ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+								ret=Application->MessageBox(Message, L"File does not exist", MB_OKCANCEL | MB_ICONWARNING);
 
                                 if (ret!=IDOK) return;
 
@@ -503,7 +503,7 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
                 HD1List->ItemIndex=0;
                 if (ATA_GetHDF(1)) OpenDialog2->FileName=ATA_GetHDF(1);
 
-                if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+				if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.LastChar()) == '\\')
                 {
                         OpenDialog2->FileName = "";
                 }
@@ -516,14 +516,14 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
                 if (Ext!=".HDF") Filename += ".hdf";
 
                 if (access(Filename.c_str(), 0))
-                {
-                        char Message[256];
-                        int ret;
+				{
+						wchar_t Message[256];
+						int ret;
 
-                        strcpy(Message,Filename.c_str());
-                        strcat(Message," Does not exist.\nWould you like to create it?");
+						mbstowcs(Message,Filename.c_str(),256);
+						wcscat(Message,L" Does not exist.\nWould you like to create it?");
 
-                        ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+                        ret=Application->MessageBox(Message, L"File does not exist", MB_OKCANCEL | MB_ICONWARNING);
 
                         if (ret!=IDOK) return;
 
@@ -741,11 +741,19 @@ void TP3Drive::InsertFile(AnsiString Filename)
 
 void P3DriveMachineHasInitialised(void)
 {
-        if (P3Drive->DriveAText->Text != "< Empty >")
-                floppy_setimage(0, P3Drive->DriveAText->Text.c_str());
+		if (P3Drive->DriveAText->Text != "< Empty >")
+		{
+			char temp[256];
+			sprintf(temp,"%S",P3Drive->DriveAText->Text.c_str());
+			floppy_setimage(0, temp);
+		}
 
-        if (P3Drive->DriveBText->Text != "< Empty >")
-                floppy_setimage(1, P3Drive->DriveBText->Text.c_str());
+		if (P3Drive->DriveBText->Text != "< Empty >")
+		{
+			char temp[256];
+			sprintf(temp,"%S",P3Drive->DriveBText->Text.c_str());
+			floppy_setimage(1, temp);
+		}
 }
 //---------------------------------------------------------------------------
 

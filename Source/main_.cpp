@@ -756,9 +756,9 @@ void __fastcall TForm1::ViewPrinterClick(TObject *Sender)
         if (ViewPrinter->Checked)
         {
                 PCAllKeysUp();
-                Printer->Show();
+                ZXPrinter->Show();
         }
-        else    Printer->Close();
+        else    ZXPrinter->Close();
 }
 //---------------------------------------------------------------------------
 
@@ -1282,7 +1282,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         Speed->SaveSettings(ini);
         ZipFile->SaveSettings(ini);
         Kb->SaveSettings(ini);
-        Printer->SaveSettings(ini);
+        ZXPrinter->SaveSettings(ini);
         WavLoad->SaveSettings(ini);
         Dbg->SaveSettings(ini);
         HW->SaveSettings(ini);
@@ -1973,7 +1973,7 @@ void TForm1::LoadIniFile(AnsiString FileName)
         Kb->LoadSettings(ini);
         WavLoad->LoadSettings(ini);
         Dbg->LoadSettings(ini);
-        Printer->LoadSettings(ini);
+        ZXPrinter->LoadSettings(ini);
         Artifacts->LoadSettings(ini);
         SerialConfig->LoadSettings(ini);
         TZX->LoadSettings(ini);
@@ -2151,7 +2151,7 @@ void MoveWindows(int l = -1, int t = -1)
         MoveWindow(Artifacts, l, t);
         MoveWindow(Keyboard, l, t);
         MoveWindow(FSSettings, l, t);
-        MoveWindow(Printer, l, t);
+        MoveWindow(ZXPrinter, l, t);
         MoveWindow(MidiForm, l, t);
         MoveWindow(MemSave, l, t);
         MoveWindow(SerialConfig, l, t);

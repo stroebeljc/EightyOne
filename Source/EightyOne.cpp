@@ -132,7 +132,7 @@ USEUNIT("zxpand\zxpandcom.cpp");
 USEUNIT("zxpand\zxpandcore.cpp");
 USEUNIT("zxpand\ZXpand-emu.cpp");
 USEUNIT("sp0256.c");
-USEFORM("zxprinter\zxprinter.cpp", Printer);
+USEFORM("zxprinter\zxprinter.cpp", ZXPrinter);
 USEFORM("Plus3Drives.cpp", P3Drive);
 USEUNIT("floppy.c");
 USEFORM("MakeHDF.cpp", CreateHDF);

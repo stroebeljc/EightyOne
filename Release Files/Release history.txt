@@ -4,12 +4,13 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 24/03/2024 (by Paul Farrow and ...)
+Version 1.41 - 24/03/2024 (by Paul Farrow)
 * Bug fixes:
   - If a hardware generated HSync pulse is output or the ZX81 part way through a scanline then it
     is no longer interpreted as starting a new scanline.
 * Enhancements:
-  - 
+  - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
+    display mechanism.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

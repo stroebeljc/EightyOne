@@ -768,7 +768,7 @@ int ATA_LoadHDF(int drive, char *FileName)
                         return(1);
                 }
 
-				if (strncmp((const char *)Drv->hdf.sig, "RS-IDE", 6) || (Drv->hdf.id != 0x1a))
+                if (strncmp((const char *)Drv->hdf.sig, "RS-IDE", 6) || (Drv->hdf.id != 0x1a))
                 {
                         fclose(f);
                         return(1);

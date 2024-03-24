@@ -454,7 +454,7 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                         if (Drives[Drive].changed) MDVSaveFile(Drive);
                         free(Drives[Drive].data);
                 }
-				Drives[Drive].data=(unsigned char *)data;
+                Drives[Drive].data=(unsigned char *)data;
                 Drives[Drive].length=256*MDVRECSIZE;
                 Drives[Drive].position=0;
                 Drives[Drive].changed=false;
@@ -495,7 +495,7 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                         if (Drives[Drive].changed) MDVSaveFile(Drive);
                         free(Drives[Drive].data);
                 }
-				Drives[Drive].data=(unsigned char *)data;
+                Drives[Drive].data=(unsigned char *)data;
                 Drives[Drive].length=len;
                 Drives[Drive].position=0;
                 Drives[Drive].changed=false;
@@ -633,13 +633,13 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                 break;
         case 1:
                 RS232Port=PORTFILE;
-				InFile=_wfopen((InputFileEdit->Text).c_str(), L"rb");
-				OutFile=_wfopen((OutputFileEdit->Text).c_str(), L"wb");
+                InFile=_wfopen((InputFileEdit->Text).c_str(), L"rb");
+                OutFile=_wfopen((OutputFileEdit->Text).c_str(), L"wb");
                 break;
         case 2:
                 RS232Port=PORTTCPIP;
                 ClientSocket->Host = TCPAddress->Text;
-				ClientSocket->Port = _wtoi((TCPPort->Text).c_str());
+                ClientSocket->Port = _wtoi((TCPPort->Text).c_str());
 
                 if ((ClientSocket->Host != "") && (ClientSocket->Port!=0))
                         ClientSocket->Open();
@@ -693,16 +693,16 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                         }
                         else
                         {
-								Baud=_wtoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
+                                Baud=_wtoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
                                 ComPort->CustomBaudRate=Baud;
                         }
 
                         try { ComPort->Open(); }
                         catch(EComPort &E)
                         {
-								UnicodeString Msg = "Could not open port ";
+                                UnicodeString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-								if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
+                                if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
                         }
                 }
                 break;
@@ -764,7 +764,7 @@ void __fastcall TIF1::ComPortTxEmpty(TObject *Sender)
 void __fastcall TIF1::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
-		UnicodeString Msg = "Could not open port ";
+        UnicodeString Msg = "Could not open port ";
         Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
         ErrorCode=0;
 }

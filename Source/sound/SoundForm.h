@@ -41,7 +41,7 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
         __fastcall TMidiForm(TComponent* Owner);
-		void SaveSettings(TIniFile *ini);
+        void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
 };
 //---------------------------------------------------------------------------

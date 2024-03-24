@@ -51,12 +51,12 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                 break;
         case 1:
                 Port=PORTFILE;
-				OutFile=_wfopen((OutputFileEdit->Text).c_str(), L"wb");
+                OutFile=_wfopen((OutputFileEdit->Text).c_str(), L"wb");
                 break;
         case 2:
                 Port=PORTTCPIP;
                 ClientSocket->Host = TCPAddress->Text;
-				ClientSocket->Port = _wtoi((TCPPort->Text).c_str());
+                ClientSocket->Port = _wtoi((TCPPort->Text).c_str());
 
                 if ((ClientSocket->Host != "") && (ClientSocket->Port!=0))
                         ClientSocket->Open();
@@ -103,14 +103,14 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
 
                         ComPort->BaudRate=brCustom;
                         if (BaudRate->ItemIndex==0)
-						ComPort->CustomBaudRate=_wtoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
+                        ComPort->CustomBaudRate=_wtoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
 
                         try { ComPort->Open(); }
                         catch(EComPort &E)
                         {
-								UnicodeString Msg = "Could not open port ";
+                                UnicodeString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-								if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
+                                if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
                         }
                 }
                 break;

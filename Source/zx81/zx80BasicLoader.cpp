@@ -322,7 +322,7 @@ unsigned char zx80BasicLoader::AsciiToZX(unsigned char ascii)
                                                                                    
 void zx80BasicLoader::ExtractInverseCharacters()
 {
-		unsigned char* pPos = mLineBuffer;
+        unsigned char* pPos = mLineBuffer;
 
         while (*pPos != '\0')
         {

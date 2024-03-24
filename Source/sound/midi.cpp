@@ -110,7 +110,7 @@ void CMidi::Start(void)
 
 void CMidi::Stop(void)
 {
-		if (outHandle) midiOutClose((HMIDIOUT)outHandle);
+        if (outHandle) midiOutClose((HMIDIOUT)outHandle);
         outHandle=NULL;
 }
 

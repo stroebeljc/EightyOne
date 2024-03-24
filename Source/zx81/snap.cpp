@@ -258,8 +258,8 @@ void load_snap_hires(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->HiResBox, tok);
                         
-						if (!strcmp(tok,"G007")) HW->EnableLowRAM->Checked=true;
-						if (!strcmp(tok,"Memotech")) HW->ProtectROM->Checked=true;
+                        if (!strcmp(tok,"G007")) HW->EnableLowRAM->Checked=true;
+                        if (!strcmp(tok,"Memotech")) HW->ProtectROM->Checked=true;
                 }
         }
 }
@@ -710,11 +710,11 @@ void InitialiseHardware()
 
         InitialiseChroma();
         
-		SetComboBox(HW->ColourBox, (char *)"None");
-		SetComboBox(HW->SoundCardBox, (char *)"None");
-		SetComboBox(HW->ChrGenBox, (char *)"Sinclair");
-		SetComboBox(HW->HiResBox, (char *)"None");
-		SetComboBox(HW->RomCartridgeBox, (char *)"None");
+        SetComboBox(HW->ColourBox, (char *)"None");
+        SetComboBox(HW->SoundCardBox, (char *)"None");
+        SetComboBox(HW->ChrGenBox, (char *)"Sinclair");
+        SetComboBox(HW->HiResBox, (char *)"None");
+        SetComboBox(HW->RomCartridgeBox, (char *)"None");
         SetComboBox(HW->ZXC1ConfigurationBox, (char *)"32K");
         HW->ZXC1ConfigurationBox->Visible = false;
         HW->RomCartridgeFileBox->Left = 86;
@@ -930,7 +930,7 @@ int save_snap_zx81(char *filename)
 		fprintf(f,"PATH %s\n", path.c_str());
 		if (HW->RomCartridgeBox->Text == "ZXC1")
 		{
-				fprintf(f,"CONFIGURATION %S\n", HW->ZXC1ConfigurationBox->Text.c_str());
+		        fprintf(f,"CONFIGURATION %S\n", HW->ZXC1ConfigurationBox->Text.c_str());
 		}
 	}
 

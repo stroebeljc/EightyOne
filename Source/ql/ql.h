@@ -22,7 +22,7 @@
 #ifndef ql_h
 #define ql_h
 
-extern unsigned char memory[];
+extern BYTE memory[];
 extern BYTE acecolour[];
 extern void ql_initialise();
 extern int ql_do_scanline(SCANLINE *CurScanLine);

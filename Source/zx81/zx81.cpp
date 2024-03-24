@@ -280,9 +280,9 @@ void zx81_initialise()
                 }
         }
         romlen=memory_load(romname.c_str(), 0, 65536);
-		emulator.romcrc=CRC32Block((char *)memory,romlen);
+        emulator.romcrc=CRC32Block((char *)memory,romlen);
 
-		if (zx81.extfont) font_load("lambda8300characterset.bin",(char *)font,512);
+        if (zx81.extfont) font_load("lambda8300characterset.bin",(char *)font,512);
 
         if ((zx81.chrgen==CHRGENDK) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
         {
@@ -1499,7 +1499,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                         else if (!lambdaSelected)
                         {
-								if ((((nmiLevel > 1) && (z80.pc.w == 0x007A)) || (nmiLevel && ((z80.pc.w < 0x0066) || (z80.pc.w > 0x007D)))))
+                                if ((((nmiLevel > 1) && (z80.pc.w == 0x007A)) || (nmiLevel && ((z80.pc.w < 0x0066) || (z80.pc.w > 0x007D)))))
                                 {
                                         nmiLevel--;
                                 }
@@ -1522,7 +1522,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         else
                         {
                                 withinDisplayDriver = ((z80.pc.w >= 0x01ED && z80.pc.w <= 0x020F) || (z80.pc.w >= 0x12C0 && z80.pc.w <= 0x1336) ||
-													   (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) || (withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2)));
+                                                       (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) || (withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2)));
                         }
                 }
 
@@ -2098,8 +2098,8 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                                 }
                                 else
                                 {
-										withinDisplayDriver = ((z80.pc.w >= 0x01ED && z80.pc.w <= 0x020F) || (z80.pc.w >= 0x12C0 && z80.pc.w <= 0x1336) ||
-															   (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) || (withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2)));
+                                        withinDisplayDriver = ((z80.pc.w >= 0x01ED && z80.pc.w <= 0x020F) || (z80.pc.w >= 0x12C0 && z80.pc.w <= 0x1336) ||
+                                                               (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) || (withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2)));
                                 }
                         }
 

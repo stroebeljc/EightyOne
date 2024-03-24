@@ -361,7 +361,7 @@ void TZXPrinter::SaveSettings(TIniFile *ini)
         ini->WriteInteger("PRINTER","SBitSpeed",BitRate->Position );
         ini->WriteInteger("PRINTER","SLineSpeed",LineRate->Position );
         ini->WriteInteger("Printer","Style",Style->ItemIndex );
-		ini->WriteBool("Printer","Options",Panel1->Visible );
+        ini->WriteBool("Printer","Options",Panel1->Visible );
 
 }
 void __fastcall TZXPrinter::BitRateChange(TObject *Sender)

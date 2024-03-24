@@ -127,7 +127,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         else
         {
                 // Couldn't file any files in the zip that match the permitted extensions
-				Application->MessageBox(L"Sorry, that archive does not contain any files of the relevant type",L"Error", MB_OK | MB_ICONERROR);
+                Application->MessageBox(L"Sorry, that archive does not contain any files of the relevant type",L"Error", MB_OK | MB_ICONERROR);
                 unzClose(ZFile);
                 return("");
         }

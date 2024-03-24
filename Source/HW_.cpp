@@ -210,7 +210,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         CloseOtherDebugWindow();
 
         RomBox->Text = RomBox->Text.LowerCase();
-		sprintf(machine.CurRom, "%S", RomBox->Text.c_str());
+        sprintf(machine.CurRom, "%S", RomBox->Text.c_str());
 
         AnsiString romBase = DetermineRomBase();
         ConfigureSymbolFile(romBase);
@@ -425,7 +425,7 @@ void THW::ConfigureRamTop()
                 int kp = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-						int rp = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int rp = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                         kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
                 }
                 zx81.RAMTOP = (kp << 10) + 16383;
@@ -479,7 +479,7 @@ void THW::DetermineRamSizeLabel(AnsiString newMachineName)
                 AnsiString Mem;
 
                 if (RamPackBox->ItemIndex!=0)
-						i+=_wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        i+=_wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
 
                 name = i;
                 name += "K Jupiter Ace";
@@ -807,7 +807,7 @@ void THW::ConfigureRomCartridge()
         {
                 RomCartridgeCapacity = 0;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
-				LoadDock((char *)"");
+                LoadDock((char *)"");
                 *(emulator.romcartridgefilepath) = '\0';
         }
         else
@@ -899,7 +899,7 @@ void THW::ConfigureRomCartridge()
                 }
                 else
                 {
-						LoadDock((char *)"");
+                        LoadDock((char *)"");
                         loadSuccessful = LoadRomCartridgeFile(romCartridgeFilePath.c_str());
                 }
 
@@ -907,11 +907,11 @@ void THW::ConfigureRomCartridge()
 
                 if (!loadSuccessful)
                 {
-						wchar_t msg[256];
-						swprintf(msg, L"Failed to load cartridge file:\n\n%s", romCartridgeFilePath.c_str());
-						Application->MessageBox(msg, L"Error", MB_OK | MB_ICONERROR);
+                        wchar_t msg[256];
+                        swprintf(msg, L"Failed to load cartridge file:\n\n%s", romCartridgeFilePath.c_str());
+                        Application->MessageBox(msg, L"Error", MB_OK | MB_ICONERROR);
 
-						LoadDock((char *)"");
+                        LoadDock((char *)"");
                 }
 
                 ResetRequired=true;
@@ -1059,7 +1059,7 @@ void THW::ConfigureCharacterGenerator()
 
         if (ChrGenBox->Text == "Lambda")
         {
-				zx81.chrgen = CHRGENLAMBDA;
+                zx81.chrgen = CHRGENLAMBDA;
         }
         else
         {
@@ -2044,7 +2044,7 @@ void THW::DisplayTotalRam()
         int totalRam = machine.baseRamSize;
         if (RamPackBox->ItemIndex!=0)
         {
-				int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
         AnsiString ramSize = totalRam;
@@ -3087,7 +3087,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
-		if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
         {
                 RomSelect->FileName = "";
         }
@@ -3332,7 +3332,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-						int ret = Application->MessageBox(L"Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", L"ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+                        int ret = Application->MessageBox(L"Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", L"ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
 
                         if (ret == IDYES)
                         {
@@ -3376,7 +3376,7 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;
-		if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
         {
                 RomSelect->FileName = "";
         }
@@ -3536,7 +3536,7 @@ void THW::PopulateRomCartridgeTS1510List()
 
         for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
         {
-				AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter._Ptr, ".rom");
+                AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter._Ptr, ".rom");
         }
 }
 //---------------------------------------------------------------------------
@@ -3560,7 +3560,7 @@ void THW::PopulateRomCartridgeTC2068List()
 
         for (iter = tc2068RomCartridges.begin(); iter != tc2068RomCartridges.end(); iter++)
         {
-				AddRomCartridgeFile(TC2068RomCartridgeFileBox, iter._Ptr, ".dck");
+                AddRomCartridgeFile(TC2068RomCartridgeFileBox, iter._Ptr, ".dck");
         }
 }//---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()

@@ -59,8 +59,8 @@ void __fastcall TProfiler::UpdateItem(TListItem* item, AnsiString tag, ProfileDe
         item->Caption = tag;
         item->SubItems->Strings[START] = symbolstore::addressToSymbolOrHex(pd._start);
         item->SubItems->Strings[END] = symbolstore::addressToSymbolOrHex(pd._end);
-		item->SubItems->Strings[MIN] = pd.Min() == INT_MAX ? L"--" : IntToStr(pd.Min()).c_str();
-		item->SubItems->Strings[MAX] = pd.Max() == INT_MIN ? L"--" : IntToStr(pd.Max()).c_str();
+        item->SubItems->Strings[MIN] = pd.Min() == INT_MAX ? L"--" : IntToStr(pd.Min()).c_str();
+        item->SubItems->Strings[MAX] = pd.Max() == INT_MIN ? L"--" : IntToStr(pd.Max()).c_str();
         item->SubItems->Strings[COUNT] = pd.SampleCount();
 }
 //---------------------------------------------------------------------------

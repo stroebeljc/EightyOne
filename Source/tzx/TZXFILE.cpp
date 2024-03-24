@@ -474,7 +474,7 @@ AnsiString TTZXFile::GetFName(int BlockNo)
 
         if (Tape[BlockNo].BlockID != TZX_BLOCK_GENERAL) return("");
 
-		p=(char *)Tape[BlockNo].Data.Data;
+        p=(char *)Tape[BlockNo].Data.Data;
 
         do
         {
@@ -549,7 +549,7 @@ Vcl::Forms::TMonitor* TTZXFile::FindMonitor(int x, int y)
 
         for (int i = 0; i < numberOfMonitors; i++)
         {
-				Vcl::Forms::TMonitor* monitor = Screen->Monitors[i];
+                Vcl::Forms::TMonitor* monitor = Screen->Monitors[i];
 
                 if (x >= monitor->Left && x < (monitor->Left + monitor->Width) &&
                     y >= monitor->Top && y < (monitor->Top + monitor->Height))

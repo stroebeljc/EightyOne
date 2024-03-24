@@ -77,7 +77,7 @@ private:	// User declarations
         bool MotorOn, MotorSlow, StylusActive, OnPaper, EncoderWheel;
         int XPos, YPos, Counter1, Counter2;
 public:		// User declarations
-		__fastcall TZXPrinter(TComponent* Owner);
+        __fastcall TZXPrinter(TComponent* Owner);
         void ResetPrinter(void);
         void WritePort(unsigned char Data);
         unsigned char ReadPort(BYTE idleDataBus);

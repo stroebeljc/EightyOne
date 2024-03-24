@@ -68,11 +68,11 @@ void TTZX::ClockTick(int TStates, bool ZX81)
         if (RecTimeOut)
         {
                 RecTimeOut -= TStates;
-				if (RecTimeOut < 884)
+                if (RecTimeOut < 884)
                 {
-						RecTimeOut=RecTimeOut;
-				}
-				if (RecTimeOut<=0) while(RecState!=REC_STOP) RecStopCheck();
+                        RecTimeOut=RecTimeOut;
+                }
+                if (RecTimeOut<=0) while(RecState!=REC_STOP) RecStopCheck();
         }
 
         if (TZXFile.Playing!=Previous)
@@ -628,7 +628,7 @@ void __fastcall TTZX::HardwareInformation1Click(TObject *Sender)
 
 void __fastcall TTZX::ArchiveInfo1Click(TObject *Sender)
 {
-		TZXFile.MoveBlock(TZXFile.AddArchiveBlock((char *)"Title"),Table->Row-1);
+        TZXFile.MoveBlock(TZXFile.AddArchiveBlock((char *)"Title"),Table->Row-1);
         TZXFile.EditBlock(Table->Row-1, Mx, My);
         UpdateTable(false);
 
@@ -637,7 +637,7 @@ void __fastcall TTZX::ArchiveInfo1Click(TObject *Sender)
 
 void __fastcall TTZX::TextDescription1Click(TObject *Sender)
 {
-		TZXFile.MoveBlock(TZXFile.AddTextBlock((char *)"Message"),Table->Row-1);
+        TZXFile.MoveBlock(TZXFile.AddTextBlock((char *)"Message"),Table->Row-1);
         TZXFile.EditBlock(Table->Row-1, Mx, My);
         UpdateTable(false);
 }
@@ -689,11 +689,11 @@ void TTZX::RecStopCheck(void)
 
         if (emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE)
         {
-				TZXFile.MoveBlock(TZXFile.AddROMBlock((char *)RecBuf, BlockLen),Table->Row-1);
-				TZXFile.Tape[TZXFile.CurBlock].Pause=3000;
-		}
-		else
-		{
+                TZXFile.MoveBlock(TZXFile.AddROMBlock((char *)RecBuf, BlockLen),Table->Row-1);
+                TZXFile.Tape[TZXFile.CurBlock].Pause=3000;
+        }
+        else
+        {
                 TZXFile.MoveBlock(TZXFile.AddGeneralBlock((char *)RecBuf, BlockLen),Table->Row-1);
                 TZXFile.Tape[TZXFile.CurBlock].Pause=5000;
         }
@@ -756,7 +756,7 @@ void __fastcall TTZX::ExtractBlock1Click(TObject *Sender)
 
         if (!ExtractDialog1->Execute()) return;
 
-		f=_wfopen(ExtractDialog1->FileName.c_str(), L"wb");
+        f=_wfopen(ExtractDialog1->FileName.c_str(), L"wb");
         if (!f) return;
 
         fwrite(p, 1, DataLen - (p-Data), f);
@@ -902,7 +902,7 @@ void __fastcall TTZX::SaveDialogTypeChange(TObject *Sender)
 
         d=(TSaveDialog *)Sender;
         h=(THandle *)GetParent(d->Handle);
-		SendMessage((HWND)h, CDM_SETCONTROLTEXT, edt1, (long)(Fname.c_str()));
+        SendMessage((HWND)h, CDM_SETCONTROLTEXT, edt1, (long)(Fname.c_str()));
 }
 
 //---------------------------------------------------------------------------
@@ -1032,8 +1032,8 @@ void __fastcall TTZX::ConvertBlocktoWave1Click(TObject *Sender)
 
 void __fastcall TTZX::GroupStart1Click(TObject *Sender)
 {
-		TZXFile.MoveBlock(TZXFile.AddGroupStartBlock((char *)"Group Start"),Table->Row-1);
-		TZXFile.EditBlock(Table->Row-1, Mx, My);
+        TZXFile.MoveBlock(TZXFile.AddGroupStartBlock((char *)"Group Start"),Table->Row-1);
+        TZXFile.EditBlock(Table->Row-1, Mx, My);
         TZXFile.GroupCount();
         UpdateTable(false);
 }

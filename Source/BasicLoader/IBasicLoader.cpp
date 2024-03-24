@@ -44,13 +44,13 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         bool truncateLine = (mLines[index].line.length() > 256);
                         int displayLen = truncateLine ? 256: mLines[index].line.length();
                         msg << mLines[index].line.substr(0, displayLen);
-						if (truncateLine) msg << "...";
-				}
+                        if (truncateLine) msg << "...";
+                }
 
-				wchar_t temp[256];
-				swprintf(temp, L"%s", msg.str().c_str());
-				Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
-				return;
+                wchar_t temp[256];
+                swprintf(temp, L"%s", msg.str().c_str());
+                Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
+                return;
         }
 
         memset(mProgramData, 0, sizeof(mProgramData));
@@ -75,9 +75,9 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         int displayLen = truncateLine ? 256: mLines[i].line.length();
                         msg << mLines[i].line.substr(0, displayLen);
                         if (truncateLine) msg << "...";
-						wchar_t temp[256];
-						swprintf(temp, L"%s", msg.str().c_str());
-						Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
+                        wchar_t temp[256];
+                        swprintf(temp, L"%s", msg.str().c_str());
+                        Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
                         return;
                 }
         }

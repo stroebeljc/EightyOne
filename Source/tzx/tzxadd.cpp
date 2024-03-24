@@ -35,7 +35,7 @@ int TTZXFile::AddGroupStartBlock(char *str)
         unsigned char *data;
 
         data=(unsigned char *)malloc(strlen(str)+1);
-		strcpy((char *)data, str);
+        strcpy((char *)data, str);
 
         Tape[Blocks].BlockID=TZX_BLOCK_GSTART;
         Tape[Blocks].Data.Data=data;
@@ -54,7 +54,7 @@ int TTZXFile::AddTextBlock(char *str)
         unsigned char *data;
 
         data=(unsigned char *)malloc(strlen(str)+1);
-		strcpy((char *)data, str);
+        strcpy((char *)data, str);
 
         Tape[Blocks].BlockID=TZX_BLOCK_TEXT;
         Tape[Blocks].Data.Data=data;
@@ -132,7 +132,7 @@ int TTZXFile::AddGeneralBlock(char *data, int len)
         Tape[Blocks].Head.General.DataLen=len;
 
         Tape[Blocks].SymDefD=SymDefD;
-		Tape[Blocks].Data.Data=(unsigned char *)DataBuf;
+        Tape[Blocks].Data.Data=(unsigned char *)DataBuf;
         Tape[Blocks].SymDefP=NULL;
         Tape[Blocks].PRLE=NULL;
 
@@ -141,9 +141,9 @@ int TTZXFile::AddGeneralBlock(char *data, int len)
 
 int TTZXFile::AddArchiveBlock(char *str)
 {
-		char *p;
+        char *p;
 
-		p=(char *)malloc(strlen(str)+2);
+        p=(char *)malloc(strlen(str)+2);
         memcpy(p+2, str, strlen(str));
         p[0]=0;
         p[1]=strlen(str);

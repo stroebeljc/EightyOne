@@ -103,7 +103,7 @@ void __fastcall TCreateHDF::EightBitClick(TObject *Sender)
 void __fastcall TCreateHDF::CylTextChange(TObject *Sender)
 {
         int i;
-		i=_wtoi(CylText->Text.c_str());
+        i=_wtoi(CylText->Text.c_str());
 
         if (((i-32769)>=CylUpDown->Min) && ((i-32769)<=CylUpDown->Max))
         {
@@ -118,7 +118,7 @@ void __fastcall TCreateHDF::CylTextChange(TObject *Sender)
 void __fastcall TCreateHDF::HeadTextChange(TObject *Sender)
 {
         int i;
-		i=_wtoi(HeadText->Text.c_str());
+        i=_wtoi(HeadText->Text.c_str());
         if ((i>=HeadUpDown->Min) && (i<=HeadUpDown->Max))
         {
                 HeadText->Color = clWindow;

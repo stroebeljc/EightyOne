@@ -744,9 +744,9 @@ void __fastcall TForm1::ViewPrinterClick(TObject *Sender)
         if (ViewPrinter->Checked)
         {
                 PCAllKeysUp();
-				ZXPrinter->Show();
-		}
-		else    ZXPrinter->Close();
+                ZXPrinter->Show();
+        }
+        else    ZXPrinter->Close();
 }
 //---------------------------------------------------------------------------
 
@@ -1020,7 +1020,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
         if (Msg.message == WM_DROPFILES)
         {
-				QtyDroppedFiles = DragQueryFile((HDROP)Msg.wParam, -1,
+                QtyDroppedFiles = DragQueryFile((HDROP)Msg.wParam, -1,
                                                 pDroppedFilename, BufferLength);
 
                 for(FileIndex=0; FileIndex<=(QtyDroppedFiles - 1); FileIndex++)
@@ -1073,7 +1073,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                 }
 
-				DragFinish((HDROP)Msg.wParam);
+                DragFinish((HDROP)Msg.wParam);
                 Handled = true;
         }
 
@@ -1270,7 +1270,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         Speed->SaveSettings(ini);
         ZipFile->SaveSettings(ini);
         Kb->SaveSettings(ini);
-		ZXPrinter->SaveSettings(ini);
+        ZXPrinter->SaveSettings(ini);
         WavLoad->SaveSettings(ini);
         Dbg->SaveSettings(ini);
         HW->SaveSettings(ini);
@@ -1961,7 +1961,7 @@ void TForm1::LoadIniFile(AnsiString FileName)
         Kb->LoadSettings(ini);
         WavLoad->LoadSettings(ini);
         Dbg->LoadSettings(ini);
-		ZXPrinter->LoadSettings(ini);
+        ZXPrinter->LoadSettings(ini);
         Artifacts->LoadSettings(ini);
         SerialConfig->LoadSettings(ini);
         TZX->LoadSettings(ini);
@@ -2069,9 +2069,9 @@ void __fastcall TForm1::Play1Click(TObject *Sender)
 {
         if (!OpenRZX->Execute()) return;
 
-		char temp[256];
-		sprintf(temp, "%S", OpenRZX->FileName.c_str());
-		spec48_LoadRZX(temp);
+        char temp[256];
+        sprintf(temp, "%S", OpenRZX->FileName.c_str());
+        spec48_LoadRZX(temp);
 }
 //---------------------------------------------------------------------------
 
@@ -2141,7 +2141,7 @@ void MoveWindows(int l = -1, int t = -1)
         MoveWindow(Artifacts, l, t);
         MoveWindow(Keyboard, l, t);
         MoveWindow(FSSettings, l, t);
-		MoveWindow(ZXPrinter, l, t);
+        MoveWindow(ZXPrinter, l, t);
         MoveWindow(MidiForm, l, t);
         MoveWindow(MemSave, l, t);
         MoveWindow(SerialConfig, l, t);

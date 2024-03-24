@@ -612,10 +612,10 @@ bool TDbg::BPInOutHit(BreakpointType type, int addr, int value, breakpoint* cons
                 case BP_INH:
                 case BP_OUTH:
                         addr = addr & 0xFF00;
-						break;
+                        break;
 
-				default:
-						break;
+                default:
+                        break;
         }
 
         if (bp->HitRdWrInOut(type, addr, value))
@@ -667,15 +667,15 @@ bool TDbg::BPFlagValueHit(breakpoint* const bp)
         BYTE regF = z80.af.b.l;
         int mask = (1 << bp->FlagId);
 
-		switch (bp->ConditionValue)
+        switch (bp->ConditionValue)
         {
                 case Equal:
                         return ((regF & mask) == bp->Value);
 
                 case NotEqual:
-						return ((regF & mask) != bp->Value);
+                        return ((regF & mask) != bp->Value);
 
-				default:
+                default:
                         break;
         }
         

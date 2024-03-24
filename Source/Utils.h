@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-int CRC32Block(char *block, int len);
+int CRC32Block(BYTE *block, int len);
 void ASCIIZX81(BYTE *in, BYTE *Output);
 int ZX81Strlen(BYTE *str);
 

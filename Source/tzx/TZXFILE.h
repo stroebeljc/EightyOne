@@ -377,7 +377,7 @@ private:
         void StopNow(bool Error);
 
         unsigned char ReadByte(FILE *f);
-		unsigned short ReadWord(FILE *f);
+        unsigned short ReadWord(FILE *f);
         unsigned int ReadDWord(FILE *f);
         unsigned int Read3Bytes(FILE *f);
         void ReadBytes(FILE *f, int len, void *buf);
@@ -432,8 +432,8 @@ public:
         void Stop(bool Error);
         bool GetEarState(void);
         bool FlashLoadable;
-		void CountBlocks(int *zx81, int *spec, int *other);
-		Vcl::Forms::TMonitor* FindMonitor(int x, int y);
+        void CountBlocks(int *zx81, int *spec, int *other);
+        Vcl::Forms::TMonitor* FindMonitor(int x, int y);
 };
 
 extern TTZXFile TZXFile;

@@ -12,12 +12,11 @@ object P3Drive: TP3Drive
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
   OnShow = FormShow
-  DesignSize = (
-    336
-    576)
+  PixelsPerInch = 96
   TextHeight = 13
   object OK: TButton
     Left = 254
@@ -191,6 +190,7 @@ object P3Drive: TP3Drive
       Width = 145
       Height = 21
       Style = csDropDownList
+      ItemHeight = 13
       TabOrder = 10
       OnChange = HD1ListChange
     end
@@ -217,8 +217,11 @@ object P3Drive: TP3Drive
       Top = 172
       Width = 25
       Height = 21
+      Min = 0
       Orientation = udHorizontal
+      Position = 0
       TabOrder = 17
+      Wrap = False
       OnClick = HD1HUDClick
     end
     object HD1S: TEdit
@@ -235,8 +238,11 @@ object P3Drive: TP3Drive
       Top = 172
       Width = 25
       Height = 21
+      Min = 0
       Orientation = udHorizontal
+      Position = 0
       TabOrder = 19
+      Wrap = False
       OnClick = HD1HUDClick
     end
     object HD0List: TComboBox
@@ -245,6 +251,7 @@ object P3Drive: TP3Drive
       Width = 145
       Height = 21
       Style = csDropDownList
+      ItemHeight = 13
       TabOrder = 0
       OnChange = HD0ListChange
     end
@@ -301,8 +308,11 @@ object P3Drive: TP3Drive
       Top = 80
       Width = 25
       Height = 21
+      Min = 0
       Orientation = udHorizontal
+      Position = 0
       TabOrder = 7
+      Wrap = False
       OnClick = HD0HUDClick
     end
     object HD0S: TEdit
@@ -319,8 +329,11 @@ object P3Drive: TP3Drive
       Top = 80
       Width = 25
       Height = 21
+      Min = 0
       Orientation = udHorizontal
+      Position = 0
       TabOrder = 9
+      Wrap = False
       OnClick = HD0HUDClick
     end
     object HD0ReadOnly: TCheckBox

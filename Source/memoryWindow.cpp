@@ -818,7 +818,7 @@ void __fastcall TMemoryWindow::ButtonLastChangeClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 void __fastcall TMemoryWindow::IncDecAddressChangingEx(TObject *Sender,
-      bool &AllowChange, short NewValue, TUpDownDirection Direction)
+      bool &AllowChange, int NewValue, TUpDownDirection Direction)
 {
      AllowChange = false;
 

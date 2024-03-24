@@ -129,7 +129,7 @@ __published:	// IDE-managed Components
         void __fastcall ButtonNextChangeClick(TObject *Sender);
         void __fastcall ButtonLastChangeClick(TObject *Sender);
         void __fastcall IncDecAddressChangingEx(TObject *Sender,
-          bool &AllowChange, short NewValue, TUpDownDirection Direction);
+          bool &AllowChange, int NewValue, TUpDownDirection Direction);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
         void __fastcall Search1Click(TObject *Sender);

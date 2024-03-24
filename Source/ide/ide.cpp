@@ -276,7 +276,7 @@ static void ATA_IncSectorNo(void)
 static int ATA_CalculateSectorNo(void)
 {
         ATA_DRIVE *Drv;
-        unsigned int SectorNo;
+        int SectorNo;
 
         Drv=&ATA_Channel.drive[ATA_Channel.cur_drive];
 
@@ -768,7 +768,7 @@ int ATA_LoadHDF(int drive, char *FileName)
                         return(1);
                 }
 
-                if (strncmp(Drv->hdf.sig, "RS-IDE", 6) || (Drv->hdf.id != 0x1a))
+                if (strncmp((const char *)Drv->hdf.sig, "RS-IDE", 6) || (Drv->hdf.id != 0x1a))
                 {
                         fclose(f);
                         return(1);

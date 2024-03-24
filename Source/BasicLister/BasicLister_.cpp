@@ -662,8 +662,6 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         int scrollPos = ScrollBar->Position;
 
-        ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
-
         int highlightIndex = mLastHighlightedEntryIndex;
 
         LoadProgram();
@@ -693,7 +691,7 @@ void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
 
         EnableButtons();
 
-        const keepScrollbarPosition = false;
+        const bool keepScrollbarPosition = false;
         Refresh(keepScrollbarPosition);
 }
 

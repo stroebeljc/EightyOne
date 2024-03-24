@@ -91,7 +91,7 @@ void ace_initialise()
         for(i=0;i<65536;i++) memory[i]=random(255);
 
         romlen=memory_load(machine.CurRom, 0, 65536);
-        emulator.romcrc=CRC32Block(memory,romlen);
+        emulator.romcrc=CRC32Block((char *)memory,romlen);
         zx81.ROMTOP=romlen-1;
 
         acelatch= (machine.colour==COLOURACE) ? 4:7;

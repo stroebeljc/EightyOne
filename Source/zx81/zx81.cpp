@@ -56,7 +56,7 @@
 
 extern "C"
 {
-        int CRC32Block(char *memory, int romlen);
+        int CRC32Block(BYTE *memory, int romlen);
         void P3DriveMachineHasInitialised(void);
 }
 
@@ -280,7 +280,7 @@ void zx81_initialise()
                 }
         }
         romlen=memory_load(romname.c_str(), 0, 65536);
-        emulator.romcrc=CRC32Block((char *)memory,romlen);
+        emulator.romcrc=CRC32Block(memory,romlen);
 
         if (zx81.extfont) font_load("lambda8300characterset.bin",(char *)font,512);
 

@@ -40,7 +40,7 @@ extern void add_blank(SCANLINE*, int, BYTE);
 extern "C"
 {
 #include "68000.h"
-extern int CRC32Block(char *memory, int romlen);
+extern int CRC32Block(BYTE *memory, int romlen);
 extern void HWReset(void);
 };
 
@@ -60,7 +60,7 @@ void ql_initialise()
         for(i=0;i<0x20000;i++) memory[i]=0;
         for(i=0x40000;i<=0xfffff;i++) memory[i]=0;
         romlen=memory_load(machine.CurRom, 0, 65536);
-        emulator.romcrc=CRC32Block((char *)memory,romlen);
+        emulator.romcrc=CRC32Block(memory,romlen);
         zx81.ROMTOP=romlen-1;
         HWReset();
 

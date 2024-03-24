@@ -59,7 +59,7 @@
 
 extern "C"
 {
-        int CRC32Block(char *memory, int romlen);
+        int CRC32Block(BYTE *memory, int romlen);
         void P3DriveMachineHasInitialised(void);
 //        void MidiClockTick(int);
 }
@@ -422,7 +422,7 @@ void spec48_initialise()
         }
 
         romlen=memory_load(machine.CurRom, 0, 65536);
-        emulator.romcrc=CRC32Block((char *)memory,romlen);
+        emulator.romcrc=CRC32Block(memory,romlen);
 
         if ((spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2 || spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 16384)
         {

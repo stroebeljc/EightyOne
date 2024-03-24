@@ -1,4 +1,4 @@
-object Printer: TPrinter
+object Printer: TZXPrinter
   Left = 416
   Top = 115
   Anchors = [akLeft, akTop, akBottom]

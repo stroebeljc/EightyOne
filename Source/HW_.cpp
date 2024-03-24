@@ -1059,7 +1059,7 @@ void THW::ConfigureCharacterGenerator()
 
         if (ChrGenBox->Text == "Lambda")
         {
-                zx81.chrgen == CHRGENLAMBDA;
+                zx81.chrgen = CHRGENLAMBDA;
         }
         else
         {

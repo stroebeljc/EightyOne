@@ -121,7 +121,9 @@ const int ZX81BackporchDuration = 16;
 const int ZX81HSyncPositionStart = ZX81HSyncDuration;
 const int ZX81HSyncPositionEnd = ZX81HSyncPositionStart - ZX81HSyncDuration + 1;
 const int ZX81HSyncPositionAfter = ZX81HSyncPositionEnd - 1;
-const int ZX81HSyncPositionAcceptanceStart = ((7 * ZX81HSyncDuration) / 4) + ZX81HSyncPositionEnd;
+const int ZX81HSyncPositionTolerance = (7 * ZX81HSyncDuration) / 4;
+const int ZX81HSyncPositionAcceptanceStart = ZX81HSyncPositionTolerance + ZX81HSyncPositionEnd;
+const int ZX81HSyncPositionTolerancePixels = ZX81HSyncPositionTolerance * 2;
 
 const int InterruptAcknowledgementDuration = 3; // The acknowledgement spans 3 clock cycles
 const int InterruptAcknowledgementOffsetStartIntoInterruptResponse = 2; // The acknowledgement spans into the first TW cycle
@@ -1461,12 +1463,13 @@ void zx81_DrawClockCycle(SCANLINE* CurScanLine, int position, BYTE pixelColour, 
 
 int zx81_do_scanline(SCANLINE *CurScanLine)
 {
-        int PrevRev = 0;
-        int PrevBit = 0;
-        int PrevGhost = 0;
+        int prevRev = 0;
+        int prevBit = 0;
+        int prevGhost = 0;
         int tstotal = 0;
         int scanlinesPerFrame = 0;
 
+        int scanlineHSyncThresholdPixelLength = emulator.single_step ? 1 : scanlinePixelLength - ZX81HSyncPositionTolerancePixels;
         int scanlineActivePixelLength = emulator.single_step ? 1 : scanlinePixelLength;
 
         CurScanLine->scanline_len = 0;
@@ -1614,10 +1617,14 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                         lineClockCounterAfterInstruction += lineCounterAdjustment;
 
                                         int lineCounterAdjustmentPixels = (lineCounterAdjustment * 2);
-                                        scanlineActivePixelLength += lineCounterAdjustmentPixels;
-                                        if (scanlineActivePixelLength > MaxScanlineActivePixelLength)
+
+                                        if (lineCounterAdjustmentPixels >= -ZX81HSyncPositionTolerancePixels)
                                         {
-                                                scanlineActivePixelLength = MaxScanlineActivePixelLength;
+                                                scanlineActivePixelLength += lineCounterAdjustmentPixels;
+                                                if (scanlineActivePixelLength > MaxScanlineActivePixelLength)
+                                                {
+                                                        scanlineActivePixelLength = MaxScanlineActivePixelLength;
+                                                }
                                         }
                                 }
 
@@ -1642,16 +1649,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (emulator.dirtydisplay)
                         {
-                                if (PrevGhost)
+                                if (prevGhost)
                                 {
                                         colour |= 4;
                                 }
-                                PrevGhost = 0;
+                                prevGhost = 0;
 
-                                if (PrevBit && (PrevRev || emulator.simpleghost))
+                                if (prevBit && (prevRev || emulator.simpleghost))
                                 {
                                         colour |= 2;
-                                        PrevGhost = 1;
+                                        prevGhost = 1;
                                 }
 
                                 if (noise & 1)
@@ -1660,8 +1667,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 }
 
                                 noise >>= 1;
-                                PrevRev = shift_reg_inv & 0x8000;
-                                PrevBit = bit;
+                                prevRev = shift_reg_inv & 0x8000;
+                                prevBit = bit;
                         }
 
                         bool inOperationActive = inFE && (i >= (pixels - PortActiveDurationPixels));
@@ -1897,21 +1904,24 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         {
                                 if (CurScanLine->sync_len <= ZX81HSyncDuration)
                                 {
-                                        // If a software generated pulse was output then discard any portion that
-                                        // straddles beyond the end of the hardware generated HSync.
-                                        if (frameSynchronised && CurScanLine->sync_len > 0)
+                                        if (!frameSynchronised || CurScanLine->scanline_len >= scanlineHSyncThresholdPixelLength)
                                         {
-                                                int pulseDurationBeyondHSync = -lineClockCounter - PortActiveDuration;
-
-                                                if (pulseDurationBeyondHSync > 0)
+                                                // If a software generated pulse was output then discard any portion that
+                                                // straddles beyond the end of the hardware generated HSync.
+                                                if (frameSynchronised && CurScanLine->sync_len > 0)
                                                 {
-                                                        scanlineActivePixelLength += pulseDurationBeyondHSync * 2;
-                                                        lineClockCarryCounter -= pulseDurationBeyondHSync;
-                                                }
-                                        }
+                                                        int pulseDurationBeyondHSync = -lineClockCounter - PortActiveDuration;
 
-                                        CurScanLine->sync_len = ZX81HSyncDuration;
-                                        CurScanLine->sync_type = SYNCTYPEH;
+                                                        if (pulseDurationBeyondHSync > 0)
+                                                        {
+                                                                scanlineActivePixelLength += pulseDurationBeyondHSync * 2;
+                                                                lineClockCarryCounter -= pulseDurationBeyondHSync;
+                                                        }
+                                                }
+
+                                                CurScanLine->sync_len = ZX81HSyncDuration;
+                                                CurScanLine->sync_type = SYNCTYPEH;
+                                        }
                                 }
                                 else
                                 {
@@ -2043,9 +2053,9 @@ void zx80_DrawPixel(SCANLINE* CurScanLine, BYTE pixelColour, InterruptResponseTy
 
 int zx80_do_scanline(SCANLINE *CurScanLine)
 {
-        int PrevRev = 0;
-        int PrevBit = 0;
-        int PrevGhost = 0;
+        int prevRev = 0;
+        int prevBit = 0;
+        int prevGhost = 0;
         int tstotal = 0;
         int scanlinesPerFrame = 0;
 
@@ -2188,16 +2198,16 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                         if (emulator.dirtydisplay)
                         {
-                                if (PrevGhost)
+                                if (prevGhost)
                                 {
                                         colour |= 4;
                                 }
-                                PrevGhost = 0;
+                                prevGhost = 0;
 
-                                if (PrevBit && (PrevRev || emulator.simpleghost))
+                                if (prevBit && (prevRev || emulator.simpleghost))
                                 {
                                         colour |= 2;
-                                        PrevGhost = 1;
+                                        prevGhost = 1;
                                 }
 
                                 if (noise & 1)
@@ -2206,8 +2216,8 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                                 }
 
                                 noise >>= 1;
-                                PrevRev = shift_reg_inv & 0x8000;
-                                PrevBit = bit;
+                                prevRev = shift_reg_inv & 0x8000;
+                                prevBit = bit;
                         }
 
                         bool inOperationActive = inFE && (i >= (instructionPixels - PortActiveDurationPixels));

@@ -62,7 +62,7 @@ public:
 
 protected:
         static const unsigned char Blank = 0x01;
-		static const int maxProgramLength = 49152;
+        static const int maxProgramLength = 49152;
         static const int maxLineLength = 16384 * 8;  // Allow 16384 of 8 character tokens
 
         int mProgramLength;

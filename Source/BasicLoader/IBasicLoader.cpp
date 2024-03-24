@@ -438,7 +438,7 @@ void IBasicLoader::MaskOutStrings(unsigned char* buffer)
 
         bool withinQuote = false;
 
-		buffer = (unsigned char *)pQuote;
+        buffer = (unsigned char *)pQuote;
 
         while (*buffer != '\0')
         {
@@ -512,7 +512,7 @@ unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
 {
         unsigned char* pCommand;
 
-		lineNumber = strtol((const char*)mLineBuffer, (char **)&pCommand, 10);
+        lineNumber = strtol((const char*)mLineBuffer, (char **)&pCommand, 10);
 
         if (pCommand == mLineBuffer)
         {
@@ -547,13 +547,13 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
                 value = strtod((char*)(mLineBuffer + index), &pEnd);
         }
 
-		if (pEnd == (char *)(mLineBuffer + index))
+        if (pEnd == (char *)(mLineBuffer + index))
         {
                 pEnd++;
         }
 
         while ((char *)(mLineBuffer + index) < pEnd)
-		{
+        {
                 unsigned char chr = mLineBufferOutput[index];
                 OutputByte(addressOffset, chr);
                 index++;
@@ -847,8 +847,8 @@ void IBasicLoader::ReplaceTokenEndCharacters(map<unsigned char, string>& tokens,
 
         for (it = tokens.begin(); it != tokens.end(); it++)
         {
-				const char* pToken = (it->second).c_str();
-				int lenToken = strlen(pToken);
+                const char* pToken = (it->second).c_str();
+                int lenToken = strlen(pToken);
                 const unsigned char endChar = pToken[lenToken-1];
 
                 if (endChar == oldChar)
@@ -866,7 +866,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
         for (it = tokens.rbegin(); it != tokens.rend(); it++)
         {
                 unsigned char tokenCode = it->first;
-				const char* pToken = (it->second).c_str();
+                const char* pToken = (it->second).c_str();
                 int lenToken = strlen(pToken);
 
                 unsigned char* pMatch;

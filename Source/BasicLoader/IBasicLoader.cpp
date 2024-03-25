@@ -48,7 +48,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                 }
 
                 wchar_t temp[256];
-                swprintf(temp, L"%s", msg.str().c_str());
+                mbstowcs(temp, msg.str().c_str(),256);
                 Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
                 return;
         }
@@ -76,7 +76,7 @@ void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, 
                         msg << mLines[i].line.substr(0, displayLen);
                         if (truncateLine) msg << "...";
                         wchar_t temp[256];
-                        swprintf(temp, L"%s", msg.str().c_str());
+                        mbstowcs(temp, msg.str().c_str(),256);
                         Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
                         return;
                 }

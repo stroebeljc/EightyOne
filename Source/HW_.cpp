@@ -2,6 +2,7 @@
 
 #include <dir.h>
 #include <dirent.h>
+#include <sstream>
 #include <vcl.h>
 #pragma hdrstop
 
@@ -907,9 +908,12 @@ void THW::ConfigureRomCartridge()
 
                 if (!loadSuccessful)
                 {
-                        wchar_t msg[256];
-                        swprintf(msg, L"Failed to load cartridge file:\n\n%s", romCartridgeFilePath.c_str());
-                        Application->MessageBox(msg, L"Error", MB_OK | MB_ICONERROR);
+                        stringstream msg;
+                        msg << "Failed to load cartridge file:" << endl << endl;
+                        msg << romCartridgeFilePath.c_str();
+                        wchar_t temp[256];
+                        mbstowcs(temp, msg.str().c_str(),256);
+                        Application->MessageBox(temp, L"Error", MB_OK | MB_ICONERROR);
 
                         LoadDock((char *)"");
                 }

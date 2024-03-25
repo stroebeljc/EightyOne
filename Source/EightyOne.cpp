@@ -156,64 +156,68 @@ bool Restart=false;
 //---------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 {
-		int i;
-		char *p, *CmdLineRaw;
-		bool quote;
+        int i;
+        char *p, *CmdLineRaw;
+        bool quote;
 
-		CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
-		strcpy(CmdLineRaw,cmdline);
+        CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
+        strcpy(CmdLineRaw,cmdline);
 
-		p=CmdLineRaw;
-		quote=false;
+        p=CmdLineRaw;
+        quote=false;
 
-		while(*p)
-		{
-				if (*p=='\"') quote=!quote;
-				if ((*p==' ') && (quote==false)) *p=0;
-				p++;
-		}
-		*++p=0;
+        while(*p)
+        {
+                if (*p=='\"') quote=!quote;
+                if ((*p==' ') && (quote==false)) *p=0;
+                p++;
+        }
+        *++p=0;
 
-		i=0;
-		p=CmdLineRaw;
-		while(strlen(p))
-		{
-				i++;
-				p+=strlen(p)+1;
-		}
-		i++;
+        i=0;
+        p=CmdLineRaw;
+        while(strlen(p))
+        {
+                i++;
+                p+=strlen(p)+1;
+        }
+        i++;
 
-		CommandLine=(char **)malloc(i*sizeof(char *));
+        CommandLine=(char **)malloc(i*sizeof(char *));
 
-		p=CmdLineRaw;
-		i=0;
-		while(strlen(p))
-		{
-				CommandLine[i++]=p;
-				p+=strlen(p)+1;
-		}
-		CommandLine[i]=NULL;
+        p=CmdLineRaw;
+        i=0;
+        while(strlen(p))
+        {
+                CommandLine[i++]=p;
+                p+=strlen(p)+1;
+        }
+        CommandLine[i]=NULL;
 
-		i=0;
-		while(CommandLine[i])
-		{
-				p=CommandLine[i];
+        i=0;
+        while(CommandLine[i])
+        {
+                p=CommandLine[i];
 
-				if ((p[0]=='\"') && (p[strlen(p)-1]=='\"'))
-				{
-						p[strlen(p)-1]=0;
-						CommandLine[i]++;
-				}
-				i++;
-		}
+                if ((p[0]=='\"') && (p[strlen(p)-1]=='\"'))
+                {
+                        p[strlen(p)-1]=0;
+                        CommandLine[i]++;
+                }
+                i++;
+        }
 
-		try
-		{
-				Application->Initialize();
-				Application->Title = "EightyOne";
-				TSplash *spl = new TSplash(Application);
-				#include "splashImpl.cpp"
-				delete spl;
+        try
+        {
+                Application->Initialize();
+                Application->Title = "EightyOne";
+
+                TSplash *spl = new TSplash(Splash);
+
+                #include "splashImpl.cpp"
+
+                Application->ProcessMessages();
+                delete spl;
 
                 Form1->GatherWindowsIfRequired();
                 Form1->Caption = "EightyOne";

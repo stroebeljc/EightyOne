@@ -276,7 +276,7 @@ static void ATA_IncSectorNo(void)
 static int ATA_CalculateSectorNo(void)
 {
         ATA_DRIVE *Drv;
-        int SectorNo;
+        unsigned int SectorNo;
 
         Drv=&ATA_Channel.drive[ATA_Channel.cur_drive];
 
@@ -319,7 +319,7 @@ static int ATA_CalculateSectorNo(void)
                 }
         }
 
-        if (SectorNo<0 || SectorNo>=Drv->size)
+        if (SectorNo>=Drv->size)
         {
                 Drv->status |= ATA_ERR;
                 Drv->error = ATA_ERR_ABRT | ATA_ERR_IDNF;

@@ -1461,9 +1461,9 @@ void zx81_DrawClockCycle(SCANLINE* CurScanLine, int position, BYTE pixelColour, 
 
 int zx81_do_scanline(SCANLINE *CurScanLine)
 {
-        int PrevRev = 0;
-        int PrevBit = 0;
-        int PrevGhost = 0;
+        int prevRev = 0;
+        int prevBit = 0;
+        int prevGhost = 0;
         int tstotal = 0;
         int scanlinesPerFrame = 0;
 
@@ -1642,16 +1642,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         if (emulator.dirtydisplay)
                         {
-                                if (PrevGhost)
+                                if (prevGhost)
                                 {
                                         colour |= 4;
                                 }
-                                PrevGhost = 0;
+                                prevGhost = 0;
 
-                                if (PrevBit && (PrevRev || emulator.simpleghost))
+                                if (prevBit && (prevRev || emulator.simpleghost))
                                 {
                                         colour |= 2;
-                                        PrevGhost = 1;
+                                        prevGhost = 1;
                                 }
 
                                 if (noise & 1)
@@ -1660,8 +1660,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 }
 
                                 noise >>= 1;
-                                PrevRev = shift_reg_inv & 0x8000;
-                                PrevBit = bit;
+                                prevRev = shift_reg_inv & 0x8000;
+                                prevBit = bit;
                         }
 
                         bool inOperationActive = inFE && (i >= (pixels - PortActiveDurationPixels));

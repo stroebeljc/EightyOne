@@ -543,13 +543,13 @@ void TTZXFile::EditBlock(int Block, int Mx, int My)
         return;
 }
 
-Vcl::Forms::TMonitor* TTZXFile::FindMonitor(int x, int y)
+Forms::TMonitor* TTZXFile::FindMonitor(int x, int y)
 {
         int numberOfMonitors = Screen->MonitorCount;
 
         for (int i = 0; i < numberOfMonitors; i++)
         {
-                Vcl::Forms::TMonitor* monitor = Screen->Monitors[i];
+                Forms::TMonitor* monitor = Screen->Monitors[i];
 
                 if (x >= monitor->Left && x < (monitor->Left + monitor->Width) &&
                     y >= monitor->Top && y < (monitor->Top + monitor->Height))

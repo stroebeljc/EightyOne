@@ -433,7 +433,7 @@ public:
         bool GetEarState(void);
         bool FlashLoadable;
         void CountBlocks(int *zx81, int *spec, int *other);
-        Vcl::Forms::TMonitor* FindMonitor(int x, int y);
+        Forms::TMonitor* FindMonitor(int x, int y);
 };
 
 extern TTZXFile TZXFile;

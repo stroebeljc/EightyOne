@@ -35,6 +35,7 @@
 #include <ToolWin.hpp>
 #include <ImgList.hpp>
 #include <IniFiles.hpp>
+#include "ThemeMgr.hpp"
 
 
 #define RENDERGDI 0
@@ -126,6 +127,7 @@ __published:	// IDE-managed Components
         TMenuItem *SaveScreenshot1;
         TSaveDialog *SaveScrDialog;
         TMenuItem *PrinterPort1;
+        TThemeManager *ThemeManager1;
         TMenuItem *Midi1;
         TMenuItem *RZX1;
         TMenuItem *N8;

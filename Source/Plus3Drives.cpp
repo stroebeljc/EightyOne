@@ -744,14 +744,14 @@ void P3DriveMachineHasInitialised(void)
         if (P3Drive->DriveAText->Text != "< Empty >")
         {
             char temp[256];
-            sprintf(temp,"%S",P3Drive->DriveAText->Text.c_str());
+            wcstombs(temp,P3Drive->DriveAText->Text.c_str(), sizeof(temp));
             floppy_setimage(0, temp);
         }
 
         if (P3Drive->DriveBText->Text != "< Empty >")
         {
             char temp[256];
-            sprintf(temp,"%S",P3Drive->DriveBText->Text.c_str());
+            wcstombs(temp,P3Drive->DriveBText->Text.c_str(), sizeof(temp));
             floppy_setimage(1, temp);
         }
 }

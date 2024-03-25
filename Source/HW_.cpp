@@ -211,7 +211,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         CloseOtherDebugWindow();
 
         RomBox->Text = RomBox->Text.LowerCase();
-        sprintf(machine.CurRom, "%S", RomBox->Text.c_str());
+        wcstombs(machine.CurRom, RomBox->Text.c_str(), sizeof(machine.CurRom));
 
         AnsiString romBase = DetermineRomBase();
         ConfigureSymbolFile(romBase);

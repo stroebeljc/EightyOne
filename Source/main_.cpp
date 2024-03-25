@@ -2070,7 +2070,7 @@ void __fastcall TForm1::Play1Click(TObject *Sender)
         if (!OpenRZX->Execute()) return;
 
         char temp[256];
-        sprintf(temp, "%S", OpenRZX->FileName.c_str());
+        wcstombs(temp, OpenRZX->FileName.c_str(), sizeof(temp));
         spec48_LoadRZX(temp);
 }
 //---------------------------------------------------------------------------

@@ -64,8 +64,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <BCC_PCHUsage>None</BCC_PCHUsage>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <IncludePath>RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;..\Components\Office Button 97;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;..\Components\Office Button 97;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <BCC_IncludePath>zlib\minizip\;zlib\;..\Components\ComPort Library\;libdsk\;..\Components\Office Button 97\OffBtn97\32-Bit\;$(BCC_IncludePath)</BCC_IncludePath>
         <DCC_LongStrings>false</DCC_LongStrings>
         <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
@@ -430,8 +430,29 @@
             <DependentOn>sound\SoundOP.h</DependentOn>
             <BuildOrder>36</BuildOrder>
         </CppCompile>
-        <CppCompile Include="sp0256.c">
-            <BuildOrder>109</BuildOrder>
+        <CppCompile Include="SP0256\audio.cpp">
+            <BuildOrder>121</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\sp0256.c">
+            <BuildOrder>127</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\sp0256drv.cpp">
+            <BuildOrder>126</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\sp0256_012.cpp">
+            <BuildOrder>123</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\sp0256_al2.cpp">
+            <BuildOrder>124</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\sp0256_main.cpp">
+            <BuildOrder>125</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\SystemClock.cpp">
+            <BuildOrder>127</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SP0256\Win32Audio.cpp">
+            <BuildOrder>128</BuildOrder>
         </CppCompile>
         <CppCompile Include="Spectra\Spectra.cpp">
             <BuildOrder>116</BuildOrder>

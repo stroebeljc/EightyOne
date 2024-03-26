@@ -68,10 +68,6 @@ void TTZX::ClockTick(int TStates, bool ZX81)
         if (RecTimeOut)
         {
                 RecTimeOut -= TStates;
-                if (RecTimeOut < 884)
-                {
-                        RecTimeOut=RecTimeOut;
-                }
                 if (RecTimeOut<=0) while(RecState!=REC_STOP) RecStopCheck();
         }
 

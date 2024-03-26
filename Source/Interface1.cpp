@@ -357,7 +357,7 @@ int TIF1::MDVGetNextBlock(int Drive, bool header)
                         count=0;
                         for(i=0;i<14;i++)
                         {
-                                byte = Drives[Drive].data[Drive, MDVPos(Drive, i)];
+                                byte = Drives[Drive].data[MDVPos(Drive, i)];
 
                                 count += byte;
                                 if (count&256) count++;

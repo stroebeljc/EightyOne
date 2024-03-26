@@ -165,8 +165,7 @@ typedef enum
         ZXC1_64K,
         ZXC1_16KPAGEOUT,
         ZXC1_32KPAGEOUT,
-        ZXC1_48KPAGEOUT,
-        ZXC1_64KPAGEOUT
+        ZXC1_48KPAGEOUT
 } ZXC1TYPE;
 
 typedef struct

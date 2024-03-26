@@ -704,6 +704,9 @@ bool TDbg::BPMemoryValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return (value != bp->Value);
+
+                default:
+                        break;
         }
         
         return false;
@@ -731,6 +734,9 @@ bool TDbg::BPRegisterValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return (value != bp->Value);
+
+                default:
+                        break;
         }
 
         return false;

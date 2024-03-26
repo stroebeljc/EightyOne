@@ -2109,7 +2109,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                                 else
                                 {
                                         withinDisplayDriver = ((z80.pc.w >= 0x01ED && z80.pc.w <= 0x020F) || (z80.pc.w >= 0x12C0 && z80.pc.w <= 0x1336) ||
-                                                               (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) ||  withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2));
+                                                               (z80.pc.w >= 0x1666 && z80.pc.w <= 0x166B) || (withinDisplayDriver && (z80.pc.w >= 0x0D74 && z80.pc.w <= 0x0DA2)));
                                 }
                         }
 

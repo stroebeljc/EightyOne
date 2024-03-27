@@ -2189,7 +2189,7 @@ void __fastcall TDbg::BPListDrawCell(TObject *Sender, int ACol, int ARow,
                 BPList->Canvas->Font->Color = clGrayText;
         }
 
-        BPList->Canvas->TextRect(Rect, Rect.Left + 2, Rect.Top, BPList->Cells[ACol][ARow]);
+        BPList->Canvas->TextRect(Rect, Rect.Left + 6, Rect.Top, BPList->Cells[ACol][ARow]);
 }
 //---------------------------------------------------------------------------
 

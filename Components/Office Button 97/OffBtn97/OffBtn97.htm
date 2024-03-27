@@ -1,0 +1,744 @@
+<html>
+<head>
+<title>TOffice97Button v2.16 ReadMe</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+a:active	{  color: #99CCFF; text-decoration: none; font-weight: bold }
+a:link		{ color: #99CCFF; text-decoration: none ; font-weight: bold }
+a:visited	{ color: #99CCFF; text-decoration: none ; font-weight: bold }
+a:hover		{ color: #FFFFFF; text-decoration: none; font-weight: bold }
+body		{ margin-top: 0px; margin-left: 0px; color: #FFFFFF ; background-color: #000000 }
+img		{ border: 0px }
+p		{ font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 9pt; text-align: justify }
+td		{ font-family: Verdana, Arial, Helvetica, sans-serif; vertical-align: top }
+.BigHeadingCell { font-size: 12pt; font-weight: bold; text-align: justify; background-color: #333399 }
+.ContentCell	{ font-size: 9pt; text-align: justify; background-color: #000033 }
+.ContentTable	{ width: 100% }
+.FadeCell	{ background-color: #000066; background-image: url(fade.gif) }
+.FormCell	{ font-size: 9pt; text-align: justify ; background-color: #000066; background-image: url(fade.gif) }
+.FormDarkCell	{ font-size: 9pt; text-align: justify ; background-color: #000033; background-image: url(fade.gif) }
+.FormFieldCell	{ font-size: 9pt; font-weight: bold; text-align: justify ; background-color: #000066; background-image: url(fade.gif) }
+.HeadingCell	{ font-size: 9pt; font-weight: bold; text-align: justify; background-color: #333399 }
+.MenuCell	{ font-size: 9pt; font-weight: bold; text-align: justify; background-color: #000066; background-image: url(fade.gif) }
+.PageHeading	{ font-size: 10pt; font-weight: bold;  text-align: justify ; background-color: #333399 }
+.PageHeadingItl { font-size: 10pt; font-weight: bold; text-align: right; font-style: italic; background-color: #333399 }
+.PageTable	{ background-color: #000033; width: 800px }
+.RightTable	{ width: 100% }
+.RightBorder	{ height: 4px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px }
+.RightMenuCell	{ font-size: 9pt; font-weight: bold; text-align: justify ; background-color: #000066; background-image: url(fade.gif) }
+.RightHeading	{ font-size: 9pt; font-weight: bold; background-color: #333399; text-align: center }
+.RightSideBorder{ width: 4px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px }
+.ScreenShot	{ border: 4px #000033 solid}
+.Seperator	{ background-color: #333399; height: 4px }
+.Small	{ font-size: 8pt }
+.SmallText	{ font-size: 9pt }
+.SubHeading	{ font-size: 9pt; font-weight: bold }
+.TopTable	{ width: 100% }
+-->
+</style>
+</head>
+<body bgcolor="#000000" text="#FFFFFF">
+<table class="ContentTable" border="0" cellspacing="0" cellpadding="2">
+  <tr> 
+    <td class="BigHeadingCell">T O F F I C E 9 7 B U T T O N&nbsp;&nbsp;&nbsp;R 
+      E A D M E</td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>By Jonathan Hosking<br>
+        V2.16 (20.02.2002)<br>
+        <br>
+      </p>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell">T A B L E&nbsp;&nbsp;&nbsp;O F&nbsp;&nbsp;&nbsp;C 
+      O N T E N T S</td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p><a href="#about">What is the TOffice97Button component?</a><br>
+        <a href="#install">How to install the TOffice97Button component</a><br>
+        <a href="#reference">TOffice97Button reference</a><br>
+        <a href="#history">Revision history</a><br>
+        <a href="#future">Future ideas</a><br>
+        <a href="#components">Other components</a><br>
+        <a href="#contact">Contacting me</a><br>
+        <br>
+      </p>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="About">W H A T&nbsp;&nbsp;&nbsp;I S&nbsp;&nbsp;&nbsp;T 
+      H E&nbsp;&nbsp;&nbsp;T O F F I C E 9 7 B U T T O N&nbsp;&nbsp;&nbsp;C O 
+      M P O N E N T ?</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>The TOffice97Button component is a new component I have written for Delphi 
+        and C++Builder. It looks and acts like the controls (Buttons, radiobuttons, 
+        up buttons and down buttons) that appear in the Office Assistant balloons 
+        in Office 97 and Office 2000. It can be fully customised if desired. It 
+        has the following features: -</p>
+      <ul>
+        <li>Fully customisable source code, which can be edited if necessary.</li>
+        <li>&quot;Active&quot; border &amp; button glyphs, which change depending 
+          on the state of the control.</li>
+        <li>&quot;Active&quot; button glyphs can be easily modified, positioned 
+          and turned on or off.</li>
+        <li>Control can act like any control that appears in the Office Assistant 
+          balloons in Office 97 and Office 2000.</li>
+        <li>A popup menu can be used with the control.</li>
+        <li>Fully compatible with the TButton component. (It has all the properties 
+          and events of the TButton component)</li>
+        <li>Works on Windows 95, NT, 2000 &amp; XP. (I have not tested it with 
+          Windows 98 &amp; ME)</li>
+        <li>Compact size, only occupying 52KB when compiled in Delphi 1.0! (47KB 
+          in Delphi 6.0!)</li>
+      </ul>
+      <p>The component code was written by modifying some code for an Internet 
+        Explorer-style button, written by Dave Jewell. Code from the TButton component 
+        was also used to write some handling routines and the code for creating 
+        a disabled bitmap was taken from the RX Library v2.40. The code works 
+        fine on Delphi 1.0, 2.0, 4.0, 5.0, 6.0 and C++Builder 3.0, but I have 
+        not tested it with other versions.</p>
+      <p>You are free to distribute the code, but you may NOT sell it. If you 
+        modify the code, you must include me in the acknowledgements. If you do 
+        want your ideas or modifications to be incorporated into the latest version, 
+        send them to the address at the end of this document.</p>
+      <p>Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> for adding bi-directional 
+        support, auto height adjustment, transparency, the hover font property, 
+        actions, and fixing some other bugs.</p>
+      <p>Thanks to <a href="mailto:michelb@docudatasoft.com">Michel</a> for fixing 
+        a bug in the keyboard routines and helping with the auto transparency 
+        feature.</p>
+      <p>Thanks to <a href="mailto:ShrHolmes@rambler.ru">Sherlock</a> for fixing 
+        a bug with modal forms.<br><br>
+      </p>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="Install">H O W&nbsp;&nbsp;&nbsp;T O&nbsp;&nbsp;&nbsp;I 
+      N S T A L L&nbsp;&nbsp;&nbsp;T H E&nbsp;&nbsp;&nbsp;T O F F I C E 9 7 B 
+      U T T O N&nbsp;&nbsp;&nbsp;C O M P O N E N T</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>To unzip the TOffice97Button component, assuming <b>[Program Path]</b> 
+        is the path to Delphi or C++Builder, follow these steps: -</p>
+      <ol>
+        <li>Unzip the file <b>OFFBTN97.ZIP</b> to any directory, using the directory 
+          switch (This is VERY important).</li>
+        <li>Copy the file <b>OFFBTN.PAS</b> to the directory <b>[Program Path]\Source\Samples</b>.</li>
+        <li>If you want documentation, copy the file <b>OFFBTN97.HTM</b> to the 
+          directory <b>[Program Path]\Bin</b>, if you are using Delphi 1.0. Otherwise, 
+          copy it to the directory <b>[Program Path]\Help</b>.</li>
+        <li>If you are using Delphi 1.0, copy the files in the <b>16-Bit</b> directory 
+          of this Zip to the directory <b>[Program Path]\Source\Samples</b>. Otherwise 
+          copy the files in the <b>32-Bit</b> directory of this Zip to the directory 
+          <b>[Program Path]\Source\Samples</b>.</li>
+      </ol>
+      <p>You can now install the component into the component library. Ignore 
+        the 3 compiler warnings about variables not being initialised. Follow 
+        the procedure for the version of Delphi or C++Builder that you are using.</p>
+      <p class="SubHeading">Delphi 1.0:</p>
+      <ol>
+        <li>Click on <b>Options</b> and then select <b>Install Components</b>.</li>
+        <li>In the <b>Install Components</b> dialog, click <b>Add</b>. In the 
+          next dialog, click <b>Browse</b> and open the file <b>OFFBTN.PAS</b>.</li>
+        <li>Click <b>Ok</b> to install the component.</li>
+      </ol>
+      <p class="SubHeading">Delphi 2.0:</p>
+      <p>This procedure should also work with C++Builder 1.0, but I'm not sure.</p>
+      <ol>
+        <li>Click on <b>Component</b> and select <b>Install</b>.</li>
+        <li>In the <b>Install Components</b> dialog, click <b>Add</b>. In the 
+          next dialog, click <b>Browse</b> and open the file <b>OFFBTN.PAS</b>.</li>
+        <li>Click <b>Ok</b> to install the component.</li>
+      </ol>
+      <p class="SubHeading">Delphi 4.0:</p>
+      <ol>
+        <li>Click on <b>Tools</b> and select <b>Environment Options</b>.</li>
+        <li>In the next dialog, click on the <b>Library</b> tab and add the full 
+          path of the TOffice97Button source code to the <b>Library Path</b> edit 
+          box. Then click <b>Ok</b>.</li>
+        <li>Click on <b>Component</b> and select <b>Install Component</b>.</li>
+        <li>In the <b>Install Component</b> dialog, click on the <b>Into existing 
+          package</b> tab. Click on the first <b>Browse</b> button and open the 
+          file <b>OFFBTN.PAS</b>. Then click on the second <b>Browse</b> button 
+          and open the file <b>DCLUSR40.DPK</b>. Finally, click <b>Ok</b> to install 
+          the component.</li>
+      </ol>
+      <p class="SubHeading">Delphi 5.0:</p>
+      <ol>
+        <li>Click on <b>Tools</b> and select <b>Environment Options</b>.</li>
+        <li>In the next dialog, click on the <b>Library</b> tab and add the full 
+          path of the TOffice97Button source code to the <b>Library Path</b> edit 
+          box. Then click <b>Ok</b>.</li>
+        <li>Click on <b>Component</b> and select <b>Install Component</b>.</li>
+        <li>In the <b>Install Component</b> dialog, click on the <b>Into existing 
+          package</b> tab. Click on the first <b>Browse</b> button and open the 
+          file <b>OFFBTN.PAS</b>. Then click on the second <b>Browse</b> button 
+          and open the file <b>DCLUSR50.DPK</b>. Finally, click <b>Ok</b> to install 
+          the component.</li>
+      </ol>
+      <p class="SubHeading">Delphi 6.0:</p>
+      <ol>
+        <li>Click on <b>Tools</b> and select <b>Environment Options</b>.</li>
+        <li>In the next dialog, click on the <b>Library</b> tab and add the full 
+          path of the TOffice97Button source code to the <b>Library Path</b> edit 
+          box. Then click <b>Ok</b>.</li>
+        <li>Click on <b>Component</b> and select <b>Install Component</b>.</li>
+        <li>In the <b>Install Component</b> dialog, click on the <b>Into existing 
+          package</b> tab. Click on the first <b>Browse</b> button and open the 
+          file <b>OFFBTN.PAS</b>. Then click on the second <b>Browse</b> button 
+          and open the file <b>DCLUSR.DPK</b>. Finally, click <b>Ok</b> to install 
+          the component.</li>
+      </ol>
+      <p class="SubHeading"></p>
+      <p class="SubHeading">C++Builder 3.0:</p>
+      <p>This procedure should also work, with minor modifications, with Delphi 
+        3.0, but I'm not sure.</p>
+      <ol>
+        <li>Click on <b>Tools</b> and select <b>Environment Options</b>.</li>
+        <li>In the next dialog, click on the <b>Library</b> tab and add the full 
+          path of the TOffice97Button source code to the <b>Library Path</b> edit 
+          box. Then click <b>Ok</b>.</li>
+        <li>Click on <b>Component</b> and select <b>Install Component</b>.</li>
+        <li>In the <b>Install Component</b> dialog, click on the <b>Into existing 
+          package</b> tab. Click on the first <b>Browse</b> button and open the 
+          file <b>OFFBTN.PAS</b>. Then click on the second <b>Browse</b> button 
+          and open the file <b>DCLUSR35.BPK</b>. Finally, click <b>Ok</b> to install 
+          the component.</li>
+      </ol>
+      <p class="SubHeading">C++Builder 4.0:</p>
+      <p>This procedure should also work, with minor modifications, with C++Builder 
+        5.0 &amp; 6.0, but I'm not sure.</p>
+      <ol>
+        <li>Click on <b>Tools</b> and select <b>Environment Options</b>.</li>
+        <li>In the next dialog, click on the <b>Library</b> tab and add the full 
+          path of the TOffice97Button source code to the <b>Library Path</b> edit 
+          box. Then click <b>Ok</b>.</li>
+        <li>Click on <b>Component</b> and select <b>Install Component</b>.</li>
+        <li>In the <b>Install Component</b> dialog, click on the <b>Into existing 
+          package</b> tab. Click on the first <b>Browse</b> button and open the 
+          file <b>OFFBTN.PAS</b>. Then click on the second <b>Browse</b> button 
+          and open the file <b>DCLUSR40.BPK</b>. Finally, click <b>Ok</b> to install 
+          the component.</li>
+      </ol>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="Reference">T O F F I C E 9 7 B U T T O N&nbsp;&nbsp;&nbsp;R 
+      E F E R E N C E</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p class="SubHeading">Remarks:</p>
+      <p>You may wonder why 2 resource files are used with this component. There 
+        are several explanations for this: -</p>
+      <ol>
+        <li>The DCR file could not be linked in, because doing so would cause 
+          a &quot;Duplicate Resource Identifier&quot; error.</li>
+        <li>The bitmaps in the RES file have to be linked in, otherwise they won't 
+          display properly. They can't be in the DCR file, as this would mean 
+          linking the DCR file, which would cause the error described above.</li>
+        <li>A RES file can't be used alone, as the error described above would 
+          occur and the component's icon would not be displayed.</li>
+      </ol>
+      <p>The bitmaps used to indicate the status of the control can be edited 
+        by opening the file <b>OFFBTN.RES</b>. These bitmaps are the default bitmaps 
+        for every TOffice97Button component, so any changes will be global. The 
+        bitmaps are stored in the following names: -</p>
+      <ul>
+        <li><b>OFFICE_1</b> – Active state bitmap. (Button)</li>
+        <li><b>OFFICE_2</b> – Disabled state bitmap. (Button)</li>
+        <li><b>OFFICE_3</b> – Down state bitmap. (Button)</li>
+        <li><b>OFFICE_4</b> – Inactive state bitmap. (Button)</li>
+        <li><b>OFFICE_5</b> – Active state bitmap. (Radiobutton)</li>
+        <li><b>OFFICE_6</b> – Disabled state bitmap. (Radiobutton)</li>
+        <li><b>OFFICE_7</b> – Down state bitmap. (Radiobutton)</li>
+        <li><b>OFFICE_8</b> – Inactive state bitmap. (Radiobutton)</li>
+        <li><b>OFFICE_9</b> – Active state bitmap. (Up Button)</li>
+        <li><b>OFFICE_10</b> – Disabled state bitmap. (Up Button)</li>
+        <li><b>OFFICE_11</b> – Down state bitmap. (Up Button)</li>
+        <li><b>OFFICE_12</b> – Inactive state bitmap. (Up Button)</li>
+        <li><b>OFFICE_13</b> – Active state bitmap. (Down Button)</li>
+        <li><b>OFFICE_14</b> – Disabled state bitmap. (Down Button)</li>
+        <li><b>OFFICE_15</b> – Down state bitmap. (Down Button)</li>
+        <li><b>OFFICE_16</b> – Inactive state bitmap. (Down Button)</li>
+        <li><b>OFFICE_17</b> – Active state bitmap. (Office 2000 Radiobutton)</li>
+        <li><b>OFFICE_18</b> – Disabled state bitmap. (Office 2000 Radiobutton)</li>
+        <li><b>OFFICE_19</b> – Down state bitmap. (Office 2000 Radiobutton)</li>
+        <li><b>OFFICE_20</b> – Inactive state bitmap. (Office 2000 Radiobutton)</li>
+        <li><b>OFFICE_21</b> – Active state bitmap. (Office 2000 Help Button)</li>
+        <li><b>OFFICE_22</b> – Disabled state bitmap. (Office 2000 Help Button)</li>
+        <li><b>OFFICE_23</b> – Down state bitmap. (Office 2000 Help Button)</li>
+        <li><b>OFFICE_24</b> – Inactive state bitmap. (Office 2000 Help Button)</li>
+      </ul>
+      <p>The assumed transparent colour of the bitmaps is <b>clBlack</b>. This 
+        can be changed by modifying the <b>fTransparentColor</b> variable in the 
+        <b>TOffice97Button.Create(AOwner: TComponent)</b> constructor, or by modifying 
+        the <b>TransparentColor</b> property.</p>
+      <p>It is not advisable to reduce the control size. If you do, the control 
+        may not display exactly as it should. Text may disappear if the control 
+        becomes too small. There shouldn't be any fatal errors if the control 
+        size is decreased. You also should not delete any of the bitmaps, or rename 
+        them, as this will probably cause errors.</p>
+      <p>When the <b>ControlType</b> property is set to anything other than <b>bsButton</b>, 
+        the control frame is not drawn and the focus is drawn in the Office 97 
+        or Office 2000 style. It is also a fixed size when text is word-wrapped, 
+        unless you change the control size.</p>
+      <p>Early versions of the component used the <b>cmFocusChanged</b> message 
+        to handle focus control. This was eventually replaced by the <b>wmKillFocus</b> 
+        and <b>wmLostFocus</b> messages in version 1.4, fixing a very annoying 
+        bug. However, the <b>cmFocusChanged</b> message is still called, to update 
+        the control, when the <b>Default</b> property is set.</p>
+      <p>If you are upgrading the component to version 1.9 or later of the control, 
+        you may find that the glyphs on any existing TOffice97Buttons disappear. 
+        If this happens, toggle the <b>Office2000Look</b> property on and off.</p>
+      <p class="SubHeading">Known problems:</p>
+      <p>There are currently no problems with the control.</p>
+      <p class="SubHeading">Key properties:</p>
+      <ul>
+        <li><b>property About: TOffBtnAbout default abNone;</b><br>
+          If you set this to <b>abAbout</b>, the component information is shown.</li>
+        <li><b>property Action: TBasicAction;</b><br>
+          Allows you to assign an action to the control.</li>
+        <li><b>property ActiveColor: TColor default $00808080;</b><br>
+          The colour of the control outline when it is active.</li>
+        <li><b>property ActiveGlyph: TBitmap;</b><br>
+          The glyph to be displayed when the control is active. If the property 
+          is empty, the default active glyph is used.</li>
+        <li><b>property ActiveOutlineColor: TColor default clWhite;</b><br>
+          The colour of the inside control outline when it is active.</li>
+        <li><b>property ActiveOutlineColor2: TColor default $00D6E7E7;</b><br>
+          The colour of the second inside control outline when it is active.</li>
+        <li><b>property Align;</b><br>
+          Determines how the control is aligned within its parent.</li>
+        <li><b>property AutoHeight: Boolean default True;</b><br>
+          If this is set to <b>True</b>, the control automatically adjusts its 
+          own height.</li>
+        <li><b>property AutoTransparency: Boolean default True;</b><br>
+          If this is set to <b>True</b>, the control uses the bottom left pixel 
+          of the glyph as the transparent colour.</li>
+        <li><b>property BiDiMode;</b><br>
+          Determines if the control uses bi-directional support.</li>
+        <li><b>property Cancel: Boolean;</b><br>
+          If this is set to <b>True</b>, the <b>OnClick</b> event occurs when 
+          you press <b>ESC</b>.</li>
+        <li><b>property Caption: TCaption;</b><br>
+          This is what text appears in the control.</li>
+        <li><b>property Color;</b><br>
+          Determines the colour of the control. The default (<b>$00CCFFFF</b>) 
+          is a yellowish colour.</li>
+        <li><b>property ControlType: TOffBtnType default bsButton;</b><br>
+          Determines the type of control that is displayed.</li>
+        <li><b>property Default: Boolean default False;</b><br>
+          If this is set to <b>True</b>, the <b>OnClick</b> event occurs when 
+          you press <b>ENTER</b>, even if the control isn't selected.</li>
+        <li><b>property DisabledGlyph: TBitmap;</b><br>
+          The glyph to be displayed when the control is disabled. If the property 
+          is empty, the default disabled glyph is used.</li>
+        <li><b>property DownActiveGlyph: TBitmap;</b><br>
+          The glyph to be displayed when the control is active and clicked. If 
+          the property is empty, the default active and clicked glyph is used.</li>
+        <li><b>property DragCursor;</b><br>
+          Determines the mouse pointer that is displayed when an object is dragged 
+          over the control.</li>
+        <li><b>property DragMode;</b><br>
+          If this is set to automatic, the control can be dragged and dropped 
+          at any time. If this is set to manual, the control can only be dragged 
+          when the <b>BeginDrag</b> method is called.</li>
+        <li><b>property Enabled;</b><br>
+          If this is set to <b>False</b>, the control cannot be used until this 
+          is set to true.</li>
+        <li><b>property Font;</b><br>
+          Determines the font that is used in the control.</li>
+        <li><b>property HoverFont;</b><br>
+          Determines the font that is displayed when the mouse hovers over the 
+          control.</li>
+        <li><b>property InactiveColor: TColor default clSilver;</b><br>
+          The colour of the control outline when it is inactive.</li>
+        <li><b>property InactiveGlyph: TBitmap;</b><br>
+          The glyph to be displayed when the control is inactive. If the property 
+          is empty, the default inactive glyph is used.</li>
+        <li><b>property ModalResult: TModalResult default 0;</b><br>
+          If this is not set to <b>0</b>, the form containing the control closes 
+          and the value of <b>ModalResult</b> is sent to whatever called the <b>ShowModal</b> 
+          method for that form.</li>
+        <li><b>property Office2000Look: Boolean default True;</b><br>
+          Determines if an Office 2000 look is applied to the control.</li>
+        <li><b>property ParentBiDiMode;</b><br>
+          If this is set to <b>True</b>, the control uses the <b>BiDiMode</b> 
+          used by its parent.</li>
+        <li><b>property ParentFont;</b><br>
+          If this is set to <b>True</b>, the control uses the font used by its 
+          parent.</li>
+        <li><b>property ParentShowHint;</b><br>
+          If this is set to <b>True</b>, the parent of the control displays the 
+          hints.</li>
+        <li><b>property PopupMenu;</b><br>
+          If this is set, right clicking the control displays the set popup menu.</li>
+        <li><b>property Position: TGlyphPosition default bsLeft;</b><br>
+          This determines the position of the glyph on the control. When the <b>ControlType</b> 
+          property is not set to <b>bsButton</b>, the only accepted values are 
+          <b>bsTop</b> and <b>bsBottom</b>.</li>
+        <li><b>property ShowGlyph: Boolean default True;</b><br>
+          If this is set to <b>False</b>, the glyph is not displayed on the control.</li>
+        <li><b>property ShowHint;</b><br>
+          If this is set to <b>True</b>, the control displays its own popup hints.</li>
+        <li><b>property TabOrder;</b><br>
+          This determines the order in which the controls in the parent are selected.</li>
+        <li><b>property TabStop default True;</b><br>
+          If this is set to <b>False</b>, the <b>Tab</b> key can't be used to 
+          select the control focus.</li>
+        <li><b>property Transparent default True;</b><br>
+          If this is set to <b>True</b>, the control is transparent.</li>
+        <li><b>property TransparentColor: TColor default clBlack;</b><br>
+          Determines the transparent colour of the glyph.</li>
+        <li><b>property UseCustomGlyphs: Boolean default False;</b><br>
+          If this is set to <b>True</b>, the custom glyphs will be displayed instead 
+          of the default glyphs.</li>
+        <li><b>property Visible;</b><br>
+          If this is set to <b>False</b>, the control cannot be seen.</li>
+        <li><b>property WordWrap: Boolean default True;</b><br>
+          If this is set to <b>True</b>, the text is word wrapped. If you set 
+          the <b>ControlType</b> property to anything other than <b>bsButton</b>, 
+          the Office 97 focus is used.</li>
+      </ul>
+      <p class="SubHeading">Key events:</p>
+      <ul>
+        <li><b>property OnClick: TNotifyEvent;</b><br>
+          Occurs when the control is selected.</li>
+        <li><b>property OnDblClick: TNotifyEvent;</b><br>
+          Occurs when the control is double-clicked.</li>
+        <li><b>property OnDragDrop: TNotifyEvent;</b><br>
+          Occurs when an object being dragged is dropped.</li>
+        <li><b>property OnDragOver: TNotifyEvent;</b><br>
+          Occurs when an object is dragged over the control.</li>
+        <li><b>property OnEndDrag: TNotifyEvent;</b><br>
+          Occurs whenever the dragging of an object ends, either by dropping the 
+          object or by cancelling the dragging.</li>
+        <li><b>property OnEnter: TNotifyEvent;</b><br>
+          Occurs when the control becomes active.</li>
+        <li><b>property OnExit: TNotifyEvent;</b><br>
+          Occurs when the input focus switches from the control to another control.</li>
+        <li><b>property OnKeyDown: TNotifyEvent;</b><br>
+          Occurs when a key is pressed while the control has focus.</li>
+        <li><b>property OnKeyPress: TNotifyEvent;</b><br>
+          Occurs when a key is pressed.</li>
+        <li><b>property OnKeyUp: TNotifyEvent;</b><br>
+          Occurs when a key, that was pressed, is released.</li>
+        <li><b>property OnMouseDown: TNotifyEvent;</b><br>
+          Occurs when a mouse button is pressed with the pointer over the control.</li>
+        <li><b>property OnMouseEnter: TNotifyEvent;</b><br>
+          Occurs when the mouse enters the control.</li>
+        <li><b>property OnMouseExit: TNotifyEvent;</b><br>
+          Occurs when the mouse leaves the control.</li>
+        <li><b>property OnMouseMove: TNotifyEvent;</b><br>
+          Occurs when the pointer is moved whilst over the control.</li>
+        <li><b>property OnMouseUp: TNotifyEvent;</b><br>
+          Occurs when a mouse button that was pressed is released with the pointer 
+          over the control.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="History">R E V I S I O N&nbsp;&nbsp;&nbsp;H 
+      I S T O R Y</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>V2.16 (20.02.2002)</p>
+      <ul>
+        <li>Bug Fixed - There was a small memory leak when using custom glyphs.</li>
+      </ul>
+      <p>V2.15 (30.12.2001)</p>
+      <ul>
+        <li>Bug Fixed - When pressing <b>ENTER</b> to select the control, the 
+          <b>OnClick</b> event was being triggered twice.</li>
+        <li>Just like normal buttons, you can now use the <b>SPACE</b> key to 
+          select the control.</li>
+      </ul>
+      <p></p>
+      <p></p>
+      <p>V2.14 (03.12.2001)</p>
+      <ul>
+        <li>Bug Fixed - There was a slight bug in the text wrapping routine.</li>
+      </ul>
+      <p></p>
+      <p>V2.13 (17.11.2001)</p>
+      <ul>
+        <li>Bug Fixed - The control still did not work properly with modal forms. 
+          Thanks to <a href="mailto:ShrHolmes@rambler.ru">Sherlock</a> for fixing 
+          this.</li>
+      </ul>
+      <p>V2.12 (12.08.2001)</p>
+      <ul>
+        <li>Delphi 6.0 is now supported.</li>
+      </ul>
+      <p></p>
+      <p>V2.11 (12.05.2001)</p>
+      <ul>
+        <li>Bug Fixed - Pressing the <b>ENTER</b> key didn't always trigger the 
+          <b>OnClick</b> event. Thanks to <a href="mailto:michelb@docudatasoft.com">Michel</a> 
+          for fixing this.</li>
+      </ul>
+      <p>V2.1 (05.05.2001)</p>
+      <ul>
+        <li>New <b>AutoTransparency</b> property added, allowing the control automatically 
+          select the transparent colour. Thanks to <a href="mailto:michelb@docudatasoft.com">Michel</a> 
+          for helping with this.</li>
+        <li>Bug Fixed - Pressing the control hotkey didn't always trigger the 
+          <b>OnClick</b> event. Thanks to <a href="mailto:michelb@docudatasoft.com">Michel</a> 
+          for fixing this.</li>
+      </ul>
+      <p>V2.02 (15.04.2001)</p>
+      <ul>
+        <li>Bug Fixed – The control state was not always correctly set when the 
+          control was loading. Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> 
+          for fixing this.</li>
+        <li>Bug Fixed - The bitmap routines contained a small memory leak. Thanks 
+          to <a href="mailto:khojasteh@mail.com">Kambiz</a> for correcting the 
+          code.</li>
+        <li>Bug Fixed - When the mouse was over the control, the parent window 
+          couldn't be closed using ALT + F4. Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> 
+          for fixing this.</li>
+      </ul>
+      <p>V2.01 (07.09.2000)</p>
+      <ul>
+        <li>Bug Fixed – The control state was not always correctly updated when 
+          the control was selected.</li>
+      </ul>
+      <p>V2.0 (28.07.2000)</p>
+      <ul>
+        <li>New <b>Action</b> property added, allowing the control to use actions. 
+          Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> for providing 
+          the code.</li>
+        <li>New <b>HoverFont</b> property added, allowing a custom font to be 
+          displayed when the mouse hovers over the control. Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> 
+          for providing the code.</li>
+        <li>New <b>Transparent</b> property added, allowing the control to look 
+          transparent. Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> 
+          for providing the code.</li>
+      </ul>
+      <p>V1.91 (07.03.2000)</p>
+      <ul>
+        <li>Extended the <b>ControlType</b> property to include a <b>bsHelpButton</b> 
+          setting. This allows the control to look like a bulb label that appears 
+          in the Office 2000 Assistant balloons.</li>
+      </ul>
+      <p>V1.9 (01.03.2000)</p>
+      <ul>
+        <li>New <b>ActiveOutlineColor2</b> and <b>Office2000Look</b> properties 
+          added, adding Office 2000 features to the control.</li>
+        <li>The default value of <b>Color</b> is now <b>$00CCFFFF</b>.</li>
+        <li>The default value of <b>ActiveColor</b> is now <b>$00808080</b>.</li>
+      </ul>
+      <p>V1.82 (22.12.1999)</p>
+      <ul>
+        <li>Bug Fixed – The control had a slight bug in the keyboard routines. 
+          Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> for fixing 
+          it.</li>
+        <li>Bug Fixed - The control did not work properly with modal forms. This 
+          was due to the mouse being captured when it should not have been.</li>
+        <li>Changed the default value of the <b>Color</b> property to the actual 
+          colour (<b>$00E1FFFF</b>).</li>
+      </ul>
+      <p>V1.81 (21.11.1999)</p>
+      <ul>
+        <li>Bug Fixed – The auto height adjustment code had a few inaccuracies. 
+          Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> for fixing 
+          it.</li>
+      </ul>
+      <p>V1.8 (30.10.1999)</p>
+      <ul>
+        <li>New <b>BiDiMode</b> and <b>ParentBiDiMode</b> properties added, allowing 
+          bi-directional support. Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> 
+          for providing the code.</li>
+        <li>New <b>AutoHeight</b> property added, allowing the control to automatically 
+          adjust its own height. Thanks to <a href="mailto:khojasteh@mail.com">Kambiz</a> 
+          for providing the code.</li>
+      </ul>
+      <p>V1.7 (04.09.1999)</p>
+      <ul>
+        <li>Delphi 5.0 is now supported.</li>
+      </ul>
+      <p>V1.69 (17.08.1999)</p>
+      <ul>
+        <li>Added a message hook to help reduce flickering.</li>
+      </ul>
+      <p>V1.68 (12.08.1999)</p>
+      <ul>
+        <li>Bug Fixed – The control now correctly recognises C++Builder 4.0.</li>
+        <li>Updated the drawing routines to reduce flicker on the control.</li>
+      </ul>
+      <p>V1.67 (25.05.1999)</p>
+      <ul>
+        <li>C++Builder 3.0 is now supported.</li>
+        <li>Code documentation has been slightly improved, though there is still 
+          more room for improvement.</li>
+      </ul>
+      <p>V1.66 (16.03.1999)</p>
+      <ul>
+        <li>Bug Fixed – The control state didn't update correctly when using modal 
+          forms.</li>
+      </ul>
+      <p>V1.65 (19.02.1999)</p>
+      <ul>
+        <li>Bug Fixed – Wouldn't compile in Delphi 3.0 and 4.0 due to difference 
+          between TCustomForm and TForm. It should now compile all right.</li>
+      </ul>
+      <p>V1.64 (22.01.1999)</p>
+      <ul>
+        <li>Bug Fixed – An error was generated when the user displayed only text 
+          using a control style other than <b>bsButton</b>.</li>
+        <li>The text is positioned slightly more accurately to improve the control's 
+          appearance.</li>
+      </ul>
+      <p>V1.63 (09.12.1998)</p>
+      <ul>
+        <li>Bug Fixed – The keyboard routines didn't work correctly due to an 
+          error in the focus handling routines.</li>
+        <li>New <b>About</b> property added, allowing the user to display information 
+          about the component.</li>
+      </ul>
+      <p>V1.62 (30.08.1998)</p>
+      <ul>
+        <li>Bug Fixed – The positioning routine did not work correctly for <b>bsBottom</b> 
+          or <b>bsRight</b>.</li>
+        <li>Bug Fixed – If the control was too small to accommodate any text, 
+          it produced errors.</li>
+      </ul>
+      <p>V1.61 (05.05.1998)</p>
+      <ul>
+        <li>Bug Fixed – The control did not work correctly when it was top of 
+          or below other TOffice97Button components.</li>
+      </ul>
+      <p>V1.6 (26.02.1998)</p>
+      <ul>
+        <li>New <b>UseCustomGlyphs</b> property added, allowing custom glyphs 
+          to be turned on or off.</li>
+        <li>The control now uses a new transparent routine to draw the glyphs. 
+          This is a lot better than the method used in previous versions.</li>
+        <li>The control uses new routine to create a disabled bitmap if one is 
+          not already specified.</li>
+      </ul>
+      <p>V1.5 (08.02.1998)</p>
+      <ul>
+        <li>New <b>WordWrap</b> property added, allowing text to be word wrapped, 
+          if required.</li>
+        <li>The control now uses the Office 97 focus when the <b>ControlStyle</b> 
+          property is not set to <b>bsButton</b>. The control should now look 
+          almost exactly like the real thing.</li>
+      </ul>
+      <p>V1.4 (01.02.1998)</p>
+      <ul>
+        <li>Bug Fixed – The control did not update itself when switching between 
+          windows. This is the most annoying bug, to date, to have been fixed!</li>
+        <li>The focus now looks like it should when the control is in the <b>bsDown</b> 
+          state.</li>
+        <li>The control painting procedures have been slightly improved.</li>
+      </ul>
+      <p>V1.3 (27.01.1998)</p>
+      <ul>
+        <li>The control now uses a new control frame, improving its appearance.</li>
+        <li>The default values of <b>Height</b> and <b>Width</b> are now <b>23</b> 
+          and <b>70</b>.</li>
+      </ul>
+      <p>V1.2 (26.01.1998)</p>
+      <ul>
+        <li>The control now uses 256 colour glyphs, improving the appearance.</li>
+        <li>New <b>ControlType</b> property added, allowing the user to display 
+          any control (Button, radiobutton, up button and down button) that appears 
+          in the Office Assistant balloons in Office 97. As each type of control 
+          uses different glyphs, there are now even more bitmaps, which has dramatically 
+          increased the size of the RES file.</li>
+        <li>The default value of <b>Color</b> is now <b>$00CEFFFF</b>.</li>
+        <li>The default value of <b>TransparentColor</b> is now <b>clBlack</b>.</li>
+        <li>The default value of <b>ActiveColor</b> is now <b>clGray</b>.</li>
+        <li>The default value of <b>InactiveColor</b> is now <b>clSilver</b>.</li>
+      </ul>
+      <p>V1.1 (01.01.1998)</p>
+      <ul>
+        <li>Bug Fixed – If the <b>Default</b> property was set to true, the control 
+          didn't respond to the Enter key when it didn't have the focus.</li>
+        <li>The control now uses a new routine to draw the focus. This is better 
+          than the old routine used in previous versions, as the new focus looks 
+          similar to a real focus.</li>
+        <li>The control now only updates itself when necessary.</li>
+        <li>New <b>ActiveGlyph</b>, <b>DisabledGlyph</b>, <b>DownActiveGlyph</b> 
+          and <b>InactiveGlyph</b> properties added, allowing the user to use 
+          custom glyphs without modifying the <b>OFFBTN.RES</b> file.</li>
+        <li>New events added, including <b>OnDragDrop</b>, <b>OnDragOver</b>, 
+          <b>OnEndDrag</b>, <b>OnEnter</b>, <b>OnExit</b>, <b>OnKeyDown</b>, <b>OnKeyPress</b> 
+          and <b>OnKeyUp</b>.</li>
+        <li>New <b>PopupMenu</b> property added, allowing the control to use popup 
+          menus.</li>
+        <li>New <b>Position</b> property added, allowing the glyph to be positioned 
+          on the control in 4 different places.</li>
+        <li>New <b>ShowGlyph</b> property added, allowing the user to turn the 
+          glyphs on or off.</li>
+        <li>Other new properties added, including <b>DragCursor</b>, <b>DragMode</b>, 
+          <b>ModalResult</b> and <b>TransparentColor</b>.</li>
+      </ul>
+      <p>V1.01 (10.12.1997)</p>
+      <ul>
+        <li>Bug Fixed – When the user clicked the control and released the mouse 
+          button, the control acted as if it had been clicked again.</li>
+        <li>Code is now documented in some areas to show what is happening, although 
+          most remains undocumented.</li>
+      </ul>
+      <p>V1.0 (09.12.1997)</p>
+      <ul>
+        <li>Initial release.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="Future">F U T U R E&nbsp;&nbsp;&nbsp;I D 
+      E A S</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>I currently only have one idea for future versions of the TOffice97Button 
+        component. It is listed below: -</p>
+      <ul>
+        <li>Improved control updating, so it doesn't flicker unnecessarily.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="Components">O T H E R&nbsp;&nbsp;&nbsp;C 
+      O M P O N E N T S</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>Below is a list other components that I have written: -</p>
+      <ul>
+        <li>TLCD99 – A control that looks like an LCD display.</li>
+        <li>TOffice97Balloon – A control that looks and acts like the Office Assistant 
+          balloons in Office 97.</li>
+        <li>TYearPlanner – A control that looks like a year planner.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td class="HeadingCell"><a name="Contact">C O N T A C T I N G&nbsp;&nbsp;&nbsp;M 
+      E</a></td>
+  </tr>
+  <tr> 
+    <td class="ContentCell"><br>
+      <p>I am currently on the Internet. If you have any bug reports, comments, 
+        ideas, modifications, etc. then you can Email me at the address given 
+        below. You can also go to my web site to find out the latest information 
+        on my components.</p>
+      <p>Email: <a href="mailto:jonathan@the-hoskings.freeserve.co.uk">jonathan@the-hoskings.freeserve.co.uk</a><br>
+        WWW: <a href="http://www.the-hoskings.freeserve.co.uk/">http://www.the-hoskings.freeserve.co.uk/</a></p>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -20,20 +20,6 @@ object Dbg: TDbg
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Label33: TLabel
-    Left = 55
-    Top = 16
-    Width = 18
-    Height = 13
-    Caption = '$FF'
-  end
-  object Label34: TLabel
-    Left = 89
-    Top = 16
-    Width = 18
-    Height = 13
-    Caption = '$FF'
-  end
   object GroupBox1: TGroupBox
     Left = 4
     Top = 3
@@ -1035,6 +1021,7 @@ object Dbg: TDbg
       ColCount = 1
       DefaultColWidth = 10
       DefaultRowHeight = 14
+      DrawingStyle = gdsGradient
       FixedCols = 0
       RowCount = 1
       FixedRows = 0

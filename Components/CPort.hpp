@@ -39,7 +39,7 @@ class DELPHICLASS TComDataPacket;
 class DELPHICLASS TComStream;
 class DELPHICLASS EComPort;
 //-- type declarations -------------------------------------------------------
-typedef System::AnsiString TPort;
+typedef System::UnicodeString TPort;
 
 enum DECLSPEC_DENUM TBaudRate : unsigned char { brCustom, br110, br300, br600, br1200, br2400, br4800, br9600, br14400, br19200, br38400, br56000, br57600, br115200, br128000, br256000 };
 
@@ -336,7 +336,7 @@ private:
 	bool FConnected;
 	TBaudRate FBaudRate;
 	int FCustomBaudRate;
-	System::AnsiString FPort;
+	System::UnicodeString FPort;
 	TStopBits FStopBits;
 	TDataBits FDataBits;
 	bool FDiscardNull;
@@ -368,7 +368,7 @@ private:
 	void __fastcall SetConnected(const bool Value);
 	void __fastcall SetBaudRate(const TBaudRate Value);
 	void __fastcall SetCustomBaudRate(const int Value);
-	void __fastcall SetPortA(const System::AnsiString Value);
+	void __fastcall SetPortW(const System::UnicodeString Value);
 	void __fastcall SetStopBits(const TStopBits Value);
 	void __fastcall SetDataBits(const TDataBits Value);
 	void __fastcall SetDiscardNull(const bool Value);
@@ -470,7 +470,7 @@ public:
 	__property bool Connected = {read=FConnected, write=SetConnected, default=0};
 	__property TBaudRate BaudRate = {read=FBaudRate, write=SetBaudRate, nodefault};
 	__property int CustomBaudRate = {read=FCustomBaudRate, write=SetCustomBaudRate, nodefault};
-	__property System::AnsiString Port = {read=FPort, write=SetPortA};
+	__property System::UnicodeString Port = {read=FPort, write=SetPortW};
 	__property TComParity* Parity = {read=FParity, write=SetParity};
 	__property TStopBits StopBits = {read=FStopBits, write=SetStopBits, nodefault};
 	__property TDataBits DataBits = {read=FDataBits, write=SetDataBits, nodefault};

@@ -18,7 +18,7 @@ uses
 
 type
   // various types
-  TPort = AnsiString;
+  TPort = UnicodeString;
   TBaudRate = (brCustom, br110, br300, br600, br1200, br2400, br4800, br9600, br14400,
     br19200, br38400, br56000, br57600, br115200, br128000, br256000);
   TStopBits = (sbOneStopBit, sbOne5StopBits, sbTwoStopBits);
@@ -277,7 +277,7 @@ type
     procedure SetConnected(const Value: Boolean);
     procedure SetBaudRate(const Value: TBaudRate);
     procedure SetCustomBaudRate(const Value: Integer);
-    procedure SetPortA(const Value: TPort);
+    procedure SetPortW(const Value: TPort);
     procedure SetStopBits(const Value: TStopBits);
     procedure SetDataBits(const Value: TDataBits);
     procedure SetDiscardNull(const Value: Boolean);
@@ -384,7 +384,7 @@ type
     property BaudRate: TBaudRate read FBaudRate write SetBaudRate;
     property CustomBaudRate: Integer
       read FCustomBaudRate write SetCustomBaudRate;
-    property Port: TPort read FPort write SetPortA;
+    property Port: TPort read FPort write SetPortW;
     property Parity: TComParity read FParity write SetParity;
     property StopBits: TStopBits read FStopBits write SetStopBits;
     property DataBits: TDataBits read FDataBits write SetDataBits;
@@ -2804,7 +2804,7 @@ begin
 end;
 
 // set port
-procedure TCustomComPort.SetPortA(const Value: TPort);
+procedure TCustomComPort.SetPortW(const Value: TPort);
 begin
   // 11.1.2001 Ch. Kaufmann; removed function ComString, because there can be com ports
   // with names other than COMn.

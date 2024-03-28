@@ -752,7 +752,7 @@ void __fastcall TTZX::ExtractBlock1Click(TObject *Sender)
 
         if (!ExtractDialog1->Execute()) return;
 
-        f=_wfopen(ExtractDialog1->FileName.c_str(), L"wb");
+        f=_wfopen(ExtractDialog1->FileName.c_str(), _TEXT("wb"));
         if (!f) return;
 
         fwrite(p, 1, DataLen - (p-Data), f);

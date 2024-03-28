@@ -913,7 +913,7 @@ void THW::ConfigureRomCartridge()
                         msg << romCartridgeFilePath.c_str();
                         wchar_t temp[256];
                         mbstowcs(temp, msg.str().c_str(),256);
-                        Application->MessageBox(temp, L"Error", MB_OK | MB_ICONERROR);
+                        Application->MessageBox(temp, _TEXT("Error"), MB_OK | MB_ICONERROR);
 
 						LoadDock((_TCHAR *)_TEXT(""));
 				}
@@ -3336,7 +3336,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-                        int ret = Application->MessageBox(L"Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", L"ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+                        int ret = Application->MessageBox(_TEXT("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound"), _TEXT("ZXpand+ Configuration"), MB_YESNO | MB_ICONQUESTION);
 
                         if (ret == IDYES)
                         {

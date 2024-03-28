@@ -51,7 +51,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                 break;
         case 1:
                 Port=PORTFILE;
-                OutFile=_wfopen((OutputFileEdit->Text).c_str(), L"wb");
+                OutFile=_wfopen((OutputFileEdit->Text).c_str(), _TEXT("wb"));
                 break;
         case 2:
                 Port=PORTTCPIP;
@@ -110,7 +110,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                         {
                                 UnicodeString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
+                                if (Sender) Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
                         }
                 }
                 break;

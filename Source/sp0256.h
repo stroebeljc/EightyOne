@@ -1,12 +1,10 @@
 #ifndef _SP0256_H
 #define _SP0256_H
 
-#include <tchar.h>
-
 struct PHONE
 {
-		_TCHAR *position;
-		int length;
+        char *position;
+        int length;
 };
 
 #ifdef __cplusplus

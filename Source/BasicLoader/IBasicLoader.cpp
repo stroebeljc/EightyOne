@@ -49,7 +49,7 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
 
                 wchar_t temp[256];
                 mbstowcs(temp, msg.str().c_str(),256);
-                Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
+                Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
                 return;
         }
 
@@ -77,7 +77,7 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
                         if (truncateLine) msg << "...";
                         wchar_t temp[256];
                         mbstowcs(temp, msg.str().c_str(),256);
-                        Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
+                        Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
                         return;
                 }
         }

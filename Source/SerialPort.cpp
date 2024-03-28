@@ -94,7 +94,7 @@ void TSerialConfig::WriteDATA(BYTE Data)
 
         if (SendTo==SERIALFILE)
         {
-                if (!File) File=_wfopen((FileNameBox->Text).c_str()  ,L"ab");
+                if (!File) File=_wfopen((FileNameBox->Text).c_str()  ,_TEXT("ab"));
                 if (File) fputc(Data,File);
                 return;
         }
@@ -308,7 +308,7 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
                         {
                                 UnicodeString Msg = "Could not open port ";
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
+                                if (Sender) Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
                                 Enabled->Checked=false;
                                 Sender=NULL;
                         }
@@ -406,7 +406,7 @@ void __fastcall TSerialConfig::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
         UnicodeString Msg = "Could not open port ";
-        Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
+        Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
         Enabled->Checked=false;
         ErrorCode=0;
 }

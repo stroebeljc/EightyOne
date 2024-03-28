@@ -52,7 +52,7 @@ void SP0256_Init(void)
         {
                 a =(int)Phones[i].position;
                 a += offset;
-                Phones[i].position = (((_TCHAR *)Phones) + a);
+                Phones[i].position = (((char *)Phones) + a);
         }
 }
 
@@ -67,12 +67,12 @@ void SP0256_Write(unsigned char Data)
         Last=Data;
 
         PlaySound(NULL, NULL, SND_PURGE);
-		PlaySound(Phones[Data&63].position, NULL, SND_MEMORY | SND_ASYNC);
+        PlaySoundA(Phones[Data&63].position, NULL, SND_MEMORY | SND_ASYNC);
 }
 
 unsigned char SP0256_Busy(void)
 {
         if (!Phones) return(0);
-        return(!PlaySound(Phones[0].position, NULL, SND_MEMORY | SND_ASYNC | SND_NOSTOP));
+        return(!PlaySoundA(Phones[0].position, NULL, SND_MEMORY | SND_ASYNC | SND_NOSTOP));
 }
 

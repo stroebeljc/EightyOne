@@ -113,7 +113,7 @@ void __fastcall TProfiler::ButtonDeleteClick(TObject *Sender)
 
         Timer->Enabled = false;
 
-        int ret = Application->MessageBox(L"Are you sure you wish to delete this entry?", L"Delete Profile Entry", MB_YESNO | MB_ICONQUESTION);
+        int ret = Application->MessageBox(_TEXT("Are you sure you wish to delete this entry?"), _TEXT("Delete Profile Entry"), MB_YESNO | MB_ICONQUESTION);
 
         if (ret == IDYES)
         {

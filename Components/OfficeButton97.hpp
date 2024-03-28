@@ -2,10 +2,10 @@
 // Copyright (c) 1995, 2022 by Embarcadero Technologies, Inc.
 // All rights reserved
 
-// (DO NOT EDIT: machine generated header) 'CPortLib6.dpk' rev: 35.00 (Windows)
+// (DO NOT EDIT: machine generated header) 'OfficeButton97.dpk' rev: 35.00 (Windows)
 
-#ifndef Cportlib6HPP
-#define Cportlib6HPP
+#ifndef Officebutton97HPP
+#define Officebutton97HPP
 
 #pragma delphiheader begin
 #pragma option push
@@ -14,11 +14,7 @@
 #pragma pack(push,8)
 #include <System.hpp>	// (rtl)
 #include <SysInit.hpp>
-#include <CPort.hpp>
-#include <CPortSetup.hpp>
-#include <CPortCtl.hpp>
-#include <CPortEsc.hpp>
-#include <CPortTrmSet.hpp>
+#include <OffBtn.hpp>
 #include <System.UITypes.hpp>	// (rtl)
 #include <Winapi.Windows.hpp>	// (rtl)
 #include <Winapi.PsAPI.hpp>	// (rtl)
@@ -61,7 +57,6 @@
 #include <Vcl.Menus.hpp>	// (vcl)
 #include <Winapi.MsCTF.hpp>	// (rtl)
 #include <Vcl.Controls.hpp>	// (vcl)
-#include <Vcl.Buttons.hpp>	// (vcl)
 // PRG_EXT: .bpl
 // BPI_DIR: C:\Users\Public\Documents\Embarcadero\Studio\22.0\Dcp
 // OBJ_DIR: C:\Users\Public\Documents\Embarcadero\Studio\22.0\Dcp
@@ -69,18 +64,18 @@
 
 //-- user supplied -----------------------------------------------------------
 
-namespace Cportlib6
+namespace Officebutton97
 {
 //-- forward type declarations -----------------------------------------------
 //-- type declarations -------------------------------------------------------
 //-- var, const, procedure ---------------------------------------------------
-}	/* namespace Cportlib6 */
-#if !defined(DELPHIHEADER_NO_IMPLICIT_NAMESPACE_USE) && !defined(NO_USING_NAMESPACE_CPORTLIB6)
-using namespace Cportlib6;
+}	/* namespace Officebutton97 */
+#if !defined(DELPHIHEADER_NO_IMPLICIT_NAMESPACE_USE) && !defined(NO_USING_NAMESPACE_OFFICEBUTTON97)
+using namespace Officebutton97;
 #endif
 #pragma pack(pop)
 #pragma option pop
 
 #pragma delphiheader end.
 //-- end unit ----------------------------------------------------------------
-#endif	// Cportlib6HPP
+#endif	// Officebutton97HPP

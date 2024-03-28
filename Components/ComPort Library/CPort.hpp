@@ -368,7 +368,7 @@ private:
 	void __fastcall SetConnected(const bool Value);
 	void __fastcall SetBaudRate(const TBaudRate Value);
 	void __fastcall SetCustomBaudRate(const int Value);
-	void __fastcall SetPort(const System::UnicodeString Value);
+	void __fastcall SetPortA(const System::UnicodeString Value);
 	void __fastcall SetStopBits(const TStopBits Value);
 	void __fastcall SetDataBits(const TDataBits Value);
 	void __fastcall SetDiscardNull(const bool Value);
@@ -470,7 +470,7 @@ public:
 	__property bool Connected = {read=FConnected, write=SetConnected, default=0};
 	__property TBaudRate BaudRate = {read=FBaudRate, write=SetBaudRate, nodefault};
 	__property int CustomBaudRate = {read=FCustomBaudRate, write=SetCustomBaudRate, nodefault};
-	__property System::UnicodeString Port = {read=FPort, write=SetPort};
+	__property System::UnicodeString Port = {read=FPort, write=SetPortA};
 	__property TComParity* Parity = {read=FParity, write=SetParity};
 	__property TStopBits StopBits = {read=FStopBits, write=SetStopBits, nodefault};
 	__property TDataBits DataBits = {read=FDataBits, write=SetDataBits, nodefault};

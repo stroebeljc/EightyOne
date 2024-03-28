@@ -277,7 +277,7 @@ type
     procedure SetConnected(const Value: Boolean);
     procedure SetBaudRate(const Value: TBaudRate);
     procedure SetCustomBaudRate(const Value: Integer);
-    procedure SetPort(const Value: TPort);
+    procedure SetPortA(const Value: TPort);
     procedure SetStopBits(const Value: TStopBits);
     procedure SetDataBits(const Value: TDataBits);
     procedure SetDiscardNull(const Value: Boolean);
@@ -384,7 +384,7 @@ type
     property BaudRate: TBaudRate read FBaudRate write SetBaudRate;
     property CustomBaudRate: Integer
       read FCustomBaudRate write SetCustomBaudRate;
-    property Port: TPort read FPort write SetPort;
+    property Port: TPort read FPort write SetPortA;
     property Parity: TComParity read FParity write SetParity;
     property StopBits: TStopBits read FStopBits write SetStopBits;
     property DataBits: TDataBits read FDataBits write SetDataBits;
@@ -2804,7 +2804,7 @@ begin
 end;
 
 // set port
-procedure TCustomComPort.SetPort(const Value: TPort);
+procedure TCustomComPort.SetPortA(const Value: TPort);
 begin
   // 11.1.2001 Ch. Kaufmann; removed function ComString, because there can be com ports
   // with names other than COMn.

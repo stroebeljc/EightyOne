@@ -63,8 +63,8 @@
 #include <Vcl.Controls.hpp>	// (vcl)
 #include <Vcl.Buttons.hpp>	// (vcl)
 // PRG_EXT: .bpl
-// BPI_DIR: C:\EightyOne_Mig\Components\ComPort Library
-// OBJ_DIR: C:\EightyOne_Mig\Components\ComPort Library
+// BPI_DIR: C:\Users\Public\Documents\Embarcadero\Studio\22.0\Dcp
+// OBJ_DIR: C:\Users\Public\Documents\Embarcadero\Studio\22.0\Dcp
 // OBJ_EXT: .obj
 
 //-- user supplied -----------------------------------------------------------

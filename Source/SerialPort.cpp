@@ -94,7 +94,7 @@ void TSerialConfig::WriteDATA(BYTE Data)
 
         if (SendTo==SERIALFILE)
         {
-                if (!File) File=_wfopen((FileNameBox->Text).c_str()  ,_TEXT("ab"));
+                if (!File) File=_tfopen((FileNameBox->Text).c_str()  ,_TEXT("ab"));
                 if (File) fputc(Data,File);
                 return;
         }
@@ -289,7 +289,7 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
         {
                 SendTo=SERIALTCPOUT;
                 ClientSocket->Host = TCPOutboundAddress->Text;
-                ClientSocket->Port = _wtoi((TCPOutboundPort->Text).c_str());
+                ClientSocket->Port = _ttoi((TCPOutboundPort->Text).c_str());
 
                 if (( ClientSocket->Host == "") || (ClientSocket->Port==0))
                         Enabled->Checked=false;

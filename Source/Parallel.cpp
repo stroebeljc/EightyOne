@@ -51,12 +51,12 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                 break;
         case 1:
                 Port=PORTFILE;
-                OutFile=_wfopen((OutputFileEdit->Text).c_str(), _TEXT("wb"));
+                OutFile=_tfopen((OutputFileEdit->Text).c_str(), _TEXT("wb"));
                 break;
         case 2:
                 Port=PORTTCPIP;
                 ClientSocket->Host = TCPAddress->Text;
-                ClientSocket->Port = _wtoi((TCPPort->Text).c_str());
+                ClientSocket->Port = _ttoi((TCPPort->Text).c_str());
 
                 if ((ClientSocket->Host != "") && (ClientSocket->Port!=0))
                         ClientSocket->Open();
@@ -103,7 +103,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
 
                         ComPort->BaudRate=brCustom;
                         if (BaudRate->ItemIndex==0)
-                        ComPort->CustomBaudRate=_wtoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
+                        ComPort->CustomBaudRate=_ttoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
 
                         try { ComPort->Open(); }
                         catch(EComPort &E)

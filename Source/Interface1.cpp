@@ -633,13 +633,13 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                 break;
         case 1:
                 RS232Port=PORTFILE;
-                InFile=_wfopen((InputFileEdit->Text).c_str(), _TEXT("rb"));
-                OutFile=_wfopen((OutputFileEdit->Text).c_str(), _TEXT("wb"));
+                InFile=_tfopen((InputFileEdit->Text).c_str(), _TEXT("rb"));
+                OutFile=_tfopen((OutputFileEdit->Text).c_str(), _TEXT("wb"));
                 break;
         case 2:
                 RS232Port=PORTTCPIP;
                 ClientSocket->Host = TCPAddress->Text;
-                ClientSocket->Port = _wtoi((TCPPort->Text).c_str());
+                ClientSocket->Port = _ttoi((TCPPort->Text).c_str());
 
                 if ((ClientSocket->Host != "") && (ClientSocket->Port!=0))
                         ClientSocket->Open();
@@ -693,7 +693,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                         }
                         else
                         {
-                                Baud=_wtoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
+                                Baud=_ttoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
                                 ComPort->CustomBaudRate=Baud;
                         }
 

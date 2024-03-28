@@ -426,7 +426,7 @@ void THW::ConfigureRamTop()
                 int kp = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-                        int rp = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int rp = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                         kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
                 }
                 zx81.RAMTOP = (kp << 10) + 16383;
@@ -480,7 +480,7 @@ void THW::DetermineRamSizeLabel(ZXString newMachineName)
                 ZXString Mem;
 
                 if (RamPackBox->ItemIndex!=0)
-                        i+=_wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        i+=_ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
 
                 name = i;
                 name += "K Jupiter Ace";
@@ -494,7 +494,7 @@ void THW::DetermineRamSizeLabel(ZXString newMachineName)
                 int totalRam = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-                        int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int ramPack = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
                 ZXString ramSize = totalRam;
@@ -2048,7 +2048,7 @@ void THW::DisplayTotalRam()
         int totalRam = machine.baseRamSize;
         if (RamPackBox->ItemIndex!=0)
         {
-                int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                int ramPack = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
         ZXString ramSize = totalRam;

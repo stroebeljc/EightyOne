@@ -44,7 +44,7 @@ extern int AutoLoadCount;
 
 #define  TSClick 4
 
-bool TWavLoad::IsWav(String FileName)
+bool TWavLoad::IsWav(ZXString FileName)
 {
         if (FileNameGetExt(FileName)==".WAV") return(true);
         return(false);
@@ -148,9 +148,9 @@ __fastcall TWavLoad::TWavLoad(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-void TWavLoad::LoadFile(String FName)
+void TWavLoad::LoadFile(ZXString FName)
 {
-        String Extension;
+        ZXString Extension;
 
         DoCaption("Loading");
 
@@ -308,7 +308,7 @@ void TWavLoad::StartRec()
         RecordBtnClick(NULL);
 }
 
-void TWavLoad::DoCaption(String Message)
+void TWavLoad::DoCaption(ZXString Message)
 {
         if (Message=="") Message=StatusText;
         else StatusText=Message;
@@ -316,7 +316,7 @@ void TWavLoad::DoCaption(String Message)
         StatusBar1->Panels->Items[2]->Text=Message;
         if (Wav.SampleRate>0)
         {
-                String text;
+                ZXString text;
                 text = TapePos / Wav.SampleRate;
                 text += " / ";
                 text += Wav.NoSamples / Wav.SampleRate;
@@ -401,7 +401,7 @@ void TWavLoad::SaveSettings(TIniFile *ini)
 
 void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
 {
-        String Filter = "Windows WAV Files|*.wav";
+        ZXString Filter = "Windows WAV Files|*.wav";
 
         if (FileName != "") SaveWavDialog->FileName = RemoveExt(FileName);
         else SaveWavDialog->FileName = RemoveExt(SaveWavDialog->FileName);
@@ -415,9 +415,9 @@ void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
         Wav.SaveFile(SaveWavDialog->FileName);
 }
 //---------------------------------------------------------------------------
-String TWavLoad::RemoveExt(String Fname)
+ZXString TWavLoad::RemoveExt(ZXString Fname)
 {
-        String Ext;
+        ZXString Ext;
         int len,pos;
 
         len=Fname.Length();
@@ -596,7 +596,7 @@ void __fastcall TWavLoad::BiasChange(TObject *Sender)
 
 void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
 {
-        String Filter = "Windows WAV Files|*.wav";
+        ZXString Filter = "Windows WAV Files|*.wav";
 
         if (FileName != "") SaveWavDialog->FileName = RemoveExt(FileName);
         else SaveWavDialog->FileName = RemoveExt(SaveWavDialog->FileName);

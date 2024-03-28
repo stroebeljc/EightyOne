@@ -22,7 +22,7 @@
 #include <sstream>
 #include <cctype>
 
-void IBasicLoader::LoadBasicFile(String filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
+void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
 {
         string result;
 
@@ -87,7 +87,7 @@ void IBasicLoader::LoadBasicFile(String filename, bool tokeniseRemContents, bool
         mProgramLength = addressOffset;
 }
 
-void IBasicLoader::ReadBasicListingFile(String filename)
+void IBasicLoader::ReadBasicListingFile(ZXString filename)
 {
         if (!FileExists(filename))
         {

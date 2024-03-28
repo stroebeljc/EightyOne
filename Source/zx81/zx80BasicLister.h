@@ -21,13 +21,14 @@
 #include <map>
 #include "BasicLister\IBasicLister.h"
 #include <Classes.hpp>
+#include "zx81config.h"
 
 class zx80BasicLister : public IBasicLister
 {
 public:
         zx80BasicLister(bool zxpandEnabled);
-        virtual String GetMachineName();
-        virtual String GetBasicFileExtension();
+        virtual ZXString GetMachineName();
+        virtual ZXString GetBasicFileExtension();
         virtual bool ZxTokenSupported();
 
 private:
@@ -39,7 +40,7 @@ private:
         static const unsigned char Escape = '\\';
 
         bool mZxpandEnabled;
-        std::map<String, String> mZxTokenChars;
+        std::map<ZXString, ZXString> mZxTokenChars;
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
@@ -49,6 +50,6 @@ private:
         virtual std::string GetKeywords();
         virtual bool ExtractLineDetails(int* address, LineInfo& lineInfo);
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
-        virtual String TranslateToZxToken(String chr);
+        virtual ZXString TranslateToZxToken(ZXString chr);
 };
 

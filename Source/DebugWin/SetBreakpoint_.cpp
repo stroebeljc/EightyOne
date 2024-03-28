@@ -43,7 +43,7 @@ void TSetBreakpoint::CentreOn(TForm* parent)
         Left = parent->Left + (parent->Width - Width) / 2;
 }
 //---------------------------------------------------------------------------
-void TSetBreakpoint::SetTitle(String& title)
+void TSetBreakpoint::SetTitle(ZXString& title)
 {
         Text = title;
 }
@@ -69,7 +69,7 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
 }
 //---------------------------------------------------------------------------
 
-void ReplaceRegisterName(String& addressValue)
+void ReplaceRegisterName(ZXString& addressValue)
 {
         if (CompareText(addressValue, "PC") == 0)
         {
@@ -121,7 +121,7 @@ void ReplaceRegisterName(String& addressValue)
         }
 }
 
-bool SanitiseEditBox(String addressValue, int& addr, int minValue, int maxValue, bool symbolLookUp = false)
+bool SanitiseEditBox(ZXString addressValue, int& addr, int minValue, int maxValue, bool symbolLookUp = false)
 {
         int newAddr = addr;
 
@@ -251,8 +251,8 @@ bool SymbolLookUpRequired(int breakType)
 
 bool TSetBreakpoint::GetBreakpointFields(struct breakpoint& bp)
 {
-        String breakAddress;
-        String breakValue;
+        ZXString breakAddress;
+        ZXString breakValue;
         int lowerLimit;
         int upperLimit;
         int addr;
@@ -356,7 +356,7 @@ void __fastcall TSetBreakpoint::BreakTypeChange(TObject *Sender)
         BreakConditionAddrChange(Sender);
 }
 
-void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, String conditions)
+void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, ZXString conditions)
 {
         conditionList->Items->Clear();
 
@@ -374,7 +374,7 @@ void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, String con
                 e++;
         }
 
-        String lastCondition = conditions.SubString(s, e + 1 - s);
+        ZXString lastCondition = conditions.SubString(s, e + 1 - s);
         conditionList->Items->Add(lastCondition);
         conditionList->ItemIndex = 0;
         conditionList->Enabled = (conditionList->Items->Count > 1);
@@ -390,7 +390,7 @@ void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, String con
         }
 }
 
-void TSetBreakpoint::SetEditBox(TEdit* const editBox, String defaultText)
+void TSetBreakpoint::SetEditBox(TEdit* const editBox, ZXString defaultText)
 {
         editBox->MaxLength = defaultText.Length();
         editBox->Text = defaultText.Trim();
@@ -461,7 +461,7 @@ void TSetBreakpoint::BreakTypeChangeTStates()
 
 //---------------------------------------------------------------------------
 
-void TSetBreakpoint::SetEditBoxLabels(String breakAddressLabel, String breakValueLabel)
+void TSetBreakpoint::SetEditBoxLabels(ZXString breakAddressLabel, ZXString breakValueLabel)
 {
         LabelBreakAddress->Caption = breakAddressLabel + ":";
         LabelBreakValue->Caption = breakValueLabel + ":";

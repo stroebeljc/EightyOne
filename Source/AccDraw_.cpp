@@ -123,7 +123,7 @@ void add_blank(SCANLINE *CurScanLine, int tstates, BYTE colour)
 // DirectDraw Functions
 // -----------------------------------------------------------------------------
 
-bool DDError(bool result, String Message)
+bool DDError(bool result, ZXString Message)
 {
         if (result)
 				MessageBox(NULL,
@@ -930,7 +930,7 @@ static void GetPixelColour(int x, int y, unsigned char *r, unsigned char *g, uns
         *b=0;
 }
 
-void SaveScreenShot(String Filename)
+void SaveScreenShot(ZXString Filename)
 {
         FILE *f;
         int w,h,x,y,Pw;

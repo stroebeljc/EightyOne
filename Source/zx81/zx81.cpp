@@ -66,7 +66,7 @@ int memoryLoadToAddress(_TCHAR *filename, void* destAddress, int length);
 
 void add_blank(SCANLINE *line, int clockCount, BYTE colour);
 
-extern String getMachineRoot(String fullRomName);
+extern ZXString getMachineRoot(ZXString fullRomName);
 
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
@@ -263,9 +263,9 @@ void zx81_initialise()
         for(i=0;i<1024;i++) font[i]=0;
         for(i=0;i<1024;i++) memhrg[i]=0;
 
-        String romname = machine.CurRom;
+        ZXString romname = machine.CurRom;
 
-        String romRoot = LowerCase(getMachineRoot(romname));
+        ZXString romRoot = LowerCase(getMachineRoot(romname));
 
         //  to prevent zxpand from interfering with - say - aszmic
         if (romRoot != "zx80" && romRoot != "zx81" && romRoot != "ts1500")
@@ -273,7 +273,7 @@ void zx81_initialise()
 
         if (zx81.zxpand)
         {
-                String overlayName = romRoot + ".zxpand.ovl";
+                ZXString overlayName = romRoot + ".zxpand.ovl";
                 if (romRoot == "zx81" || romRoot == "ts1500")
                 {
                         memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);

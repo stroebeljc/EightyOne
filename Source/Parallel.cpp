@@ -63,7 +63,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                 break;
 
         default:
-                String Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+                ZXString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
                 if (Port.SubString(1,3)=="LPT")
                 {
@@ -124,7 +124,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TParallelPort::ComPortListChange(TObject *Sender)
 {
-        String Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+        ZXString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
         PortPanel->Visible=false;
         TCPPanel->Visible=false;

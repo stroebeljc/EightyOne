@@ -23,6 +23,12 @@
 #ifndef ZX81CONFIG_H
 #define ZX81CONFIG_H
 
+#ifdef _UNICODE
+#define ZXString UnicodeString
+#else
+#define ZXString AnsiString
+#endif
+
 #ifndef _TCHAR
 #include <tchar.h>
 #endif

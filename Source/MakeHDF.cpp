@@ -22,9 +22,9 @@ void __fastcall TCreateHDF::CylUpDownClick(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-String TCreateHDF::ConvertValue(long Val)
+ZXString TCreateHDF::ConvertValue(long Val)
 {
-        String output;
+        ZXString output;
         if (Val>=2097152)
         {
                 Val/=2097152;

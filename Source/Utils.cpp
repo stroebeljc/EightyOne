@@ -79,10 +79,10 @@ int CRC32Block(BYTE *block, int len)
         return ulCRC & 0xffff;
 }
 
-String FileNameGetPath(String Fname)
+ZXString FileNameGetPath(ZXString Fname)
 {
         int i,Pos;
-        String Result;
+        ZXString Result;
 
         Pos=0;
         for(i=1;i<=Fname.Length();i++)
@@ -96,10 +96,10 @@ String FileNameGetPath(String Fname)
         return(Result);
 }
 
-String FileNameGetFname(String Fname)
+ZXString FileNameGetFname(ZXString Fname)
 {
         int i,Pos1,Pos2;
-        String Result;
+        ZXString Result;
 
         Pos1=Pos2=0;
         for(i=1;i<=Fname.Length();i++)
@@ -117,10 +117,10 @@ String FileNameGetFname(String Fname)
         return(Result);
 }
 
-String FileNameGetExt(String Fname)
+ZXString FileNameGetExt(ZXString Fname)
 {
         int i,Pos1,Pos2;
-        String Result;
+        ZXString Result;
 
         Pos1=Pos2=0;
         for(i=1;i<=Fname.Length();i++)
@@ -139,9 +139,9 @@ String FileNameGetExt(String Fname)
         return(Result);
 }
 
-String ConvertZX81ASCII(BYTE *str)
+ZXString ConvertZX81ASCII(BYTE *str)
 {
-        String Output;
+        ZXString Output;
         BYTE c;
         int len=0;
 
@@ -166,7 +166,7 @@ String ConvertZX81ASCII(BYTE *str)
 
 
 
-void ConvertASCIIZX81(String Str, BYTE *Output)
+void ConvertASCIIZX81(ZXString Str, BYTE *Output)
 {
         char c, *p;
         int i;
@@ -230,9 +230,9 @@ int ZX81Strlen(BYTE *str)
 }
 
 //---------------------------------------------------------------------------
-String RemoveExt(String Fname)
+ZXString RemoveExt(ZXString Fname)
 {
-        String Ext;
+        ZXString Ext;
         int len,pos;
 
         len=Fname.Length();
@@ -280,9 +280,9 @@ String RemoveExt(String Fname)
         return(Fname);
 }
 
-String GetExt(String Fname)
+ZXString GetExt(ZXString Fname)
 {
-        String Ext;
+        ZXString Ext;
         int len,pos;
 
         len=Fname.Length();
@@ -303,7 +303,7 @@ String GetExt(String Fname)
 }
 //---------------------------------------------------------------------------
 
-String RemovePath(String Str)
+ZXString RemovePath(ZXString Str)
 {
         int p;
 
@@ -327,10 +327,10 @@ String RemovePath(String Str)
 // Enumerate the Serial Ports
 //---------------------------------------------------------------------------
 
-int EnumeratePorts(TStrings *List, String Type)
+int EnumeratePorts(TStrings *List, ZXString Type)
 {
         int i;
-		String PortName;
+		ZXString PortName;
         bool Success;
         HANDLE Port;
 

@@ -404,7 +404,7 @@ void spec48_initialise()
 
         if (spectrum.floppytype==FLOPPYIF1)
         {
-                String romPath;
+                ZXString romPath;
 
                 if (IF1->RomEdition->Text == "Edition 2")
                 {

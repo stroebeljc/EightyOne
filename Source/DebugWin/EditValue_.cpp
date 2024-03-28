@@ -58,7 +58,7 @@ void TEditValue::CentreOn(TForm* parent)
 //
 bool TEditValue::Edit2(int& value, int len, char format)
 {
-        String NewVal;
+        ZXString NewVal;
 
         maxValue = (1 << (8*len)) - 1;
 
@@ -83,12 +83,12 @@ bool TEditValue::Edit2(int& value, int len, char format)
         return Translate(EditVal->Text, value);
 }
 
-String TEditValue::IntToDec(int value)
+ZXString TEditValue::IntToDec(int value)
 {
         return Format("%d", ARRAYOFCONST((value)));
 }
 
-String TEditValue::IntToBin(int value, int digits)
+ZXString TEditValue::IntToBin(int value, int digits)
 {
         char arry[16] = {0};
         
@@ -98,12 +98,12 @@ String TEditValue::IntToBin(int value, int digits)
                 value >>= 1;
         }
 
-        return String(arry);
+        return ZXString(arry);
 }
 
-bool TEditValue::Translate(String text, int& value)
+bool TEditValue::Translate(ZXString text, int& value)
 {
-        String result = text.Trim();
+        ZXString result = text.Trim();
 
         if (cancelled || result.Length() == 0)
         {

@@ -179,12 +179,12 @@ COLORREF spec48BasicLister::GetDefaultPaperColour()
         return mColours[7];
 }
 
-String spec48BasicLister::GetMachineName()
+ZXString spec48BasicLister::GetMachineName()
 {
         return "Spectrum";
 }
 
-String spec48BasicLister::GetBasicFileExtension()
+ZXString spec48BasicLister::GetBasicFileExtension()
 {
         return "b82";
 }

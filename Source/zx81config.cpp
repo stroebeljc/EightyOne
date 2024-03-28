@@ -151,50 +151,50 @@ void load_config(void)
 
         LoadMachineRoms();
 
-        String simplePlus3Rom = String(emulator.cwd) + ideRomsFolder + String("simple+3e8bit(sm8en3eE).rom");
+        ZXString simplePlus3Rom = ZXString(emulator.cwd) + ideRomsFolder + ZXString("simple+3e8bit(sm8en3eE).rom");
         _tcscpy(emulator.ROMSPP3E, simplePlus3Rom.c_str());
-        String zxcflbaRom = String(emulator.cwd) + ideRomsFolder + String("zxcflba.rom");
+        ZXString zxcflbaRom = ZXString(emulator.cwd) + ideRomsFolder + ZXString("zxcflba.rom");
         _tcscpy(emulator.ROMZXCF, zxcflbaRom.c_str());
-        String zx8blbsRom = String(emulator.cwd) + ideRomsFolder + String("zx8blbs.rom");
+        ZXString zx8blbsRom = ZXString(emulator.cwd) + ideRomsFolder + ZXString("zx8blbs.rom");
         _tcscpy(emulator.ROMZX8BIT, zx8blbsRom.c_str());
-        String zxidelbsRom = String(emulator.cwd) + ideRomsFolder + String("zxidelbs.rom");
+        ZXString zxidelbsRom = ZXString(emulator.cwd) + ideRomsFolder + ZXString("zxidelbs.rom");
         _tcscpy(emulator.ROMZX16BIT, zxidelbsRom.c_str());
 
-        String plusdRom = fdcRomsFolder + String("plusd.rom");
+        ZXString plusdRom = fdcRomsFolder + ZXString("plusd.rom");
         _tcscpy(emulator.ROMPLUSD, plusdRom.c_str());
-        String discipleRom = fdcRomsFolder + String("disciple.rom");
+        ZXString discipleRom = fdcRomsFolder + ZXString("disciple.rom");
         _tcscpy(emulator.ROMDISCIPLE, discipleRom.c_str());
-        String opusdiscoveryRom = fdcRomsFolder + String("opusdiscovery.rom");
+        ZXString opusdiscoveryRom = fdcRomsFolder + ZXString("opusdiscovery.rom");
         _tcscpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
-        String trdosRom = fdcRomsFolder + String("trdos.rom");
+        ZXString trdosRom = fdcRomsFolder + ZXString("trdos.rom");
         _tcscpy(emulator.ROMBETADISC, trdosRom.c_str());
-        String mwcfideRom = fdcRomsFolder + String("mwcfide.rom");
+        ZXString mwcfideRom = fdcRomsFolder + ZXString("mwcfide.rom");
         _tcscpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
-        String larken81Rom = fdcRomsFolder + String("larken81.rom");
+        ZXString larken81Rom = fdcRomsFolder + ZXString("larken81.rom");
         _tcscpy(emulator.ROMLARKEN81, larken81Rom.c_str());
-        String interface1Ed1Rom = fdcRomsFolder + String("interface1.edition1.rom");
+        ZXString interface1Ed1Rom = fdcRomsFolder + ZXString("interface1.edition1.rom");
         _tcscpy(emulator.ROMINTERFACE1ED1, interface1Ed1Rom.c_str());
-        String interface1Ed2Rom = fdcRomsFolder + String("interface1.edition2.rom");
+        ZXString interface1Ed2Rom = fdcRomsFolder + ZXString("interface1.edition2.rom");
         _tcscpy(emulator.ROMINTERFACE1ED2, interface1Ed2Rom.c_str());
 
-        String uSpeechRom = interfaceRomsFolder + String("uspeech.rom");
+        ZXString uSpeechRom = interfaceRomsFolder + ZXString("uspeech.rom");
         _tcscpy(emulator.ROMUSPEECH, uSpeechRom.c_str());
-        String uSourceRom = interfaceRomsFolder + String("usource.rom");
+        ZXString uSourceRom = interfaceRomsFolder + ZXString("usource.rom");
         _tcscpy(emulator.ROMUSOURCE, uSourceRom.c_str());
-        String multiface128Rom = interfaceRomsFolder + String("multiface128.rom");
+        ZXString multiface128Rom = interfaceRomsFolder + ZXString("multiface128.rom");
         _tcscpy(emulator.ROMMULTIFACE128, multiface128Rom.c_str());
-        String multiface3Rom = interfaceRomsFolder + String("multiface3.rom");
+        ZXString multiface3Rom = interfaceRomsFolder + ZXString("multiface3.rom");
         _tcscpy(emulator.ROMMULTIFACE3, multiface3Rom.c_str());
 
-        String dktronicsRom = graphicRomsFolder + String("dktronicsgraphics.rom");
+        ZXString dktronicsRom = graphicRomsFolder + ZXString("dktronicsgraphics.rom");
         _tcscpy(emulator.ROMDKTRONICS, dktronicsRom.c_str());
-        String kaydeRom = graphicRomsFolder + String("kaydegraphics.rom");
+        ZXString kaydeRom = graphicRomsFolder + ZXString("kaydegraphics.rom");
         _tcscpy(emulator.ROMKAYDE, kaydeRom.c_str());
-        String g007Rom = graphicRomsFolder + String("g007hrg.rom");
+        ZXString g007Rom = graphicRomsFolder + ZXString("g007hrg.rom");
         _tcscpy(emulator.ROMG007, g007Rom.c_str());
-        String memotechRom = graphicRomsFolder + String("memotechhrg.rom");
+        ZXString memotechRom = graphicRomsFolder + ZXString("memotechhrg.rom");
         _tcscpy(emulator.ROMMEMOTECH, memotechRom.c_str());
-		String QuicksilvaHiResRom = graphicRomsFolder + String("quicksilvahires.rom");
+		ZXString QuicksilvaHiResRom = graphicRomsFolder + ZXString("quicksilvahires.rom");
         _tcscpy(emulator.ROMQUICKSILVAHIRES, QuicksilvaHiResRom.c_str());
 
 		_tcscpy(emulator.machinename, _TEXT("EightyOne"));

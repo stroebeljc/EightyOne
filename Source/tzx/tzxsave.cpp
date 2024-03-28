@@ -403,7 +403,7 @@ void TTZXFile::CountBlocks(int *zx81, int *spec, int *other)
         }
 }
 
-bool TTZXFile::SaveTapFile(String FileName)
+bool TTZXFile::SaveTapFile(ZXString FileName)
 {
         FILE *f;
         int i;
@@ -440,12 +440,12 @@ bool TTZXFile::SaveTapFile(String FileName)
         return(true);
 }
 
-bool TTZXFile::SaveT81File(String FileName)
+bool TTZXFile::SaveT81File(ZXString FileName)
 {
         FILE *f;
         int i, id;
         char fname[32], flen[16];
-        String zx81Fname;
+        ZXString zx81Fname;
 
 		f=_tfopen(FileName.c_str(), _TEXT("wb"));
         if (!f) return(false);
@@ -491,7 +491,7 @@ bool TTZXFile::SaveT81File(String FileName)
         return(true);
 }
 
-bool TTZXFile::SavePFile(String FileName)
+bool TTZXFile::SavePFile(ZXString FileName)
 {
         FILE *f;
         int i;
@@ -514,7 +514,7 @@ bool TTZXFile::SavePFile(String FileName)
         return(true);
 }
 
-bool TTZXFile::SaveP81File(String FileName)
+bool TTZXFile::SaveP81File(ZXString FileName)
 {
         FILE *f;
         int i;
@@ -533,7 +533,7 @@ bool TTZXFile::SaveP81File(String FileName)
         return(true);
 }
 
-bool TTZXFile::SaveOFile(String FileName)
+bool TTZXFile::SaveOFile(ZXString FileName)
 {
         FILE *f;
         int i;
@@ -550,11 +550,11 @@ bool TTZXFile::SaveOFile(String FileName)
         return(true);
 }
 
-bool TTZXFile::SaveFile(String FileName)
+bool TTZXFile::SaveFile(ZXString FileName)
 {
         FILE *f;
         int i, version;
-        String Ext;
+        ZXString Ext;
 
         Ext=GetExt(FileName);
         if (Ext==".TAP") return(SaveTapFile(FileName));

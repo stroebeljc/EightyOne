@@ -35,9 +35,9 @@ TAbout *About;
 
 //---------------------------------------------------------------------------
 
-static String ExtractPart(String versionNumber, int& s, int&e)
+static ZXString ExtractPart(ZXString versionNumber, int& s, int&e)
 {
-        String part;
+        ZXString part;
 
         while (e <= versionNumber.Length())
         {
@@ -62,9 +62,9 @@ bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& ver
         versionNumberPart3 = 0;
         versionNumberPart4 = 0;
         
-		String versionNumber = "";
+		ZXString versionNumber = "";
 
-		String fileName = Application->ExeName;
+		ZXString fileName = Application->ExeName;
 
 	// Get the size of the version information buffer
 	DWORD dwHandle = 0;
@@ -116,8 +116,8 @@ bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& ver
 	}
 
 	// Get translation information
-		String langID;
-		String charset;
+		ZXString langID;
+		ZXString charset;
 		if (VerQueryValue(lpvMem, _TEXT("\\VarFileInfo\\Translation"), &lpInfo, &cch))
         {
     	        WORD wLangID = ((WORD*)lpInfo)[0];
@@ -136,7 +136,7 @@ bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& ver
 	TCHAR key[80];
 
 	lstrcpy(key, _TEXT("\\StringFileInfo\\"));
-	String versionInfoLangID(langID + charset);
+	ZXString versionInfoLangID(langID + charset);
 		lstrcat(key, versionInfoLangID.c_str());
 	lstrcat(key, _TEXT("\\"));
 	lstrcat(key, _TEXT("FileVersion"));

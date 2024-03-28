@@ -26,7 +26,7 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
         int i,j,c,added;
         //int r;
         int retval;
-        String Text,OldText;
+        ZXString Text,OldText;
         int w,h,modes; //,c,r;
         int x1,x2;
 
@@ -85,7 +85,7 @@ void __fastcall TFSSettings::FormClose(TObject *Sender,
 //---------------------------------------------------------------------------
 void __fastcall TFSSettings::ModeListChange(TObject *Sender)
 {
-        String Txt;
+        ZXString Txt;
 
         Txt = ModeList->Items->Strings[ModeList->ItemIndex];
 

@@ -147,7 +147,7 @@ void __fastcall TForm1::WndProc(TMessage &Message)
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
-        String IniPath;
+        ZXString IniPath;
         _TCHAR path[256];
         int i;
 
@@ -503,7 +503,7 @@ void __fastcall TForm1::Keyboard1Click(TObject *Sender)
 
 void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 {
-        String Extension, Filename;
+        ZXString Extension, Filename;
         int stopped;
 
         stopped=emulation_stop;
@@ -565,7 +565,7 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 
 void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
 {
-        String Path, Ext;
+        ZXString Path, Ext;
         int stopped;
         stopped=emulation_stop;
         emulation_stop=1;
@@ -605,7 +605,7 @@ void __fastcall TForm1::SaveSnapshot1Click(TObject *Sender)
 void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
 {
         int stopped;
-        String Path, Ext;
+        ZXString Path, Ext;
         stopped=emulation_stop;
 
         if (emulator.machine==MACHINEACE)
@@ -704,7 +704,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 {
         TIniFile *ini;
         DIR *dir;
-        String TempFile;
+        ZXString TempFile;
 
         struct dirent *ent;
 
@@ -754,7 +754,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 {
         static int startup=0;
         int targetfps;
-        String Filename, Ext;
+        ZXString Filename, Ext;
         int i=0;
 
         static HWND OldhWnd=NULL;
@@ -851,7 +851,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 return;
         }
 
-        String text="";
+        ZXString text="";
 
         if (emulation_stop)
         {
@@ -873,7 +873,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 }
         }
 
-        String scanlinesInfo = "";
+        ZXString scanlinesInfo = "";
         if (emulator.scanlinesPerFrame > 0)
         {
                 scanlinesInfo = "     ";
@@ -1013,7 +1013,7 @@ void __fastcall TForm1::DebugWinClick(TObject *Sender)
 void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 {
         WORD BufferLength=255;
-        String Filename, Ext;
+        ZXString Filename, Ext;
         WORD FileIndex;
         WORD QtyDroppedFiles;
         _TCHAR pDroppedFilename[255];
@@ -1604,8 +1604,8 @@ void __fastcall TForm1::IFace1Click(TObject *Sender)
 void __fastcall TForm1::SaveSnapDialogTypeChange(TObject *Sender)
 {
         int i,p;
-        String filter, newext;
-        String Fname;
+        ZXString filter, newext;
+        ZXString Fname;
 
         HWND h;
         TSaveDialog *d;
@@ -1703,7 +1703,7 @@ void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
         nmiOccurred = 1;
 }
 //---------------------------------------------------------------------------
-void FetchFolderList(vector<String>* pEntries, String path)
+void FetchFolderList(vector<ZXString>* pEntries, ZXString path)
 {
 		DIR* dir;
         struct dirent *ent;
@@ -1714,7 +1714,7 @@ void FetchFolderList(vector<String>* pEntries, String path)
                 {
                         if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
                         {
-								pEntries->push_back(String(ent->d_name));
+								pEntries->push_back(ZXString(ent->d_name));
 						}
                 }
 
@@ -1727,8 +1727,8 @@ void FetchFolderList(vector<String>* pEntries, String path)
 
 void TForm1::BuildConfigMenu()
 {
-        vector<String> files;
-        vector<String>::iterator iter;
+        vector<ZXString> files;
+        vector<ZXString>::iterator iter;
 
         DIR *dir;
         struct dirent *ent;
@@ -1740,7 +1740,7 @@ void TForm1::BuildConfigMenu()
 
         for (iter = files.begin(); iter != files.end(); iter++)
         {
-                String FileName, Extension;
+                ZXString FileName, Extension;
 
                 FileName=(*iter);
                 Extension=FileNameGetExt(FileName);
@@ -1770,10 +1770,10 @@ void TForm1::BuildConfigMenu()
 //---------------------------------------------------------------------------
 void TForm1::BuildDocumentationMenu()
 {
-        vector<String> folders;
-        vector<String>::iterator iter;
+        vector<ZXString> folders;
+        vector<ZXString>::iterator iter;
 
-        String path = emulator.cwd;
+        ZXString path = emulator.cwd;
         path += documentationFolder;
 
         FetchFolderList(&folders, path);
@@ -1784,7 +1784,7 @@ void TForm1::BuildDocumentationMenu()
                 DocumentationMenuEntry->Add(CategorySubMenu);
                 CategorySubMenu->Caption = (*iter).c_str();
 
-                String CategoryFolder = path;
+                ZXString CategoryFolder = path;
                 CategoryFolder += (*iter).c_str();
                 CategoryFolder += "\\";
 
@@ -1792,17 +1792,17 @@ void TForm1::BuildDocumentationMenu()
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::AddInstructionFiles(TMenuItem* CategorySubMenu, String path)
+void TForm1::AddInstructionFiles(TMenuItem* CategorySubMenu, ZXString path)
 {
-        vector<String> files;
-        vector<String>::iterator iter;
+        vector<ZXString> files;
+        vector<ZXString>::iterator iter;
 
         FetchFolderList(&files, path);
 
         for (iter = files.begin(); iter != files.end(); iter++)
         {
-                String FileName = (*iter).c_str();
-                String Title = RemoveExt(FileName);
+                ZXString FileName = (*iter).c_str();
+                ZXString Title = RemoveExt(FileName);
 
                 TMenuItem* InstructionEntry = new TMenuItem(CategorySubMenu);
                 CategorySubMenu->Add(InstructionEntry);
@@ -1816,13 +1816,13 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
         TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
         TMenuItem* ParentItem = ClickedItem->Parent;
 
-        String Path = emulator.cwd;
+        ZXString Path = emulator.cwd;
         Path += documentationFolder;
         Path += ParentItem->Caption;
         Path += "\\";
 
         struct _stat buffer;
-        String webPath = Path + ClickedItem->Caption + ".web";
+        ZXString webPath = Path + ClickedItem->Caption + ".web";
 		if (_tstat(webPath.c_str(), &buffer) == 0)
         {
 				FILE* filePointer = _tfopen(webPath.c_str(), _TEXT("r"));
@@ -1846,10 +1846,10 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void TForm1::BuildExamplesMenu()
 {
-        vector<String> folders;
-        vector<String>::iterator iter;
+        vector<ZXString> folders;
+        vector<ZXString>::iterator iter;
 
-        String path = emulator.cwd;
+        ZXString path = emulator.cwd;
         path += exampleZX81ProgramsFolder;
 
         FetchFolderList(&folders, path);
@@ -1860,7 +1860,7 @@ void TForm1::BuildExamplesMenu()
                 ExampleZX81ProgramsMenuEntry->Add(CategorySubMenu);
                 CategorySubMenu->Caption = (*iter).c_str();
 
-                String CategoryFolder = path;
+                ZXString CategoryFolder = path;
                 CategoryFolder += (*iter).c_str();
                 CategoryFolder += "\\";
 
@@ -1868,10 +1868,10 @@ void TForm1::BuildExamplesMenu()
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, String path)
+void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, ZXString path)
 {
-        vector<String> files;
-        vector<String>::iterator iter;
+        vector<ZXString> files;
+        vector<ZXString>::iterator iter;
 
         FetchFolderList(&files, path);
 
@@ -1889,7 +1889,7 @@ void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
         TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
         TMenuItem* ParentItem = ClickedItem->Parent;
 
-        String Path = emulator.cwd;
+        ZXString Path = emulator.cwd;
         Path += exampleZX81ProgramsFolder;
         Path += ParentItem->Caption;
         Path += "\\";
@@ -1902,7 +1902,7 @@ void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 {
         TIniFile *ini;
-        String FileName;
+        ZXString FileName;
 
         SaveConfigDialog->FileName="";
         SaveConfigDialog->InitialDir=emulator.configpath;
@@ -1923,8 +1923,8 @@ void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
 
 void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 {
-        String FileName;
-        String ConfigName;
+        ZXString FileName;
+        ZXString ConfigName;
         int i;
 
         ConfigName = ((TMenuItem *)Sender)->Caption;
@@ -1932,7 +1932,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         while((i = ConfigName.Pos("&")) != 0)
         {
                 int len;
-                String Before="", After="";
+                ZXString Before="", After="";
 
                 len=ConfigName.Length();
 
@@ -1949,7 +1949,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TForm1::LoadIniFile(String FileName)
+void TForm1::LoadIniFile(ZXString FileName)
 {                      
         TIniFile *ini;
         
@@ -2004,7 +2004,7 @@ void __fastcall TForm1::ResetQuicksilvaHiResClick(TObject *Sender)
 
 void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
 {
-        String Extension, Filename;
+        ZXString Extension, Filename;
         FILE *f;
 
         SaveScrDialog->Filter = "Windows Bitmap (.bmp)|*.bmp";
@@ -2616,7 +2616,7 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
         DIR *dir;
         struct dirent *ent;
 
-        String iniFile;
+        ZXString iniFile;
         _TCHAR iniPath[256];
 		if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
         {
@@ -2624,7 +2624,7 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
                 {
                         while ((ent = readdir(dir)) != NULL)
                         {
-                                String FileName, Extension;
+                                ZXString FileName, Extension;
 
                                 FileName=ent->d_name;
                                 Extension=FileNameGetExt(FileName);
@@ -2649,14 +2649,14 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
 
 void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
 {
-        String iniFile;
+        ZXString iniFile;
 		_TCHAR iniPath[256];
 		if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
         {
                 iniFile = iniPath;
                 if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
                 iniFile += iniFolder;
-                String name = ((TMenuItem *)Sender)->Caption;
+                ZXString name = ((TMenuItem *)Sender)->Caption;
                 iniFile += name;
                 iniFile += ".ini";
 
@@ -2688,7 +2688,7 @@ void __fastcall TForm1::WriteProtect8KRAMClick(TObject *Sender)
 
 void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
 {
-        String iniFile;
+        ZXString iniFile;
         _TCHAR iniPath[256];
 		if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
         {
@@ -2707,7 +2707,7 @@ void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
 
 void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
 {
-        String releaseHistoryFile = emulator.cwd;
+        ZXString releaseHistoryFile = emulator.cwd;
         releaseHistoryFile += "Release history.txt";
 		ShellExecute(NULL, _TEXT("open"), releaseHistoryFile.c_str(), _TEXT(""), NULL, SW_RESTORE);
 }

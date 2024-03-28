@@ -25,6 +25,8 @@
 #define UtilsH
 //---------------------------------------------------------------------------
 
+#include "zx81config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,15 +39,15 @@ int ZX81Strlen(BYTE *str);
 }
 #endif
 
-String FileNameGetPath(String Fname);
-String FileNameGetFname(String Fname);
-String FileNameGetExt(String Fname);
-String ConvertZX81ASCII(BYTE *str);
-void ConvertASCIIZX81(String Str, BYTE *Output);
-String RemoveExt(String Fname);
-String GetExt(String Fname);
-String RemovePath(String Str);
-int EnumeratePorts(TStrings *List, String Type);
+ZXString FileNameGetPath(ZXString Fname);
+ZXString FileNameGetFname(ZXString Fname);
+ZXString FileNameGetExt(ZXString Fname);
+ZXString ConvertZX81ASCII(BYTE *str);
+void ConvertASCIIZX81(ZXString Str, BYTE *Output);
+ZXString RemoveExt(ZXString Fname);
+ZXString GetExt(ZXString Fname);
+ZXString RemovePath(ZXString Str);
+int EnumeratePorts(TStrings *List, ZXString Type);
 
 #endif
 

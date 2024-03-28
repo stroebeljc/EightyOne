@@ -79,7 +79,7 @@ void __fastcall TMemSave::FormShow(TObject *Sender)
         Top=y;
 }
 //---------------------------------------------------------------------------
-int TMemSave::Hex2Dec(String num)
+int TMemSave::Hex2Dec(ZXString num)
 {
         int val=0;
         int i;
@@ -95,7 +95,7 @@ int TMemSave::Hex2Dec(String num)
 }
 void __fastcall TMemSave::SaveClick(TObject *Sender)
 {
-        String AddrStr, LenStr, FileName, Ext;
+        ZXString AddrStr, LenStr, FileName, Ext;
         int addr,len;
         FILE *f;
 
@@ -179,7 +179,7 @@ void __fastcall TMemSave::SaveClick(TObject *Sender)
 
 void __fastcall TMemSave::BrowseClick(TObject *Sender)
 {
-        String Ext, Path;
+        ZXString Ext, Path;
 
         if (Save->Caption=="Save File...")
         {

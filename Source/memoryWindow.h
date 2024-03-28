@@ -166,7 +166,7 @@ private:
         RowRenderer* mRowRenderer;
 
         int mSelectedAddress;
-        String mSearchText;
+        ZXString mSearchText;
 
         void CreateBitmap(void);
         bool FindSequence(std::vector<int>& bytes, int& addr);

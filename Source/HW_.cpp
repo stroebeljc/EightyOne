@@ -125,7 +125,7 @@ __fastcall THW::THW(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-String getMachineRoot(String fullRomName)
+ZXString getMachineRoot(ZXString fullRomName)
 {
         // return the first part of the rom name up to but excluding the first '.'
 		_TCHAR* p1 = fullRomName.c_str();
@@ -211,9 +211,9 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         CloseOtherDebugWindow();
 
         RomBox->Text = RomBox->Text.LowerCase();
-		_tcscpy(machine.CurRom, RomBox->Text.c_str());
+		_tcscpy(machine.CurRom, ZXString(RomBox->Text).c_str());
 
-        String romBase = DetermineRomBase();
+        ZXString romBase = DetermineRomBase();
         ConfigureSymbolFile(romBase);
         ConfigureCharacterBitmapFile(romBase);
 
@@ -309,7 +309,7 @@ void THW::ReInitialiseSound()
         int r = Sound.ReInitialise(NULL, machine.fps,0,0,0);
         if (r)
         {
-                String err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
+                ZXString err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
                 MessageBox(NULL, err.c_str(), _TEXT("Error"), 0);
                 Application->Terminate();
         }
@@ -470,14 +470,14 @@ void THW::CloseOtherDebugWindow()
         }
 }
 
-void THW::DetermineRamSizeLabel(String newMachineName)
+void THW::DetermineRamSizeLabel(ZXString newMachineName)
 {
-        String name = newMachineName;
+        ZXString name = newMachineName;
 
         if (AceBtn->Down)
         {
                 int i=3;
-                String Mem;
+                ZXString Mem;
 
                 if (RamPackBox->ItemIndex!=0)
                         i+=_wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
@@ -497,7 +497,7 @@ void THW::DetermineRamSizeLabel(String newMachineName)
                         int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
-                String ramSize = totalRam;
+                ZXString ramSize = totalRam;
                 name = ramSize + "K " + name;
         }
 
@@ -813,7 +813,7 @@ void THW::ConfigureRomCartridge()
         }
         else
         {
-                String romCartridgeFilePath = RomCartridgeFileBox->Text;
+                ZXString romCartridgeFilePath = RomCartridgeFileBox->Text;
 
                 if (romcartridge.type == ROMCARTRIDGESINCLAIR)
                 {
@@ -823,12 +823,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        romCartridgeFilePath = ZXString(emulator.cwd) + iter->Path + iter->Title + ".rom";
                                         break;
                                 }
                         }
 
-                        String path = FileNameGetPath(romCartridgeFilePath);
+                        ZXString path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = if2RomsFolder + romCartridgeFilePath;
@@ -842,12 +842,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        romCartridgeFilePath = ZXString(emulator.cwd) + iter->Path + iter->Title + ".rom";
                                         break;
                                 }
                         }
 
-                        String path = FileNameGetPath(romCartridgeFilePath);
+                        ZXString path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = ts1510RomsFolder + romCartridgeFilePath;
@@ -861,12 +861,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".dck";
+                                        romCartridgeFilePath = ZXString(emulator.cwd) + iter->Path + iter->Title + ".dck";
                                         break;
                                 }
                         }
 
-                        String path = FileNameGetPath(romCartridgeFilePath);
+                        ZXString path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = ts2068RomsFolder + romCartridgeFilePath;
@@ -880,12 +880,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".dck";
+                                        romCartridgeFilePath = ZXString(emulator.cwd) + iter->Path + iter->Title + ".dck";
                                         break;
                                 }
                         }
 
-                        String path = FileNameGetPath(romCartridgeFilePath);
+                        ZXString path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = tc2068RomsFolder + romCartridgeFilePath;
@@ -922,7 +922,7 @@ void THW::ConfigureRomCartridge()
         }
 }
 
-int THW::DetermineRomCartridgeType(String cartridgeText, int machine, int spectrumModel)
+int THW::DetermineRomCartridgeType(ZXString cartridgeText, int machine, int spectrumModel)
 {
         int cartridgeType;
 
@@ -1308,12 +1308,12 @@ void THW::ConfigureMachineSettings()
         }
 }
 
-String THW::DetermineRomBase()
+ZXString THW::DetermineRomBase()
 {
-        String romBase = emulator.cwd;
+        ZXString romBase = emulator.cwd;
         romBase += romsFolder;
 
-        String rom = machine.CurRom;
+        ZXString rom = machine.CurRom;
 
         if (!FileExists(rom))
         {
@@ -1328,18 +1328,18 @@ String THW::DetermineRomBase()
         return romBase;
 }
 
-void THW::ConfigureSymbolFile(String romBase)
+void THW::ConfigureSymbolFile(ZXString romBase)
 {
-        String sym = romBase;
+        ZXString sym = romBase;
         sym += ChangeFileExt(machine.CurRom, ".sym");
         symbolstore::reset();
         symbolstore::loadROMSymbols(AnsiString(sym).c_str());
         SymbolBrowser->RefreshContent();
 }
 
-void THW::ConfigureCharacterBitmapFile(String romBase)
+void THW::ConfigureCharacterBitmapFile(ZXString romBase)
 {
-        String bmp = romBase;
+        ZXString bmp = romBase;
         bmp += ChangeFileExt(machine.CurRom, ".bmp");
         delete (Graphics::TBitmap*)machine.cset;
         machine.cset = NULL;
@@ -1408,9 +1408,9 @@ void THW::ConfigureCharacterBitmapFile(String romBase)
         }
 }
 
-String THW::DirectSoundError(unsigned int errorCode)
+ZXString THW::DirectSoundError(unsigned int errorCode)
 {
-        String errorText;
+        ZXString errorText;
         switch (errorCode)
         {
         case 0x8878000A:
@@ -1429,7 +1429,7 @@ String THW::DirectSoundError(unsigned int errorCode)
                 errorText = "DSERR_OUTOFMEMORY:\n\nThe DirectSound subsystem could not allocate sufficient memory to complete the caller's request.";
                 break;
         default:
-                errorText = "0x" + String::IntToHex(errorCode, 8);
+                errorText = "0x" + ZXString::IntToHex(errorCode, 8);
                 break;
         }
 
@@ -1483,7 +1483,7 @@ void THW::ResetDisplaySize()
 //---------------------------------------------------------------------------
 void THW::SetZX80Icon()
 {
-        String romName;
+        ZXString romName;
 
         if (ZX80Btn->Down)
         {
@@ -1494,7 +1494,7 @@ void THW::SetZX80Icon()
                 romName = emulator.ROM80;
         }
 
-        String romRoot = LowerCase(getMachineRoot(romName));
+        ZXString romRoot = LowerCase(getMachineRoot(romName));
         Graphics::TBitmap* zx80Icon = new Graphics::TBitmap;
         int iconIndex = (romRoot== "zx81" || romRoot == "ts1500") ? 1 : 0;
         ZX80Icons->GetBitmap(iconIndex, zx80Icon);
@@ -1503,7 +1503,7 @@ void THW::SetZX80Icon()
 //---------------------------------------------------------------------------
 void THW::SetSpectrum128Icon()
 {
-        String romName;
+        ZXString romName;
 
         if (Spec128Btn->Down)
         {
@@ -1523,7 +1523,7 @@ void THW::SetSpectrum128Icon()
 void THW::SetupForZX81(void)
 {
         int i;
-        String OldIDE, OldFloppy;
+        ZXString OldIDE, OldFloppy;
 
         ZX80Btn->Down=false;
         ZX81Btn->Down=false;
@@ -1687,7 +1687,7 @@ void THW::SetZXpandState(bool checked, bool enabled)
 
 void THW::SetupForSpectrum(void)
 {
-        String OldIDE,OldFDC;
+        ZXString OldIDE,OldFDC;
         int i;
 
         ZX80Btn->Down=false;
@@ -1859,7 +1859,7 @@ void THW::SetupForSpectrum(void)
 
 void THW::SetupForQL(void)
 {
-        String OldIDE;
+        ZXString OldIDE;
         int i;
 
         FloatingPointHardwareFix->Enabled = false;
@@ -1969,7 +1969,7 @@ void THW::SetupForQL(void)
         for(i=0;i<IDEBox->Items->Count;i++)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
 
-        String OldFDC=FDC->Items->Strings[FDC->ItemIndex];
+        ZXString OldFDC=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
         FDC->Items->Strings[0]="None";
         FDC->Items->Add("ZX Interface 1");
@@ -2051,7 +2051,7 @@ void THW::DisplayTotalRam()
                 int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
-        String ramSize = totalRam;
+        ZXString ramSize = totalRam;
         LabelTotalRAM->Caption = "Total RAM: " + ramSize + "K";
 }
 //---------------------------------------------------------------------------
@@ -2760,7 +2760,7 @@ void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void THW::SaveSettings(TIniFile *ini)
 {
-        String Rom;
+        ZXString Rom;
         FILE *f;
 		_TCHAR FileName[256];
 
@@ -2912,7 +2912,7 @@ void THW::SaveSettings(TIniFile *ini)
 
 void THW::LoadSettings(TIniFile *ini)
 {
-        String Rom;
+        ZXString Rom;
         _TCHAR FileName[256];
         FILE *f;
 
@@ -3083,7 +3083,7 @@ void THW::LoadSettings(TIniFile *ini)
 
 void __fastcall THW::BrowseROMClick(TObject *Sender)
 {
-        String Path;
+        ZXString Path;
         _TCHAR cPath[512];
 
         Path = emulator.cwd;
@@ -3101,7 +3101,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
                 return;
         }
         
-        String selectedRomPath = FileNameGetPath(RomSelect->FileName);
+        ZXString selectedRomPath = FileNameGetPath(RomSelect->FileName);
 
         _tcscpy(cPath, Path.c_str());
         if (Path == selectedRomPath)
@@ -3352,7 +3352,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
 void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 {
-        String Path;
+        ZXString Path;
         _TCHAR cPath[512];
 
         Path = emulator.cwd;
@@ -3386,7 +3386,7 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         }
         if (!RomSelect->Execute()) return;
 
-        String selectedRomPath = FileNameGetPath(RomSelect->FileName);
+        ZXString selectedRomPath = FileNameGetPath(RomSelect->FileName);
 
 		_tcscpy(cPath, Path.c_str());
         if (Path == selectedRomPath)
@@ -3502,8 +3502,8 @@ extern char* zxpandSDCardFolderRoot;
 
 void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 {
-        String root(zxpandSDCardFolderRoot);
-        String replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
+        ZXString root(zxpandSDCardFolderRoot);
+        ZXString replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
         ShellExecute(Application->Handle,_TEXT("OPEN"),_TEXT("EXPLORER.EXE"), replaced.c_str(), NULL, 1);
 }
 //---------------------------------------------------------------------------
@@ -3579,9 +3579,9 @@ void THW::PopulateRomCartridgeSinclairList()
         }
 }
 //---------------------------------------------------------------------------
-void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, String fileExt)
+void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, ZXString fileExt)
 {                                                  
-        String romPath = emulator.cwd;
+        ZXString romPath = emulator.cwd;
         romPath += romCartridgeEntry->Path;
         romPath += romCartridgeEntry->Title;
         romPath += fileExt;
@@ -3595,7 +3595,7 @@ void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry*
 
 void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
 {
-        String path = emulator.cwd;
+        ZXString path = emulator.cwd;
 
         ShellExecute(0, _TEXT("open"), _TEXT("Notepad.exe"), _TEXT("ZXpand readme.txt"), path.c_str(), SW_SHOWNORMAL);
 }

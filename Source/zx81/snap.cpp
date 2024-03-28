@@ -278,19 +278,19 @@ void load_snap_romcartridge(FILE *f)
 				if (!_tcscmp(tok,_TEXT("TYPE")))
                 {
                         tok = get_token(f);
-                        String type = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        ZXString type = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
                         SetComboBox(HW->RomCartridgeBox, type.c_str());
                 }
 				else if (!_tcscmp(tok,_TEXT("PATH")))
                 {
                         tok = get_token(f);
-                        String path = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        ZXString path = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
                         HW->RomCartridgeFileBox->Text = path;
                 }
                 else if (!_tcscmp(tok,_TEXT("CONFIGURATION")))
                 {
                         tok = get_token(f);
-                        String config = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        ZXString config = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
                         SetComboBox(HW->ZXC1ConfigurationBox, config.c_str());
                 }
         }
@@ -374,9 +374,9 @@ void load_snap_colour(FILE *f)
         }
 }
 
-String GetMachine()
+ZXString GetMachine()
 {
-        String machineName;
+        ZXString machineName;
 
         switch(emulator.machine)
         {
@@ -415,7 +415,7 @@ String GetMachine()
         return machineName;
 }
 
-void SetMachine(String machine)
+void SetMachine(ZXString machine)
 {
         if (machine == "ZX80") HWSetMachine(MACHINEZX80, NULL);
         else if (machine == "ZX81") HWSetMachine(MACHINEZX81, NULL);
@@ -530,7 +530,7 @@ void load_snap_advanced(FILE* f)
 				if (!_tcscmp(tok,_TEXT("ROM")))
 				{
                         tok = get_token(f);
-                        String rom = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
+                        ZXString rom = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
                         HW->RomBox->Text = rom;
                 }
 				else if (!_tcscmp(tok,_TEXT("PROTECT_ROM")))
@@ -631,7 +631,7 @@ void load_snap_ace(FILE *f)
         zx81.RAMTOP = ramTop-1;
         if (zx81.RAMTOP == -1) zx81.RAMTOP=65535;
 
-        String ramPackText = IntToStr(ramPackSize) + "K";
+        ZXString ramPackText = IntToStr(ramPackSize) + "K";
         SetComboBox(HW->RamPackBox, ramPackText.c_str());
 
         memptr=0x2100;
@@ -856,7 +856,7 @@ int save_snap_zx81(_TCHAR *filename)
 	fprintf(f, "\n");
 
 	fprintf(f,"\n[ADVANCED]\n");
-	String rom = StringReplace(HW->RomBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
+	ZXString rom = StringReplace(HW->RomBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
 	fprintf(f,"ROM %S\n", rom.c_str());
 	fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
 	fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
@@ -922,11 +922,11 @@ int save_snap_zx81(_TCHAR *filename)
 	fprintf(f,"TYPE %S\n", HW->HiResBox->Text.c_str());
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
-        String type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
+        ZXString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
 	fprintf(f,"TYPE %S\n", type.c_str());
 	if (HW->RomCartridgeBox->Text != "None")
 	{
-	        String path = StringReplace(HW->RomCartridgeFileBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
+	        ZXString path = StringReplace(HW->RomCartridgeFileBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
 		fprintf(f,"PATH %S\n", path.c_str());
 		if (HW->RomCartridgeBox->Text == "ZXC1")
 		{
@@ -1070,7 +1070,7 @@ int memoryLoadToAddress(_TCHAR *filename, void* destAddress, int length)
         if (fptr<1)
         {
                 int err=errno;
-				String errMsg = "ROM load to address failed:\n" + String(filename);
+				ZXString errMsg = "ROM load to address failed:\n" + ZXString(filename);
                 ShowMessage(errMsg);
                 return(err);
         }
@@ -1079,7 +1079,7 @@ int memoryLoadToAddress(_TCHAR *filename, void* destAddress, int length)
         {
                 int err=errno;
                 close(fptr);
-                String errMsg = "ROM load to address failed:\n" + String(filename);
+                ZXString errMsg = "ROM load to address failed:\n" + ZXString(filename);
                 ShowMessage(errMsg);
                 return(err);
         }
@@ -1098,7 +1098,7 @@ int do_memory_load(_TCHAR *file, int address, int length, int secondBank)
         if (fptr<1)
         {
                 int err=errno;
-                String errMsg = "ROM load failed:\n" + String(file);
+                ZXString errMsg = "ROM load failed:\n" + ZXString(file);
                 ShowMessage(errMsg);
                 return(err);
         }
@@ -1107,7 +1107,7 @@ int do_memory_load(_TCHAR *file, int address, int length, int secondBank)
         {
                 int err=errno;
                 close(fptr);
-                String errMsg = "ROM load failed:\n" + String(file);
+                ZXString errMsg = "ROM load failed:\n" + ZXString(file);
                 ShowMessage(errMsg);
                 return(err);
         }
@@ -1118,7 +1118,7 @@ int do_memory_load(_TCHAR *file, int address, int length, int secondBank)
                 {
                         int err=errno;
                         close(fptr);
-                        String errMsg = "ROM load failed:\n" + String(file);
+                        ZXString errMsg = "ROM load failed:\n" + ZXString(file);
                         ShowMessage(errMsg);
                         return(err);
                 }
@@ -1176,7 +1176,7 @@ int font_load(const _TCHAR *filename, char *address, int length)
         {
                 int err=errno;
                 close(fptr);
-				String errMsg = "Font load failed:\n" + String(filename);
+				ZXString errMsg = "Font load failed:\n" + ZXString(filename);
                 ShowMessage(errMsg);
                 return(err);
         }

@@ -28,7 +28,7 @@ void __fastcall TSymbolBrowser::RefreshContent(void)
         ListBox1->Items->Clear();
 
         symbolstore::beginenumeration();
-        String sym;
+        ZXString sym;
         char type;
         int val;
         while(symbolstore::enumerate(sym, val, type))
@@ -53,7 +53,7 @@ void __fastcall TSymbolBrowser::ListBox1ContextPopup(TObject *Sender,
         if (item < ListBox1->Items->Count)
         {
                 ListBox1->ItemIndex=item;
-                String sym(ListBox1->Items->Strings[item].SubString(5,24));
+                ZXString sym(ListBox1->Items->Strings[item].SubString(5,24));
                 symbolstore::symbolToAddress(sym.Trim(), Dbg->MemDumpFromHere1->Tag);
         }
 
@@ -100,7 +100,7 @@ void __fastcall TSymbolBrowser::ListBox1KeyPress(TObject *Sender,
         for (int i = 0; i < ListBox1->Items->Count; ++i)
         {
                 int idx = (startidx + i) % ListBox1->Items->Count;
-                String x = ListBox1->Items->Strings[idx].SubString(5,_searchString.Length());
+                UnicodeString x = ListBox1->Items->Strings[idx].SubString(5,_searchString.Length());
                 if (x.CompareIC(_searchString) == 0)
                 {
                        ListBox1->ItemIndex = idx;
@@ -113,7 +113,7 @@ void __fastcall TSymbolBrowser::ListBox1KeyPress(TObject *Sender,
 void __fastcall TSymbolBrowser::ListBox1DblClick(TObject *Sender)
 {
         int addr, item = ListBox1->ItemIndex;
-        String sym(ListBox1->Items->Strings[item].SubString(5,24));
+        ZXString sym(ListBox1->Items->Strings[item].SubString(5,24));
         symbolstore::symbolToAddress(sym.Trim(), addr);
         breakpoint bp(addr, BP_EXE);
         Dbg->AddBreakPoint(bp);

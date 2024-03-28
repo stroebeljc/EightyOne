@@ -23,6 +23,7 @@
 
 #ifndef WavFileH
 #define WavFileH
+#include "zx81config.h"
 
 struct RIFFHeader
 {
@@ -65,7 +66,7 @@ struct CSW
 class TWavFile
 {
 private:
-        String FileName;
+        ZXString FileName;
         struct RIFFHeader Head;
         struct RIFFFormat Format;
         struct RIFFData Data;
@@ -75,10 +76,10 @@ public:
         unsigned int SampleRate, NoSamples, Bits;
         bool Stereo;
 
-        bool LoadFile(String Filename);
-        bool SaveFile(String Filename);
-        bool LoadCSW(String Filename);
-        bool SaveCSW(String Filename);
+        bool LoadFile(ZXString Filename);
+        bool SaveFile(ZXString Filename);
+        bool LoadCSW(ZXString Filename);
+        bool SaveCSW(ZXString Filename);
         unsigned char Sample(unsigned int Pos, int Channel);
         bool NewFile(void);
         bool SetSample(unsigned int Pos, int Value);

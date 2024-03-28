@@ -76,7 +76,7 @@ _TCHAR **CommandLine;
 bool ShowSplash=true;
 bool Restart=false;
 //---------------------------------------------------------------------------
-int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmdline, int)
+int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR cmdline, int)
 {
 		int i;
 		_TCHAR *p, *CmdLineRaw;
@@ -147,7 +147,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmdline, int)
 
                 if (Restart)
                 {
-                        String exeFile = Application->ExeName;
+                        ZXString exeFile = Application->ExeName;
 						ShellExecute(NULL, _TEXT("open"), exeFile.c_str(), NULL, NULL, SW_SHOWNORMAL);
                 }
         }

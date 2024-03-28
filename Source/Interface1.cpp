@@ -398,7 +398,7 @@ int TIF1::MDVGetNextBlock(int Drive, bool header)
 void TIF1::MDVLoadFile(int Drive, _TCHAR *FileName)
 {
         FILE *f;
-        String Ext;
+        ZXString Ext;
         char *buffer, *data, *secptr;
         int len, sectors, i;
 
@@ -508,7 +508,7 @@ void TIF1::MDVSaveFile(int Drive)
         unsigned char* buffer;
         int bufferSize;
 
-        String Ext = GetExt(Drives[Drive].FileName);
+        ZXString Ext = GetExt(Drives[Drive].FileName);
         if (Ext == ".MDR")
         {
                 const int MDR_HEADER_SIZE = 15;
@@ -646,7 +646,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                 break;
 
         default:
-                String Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+                ZXString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
                 if (Port.SubString(1,3)=="LPT")
                 {
@@ -720,7 +720,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
 
 void __fastcall TIF1::ComPortListChange(TObject *Sender)
 {
-		String Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+		ZXString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
         PortPanel->Visible=false;
         TCPPanel->Visible=false;

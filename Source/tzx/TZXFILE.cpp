@@ -170,10 +170,10 @@ int TTZXFile::GetGroup(int Block)
 }
 
 
-String TTZXFile::GetBlockName(int BlockNo)
+ZXString TTZXFile::GetBlockName(int BlockNo)
 {
         int i, len, BlockID;
-        String text, parameters;
+        ZXString text, parameters;
         char c, *data;
 
         BlockID=Tape[BlockNo].BlockID;
@@ -401,7 +401,7 @@ bool TTZXFile::IsEditable(int BlockNo)
         }
 }
 
-String TTZXFile::GetBlockType(int BlockNo)
+ZXString TTZXFile::GetBlockType(int BlockNo)
 {
         switch(Tape[BlockNo].BlockID)
         {
@@ -417,9 +417,9 @@ String TTZXFile::GetBlockType(int BlockNo)
         //return(Tape[BlockNo].BlockID);
 }
 
-String TTZXFile::GetBlockLength(int BlockNo)
+ZXString TTZXFile::GetBlockLength(int BlockNo)
 {
-        String value;
+        ZXString value;
         int len=-1;
 
         switch (Tape[BlockNo].BlockID)
@@ -464,9 +464,9 @@ bool TTZXFile::GetEarState(void)
         return(EarState!=0);
 }
 
-String TTZXFile::GetFName(int BlockNo)
+ZXString TTZXFile::GetFName(int BlockNo)
 {
-        String Name="";
+        ZXString Name="";
         char *p,c;
         int i=32;
         bool end=false;

@@ -52,9 +52,9 @@ BYTE GetMem(int Addr)
 	return byteVal;
 }
 
-String TDbg::StrRep(String Text, int Pos, int Len, String NewText)
+ZXString TDbg::StrRep(ZXString Text, int Pos, int Len, ZXString NewText)
 {
-        String t="";
+        ZXString t="";
 
         if (Pos>1) t=Text.SubString(1,Pos-1);
         t+=NewText;
@@ -63,7 +63,7 @@ String TDbg::StrRep(String Text, int Pos, int Len, String NewText)
         return(t);
 }
                            
-String TDbg::Disassemble(int addr, BYTE* bytes)
+ZXString TDbg::Disassemble(int addr, BYTE* bytes)
 {
 	readFromMemory = false;
 	instructionAddress = addr;
@@ -72,26 +72,26 @@ String TDbg::Disassemble(int addr, BYTE* bytes)
 	return DisassembleAddress(&addr);
 }
 
-String TDbg::Disassemble(int *Ad)
+ZXString TDbg::Disassemble(int *Ad)
 {
 	readFromMemory = true;
 
 	return DisassembleAddress(Ad);
 }
 
-String TDbg::DisassembleAddress(int* Ad)
+ZXString TDbg::DisassembleAddress(int* Ad)
 {
         int Addr = *Ad;
         int Opcode;
         int p;
         int Offset;
 
-        String StrAddr;
-        String StrCode;
-        String StrText;
+        ZXString StrAddr;
+        ZXString StrCode;
+        ZXString StrText;
 
         Opcode = GetMem(Addr);
-        StrAddr = "$"+String::IntToHex(Addr,4);
+        StrAddr = "$"+ZXString::IntToHex(Addr,4);
         StrCode += Hex8(Opcode);
         Addr++;
 
@@ -1458,7 +1458,7 @@ String TDbg::DisassembleAddress(int* Ad)
                 int lowByte = GetMem(Addr);
                 int highByte = GetMem(Addr+1);
                 int absadd = lowByte + 256*highByte;
-                String nnnn = symbolstore::addressToSymbolOrHex(absadd);
+                ZXString nnnn = symbolstore::addressToSymbolOrHex(absadd);
                 StrText=StrRep(StrText,p,4,nnnn);
                 StrCode += Hex8(lowByte);
                 StrCode += Hex8(highByte);
@@ -1471,7 +1471,7 @@ String TDbg::DisassembleAddress(int* Ad)
                 int offset=GetMem(Addr);
                 if (offset>127) offset=offset-256;
 
-                String nnnn = symbolstore::addressToSymbolOrHex(Addr + 1 + offset);
+                ZXString nnnn = symbolstore::addressToSymbolOrHex(Addr + 1 + offset);
                 StrText=StrRep(StrText,p,2,nnnn);
                 StrCode += Hex8(GetMem(Addr++));
         }
@@ -1500,7 +1500,7 @@ String TDbg::DisassembleAddress(int* Ad)
                 else StrText=StrRep(StrText,p,3,"+$" + Hex8(i));
         }
 
-		String lab("");
+		ZXString lab("");
 		symbolstore::addressToSymbol(*Ad, lab);
 
         lab += "             ";

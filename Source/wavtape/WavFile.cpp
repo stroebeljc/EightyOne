@@ -56,12 +56,12 @@ TWavFile::~TWavFile()
 
 }
 
-bool TWavFile::SaveCSW(String FName)
+bool TWavFile::SaveCSW(ZXString FName)
 {
         return true;
 }
 
-bool TWavFile::LoadCSW(String FName)
+bool TWavFile::LoadCSW(ZXString FName)
 {
         FILE *f;
         struct CSW csw;
@@ -123,7 +123,7 @@ bool TWavFile::LoadCSW(String FName)
         return(true);
 }
 
-bool TWavFile::LoadFile(String FName)
+bool TWavFile::LoadFile(ZXString FName)
 {
         FILE *f;
 
@@ -188,7 +188,7 @@ bool TWavFile::LoadFile(String FName)
         return(true);
 }
 
-bool TWavFile::SaveFile(String FName)
+bool TWavFile::SaveFile(ZXString FName)
 {
         FILE *f;
 

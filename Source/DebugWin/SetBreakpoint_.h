@@ -60,13 +60,13 @@ private:	// User declarations
         void BreakTypeChangeFlag();
         void BreakTypeChangeMem();
         void BreakTypeChangeTStates();
-        void SetConditionList(TComboBox* const conditionList, String conditions);
-        void SetEditBox(TEdit* const editBox, String defaultText);
-        void SetEditBoxLabels(String breakAddressLabel, String breakValueLabel);
+        void SetConditionList(TComboBox* const conditionList, ZXString conditions);
+        void SetEditBox(TEdit* const editBox, ZXString defaultText);
+        void SetEditBoxLabels(ZXString breakAddressLabel, ZXString breakValueLabel);
 
 public:		// User declarations
         __fastcall TSetBreakpoint(TComponent* Owner);
-        void SetTitle(String& title);
+        void SetTitle(ZXString& title);
         bool EditBreakpoint(struct breakpoint& bp);
         void CentreOn(TForm* parent);
 };

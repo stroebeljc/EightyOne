@@ -18,7 +18,7 @@ uses
 
 type
   // various types
-  TPort = string;
+  TPort = AnsiString;
   TBaudRate = (brCustom, br110, br300, br600, br1200, br2400, br4800, br9600, br14400,
     br19200, br38400, br56000, br57600, br115200, br128000, br256000);
   TStopBits = (sbOneStopBit, sbOne5StopBits, sbTwoStopBits);

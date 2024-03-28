@@ -52,7 +52,7 @@ class PASCALIMPLEMENTATION TComSelect : public System::TObject
 	typedef System::TObject inherited;
 	
 private:
-	System::UnicodeString FPort;
+	System::AnsiString FPort;
 	Cport::TBaudRate FBaudRate;
 	Cport::TDataBits FDataBits;
 	Cport::TStopBits FStopBits;

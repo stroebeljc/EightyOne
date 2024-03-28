@@ -113,7 +113,7 @@ void TTZX::AddBlock(char *buffer, int len)
 void TTZX::UpdateTable(bool NewFile)
 {
         int i;
-        AnsiString Name, Type, Length;
+        String Name, Type, Length;
         int Indent;
 
         Table->RowCount=TZXFile.Blocks+2;
@@ -125,7 +125,7 @@ void TTZX::UpdateTable(bool NewFile)
                 Length=TZXFile.GetBlockLength(i);
                 Indent=TZXFile.GetGroup(i)*8;
 
-                Name = AnsiString::StringOfChar(' ', Indent) + Name;
+                Name = String::StringOfChar(' ', Indent) + Name;
                 //for(j=0;j<Indent;j++) Name = " " + Name;
 
                 //Table->Cells[0][i+1]=Type;
@@ -200,9 +200,9 @@ __fastcall TTZX::TTZX(TComponent* Owner)
         FormResize(NULL);
 }
 //---------------------------------------------------------------------------
-void TTZX::LoadFile(AnsiString Filename, bool Insert)
+void TTZX::LoadFile(String Filename, bool Insert)
 {
-        AnsiString Extension;
+        String Extension;
 
         TZXFile.Stop(false);
 
@@ -302,16 +302,16 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
         {
                 for(i=0; i < OpenDialog->Files->Count; i++)
                 {
-                        AnsiString filename = OpenDialog->Files->Strings[i];
+                        String filename = OpenDialog->Files->Strings[i];
                         LoadFile(filename, insert);
-                        AnsiString Ext = GetExt(filename);
+                        String Ext = GetExt(filename);
                         if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
                                   || Ext==".81" || Ext==".80" || Ext==".P81"
                                   || Ext==".B80" || Ext==".B81" || Ext==".B82"
                                   || Ext==".TXT" || Ext==".BAS")
                         {
-                                loadFileSymbolsProxy(filename.c_str());
+                                loadFileSymbolsProxy(AnsiString(filename).c_str());
                         }
                         insert=true;
                         TZXFile.CurBlock=TZXFile.Blocks;
@@ -441,8 +441,8 @@ void __fastcall TTZX::SaveAs1Click(TObject *Sender)
 {
         int zx81, spec, other;
         int canT81, canTAP, canP, canP81;
-        AnsiString Filter;
-        AnsiString FileName;
+        String Filter;
+        String FileName;
 
         canT81=canTAP=canP=canP81=true;
 
@@ -466,7 +466,7 @@ void __fastcall TTZX::SaveAs1Click(TObject *Sender)
 
         if (FileName != "")
         {
-                AnsiString Ext;
+                String Ext;
 
                 Ext=GetExt(FileName);
                 FileName=RemoveExt(FileName);
@@ -868,8 +868,8 @@ void __fastcall TTZX::FFEndClick(TObject *Sender)
 void __fastcall TTZX::SaveDialogTypeChange(TObject *Sender)
 {
         int i,p;
-        AnsiString filter, newext;
-        AnsiString Fname;
+        String filter, newext;
+        String Fname;
 
         THandle *h;
         TSaveDialog *d;

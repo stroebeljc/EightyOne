@@ -37,4 +37,4 @@ extern void RenderDrawBorder(void);
 extern void CompleteFrame(void);
 extern void AccurateUpdateDisplay(int);
 extern void RecalcWinSize(void);
-extern void SaveScreenShot(AnsiString Filename);
+extern void SaveScreenShot(String Filename);

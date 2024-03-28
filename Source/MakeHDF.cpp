@@ -22,9 +22,9 @@ void __fastcall TCreateHDF::CylUpDownClick(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-AnsiString TCreateHDF::ConvertValue(long Val)
+String TCreateHDF::ConvertValue(long Val)
 {
-        AnsiString output;
+        String output;
         if (Val>=2097152)
         {
                 Val/=2097152;
@@ -201,11 +201,11 @@ void __fastcall TCreateHDF::OKClick(TObject *Sender)
         Progress->Max=tracks;
         Progress->Visible=true;
 
-        f=fopen(FileName.c_str(), "wb");
+		f=_tfopen(FileName.c_str(), _TEXT("wb"));
         if (!f) Close();
         fwrite(head, 512+16,1,f);
 
-        for(i=0;i<tracks;i++)
+		for(i=0;i<tracks;i++)
         {
                 fwrite(track, tracklen, 1, f);
                 Progress->Position=i;

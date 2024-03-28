@@ -62,11 +62,11 @@ extern "C"
 
 ZXpand* zxpand = NULL;
 
-int memoryLoadToAddress(char *filename, void* destAddress, int length);
+int memoryLoadToAddress(_TCHAR *filename, void* destAddress, int length);
 
 void add_blank(SCANLINE *line, int clockCount, BYTE colour);
 
-extern AnsiString getMachineRoot(AnsiString fullRomName);
+extern String getMachineRoot(String fullRomName);
 
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
@@ -216,7 +216,7 @@ bool interruptPending = false;
 extern int shift_register, shift_reg_inv;
 extern long noise;
 
-extern int font_load(const char*, char*,int);
+extern int font_load(const _TCHAR*, char*,int);
 
 BYTE get_i_reg(void)
 {
@@ -263,9 +263,9 @@ void zx81_initialise()
         for(i=0;i<1024;i++) font[i]=0;
         for(i=0;i<1024;i++) memhrg[i]=0;
 
-        AnsiString romname = machine.CurRom;
+        String romname = machine.CurRom;
 
-        AnsiString romRoot = LowerCase(getMachineRoot(romname));
+        String romRoot = LowerCase(getMachineRoot(romname));
 
         //  to prevent zxpand from interfering with - say - aszmic
         if (romRoot != "zx80" && romRoot != "zx81" && romRoot != "ts1500")
@@ -273,7 +273,7 @@ void zx81_initialise()
 
         if (zx81.zxpand)
         {
-                AnsiString overlayName = romRoot + ".zxpand.ovl";
+                String overlayName = romRoot + ".zxpand.ovl";
                 if (romRoot == "zx81" || romRoot == "ts1500")
                 {
                         memoryLoadToAddress(overlayName.c_str(), (void*)zxpandROMOverlay, 8192);
@@ -284,7 +284,7 @@ void zx81_initialise()
         romlen=memory_load(romname.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
-        if (zx81.extfont) font_load("lambda8300characterset.bin",(char *)font,512);
+        if (zx81.extfont) font_load(_TEXT("lambda8300characterset.bin"),(char *)font,512);
 
         if ((zx81.chrgen==CHRGENDK) && (!chromaSelected || (chromaSelected && !zx81.RAM816k)))
         {
@@ -402,9 +402,9 @@ void zx81_initialise()
         videoFlipFlop3Clear = 0;
         prevVideoFlipFlop3Q = 0;
 
-        zx80rom = !strcmp(machine.CurRom, "zx80.rom");
-        zx81rom = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                  !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
+		zx80rom = !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
+		zx81rom = !_tcscmp(machine.CurRom, _TEXT("zx81.edition1.rom")) || !_tcscmp(machine.CurRom, _TEXT("zx81.edition2.rom")) || !_tcscmp(machine.CurRom, _TEXT("zx81.edition3.rom")) ||
+				  !_tcscmp(machine.CurRom, _TEXT("tk85.rom")) || !_tcscmp(machine.CurRom, _TEXT("ts1500.rom"));
 
         annotatableROM = IsAnnotatableROM();
 }
@@ -426,7 +426,7 @@ BOOL IsAnnotatableROM()
 {
         bool annotatableROM = true;
 
-        if (!strcmp(machine.CurRom, ""))
+		if (!_tcscmp(machine.CurRom, _TEXT("")))
         {
                 return annotatableROM;
         }
@@ -436,7 +436,7 @@ BOOL IsAnnotatableROM()
         case MACHINEZX80:
                 if (zx80rom)
                 {
-                        annotatableROM = !strcmp(machine.CurRom, "zx80.rom");
+						annotatableROM = !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
                         break;
                 }
 
@@ -445,11 +445,11 @@ BOOL IsAnnotatableROM()
         case MACHINETK85:
         case MACHINER470:
         case MACHINETS1500:
-                annotatableROM = zx81rom || !strcmp(machine.CurRom, "ringo470.rom");
+				annotatableROM = zx81rom || !_tcscmp(machine.CurRom, _TEXT("ringo470.rom"));
                 break;
 
         case MACHINELAMBDA:
-                annotatableROM = !strcmp(machine.CurRom, "lambda8300.rom") || !strcmp(machine.CurRom, "lambda8300colour.rom");
+				annotatableROM = !_tcscmp(machine.CurRom, _TEXT("lambda8300.rom")) || !_tcscmp(machine.CurRom, _TEXT("lambda8300colour.rom"));
                 break;
 
         default:
@@ -808,7 +808,7 @@ BYTE zx81_ReadByte(int Address)
                         // Shadow 8-16K RAM at 40-48K
                         data=memory[Address & 0x7FFF];
                 }
-                else if ((emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom") && !zx81.zxpand && (Address & 0x1000))
+                else if ((emulator.machine == MACHINEZX80) && !_tcscmp(machine.CurRom, _TEXT("zx80.rom")) && !zx81.zxpand && (Address & 0x1000))
                 {
                         data = idleDataBus;
                 }

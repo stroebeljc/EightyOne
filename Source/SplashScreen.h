@@ -20,8 +20,8 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
         __fastcall TSplash(TComponent* Owner);
-        void SetProgress(int Max, AnsiString text);
-        void IncProgress(AnsiString text);
+        void SetProgress(int Max, String text);
+        void IncProgress(String text);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSplash *Splash;

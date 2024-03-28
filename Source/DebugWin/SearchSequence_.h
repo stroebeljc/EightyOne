@@ -25,7 +25,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TSearchSequence(TComponent* Owner);
         void CentreOn(TForm* parent);
-        bool EditSequenceBytes(AnsiString& searchText, std::vector<int>& bytes);
+        bool EditSequenceBytes(String& searchText, std::vector<int>& bytes);
         bool ValidateSearchSequence(std::vector<int>& bytes);
 };
 //---------------------------------------------------------------------------

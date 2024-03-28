@@ -49,7 +49,7 @@ extern int zx80_do_scanline(SCANLINE *CurScanLine);
 extern void InitPatches(int machineType);
 extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
-extern int LoadDock(char *Filename);
+extern int LoadDock(_TCHAR *Filename);
 
 int romcartridgetype;
 
@@ -125,11 +125,11 @@ __fastcall THW::THW(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-AnsiString getMachineRoot(AnsiString fullRomName)
+String getMachineRoot(String fullRomName)
 {
         // return the first part of the rom name up to but excluding the first '.'
-        char* p1 = fullRomName.c_str();
-        char* p2 = strchr(p1, '.');
+		_TCHAR* p1 = fullRomName.c_str();
+		_TCHAR* p2 = _tcschr(p1, '.');
         if (p2 == NULL) return fullRomName;
         int len = p2 - p1;
         return fullRomName.SubString(1,len);
@@ -211,9 +211,9 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         CloseOtherDebugWindow();
 
         RomBox->Text = RomBox->Text.LowerCase();
-        wcstombs(machine.CurRom, RomBox->Text.c_str(), sizeof(machine.CurRom));
+		_tcscpy(machine.CurRom, RomBox->Text.c_str());
 
-        AnsiString romBase = DetermineRomBase();
+        String romBase = DetermineRomBase();
         ConfigureSymbolFile(romBase);
         ConfigureCharacterBitmapFile(romBase);
 
@@ -309,8 +309,8 @@ void THW::ReInitialiseSound()
         int r = Sound.ReInitialise(NULL, machine.fps,0,0,0);
         if (r)
         {
-                AnsiString err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
-                MessageBox(NULL, err.c_str(), "Error", 0);
+                String err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
+                MessageBox(NULL, err.c_str(), _TEXT("Error"), 0);
                 Application->Terminate();
         }
 }
@@ -470,14 +470,14 @@ void THW::CloseOtherDebugWindow()
         }
 }
 
-void THW::DetermineRamSizeLabel(AnsiString newMachineName)
+void THW::DetermineRamSizeLabel(String newMachineName)
 {
-        AnsiString name = newMachineName;
+        String name = newMachineName;
 
         if (AceBtn->Down)
         {
                 int i=3;
-                AnsiString Mem;
+                String Mem;
 
                 if (RamPackBox->ItemIndex!=0)
                         i+=_wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
@@ -497,11 +497,11 @@ void THW::DetermineRamSizeLabel(AnsiString newMachineName)
                         int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
-                AnsiString ramSize = totalRam;
+                String ramSize = totalRam;
                 name = ramSize + "K " + name;
         }
 
-        strcpy(emulator.machinename, name.c_str());
+		_tcscpy(emulator.machinename, name.c_str());
         Form1->StatusBar1->Panels->Items[0]->Text = name;
 }
 
@@ -547,43 +547,43 @@ void THW::ConfigureRom()
         switch(NewMachine)
         {
         case MACHINEZX80:
-                strcpy(emulator.ROM80, machine.CurRom);
+				_tcscpy(emulator.ROM80, machine.CurRom);
                 break;
 
         case MACHINEZX81:
-                strcpy(emulator.ROM81, machine.CurRom);
+				_tcscpy(emulator.ROM81, machine.CurRom);
                 break;
 
         case MACHINER470:
-                strcpy(emulator.ROMR470, machine.CurRom);
+				_tcscpy(emulator.ROMR470, machine.CurRom);
                 break;
 
         case MACHINETK85:
-                strcpy(emulator.ROMTK85, machine.CurRom);
+				_tcscpy(emulator.ROMTK85, machine.CurRom);
                 break;
 
         case MACHINETS1000:
-                strcpy(emulator.ROMTS1000, machine.CurRom);
+				_tcscpy(emulator.ROMTS1000, machine.CurRom);
                 break;
 
         case MACHINEACE:
-                strcpy(emulator.ROMACE, machine.CurRom);
+				_tcscpy(emulator.ROMACE, machine.CurRom);
                 break;
 
         case MACHINETS1500:
-                strcpy(emulator.ROMTS1500, machine.CurRom);
+				_tcscpy(emulator.ROMTS1500, machine.CurRom);
                 break;
 
         case MACHINELAMBDA:
-                strcpy(emulator.ROMLAMBDA, machine.CurRom);
+				_tcscpy(emulator.ROMLAMBDA, machine.CurRom);
                 break;
 
         case MACHINEZX97LE:
-                strcpy(emulator.ROM97LE, machine.CurRom);
+				_tcscpy(emulator.ROM97LE, machine.CurRom);
                 break;
 
         case MACHINEQL:
-                strcpy(emulator.ROMQL, machine.CurRom);
+				_tcscpy(emulator.ROMQL, machine.CurRom);
                 break;
 
         case MACHINESPECTRUM:
@@ -592,77 +592,77 @@ void THW::ConfigureRom()
                 case SPECCY16:
                         spectrum.RAMBanks=1;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP16, machine.CurRom);
+						if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") _tcscpy(emulator.ROMZXCF, machine.CurRom);
+						else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") _tcscpy(emulator.ROMZX8BIT, machine.CurRom);
+						else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") _tcscpy(emulator.ROMZX16BIT, machine.CurRom);
+						else _tcscpy(emulator.ROMSP16, machine.CurRom);
                         break;
 
                 case SPECCY48:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP48, machine.CurRom);
+						if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") _tcscpy(emulator.ROMZXCF, machine.CurRom);
+						else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") _tcscpy(emulator.ROMZX8BIT, machine.CurRom);
+						else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") _tcscpy(emulator.ROMZX16BIT, machine.CurRom);
+						else _tcscpy(emulator.ROMSP48, machine.CurRom);
                         break;
 
                 case SPECCYPLUS:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSPP, machine.CurRom);
+						if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") _tcscpy(emulator.ROMZXCF, machine.CurRom);
+						else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") _tcscpy(emulator.ROMZX8BIT, machine.CurRom);
+						else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") _tcscpy(emulator.ROMZX16BIT, machine.CurRom);
+						else _tcscpy(emulator.ROMSPP, machine.CurRom);
                         break;
 
                 case SPECCYTC2048:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMTC2048, machine.CurRom);
+						_tcscpy(emulator.ROMTC2048, machine.CurRom);
                         break;
 
                 case SPECCYTC2068:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMTC2068, machine.CurRom);
+						_tcscpy(emulator.ROMTC2068, machine.CurRom);
                         break;
 
                 case SPECCYTS2068:
                         spectrum.RAMBanks=3;
                         spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMTS2068, machine.CurRom);
+						_tcscpy(emulator.ROMTS2068, machine.CurRom);
                         break;
 
-                case SPECCY128:
+				case SPECCY128:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP128, machine.CurRom);
+						if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik CF") _tcscpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 8-Bit") _tcscpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Pera Putnik 16-Bit") _tcscpy(emulator.ROMZX16BIT, machine.CurRom);
+                        else _tcscpy(emulator.ROMSP128, machine.CurRom);
                         break;
 
                 case SPECCYPLUS2:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
-                        strcpy(emulator.ROMSPP2, machine.CurRom);
+                        _tcscpy(emulator.ROMSPP2, machine.CurRom);
                         break;
 
                 case SPECCYPLUS2A:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
                         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
-                                strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        else strcpy(emulator.ROMSPP2A, machine.CurRom);
+                                _tcscpy(emulator.ROMSPP3E, machine.CurRom);
+                        else _tcscpy(emulator.ROMSPP2A, machine.CurRom);
                         break;
 
                 case SPECCYPLUS3:
                         spectrum.RAMBanks=8;
                         spectrum.ROMBanks=1;
                         if (IDEBox->Items->Strings[IDEBox->ItemIndex]=="Simple +3e 8-Bit")
-                                strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        else strcpy(emulator.ROMSPP3, machine.CurRom);
+                                _tcscpy(emulator.ROMSPP3E, machine.CurRom);
+                        else _tcscpy(emulator.ROMSPP3, machine.CurRom);
                         break;
                 }
                 break;
@@ -700,35 +700,35 @@ void THW::ConfigureBasicLister()
 
         Form1->BasicListerOption->Enabled = false;
         
-        if (!strcmp(machine.CurRom, "zx80.rom"))
+		if (!_tcscmp(machine.CurRom, _TEXT("zx80.rom")))
         {
                 BasicLister->SetBasicLister(new zx80BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
-                 !strcmp(machine.CurRom, "zx81.edition2.rom") ||
-                 !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                 !strcmp(machine.CurRom, "ts1500.rom") ||
-                 !strcmp(machine.CurRom, "tk85.rom"))
+		else if (!_tcscmp(machine.CurRom, _TEXT("zx81.edition1.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("zx81.edition2.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("zx81.edition3.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("ts1500.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("tk85.rom")))
         {
                 BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spectrum48.rom") ||
-                 !strcmp(machine.CurRom, "spectrum48.spanish.rom"))
-        {
-                BasicLister->SetBasicLister(new spec48BasicLister());
-                Form1->BasicListerOption->Enabled = true;
-        }
-        else if (!strcmp(machine.CurRom, "spectrum128.rom") ||
-                 !strcmp(machine.CurRom, "spectrum128.spanish.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+2.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-0.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-1.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+2.french.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+2.spanish.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-0.spanish.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-1.spanish.rom"))
+		else if (!_tcscmp(machine.CurRom, _TEXT("spectrum48.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum48.spanish.rom")))
+		{
+				BasicLister->SetBasicLister(new spec48BasicLister());
+				Form1->BasicListerOption->Enabled = true;
+		}
+		else if (!_tcscmp(machine.CurRom, _TEXT("spectrum128.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum128.spanish.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+2.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+3.version4-0.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+3.version4-1.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+2.french.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+2.spanish.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+3.version4-0.spanish.rom")) ||
+				 !_tcscmp(machine.CurRom, _TEXT("spectrum+3.version4-1.spanish.rom")))
         {
                 BasicLister->SetBasicLister(new spec128BasicLister());
                 Form1->BasicListerOption->Enabled = true;
@@ -808,12 +808,12 @@ void THW::ConfigureRomCartridge()
         {
                 RomCartridgeCapacity = 0;
                 RomCartridgeBox->ItemIndex = ROMCARTRIDGENONE;
-                LoadDock((char *)"");
-                *(emulator.romcartridgefilepath) = '\0';
+				LoadDock((_TCHAR *)_TEXT(""));
+				*(emulator.romcartridgefilepath) = '\0';
         }
         else
         {
-                AnsiString romCartridgeFilePath = RomCartridgeFileBox->Text;
+                String romCartridgeFilePath = RomCartridgeFileBox->Text;
 
                 if (romcartridge.type == ROMCARTRIDGESINCLAIR)
                 {
@@ -823,12 +823,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".rom";
                                         break;
                                 }
                         }
 
-                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        String path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = if2RomsFolder + romCartridgeFilePath;
@@ -842,12 +842,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".rom";
+                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".rom";
                                         break;
                                 }
                         }
 
-                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        String path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = ts1510RomsFolder + romCartridgeFilePath;
@@ -861,12 +861,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".dck";
+                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".dck";
                                         break;
                                 }
                         }
 
-                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        String path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = ts2068RomsFolder + romCartridgeFilePath;
@@ -880,12 +880,12 @@ void THW::ConfigureRomCartridge()
                         {
                                 if (romCartridgeFilePath == iter->Title)
                                 {
-                                        romCartridgeFilePath = AnsiString(emulator.cwd) + iter->Path + iter->Title + ".dck";
+                                        romCartridgeFilePath = String(emulator.cwd) + iter->Path + iter->Title + ".dck";
                                         break;
                                 }
                         }
 
-                        AnsiString path = FileNameGetPath(romCartridgeFilePath);
+                        String path = FileNameGetPath(romCartridgeFilePath);
                         if (path.Length() == 0)
                         {
                                 romCartridgeFilePath = tc2068RomsFolder + romCartridgeFilePath;
@@ -900,11 +900,11 @@ void THW::ConfigureRomCartridge()
                 }
                 else
                 {
-                        LoadDock((char *)"");
-                        loadSuccessful = LoadRomCartridgeFile(romCartridgeFilePath.c_str());
-                }
+						LoadDock((_TCHAR *)_TEXT(""));
+						loadSuccessful = LoadRomCartridgeFile(AnsiString(romCartridgeFilePath).c_str());
+				}
 
-                strcpy(emulator.romcartridgefilepath, romCartridgeFilePath.c_str());
+                _tcscpy(emulator.romcartridgefilepath, romCartridgeFilePath.c_str());
 
                 if (!loadSuccessful)
                 {
@@ -915,14 +915,14 @@ void THW::ConfigureRomCartridge()
                         mbstowcs(temp, msg.str().c_str(),256);
                         Application->MessageBox(temp, L"Error", MB_OK | MB_ICONERROR);
 
-                        LoadDock((char *)"");
-                }
+						LoadDock((_TCHAR *)_TEXT(""));
+				}
 
                 ResetRequired=true;
         }
 }
 
-int THW::DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel)
+int THW::DetermineRomCartridgeType(String cartridgeText, int machine, int spectrumModel)
 {
         int cartridgeType;
 
@@ -1308,12 +1308,12 @@ void THW::ConfigureMachineSettings()
         }
 }
 
-AnsiString THW::DetermineRomBase()
+String THW::DetermineRomBase()
 {
-        AnsiString romBase = emulator.cwd;
+        String romBase = emulator.cwd;
         romBase += romsFolder;
 
-        AnsiString rom = machine.CurRom;
+        String rom = machine.CurRom;
 
         if (!FileExists(rom))
         {
@@ -1328,18 +1328,18 @@ AnsiString THW::DetermineRomBase()
         return romBase;
 }
 
-void THW::ConfigureSymbolFile(AnsiString romBase)
+void THW::ConfigureSymbolFile(String romBase)
 {
-        AnsiString sym = romBase;
+        String sym = romBase;
         sym += ChangeFileExt(machine.CurRom, ".sym");
         symbolstore::reset();
-        symbolstore::loadROMSymbols(sym.c_str());
+        symbolstore::loadROMSymbols(AnsiString(sym).c_str());
         SymbolBrowser->RefreshContent();
 }
 
-void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
+void THW::ConfigureCharacterBitmapFile(String romBase)
 {
-        AnsiString bmp = romBase;
+        String bmp = romBase;
         bmp += ChangeFileExt(machine.CurRom, ".bmp");
         delete (Graphics::TBitmap*)machine.cset;
         machine.cset = NULL;
@@ -1408,9 +1408,9 @@ void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
         }
 }
 
-AnsiString THW::DirectSoundError(unsigned int errorCode)
+String THW::DirectSoundError(unsigned int errorCode)
 {
-        AnsiString errorText;
+        String errorText;
         switch (errorCode)
         {
         case 0x8878000A:
@@ -1429,7 +1429,7 @@ AnsiString THW::DirectSoundError(unsigned int errorCode)
                 errorText = "DSERR_OUTOFMEMORY:\n\nThe DirectSound subsystem could not allocate sufficient memory to complete the caller's request.";
                 break;
         default:
-                errorText = "0x" + AnsiString::IntToHex(errorCode, 8);
+                errorText = "0x" + String::IntToHex(errorCode, 8);
                 break;
         }
 
@@ -1483,7 +1483,7 @@ void THW::ResetDisplaySize()
 //---------------------------------------------------------------------------
 void THW::SetZX80Icon()
 {
-        AnsiString romName;
+        String romName;
 
         if (ZX80Btn->Down)
         {
@@ -1494,7 +1494,7 @@ void THW::SetZX80Icon()
                 romName = emulator.ROM80;
         }
 
-        AnsiString romRoot = LowerCase(getMachineRoot(romName));
+        String romRoot = LowerCase(getMachineRoot(romName));
         Graphics::TBitmap* zx80Icon = new Graphics::TBitmap;
         int iconIndex = (romRoot== "zx81" || romRoot == "ts1500") ? 1 : 0;
         ZX80Icons->GetBitmap(iconIndex, zx80Icon);
@@ -1503,7 +1503,7 @@ void THW::SetZX80Icon()
 //---------------------------------------------------------------------------
 void THW::SetSpectrum128Icon()
 {
-        AnsiString romName;
+        String romName;
 
         if (Spec128Btn->Down)
         {
@@ -1523,7 +1523,7 @@ void THW::SetSpectrum128Icon()
 void THW::SetupForZX81(void)
 {
         int i;
-        AnsiString OldIDE, OldFloppy;
+        String OldIDE, OldFloppy;
 
         ZX80Btn->Down=false;
         ZX81Btn->Down=false;
@@ -1687,7 +1687,7 @@ void THW::SetZXpandState(bool checked, bool enabled)
 
 void THW::SetupForSpectrum(void)
 {
-        AnsiString OldIDE,OldFDC;
+        String OldIDE,OldFDC;
         int i;
 
         ZX80Btn->Down=false;
@@ -1859,7 +1859,7 @@ void THW::SetupForSpectrum(void)
 
 void THW::SetupForQL(void)
 {
-        AnsiString OldIDE;
+        String OldIDE;
         int i;
 
         FloatingPointHardwareFix->Enabled = false;
@@ -1969,7 +1969,7 @@ void THW::SetupForQL(void)
         for(i=0;i<IDEBox->Items->Count;i++)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
 
-        AnsiString OldFDC=FDC->Items->Strings[FDC->ItemIndex];
+        String OldFDC=FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
         FDC->Items->Strings[0]="None";
         FDC->Items->Add("ZX Interface 1");
@@ -2051,7 +2051,7 @@ void THW::DisplayTotalRam()
                 int ramPack = _wtoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
-        AnsiString ramSize = totalRam;
+        String ramSize = totalRam;
         LabelTotalRAM->Caption = "Total RAM: " + ramSize + "K";
 }
 //---------------------------------------------------------------------------
@@ -2760,9 +2760,9 @@ void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void THW::SaveSettings(TIniFile *ini)
 {
-        AnsiString Rom;
+        String Rom;
         FILE *f;
-        char FileName[256];
+		_TCHAR FileName[256];
 
         ini->WriteInteger("HWARE","Top",Top);
         ini->WriteInteger("HWARE","Left",Left);
@@ -2876,33 +2876,33 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=emulator.ROMZX16BIT; ini->WriteString("HWARE","ZX16BIT",Rom);
         Rom=emulator.ROMZXCF; ini->WriteString("HWARE","ZXCF",Rom);
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "divide.nv");
+        _tcscpy(FileName, emulator.cwd);
+		_tcscat(FileName, nvMemoryFolder);
+		_tcscat(FileName, _TEXT("divide.nv"));
 
-        f=fopen(FileName,"wb");
+		f=_tfopen(FileName,_TEXT("wb"));
         if (f)
         {
-                fwrite(divIDEMem, 8192, 1, f);
+				fwrite(divIDEMem, 8192, 1, f);
                 fclose(f);
         }
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zxcf.nv");
+        _tcscpy(FileName, emulator.cwd);
+        _tcscat(FileName, nvMemoryFolder);
+		_tcscat(FileName, _TEXT("zxcf.nv"));
 
-        f=fopen(FileName,"wb");
+		f=_tfopen(FileName,_TEXT("wb"));
         if (f)
         {
                 fwrite(ZXCFMem, 64, 16384, f);
                 fclose(f);
         }
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zx1541.nv");
+        _tcscpy(FileName, emulator.cwd);
+        _tcscat(FileName, nvMemoryFolder);
+		_tcscat(FileName, _TEXT("zx1541.nv"));
 
-        f=fopen(FileName,"wb");
+		f=_tfopen(FileName,_TEXT("wb"));
         if (f)
         {
                 fwrite(ZX1541Mem, 1, 8192, f);
@@ -2912,38 +2912,38 @@ void THW::SaveSettings(TIniFile *ini)
 
 void THW::LoadSettings(TIniFile *ini)
 {
-        AnsiString Rom;
-        char FileName[256];
+        String Rom;
+        _TCHAR FileName[256];
         FILE *f;
 
         Top=ini->ReadInteger("HWARE","Top",Top);
         Left=ini->ReadInteger("HWARE","Left",Left);
 
-        Rom=emulator.ROM80; Rom=ini->ReadString("HWARE","ROM80",Rom).LowerCase(); strcpy(emulator.ROM80, Rom.c_str());
-        Rom=emulator.ROM81; Rom=ini->ReadString("HWARE","ROM81",Rom).LowerCase(); strcpy(emulator.ROM81, Rom.c_str());
-        Rom=emulator.ROMACE; Rom=ini->ReadString("HWARE","ROMACE",Rom).LowerCase(); strcpy(emulator.ROMACE, Rom.c_str());
-        Rom=emulator.ROMTS1000; Rom=ini->ReadString("HWARE","ROMTS1000",Rom).LowerCase(); strcpy(emulator.ROMTS1000, Rom.c_str());
-        Rom=emulator.ROMTS1500; Rom=ini->ReadString("HWARE","ROMTS1500",Rom).LowerCase(); strcpy(emulator.ROMTS1500, Rom.c_str());
-        Rom=emulator.ROMTC2048; Rom=ini->ReadString("HWARE","ROMTC2048",Rom).LowerCase(); strcpy(emulator.ROMTC2048, Rom.c_str());
-        Rom=emulator.ROMTC2068; Rom=ini->ReadString("HWARE","ROMTC2068",Rom).LowerCase(); strcpy(emulator.ROMTC2068, Rom.c_str());
-        Rom=emulator.ROMTS2068; Rom=ini->ReadString("HWARE","ROMTS2068",Rom).LowerCase(); strcpy(emulator.ROMTS2068, Rom.c_str());
-        Rom=emulator.ROMLAMBDA; Rom=ini->ReadString("HWARE","ROMLAMBDA",Rom).LowerCase(); strcpy(emulator.ROMLAMBDA, Rom.c_str());
-        Rom=emulator.ROMTK85; Rom=ini->ReadString("HWARE","ROMTK85",Rom).LowerCase(); strcpy(emulator.ROMTK85, Rom.c_str());
-        Rom=emulator.ROM97LE; Rom=ini->ReadString("HWARE","ROM97LE",Rom).LowerCase(); strcpy(emulator.ROM97LE, Rom.c_str());
-        Rom=emulator.ROMR470; Rom=ini->ReadString("HWARE","ROMR470",Rom).LowerCase(); strcpy(emulator.ROMR470, Rom.c_str());
-        Rom=emulator.ROMSP16; Rom=ini->ReadString("HWARE","ROMSP16",Rom).LowerCase(); strcpy(emulator.ROMSP16, Rom.c_str());
-        Rom=emulator.ROMSP48; Rom=ini->ReadString("HWARE","ROMSP48",Rom).LowerCase(); strcpy(emulator.ROMSP48, Rom.c_str());
-        Rom=emulator.ROMSPP; Rom=ini->ReadString("HWARE","ROMSPP",Rom).LowerCase(); strcpy(emulator.ROMSPP, Rom.c_str());
-        Rom=emulator.ROMSP128; Rom=ini->ReadString("HWARE","ROMSP128",Rom).LowerCase(); strcpy(emulator.ROMSP128, Rom.c_str());
-        Rom=emulator.ROMSPP2; Rom=ini->ReadString("HWARE","ROMSPP2",Rom).LowerCase(); strcpy(emulator.ROMSPP2, Rom.c_str());
-        Rom=emulator.ROMSPP2A; Rom=ini->ReadString("HWARE","ROMSPP2A",Rom).LowerCase(); strcpy(emulator.ROMSPP2A, Rom.c_str());
-        Rom=emulator.ROMSPP3; Rom=ini->ReadString("HWARE","ROMSPP3",Rom).LowerCase(); strcpy(emulator.ROMSPP3, Rom.c_str());
-        Rom=emulator.ROMSPP3E; Rom=ini->ReadString("HWARE","ROMSPP3E",Rom).LowerCase(); strcpy(emulator.ROMSPP3E, Rom.c_str());
-        Rom=emulator.ROMDock; Rom=ini->ReadString("HWARE","Dock",Rom).LowerCase(); strcpy(emulator.ROMDock, Rom.c_str());
-        Rom=emulator.ROMZX8BIT; Rom=ini->ReadString("HWARE","ZX8BIT",Rom).LowerCase(); strcpy(emulator.ROMZX8BIT, Rom.c_str());
-        Rom=emulator.ROMZX16BIT; Rom=ini->ReadString("HWARE","ZX16BIT",Rom).LowerCase(); strcpy(emulator.ROMZX16BIT, Rom.c_str());
-        Rom=emulator.ROMZXCF; Rom=ini->ReadString("HWARE","ZXCF",Rom).LowerCase(); strcpy(emulator.ROMZXCF, Rom.c_str());
-        Rom=emulator.ROMQL; Rom=ini->ReadString("HWARE","ROMQL",Rom).LowerCase(); strcpy(emulator.ROMQL, Rom.c_str());
+        Rom=emulator.ROM80; Rom=ini->ReadString("HWARE","ROM80",Rom).LowerCase(); _tcscpy(emulator.ROM80, Rom.c_str());
+        Rom=emulator.ROM81; Rom=ini->ReadString("HWARE","ROM81",Rom).LowerCase(); _tcscpy(emulator.ROM81, Rom.c_str());
+        Rom=emulator.ROMACE; Rom=ini->ReadString("HWARE","ROMACE",Rom).LowerCase(); _tcscpy(emulator.ROMACE, Rom.c_str());
+        Rom=emulator.ROMTS1000; Rom=ini->ReadString("HWARE","ROMTS1000",Rom).LowerCase(); _tcscpy(emulator.ROMTS1000, Rom.c_str());
+        Rom=emulator.ROMTS1500; Rom=ini->ReadString("HWARE","ROMTS1500",Rom).LowerCase(); _tcscpy(emulator.ROMTS1500, Rom.c_str());
+        Rom=emulator.ROMTC2048; Rom=ini->ReadString("HWARE","ROMTC2048",Rom).LowerCase(); _tcscpy(emulator.ROMTC2048, Rom.c_str());
+        Rom=emulator.ROMTC2068; Rom=ini->ReadString("HWARE","ROMTC2068",Rom).LowerCase(); _tcscpy(emulator.ROMTC2068, Rom.c_str());
+        Rom=emulator.ROMTS2068; Rom=ini->ReadString("HWARE","ROMTS2068",Rom).LowerCase(); _tcscpy(emulator.ROMTS2068, Rom.c_str());
+        Rom=emulator.ROMLAMBDA; Rom=ini->ReadString("HWARE","ROMLAMBDA",Rom).LowerCase(); _tcscpy(emulator.ROMLAMBDA, Rom.c_str());
+        Rom=emulator.ROMTK85; Rom=ini->ReadString("HWARE","ROMTK85",Rom).LowerCase(); _tcscpy(emulator.ROMTK85, Rom.c_str());
+        Rom=emulator.ROM97LE; Rom=ini->ReadString("HWARE","ROM97LE",Rom).LowerCase(); _tcscpy(emulator.ROM97LE, Rom.c_str());
+        Rom=emulator.ROMR470; Rom=ini->ReadString("HWARE","ROMR470",Rom).LowerCase(); _tcscpy(emulator.ROMR470, Rom.c_str());
+        Rom=emulator.ROMSP16; Rom=ini->ReadString("HWARE","ROMSP16",Rom).LowerCase(); _tcscpy(emulator.ROMSP16, Rom.c_str());
+        Rom=emulator.ROMSP48; Rom=ini->ReadString("HWARE","ROMSP48",Rom).LowerCase(); _tcscpy(emulator.ROMSP48, Rom.c_str());
+        Rom=emulator.ROMSPP; Rom=ini->ReadString("HWARE","ROMSPP",Rom).LowerCase(); _tcscpy(emulator.ROMSPP, Rom.c_str());
+        Rom=emulator.ROMSP128; Rom=ini->ReadString("HWARE","ROMSP128",Rom).LowerCase(); _tcscpy(emulator.ROMSP128, Rom.c_str());
+        Rom=emulator.ROMSPP2; Rom=ini->ReadString("HWARE","ROMSPP2",Rom).LowerCase(); _tcscpy(emulator.ROMSPP2, Rom.c_str());
+        Rom=emulator.ROMSPP2A; Rom=ini->ReadString("HWARE","ROMSPP2A",Rom).LowerCase(); _tcscpy(emulator.ROMSPP2A, Rom.c_str());
+        Rom=emulator.ROMSPP3; Rom=ini->ReadString("HWARE","ROMSPP3",Rom).LowerCase(); _tcscpy(emulator.ROMSPP3, Rom.c_str());
+        Rom=emulator.ROMSPP3E; Rom=ini->ReadString("HWARE","ROMSPP3E",Rom).LowerCase(); _tcscpy(emulator.ROMSPP3E, Rom.c_str());
+        Rom=emulator.ROMDock; Rom=ini->ReadString("HWARE","Dock",Rom).LowerCase(); _tcscpy(emulator.ROMDock, Rom.c_str());
+        Rom=emulator.ROMZX8BIT; Rom=ini->ReadString("HWARE","ZX8BIT",Rom).LowerCase(); _tcscpy(emulator.ROMZX8BIT, Rom.c_str());
+        Rom=emulator.ROMZX16BIT; Rom=ini->ReadString("HWARE","ZX16BIT",Rom).LowerCase(); _tcscpy(emulator.ROMZX16BIT, Rom.c_str());
+        Rom=emulator.ROMZXCF; Rom=ini->ReadString("HWARE","ZXCF",Rom).LowerCase(); _tcscpy(emulator.ROMZXCF, Rom.c_str());
+        Rom=emulator.ROMQL; Rom=ini->ReadString("HWARE","ROMQL",Rom).LowerCase(); _tcscpy(emulator.ROMQL, Rom.c_str());
 
         if (ini->ReadBool("HWARE","ZX80",ZX80Btn->Down)) ZX80BtnClick(NULL);
         if (ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)) ZX81BtnClick(NULL);
@@ -2992,12 +2992,12 @@ void THW::LoadSettings(TIniFile *ini)
         Autoboot->Checked=ini->ReadBool("HWARE","Autoboot",Autoboot->Checked);
 
         Rom=ini->ReadString("DRIVES","DriveA", spectrum.driveaimg);
-        strcpy(spectrum.driveaimg, Rom.c_str());
+		_tcscpy(spectrum.driveaimg, Rom.c_str());
         Rom=ini->ReadString("DRIVES","DriveB", spectrum.drivebimg);
-        strcpy(spectrum.drivebimg, Rom.c_str());
+        _tcscpy(spectrum.drivebimg, Rom.c_str());
 
         Rom=ini->ReadString("DRIVES","HD0", "NULL");
-        if (Rom!="NULL") ATA_LoadHDF(0,Rom.c_str());
+		if (Rom!="NULL") ATA_LoadHDF(0,Rom.c_str());
         Rom=ini->ReadString("DRIVES","HD1", "NULL");
         if (Rom!="NULL") ATA_LoadHDF(1,Rom.c_str());
 
@@ -3047,34 +3047,34 @@ void THW::LoadSettings(TIniFile *ini)
         uSpeech->Checked=ini->ReadBool("HWARE","uSpeech",uSpeech->Checked);
         uSource->Checked=ini->ReadBool("HWARE","uSource",uSource->Checked);
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zxcf.nv");
+        _tcscpy(FileName, emulator.cwd);
+        _tcscat(FileName, nvMemoryFolder);
+		_tcscat(FileName, _TEXT("zxcf.nv"));
 
-        f=fopen(FileName,"rb");
+		f=_tfopen(FileName,_TEXT("rb"));
         if (f)
         {
                 fread(ZXCFMem, 64, 16384, f);
                 fclose(f);
         }
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "divide.nv");
+        _tcscpy(FileName, emulator.cwd);
+        _tcscat(FileName, nvMemoryFolder);
+		_tcscat(FileName, _TEXT("divide.nv"));
 
-        f=fopen(FileName,"rb");
+		f=_tfopen(FileName,_TEXT("rb"));
         if (f)
         {
                 fread(divIDEMem, 64, 16384, f);
                 fclose(f);
         }
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zx1541.nv");
+        _tcscpy(FileName, emulator.cwd);
+        _tcscat(FileName, nvMemoryFolder);
+		_tcscat(FileName, _TEXT("zx1541.nv"));
 
-        f=fopen(FileName,"rb");
-        if (f)
+        f=_tfopen(FileName,_TEXT("rb"));
+		if (f)
         {
                 fread(ZX1541Mem, 1, 8192, f);
                 fclose(f);
@@ -3083,8 +3083,8 @@ void THW::LoadSettings(TIniFile *ini)
 
 void __fastcall THW::BrowseROMClick(TObject *Sender)
 {
-        AnsiString Path;
-        char cPath[512];
+        String Path;
+        _TCHAR cPath[512];
 
         Path = emulator.cwd;
         Path += romsFolder;
@@ -3101,9 +3101,9 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
                 return;
         }
         
-        AnsiString selectedRomPath = FileNameGetPath(RomSelect->FileName);
+        String selectedRomPath = FileNameGetPath(RomSelect->FileName);
 
-        strcpy(cPath, Path.c_str());
+        _tcscpy(cPath, Path.c_str());
         if (Path == selectedRomPath)
         {
                 Path=RomSelect->FileName;
@@ -3352,8 +3352,8 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
 void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 {
-        AnsiString Path;
-        char cPath[512];
+        String Path;
+        _TCHAR cPath[512];
 
         Path = emulator.cwd;
 
@@ -3386,9 +3386,9 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         }
         if (!RomSelect->Execute()) return;
 
-        AnsiString selectedRomPath = FileNameGetPath(RomSelect->FileName);
+        String selectedRomPath = FileNameGetPath(RomSelect->FileName);
 
-        strcpy(cPath, Path.c_str());
+		_tcscpy(cPath, Path.c_str());
         if (Path == selectedRomPath)
         {
                 Path=RomSelect->FileName;
@@ -3502,9 +3502,9 @@ extern char* zxpandSDCardFolderRoot;
 
 void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 {
-        AnsiString root(zxpandSDCardFolderRoot);
-        AnsiString replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
-        ShellExecute(Application->Handle,"OPEN","EXPLORER.EXE", replaced.c_str(), NULL, 1);
+        String root(zxpandSDCardFolderRoot);
+        String replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
+        ShellExecute(Application->Handle,_TEXT("OPEN"),_TEXT("EXPLORER.EXE"), replaced.c_str(), NULL, 1);
 }
 //---------------------------------------------------------------------------
 
@@ -3579,9 +3579,9 @@ void THW::PopulateRomCartridgeSinclairList()
         }
 }
 //---------------------------------------------------------------------------
-void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, AnsiString fileExt)
+void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, String fileExt)
 {                                                  
-        AnsiString romPath = emulator.cwd;
+        String romPath = emulator.cwd;
         romPath += romCartridgeEntry->Path;
         romPath += romCartridgeEntry->Title;
         romPath += fileExt;
@@ -3595,9 +3595,9 @@ void THW::AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry*
 
 void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
 {
-        AnsiString path = emulator.cwd;
+        String path = emulator.cwd;
 
-        ShellExecute(0, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
+        ShellExecute(0, _TEXT("open"), _TEXT("Notepad.exe"), _TEXT("ZXpand readme.txt"), path.c_str(), SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------
 

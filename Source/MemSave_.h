@@ -51,7 +51,7 @@ public:		// User declarations
         __fastcall TMemSave(TComponent* Owner);
         void SaveMem(void);
         void LoadMem(void);
-        int Hex2Dec(AnsiString num);
+        int Hex2Dec(String num);
 
 };
 //---------------------------------------------------------------------------

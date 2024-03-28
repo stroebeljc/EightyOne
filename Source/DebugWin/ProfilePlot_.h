@@ -27,7 +27,7 @@ private:	// User declarations
         
 public:		// User declarations
         __fastcall TProfilePlot(TComponent* Owner);
-        void __fastcall PlotTGraph(class ProfileDetail* pd, AnsiString caption);
+        void __fastcall PlotTGraph(class ProfileDetail* pd, String caption);
         void ShowLast();
 };
 //---------------------------------------------------------------------------

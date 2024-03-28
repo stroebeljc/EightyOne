@@ -136,17 +136,17 @@ void symbolstore::reset(void)
 static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v,
         symbolstore::SYMBOLSPLITTER splitter)
 {
-        FILE* symfile = fopen(filename, "r");
-        if (!symfile)
-        {
-                return false;
-        }
+		FILE* symfile = fopen(filename, "r");
+		if (!symfile)
+		{
+				return false;
+		}
 
-        char buf[128];
-        AnsiString sym, val;
+		char buf[128];
+		AnsiString sym, val;
 
-        while(fgets(buf, 128, symfile))
-        {
+		while(fgets(buf, 128, symfile))
+		{
                 if (!splitter(buf, sym, val))
                 {
                         continue;
@@ -170,7 +170,7 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v,
 bool symbolstore::loadROMSymbols(const char* filename)
 {
         clearROMSymbols();
-        return loadSymbols(filename, romV2S, romS2V, symSplitter);
+		return loadSymbols(filename, romV2S, romS2V, symSplitter);
 }
 
 bool symbolstore::loadSymFileSymbols(const char* filename)
@@ -185,7 +185,7 @@ bool symbolstore::loadZ88FileSymbols(const char* filename)
         return loadSymbols(filename, fileV2S, fileS2V, z88Splitter);
 }
 
-bool symbolstore::addressToSymbol(const int addr, AnsiString& result)
+bool symbolstore::addressToSymbol(const int addr, String& result)
 {
         if (addr == 0) return false;  // zero is always 0
 
@@ -206,13 +206,13 @@ bool symbolstore::addressToSymbol(const int addr, AnsiString& result)
         return false;
 }
 
-AnsiString symbolstore::addressToSymbolOrHex(const int addr)
+String symbolstore::addressToSymbolOrHex(const int addr)
 {
-        AnsiString temp;
+        String temp;
         if (!addressToSymbol(addr, temp))
         {
                 temp = temp.IntToHex(addr,4);
-                int len = strlen(temp.c_str());
+                int len = _tcslen(temp.c_str());
                 int delLen = len < 4 ? 0 : len - 4; 
                 temp = "$" + temp.Delete(1, delLen);
         }
@@ -222,7 +222,7 @@ AnsiString symbolstore::addressToSymbolOrHex(const int addr)
 
 // NUNS! REVERSE!
 //
-bool symbolstore::symbolToAddress(const AnsiString& sym, int& val)
+bool symbolstore::symbolToAddress(const String& sym, int& val)
 {
         SYM2VAL::iterator it = fileS2V.find(sym);
         if (it != fileS2V.end())
@@ -253,7 +253,7 @@ void symbolstore::beginenumeration(void)
         type = 'r';
 }
 
-bool symbolstore::enumerate(AnsiString& sym, int& val, char& storetype)
+bool symbolstore::enumerate(String& sym, int& val, char& storetype)
 {
         if (nasty == romS2V.end())
         {

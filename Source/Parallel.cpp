@@ -63,12 +63,12 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
                 break;
 
         default:
-                AnsiString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+                String Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
                 if (Port.SubString(1,3)=="LPT")
                 {
                         Port=PORTFILE;
-                        OutFile=fopen(Port.c_str(), "wb");
+                        OutFile=_tfopen(Port.c_str(), _TEXT("wb"));
                 }
                 else
                 {
@@ -124,7 +124,7 @@ void __fastcall TParallelPort::OKClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TParallelPort::ComPortListChange(TObject *Sender)
 {
-        AnsiString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+        String Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
         PortPanel->Visible=false;
         TCPPanel->Visible=false;

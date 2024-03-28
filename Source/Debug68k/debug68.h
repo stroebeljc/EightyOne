@@ -64,7 +64,7 @@ __published:	// IDE-managed Components
         void __fastcall SingleStepClick(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
-        AnsiString Hex32(int val);
+        String Hex32(int val);
 public:		// User declarations
         __fastcall TDebug68k(TComponent* Owner);
         void UpdateVals(void);

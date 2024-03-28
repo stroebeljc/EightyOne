@@ -42,13 +42,13 @@ __published:	// IDE-managed Components
         void __fastcall OKClick(TObject *Sender);
 private:	// User declarations
         void ValueChanged(void);
-        AnsiString ConvertValue(long Val);
+        String ConvertValue(long Val);
         void EnableAll(void);
         void DisableAll(void);
         void WriteWord(unsigned char *base, int WordNo, int Value);
 public:		// User declarations
         __fastcall TCreateHDF(TComponent* Owner);
-        AnsiString FileName;
+        String FileName;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TCreateHDF *CreateHDF;

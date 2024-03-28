@@ -278,7 +278,7 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
 
         Breakpoint[Breakpoints] = bp;
 
-        AnsiString str = GetBreakpointText(&bp);
+        String str = GetBreakpointText(&bp);
 
         BPList->Rows[Breakpoints]->Text = str;
 
@@ -292,9 +292,9 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         return true;
 }
 
-AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
+String TDbg::GetBreakpointText(breakpoint* const bp)
 {
-        AnsiString str;
+        String str;
                         
         switch (bp->Type)
         {
@@ -370,53 +370,53 @@ AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
         return str;
 }
 
-static AnsiString GetConditionAddr(BreakpointCondition condition)
+static String GetConditionAddr(BreakpointCondition condition)
 {
-        const AnsiString conditions[] = { " = ", " <>", " <=", " >=", " ->", " @ " };
+        const String conditions[] = { " = ", " <>", " <=", " >=", " ->", " @ " };
 
         return conditions[condition];
 }
 
-static AnsiString GetConditionValue(BreakpointCondition condition)
+static String GetConditionValue(BreakpointCondition condition)
 {
-        const AnsiString conditions[] = { " = ", " <>", " <=", " >=", "..." };
+        const String conditions[] = { " = ", " <>", " <=", " >=", "..." };
 
         return conditions[condition];
 }
 
-AnsiString TDbg::ConstructTStatesBreakpointText(breakpoint* const bp)
+String TDbg::ConstructTStatesBreakpointText(breakpoint* const bp)
 {
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString str = "CYC" + ca + "$" + Hex16(bp->Addr) + " <>" + bp->TStates;
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String str = "CYC" + ca + "$" + Hex16(bp->Addr) + " <>" + bp->TStates;
         return str;
 }
 
-static AnsiString Pad(AnsiString string)
+static String Pad(String string)
 {
-        AnsiString paddedString = string + "    ";
+        String paddedString = string + "    ";
         return paddedString.SubString(1, 5);
 }
 
-AnsiString TDbg::ConstructFlagBreakpointText(breakpoint* const bp)
+String TDbg::ConstructFlagBreakpointText(breakpoint* const bp)
 {
-        AnsiString FlagNames[] = {"C", "N", "P/V", "Bit3", "H", "Bit5", "Z", "S"};
+        String FlagNames[] = {"C", "N", "P/V", "Bit3", "H", "Bit5", "Z", "S"};
 
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString cv = GetConditionValue(bp->ConditionValue);
-        AnsiString str = "FLG" + ca + Pad(FlagNames[bp->FlagId]) + cv + bp->Value;
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String cv = GetConditionValue(bp->ConditionValue);
+        String str = "FLG" + ca + Pad(FlagNames[bp->FlagId]) + cv + bp->Value;
 
         return str;
 }
 
-AnsiString TDbg::ConstructRegisterBreakpointText(breakpoint* const bp)
+String TDbg::ConstructRegisterBreakpointText(breakpoint* const bp)
 {
-        AnsiString RegisterNames[] = {"BC", "DE", "HL", "IX", "IY", "PC", "SP", "BC'", "DE'", "HL'",
+        String RegisterNames[] = {"BC", "DE", "HL", "IX", "IY", "PC", "SP", "BC'", "DE'", "HL'",
                                       "A", "B", "C", "D", "E", "H", "L", "I", "R", "IXh", "IXl", "IYh", "IYl",
                                       "A'", "B'", "C'", "D'", "E'", "H'", "L'"};
 
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString cv = GetConditionValue(bp->ConditionValue);
-        AnsiString str = "REG" + ca + Pad(RegisterNames[bp->RegisterId]) + cv + "$";
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String cv = GetConditionValue(bp->ConditionValue);
+        String str = "REG" + ca + Pad(RegisterNames[bp->RegisterId]) + cv + "$";
         if (bp->RegisterId >= RegA)
         {
                 str += Hex8(bp->Value);
@@ -429,26 +429,26 @@ AnsiString TDbg::ConstructRegisterBreakpointText(breakpoint* const bp)
         return str;
 }
 
-AnsiString TDbg::ConstructLowIOBreakpointText(AnsiString type, breakpoint* const bp)
+String TDbg::ConstructLowIOBreakpointText(String type, breakpoint* const bp)
 {
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString cv = GetConditionValue(bp->ConditionValue);
-        AnsiString str = type + ca + "$xx" + Hex8(bp->Addr) + cv + "$" + Hex8(bp->Value);
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String cv = GetConditionValue(bp->ConditionValue);
+        String str = type + ca + "$xx" + Hex8(bp->Addr) + cv + "$" + Hex8(bp->Value);
         return str;
 }
 
-AnsiString TDbg::ConstructHighIOBreakpointText(AnsiString type, breakpoint* const bp)
+String TDbg::ConstructHighIOBreakpointText(String type, breakpoint* const bp)
 {
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString cv = GetConditionValue(bp->ConditionValue);
-        AnsiString str = type + ca + "$" + Hex8(bp->Addr >> 8) + "xx" + cv + "$" + Hex8(bp->Value);
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String cv = GetConditionValue(bp->ConditionValue);
+        String str = type + ca + "$" + Hex8(bp->Addr >> 8) + "xx" + cv + "$" + Hex8(bp->Value);
         return str;
 }
 
-AnsiString TDbg::ConstructRdWrInOutMemBreakpointText(AnsiString type, breakpoint* const bp)
+String TDbg::ConstructRdWrInOutMemBreakpointText(String type, breakpoint* const bp)
 {
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString str = type + ca + "$" + Hex16(bp->Addr);
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String str = type + ca + "$" + Hex16(bp->Addr);
 
         if (bp->ConditionAddr == Range)
         {
@@ -456,17 +456,17 @@ AnsiString TDbg::ConstructRdWrInOutMemBreakpointText(AnsiString type, breakpoint
         }
         else
         {
-                AnsiString cv = GetConditionValue(bp->ConditionValue);
+                String cv = GetConditionValue(bp->ConditionValue);
                 str += cv + "$" + Hex8(bp->Value);
         }
         
         return str;
 }
 
-AnsiString TDbg::ConstructExeBreakpointText(breakpoint* const bp)
+String TDbg::ConstructExeBreakpointText(breakpoint* const bp)
 {
-        AnsiString ca = GetConditionAddr(bp->ConditionAddr);
-        AnsiString str = "EXE" + ca + "$" + Hex16(bp->Addr);
+        String ca = GetConditionAddr(bp->ConditionAddr);
+        String str = "EXE" + ca + "$" + Hex16(bp->Addr);
 
         if (bp->ConditionAddr == Range)
         {
@@ -474,7 +474,7 @@ AnsiString TDbg::ConstructExeBreakpointText(breakpoint* const bp)
         }
         else
         {
-                AnsiString symbol;
+                String symbol;
                 if (symbolstore::addressToSymbol(bp->Addr, symbol))
                 {
                         str += " " + symbol;
@@ -880,7 +880,7 @@ void TDbg::DelTempBreakPoints(void)
                         DelBreakPoint(i);
 }
 //---------------------------------------------------------------------------
-int TDbg::Hex2Dec(AnsiString num)
+int TDbg::Hex2Dec(String num)
 {
         int val=0;
         int i;
@@ -895,17 +895,17 @@ int TDbg::Hex2Dec(AnsiString num)
         return(val);
 }
 //---------------------------------------------------------------------------
-AnsiString TDbg::Hex16(int Value)
+String TDbg::Hex16(int Value)
 {
-        return AnsiString::IntToHex(Value,4);
+        return String::IntToHex(Value,4);
 }
 //---------------------------------------------------------------------------
-AnsiString TDbg::Hex8(int Value)
+String TDbg::Hex8(int Value)
 {
-        return AnsiString::IntToHex(Value,2);
+        return String::IntToHex(Value,2);
 }
 //---------------------------------------------------------------------------
-AnsiString TDbg::Bin8(int Value)
+String TDbg::Bin8(int Value)
 {
         char arry[9] = {0};
         for (int i = 7; i >= 0; --i)
@@ -914,7 +914,7 @@ AnsiString TDbg::Bin8(int Value)
                 Value >>= 1;
         }
 
-        return AnsiString(arry);
+        return String(arry);
 }
 //---------------------------------------------------------------------------
 
@@ -926,11 +926,11 @@ void TDbg::SetLabelInfo(TLabel* label, int value, int valueWidth)
         label->Tag = value;
 
         // the caption is fairly standard
-        label->Caption = "$"+AnsiString::IntToHex(label->Tag, valueWidth);
+        label->Caption = "$"+String::IntToHex(label->Tag, valueWidth);
         if (valueWidth == 4)
         {
                 // ahaa!
-                AnsiString hint("");
+                String hint("");
 
                 // enable showHint if there is a symbol for the given 16bit value
                 label->ShowHint = symbolstore::addressToSymbol(label->Tag, hint);
@@ -1087,7 +1087,7 @@ void TDbg::UpdateVals(void)
         if (lastIOAccess[0].direction != IO_NONE)
         {
                 if (lastIOAccess[0].direction == IO_IN) IOPort0Direction->Caption = "IN"; else IOPort0Direction->Caption = "OUT";
-                IOPort0Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[0].address, 4);
+                IOPort0Address->Caption = "$"+String::IntToHex(lastIOAccess[0].address, 4);
                 IOPort0Data->Caption = "$"+Hex8(lastIOAccess[0].data);
 
                 IOPort0Address->PopupMenu = (lastIOAccess[0].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
@@ -1104,7 +1104,7 @@ void TDbg::UpdateVals(void)
         if (lastIOAccess[1].direction != IO_NONE)
         {
                 if (lastIOAccess[1].direction == IO_IN) IOPort1Direction->Caption = "IN"; else IOPort1Direction->Caption = "OUT";
-                IOPort1Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[1].address, 4);
+                IOPort1Address->Caption = "$"+String::IntToHex(lastIOAccess[1].address, 4);
                 IOPort1Data->Caption = "$"+Hex8(lastIOAccess[1].data);
 
                 IOPort1Address->PopupMenu = (lastIOAccess[1].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
@@ -1121,7 +1121,7 @@ void TDbg::UpdateVals(void)
         if (lastIOAccess[2].direction != IO_NONE)
         {
                 if (lastIOAccess[2].direction == IO_IN) IOPort2Direction->Caption = "IN"; else IOPort2Direction->Caption = "OUT";
-                IOPort2Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[2].address, 4);
+                IOPort2Address->Caption = "$"+String::IntToHex(lastIOAccess[2].address, 4);
                 IOPort2Data->Caption = "$"+Hex8(lastIOAccess[2].data);
 
                 IOPort2Address->PopupMenu = (lastIOAccess[2].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
@@ -1138,7 +1138,7 @@ void TDbg::UpdateVals(void)
         if (lastIOAccess[3].direction != IO_NONE)
         {
                 if (lastIOAccess[3].direction == IO_IN) IOPort3Direction->Caption = "IN"; else IOPort3Direction->Caption = "OUT";
-                IOPort3Address->Caption = "$"+AnsiString::IntToHex(lastIOAccess[3].address, 4);
+                IOPort3Address->Caption = "$"+String::IntToHex(lastIOAccess[3].address, 4);
                 IOPort3Data->Caption = "$"+Hex8(lastIOAccess[3].data);
 
                 IOPort3Address->PopupMenu = (lastIOAccess[3].direction == IO_IN) ? InputContextPopup : OutputContextPopup;
@@ -1567,7 +1567,7 @@ void TDbg::PopulateHistoryWindow()
 
                         if (includeInstruction)
                         {
-		 	        AnsiString instruction = Dbg->Disassemble(address, HistoryLog[i].Bytes);
+		 	        String instruction = Dbg->Disassemble(address, HistoryLog[i].Bytes);
                                 if (reverseOrder)
                                 {
         		         	HistoryBox->Text->Lines->Insert(0, instruction);
@@ -1964,7 +1964,7 @@ void TDbg::EditBreakpoint()
         {
                 Breakpoint[idx] = bp;
 
-                AnsiString str = GetBreakpointText(&bp);
+                String str = GetBreakpointText(&bp);
                 BPList->Rows[idx]->Text = str;
         }
 }
@@ -2028,8 +2028,8 @@ void __fastcall TDbg::BPListSelectCell(TObject *Sender, int ACol, int ARow,
 void __fastcall TDbg::Disass3MouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-        AnsiString t = ((TLabel*)Sender)->Caption;
-        AnsiString t2 = t.SubString(13,5);
+        String t = ((TLabel*)Sender)->Caption;
+        String t2 = t.SubString(13,5);
         SetMenuContent(StrToInt(t2));
 }
 //---------------------------------------------------------------------------
@@ -2102,11 +2102,11 @@ void __fastcall TDbg::IOPort3AddressMouseDown(TObject *Sender,
         SetIoContextPopupContent(IOPort3Address->Caption);
 }
 //---------------------------------------------------------------------------
-void TDbg::SetIoContextPopupContent(AnsiString ioPort)
+void TDbg::SetIoContextPopupContent(String ioPort)
 {
         if (ioPort != "-")
         {
-                AnsiString val = "0x" + ioPort.SubString(2, 4);
+                String val = "0x" + ioPort.SubString(2, 4);
                 int portNumber = StrToInt(val);
                 InputContextPopup->Tag = portNumber;
                 OutputContextPopup->Tag = portNumber;
@@ -2279,7 +2279,7 @@ void __fastcall TDbg::BPListContextPopup(TObject *Sender, TPoint &MousePos,
                 BreakpointWindowPopup->Items->Items[Separator]->Visible = true;
                 BreakpointWindowPopup->Items->Items[Count]->Visible = true;
 
-                AnsiString hitCount = "Hit Count = ";
+                String hitCount = "Hit Count = ";
                 hitCount += Breakpoint[BPList->Row].Hits;
                 BreakpointWindowPopup->Items->Items[Count]->Caption = hitCount;
 
@@ -2314,7 +2314,7 @@ void TDbg::RefreshBreakpointList()
 {
         for (int b = 0; b < Breakpoints; b++)
         {
-                AnsiString str = GetBreakpointText(&Breakpoint[b]);
+                String str = GetBreakpointText(&Breakpoint[b]);
                 BPList->Rows[b]->Text = str;
         }
 }

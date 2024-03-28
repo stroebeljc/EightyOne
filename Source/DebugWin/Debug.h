@@ -326,8 +326,8 @@ private:	// User declarations
         void EnableVals(void);
         void DisableVals(void);
         void SetMenuContent(int memloc);
-        void SetIoContextPopupContent(AnsiString ioPort);
-        AnsiString StrRep(AnsiString Text, int Pos, int Len, AnsiString NewText);
+        void SetIoContextPopupContent(String ioPort);
+        String StrRep(String Text, int Pos, int Len, String NewText);
 
         struct breakpoint Breakpoint[99];
         int Breakpoints;
@@ -341,14 +341,14 @@ private:	// User declarations
 
         void PopulateHistoryWindow();
         int getRegisterValue(int registerIndex);
-        AnsiString ConstructRegisterBreakpointText(breakpoint* const bp);
-        AnsiString ConstructExeBreakpointText(breakpoint* const bp);
-        AnsiString ConstructTStatesBreakpointText(breakpoint* const bp);
-        AnsiString ConstructFlagBreakpointText(breakpoint* const bp);
-        AnsiString ConstructLowIOBreakpointText(AnsiString type, breakpoint* const bp);
-        AnsiString ConstructHighIOBreakpointText(AnsiString type, breakpoint* const bp);
-        AnsiString ConstructRdWrInOutMemBreakpointText(AnsiString type, breakpoint* const bp);
-        AnsiString GetBreakpointText(breakpoint* const bp);
+        String ConstructRegisterBreakpointText(breakpoint* const bp);
+        String ConstructExeBreakpointText(breakpoint* const bp);
+        String ConstructTStatesBreakpointText(breakpoint* const bp);
+        String ConstructFlagBreakpointText(breakpoint* const bp);
+        String ConstructLowIOBreakpointText(String type, breakpoint* const bp);
+        String ConstructHighIOBreakpointText(String type, breakpoint* const bp);
+        String ConstructRdWrInOutMemBreakpointText(String type, breakpoint* const bp);
+        String GetBreakpointText(breakpoint* const bp);
 
         bool BPInOutHit(BreakpointType type, int addr, int value, breakpoint* const bp);
         bool BPTCyclesHit(int addr, breakpoint* const bp);
@@ -378,13 +378,13 @@ public:		// User declarations
         void DelBreakPoint(int index);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
-        AnsiString DisassembleAddress(int* Ad);
-        AnsiString Disassemble(int addr, BYTE* bytes);
-        AnsiString Disassemble(int *Ad);
-        AnsiString Hex16(int value);
-        AnsiString Hex8(int value);
-        AnsiString Bin8(int Value);
-        int Hex2Dec(AnsiString num);
+        String DisassembleAddress(int* Ad);
+        String Disassemble(int addr, BYTE* bytes);
+        String Disassemble(int *Ad);
+        String Hex16(int value);
+        String Hex8(int value);
+        String Bin8(int Value);
+        int Hex2Dec(String num);
 
         LastIOAccess lastIOAccess[4];
         int lastPortInAddr, lastPortOutAddr;

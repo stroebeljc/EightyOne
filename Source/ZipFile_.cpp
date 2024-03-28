@@ -24,14 +24,14 @@ __fastcall TZipFile::TZipFile(TComponent* Owner)
         delete ini;
 }
 //---------------------------------------------------------------------------
-AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
+String TZipFile::ExpandZIP(String Path, String DialogueFilter)
 {
         unzFile ZFile;
         FILE *F;
         int error;
-        char FileName[512], Filter[512];
-        char *Orig, *Dest;
-        AnsiString File, Ext;
+		_TCHAR FileName[512], Filter[512];
+        _TCHAR *Orig, *Dest;
+		String File, Ext;
 
         // Set the window title to the name of the .zip file
 
@@ -44,7 +44,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         Orig=FileName;
         Dest=Filter;
         Filter[0]='\0';
-        strcpy(FileName, DialogueFilter.c_str());
+		_tcscpy(FileName, DialogueFilter.c_str());
 
         // Now search the text for a * or a , indicating the start of an extension
         // eg *.TZX or .t81
@@ -72,21 +72,23 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         // We don't handle nested .zip files, so if it's in the permitted extension
         // list, remove it.
 
-        while(strlen(Dest))
+		while(_tcslen(Dest))
         {
-                if ((!strcmp(Dest,".zip")) || (!strcmp(Dest,".ZIP")))
+                if ((!_tcscmp(Dest,_TEXT(".zip"))) || (!_tcscmp(Dest,_TEXT(".ZIP"))))
                 {
                         Dest[0]='\0';
                         Dest[1]='\0';
                 }
-                Dest += strlen(Dest)+1;
+                Dest += _tcslen(Dest)+1;
         }
 
         // Empty the ListBox
         while(ListBox->Items->Count) ListBox->Items->Delete(0);
 
-        // Open The zip file
-        ZFile=unzOpen(Path.c_str());
+		// Open The zip file
+		char tempPath[1024];
+		wcstombs(tempPath, Path.c_str(), sizeof(tempPath));
+		ZFile=unzOpen(tempPath);
         if (!ZFile) return("");
 
         // Step through the contents of the archive, adding each item to the ListBox
@@ -96,22 +98,24 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         while(error==UNZ_OK)
         {
                 // Get filename of archive member
-                unzGetCurrentFileInfo(ZFile, NULL, FileName, 256, NULL, 0, NULL, 0);
+				char tempFileName[1024];
+				unzGetCurrentFileInfo(ZFile, NULL, tempFileName, sizeof(tempFileName), NULL, 0, NULL, 0);
 
-                File=FileName;
+				mbstowcs(FileName, tempFileName, sizeof(tempFileName));
+				File=FileName;
                 Ext=FileNameGetExt(File);
 
                 // Check the member file extension matches on of those permitted
                 Dest=Filter;
-                while(strlen(Dest))
+				while(_tcslen(Dest))
                 {
-                        if (!stricmp(Ext.c_str(), Dest))
-                                ListBox->Items->Add(FileName); //If it does, add it to the ListBox
+						if (!_tcsicmp(Ext.c_str(), Dest))
+								ListBox->Items->Add(FileName); //If it does, add it to the ListBox
 
-                        Dest += strlen(Dest)+1; // Next extension
+						Dest += _tcslen(Dest)+1; // Next extension
                 }
                 error=unzGoToNextFile(ZFile);
-        }
+		}
 
         // ???? Seems to be a long way of setting ItemIndex to the last file in the list
         if (ListBox->Items->Count)
@@ -154,16 +158,18 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         LastFile=File;
 
         // Locate the selected file in the archive
-        error=unzLocateFile(ZFile, File.c_str(), 0);
-        if (error==UNZ_OK)
+		char tempFile[1024];
+		wcstombs(tempFile, File.c_str(), sizeof(tempFile));
+		error=unzLocateFile(ZFile, tempFile, 0);
+		if (error==UNZ_OK)
         {
                 // Create a path in the temp directory to extract to
 
-                strcpy(FileName, emulator.temppath);
-                strcat(FileName, File.c_str());
+				_tcscpy(FileName, emulator.temppath);
+				_tcscat(FileName, File.c_str());
 
                 // Open file for writing, then extract the contents.
-                F=fopen(FileName, "wb");
+                F=_tfopen(FileName, _TEXT("wb"));
                 if (F)
                 {
                         char buf[256];

@@ -65,7 +65,7 @@ struct CSW
 class TWavFile
 {
 private:
-        AnsiString FileName;
+        String FileName;
         struct RIFFHeader Head;
         struct RIFFFormat Format;
         struct RIFFData Data;
@@ -75,10 +75,10 @@ public:
         unsigned int SampleRate, NoSamples, Bits;
         bool Stereo;
 
-        bool LoadFile(AnsiString Filename);
-        bool SaveFile(AnsiString Filename);
-        bool LoadCSW(AnsiString Filename);
-        bool SaveCSW(AnsiString Filename);
+        bool LoadFile(String Filename);
+        bool SaveFile(String Filename);
+        bool LoadCSW(String Filename);
+        bool SaveCSW(String Filename);
         unsigned char Sample(unsigned int Pos, int Channel);
         bool NewFile(void);
         bool SetSample(unsigned int Pos, int Value);

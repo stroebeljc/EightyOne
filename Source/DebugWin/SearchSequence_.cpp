@@ -42,7 +42,7 @@ void __fastcall TSearchSequence::FindClick(TObject *Sender)
         Close();
 }
 //---------------------------------------------------------------------------
-bool TSearchSequence::EditSequenceBytes(AnsiString& searchText, std::vector<int>& bytes)
+bool TSearchSequence::EditSequenceBytes(String& searchText, std::vector<int>& bytes)
 {
         cancelled=false;
 

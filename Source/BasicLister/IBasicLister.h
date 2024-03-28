@@ -51,15 +51,15 @@ private:
         int mLineEndingCode;
         bool mSupportsFloatingPointNumbers;
         bool mSupportEmbeddedControlCodes;
-        AnsiString mEscapeCharacter;
+        String mEscapeCharacter;
         int mScaling;
 
         void RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
         void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
         void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
-        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem);
-        AnsiString FormatLineNumber(int lineNumber, bool outputFullWidthLineNumbers = false);
+        bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, String& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem);
+        String FormatLineNumber(int lineNumber, bool outputFullWidthLineNumbers = false);
         COLORREF GetBackgroundColour();
         unsigned char GetEscapeCharacter() { return '\\'; }
 
@@ -71,14 +71,14 @@ public:
         int GetProgramRows();
         void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
         void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
-        AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
+        String RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
 
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }
         virtual COLORREF GetPaperColour() { return RGB(255, 255, 255); }
-        virtual AnsiString GetMachineName() { return ""; }
-        virtual AnsiString GetBasicFileExtension() { return "txt"; }
+        virtual String GetMachineName() { return ""; }
+        virtual String GetBasicFileExtension() { return "txt"; }
         virtual bool ZxTokenSupported() { return false; }
         virtual int GetProgramStartAddress() { return 65535; }
         virtual int GetProgramEndAddress() { return 65535; }
@@ -103,7 +103,7 @@ protected:
         virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
         virtual bool RequiresInitialSpace() { return true; }
-        virtual AnsiString TranslateToZxToken(AnsiString chr) { return chr; }
+        virtual String TranslateToZxToken(String chr) { return chr; }
         
         int GetKeywordLength(unsigned char code);
 

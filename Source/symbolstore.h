@@ -20,10 +20,10 @@ namespace symbolstore
         // if you want to do special processing on each symbol/value pair as
         // they're parsed, pass in a munger.
         //
-        bool loadROMSymbols(const char* filename);
+		bool loadROMSymbols(const char* filename);
 
-        bool loadSymFileSymbols(const char* filename);
-        bool loadZ88FileSymbols(const char* filename);
+		bool loadSymFileSymbols(const char* filename);
+		bool loadZ88FileSymbols(const char* filename);
 
         // check if symbols are loaded
         //
@@ -33,21 +33,21 @@ namespace symbolstore
         // searches file set first, then ROM set.
         // returns true if the symbol was resolved into result
         //
-        bool addressToSymbol(const int addr, AnsiString& result);
+        bool addressToSymbol(const int addr, String& result);
 
         // returns either the resolved symbol or the hex equivalent
         //
-        AnsiString addressToSymbolOrHex(const int addr);
+        String addressToSymbolOrHex(const int addr);
 
         // given a symbol, do a reverse look-up and return its address
         // returns true if val was resolved
         //
-        bool symbolToAddress(const AnsiString& sym, int& addr);
+        bool symbolToAddress(const String& sym, int& addr);
 
         // query the content
         //
         void beginenumeration(void);
-        bool enumerate(AnsiString& sym, int& addr, char& type);
+		bool enumerate(String& sym, int& addr, char& type);
 };
 
 #endif // _symbolstore_h_

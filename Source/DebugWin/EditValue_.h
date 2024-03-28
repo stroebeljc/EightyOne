@@ -21,9 +21,9 @@ __published:	// IDE-managed Components
         void __fastcall EditValChange(TObject *Sender);
 private:	// User declarations
         bool cancelled;
-        bool Translate(AnsiString str, int& value);
-        AnsiString IntToBin(int Value, int digits);
-        AnsiString IntToDec(int value);
+        bool Translate(String str, int& value);
+        String IntToBin(int Value, int digits);
+        String IntToDec(int value);
         int maxValue;
 public:		// User declarations
         __fastcall TEditValue(TComponent* Owner);

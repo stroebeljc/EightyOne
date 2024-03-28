@@ -44,7 +44,7 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
 //---------------------------------------------------------------------------
 void TP3Drive::LoadSettings(TIniFile *ini)
 {
-        AnsiString Rom;
+        String Rom;
 
         Top=ini->ReadInteger("P3DRIVE","Top",Top);
         Left=ini->ReadInteger("P3DRIVE","Left",Left);
@@ -64,7 +64,7 @@ void TP3Drive::SaveSettings(TIniFile *ini)
 
 void TP3Drive::BuildHDList(TComboBox *List)
 {
-        AnsiString old, temp;
+        String old, temp;
         int i, size;
 
         old=List->Items->Strings[List->ItemIndex];
@@ -101,7 +101,7 @@ void __fastcall TP3Drive::OKClick(TObject *Sender)
 
 void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 {
-        AnsiString Filename, Ext;
+        String Filename, Ext;
 
         if (Sender)
         {
@@ -125,7 +125,7 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 
         DriveAText->Text = Filename;
         DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
-        wcstombs(spectrum.driveaimg,DriveAText->Text.c_str(),sizeof(spectrum.driveaimg));
+        _tcscpy(spectrum.driveaimg,DriveAText->Text.c_str());
         floppy_setimage(0,spectrum.driveaimg);
 }
 //---------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
 
 void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 {
-        AnsiString Filename, Ext;
+        String Filename, Ext;
 
         // if (strlen(spectrum.driveaimg)) OpenDialog1->FileName=spectrum.driveaimg;
         if (!OpenDialog1->Execute()) return;
@@ -159,7 +159,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 
         DriveBText->Text = Filename;
         DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
-        wcstombs(spectrum.drivebimg,DriveBText->Text.c_str(),sizeof(spectrum.driveaimg));
+		_tcscpy(spectrum.drivebimg,DriveBText->Text.c_str());
         floppy_setimage(1,spectrum.drivebimg);
 }
 //---------------------------------------------------------------------------
@@ -189,8 +189,8 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
         MDV6Text->Text="< Empty >";
         MDV7Text->Text="< Empty >";
 
-        if (strlen(spectrum.driveaimg)) DriveAText->Text=spectrum.driveaimg;
-        if (strlen(spectrum.drivebimg)) DriveBText->Text=spectrum.drivebimg;
+		if (_tcslen(spectrum.driveaimg)) DriveAText->Text=spectrum.driveaimg;
+		if (_tcslen(spectrum.drivebimg)) DriveBText->Text=spectrum.drivebimg;
 
         HD0CHS->Visible=false; HD0C->Visible=false; HD0H->Visible=false;
         HD0S->Visible=false; HD0HUD->Visible=false; HD0SUD->Visible=false;
@@ -405,7 +405,7 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
 {
         int c,h,s;
         unsigned long size;
-        AnsiString Filename, Ext;
+        String Filename, Ext;
 
         if (DragFileName!="")
         {
@@ -435,22 +435,22 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                         if (Ext!=".HDF" && Ext!=".VHD") Filename += ".hdf";
                         Ext=FileNameGetExt(Filename);
 
-                        if (access(Filename.c_str(), 0) && Ext==".HDF")
+						if (_taccess(Filename.c_str(), 0) && Ext==".HDF")
                         {
-                                wchar_t Message[256];
+								_TCHAR Message[256];
                                 int ret;
 
-                                mbstowcs(Message,Filename.c_str(),256);
-                                wcscat(Message,L" Does not exist.\nWould you like to create it?");
+								_tcscpy(Message,Filename.c_str());
+								_tcscat(Message,_TEXT(" Does not exist.\nWould you like to create it?"));
 
-                                ret=Application->MessageBox(Message, L"File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+								ret=Application->MessageBox(Message, _TEXT("File does not exist"), MB_OKCANCEL | MB_ICONWARNING);
 
                                 if (ret!=IDOK) return;
 
                                 CreateHDF->FileName=Filename;
                                 CreateHDF->ShowModal();
                         }
-                        if (access(Filename.c_str(), 0)) return;
+                        if (_taccess(Filename.c_str(), 0)) return;
                 }
         }
 
@@ -492,7 +492,7 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
 {
         int c,h,s;
         unsigned long size;
-        AnsiString Filename, Ext;
+        String Filename, Ext;
 
         if (!Sender && (HD1List->ItemIndex!=0))
         {
@@ -515,21 +515,21 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
 
                 if (Ext!=".HDF") Filename += ".hdf";
 
-                if (access(Filename.c_str(), 0))
+				if (_taccess(Filename.c_str(), 0))
                 {
-                        wchar_t Message[256];
+						_TCHAR Message[256];
                         int ret;
 
-                        mbstowcs(Message,Filename.c_str(),256);
-                        wcscat(Message,L" Does not exist.\nWould you like to create it?");
+						_tcscpy(Message,Filename.c_str());
+						_tcscat(Message, _TEXT(" Does not exist.\nWould you like to create it?"));
 
-                        ret=Application->MessageBox(Message, L"File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+						ret=Application->MessageBox(Message, _TEXT("File does not exist"), MB_OKCANCEL | MB_ICONWARNING);
 
                         if (ret!=IDOK) return;
 
                         CreateHDF->FileName=Filename;
                         CreateHDF->ShowModal();
-                        if (access(Filename.c_str(), 0)) return;
+                        if (_taccess(Filename.c_str(), 0)) return;
                 }
         }
 
@@ -622,7 +622,7 @@ void __fastcall TP3Drive::MDV0EjectBtnClick(TObject *Sender)
 void __fastcall TP3Drive::MDV0FSBtnClick(TObject *Sender)
 {
         int Drive = GetMDVNo(Sender);
-        AnsiString FileName;
+        String FileName;
         TEdit *Text;
 
         Text=(TEdit *)GetTextBox(Drive);
@@ -722,9 +722,9 @@ void __fastcall TP3Drive::HD1ReadOnlyClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TP3Drive::InsertFile(AnsiString Filename)
+void TP3Drive::InsertFile(String Filename)
 {
-        AnsiString Ext;
+        String Ext;
 
         DragFileName=Filename;
 
@@ -743,16 +743,12 @@ void P3DriveMachineHasInitialised(void)
 {
         if (P3Drive->DriveAText->Text != "< Empty >")
         {
-            char temp[256];
-            wcstombs(temp,P3Drive->DriveAText->Text.c_str(), sizeof(temp));
-            floppy_setimage(0, temp);
-        }
+			floppy_setimage(0, P3Drive->DriveAText->Text.c_str());
+		}
 
-        if (P3Drive->DriveBText->Text != "< Empty >")
-        {
-            char temp[256];
-            wcstombs(temp,P3Drive->DriveBText->Text.c_str(), sizeof(temp));
-            floppy_setimage(1, temp);
+		if (P3Drive->DriveBText->Text != "< Empty >")
+		{
+            floppy_setimage(1, P3Drive->DriveBText->Text.c_str());
         }
 }
 //---------------------------------------------------------------------------
@@ -765,11 +761,11 @@ void __fastcall TP3Drive::btnCreateCartridgeClick(TObject *Sender)
 
         if (SaveDialog1->Execute())
         {
-                AnsiString FileName;
+                String FileName;
                 FileName = SaveDialog1->FileName;
                 bool success = true;
 
-                FILE* f=fopen(FileName.c_str(), "wb");
+                FILE* f=_tfopen(FileName.c_str(), _TEXT("wb"));
                 if (f)
                 {
                         try

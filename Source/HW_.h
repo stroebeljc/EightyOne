@@ -36,14 +36,14 @@ using namespace std;
 struct RomCartridgeEntry
 {
 public:
-        RomCartridgeEntry(AnsiString title, AnsiString path)
+        RomCartridgeEntry(String title, String path)
         {
                 Title = title;
                 Path = path;
         }
 
-        AnsiString Title;
-        AnsiString Path;
+        String Title;
+        String Path;
 };
 
 class THW : public TForm
@@ -202,7 +202,7 @@ __published:	// IDE-managed Components
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
-        AnsiString NewMachineName;
+        String NewMachineName;
         void SetupForZX81(void);
         void SetupForSpectrum(void);
         void SetupForQL(void);
@@ -214,12 +214,12 @@ private:	// User declarations
         void PopulateRomCartridgeTS1510List();
         void PopulateRomCartridgeTS2068List();
         void PopulateRomCartridgeTC2068List();
-        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, AnsiString fileExt);
-        AnsiString DirectSoundError(unsigned int errorCode);
+        void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, String fileExt);
+        String DirectSoundError(unsigned int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
         int UpdateRomCartridgeControls(int machine, int spectrumModel);
-        int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
+        int DetermineRomCartridgeType(String cartridgeText, int machine, int spectrumModel);
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -233,7 +233,7 @@ private:	// User declarations
         void InitialiseSound(bool machineChanged);
         void CloseLiveMemoryWindow(bool machineChanged);
         void CloseOtherDebugWindow();
-        void DetermineRamSizeLabel(AnsiString newMachineName);
+        void DetermineRamSizeLabel(String newMachineName);
         void ConfigureMultifaceRom();
         void ConfigureRom();
         void ConfigureZXpand();
@@ -248,9 +248,9 @@ private:	// User declarations
         void ConfigureSpectrumIDE();
         void ConfigureFDC();
         void ConfigureMachineSettings();
-        AnsiString DetermineRomBase();
-        void ConfigureSymbolFile(AnsiString romBase);
-        void ConfigureCharacterBitmapFile(AnsiString romBase);
+        String DetermineRomBase();
+        void ConfigureSymbolFile(String romBase);
+        void ConfigureCharacterBitmapFile(String romBase);
         void SetUpRomCartridges();
         void Configure8K16KRam();
 

@@ -26,8 +26,8 @@ class zx81BasicLister : public IBasicLister
 {
 public:
         zx81BasicLister(bool zxpandEnabled);
-        virtual AnsiString GetMachineName();
-        virtual AnsiString GetBasicFileExtension();
+        virtual String GetMachineName();
+        virtual String GetBasicFileExtension();
         virtual bool ZxTokenSupported();
 
 private:
@@ -44,7 +44,7 @@ private:
         static const unsigned char Number = 126;
 
         bool mZxpandEnabled;
-        std::map<AnsiString, AnsiString> mZxTokenChars;
+        std::map<String, String> mZxTokenChars;
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
@@ -53,6 +53,6 @@ private:
         virtual inline unsigned char GetLineEndingCode();
         virtual std::string GetKeywords();
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
-        virtual AnsiString TranslateToZxToken(AnsiString chr);
+        virtual String TranslateToZxToken(String chr);
 };
 

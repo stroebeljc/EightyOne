@@ -37,9 +37,9 @@ void __fastcall TProfileSampleEdit::ButtonOKClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TProfileSampleEdit::EditValues(AnsiString tag,
+void __fastcall TProfileSampleEdit::EditValues(String tag,
         ProfileDetail* pd,
-                void (*completion)(bool, AnsiString))
+                void (*completion)(bool, String))
 {
         _pd = pd;
         _completion = completion;

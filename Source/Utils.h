@@ -37,15 +37,15 @@ int ZX81Strlen(BYTE *str);
 }
 #endif
 
-AnsiString FileNameGetPath(AnsiString Fname);
-AnsiString FileNameGetFname(AnsiString Fname);
-AnsiString FileNameGetExt(AnsiString Fname);
-AnsiString ConvertZX81ASCII(BYTE *str);
-void ConvertASCIIZX81(AnsiString Str, BYTE *Output);
-AnsiString RemoveExt(AnsiString Fname);
-AnsiString GetExt(AnsiString Fname);
-AnsiString RemovePath(AnsiString Str);
-int EnumeratePorts(TStrings *List, AnsiString Type);
+String FileNameGetPath(String Fname);
+String FileNameGetFname(String Fname);
+String FileNameGetExt(String Fname);
+String ConvertZX81ASCII(BYTE *str);
+void ConvertASCIIZX81(String Str, BYTE *Output);
+String RemoveExt(String Fname);
+String GetExt(String Fname);
+String RemovePath(String Str);
+int EnumeratePorts(TStrings *List, String Type);
 
 #endif
 

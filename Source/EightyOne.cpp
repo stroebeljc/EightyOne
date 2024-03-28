@@ -72,18 +72,18 @@ USEFORM("Interface1.cpp", IF1);
 #include "SplashScreen.h"
 #include "main_.h"
 //---------------------------------------------------------------------------
-char **CommandLine;
+_TCHAR **CommandLine;
 bool ShowSplash=true;
 bool Restart=false;
 //---------------------------------------------------------------------------
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
+int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmdline, int)
 {
 		int i;
-		char *p, *CmdLineRaw;
+		_TCHAR *p, *CmdLineRaw;
 		bool quote;
 
-		CmdLineRaw=(char *)malloc(strlen(cmdline)+2);
-		strcpy(CmdLineRaw,cmdline);
+		CmdLineRaw=(_TCHAR *)malloc(_tcslen(cmdline)+2);
+		_tcscpy(CmdLineRaw,cmdline);
 
 		p=CmdLineRaw;
 		quote=false;
@@ -98,21 +98,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 
 		i=0;
 		p=CmdLineRaw;
-		while(strlen(p))
+		while(_tcslen(p))
 		{
 				i++;
-				p+=strlen(p)+1;
+				p+=_tcslen(p)+1;
 		}
 		i++;
 
-		CommandLine=(char **)malloc(i*sizeof(char *));
+		CommandLine=(_TCHAR **)malloc(i*sizeof(_TCHAR *));
 
 		p=CmdLineRaw;
 		i=0;
-		while(strlen(p))
+		while(_tcslen(p))
 		{
 				CommandLine[i++]=p;
-				p+=strlen(p)+1;
+				p+=_tcslen(p)+1;
 		}
 		CommandLine[i]=NULL;
 
@@ -121,9 +121,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 		{
 				p=CommandLine[i];
 
-				if ((p[0]=='\"') && (p[strlen(p)-1]=='\"'))
+				if ((p[0]=='\"') && (p[_tcslen(p)-1]=='\"'))
 				{
-						p[strlen(p)-1]=0;
+						p[_tcslen(p)-1]=0;
 						CommandLine[i]++;
 				}
 				i++;
@@ -147,8 +147,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 
                 if (Restart)
                 {
-                        AnsiString exeFile = Application->ExeName;
-                        ShellExecute(NULL, "open", exeFile.c_str(), NULL, NULL, SW_SHOWNORMAL);
+                        String exeFile = Application->ExeName;
+						ShellExecute(NULL, _TEXT("open"), exeFile.c_str(), NULL, NULL, SW_SHOWNORMAL);
                 }
         }
         catch (Exception &exception)

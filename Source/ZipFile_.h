@@ -20,10 +20,10 @@ __published:	// IDE-managed Components
         void __fastcall ListBoxDblClick(TObject *Sender);
 private:	// User declarations
         bool Cancelled;
-        AnsiString LastFile;
+        String LastFile;
 public:		// User declarations
         __fastcall TZipFile(TComponent* Owner);
-        AnsiString ExpandZIP(AnsiString Path, AnsiString Filter);
+        String ExpandZIP(String Path, String Filter);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

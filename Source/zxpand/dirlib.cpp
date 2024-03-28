@@ -27,8 +27,8 @@ void dirGetExeLocation(char* buffer, int bufSize)
 {
 #ifdef _UNICODE
    _TCHAR *tempbuff = (_TCHAR *)malloc(bufSize*sizeof(_TCHAR));
-   mbstowcs(tempbuff, buffer, bufSize);
    GetModuleFileName(NULL, tempbuff, bufSize);
+   wcstombs(buffer, tempbuff, bufSize);
    free(tempbuff);
 #else
    GetModuleFileName(NULL, buffer, bufSize);

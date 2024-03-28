@@ -637,7 +637,7 @@ void floppy_eject(int drive)
         }
 }
 
-int do_format(_TCHAR *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format);
+int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format);
 
 void floppy_setimage(int drive, _TCHAR *filename)
 {
@@ -759,14 +759,21 @@ void floppy_setimage(int drive, _TCHAR *filename)
                         case DRIVE35INCHDS: format=FMT_720K; break;
                         }
 
-						do_format(filename, "dsk", NULL, -1, format);
+                        char temp[sizeof(filename)];
+                        wcstombs(temp, filename, sizeof(filename));
+                        do_format(temp, "dsk", NULL, -1, format);
                 }
 
                 if (USEFDC765DLL)
                 {
                         if (u765_DiskInserted(drive))
                                 u765_EjectDisk(drive);
-						if (_tcslen(filename)) u765_InsertDisk(filename,drive);
+                        if (_tcslen(filename))
+                        {
+                            char temp[sizeof(filename)];
+                            wcstombs(temp, filename, sizeof(filename));
+                            u765_InsertDisk(temp,drive);
+                        }
                         u765_DiskInserted(0);
                         return;
                 }
@@ -774,15 +781,23 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 if ((drive==0) && (p3_drive_a))
                 {
                         fd_eject(p3_drive_a);
-						if (_tcslen(filename))
-								fdl_setfilename(p3_drive_a, filename);
+                        if (_tcslen(filename))
+                        {
+                            char temp[sizeof(filename)];
+                            wcstombs(temp, filename, sizeof(filename));
+                            fdl_setfilename(p3_drive_a, temp);
+                        }
                 }
 
                 if ((drive==1) && (p3_drive_b))
                 {
                         fd_eject(p3_drive_b);
-						if (_tcslen(filename))
-								fdl_setfilename(p3_drive_b, filename);
+                        if (_tcslen(filename))
+                        {
+                            char temp[sizeof(filename)];
+                            wcstombs(temp, filename, sizeof(filename));
+                            fdl_setfilename(p3_drive_b, temp);
+                        }
                 }
         }
 }
@@ -796,7 +811,7 @@ static unsigned char spec200 [10] = { 0,    0, 40,10, 2, 1, 3, 3, 0x0C, 0x17 };
 static unsigned char spec720 [10] = { 3, 0x81, 80, 9, 2, 1, 4, 4, 0x2A, 0x52 };
 static unsigned char spec800 [10] = { 3, 0x81, 80,10, 2, 1, 4, 4, 0x0C, 0x17 };
 
-int do_format(_TCHAR *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format)
+int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format)
 {
 	DSK_PDRIVER outdr = NULL;
 	dsk_err_t e;

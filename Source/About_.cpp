@@ -143,7 +143,7 @@ bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& ver
 
 	if (VerQueryValue(lpvMem, key, &lpInfo, &cch))
         {
-                versionNumber = (char*)lpInfo;
+                versionNumber = (TCHAR*)lpInfo;
                 versionNumber += ".";
         }
         else

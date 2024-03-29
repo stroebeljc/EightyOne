@@ -129,7 +129,7 @@ __published:	// IDE-managed Components
         void __fastcall ButtonNextChangeClick(TObject *Sender);
         void __fastcall ButtonLastChangeClick(TObject *Sender);
         void __fastcall IncDecAddressChangingEx(TObject *Sender,
-          bool &AllowChange, short NewValue, TUpDownDirection Direction);
+          bool &AllowChange, int NewValue, TUpDownDirection Direction);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
         void __fastcall Search1Click(TObject *Sender);
@@ -166,7 +166,7 @@ private:
         RowRenderer* mRowRenderer;
 
         int mSelectedAddress;
-        AnsiString mSearchText;
+        ZXString mSearchText;
 
         void CreateBitmap(void);
         bool FindSequence(std::vector<int>& bytes, int& addr);

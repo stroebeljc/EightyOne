@@ -13,17 +13,17 @@ void SP0256_Init(void)
 {
         FILE *f;
         int a,i,len;
-        char FileName[256];
+		_TCHAR FileName[256];
         int offset;
 
         if (Phones) free(Phones);
         Phones=NULL;
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, interfaceRomsFolder);
-        strcat(FileName, "sp0256.bin");
+		_tcscpy(FileName, emulator.cwd);
+		_tcscat(FileName, interfaceRomsFolder);
+        _tcscat(FileName, _TEXT("sp0256.bin"));
 
-        f=fopen(FileName,"rb");
+		f=_tfopen(FileName,_TEXT("rb"));
         if (!f) return;
 
         fseek(f, 0, SEEK_END);

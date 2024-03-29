@@ -754,15 +754,15 @@ void floppy_setimage(int drive, _TCHAR *filename)
 
                         switch(drivetype)
                         {
-                        case DRIVE3INCHSS: format=FMT_180K; break;
+						case DRIVE3INCHSS: format=FMT_180K; break;
                         case DRIVE3INCHDS: format=FMT_360K; break;
                         case DRIVE35INCHDS: format=FMT_720K; break;
                         }
 
-                        char temp[sizeof(filename)];
-                        wcstombs(temp, filename, sizeof(filename));
-                        do_format(temp, "dsk", NULL, -1, format);
-                }
+						char temp[MAXPATH];
+						wcstombs(temp, filename, MAXPATH);
+						do_format(temp, "dsk", NULL, -1, format);
+				}
 
                 if (USEFDC765DLL)
                 {
@@ -770,8 +770,8 @@ void floppy_setimage(int drive, _TCHAR *filename)
                                 u765_EjectDisk(drive);
                         if (_tcslen(filename))
                         {
-                            char temp[sizeof(filename)];
-                            wcstombs(temp, filename, sizeof(filename));
+							char temp[MAXPATH];
+							wcstombs(temp, filename, MAXPATH);
                             u765_InsertDisk(temp,drive);
                         }
                         u765_DiskInserted(0);
@@ -783,8 +783,8 @@ void floppy_setimage(int drive, _TCHAR *filename)
                         fd_eject(p3_drive_a);
                         if (_tcslen(filename))
                         {
-                            char temp[sizeof(filename)];
-                            wcstombs(temp, filename, sizeof(filename));
+							char temp[MAXPATH];
+							wcstombs(temp, filename, MAXPATH);
                             fdl_setfilename(p3_drive_a, temp);
                         }
                 }
@@ -793,9 +793,9 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 {
                         fd_eject(p3_drive_b);
                         if (_tcslen(filename))
-                        {
-                            char temp[sizeof(filename)];
-                            wcstombs(temp, filename, sizeof(filename));
+						{
+							char temp[MAXPATH];
+							wcstombs(temp, filename, MAXPATH);
                             fdl_setfilename(p3_drive_b, temp);
                         }
                 }

@@ -908,12 +908,10 @@ void THW::ConfigureRomCartridge()
 
                 if (!loadSuccessful)
                 {
-                        stringstream msg;
-                        msg << "Failed to load cartridge file:" << endl << endl;
-                        msg << romCartridgeFilePath.c_str();
-                        wchar_t temp[256];
-                        mbstowcs(temp, msg.str().c_str(),256);
-                        Application->MessageBox(temp, _TEXT("Error"), MB_OK | MB_ICONERROR);
+                        UnicodeString msg;
+                        msg = "Failed to load cartridge file:\n\n";
+                        msg += romCartridgeFilePath;
+                        Application->MessageBox(msg.c_str(), _TEXT("Error"), MB_OK | MB_ICONERROR);
 
 						LoadDock((_TCHAR *)_TEXT(""));
 				}

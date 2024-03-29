@@ -26,7 +26,7 @@ const int FR_NO_PATH = 5;
 void dirGetExeLocation(char* buffer, int bufSize)
 {
 #ifdef _UNICODE
-   _TCHAR *tempbuff = (_TCHAR *)malloc(bufSize*sizeof(_TCHAR));
+   _TCHAR *tempbuff = (_TCHAR *)malloc(MAX_PATH);
    GetModuleFileName(NULL, tempbuff, bufSize);
    wcstombs(buffer, tempbuff, bufSize);
    free(tempbuff);
@@ -123,7 +123,7 @@ void dirReadNext(void* fil)
 
       fileinfo->fsize = findFileData.nFileSizeLow;
       fileinfo->fattrib = attrib;
-      wcstombs(&fileinfo->fname[0], &findFileData.cFileName[0], sizeof(findFileData.cFileName));
+	  wcstombs(&fileinfo->fname[0], &findFileData.cFileName[0], sizeof(fileinfo->fname));
    }
 }
 

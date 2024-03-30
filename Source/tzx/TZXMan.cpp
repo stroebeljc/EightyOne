@@ -395,7 +395,6 @@ void TTZX::LoadSettings(TIniFile *ini)
         Width = ini->ReadInteger("TZXMAN","Width",Width);
 
         OpenDialog->FileName = ini->ReadString("TZXMAN","Filename",OpenDialog->FileName);
-        OpenDialog->InitialDir = ini->ReadString("TZXMAN","Dir",OpenDialog->InitialDir);
 
         FlashLoadBtn->Down = ini->ReadBool("TZXMAN","FlashLoad",FlashLoadBtn->Down);
         AutoStartBtn->Down = ini->ReadBool("TZXMAN","AutoStart",AutoStartBtn->Down);
@@ -418,7 +417,6 @@ void TTZX::SaveSettings(TIniFile *ini)
         ini->WriteInteger("TZXMAN","Width",Width);
 
         ini->WriteString("TZXMAN","Filename",OpenDialog->FileName);
-        ini->WriteString("TZXMAN","Dir",OpenDialog->InitialDir);
         ini->WriteBool("TZXMAN","FlashLoad",FlashLoadBtn->Down);
         ini->WriteBool("TZXMAN","AutoStart",AutoStartBtn->Down);
         ini->WriteBool("TZXMAN","AutoLoad",AutoLoadBtn->Down);

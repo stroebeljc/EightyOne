@@ -633,13 +633,13 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                 break;
         case 1:
                 RS232Port=PORTFILE;
-                InFile=_tfopen((InputFileEdit->Text).c_str(), _TEXT("rb"));
-                OutFile=_tfopen((OutputFileEdit->Text).c_str(), _TEXT("wb"));
+                InFile=_tfopen(ZXString(InputFileEdit->Text).c_str(), _TEXT("rb"));
+                OutFile=_tfopen(ZXString(OutputFileEdit->Text).c_str(), _TEXT("wb"));
                 break;
         case 2:
                 RS232Port=PORTTCPIP;
                 ClientSocket->Host = TCPAddress->Text;
-                ClientSocket->Port = _ttoi((TCPPort->Text).c_str());
+                ClientSocket->Port = _ttoi(ZXString(TCPPort->Text).c_str());
 
                 if ((ClientSocket->Host != "") && (ClientSocket->Port!=0))
                         ClientSocket->Open();
@@ -693,7 +693,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                         }
                         else
                         {
-                                Baud=_ttoi((BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
+                                Baud=_ttoi(ZXString(BaudRate->Items->Strings[BaudRate->ItemIndex]).c_str());
                                 ComPort->CustomBaudRate=Baud;
                         }
 
@@ -702,11 +702,13 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                         {
 #if __CODEGEARC__ >= 0x0620
                                 UnicodeString Msg = "Could not open port ";
+                                Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
+                                if (Sender) Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
 #else
                                 AnsiString Msg = "Could not open port ";
-#endif
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
-                                if (Sender) Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
+                                if (Sender) Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
+#endif
                         }
                 }
                 break;
@@ -770,10 +772,11 @@ void __fastcall TIF1::ClientSocketError(TObject *Sender,
 {
 #if __CODEGEARC__ >= 0x0620
         UnicodeString Msg = "Could not open port ";
+        Application->MessageBox(Msg.c_str(),L"Error", MB_OK | MB_ICONERROR);
 #else
         AnsiString Msg = "Could not open port ";
+        Application->MessageBox(Msg.c_str(),"Error", MB_OK | MB_ICONERROR);
 #endif
-        Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
         ErrorCode=0;
 }
 //---------------------------------------------------------------------------

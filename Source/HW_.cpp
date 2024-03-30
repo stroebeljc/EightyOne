@@ -424,7 +424,7 @@ void THW::ConfigureRamTop()
                 int kp = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-                        int rp = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int rp = _ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
                         kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
                 }
                 zx81.RAMTOP = (kp << 10) + 16383;
@@ -478,7 +478,7 @@ void THW::DetermineRamSizeLabel(ZXString newMachineName)
                 ZXString Mem;
 
                 if (RamPackBox->ItemIndex!=0)
-                        i+=_ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        i+=_ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
 
                 name = i;
                 name += "K Jupiter Ace";
@@ -492,7 +492,7 @@ void THW::DetermineRamSizeLabel(ZXString newMachineName)
                 int totalRam = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-                        int ramPack = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int ramPack = _ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
                 ZXString ramSize = totalRam;
@@ -908,12 +908,15 @@ void THW::ConfigureRomCartridge()
                 {
 #if __CODEGEARC__ >= 0x0620
                         UnicodeString msg;
-#else
-                        AnsiString msg;
-#endif
                         msg = "Failed to load cartridge file:\n\n";
                         msg += romCartridgeFilePath;
-                        Application->MessageBox(msg.c_str(), _TEXT("Error"), MB_OK | MB_ICONERROR);
+                        Application->MessageBox(msg.c_str(), L"Error", MB_OK | MB_ICONERROR);
+#else
+                        AnsiString msg;
+                        msg = "Failed to load cartridge file:\n\n";
+                        msg += romCartridgeFilePath;
+                        Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
+#endif
 
 						LoadDock((_TCHAR *)_TEXT(""));
 				}
@@ -2048,7 +2051,7 @@ void THW::DisplayTotalRam()
         int totalRam = machine.baseRamSize;
         if (RamPackBox->ItemIndex!=0)
         {
-                int ramPack = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                int ramPack = _ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
         ZXString ramSize = totalRam;
@@ -3318,7 +3321,11 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-                        int ret = Application->MessageBox(_TEXT("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound"), _TEXT("ZXpand+ Configuration"), MB_YESNO | MB_ICONQUESTION);
+#if __CODEGEARC__ >= 0x0620
+                        int ret = Application->MessageBox(L"Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", L"ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+#else
+                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+#endif
 
                         if (ret == IDYES)
                         {

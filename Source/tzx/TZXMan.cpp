@@ -209,7 +209,7 @@ void TTZX::LoadFile(ZXString Filename, bool Insert)
         Extension=FileNameGetExt(Filename);
         if (Extension == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialog->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, ZXString(OpenDialog->Filter));
                 if (Filename=="") return;
                 Extension = FileNameGetExt(Filename);
         }
@@ -750,7 +750,7 @@ void __fastcall TTZX::ExtractBlock1Click(TObject *Sender)
 
         if (!ExtractDialog1->Execute()) return;
 
-        f=_tfopen(ExtractDialog1->FileName.c_str(), _TEXT("wb"));
+        f=_tfopen(ZXString(ExtractDialog1->FileName).c_str(), _TEXT("wb"));
         if (!f) return;
 
         fwrite(p, 1, DataLen - (p-Data), f);

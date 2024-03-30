@@ -49,9 +49,9 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
 #if __CODEGEARC__ >= 0x0620
                 wchar_t temp[512];
                 mbstowcs(temp, msg.str().c_str(),512);
-                Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
+                Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
 #else
-                Application->MessageBox(msg.str().c_str(), _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
+                Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK | MB_ICONERROR);
 #endif
                 return;
         }
@@ -81,9 +81,9 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
 #if __CODEGEARC__ >= 0x0620
                         wchar_t temp[512];
                         mbstowcs(temp, msg.str().c_str(),512);
-                        Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
+                        Application->MessageBox(temp, L"Load BASIC Listing", MB_OK | MB_ICONERROR);
 #else
-                        Application->MessageBox(msg.str().c_str(), _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
+                        Application->MessageBox(msg.str().c_str(), "Load BASIC Listing", MB_OK | MB_ICONERROR);
 #endif
                         return;
                 }

@@ -527,7 +527,7 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 
         if (Extension == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenTape1->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, ZXString(OpenTape1->Filter));
                 if (Filename=="") return;
                 Extension = FileNameGetExt(Filename);
         }
@@ -637,7 +637,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
 
         if (Ext == ".ZIP")
         {
-                Path=ZipFile->ExpandZIP(Path, LoadSnapDialog->Filter);
+                Path=ZipFile->ExpandZIP(Path, ZXString(LoadSnapDialog->Filter));
                 if (Path=="") return;
                 Ext = FileNameGetExt(Path);
         }

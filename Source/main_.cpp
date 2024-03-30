@@ -81,7 +81,9 @@
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
 #include "sound\sound.h"
+#if __CODEGEARC__ >= 0x0620
 #include <System.IOUtils.hpp>
+#endif
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -521,7 +523,7 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 
         if (Extension == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenTape1->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, ZXString(OpenTape1->Filter));
                 if (Filename=="") return;
                 Extension = FileNameGetExt(Filename);
         }
@@ -631,7 +633,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
 
         if (Ext == ".ZIP")
         {
-                Path=ZipFile->ExpandZIP(Path, LoadSnapDialog->Filter);
+                Path=ZipFile->ExpandZIP(Path, ZXString(LoadSnapDialog->Filter));
                 if (Path=="") return;
                 Ext = FileNameGetExt(Path);
         }
@@ -733,7 +735,22 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         RenderEnd();
 
+#if __CODEGEARC__ >= 0x0620
         TDirectory::Delete(emulator.temppath, true);
+#else
+        if ((dir = opendir(emulator.temppath)) != NULL)
+        {
+                while ((ent = readdir(dir)) != NULL)
+                {
+                        TempFile = emulator.temppath;
+                        TempFile += ent->d_name;
+                        DeleteFile(TempFile);
+                }
+
+                closedir(dir);
+                _rmdir(emulator.temppath);
+        }
+#endif
 }
 //---------------------------------------------------------------------------
 
@@ -932,7 +949,11 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                                 DEVMODE Mode;
                                 int i, retval;
 
+#if __CODEGEARC__ >= 0x0620
                                 TPoint p={0,0};
+#else
+                                POINT p={0,0};
+#endif
 
                                 SaveScrW = GetSystemMetrics(SM_CXSCREEN);
                                 SaveScrH = GetSystemMetrics(SM_CYSCREEN);

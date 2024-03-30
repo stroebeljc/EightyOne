@@ -793,7 +793,11 @@ void TTZXFile::ValidateFile(ZXString FileName, char* tempdata, int len)
         char* program = tempdata;
         int startSystemVariables;
         int elineOffset;
+#if __CODEGEARC__ >= 0x0620
         UnicodeString msg;
+#else
+        AnsiString msg;
+#endif
 
         int length = len;
 
@@ -811,7 +815,11 @@ void TTZXFile::ValidateFile(ZXString FileName, char* tempdata, int len)
                 if (length < (elineOffset + 2))
                 {
                         msg = "The start of the program data could not be found.";
-                        Application->MessageBox(msg.c_str(), _TEXT("File integrity error"), MB_OK | MB_ICONERROR);
+#if __CODEGEARC__ >= 0x0620
+                        Application->MessageBox(msg.c_str(), L"File integrity error", MB_OK | MB_ICONERROR);
+#else
+                        Application->MessageBox(msg.c_str(), "File integrity error", MB_OK | MB_ICONERROR);
+#endif
                         return;
                 }
 
@@ -836,7 +844,11 @@ void TTZXFile::ValidateFile(ZXString FileName, char* tempdata, int len)
                 bool includesSurplusBytes = surplusBytes > 1;
                 msg = "The file contains " + IntToStr(surplusBytes) + " byte" + (includesSurplusBytes ? "s" : "") + " more than specifed by ELINE. Th" + (includesSurplusBytes ? "ese" : "is") + " will be ignored.";
 
-                Application->MessageBox(msg.c_str(), _TEXT("File size warning"), MB_OK | MB_ICONWARNING);
+#if __CODEGEARC__ >= 0x0620
+                Application->MessageBox(msg.c_str(), L"File size warning", MB_OK | MB_ICONWARNING);
+#else
+                Application->MessageBox(msg.c_str(), "File size warning", MB_OK | MB_ICONWARNING);
+#endif
         }
 }
 

@@ -64,8 +64,8 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
         for(i=0;i<modes-1;i++)
                 for(j=i;j<modes;j++)
                 {
-                        x1= _ttoi(ModeList->Items->Strings[i].c_str());
-                        x2= _ttoi(ModeList->Items->Strings[j].c_str());
+                        x1= _ttoi(ZXString(ModeList->Items->Strings[i]).c_str());
+                        x2= _ttoi(ZXString(ModeList->Items->Strings[j]).c_str());
 
                         if (x2<x1) ModeList->Items->Exchange(i,j);
                 }

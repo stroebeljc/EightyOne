@@ -56,8 +56,6 @@ int romcartridgetype;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
-#pragma link "OffBtn"
-#pragma link "OffBtn"
 #pragma resource "*.dfm"
 THW *HW;
 //---------------------------------------------------------------------------
@@ -426,7 +424,7 @@ void THW::ConfigureRamTop()
                 int kp = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-                        int rp = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int rp = _ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
                         kp = machine.ramPackSupplementsInternalRam ? kp + rp : rp;
                 }
                 zx81.RAMTOP = (kp << 10) + 16383;
@@ -480,7 +478,7 @@ void THW::DetermineRamSizeLabel(ZXString newMachineName)
                 ZXString Mem;
 
                 if (RamPackBox->ItemIndex!=0)
-                        i+=_ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        i+=_ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
 
                 name = i;
                 name += "K Jupiter Ace";
@@ -494,7 +492,7 @@ void THW::DetermineRamSizeLabel(ZXString newMachineName)
                 int totalRam = machine.baseRamSize;
                 if (RamPackBox->ItemIndex!=0)
                 {
-                        int ramPack = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                        int ramPack = _ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
                         totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
                 }
                 ZXString ramSize = totalRam;
@@ -908,10 +906,17 @@ void THW::ConfigureRomCartridge()
 
                 if (!loadSuccessful)
                 {
+#if __CODEGEARC__ >= 0x0620
                         UnicodeString msg;
                         msg = "Failed to load cartridge file:\n\n";
                         msg += romCartridgeFilePath;
-                        Application->MessageBox(msg.c_str(), _TEXT("Error"), MB_OK | MB_ICONERROR);
+                        Application->MessageBox(msg.c_str(), L"Error", MB_OK | MB_ICONERROR);
+#else
+                        AnsiString msg;
+                        msg = "Failed to load cartridge file:\n\n";
+                        msg += romCartridgeFilePath;
+                        Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
+#endif
 
 						LoadDock((_TCHAR *)_TEXT(""));
 				}
@@ -2046,7 +2051,7 @@ void THW::DisplayTotalRam()
         int totalRam = machine.baseRamSize;
         if (RamPackBox->ItemIndex!=0)
         {
-                int ramPack = _ttoi(RamPackBox->Items->Strings[RamPackBox->ItemIndex].c_str());
+                int ramPack = _ttoi(ZXString(RamPackBox->Items->Strings[RamPackBox->ItemIndex]).c_str());
                 totalRam = machine.ramPackSupplementsInternalRam ? totalRam + ramPack : ramPack;
         }
         ZXString ramSize = totalRam;
@@ -3067,7 +3072,11 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
+#if __CODEGEARC__ >= 0x0620
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
+#else
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
+#endif
         {
                 RomSelect->FileName = "";
         }
@@ -3312,7 +3321,11 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-                        int ret = Application->MessageBox(_TEXT("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound"), _TEXT("ZXpand+ Configuration"), MB_YESNO | MB_ICONQUESTION);
+#if __CODEGEARC__ >= 0x0620
+                        int ret = Application->MessageBox(L"Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", L"ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+#else
+                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+#endif
 
                         if (ret == IDYES)
                         {
@@ -3356,7 +3369,11 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;
+#if __CODEGEARC__ >= 0x0620
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
+#else
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
+#endif
         {
                 RomSelect->FileName = "";
         }
@@ -3516,7 +3533,11 @@ void THW::PopulateRomCartridgeTS1510List()
 
         for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
                 AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter._Ptr, ".rom");
+#else
+                AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter, ".rom");
+#endif
         }
 }
 //---------------------------------------------------------------------------
@@ -3528,7 +3549,11 @@ void THW::PopulateRomCartridgeTS2068List()
 
         for (iter = ts2068RomCartridges.begin(); iter != ts2068RomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
                 AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter._Ptr, ".dck");
+#else
+                AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter, ".dck");
+#endif
         }
 }
 //---------------------------------------------------------------------------
@@ -3540,7 +3565,11 @@ void THW::PopulateRomCartridgeTC2068List()
 
         for (iter = tc2068RomCartridges.begin(); iter != tc2068RomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
                 AddRomCartridgeFile(TC2068RomCartridgeFileBox, iter._Ptr, ".dck");
+#else
+                AddRomCartridgeFile(TC2068RomCartridgeFileBox, iter, ".dck");
+#endif
         }
 }//---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()
@@ -3551,7 +3580,11 @@ void THW::PopulateRomCartridgeSinclairList()
 
         for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
                 AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter._Ptr, ".rom");
+#else
+                AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter, ".rom");
+#endif
         }
 }
 //---------------------------------------------------------------------------

@@ -86,11 +86,7 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
         while(ListBox->Items->Count) ListBox->Items->Delete(0);
 
 		// Open The zip file
-#ifdef _UNICODE
         ZFile=unzOpen(AnsiString(Path).c_str());
-#else
-        ZFile=unzOpen(Path.c_str());
-#endif
         if (!ZFile) return("");
 
         // Step through the contents of the archive, adding each item to the ListBox
@@ -136,7 +132,11 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
         else
         {
                 // Couldn't file any files in the zip that match the permitted extensions
-                Application->MessageBox(_TEXT("Sorry, that archive does not contain any files of the relevant type"),_TEXT("Error"), MB_OK | MB_ICONERROR);
+#if __CODEGEARC__ < 0x0620
+                Application->MessageBox("Sorry, that archive does not contain any files of the relevant type","Error", MB_OK | MB_ICONERROR);
+#else
+                Application->MessageBox(L"Sorry, that archive does not contain any files of the relevant type",L"Error", MB_OK | MB_ICONERROR);
+#endif
                 unzClose(ZFile);
                 return("");
         }

@@ -116,7 +116,7 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 
         if (Ext == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialog1->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, ZXString(OpenDialog1->Filter));
                 if (Filename=="") return;
                 Ext = FileNameGetExt(Filename);
         }
@@ -150,7 +150,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 
         if (Ext == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialog1->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, ZXString(OpenDialog1->Filter));
                 if (Filename=="") return;
                 Ext = FileNameGetExt(Filename);
         }
@@ -422,7 +422,11 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                         HD0List->ItemIndex=0;
                         if (ATA_GetHDF(0)) OpenDialog2->FileName=ATA_GetHDF(0);
 
+#if __CODEGEARC__ >= 0x0620
                         if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.LastChar()) == '\\')
+#else
+                        if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+#endif
                         {
                                 OpenDialog2->FileName = "";
                         }
@@ -443,7 +447,11 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
 								_tcscpy(Message,ZXString(Filename).c_str());
 								_tcscat(Message,_TEXT(" Does not exist.\nWould you like to create it?"));
 
-                                ret=Application->MessageBox(Message, _TEXT("File does not exist"), MB_OKCANCEL | MB_ICONWARNING);
+#if __CODEGEARC__ < 0x0620
+                                ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+#else
+                                ret=Application->MessageBox(UnicodeString(Message).w_str(), L"File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+#endif
 
                                 if (ret!=IDOK) return;
 
@@ -503,7 +511,11 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
                 HD1List->ItemIndex=0;
                 if (ATA_GetHDF(1)) OpenDialog2->FileName=ATA_GetHDF(1);
 
+#if __CODEGEARC__ >= 0x0620
                 if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.LastChar()) == '\\')
+#else
+                if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+#endif
                 {
                         OpenDialog2->FileName = "";
                 }
@@ -523,7 +535,11 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
 						_tcscpy(Message,ZXString(Filename).c_str());
 						_tcscat(Message, _TEXT(" Does not exist.\nWould you like to create it?"));
 
-                        ret=Application->MessageBox(Message, _TEXT("File does not exist"), MB_OKCANCEL | MB_ICONWARNING);
+#if __CODEGEARC__ < 0x0620
+                        ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+#else
+                        ret=Application->MessageBox(UnicodeString(Message).w_str(), L"File does not exist", MB_OKCANCEL | MB_ICONWARNING);
+#endif
 
                         if (ret!=IDOK) return;
 

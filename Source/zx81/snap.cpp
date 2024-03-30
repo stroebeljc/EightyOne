@@ -809,7 +809,11 @@ int save_snap_zx81(_TCHAR *filename)
 	}
 
 	fprintf(f,"[MACHINE]\n");
+#ifdef _UNICODE
 	fprintf(f,"MODEL %S\n", GetMachine().c_str());
+#else
+	fprintf(f,"MODEL %s\n", GetMachine().c_str());
+#endif
 
 	fprintf(f,"\n[CPU]\n");
 	fprintf(f,"PC %04X    SP  %04X\n", z80.pc.w,z80.sp.w);
@@ -856,8 +860,7 @@ int save_snap_zx81(_TCHAR *filename)
 	fprintf(f, "\n");
 
 	fprintf(f,"\n[ADVANCED]\n");
-	ZXString rom = StringReplace(HW->RomBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
-	fprintf(f,"ROM %S\n", rom.c_str());
+	fprintf(f,"ROM %S\n", StringReplace(HW->RomBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll).c_str());
 	fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
 	fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
 	fprintf(f,"IMPROVED_WAIT %02X\n", zx81.improvedWait);
@@ -922,12 +925,10 @@ int save_snap_zx81(_TCHAR *filename)
 	fprintf(f,"TYPE %S\n", HW->HiResBox->Text.c_str());
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
-        ZXString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
-	fprintf(f,"TYPE %S\n", type.c_str());
+	fprintf(f,"TYPE %S\n", StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll).c_str());
 	if (HW->RomCartridgeBox->Text != "None")
 	{
-	        ZXString path = StringReplace(HW->RomCartridgeFileBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
-		fprintf(f,"PATH %S\n", path.c_str());
+		fprintf(f,"PATH %S\n", StringReplace(HW->RomCartridgeFileBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll).c_str());
 		if (HW->RomCartridgeBox->Text == "ZXC1")
 		{
 		        fprintf(f,"CONFIGURATION %S\n", HW->ZXC1ConfigurationBox->Text.c_str());

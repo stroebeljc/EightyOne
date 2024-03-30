@@ -412,7 +412,11 @@ void DDAccurateUpdateDisplay(bool singlestep)
 
         DDFrame->Unlock(NULL);
 
-        TPoint p = {0, 0};
+#if __CODEGEARC__ >= 0x0620
+        TPoint p={0,0};
+#else
+        POINT p={0,0};
+#endif
         if(!Form1->FullScreen) p=Form1->ClientToScreen(p);
 
         rDest=rcdest;

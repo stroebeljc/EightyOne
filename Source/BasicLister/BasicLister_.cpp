@@ -582,7 +582,11 @@ void TBasicLister::SaveListingToFile()
         bool programLoaded = (ProgramSize() > 0);
         if (!programLoaded)
         {
-                Application->MessageBox(_TEXT("There is no BASIC program loaded."), _TEXT("Save BASIC Listing"), MB_OK | MB_ICONERROR);
+#if __CODEGEARC__ < 0x0620
+                Application->MessageBox("There is no BASIC program loaded.", "Save BASIC Listing", MB_OK | MB_ICONERROR);
+#else
+                Application->MessageBox(L"There is no BASIC program loaded.", L"Save BASIC Listing", MB_OK | MB_ICONERROR);
+#endif
                 return;
         }
 
@@ -661,6 +665,10 @@ void TBasicLister::LoadSettings(TIniFile *ini)
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         int scrollPos = ScrollBar->Position;
+
+#if __CODEGEARC__ < 0x0620
+        ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
+#endif
 
         int highlightIndex = mLastHighlightedEntryIndex;
 

@@ -87,7 +87,7 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
 
 		// Open The zip file
 #ifdef _UNICODE
-		ZFile=unzOpen(AnsiString(Path).c_str());
+        ZFile=unzOpen(AnsiString(Path).c_str());
 #else
         ZFile=unzOpen(Path.c_str());
 #endif
@@ -101,9 +101,9 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
         {
                 // Get filename of archive member
 #ifdef _UNICODE
-				char tempFileName[MAX_PATH];
+                char tempFileName[MAX_PATH];
                 unzGetCurrentFileInfo(ZFile, NULL, tempFileName, sizeof(tempFileName), NULL, 0, NULL, 0);
-				mbstowcs(FileName, tempFileName, MAX_PATH);
+                mbstowcs(FileName, tempFileName, MAX_PATH);
 #else
                 unzGetCurrentFileInfo(ZFile, NULL, FileName, sizeof(FileName), NULL, 0, NULL, 0);
 #endif
@@ -164,9 +164,9 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
 
         // Locate the selected file in the archive
 #ifdef _UNICODE
-		char tempFile[MAX_PATH];
-		wcstombs(tempFile, File.c_str(), MAX_PATH);
-		error=unzLocateFile(ZFile, tempFile, 0);
+        char tempFile[MAX_PATH];
+        wcstombs(tempFile, File.c_str(), MAX_PATH);
+        error=unzLocateFile(ZFile, tempFile, 0);
 #else
         error=unzLocateFile(ZFile, File.c_str(), 0);
 #endif

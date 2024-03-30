@@ -625,7 +625,7 @@ bool TTZXFile::LoadTAPFile(ZXString FileName, bool Insert)
         bool FirstBlock, AddSync, AddChecksum;
         unsigned char data[65536];
 
-		f=_tfopen(FileName.c_str(), _TEXT("rb"));
+        f=_tfopen(FileName.c_str(), _TEXT("rb"));
         if (!f) return(false);
         this->FileName=FileName;
 
@@ -689,7 +689,7 @@ bool TTZXFile::LoadPFile(ZXString FileName, bool Insert)
         int len, fnamelen;
         char tempdata[65536+256];
 
-		f=_tfopen(FileName.c_str(), _TEXT("rb"));
+        f=_tfopen(FileName.c_str(), _TEXT("rb"));
         if (!f) return(false);
         this->FileName=FileName;
 
@@ -867,7 +867,7 @@ bool TTZXFile::LoadT81File(ZXString FileName, bool Insert)
         FILE *fptr;
         int length, zxnamelen,i;
 
-		fptr=_tfopen(FileName.c_str(), _TEXT("rb"));
+        fptr=_tfopen(FileName.c_str(), _TEXT("rb"));
         if (!fptr) return(false);
         this->FileName=FileName;
 

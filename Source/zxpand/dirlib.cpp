@@ -57,7 +57,7 @@ int dirOpen(const char* path)
    mbstowcs(pathPlusExt, path, MAX_PATH);
    if (path[strlen(path) - 1] != '/' && path[strlen(path) - 1] != '\\')
    {
-	  _tcscat(pathPlusExt, _TEXT("\\"));
+       _tcscat(pathPlusExt, _TEXT("\\"));
    }
    _tcscat(pathPlusExt, _TEXT("*.*"));
 

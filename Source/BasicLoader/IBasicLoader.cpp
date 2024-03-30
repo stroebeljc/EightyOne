@@ -31,10 +31,10 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
 
         try
         {
-				ReadBasicListingFile(filename);
+                ReadBasicListingFile(filename);
         }
         catch (exception& ex)
-		{
+        {
                 stringstream msg;
                 msg << ex.what() << endl;
                 msg << endl;
@@ -47,11 +47,11 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
                         if (truncateLine) msg << "...";
                 }
 
-				wchar_t temp[512];
-				mbstowcs(temp, msg.str().c_str(),512);
-				Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
+                wchar_t temp[512];
+                mbstowcs(temp, msg.str().c_str(),512);
+                Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
                 return;
-		}
+        }
 
         memset(mProgramData, 0, sizeof(mProgramData));
 
@@ -68,16 +68,16 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
                 }
                 catch (exception& ex)
                 {
-						stringstream msg;
+                        stringstream msg;
                         msg << "Unable to parse line " << mLines[i].sourceLine << " - " << ex.what() << endl;
                         msg << endl;
                         bool truncateLine = (mLines[i].line.length() > 256);
                         int displayLen = truncateLine ? 256: mLines[i].line.length();
                         msg << mLines[i].line.substr(0, displayLen);
-						if (truncateLine) msg << "...";
-						wchar_t temp[512];
-						mbstowcs(temp, msg.str().c_str(),512);
-						Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
+                        if (truncateLine) msg << "...";
+                        wchar_t temp[512];
+                        mbstowcs(temp, msg.str().c_str(),512);
+                        Application->MessageBox(temp, _TEXT("Load BASIC Listing"), MB_OK | MB_ICONERROR);
                         return;
                 }
         }
@@ -89,18 +89,18 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
 
 void IBasicLoader::ReadBasicListingFile(ZXString filename)
 {
-		if (!FileExists(filename))
-		{
-				stringstream msg;
-				msg << "File not found:" << endl << endl;
-				msg << AnsiString(filename).c_str() << endl;
+        if (!FileExists(filename))
+        {
+                stringstream msg;
+                msg << "File not found:" << endl << endl;
+                msg << AnsiString(filename).c_str() << endl;
 
-				throw runtime_error(msg.str());
+                throw runtime_error(msg.str());
         }
 
         ifstream basicFile(AnsiString(filename).c_str());
         if (basicFile.fail())
-		{
+        {
                 stringstream msg;
                 msg << "Failed to load file:" << endl << endl;
                 msg << AnsiString(filename).c_str() << endl;
@@ -600,7 +600,7 @@ void IBasicLoader::ExtractZxTokenFormatExtensionByteEncoding(bool zxTokenSupport
                         unsigned char chr1 = *pPos;
                         if (chr1 == '\0')
                         {
-								throw runtime_error("Escape sequence incomplete before line ending");
+                                throw runtime_error("Escape sequence incomplete before line ending");
                         }
 
                         *pPos = Blank;

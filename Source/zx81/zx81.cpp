@@ -402,9 +402,9 @@ void zx81_initialise()
         videoFlipFlop3Clear = 0;
         prevVideoFlipFlop3Q = 0;
 
-		zx80rom = !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
-		zx81rom = !_tcscmp(machine.CurRom, _TEXT("zx81.edition1.rom")) || !_tcscmp(machine.CurRom, _TEXT("zx81.edition2.rom")) || !_tcscmp(machine.CurRom, _TEXT("zx81.edition3.rom")) ||
-				  !_tcscmp(machine.CurRom, _TEXT("tk85.rom")) || !_tcscmp(machine.CurRom, _TEXT("ts1500.rom"));
+        zx80rom = !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
+        zx81rom = !_tcscmp(machine.CurRom, _TEXT("zx81.edition1.rom")) || !_tcscmp(machine.CurRom, _TEXT("zx81.edition2.rom")) || !_tcscmp(machine.CurRom, _TEXT("zx81.edition3.rom")) ||
+                  !_tcscmp(machine.CurRom, _TEXT("tk85.rom")) || !_tcscmp(machine.CurRom, _TEXT("ts1500.rom"));
 
         annotatableROM = IsAnnotatableROM();
 }
@@ -426,7 +426,7 @@ BOOL IsAnnotatableROM()
 {
         bool annotatableROM = true;
 
-		if (!_tcscmp(machine.CurRom, _TEXT("")))
+        if (!_tcscmp(machine.CurRom, _TEXT("")))
         {
                 return annotatableROM;
         }
@@ -436,7 +436,7 @@ BOOL IsAnnotatableROM()
         case MACHINEZX80:
                 if (zx80rom)
                 {
-						annotatableROM = !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
+                        annotatableROM = !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
                         break;
                 }
 
@@ -445,11 +445,11 @@ BOOL IsAnnotatableROM()
         case MACHINETK85:
         case MACHINER470:
         case MACHINETS1500:
-				annotatableROM = zx81rom || !_tcscmp(machine.CurRom, _TEXT("ringo470.rom"));
+                annotatableROM = zx81rom || !_tcscmp(machine.CurRom, _TEXT("ringo470.rom"));
                 break;
 
         case MACHINELAMBDA:
-				annotatableROM = !_tcscmp(machine.CurRom, _TEXT("lambda8300.rom")) || !_tcscmp(machine.CurRom, _TEXT("lambda8300colour.rom"));
+                annotatableROM = !_tcscmp(machine.CurRom, _TEXT("lambda8300.rom")) || !_tcscmp(machine.CurRom, _TEXT("lambda8300colour.rom"));
                 break;
 
         default:

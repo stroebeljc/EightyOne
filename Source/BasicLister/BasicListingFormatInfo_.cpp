@@ -4,6 +4,7 @@
 #pragma hdrstop
 
 #include "BasicListingFormatInfo_.h"
+#include "zx81config.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"

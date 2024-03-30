@@ -6,7 +6,7 @@ class AddressResolver
 public:
         static bool Validate(ZXString addrString, int& address)
         {
-				ZXString addressValue = addrString.Trim();
+                ZXString addressValue = addrString.Trim();
 
                 if (addressValue.Length() == 0)
                         return false;

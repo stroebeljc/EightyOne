@@ -59,7 +59,7 @@ typedef struct DriveStruct
         int Sectors;
         unsigned long Size;
         int Type;
-		_TCHAR Path[32];
+        _TCHAR Path[32];
         int ReadOnly;
 } PHYSDRIVE;
 

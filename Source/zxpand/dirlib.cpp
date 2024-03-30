@@ -26,7 +26,7 @@ const int FR_NO_PATH = 5;
 void dirGetExeLocation(char* buffer, int bufSize)
 {
 #ifdef _UNICODE
-   _TCHAR *tempbuff = (_TCHAR *)malloc(bufSize*sizeof(_TCHAR));
+   _TCHAR *tempbuff = (_TCHAR *)malloc(MAX_PATH);
    GetModuleFileName(NULL, tempbuff, bufSize);
    wcstombs(buffer, tempbuff, bufSize);
    free(tempbuff);
@@ -57,7 +57,7 @@ int dirOpen(const char* path)
    strcpy(pathPlusExt, path);
    if (path[strlen(path) - 1] != '/' && path[strlen(path) - 1] != '\\')
    {
-	  _tcscat(pathPlusExt, _TEXT("\\"));
+       _tcscat(pathPlusExt, _TEXT("\\"));
    }
    _tcscat(pathPlusExt, _TEXT("*.*"));
 

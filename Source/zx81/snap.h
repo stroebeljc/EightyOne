@@ -23,6 +23,8 @@
 #ifndef SNAP_H
 #define SNAP_H
 
+#include "zx81config.h"
+
 #ifdef __cplusplus
 extern "C"
 {

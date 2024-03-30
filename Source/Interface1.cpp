@@ -408,7 +408,7 @@ void TIF1::MDVLoadFile(int Drive, _TCHAR *FileName)
 
         if (Ext==".MDR")
         {
-				f=_tfopen(FileName, _TEXT("rb"));
+                f=_tfopen(FileName, _TEXT("rb"));
                 if (!f) return;
 
                 buffer=(char *)malloc(MDR_RECORD);
@@ -462,7 +462,7 @@ void TIF1::MDVLoadFile(int Drive, _TCHAR *FileName)
         }
         else
         {
-				f=_tfopen(FileName, _TEXT("rb"));
+                f=_tfopen(FileName, _TEXT("rb"));
                 if (f)
                 {
                         buffer=(char *)malloc(256*1024);
@@ -499,7 +499,7 @@ void TIF1::MDVLoadFile(int Drive, _TCHAR *FileName)
                 Drives[Drive].length=len;
                 Drives[Drive].position=0;
                 Drives[Drive].changed=false;
-				_tcscpy(Drives[Drive].FileName, FileName);
+                _tcscpy(Drives[Drive].FileName, FileName);
         }
 }
 
@@ -561,7 +561,7 @@ void TIF1::MDVSaveFile(int Drive)
 
 _TCHAR *TIF1::MDVGetFileName(int Drive)
 {
-		if (Drives[Drive].FileName[0]=='\0') return(NULL);
+        if (Drives[Drive].FileName[0]=='\0') return(NULL);
         return(Drives[Drive].FileName);
 }
 
@@ -652,7 +652,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                 {
                         RS232Port=PORTFILE;
                         InFile=NULL;
-						OutFile=_tfopen(Port.c_str(), _TEXT("wb"));
+                        OutFile=_tfopen(Port.c_str(), _TEXT("wb"));
                 }
                 else
                 {
@@ -726,7 +726,7 @@ void __fastcall TIF1::OKClick(TObject *Sender)
 
 void __fastcall TIF1::ComPortListChange(TObject *Sender)
 {
-		ZXString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+        ZXString Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
         PortPanel->Visible=false;
         TCPPanel->Visible=false;

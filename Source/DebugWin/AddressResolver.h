@@ -29,7 +29,7 @@ public:
                 // suddenly 0xABCD, $ABCD, 01234 [octal] and decimal are all valid.
                 //
                 _TCHAR* endPtr;
-				tempAddress = int(_tcstol(ZXString(addressValue).c_str(), &endPtr, 0));
+                tempAddress = int(_tcstol(ZXString(addressValue).c_str(), &endPtr, 0));
                 if (*endPtr != 0)
                 {
                         return false;

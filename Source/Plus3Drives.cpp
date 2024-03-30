@@ -159,7 +159,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 
         DriveBText->Text = Filename;
         DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
-		_tcscpy(spectrum.drivebimg,ZXString(DriveBText->Text).c_str());
+        _tcscpy(spectrum.drivebimg,ZXString(DriveBText->Text).c_str());
         floppy_setimage(1,spectrum.drivebimg);
 }
 //---------------------------------------------------------------------------
@@ -189,8 +189,8 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
         MDV6Text->Text="< Empty >";
         MDV7Text->Text="< Empty >";
 
-		if (_tcslen(spectrum.driveaimg)) DriveAText->Text=spectrum.driveaimg;
-		if (_tcslen(spectrum.drivebimg)) DriveBText->Text=spectrum.drivebimg;
+        if (_tcslen(spectrum.driveaimg)) DriveAText->Text=spectrum.driveaimg;
+        if (_tcslen(spectrum.drivebimg)) DriveBText->Text=spectrum.drivebimg;
 
         HD0CHS->Visible=false; HD0C->Visible=false; HD0H->Visible=false;
         HD0S->Visible=false; HD0HUD->Visible=false; HD0SUD->Visible=false;
@@ -439,13 +439,13 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                         if (Ext!=".HDF" && Ext!=".VHD") Filename += ".hdf";
                         Ext=FileNameGetExt(Filename);
 
-						if (_taccess(ZXString(Filename).c_str(), 0) && Ext==".HDF")
+                        if (_taccess(ZXString(Filename).c_str(), 0) && Ext==".HDF")
                         {
-								_TCHAR Message[256];
+                                _TCHAR Message[256];
                                 int ret;
 
-								_tcscpy(Message,ZXString(Filename).c_str());
-								_tcscat(Message,_TEXT(" Does not exist.\nWould you like to create it?"));
+                                _tcscpy(Message,ZXString(Filename).c_str());
+                                _tcscat(Message,_TEXT(" Does not exist.\nWould you like to create it?"));
 
 #if __CODEGEARC__ < 0x0620
                                 ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
@@ -527,13 +527,13 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
 
                 if (Ext!=".HDF") Filename += ".hdf";
 
-				if (_taccess(ZXString(Filename).c_str(), 0))
+                if (_taccess(ZXString(Filename).c_str(), 0))
                 {
-						_TCHAR Message[256];
+                        _TCHAR Message[256];
                         int ret;
 
-						_tcscpy(Message,ZXString(Filename).c_str());
-						_tcscat(Message, _TEXT(" Does not exist.\nWould you like to create it?"));
+                        _tcscpy(Message,ZXString(Filename).c_str());
+                        _tcscat(Message, _TEXT(" Does not exist.\nWould you like to create it?"));
 
 #if __CODEGEARC__ < 0x0620
                         ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
@@ -759,11 +759,11 @@ void P3DriveMachineHasInitialised(void)
 {
         if (P3Drive->DriveAText->Text != "< Empty >")
         {
-			floppy_setimage(0, ZXString(P3Drive->DriveAText->Text).c_str());
-		}
+            floppy_setimage(0, ZXString(P3Drive->DriveAText->Text).c_str());
+        }
 
-		if (P3Drive->DriveBText->Text != "< Empty >")
-		{
+        if (P3Drive->DriveBText->Text != "< Empty >")
+        {
             floppy_setimage(1, ZXString(P3Drive->DriveBText->Text).c_str());
         }
 }

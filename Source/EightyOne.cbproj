@@ -54,8 +54,8 @@
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
         <ProjectType>CppVCLApplication</ProjectType>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <AllPackageLibs>rtl.lib;vcl.lib;CPortLib6.lib;OfficeButton97.lib</AllPackageLibs>
-        <_TCHARMapping>char</_TCHARMapping>
+        <AllPackageLibs>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib</AllPackageLibs>
+        <_TCHARMapping>wchar_t</_TCHARMapping>
         <Multithreaded>true</Multithreaded>
         <Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
@@ -65,24 +65,23 @@
         <BCC_PCHUsage>None</BCC_PCHUsage>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <IncludePath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;..\Components\Office Button 97;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <ILINK_LibraryPath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <BCC_IncludePath>zlib\minizip\;zlib\;..\Components\ComPort Library\;libdsk\;..\Components\Office Button 97\OffBtn97\32-Bit\;$(BCC_IncludePath)</BCC_IncludePath>
         <DCC_LongStrings>false</DCC_LongStrings>
         <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
         <SubProcessesNumber>2</SubProcessesNumber>
-        <Defines>DONT_USE_WINSPOOL_SETPORTA;$(Defines)</Defines>
         <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
         <BCC_wpar>false</BCC_wpar>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindcompvclsmp;bindcompvclwinx;bindengine;CloudService;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;OfficeButton97;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;tethering;vcl;vclactnband;vcldb;vcldsnap;vcledge;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
+        <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindcompvclsmp;bindcompvclwinx;bindengine;CloudService;CPort_R;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;OfficeButton97;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;tethering;vcl;vclactnband;vcldb;vcldsnap;vcledge;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
         <IncludePath>$(BDSINCLUDE)\windows\vcl;$(IncludePath)</IncludePath>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <ILINK_LibraryPath>..\Components\DirectSound\;..\Components\DirectDraw\;..\Source\;..\Components\Office Button 97\OffBtn97\32-Bit\;..\Components\Office Button 97\OffBtn97\;..\Components\DirectSound\;..\Components\DirectDraw\;..\Components\ComPort Library\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <ILINK_LibraryPath>..\Components\DirectSound\;..\Components\DirectDraw\;..\Source\;..\Components\Office Button 97\OffBtn97\32-Bit\;..\Components\Office Button 97\OffBtn97\;..\Components\ComPort-Library-master\Source;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <Icon_MainIcon>icons\zx81.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
@@ -117,7 +116,7 @@
         <ILINK_LibraryPath>$(BDSLIB)\$(PLATFORM)$(CC_SUFFIX)\debug;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <ILINK_Verbose>true</ILINK_Verbose>
-        <LinkPackageStatics>rtl.lib;vcl.lib;CPortLib6.lib;OfficeButton97.lib</LinkPackageStatics>
+        <LinkPackageStatics>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib</LinkPackageStatics>
         <Icon_MainIcon>icons\zx81.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -127,7 +126,7 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <LinkPackageStatics>rtl.lib;vcl.lib;CPortLib6.lib;OfficeButton97.lib</LinkPackageStatics>
+        <LinkPackageStatics>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib</LinkPackageStatics>
         <Icon_MainIcon>icons\zx81.ico</Icon_MainIcon>
     </PropertyGroup>
     <ItemGroup>
@@ -659,51 +658,51 @@
             <DependentOn>zxprinter\zxprinter.h</DependentOn>
             <BuildOrder>121</BuildOrder>
         </CppCompile>
+        <FormResources Include="SymBrowse.dfm"/>
+        <FormResources Include="tzx\tzxEditArchive.dfm"/>
         <FormResources Include="tzx\tzxEditData.dfm"/>
+        <FormResources Include="Speed_.dfm"/>
+        <FormResources Include="SplashScreen.dfm"/>
         <FormResources Include="tzx\tzxEditGeneral.dfm"/>
         <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
-        <FormResources Include="tzx\tzxEditArchive.dfm"/>
-        <FormResources Include="SymBrowse.dfm"/>
         <FormResources Include="tzx\tzxEditPause.dfm"/>
         <FormResources Include="tzx\tzxEditText.dfm"/>
         <FormResources Include="sound\SoundForm.dfm"/>
         <FormResources Include="sound\SoundOP.dfm"/>
-        <FormResources Include="SerialPort.dfm"/>
-        <FormResources Include="Speed_.dfm"/>
-        <FormResources Include="SplashScreen.dfm"/>
         <FormResources Include="zx97Config.dfm"/>
         <FormResources Include="zxprinter\zxprinter.dfm"/>
         <FormResources Include="wavtape\wavload_.dfm"/>
         <FormResources Include="tzx\TZXMan.dfm"/>
         <FormResources Include="ZipFile_.dfm"/>
         <FormResources Include="BasicLoader\BasicLoaderOptions_.dfm"/>
-        <FormResources Include="BasicLister\BasicListingFormatInfo_.dfm"/>
-        <FormResources Include="Artifacts_.dfm"/>
         <FormResources Include="BasicLister\BasicListerOptions_.dfm"/>
         <FormResources Include="BasicLister\BasicLister_.dfm"/>
-        <FormResources Include="DebugWin\Hist.dfm"/>
+        <FormResources Include="BasicLister\BasicListingFormatInfo_.dfm"/>
         <FormResources Include="DebugWin\ProfilePlot_.dfm"/>
         <FormResources Include="DebugWin\Profiler.dfm"/>
-        <FormResources Include="DebugWin\EditValue_.dfm"/>
+        <FormResources Include="DebugWin\ProfSampEdit.dfm"/>
+        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
         <FormResources Include="Debug68k\debug68.dfm"/>
         <FormResources Include="DebugWin\Debug.dfm"/>
+        <FormResources Include="DebugWin\EditValue_.dfm"/>
+        <FormResources Include="DebugWin\Hist.dfm"/>
         <FormResources Include="About_.dfm"/>
-        <FormResources Include="LiveMemoryWindow_.dfm"/>
-        <FormResources Include="main_.dfm"/>
+        <FormResources Include="Artifacts_.dfm"/>
         <FormResources Include="MakeHDF.dfm"/>
-        <FormResources Include="Plus3Drives.dfm"/>
         <FormResources Include="memoryWindow.dfm"/>
         <FormResources Include="MemSave_.dfm"/>
         <FormResources Include="Parallel.dfm"/>
-        <FormResources Include="FullScreen.dfm"/>
+        <FormResources Include="LiveMemoryWindow_.dfm"/>
+        <FormResources Include="main_.dfm"/>
+        <FormResources Include="SerialPort.dfm"/>
+        <FormResources Include="Plus3Drives.dfm"/>
         <FormResources Include="HW_.dfm"/>
-        <FormResources Include="DebugWin\ProfSampEdit.dfm"/>
-        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
+        <FormResources Include="Interface1.dfm"/>
         <FormResources Include="DebugWin\SetBreakpoint_.dfm"/>
+        <FormResources Include="FullScreen.dfm"/>
+        <FormResources Include="kb_.dfm"/>
         <FormResources Include="KeyboardFunctions_.dfm"/>
         <FormResources Include="Keyboard_.dfm"/>
-        <FormResources Include="kb_.dfm"/>
-        <FormResources Include="Interface1.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -731,6 +730,7 @@
                     <Source Name="MainSource">EightyOne.cpp</Source>
                 </Source>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="C:\EightyOne_tmp\Components\ComPort-Library-master\CPort_D104S.bpl">ComPort Library Delphi 10.4</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k280.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp280.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                 </Excluded_Packages>

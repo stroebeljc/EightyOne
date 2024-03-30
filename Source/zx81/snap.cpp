@@ -656,7 +656,7 @@ void load_snap_ace(FILE *f)
         z80.r = memory[memptr];
 }
 
-int do_load_snap(TCHAR *filename, bool resetHardware)
+int do_load_snap(_TCHAR *filename, bool resetHardware)
 {
         _TCHAR *p;
         FILE *f;

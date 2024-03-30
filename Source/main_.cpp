@@ -159,36 +159,36 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 
         RunFrameEnable=false;
 
-		_tcscpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
-		if (emulator.cwd[_tcslen(emulator.cwd)-1]!='\\')
+        _tcscpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
+        if (emulator.cwd[_tcslen(emulator.cwd)-1]!='\\')
         {
-				emulator.cwd[_tcslen(emulator.cwd)-1]='\\';
-				emulator.cwd[_tcslen(emulator.cwd)]='\0';
+                emulator.cwd[_tcslen(emulator.cwd)-1]='\\';
+                emulator.cwd[_tcslen(emulator.cwd)]='\0';
         }
 
-		_tcscpy(TEMP1, emulator.cwd);
+        _tcscpy(TEMP1, emulator.cwd);
         GetTempPath(256, emulator.temppath);
-		_tcscat(emulator.temppath, temporaryFolder);
-		_tmkdir(emulator.temppath);
+        _tcscat(emulator.temppath, temporaryFolder);
+        _tmkdir(emulator.temppath);
 
         if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, path))
         {
-				IniPath=path;
+                IniPath=path;
                 if (IniPath[IniPath.Length()] != '\\') IniPath += "\\";
                 IniPath += iniFolder;
                 _tmkdir(IniPath.c_str());
-				_tcscpy(emulator.configpath, IniPath.c_str());
+                _tcscpy(emulator.configpath, IniPath.c_str());
 
                 IniPath += FileNameGetFname(Application->ExeName);
                 IniPath += ".ini";
-				_tcscpy(emulator.inipath, IniPath.c_str());
+                _tcscpy(emulator.inipath, IniPath.c_str());
         }
         else
-		{
+        {
                 IniPath=ChangeFileExt(Application->ExeName, ".ini" );
-				_tcscpy(emulator.inipath, IniPath.c_str());
+                _tcscpy(emulator.inipath, IniPath.c_str());
                 IniPath=FileNameGetPath(Application->ExeName);
-				_tcscpy(emulator.configpath, IniPath.c_str());
+                _tcscpy(emulator.configpath, IniPath.c_str());
         }
 
         for(i=0; CommandLine[i]!=NULL; i++)
@@ -198,7 +198,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
                         IniPath=CommandLine[i];
                         if (IniPath.Pos("\\")==0)
                                 IniPath=emulator.configpath + IniPath;
-						_tcscpy(emulator.inipath, IniPath.c_str());
+                        _tcscpy(emulator.inipath, IniPath.c_str());
 
                 }
         }
@@ -268,13 +268,13 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         BuildDocumentationMenu();
         BuildExamplesMenu();
 
-		if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, _TEXT(""), _TEXT("Sound Error"), 0);
+        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, _TEXT(""), _TEXT("Sound Error"), 0);
 
         if (emulator.checkInstallationPathLength && _tcslen(emulator.cwd) >= 180)
         {
-				int ret = MessageBox(NULL, _TEXT("The location of the EightyOne folder may cause selection of alternate ROMs\nor ROM cartridges to exceed to maximum path length supported by Windows.\n\nCheck and show this warning next time EightyOne is started?"), _TEXT("Warning"), MB_YESNO |MB_ICONWARNING);
+                int ret = MessageBox(NULL, _TEXT("The location of the EightyOne folder may cause selection of alternate ROMs\nor ROM cartridges to exceed to maximum path length supported by Windows.\n\nCheck and show this warning next time EightyOne is started?"), _TEXT("Warning"), MB_YESNO |MB_ICONWARNING);
                 if (ret == IDNO)
-				{
+                {
                         emulator.checkInstallationPathLength = 0;
                 }
         }
@@ -651,8 +651,8 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         }
         
         if ((Ext == ".Z81") || (Ext == ".ACE")) load_snap(Path.c_str());
-		if (Ext == ".Z80") spec_load_z80(AnsiString(Path).c_str());
-		if (Ext == ".SNA") spec_load_sna(AnsiString(Path).c_str());
+        if (Ext == ".Z80") spec_load_z80(AnsiString(Path).c_str());
+        if (Ext == ".SNA") spec_load_sna(AnsiString(Path).c_str());
         emulation_stop=stopped;
 
         Dbg->UpdateVals();
@@ -825,9 +825,9 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 
                         if (Ext==".WAV") WavLoad->LoadFile(Filename);
                         else if (Ext==".Z81" || Ext==".ACE") load_snap(Filename.c_str());
-						else if (Ext==".Z80") spec_load_z80(AnsiString(Filename).c_str());
+                        else if (Ext==".Z80") spec_load_z80(AnsiString(Filename).c_str());
                         else if (Ext==".SNA") spec_load_sna(AnsiString(Filename).c_str());
-						else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
+                        else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
                                   || Ext==".81" || Ext==".80" || Ext==".P81")
                         {
@@ -839,7 +839,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                                   || Ext==".OPD" || Ext==".OPU" || Ext==".TRD")
                                         P3Drive->InsertFile(Filename);
                         else if (Ext==".RZX")
-								spec48_LoadRZX(AnsiString(Filename).c_str());
+                                spec48_LoadRZX(AnsiString(Filename).c_str());
                         i++;
                 }
 
@@ -1064,7 +1064,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext==".SYM")
                         {
-								symbolstore::loadSymFileSymbols(AnsiString(Filename).c_str());
+                                symbolstore::loadSymFileSymbols(AnsiString(Filename).c_str());
                                 SymbolBrowser->RefreshContent();
                                 return;
                         }
@@ -1078,8 +1078,8 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext==".WAV") WavLoad->LoadFile(Filename);
                         else if (Ext==".Z81" || Ext==".ACE") load_snap(Filename.c_str());
-						else if (Ext==".Z80") spec_load_z80(AnsiString(Filename).c_str());
-						else if (Ext==".SNA") spec_load_sna(AnsiString(Filename).c_str());
+                        else if (Ext==".Z80") spec_load_z80(AnsiString(Filename).c_str());
+                        else if (Ext==".SNA") spec_load_sna(AnsiString(Filename).c_str());
                         else if (Ext==".TZX" || Ext==".TAP" || Ext==".T81"
                                   || Ext==".P" || Ext==".O" || Ext==".A83"
                                   || Ext==".81" || Ext==".80" || Ext==".P81"
@@ -1094,7 +1094,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
                                   || Ext==".OPD" || Ext==".OPU" || Ext==".TRD")
                                         P3Drive->InsertFile(Filename);
                         else if (Ext==".RZX")
-								spec48_LoadRZX(AnsiString(Filename).c_str());
+                                spec48_LoadRZX(AnsiString(Filename).c_str());
 
                 }
 
@@ -1504,7 +1504,7 @@ void TForm1::DoAutoLoad(void)
 #define AUTOINC(i)  (340+i*10)
 
         if (emulator.machine==MACHINEACE) return;
-		bool zx80 = (emulator.machine == MACHINEZX80) && !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
+        bool zx80 = (emulator.machine == MACHINEZX80) && !_tcscmp(machine.CurRom, _TEXT("zx80.rom"));
 
         switch(AutoLoadCount)
         {
@@ -1730,17 +1730,17 @@ void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 //---------------------------------------------------------------------------
 void FetchFolderList(vector<ZXString>* pEntries, ZXString path)
 {
-		DIR* dir;
+        DIR* dir;
         struct dirent *ent;
 
-		if ((dir = opendir(AnsiString(path).c_str())) != NULL)
-		{
+        if ((dir = opendir(AnsiString(path).c_str())) != NULL)
+        {
                 while ((ent = readdir(dir)) != NULL)
                 {
                         if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0)
                         {
-								pEntries->push_back(ZXString(ent->d_name));
-						}
+                                pEntries->push_back(ZXString(ent->d_name));
+                        }
                 }
 
                 closedir(dir);
@@ -1848,24 +1848,24 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 
         struct _stat buffer;
         ZXString webPath = Path + ClickedItem->Caption + ".web";
-		if (_tstat(webPath.c_str(), &buffer) == 0)
+        if (_tstat(webPath.c_str(), &buffer) == 0)
         {
-				FILE* filePointer = _tfopen(webPath.c_str(), _TEXT("r"));
+                FILE* filePointer = _tfopen(webPath.c_str(), _TEXT("r"));
                 if (filePointer)
                 {
-						bool readText = (_fgetts(webBuffer, bufferLength, filePointer) != NULL);
+                        bool readText = (_fgetts(webBuffer, bufferLength, filePointer) != NULL);
                         fclose(filePointer);
 
-						if (readText)
+                        if (readText)
                         {
                                 ShellExecute(0, NULL, webBuffer, NULL, NULL, SW_NORMAL);
-						}
+                        }
                 }
         }
         else
         {
                 Path += ClickedItem->Caption + ".txt";
-				ShellExecute(NULL, _TEXT("open"), Path.c_str(), NULL, NULL, SW_NORMAL);
+                ShellExecute(NULL, _TEXT("open"), Path.c_str(), NULL, NULL, SW_NORMAL);
         }
 }
 //---------------------------------------------------------------------------
@@ -1921,7 +1921,7 @@ void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
         Path += ClickedItem->Caption;
         Path += "\\";
 
-		ShellExecute(NULL, _TEXT("open"), Path.c_str(), _TEXT(""), NULL, SW_RESTORE);
+        ShellExecute(NULL, _TEXT("open"), Path.c_str(), _TEXT(""), NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
@@ -2051,7 +2051,7 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
 
         case 2:
                 if (Extension!=".SCR") Filename += ".scr";
-				f=_tfopen(Filename.c_str(), _TEXT("wb"));
+                f=_tfopen(Filename.c_str(), _TEXT("wb"));
                 if (f)
                 {
                         int i;
@@ -2094,7 +2094,7 @@ void __fastcall TForm1::Play1Click(TObject *Sender)
 {
         if (!OpenRZX->Execute()) return;
 
-		spec48_LoadRZX(AnsiString(OpenRZX->FileName).c_str());
+        spec48_LoadRZX(AnsiString(OpenRZX->FileName).c_str());
 }
 //---------------------------------------------------------------------------
 
@@ -2643,7 +2643,7 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
 
         ZXString iniFile;
         _TCHAR iniPath[256];
-		if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
         {
                 if ((dir = opendir(AnsiString(emulator.configpath).c_str())) != NULL)
                 {
@@ -2657,7 +2657,7 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
                                 if (Extension == ".INI" && !FileName.Pos("&") && FileName != "EightyOne.ini")
                                 {
                                         iniFile = iniPath;
-										if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
+                                        if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
                                         iniFile += iniFolder;
                                         iniFile += FileName;
 
@@ -2675,8 +2675,8 @@ void __fastcall TForm1::DeleteAllClick(TObject *Sender)
 void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
 {
         ZXString iniFile;
-		_TCHAR iniPath[256];
-		if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
+        _TCHAR iniPath[256];
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
         {
                 iniFile = iniPath;
                 if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
@@ -2715,7 +2715,7 @@ void __fastcall TForm1::ResetToDefaultSettingsClick(TObject *Sender)
 {
         ZXString iniFile;
         _TCHAR iniPath[256];
-		if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
+        if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, iniPath))
         {
                 iniFile = iniPath;
                 if (iniFile[iniFile.Length()] != '\\') iniFile += "\\";
@@ -2734,7 +2734,7 @@ void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
 {
         ZXString releaseHistoryFile = emulator.cwd;
         releaseHistoryFile += "Release history.txt";
-		ShellExecute(NULL, _TEXT("open"), releaseHistoryFile.c_str(), _TEXT(""), NULL, SW_RESTORE);
+        ShellExecute(NULL, _TEXT("open"), releaseHistoryFile.c_str(), _TEXT(""), NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
 

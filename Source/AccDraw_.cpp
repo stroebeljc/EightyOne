@@ -126,7 +126,7 @@ void add_blank(SCANLINE *CurScanLine, int tstates, BYTE colour)
 bool DDError(bool result, ZXString Message)
 {
         if (result)
-				MessageBox(NULL,
+                MessageBox(NULL,
                 _TEXT("Count not initialise DirectDraw.\nPlease ensure DirectX 7 or greater is installed"),
                 Message.c_str(),
                 MB_OK);

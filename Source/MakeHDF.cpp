@@ -201,11 +201,11 @@ void __fastcall TCreateHDF::OKClick(TObject *Sender)
         Progress->Max=tracks;
         Progress->Visible=true;
 
-		f=_tfopen(FileName.c_str(), _TEXT("wb"));
+        f=_tfopen(FileName.c_str(), _TEXT("wb"));
         if (!f) Close();
         fwrite(head, 512+16,1,f);
 
-		for(i=0;i<tracks;i++)
+        for(i=0;i<tracks;i++)
         {
                 fwrite(track, tracklen, 1, f);
                 Progress->Position=i;

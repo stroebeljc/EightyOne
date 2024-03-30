@@ -23,7 +23,7 @@ static int check_error(JNIEnv *env, dsk_err_t error)
 	clazz = (*env)->FindClass(env, "uk/co/demon/seasip/libdsk/DskException");
 	if (clazz == NULL) return 0;
 
-	mid = (*env)->GetMethodID(env, clazz, "<init>", "(Ljava/lang/ZXString;I)V");
+	mid = (*env)->GetMethodID(env, clazz, "<init>", "(Ljava/lang/String;I)V");
 	if (mid == NULL) return 0;
 
 	str = (*env)->NewStringUTF(env, dsk_strerror(error));

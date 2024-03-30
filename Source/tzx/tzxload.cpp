@@ -793,7 +793,11 @@ void TTZXFile::ValidateFile(ZXString FileName, char* tempdata, int len)
         char* program = tempdata;
         int startSystemVariables;
         int elineOffset;
+#if __CODEGEARC__ >= 0x0620
+        UnicodeString msg;
+#else
         AnsiString msg;
+#endif
 
         int length = len;
 

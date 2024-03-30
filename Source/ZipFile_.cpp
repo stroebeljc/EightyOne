@@ -86,7 +86,7 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
         while(ListBox->Items->Count) ListBox->Items->Delete(0);
 
 		// Open The zip file
-        ZFile=unzOpen(Path.c_str());
+        ZFile=unzOpen(AnsiString(Path).c_str());
         if (!ZFile) return("");
 
         // Step through the contents of the archive, adding each item to the ListBox
@@ -96,7 +96,13 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
         while(error==UNZ_OK)
         {
                 // Get filename of archive member
+#ifdef _UNICODE
+                char tempFileName[MAX_PATH];
+                unzGetCurrentFileInfo(ZFile, NULL, tempFileName, sizeof(tempFileName), NULL, 0, NULL, 0);
+                mbstowcs(FileName, tempFileName, MAX_PATH);
+#else
                 unzGetCurrentFileInfo(ZFile, NULL, FileName, sizeof(FileName), NULL, 0, NULL, 0);
+#endif
                 File=FileName;
                 Ext=FileNameGetExt(File);
 
@@ -153,7 +159,13 @@ ZXString TZipFile::ExpandZIP(ZXString Path, ZXString DialogueFilter)
         LastFile=File;
 
         // Locate the selected file in the archive
+#ifdef _UNICODE
+        char tempFile[MAX_PATH];
+        wcstombs(tempFile, File.c_str(), MAX_PATH);
+        error=unzLocateFile(ZFile, tempFile, 0);
+#else
         error=unzLocateFile(ZFile, File.c_str(), 0);
+#endif
 		if (error==UNZ_OK)
         {
                 // Create a path in the temp directory to extract to

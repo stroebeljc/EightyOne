@@ -54,7 +54,11 @@ int dirOpen(const char* path)
       return FR_NO_PATH;
    }
 
+#if _UNICODE
+   mbstowcs(pathPlusExt, path, MAX_PATH);
+#else
    strcpy(pathPlusExt, path);
+#endif
    if (path[strlen(path) - 1] != '/' && path[strlen(path) - 1] != '\\')
    {
        _tcscat(pathPlusExt, _TEXT("\\"));
@@ -123,7 +127,11 @@ void dirReadNext(void* fil)
 
       fileinfo->fsize = findFileData.nFileSizeLow;
       fileinfo->fattrib = attrib;
+#if _UNICODE
+      wcstombs(&fileinfo->fname[0], &findFileData.cFileName[0], sizeof(fileinfo->fname));
+#else
       strcpy(&fileinfo->fname[0], &findFileData.cFileName[0]);
+#endif
    }
 }
 

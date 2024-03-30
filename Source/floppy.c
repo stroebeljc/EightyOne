@@ -759,14 +759,29 @@ void floppy_setimage(int drive, _TCHAR *filename)
                         case DRIVE35INCHDS: format=FMT_720K; break;
                         }
 
+#if _UNICODE
+                        char temp[MAXPATH];
+                        wcstombs(temp, filename, MAXPATH);
+                        do_format(temp, "dsk", NULL, -1, format);
+#else
                         do_format(filename, "dsk", NULL, -1, format);
+#endif
                 }
 
                 if (USEFDC765DLL)
                 {
                         if (u765_DiskInserted(drive))
                                 u765_EjectDisk(drive);
+#if _UNICODE
+                        if (_tcslen(filename))
+                        {
+                            char temp[MAXPATH];
+                            wcstombs(temp, filename, MAXPATH);
+                            u765_InsertDisk(temp,drive);
+                        }
+#else
                         if (_tcslen(filename)) u765_InsertDisk(filename,drive);
+#endif
                         u765_DiskInserted(0);
                         return;
                 }
@@ -775,14 +790,30 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 {
                         fd_eject(p3_drive_a);
                         if (_tcslen(filename))
+#if _UNICODE
+                        {
+                            char temp[MAXPATH];
+                            wcstombs(temp, filename, MAXPATH);
+                            fdl_setfilename(p3_drive_a, temp);
+                        }
+#else
                                 fdl_setfilename(p3_drive_a, filename);
+#endif
                 }
 
                 if ((drive==1) && (p3_drive_b))
                 {
                         fd_eject(p3_drive_b);
                         if (_tcslen(filename))
+#if _UNICODE
+                        {
+                            char temp[MAXPATH];
+                            wcstombs(temp, filename, MAXPATH);
+                            fdl_setfilename(p3_drive_b, temp);
+                        }
+#else
                                 fdl_setfilename(p3_drive_b, filename);
+#endif
                 }
         }
 }

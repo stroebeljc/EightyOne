@@ -422,7 +422,11 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                         HD0List->ItemIndex=0;
                         if (ATA_GetHDF(0)) OpenDialog2->FileName=ATA_GetHDF(0);
 
+#if __CODEGEARC__ >= 0x0620
+                        if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.LastChar()) == '\\')
+#else
                         if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+#endif
                         {
                                 OpenDialog2->FileName = "";
                         }
@@ -503,7 +507,11 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
                 HD1List->ItemIndex=0;
                 if (ATA_GetHDF(1)) OpenDialog2->FileName=ATA_GetHDF(1);
 
+#if __CODEGEARC__ >= 0x0620
+                if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.LastChar()) == '\\')
+#else
                 if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+#endif
                 {
                         OpenDialog2->FileName = "";
                 }

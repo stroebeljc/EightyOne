@@ -56,9 +56,6 @@ int romcartridgetype;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "OffBtn"
-#pragma link "OffBtn"
-#pragma link "OffBtn"
-#pragma link "OffBtn"
 #pragma resource "*.dfm"
 THW *HW;
 //---------------------------------------------------------------------------
@@ -909,7 +906,11 @@ void THW::ConfigureRomCartridge()
 
                 if (!loadSuccessful)
                 {
+#if __CODEGEARC__ >= 0x0620
+                        UnicodeString msg;
+#else
                         AnsiString msg;
+#endif
                         msg = "Failed to load cartridge file:\n\n";
                         msg += romCartridgeFilePath;
                         Application->MessageBox(msg.c_str(), _TEXT("Error"), MB_OK | MB_ICONERROR);
@@ -3068,7 +3069,11 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
+#if __CODEGEARC__ >= 0x0620
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
+#else
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
+#endif
         {
                 RomSelect->FileName = "";
         }
@@ -3357,7 +3362,11 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
 
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;
+#if __CODEGEARC__ >= 0x0620
+        if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.LastChar()) == '\\')
+#else
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
+#endif
         {
                 RomSelect->FileName = "";
         }
@@ -3517,7 +3526,11 @@ void THW::PopulateRomCartridgeTS1510List()
 
         for (iter = ts1510RomCartridges.begin(); iter != ts1510RomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
+                AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter._Ptr, ".rom");
+#else
                 AddRomCartridgeFile(TS1510RomCartridgeFileBox, iter, ".rom");
+#endif
         }
 }
 //---------------------------------------------------------------------------
@@ -3529,7 +3542,11 @@ void THW::PopulateRomCartridgeTS2068List()
 
         for (iter = ts2068RomCartridges.begin(); iter != ts2068RomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
+                AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter._Ptr, ".dck");
+#else
                 AddRomCartridgeFile(TS2068RomCartridgeFileBox, iter, ".dck");
+#endif
         }
 }
 //---------------------------------------------------------------------------
@@ -3541,7 +3558,11 @@ void THW::PopulateRomCartridgeTC2068List()
 
         for (iter = tc2068RomCartridges.begin(); iter != tc2068RomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
+                AddRomCartridgeFile(TC2068RomCartridgeFileBox, iter._Ptr, ".dck");
+#else
                 AddRomCartridgeFile(TC2068RomCartridgeFileBox, iter, ".dck");
+#endif
         }
 }//---------------------------------------------------------------------------
 void THW::PopulateRomCartridgeSinclairList()
@@ -3552,7 +3573,11 @@ void THW::PopulateRomCartridgeSinclairList()
 
         for (iter = sinclairRomCartridges.begin(); iter != sinclairRomCartridges.end(); iter++)
         {
+#if __CODEGEARC__ >= 0x0620
+                AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter._Ptr, ".rom");
+#else
                 AddRomCartridgeFile(SinclairRomCartridgeFileBox, iter, ".rom");
+#endif
         }
 }
 //---------------------------------------------------------------------------

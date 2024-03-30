@@ -700,7 +700,11 @@ void __fastcall TIF1::OKClick(TObject *Sender)
                         try { ComPort->Open(); }
                         catch(EComPort &E)
                         {
+#if __CODEGEARC__ >= 0x0620
+                                UnicodeString Msg = "Could not open port ";
+#else
                                 AnsiString Msg = "Could not open port ";
+#endif
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
                                 if (Sender) Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
                         }
@@ -764,7 +768,11 @@ void __fastcall TIF1::ComPortTxEmpty(TObject *Sender)
 void __fastcall TIF1::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
+#if __CODEGEARC__ >= 0x0620
+        UnicodeString Msg = "Could not open port ";
+#else
         AnsiString Msg = "Could not open port ";
+#endif
         Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
         ErrorCode=0;
 }

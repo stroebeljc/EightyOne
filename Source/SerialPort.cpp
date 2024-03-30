@@ -306,7 +306,11 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
                         try { ComPort1->Open(); }
                         catch(EComPort &E)
                         {
+#if __CODEGEARC__ >= 0x0620
+                                UnicodeString Msg = "Could not open port ";
+#else
                                 AnsiString Msg = "Could not open port ";
+#endif
                                 Msg += ComPortList->Items->Strings[ComPortList->ItemIndex];
                                 if (Sender) Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
                                 Enabled->Checked=false;
@@ -405,7 +409,11 @@ void __fastcall TSerialConfig::BrowseClick(TObject *Sender)
 void __fastcall TSerialConfig::ClientSocketError(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
+#if __CODEGEARC__ >= 0x0620
+        UnicodeString Msg = "Could not open port ";
+#else
         AnsiString Msg = "Could not open port ";
+#endif
         Application->MessageBox(Msg.c_str(),_TEXT("Error"), MB_OK | MB_ICONERROR);
         Enabled->Checked=false;
         ErrorCode=0;

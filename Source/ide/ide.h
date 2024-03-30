@@ -6,6 +6,7 @@
 #include <winioctl.h>
 #include <stdio.h>
 
+#include "zx81config.h"
 
 #define ACCESS_NONE 0
 #define ACCESS_HDF  1

@@ -13,8 +13,6 @@
 #include <ExtCtrls.hpp>
 #include "CPort.hpp"
 #include <stdio.h>
-#include <System.Win.ScktComp.hpp>
-#include <Vcl.Dialogs.hpp>
 #if __CODEGEARC__ >= 0x0620
 #include <System.Win.ScktComp.hpp>
 #else

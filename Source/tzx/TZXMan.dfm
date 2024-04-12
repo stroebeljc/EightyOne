@@ -37,6 +37,7 @@ object TZX: TTZX
     ColCount = 2
     DefaultRowHeight = 16
     FixedCols = 0
+    DrawingStyle = gdsGradient
     RowCount = 2
     GridLineWidth = 0
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]

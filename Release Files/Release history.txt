@@ -16,14 +16,17 @@ Version 1.41 - 07/12/2024 (by Paul Farrow and John Stroebel)
   - Handle potential for a NULL path in ZXpand internal calls.
   - Removed unused labels in Debug DFM file.
   - Fixed drive mapping bug for ZX Interface 1 Microdrives.
-  - Fixed case that showed duplicate filenames in a ZIP file when opening a tape file from the main window.
+  - Fixed case that showed duplicate filenames in a ZIP file when opening a tape file from the
+    main window.
   - Improved support for retrieving from structured ZIP files.
+  - Fixed debug window stalling when 'Skip NMI' or 'Skip INT' were enabled in Continuous mode.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.
+  - 'Skip NMI' and 'Skip INT' debug screen controls also provide a filter for the history buffer.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

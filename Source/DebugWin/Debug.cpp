@@ -154,8 +154,6 @@ void DebugUpdate(void)
                 lastpc=z80.pc.w;
         }
 
-        if (Dbg->Continuous->Checked && (Dbg->NMIRetAddr!=-1 || Dbg->INTRetAddr!=-1)) return;
-
         displayedTStatesCount = tStatesCount;
 
         if (Dbg->BreakPointHit() || (RetExecuted && StepOutRequested && (StackChange < 0)))
@@ -165,6 +163,8 @@ void DebugUpdate(void)
                 Dbg->UpdateVals();
                 Dbg->RunStopClick(NULL);
         }
+
+        if (Dbg->NMIRetAddr!=-1 || Dbg->INTRetAddr!=-1) return;
 
         if (Dbg->DoNext)
         {

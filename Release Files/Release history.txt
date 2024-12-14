@@ -12,6 +12,7 @@ Version 1.41 - 30/05/2024 (by Paul Farrow and John Stroebel)
   - The Lambda character generator was not correctly being selected via the Hardware dialog.
   - The BASIC Listing loader facility did not handle spaces within variable names or spaces
     within numeric values.
+  - History window cleared after loading a snapshot.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.

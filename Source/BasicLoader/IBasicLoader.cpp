@@ -600,7 +600,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
 
         delete[] pLineBufferWithoutSpaces;
         
-        while ((char *)mLineBuffer + index < pEnd)
+        while ((char *)(mLineBuffer + index) < pEnd)
         {
                 unsigned char chr = mLineBufferOutput[index];
                 if (chr != Blank)

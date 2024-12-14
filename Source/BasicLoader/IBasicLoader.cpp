@@ -22,7 +22,7 @@
 #include <sstream>
 #include <cctype>
 
-void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
+void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
 {
         string result;
 
@@ -582,7 +582,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
                 value = strtod((char*)pLineBufferWithoutSpaces, &pWithoutSpacesNumberEnd);
         }
 
-        int withoutSpacesNumberLength = pWithoutSpacesNumberEnd - (char*)pLineBufferWithoutSpaces;
+        int withoutSpacesNumberLength = pWithoutSpacesNumberEnd - pLineBufferWithoutSpaces;
              
         int withSpacesIndex = 0;
 
@@ -596,11 +596,11 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
                 withSpacesIndex++;   
         }
 
-        char* pEnd = (char*)pBufferStart + withSpacesIndex;
+        char* pEnd = pBufferStart + withSpacesIndex;
 
         delete[] pLineBufferWithoutSpaces;
         
-        while ((char *)(mLineBuffer + index) < pEnd)
+        while (mLineBuffer + index < pEnd)
         {
                 unsigned char chr = mLineBufferOutput[index];
                 if (chr != Blank)

@@ -57,7 +57,7 @@ private:
         void ExtractZxTokenFormatExtensionByteEncoding(bool zxTokenSupport);
 
 public:
-        void LoadBasicFile(ZXString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardRedundantSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
+        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         unsigned char* ProgramData();
         int ProgramLength();
 

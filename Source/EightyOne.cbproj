@@ -448,9 +448,6 @@
         <CppCompile Include="SP0256\sp0256_al2.cpp">
             <BuildOrder>124</BuildOrder>
         </CppCompile>
-        <CppCompile Include="SP0256\sp0256_main.cpp">
-            <BuildOrder>125</BuildOrder>
-        </CppCompile>
         <CppCompile Include="SP0256\SystemClock.cpp">
             <BuildOrder>127</BuildOrder>
         </CppCompile>

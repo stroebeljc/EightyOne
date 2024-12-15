@@ -13,6 +13,8 @@ Version 1.41 - 30/05/2024 (by Paul Farrow and John Stroebel)
   - The BASIC Listing loader facility did not handle spaces within variable names or spaces
     within numeric values.
   - History window cleared after loading a snapshot.
+  - In the Spectrum+2A/+3, switching back from special memory map mode to normal memory map mode
+    was not switching to banks 5 and 2 in memory ranges $4000-$7FFF and $8000-$BFFF respectively.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.

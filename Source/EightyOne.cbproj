@@ -6,7 +6,7 @@
         <AppType>Application</AppType>
         <MainSource>EightyOne.cpp</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <CC_Suffix Condition="'$(CC_Suffix)'==''">c</CC_Suffix>
@@ -659,9 +659,9 @@
             <DependentOn>zxprinter\zxprinter.h</DependentOn>
             <BuildOrder>121</BuildOrder>
         </CppCompile>
-        <FormResources Include="SymBrowse.dfm"/>
         <FormResources Include="tzx\tzxEditArchive.dfm"/>
         <FormResources Include="tzx\tzxEditData.dfm"/>
+        <FormResources Include="SymBrowse.dfm"/>
         <FormResources Include="Speed_.dfm"/>
         <FormResources Include="SplashScreen.dfm"/>
         <FormResources Include="tzx\tzxEditGeneral.dfm"/>
@@ -682,28 +682,28 @@
         <FormResources Include="DebugWin\ProfilePlot_.dfm"/>
         <FormResources Include="DebugWin\Profiler.dfm"/>
         <FormResources Include="DebugWin\ProfSampEdit.dfm"/>
-        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
+        <FormResources Include="DebugWin\Hist.dfm"/>
         <FormResources Include="Debug68k\debug68.dfm"/>
         <FormResources Include="DebugWin\Debug.dfm"/>
         <FormResources Include="DebugWin\EditValue_.dfm"/>
-        <FormResources Include="DebugWin\Hist.dfm"/>
-        <FormResources Include="About_.dfm"/>
         <FormResources Include="Artifacts_.dfm"/>
+        <FormResources Include="About_.dfm"/>
+        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
         <FormResources Include="MakeHDF.dfm"/>
         <FormResources Include="memoryWindow.dfm"/>
         <FormResources Include="MemSave_.dfm"/>
-        <FormResources Include="Parallel.dfm"/>
-        <FormResources Include="LiveMemoryWindow_.dfm"/>
         <FormResources Include="main_.dfm"/>
+        <FormResources Include="LiveMemoryWindow_.dfm"/>
+        <FormResources Include="Parallel.dfm"/>
         <FormResources Include="SerialPort.dfm"/>
         <FormResources Include="Plus3Drives.dfm"/>
         <FormResources Include="HW_.dfm"/>
-        <FormResources Include="Interface1.dfm"/>
-        <FormResources Include="DebugWin\SetBreakpoint_.dfm"/>
         <FormResources Include="FullScreen.dfm"/>
+        <FormResources Include="DebugWin\SetBreakpoint_.dfm"/>
+        <FormResources Include="Interface1.dfm"/>
+        <FormResources Include="Keyboard_.dfm"/>
         <FormResources Include="kb_.dfm"/>
         <FormResources Include="KeyboardFunctions_.dfm"/>
-        <FormResources Include="Keyboard_.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

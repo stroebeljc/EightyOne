@@ -68,6 +68,13 @@ USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
 USEFORM("Keyboard_.cpp", Keyboard);
 USEFORM("kb_.cpp", Kb);
 USEFORM("Interface1.cpp", IF1);
+USEUNIT("SP0256\audio.cpp");
+USEUNIT("SP0256\sp0256_al2.cpp");
+USEUNIT("SP0256\SystemClock.cpp");
+USEUNIT("SP0256\Win32Audio.cpp");
+USEUNIT("SP0256\sp0256drv.cpp");
+USEUNIT("SP0256\sp0256.c");
+USEUNIT("SP0256\sp0256_012.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

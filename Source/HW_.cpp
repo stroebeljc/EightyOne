@@ -229,6 +229,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigureCharacterGenerator();
         ConfigureHiRes();
         ConfigureSound();
+        ConfigureSpeech();
         ConfigureM1Not();
         ConfigureDisplayArtifacts();
 
@@ -238,7 +239,6 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ConfigurePrinterCentronicsPort();
         ConfigureRzxSupport();
 
-        spectrum.uspeech = uSpeech->Checked;
         spectrum.usource = uSource->Checked;
         spectrum.kbissue = Issue2->Checked;
         spectrum.kmouse = KMouse->Checked;
@@ -248,7 +248,6 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         zx81.RAM816k = EnableLowRAM->Checked;
         zx81.RAM816kWriteProtected = Form1->WriteProtect8KRAM->Checked;
         zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
-        zx81.parrot = Parrot->Checked;
 
         Form1->InWaveLoader->Enabled=true;
         Form1->OutWaveLoader->Enabled=true;
@@ -1113,9 +1112,36 @@ void THW::ConfigureSound()
         case 6: machine.aysound=1; machine.aytype=AY_TYPE_QUICKSILVA; break;
         case 7: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
         case 0:
-        default: machine.aysound=0; machine.aytype=0; break;
+        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
         }
 }
+
+void THW::ConfigureSpeech()
+{
+        if (NewMachine == MACHINESPECTRUM)
+        {
+                switch(SpeechBox->ItemIndex)
+                {
+                case 1: machine.speech=SPEECH_TYPE_USPEECH; break;
+                case 0:
+                default: machine.speech=SPEECH_TYPE_NONE;break;
+                }
+        }
+        else if (NewMachine != MACHINEACE && NewMachine != MACHINEQL)
+        {
+                switch(SpeechBox->ItemIndex)
+                {
+                case 1: machine.speech=SPEECH_TYPE_PARROT; break;
+                case 0:
+                default: machine.speech=SPEECH_TYPE_NONE;break;
+                }
+        }
+        else
+        {
+                machine.speech=SPEECH_TYPE_NONE;
+        }
+}
+
 void THW::ConfigureSpectrumIDE()
 {
         Form1->divIDEJumperEClosed->Visible = (NewMachine == MACHINESPECTRUM) && ((NewSpec != SPECCYTC2048) && (NewSpec != SPECCYTC2068) && (NewSpec != SPECCYTS2068));
@@ -1643,10 +1669,12 @@ void THW::SetupForZX81(void)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
         }
 
-        uSpeech->Enabled=false;
-        uSpeech->Checked=false;
-
-        Parrot->Enabled=true;
+        SpeechBox->Items->Clear();
+        SpeechBox->Items->Add("None");
+        SpeechBox->Items->Add("The Parrot");
+        SpeechBox->ItemIndex=0;
+        SpeechBox->Enabled=true;
+        SpeechBoxLbl->Enabled=true;
 
         uSource->Enabled=false;
         uSource->Checked=false;
@@ -1752,11 +1780,11 @@ void THW::SetupForSpectrum(void)
         FDC->Enabled=true;
         FDCChange(NULL);
 
-        uSpeech->Checked=false;
-        uSpeech->Enabled=false;
-
-        Parrot->Enabled=false;
-        Parrot->Checked=false;
+        SpeechBox->Items->Clear();
+        SpeechBox->Items->Add("None");
+        SpeechBox->ItemIndex=0;
+        SpeechBox->Enabled=false;
+        SpeechBoxLbl->Enabled=false;
 
         uSource->Checked=false;
         uSource->Enabled=false;
@@ -1832,7 +1860,6 @@ void THW::SetupForSpectrum(void)
         for(i=0;i<IDEBox->Items->Count;i++)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
 
-        uSpeech->Enabled=true;
         uSource->Enabled=true;
 
         RomCartridgeBox->Items->Clear();
@@ -1897,11 +1924,11 @@ void THW::SetupForQL(void)
 
         ResetRequired=true;
 
-        uSpeech->Checked=false;
-        uSpeech->Enabled=false;
-
-        Parrot->Enabled=false;
-        Parrot->Checked=false;
+        SpeechBox->Items->Clear();
+        SpeechBox->Items->Add("None");
+        SpeechBox->ItemIndex=0;
+        SpeechBox->Enabled=false;
+        SpeechBoxLbl->Enabled=false;
 
         uSource->Checked=false;
         uSource->Enabled=false;
@@ -2120,7 +2147,10 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec48Btn->Down=true;
 
-        uSpeech->Enabled=true;
+        SpeechBox->Items->Add("µSpeech");
+        SpeechBox->Enabled=true;
+        SpeechBoxLbl->Enabled=true;
+
         uSource->Enabled=true;
 
         Issue2->Enabled=true;
@@ -2176,7 +2206,10 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         SetupForSpectrum();
         SpecPlusBtn->Down=true;
 
-        uSpeech->Enabled=true;
+        SpeechBox->Items->Add("µSpeech");
+        SpeechBox->Enabled=true;
+        SpeechBoxLbl->Enabled=true;
+
         uSource->Enabled=true;
 
         Issue2->Enabled=true;
@@ -2204,7 +2237,10 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec16Btn->Down=true;
 
-        uSpeech->Enabled=true;
+        SpeechBox->Items->Add("µSpeech");
+        SpeechBox->Enabled=true;
+        SpeechBoxLbl->Enabled=true;
+
         uSource->Enabled=true;
 
         Issue2->Enabled=true;
@@ -2503,7 +2539,12 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         ColourBox->Items->Add("None");
         ColourBox->Items->Add("ETI");
         ColourBox->ItemIndex=0;
-        ColourBox->Enabled=true;
+        ColourBox->Enabled=true;   
+        SpeechBox->Items->Clear();
+        SpeechBox->Items->Add("None");
+        SpeechBox->ItemIndex=0;
+        SpeechBox->Enabled=false;
+        SpeechBoxLbl->Enabled=false;
         IDEBox->Items->Add("AceCF");
         RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
@@ -2562,8 +2603,7 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         TC2068Btn->Down=true;
         Multiface->Enabled = false;
 
-        uSpeech->Checked = false;
-        uSpeech->Enabled = false;
+        SpeechBox->Enabled = false;
 
         uSource->Checked = false;
         uSource->Enabled = false;
@@ -2616,8 +2656,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         TS2068Btn->Down=true;
         Multiface->Enabled = false;
 
-        uSpeech->Checked = false;
-        uSpeech->Enabled = false;
+        SpeechBox->Enabled = false;
 
         uSource->Checked = false;
         uSource->Enabled = false;
@@ -2799,6 +2838,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteInteger("HWARE","QLCPU",QLCPU->ItemIndex);
         ini->WriteInteger("HWARE","QLMEM",QLMem->ItemIndex);
         ini->WriteInteger("HWARE","Colour",ColourBox->ItemIndex);
+        ini->WriteInteger("HWARE","speech",SpeechBox->ItemIndex);
         ini->WriteInteger("HWARE","RomCartridge",RomCartridgeBox->ItemIndex);
         ini->WriteString("HWARE","RomCartridgeFile",RomCartridgeFileBox->Text);
         ini->WriteInteger("HWARE","ZXC1Configuration",ZXC1ConfigurationBox->ItemIndex);
@@ -2809,7 +2849,6 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteString("DRIVES","DriveB", spectrum.drivebimg);
         ini->WriteInteger("HWARE","FDCType",FDC->ItemIndex);
         ini->WriteBool("HWARE","Autoboot",Autoboot->Checked);
-        ini->WriteBool("HWARE","uSpeech",uSpeech->Checked);
         ini->WriteBool("HWARE","uSource",uSource->Checked);
         ini->WriteBool("HWARE","ZXpand",ZXpand->Checked);
 
@@ -2842,7 +2881,6 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","TS2050",TS2050->Checked);
         ini->WriteBool("HWARE","Iss2Kb",Issue2->Checked);
         ini->WriteBool("HWARE","KMouse",KMouse->Checked);
-        ini->WriteBool("HWARE","Parrot",Parrot->Checked);
         ini->WriteBool("HWARE","divIDEWP",Form1->divIDEJumperEClosed->Checked);
         ini->WriteBool("HWARE","ZXCFWP",Upload->Checked);
         ini->WriteBool("HWARE","MFace",Multiface->Checked);
@@ -2979,6 +3017,7 @@ void THW::LoadSettings(TIniFile *ini)
         QLMem->ItemIndex=ini->ReadInteger("HWARE","QLMEM",QLMem->ItemIndex);
         QLCPU->ItemIndex=ini->ReadInteger("HWARE","QLCPU",QLCPU->ItemIndex);
         ColourBox->ItemIndex=ini->ReadInteger("HWARE","Colour",ColourBox->ItemIndex);
+        SpeechBox->ItemIndex=ini->ReadInteger("HWARE","Speech",SpeechBox->ItemIndex);
         RomCartridgeBox->ItemIndex=ini->ReadInteger("HWARE","RomCartridge",RomCartridgeBox->ItemIndex);
         RomCartridgeFileBox->Text=ini->ReadString("HWARE","RomCartridgeFile","");
         ZXC1ConfigurationBox->ItemIndex=ini->ReadInteger("HWARE","ZXC1Configuration",ZXC1ConfigurationBox->ItemIndex);
@@ -3030,7 +3069,7 @@ void THW::LoadSettings(TIniFile *ini)
         if (Rom!="NULL") IF1->MDVSetFileName(7,Rom.c_str());
 
         SetZXpandState(ini->ReadBool("HWARE","ZXpand",ZXpand->Checked),
-                        ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)||ini->ReadBool("HWARE","ZX80",ZX81Btn->Down)||ini->ReadBool("HWARE","TS1500",TS1500Btn->Down)); 
+                        ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)||ini->ReadBool("HWARE","ZX80",ZX81Btn->Down)||ini->ReadBool("HWARE","TS1500",TS1500Btn->Down));
         ProtectROM->Checked=ini->ReadBool("HWARE","ProtectRom",ProtectROM->Checked);
         NTSC->Checked=ini->ReadBool("HWARE","NTSC",NTSC->Checked);
         EnableLowRAM->Checked=ini->ReadBool("HWARE","LowRAM",EnableLowRAM->Checked);
@@ -3039,7 +3078,6 @@ void THW::LoadSettings(TIniFile *ini)
         TS2050->Checked=ini->ReadBool("HWARE","TS2050",TS2050->Checked);
         Issue2->Checked=ini->ReadBool("HWARE","Iss2Kb",Issue2->Checked);
         KMouse->Checked=ini->ReadBool("HWARE","KMouse",KMouse->Checked);
-        Parrot->Checked=ini->ReadBool("HWARE","Parrot",Parrot->Checked);
         Form1->divIDEJumperEClosed->Checked=ini->ReadBool("HWARE","divIDEWP",Form1->divIDEJumperEClosed->Checked);
         Multiface->Checked=ini->ReadBool("HWARE","MFace",Multiface->Checked);
         ZXPrinter->Checked=ini->ReadBool("HWARE","ZXPrinter",ZXPrinter->Checked);
@@ -3051,7 +3089,6 @@ void THW::LoadSettings(TIniFile *ini)
         IDEBoxChange(NULL);
         FDCChange(NULL);
 
-        uSpeech->Checked=ini->ReadBool("HWARE","uSpeech",uSpeech->Checked);
         uSource->Checked=ini->ReadBool("HWARE","uSource",uSource->Checked);
 
         strcpy(FileName, emulator.cwd);
@@ -3605,6 +3642,12 @@ void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
         AnsiString path = emulator.cwd;
 
         ShellExecute(0, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::SpeechBoxChange(TObject *Sender)
+{
+        ResetRequired=true;
 }
 //---------------------------------------------------------------------------
 

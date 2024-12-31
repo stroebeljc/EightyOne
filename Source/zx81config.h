@@ -177,7 +177,6 @@ typedef struct
         CFGBYTE chrgen;
         CFGBYTE enableQSchrgen;
         CFGBYTE vsyncsound;
-        CFGBYTE parrot;
         int maxireg;
         CFGBYTE zxpand;
         int RAMTOP;
@@ -195,7 +194,6 @@ typedef struct
         int model;
         int RAMBanks;
         int ROMBanks;
-        int uspeech;
         int usource;
         int kbissue;
         int kmouse;
@@ -277,6 +275,7 @@ typedef struct
         CFGBYTE zxprinter;
         CFGBYTE aysound;
         CFGBYTE aytype;
+        CFGBYTE speech;
         CFGBYTE ts2050;
         CFGBYTE colour;
 

@@ -50,6 +50,7 @@ void load_snap_mem(FILE *f);
 void load_snap_zx81(FILE *f);
 void load_snap_machine(FILE *f);
 void load_snap_sound(FILE *f);
+void load_snap_speech(FILE *f);
 void load_snap_chrgen(FILE *f);
 void load_snap_hires(FILE *f);
 void load_snap_colour(FILE *f);
@@ -62,6 +63,11 @@ void InitialiseHardware();
 
 extern void HWSetMachine(int machine, int speccy);
 extern void DebugUpdate();
+
+AnsiString ReplaceSpaces(AnsiString text)
+{
+        return StringReplace(text.c_str(), " ", "_", TReplaceFlags() << rfReplaceAll);
+}
 
 char *get_token(FILE *f)
 {
@@ -106,9 +112,11 @@ int hex2dec(char *str)
 
 void SetComboBox(TComboBox* comboBox, char* text)
 {
+        AnsiString newText = StringReplace(text, "_", " ", TReplaceFlags() << rfReplaceAll);
+
         for (int i = 0; i < comboBox->Items->Count; i++)
         {
-                if (comboBox->Items->Strings[i] == text)
+                if (comboBox->Items->Strings[i] == newText)
                 {
                         comboBox->ItemIndex = i;
                         break;
@@ -173,6 +181,25 @@ void load_snap_sound(FILE *f)
                 {
                         tok = get_token(f);
                         SetComboBox(HW->SoundCardBox, tok);
+                }
+        }
+}
+
+void load_snap_speech(FILE *f)
+{
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"TYPE"))
+                {
+                        tok = get_token(f);
+                        SetComboBox(HW->SpeechBox, tok);
                 }
         }
 }
@@ -278,8 +305,7 @@ void load_snap_romcartridge(FILE *f)
                 if (!strcmp(tok,"TYPE"))
                 {
                         tok = get_token(f);
-                        AnsiString type = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
-                        SetComboBox(HW->RomCartridgeBox, type.c_str());
+                        SetComboBox(HW->RomCartridgeBox, tok);
                 }
                 else if (!strcmp(tok,"PATH"))
                 {
@@ -290,8 +316,7 @@ void load_snap_romcartridge(FILE *f)
                 else if (!strcmp(tok,"CONFIGURATION"))
                 {
                         tok = get_token(f);
-                        AnsiString config = StringReplace(tok, "_", " ", TReplaceFlags() << rfReplaceAll);
-                        SetComboBox(HW->ZXC1ConfigurationBox, config.c_str());
+                        SetComboBox(HW->ZXC1ConfigurationBox, tok);
                 }
         }
 }
@@ -588,6 +613,7 @@ void ProcessTag(char* tok, FILE* f)
         else if (!strcmp(tok, "[ZX81]")) load_snap_zx81(f);
         else if (!strcmp(tok, "[COLOUR]")) load_snap_colour(f);
         else if (!strcmp(tok, "[SOUND]")) load_snap_sound(f);
+        else if (!strcmp(tok, "[SPEECH]")) load_snap_speech(f);
         else if (!strcmp(tok, "[CHR$_GENERATOR]")) load_snap_chrgen(f);
         else if (!strcmp(tok, "[HIGH_RESOLUTION]")) load_snap_hires(f);
         else if (!strcmp(tok, "[ROM_CARTRIDGE]")) load_snap_romcartridge(f);
@@ -856,8 +882,7 @@ int save_snap_zx81(char *filename)
 	fprintf(f, "\n");
 
 	fprintf(f,"\n[ADVANCED]\n");
-	AnsiString rom = StringReplace(HW->RomBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
-	fprintf(f,"ROM %s\n", rom.c_str());
+	fprintf(f,"ROM %s\n", ReplaceSpaces(HW->RomBox->Text).c_str());
 	fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
 	fprintf(f,"M1NOT %02X\n", (zx81.m1not == 0xC000));
 	fprintf(f,"IMPROVED_WAIT %02X\n", zx81.improvedWait);
@@ -865,7 +890,10 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"FRAME_RATE_60HZ %02X\n", machine.NTSC);
 
 	fprintf(f,"\n[SOUND]\n");
-	fprintf(f,"TYPE %s\n", HW->SoundCardBox->Text.c_str());
+	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->SoundCardBox->Text).c_str());
+
+	fprintf(f,"\n[SPEECH]\n");
+	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->SpeechBox->Text).c_str());
 
 	// Must output this before the Chr$ Generator section
 	fprintf(f,"\n[COLOUR]\n");

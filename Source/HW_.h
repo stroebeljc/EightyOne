@@ -119,8 +119,6 @@ __published:	// IDE-managed Components
         TCheckBox *Upload;
         TLabel *LabelIDE;
         TLabel *ZXCFLabel;
-        TCheckBox *uSpeech;
-        TCheckBox *Parrot;
         TCheckBox *ZXPrinter;
         TCheckBox *ZXpand;
         TComboBox *ColourBox;
@@ -145,6 +143,8 @@ __published:	// IDE-managed Components
         TOffice97Button *TC2068Btn;
         TComboBox *TC2068RomCartridgeFileBox;
         TImage *ZXpandEmulationInfo;
+        TLabel *SpeechBoxLbl;
+        TComboBox *SpeechBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -202,6 +202,7 @@ __published:	// IDE-managed Components
         void __fastcall TC2068BtnClick(TObject *Sender);
         void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall ZXpandEmulationInfoClick(TObject *Sender);
+        void __fastcall SpeechBoxChange(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -248,6 +249,7 @@ private:	// User declarations
         void ConfigureCharacterGenerator();
         void ConfigureHiRes();
         void ConfigureSound();
+        void ConfigureSpeech();
         void ConfigureSpectrumIDE();
         void ConfigureFDC();
         void ConfigureMachineSettings();

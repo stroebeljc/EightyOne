@@ -696,7 +696,7 @@ void IBasicLoader::ExtractZxTokenNumericBlocks()
                         withinBrackets = true;
 
                         *pPos = Blank;
-                        *pPos++;
+                        pPos++;
                         
                         base = ExtractNumericBlockBase(&pPos);
                 }

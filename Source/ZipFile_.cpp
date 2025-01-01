@@ -106,7 +106,10 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
                 while(strlen(Dest))
                 {
                         if (!stricmp(Ext.c_str(), Dest))
+                        {
                                 ListBox->Items->Add(FileName); //If it does, add it to the ListBox
+                                break;
+                        }
 
                         Dest += strlen(Dest)+1; // Next extension
                 }

@@ -518,9 +518,7 @@ bool TTZXFile::SaveP81File(AnsiString FileName)
 {
         FILE *f;
         int i;
-        int namelen;
-        char *p;
-
+        
         f=fopen(FileName.c_str(), "wb");
         if (!f) return(false);
         this->FileName=FileName;

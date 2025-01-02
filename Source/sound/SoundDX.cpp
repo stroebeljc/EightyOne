@@ -54,7 +54,6 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
 
         LPVOID lpvAudio1 = NULL, lpvAudio2 = NULL;
 	DWORD dwBytesAudio1, dwBytesAudio2;
-	DWORD dwRetSamples, dwRetBytes;
 
         // Set Sound Output Format - Stereo/22kHz/8Bit
 
@@ -232,8 +231,7 @@ void CDSnd::ThreadFN()
 {
 	LPVOID lpvAudio1 = NULL, lpvAudio2 = NULL;
 	DWORD dwBytesAudio1, dwBytesAudio2;
-	DWORD dwRetSamples, dwRetBytes;
-
+	
         while(1)
         {
                 int i=WaitForMultipleObjects(2, m_pHEvent, FALSE, -1) - WAIT_OBJECT_0;

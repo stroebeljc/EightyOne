@@ -1169,9 +1169,7 @@ int memory_device_rom_load(char *filename, int address, int length)
 
 int memory_load(char *filename, int address, int length, int secondBank)
 {
-        int fptr;
         char file[256];
-        int len;
 
         if (strchr(filename, '\\') || strchr(filename, '/'))
         {

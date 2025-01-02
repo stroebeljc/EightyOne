@@ -212,7 +212,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
         TIniFile *ini;
-        char soundfile[256];
 
         RunFrameEnable=false;
 
@@ -1743,9 +1742,6 @@ void TForm1::BuildConfigMenu()
 {
         vector<AnsiString> files;
         vector<AnsiString>::iterator iter;
-
-        DIR *dir;
-        struct dirent *ent;
 
         while(Config1->Count > 4) Config1->Delete(4);
         while(DeleteConfigurations->Count > 2) DeleteConfigurations->Delete(2);

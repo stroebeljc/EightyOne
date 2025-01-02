@@ -213,7 +213,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
         TIniFile *ini;
-        char soundfile[256];
 
         RunFrameEnable=false;
 
@@ -820,7 +819,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.a83;*.81;*.80;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.a83;*.81;*.80;*.mdr;*.mdv;*.hdf;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*rzx;*.zip");
                                 Ext = FileNameGetExt(Filename);
                         }
 
@@ -1058,7 +1057,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                         if (Ext == ".ZIP")
                         {
-                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.zip;*.b80;*.b81;*.b82;*bas;*.txt");
+                                Filename=ZipFile->ExpandZIP(Filename, "*.wav;*.z81;*.ace;*.z80;*.sna;*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*.mdr;*.mdv;*.hdf;*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*rzx;**.zip;*.b80;*.b81;*.b82;*bas;*.txt");
                                 if (Filename=="") return;
                                 Ext = FileNameGetExt(Filename);
                         }
@@ -1755,9 +1754,6 @@ void TForm1::BuildConfigMenu()
 {
         vector<ZXString> files;
         vector<ZXString>::iterator iter;
-
-        DIR *dir;
-        struct dirent *ent;
 
         while(Config1->Count > 4) Config1->Delete(4);
         while(DeleteConfigurations->Count > 2) DeleteConfigurations->Delete(2);

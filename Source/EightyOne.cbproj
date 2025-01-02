@@ -9,7 +9,6 @@
         <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
-        <CC_Suffix Condition="'$(CC_Suffix)'==''">c</CC_Suffix>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -70,8 +69,9 @@
         <DCC_LongStrings>false</DCC_LongStrings>
         <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
         <SubProcessesNumber>2</SubProcessesNumber>
-        <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
         <BCC_wpar>false</BCC_wpar>
+        <BCC_wccc>false</BCC_wccc>
+        <BCC_wrch>false</BCC_wrch>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindcompvclsmp;bindcompvclwinx;bindengine;CloudService;CPort_R;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;OfficeButton97;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;tethering;vcl;vclactnband;vcldb;vcldsnap;vcledge;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -132,6 +132,10 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <LinkPackageStatics>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib</LinkPackageStatics>
         <Icon_MainIcon>icons\zx81.ico</Icon_MainIcon>
+        <VerInfo_MinorVer>41</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Locale>2057</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=Michael D Wynne;FileDescription=EightyOne Emulator;FileVersion=1.41.1.0;InternalName=;LegalCopyright=Michael D Wynne;LegalTrademarks=;OriginalFilename=EightyOne.exe;ProgramID=;ProductName=EightyOne;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <ItemGroup>
         <LibFiles Include="..\Components\DirectDraw\ddraw.lib" Condition="'$(Platform)'=='Win32'">
@@ -731,7 +735,6 @@
                     <Source Name="MainSource">EightyOne.cpp</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\EightyOne_tmp\Components\ComPort-Library-master\CPort_D104S.bpl">ComPort Library Delphi 10.4</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k280.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp280.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                 </Excluded_Packages>

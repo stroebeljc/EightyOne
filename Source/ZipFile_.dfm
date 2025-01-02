@@ -1,11 +1,11 @@
 object ZipFile: TZipFile
   Left = 432
   Top = 113
-  Width = 192
-  Height = 248
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = 'ZipFile'
+  ClientHeight = 209
+  ClientWidth = 176
   Color = clBtnFace
   Constraints.MinHeight = 128
   Constraints.MinWidth = 128
@@ -14,9 +14,10 @@ object ZipFile: TZipFile
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Scaled = False
-  PixelsPerInch = 96
+  DesignSize = (
+    176
+    209)
   TextHeight = 13
   object Label1: TLabel
     Left = 8

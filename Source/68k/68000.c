@@ -28,6 +28,11 @@
  *  25.10.2002  JH  CHKTRACE no longer optional, improved implementation.
  */
 //static char     sccsid[] = "$Id: 68000.c,v 1.20 2002/10/30 16:23:04 jhoenig Exp $";
+
+#if __CODEGEARC__ < 0x0620
+#pragma warn -8066
+#endif
+
 #include "68kconfig.h"
 
 #include <stdio.h>
@@ -43,8 +48,6 @@
 #elif (CPU_TYPE == 68010) // broken
 #include "op68010.c"
 #endif
-
-#define UNUSED(x) (void)(x)
 
 extern int ql_readbyte(int address);
 extern void ql_writebyte(int address, int data);
@@ -117,8 +120,6 @@ unsigned short status;
 
 int QueryIRQ(int intpri)
 {
-        UNUSED(intpri);
-
         return(0);
 }
 

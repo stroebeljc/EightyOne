@@ -28,7 +28,13 @@
 #pragma option push
 #pragma warn -8004
 
+#if __CODEGEARC__ < 0x0620
+#pragma warn -8066
+#pragma warn -8071
+#endif
+
 #ifndef PROTOH
+
 //static char     sccsid[] = "$Id: op68kmisc.c,v 1.13 2002/11/13 01:04:30 jhoenig Exp $";
 #include "68000.h"
 #include "op68k.h"
@@ -36,11 +42,6 @@
 /*
  * Opfuncs.
  */
-#define OMoves(Code, Decl, CalcEA, GetReg, SetReg, GetMem, SetMem) \
-void            Code(void)\
-{\
-}
-/*
 #define OMoves(Code, Decl, CalcEA, GetReg, SetReg, GetMem, SetMem) \
 void            Code(void)\
 {\
@@ -59,12 +60,7 @@ void            Code(void)\
         SetReg(index, source)\
     }\
 }
-*/
-#define OMoveToSR(Code, Get1)\
-void            Code(void)\
-{\
-}
-/*
+
 #define OMoveToSR(Code, Get1)\
 void            Code(void)\
 {\
@@ -74,7 +70,7 @@ void            Code(void)\
     SetSRW(source);\
     TraceChanged();\
 }
-*/
+
 #define DoBtst8(target,source) SetZ (0 == (target & (1 << (source & 7))));
 #define DoBtst32(target,source) SetZ (0 == (target & (1 << (source & 31))));
 #define DoBchg8(target,source) DoBtst8(target,source); target ^= (1 << (source & 7));

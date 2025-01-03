@@ -33,8 +33,6 @@
 
 #include "z80_macros.h"
 
-#define UNUSED(x) (void)(x)
-
 #ifndef HAVE_ENOUGH_MEMORY
 static void z80_cbxx(BYTE opcode2);
 static void z80_ddxx(BYTE opcode2);
@@ -89,8 +87,6 @@ int z80_NumberOfM1Cycles()
 
 void SetSP(int i)
 {
-        UNUSED(i);
-
         //spBase = i;
 }
 

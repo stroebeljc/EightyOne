@@ -380,7 +380,6 @@ int rzx_seek_irb(void)
           #endif
           /* all done */
           return RZX_OK;
-          break;
      case RZXBLK_SECURITY:
           /* set the new security parameters */
           break;
@@ -692,7 +691,6 @@ int rzx_update(rzx_u16 *icount)
          break;
     default:
          return RZX_INVALID;
-         break;
    }
    return RZX_OK;
 }

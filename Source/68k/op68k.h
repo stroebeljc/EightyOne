@@ -496,7 +496,6 @@ default:\
                             SRB, SRW, SRL = write to register
  */
 
-/*
 #if (!defined(DEBUG) || !defined(INTERNALTRACE))
 #define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
 void            Code(void)\
@@ -511,6 +510,7 @@ void            Code(void)\
     SetEA2 (address2, target)\
 }
 #else
+/* quick'n dirty debug hack */
 #undef DN
 #define DN(name) int name;
 #define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
@@ -531,22 +531,6 @@ void            Code(void)\
     Op (target, source)\
     traceback[tbi].result = target; \
     SetEA2 (address2, target)\
-}
-#endif
-*/
-
-#if (!defined(DEBUG) || !defined(INTERNALTRACE))
-#define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
-void            Code(void)\
-{\
-}
-#else
-/* quick'n dirty debug hack */
-#undef DN
-#define DN(name) int name;
-#define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
-void            Code(void)\
-{\
 }
 #endif
 

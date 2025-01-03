@@ -1256,6 +1256,7 @@ int spec48_contendio(int Address, int states, int time)
                 time += ContendArray[ContendCounter+states+time];
         return(time);
 
+/*
         time=0;
         if (Address&1)
         {
@@ -1289,6 +1290,7 @@ int spec48_contendio(int Address, int states, int time)
         }
 
         return(time);
+*/
 }
 
 

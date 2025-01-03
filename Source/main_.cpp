@@ -23,7 +23,7 @@
 
 #define NO_WIN32_LEAN_AND_MEAN
 
-#include <vcl.h>
+#include <vcl4.h>
 #include <io.h>
 #include <dirent.h>
 #include <ctype.h>

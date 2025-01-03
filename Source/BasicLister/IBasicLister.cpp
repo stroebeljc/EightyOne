@@ -17,7 +17,7 @@
  */
 
 #include "IBasicLister.h"
-#include <vcl.h>
+#include <vcl4.h>
 #include <sstream>
 #include <iomanip>
 #include <string>

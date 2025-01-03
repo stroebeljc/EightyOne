@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <vcl.h>
+#include <vcl4.h>
 #include <fcntl.h>
 #include <io.h>
 #include <mem.h>

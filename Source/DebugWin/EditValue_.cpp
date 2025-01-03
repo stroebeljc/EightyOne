@@ -20,7 +20,7 @@
  */
 //---------------------------------------------------------------------------
 
-#include <vcl.h>
+#include <vcl4.h>
 #pragma hdrstop
 
 #include "EditValue_.h"

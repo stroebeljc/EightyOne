@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 
-#include <vcl.h>
+#include <vcl4.h>
 #include <io.h>
 #include <stdio.h>
 #pragma hdrstop

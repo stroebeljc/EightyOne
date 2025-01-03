@@ -21,7 +21,7 @@
 
 #include <string.h>
 #include <dir.h>
-#include <vcl.h>
+#include <vcl4.h>
 
 #include "zx81config.h"
 

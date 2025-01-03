@@ -19,7 +19,7 @@
  * rompatch.cpeepeep
  */
 
-#include <vcl.h>
+#include <vcl4.h>
 
 #include "z80.h"
 #include "zx81.h"

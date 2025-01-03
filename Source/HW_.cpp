@@ -2,7 +2,7 @@
 
 #include <dir.h>
 #include <dirent.h>
-#include <vcl.h>
+#include <vcl4.h>
 #pragma hdrstop
 
 #include "HW_.h"

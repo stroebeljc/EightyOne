@@ -18,7 +18,7 @@
  * spec48.c
  *
  */
-#include <vcl.h>
+#include <vcl4.h>
 
 #include <stdio.h>
 #include <stdlib.h>

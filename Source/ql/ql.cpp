@@ -18,7 +18,7 @@
  * ql.c
  *
  */
-#include <VCL.h>
+#include <vcl4.h>
 
 #include <stdlib.h>
 #include <fcntl.h>

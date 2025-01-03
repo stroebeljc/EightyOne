@@ -659,7 +659,7 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
         int byte, Silence;
         BYTE  *Data;
 
-        if (emulator.machine == MACHINESPECTRUM || emulator.machine == MACHINESPECTRUM) return;
+        if (emulator.machine == MACHINESPECTRUM || emulator.machine == MACHINEACE) return;
         
         int StartTapePos;
 

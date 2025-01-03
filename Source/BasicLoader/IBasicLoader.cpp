@@ -570,7 +570,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
                 value = strtod((char*)pLineBufferWithoutSpaces, &pWithoutSpacesNumberEnd);
         }
 
-        int withoutSpacesNumberLength = pWithoutSpacesNumberEnd - pLineBufferWithoutSpaces;
+        int withoutSpacesNumberLength = (unsigned char*)pWithoutSpacesNumberEnd - pLineBufferWithoutSpaces;
              
         int withSpacesIndex = 0;
 
@@ -886,9 +886,9 @@ void IBasicLoader::ReplaceTokenEndCharacters(map<unsigned char, string>& tokens,
 
         for (it = tokens.begin(); it != tokens.end(); it++)
         {
-                const unsigned char* pToken = (it->second).c_str();
-                int lenToken = strlen((char*)pToken);
-                const unsigned char endChar = pToken[lenToken-1];
+                const char* pToken = (it->second).c_str();
+                int lenToken = strlen(pToken);
+                const unsigned char endChar = (unsigned char)pToken[lenToken-1];
 
                 if (endChar == oldChar)
                 {
@@ -905,7 +905,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
         for (it = tokens.rbegin(); it != tokens.rend(); it++)
         {
                 unsigned char tokenCode = it->first;
-                const unsigned char* pToken = (it->second).c_str();
+                const unsigned char* pToken = (unsigned char*)((it->second).c_str());
                 int lenToken = strlen((char*)pToken);
 
                 unsigned char* pMatch;

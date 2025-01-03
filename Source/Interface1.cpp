@@ -454,7 +454,7 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                         if (Drives[Drive].changed) MDVSaveFile(Drive);
                         free(Drives[Drive].data);
                 }
-                Drives[Drive].data=data;
+                Drives[Drive].data=(unsigned char*)data;
                 Drives[Drive].length=256*MDVRECSIZE;
                 Drives[Drive].position=0;
                 Drives[Drive].changed=false;
@@ -495,7 +495,7 @@ void TIF1::MDVLoadFile(int Drive, char *FileName)
                         if (Drives[Drive].changed) MDVSaveFile(Drive);
                         free(Drives[Drive].data);
                 }
-                Drives[Drive].data=data;
+                Drives[Drive].data=(unsigned char*)data;
                 Drives[Drive].length=len;
                 Drives[Drive].position=0;
                 Drives[Drive].changed=false;

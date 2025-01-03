@@ -905,7 +905,7 @@ static void GetPixelColour(int x, int y, unsigned char *r, unsigned char *g, uns
         DWORD c;
         int i;
 
-        p=buffer + x*BPP + y*TVP;
+        p=(char*)(buffer + x*BPP + y*TVP);
         c=*(DWORD *)p;
 
         switch(BPP)

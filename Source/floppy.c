@@ -1,3 +1,7 @@
+#if __CODEGEARC__ < 0x0620
+#pragma warn -8080
+#endif
+
 #include <stdlib.h>
 #include <mem.h>
 #include <string.h>
@@ -907,6 +911,10 @@ void LarkenSaveTrack(int Drive, int TrackNo, unsigned char *buf)
 
         memcpy(p, buf, 1984);
 }
+
+
+
+
 
 
 

@@ -39,7 +39,7 @@ int ZX81Strlen(BYTE *str);
 AnsiString RemoveExt(AnsiString Fname);
 AnsiString GetExt(AnsiString Fname);
 AnsiString RemovePath(AnsiString Str);
-int CRC32Block(char *block, int len);
+int CRC32Block(BYTE *block, int len);
 int EnumeratePorts(TStrings *List, AnsiString Type);
 
 #ifdef __cplusplus

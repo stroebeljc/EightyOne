@@ -70,7 +70,7 @@ void TIF1::PortEFWrite(int Data)
 void TIF1::PortE7Write(int Data, int *tstates)
 {
         if (MDVSync) ClockTick(MDVCount);
-        WriteData=Data;
+        WriteData=(char)Data;
         MDVCount=*tstates;
 }
 
@@ -84,7 +84,7 @@ void TIF1::PortF7Write(int Data)
                 {
                         int baud=machine.clockspeed/((z80.hl.w +2)*26);
                         SerialOut = (~(SerialOut>>1))&255;
-                        SendSerialData(SerialOut, baud);
+                        SendSerialData((unsigned char)SerialOut, baud);
                         SerialOut=0;
                 }
         }

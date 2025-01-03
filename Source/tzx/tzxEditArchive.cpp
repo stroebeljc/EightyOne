@@ -48,7 +48,7 @@ void TEditArchiveInfo::Go(int BlockNo, int Mx, int My)
 
         Top = My - Height/2;
         Left = Mx - Width/2;
-        TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
+        Forms::TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
         if (Top<monitor->Top) Top=monitor->Top;
         if (Left<monitor->Left) Left=monitor->Left;
         if (Left+Width > monitor->Left+monitor->Width) Left = monitor->Left+monitor->Width - Width;
@@ -170,9 +170,9 @@ void TEditArchiveInfo::Go(int BlockNo, int Mx, int My)
         free(TZXFile.Tape[BlockNo].Data.Data);
         p=(unsigned char *)malloc(text.Length());
         memcpy(p, text.c_str(), text.Length());
-        TZXFile.Tape[BlockNo].Head.Archive.NoStrings=nstrings;
+        TZXFile.Tape[BlockNo].Head.Archive.NoStrings=(unsigned short)nstrings;
         TZXFile.Tape[BlockNo].Data.Data=p;
-        TZXFile.Tape[BlockNo].Head.Archive.BlockLen=text.Length();
+        TZXFile.Tape[BlockNo].Head.Archive.BlockLen=(unsigned short)text.Length();
 }
 
 void __fastcall TEditArchiveInfo::OKClick(TObject *Sender)

@@ -52,8 +52,8 @@
     else \
         {status &= ~0x2000U ; areg[7] = usp; }
 
-#define SetT(flag) if (flag) status |= 0x8000U; else status &= ~0x8000U
-#define SetI(int) status = ((status&0xf8ffU)|(((int)<<8)&0x0700U))
+#define SetT(flag) if (flag) status |= (unsigned short)0x8000U; else status &= (unsigned short)~0x8000U
+#define SetI(int) status = (unsigned short)((status&0xf8ffU)|(((int)<<8)&0x0700U))
 
 #define ClrCV() status &= ~0x3U
 
@@ -85,19 +85,19 @@
     }
 #define SetNZ(operand) status_NZ = operand;
 #else
-#define SetZ(flag) status[5] = (!!(flag))
-#define SetN(flag) status[6] = (!!(flag))
+#define SetZ(flag) status[5] = (unsigned short)(!!(flag))
+#define SetN(flag) status[6] = (unsigned short)(!!(flag))
 #define SetNZ(operand) status[6] = ((operand) < 0); status[5] = ((operand) == 0)
 #endif
-#define SetX(flag) status[2] = (!!(flag))
+#define SetX(flag) status[2] = (unsigned short)(!!(flag))
 #define SetI(int) intmask = (int)
 #define SetS(flag) \
     if (status[3]) ssp = areg[7]; else usp = areg[7]; \
     status[3] = (!!(flag)); \
     if (status[3]) areg[7] = ssp; else areg[7] = usp
-#define SetT(flag) status[4] = (!!(flag))
+#define SetT(flag) status[4] = (unsigned short)(!!(flag))
 
-#define SetXC(flag) status[0] = status[2] = (!!(flag))
+#define SetXC(flag) status[0] = status[2] = (unsigned short)(!!(flag))
 #define ClrCV() *((int16 *) status) = 0;
 #define ClrCVSetNZ(operand) ClrCV(); SetNZ(operand)
 
@@ -172,7 +172,7 @@ extern void     SetSRW(uint16);
 #define CmaiW(address,spec) areg[spec] -= 2; address = areg[spec];
 #define CmaiL(address,spec) areg[spec] -= 4; address = areg[spec];
 #define Cdai(address,spec) address = areg[spec] + GetMPCW (); pc += 2;
-#define Caix(address,spec) { register uint16 mod, regno; regno = spec; mod = GetMPCW(); pc += 2; address = areg[regno] + (int8) mod + ((mod & 0x800) ? GetRegL(mod >> 12) : GetRegW(mod >> 12)); }
+#define Caix(address,spec) {register uint16 mod, regno; regno = (uint16)(spec); mod = GetMPCW(); pc += 2; address = (uint16)(areg[regno] + (int8) mod + ((mod & 0x800) ? GetRegL(mod >> 12) : GetRegW(mod >> 12))); }
 #define Ceaw(address, spec) \
 switch (spec) {\
 case 0x0:\
@@ -496,6 +496,7 @@ default:\
                             SRB, SRW, SRL = write to register
  */
 
+/*
 #if (!defined(DEBUG) || !defined(INTERNALTRACE))
 #define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
 void            Code(void)\
@@ -510,7 +511,6 @@ void            Code(void)\
     SetEA2 (address2, target)\
 }
 #else
-/* quick'n dirty debug hack */
 #undef DN
 #define DN(name) int name;
 #define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
@@ -531,6 +531,22 @@ void            Code(void)\
     Op (target, source)\
     traceback[tbi].result = target; \
     SetEA2 (address2, target)\
+}
+#endif
+*/
+
+#if (!defined(DEBUG) || !defined(INTERNALTRACE))
+#define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
+void            Code(void)\
+{\
+}
+#else
+/* quick'n dirty debug hack */
+#undef DN
+#define DN(name) int name;
+#define Oper(Code, Op, DeclS, GetS, spec1, DeclT, DeclEA2, CalcEA2, spec2, GetEA2, SetEA2)\
+void            Code(void)\
+{\
 }
 #endif
 

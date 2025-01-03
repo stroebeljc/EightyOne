@@ -98,7 +98,7 @@ bool TWavFile::LoadCSW(AnsiString FName)
         Format.NoChannels=1;
         Data.DataLen=NoSamples;
         if (Data.Data!=NULL) delete[] Data.Data;
-        Data.Data=new char[Data.DataLen];
+        Data.Data=new unsigned char[Data.DataLen];
         MemAllocated=Data.DataLen;
 
         fclose(f);
@@ -114,7 +114,7 @@ bool TWavFile::LoadCSW(AnsiString FName)
                 c=fgetc(f);
                 if (c==0) fread(&c,4,1,f);
 
-                for(i=0;i<c;i++) Data.Data[size++]=current? 255:0;
+                for(i=0;i<c;i++) Data.Data[size++]=(unsigned char)(current? 255:0);
                 current=1-current;
         }
 
@@ -174,7 +174,7 @@ bool TWavFile::LoadFile(AnsiString FName)
         else Stereo=true;
 
         if (Data.Data!=NULL) delete[] Data.Data;
-        Data.Data=new char[Data.DataLen];
+        Data.Data=new unsigned char[Data.DataLen];
         MemAllocated=Data.DataLen;
 
         fread(Data.Data, Data.DataLen, 1, f);
@@ -226,15 +226,15 @@ unsigned char TWavFile::Sample(unsigned int SampleNo, int Channel)
                 break;
 
         case 2:
-                data = (* (( unsigned short *) (Data.Data + Pos))) / 256;
+                data = (unsigned char)((* (( unsigned short *) (Data.Data + Pos))) / 256);
                 break;
 
         default:
                 data=128;
         }
 
-        if (Signed==true) data = 128 + ((signed char) data);
-        data=255-data;
+        if (Signed==true) data = (unsigned char)(128 + ((signed char) data));
+        data=(unsigned char)(255-data);
 
         val=data-128;
 
@@ -245,7 +245,7 @@ unsigned char TWavFile::Sample(unsigned int SampleNo, int Channel)
         if (val>127) val=127;
         if (val<-127) val=-127;
 
-        data = val + 128;
+        data = (unsigned char)(val + 128);
         return(data);
 
 }
@@ -281,7 +281,7 @@ bool TWavFile::NewFile(void)
         Stereo=false;
 
         MemAllocated = (16384*8*140);  // 16k * average of 70 Samples per bit
-        Data.Data = new char[MemAllocated];
+        Data.Data = new unsigned char[MemAllocated];
         Data.Data[0]=128;
 
 
@@ -297,10 +297,10 @@ bool TWavFile::SetSample(unsigned int Pos, int Value)
         {
 
                 int NewMemAllocated;
-                char *NewData;
+                unsigned char *NewData;
 
                 NewMemAllocated = MemAllocated + (16384*8*70);
-                NewData = new char[NewMemAllocated];
+                NewData = new unsigned char[NewMemAllocated];
 
                 if (Data.Data)
                 {

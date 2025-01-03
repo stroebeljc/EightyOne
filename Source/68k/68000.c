@@ -44,6 +44,8 @@
 #include "op68010.c"
 #endif
 
+#define UNUSED(x) (void)(x)
+
 extern int ql_readbyte(int address);
 extern void ql_writebyte(int address, int data);
 extern void Interrupt(void);
@@ -51,7 +53,7 @@ extern void Trace(void);
 
 char GetMemB(unsigned long address)
 {
-        return(ql_readbyte(address));
+        return((char)ql_readbyte((int)address));
 }
 /* Fetch word, address may not be word-aligned */
 short GetMemW(unsigned long address)
@@ -59,7 +61,7 @@ short GetMemW(unsigned long address)
 #ifdef CHKADDRESSERR
     if (address & 0x1) ExceptionGroup0(ADDRESSERR, address, 1);
 #endif
-        return((ql_readbyte(address)<<8)|ql_readbyte(address+1));
+        return((short)((ql_readbyte(address)<<8)|ql_readbyte(address+1)));
 }
 /* Fetch dword, address may not be dword-aligned */
 long GetMemL(unsigned long address)
@@ -89,8 +91,8 @@ void SetMemL(unsigned long address, unsigned long value)
 #ifdef CHKADDRESSERR
     if (address & 0x1) ExceptionGroup0(ADDRESSERR, address, 0);
 #endif
-        SetMemW(address, (value>>16)&65535);
-        SetMemW(address+2, (value&65535));
+        SetMemW(address, (unsigned short)((value>>16)&65535));
+        SetMemW(address+2, (unsigned short)((value&65535)));
 }
 
 unsigned long   reg[16], *areg;         // areg later points to reg[8]
@@ -115,12 +117,14 @@ unsigned short status;
 
 int QueryIRQ(int intpri)
 {
+        UNUSED(intpri);
+
         return(0);
 }
 
 void        SetSRB(unsigned short sr)
 {
-    status=(status&0xff00U)|((sr)&0xffU);
+    status=(unsigned short)((status&0xff00U)|((sr)&0xffU));
 }
 
 void        SetSRW(unsigned short sr)
@@ -133,7 +137,7 @@ void        SetSRW(unsigned short sr)
 
 unsigned short  GetSRB()
 {
-    return (status&0xffU);
+    return ((unsigned short)(status&0xffU));
 }
 
 unsigned short  GetSRW()
@@ -235,7 +239,7 @@ void            ExceptionGroup0(
     else context |= 0x1;
     cpu_state = 0; /* begin group 0 exception processing */
     SetS (1);
-    SetT (0);
+    SetT ((long)0);
 #if CPU_TYPE == 68010
     areg[7] -= 44; /* Rerun info */
     areg[7] -= 4; SetMemL(areg[7], address); /* fault address */
@@ -313,7 +317,7 @@ void            ExceptionGroup2(int number)
 #endif
     cpu_state = 2; /* begin group 2 exception processing */
     SetS (1);
-    SetT (0);
+    SetT ((unsigned short)0);
 #if CPU_TYPE == 68010
     areg[7] -= 2; SetMemW(areg[7], number * 4);
 #endif

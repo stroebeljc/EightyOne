@@ -226,7 +226,7 @@ void PrinterSetStrobe(unsigned char Strobe)
         if (Strobe & !LastStrobe)
         {
                 BusyTime=1000;
-                ParallelPort->SendData(PortData);
+                ParallelPort->SendData((unsigned char)PortData);
         }
 
         LastStrobe=Strobe;

@@ -293,8 +293,8 @@ void specBasicLoader::OutputLine(int lineNumber, int& addressOffset)
 {
         int i = 0;
 
-        OutputByte(addressOffset, lineNumber >> 8);
-        OutputByte(addressOffset, lineNumber & 0xFF);
+        OutputByte(addressOffset, (unsigned char)(lineNumber >> 8));
+        OutputByte(addressOffset, (unsigned char)(lineNumber & 0xFF));
 
         int lineLengthOffset = addressOffset;
         addressOffset += 2;
@@ -380,19 +380,19 @@ void specBasicLoader::OutputFloatingPointEncoding(double value, int& addressOffs
 
                 OutputByte(addressOffset, 0x00);
                 OutputByte(addressOffset, 0x00);
-                OutputByte(addressOffset, (int)absValue & 0xFF);
-                OutputByte(addressOffset, (int)absValue >> 8);
+                OutputByte(addressOffset, (unsigned char)((int)absValue & 0xFF));
+                OutputByte(addressOffset, (unsigned char)((int)absValue >> 8));
                 OutputByte(addressOffset, 0x00);
         }
         else
         {
-                exponent = (int)floor(DBL_EPSILON + (log(value) / log(2)));
+                exponent = (int)floor(DBL_EPSILON + (log(value) / log(2.0)));
                 if (exponent < -129 || exponent > 126)
                 {
                         throw out_of_range("Number out of range");
                 }
 
-                double mantissaVal = (value / pow(2, exponent)) - 1;
+                double mantissaVal = (value / pow(2.0, exponent)) - 1;
                 mantissaVal *= 0x80000000;
                 mantissa = (unsigned long)floor(mantissaVal);
 

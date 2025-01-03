@@ -17,7 +17,6 @@
  */
 
 #include "IBasicLister.h"
-#include "zx81config.h"
 #include <vcl.h>
 #include <sstream>
 #include <iomanip>
@@ -563,7 +562,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         {
                 if (!withinQuotes && !withinRem && outputVariableNamesInLowercase && (mKeyword[c].length() == 1))
                 {
-                        char chr = tolower(mKeyword[c][0]);
+                        char chr = (char)tolower(mKeyword[c][0]);
                         zxCharacter = chr;
                 }
                 else
@@ -611,7 +610,7 @@ AnsiString IBasicLister::FormatLineNumber(int lineNumber, bool outputFullWidthLi
 
         if (!outputFullWidthLineNumbers && (lineNum[1] != ' '))
         {
-                lineNum[2] = 'A' + (lineNum[2] - '0');
+                lineNum[2] = (char)('A' + (lineNum[2] - '0'));
                 lineNum[1] = ' ';
         }
 

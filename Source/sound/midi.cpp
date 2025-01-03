@@ -81,7 +81,7 @@ void CMidi::Write(int Byte)
                         else return;
                 }
 
-        MidiBuffer[MidiBufferLen++]=Byte;
+        MidiBuffer[MidiBufferLen++]=(unsigned char)Byte;
 
         if ((((MidiBuffer[0]&0xfd) == 0xf1) || ((MidiBuffer[0]&0xe0) == 0xc0))
                 && (MidiBufferLen<2)) return;
@@ -96,7 +96,7 @@ void CMidi::Write(int Byte)
         }
 
         if (outHandle)
-                midiOutShortMsg(outHandle, *((int *)MidiBuffer));
+                midiOutShortMsg((HMIDIOUT)outHandle, *((int *)MidiBuffer));
         MidiBuffer[0]=MidiBuffer[1]=MidiBuffer[2]=MidiBuffer[3]=0;
 }
 
@@ -105,13 +105,13 @@ void CMidi::Start(void)
         Stop();
         if (Device==-2) return;
 
-        if (midiOutOpen(&outHandle, Device, 0, 0, CALLBACK_NULL))
+        if (midiOutOpen((LPHMIDIOUT)&outHandle, Device, 0, 0, CALLBACK_NULL))
                 outHandle=NULL;
 }
 
 void CMidi::Stop(void)
 {
-        if (outHandle) midiOutClose(outHandle);
+        if (outHandle) midiOutClose((HMIDIOUT)outHandle);
         outHandle=NULL;
 }
 

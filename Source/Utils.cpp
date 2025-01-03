@@ -34,7 +34,7 @@
 char ZXCharTable[]= " ----------\'£$:?()><=+-*/;,.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 ULONG crc32_table[256];  // Lookup table array
 
-ULONG CRC32Reflect(ULONG ref, char ch)
+ULONG CRC32Reflect(ULONG ref, BYTE ch)
 {
         ULONG value=0;
 
@@ -61,11 +61,11 @@ void CRC32Init()
         }
 }
 
-int CRC32Block(char *block, int len)
+int CRC32Block(BYTE *block, int len)
 {
         static bool initialised=0;
         ULONG  ulCRC=0xffffffff;
-        unsigned char* buffer;
+        BYTE* buffer;
 
         if (!initialised)
         {
@@ -73,7 +73,7 @@ int CRC32Block(char *block, int len)
                 initialised=true;
         }
 
-        buffer = (unsigned char*) block;
+        buffer = block;
         while(len--)
                 ulCRC = (ulCRC >> 8) ^ crc32_table[(ulCRC & 0xFF) ^ *buffer++];
         return ulCRC & 0xffff;
@@ -178,11 +178,11 @@ void ConvertASCIIZX81(AnsiString Str, BYTE *Output)
 
         while(i<=Str.Length() && p)
         {
-                c = toupper(Str[i]);
+                c = (char)toupper(Str[i]);
                 if (c=='_') c=' ';
 
                 p = strchr(ZXCharTable, c);
-                if (p) *(Output++) = p - ZXCharTable;
+                if (p) *(Output++) = (BYTE)(p - ZXCharTable);
                 i++;
         }
 
@@ -196,18 +196,18 @@ void ASCIIZX81(BYTE *in, BYTE *Out)
         char c, *p;
         unsigned int i;
 
-        if (!strlen(in)) return;
+        if (!strlen((const char*)in)) return;
 
         i=0;
         p=ZXCharTable;
 
-        while(i<strlen(in) && p)
+        while(i<strlen((const char*)in) && p)
         {
-                c = toupper(in[i]);
+                c = (char)toupper(in[i]);
                 if (c==' ') c='_';
 
                 p = strchr(ZXCharTable, c);
-                if (p) *(Out++) = p - ZXCharTable;
+                if (p) *(Out++) = (BYTE)(p - ZXCharTable);
                 i++;
         }
 
@@ -299,7 +299,7 @@ AnsiString GetExt(AnsiString Fname)
 
         Ext = Fname.SubString(pos, 1+len-pos);
 
-        for(pos=1; pos<=Ext.Length(); pos++) Ext[pos]=toupper(Ext[pos]);
+        for(pos=1; pos<=Ext.Length(); pos++) Ext[pos]=(char)toupper(Ext[pos]);
         return(Ext);
 }
 //---------------------------------------------------------------------------

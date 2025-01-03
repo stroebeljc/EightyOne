@@ -232,8 +232,8 @@ void zx81BasicLoader::OutputLine(int lineNumber, int& addressOffset)
 {
         int i = 0;
 
-        OutputByte(addressOffset, lineNumber >> 8);
-        OutputByte(addressOffset, lineNumber & 0xFF);
+        OutputByte(addressOffset, (unsigned char)(lineNumber >> 8));
+        OutputByte(addressOffset, (unsigned char)(lineNumber & 0xFF));
 
         int lineLengthOffset = addressOffset;
         addressOffset += 2;
@@ -289,13 +289,13 @@ void zx81BasicLoader::OutputFloatingPointEncoding(double value, int& addressOffs
                         value = -value;
                 }
 
-                exponent = (int)floor(DBL_EPSILON + (log(value) / log(2)));
+                exponent = (int)floor(DBL_EPSILON + (log(value) / log(2.0)));
                 if (exponent < -129 || exponent > 126)
                 {
                         throw out_of_range("Number out of range");
                 }
 
-                double mantissaVal = (value / pow(2, exponent)) - 1;
+                double mantissaVal = (value / pow(2.0, exponent)) - 1;
                 mantissaVal *= 0x80000000;
                 mantissa = (unsigned long)floor(mantissaVal);
 
@@ -374,11 +374,11 @@ unsigned char zx81BasicLoader::AsciiToZX(unsigned char ascii)
 
         if (isalpha(ascii))
         {
-                return (ascii - 'A') + LetterA;
+                return (unsigned char)((ascii - 'A') + LetterA);
         }
         else if (isdigit(ascii))
         {
-                return (ascii - '0') + Number0;
+                return (unsigned char)((ascii - '0') + Number0);
         }
 
         unsigned char zxChr;
@@ -454,7 +454,7 @@ unsigned char zx81BasicLoader::AsciiToZX(unsigned char ascii)
                                       
 void zx81BasicLoader::ExtractInverseCharacters()
 {
-        char* pPos = mLineBuffer;
+        unsigned char* pPos = mLineBuffer;
 
         while (*pPos != '\0')
         {
@@ -464,7 +464,7 @@ void zx81BasicLoader::ExtractInverseCharacters()
                         pPos++;
 
                         int index = pPos - mLineBuffer;
-                        mLineBufferOutput[index] = 0x80 | AsciiToZX(*pPos);
+                        mLineBufferOutput[index] = (unsigned char)(0x80 | AsciiToZX(*pPos));
                         mLineBufferPopulated[index] = true;
                         
                         *pPos = Blank;
@@ -591,10 +591,10 @@ void zx81BasicLoader::ExtractZxTokenCharacterCodes()
                                         
         for (unsigned char c = 'a'; c <= 'z'; c++)
         {
-                zxTokenChars[c] = c + 0x45;
+                zxTokenChars[c] = (unsigned char)(c + 0x45);
         }
 
-        char* pPos = mLineBuffer;
+        unsigned char* pPos = mLineBuffer;
 
         while (*pPos != '\0')
         {

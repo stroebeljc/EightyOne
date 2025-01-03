@@ -22,6 +22,7 @@
 #include <Classes.hpp>
 #include <vector>
 #include <string>
+#include "zx81config.h"
 
 const int PixelsPerCharacterWidth = 8;
 const int PixelsPerCharacterHeight = 8;

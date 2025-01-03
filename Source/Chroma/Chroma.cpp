@@ -260,7 +260,7 @@ bool ChromaIORead(int Address, BYTE* pData)
         {
                 if ((Address == chromaIoPort) && zx81.chromaColourSwitchOn)
                 {
-                        *pData = (idleDataBus & ~colourPresentMask) | colourPresentValue;
+                        *pData = (BYTE)((idleDataBus & ~colourPresentMask) | colourPresentValue);
                         readHandled = true;
                 }
         }
@@ -283,7 +283,7 @@ void FetchChromaColour(const int Address, const BYTE data, int lineCounter, BYTE
         else
         {
             // Character code colour mode
-            BYTE entry = ((data & 0x80) >> 1) | (data & 0x3F);
+            BYTE entry = (BYTE)(((data & 0x80) >> 1) | (data & 0x3F));
             colourAddress = 0xC000 + (entry << 3) + lineCounter;
         }
 

@@ -46,7 +46,7 @@ void TEditTextForm::Go(int BlockNo, int Mx, int My)
 
         Top = My - Height/2;
         Left = Mx - Width/2;
-        TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
+        Forms::TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
         if (Top<monitor->Top) Top=monitor->Top;
         if (Left<monitor->Left) Left=monitor->Left;
         if (Left+Width > monitor->Left+monitor->Width) Left = monitor->Left+monitor->Width - Width;
@@ -73,8 +73,8 @@ void TEditTextForm::Go(int BlockNo, int Mx, int My)
         len=text.Length();
         free(TZXFile.Tape[BlockNo].Data.Data);
         p=(char *)malloc(len);
-        TZXFile.Tape[BlockNo].Head.Text.TextLen=len;
-        TZXFile.Tape[BlockNo].Data.Data=p;
+        TZXFile.Tape[BlockNo].Head.Text.TextLen=(unsigned short)len;
+        TZXFile.Tape[BlockNo].Data.Data=(unsigned char*)p;
 
         for(i=0;i<len;i++) p[i]=text[i+1];
 }

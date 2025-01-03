@@ -270,8 +270,8 @@ void IBasicLoader::OutputByte(int& addressOffset, unsigned char byte)
 
 void IBasicLoader::OutputWord(int& addressOffset, int word)
 {
-        OutputByte(addressOffset, word & 0xFF);
-        OutputByte(addressOffset, word >> 8);
+        OutputByte(addressOffset, (unsigned char)(word & 0xFF));
+        OutputByte(addressOffset, (unsigned char)(word >> 8));
 }
 
 void IBasicLoader::ChangeWord(int addressOffset, int word)
@@ -317,7 +317,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
                 i = 0;
                 while (mLineBufferTokenised[i] != '\0')
                 {
-                        mLineBufferTokenised[i] = toupper(mLineBufferTokenised[i]);
+                        mLineBufferTokenised[i] = (unsigned char)toupper(mLineBufferTokenised[i]);
                         i++;
                 }
         }
@@ -399,7 +399,7 @@ void IBasicLoader::ExtractSingleCharacters(bool discardSurplusSpaces)
 
                                 if (SupportUppercaseOnly())
                                 {
-                                        c = toupper(c);
+                                        c = (unsigned char)toupper(c);
                                 }
 
                                 mLineBufferOutput[i] = AsciiToZX(c);
@@ -433,7 +433,7 @@ void IBasicLoader::MaskOutStrings(unsigned char* buffer)
 
         bool withinQuote = false;
 
-        buffer = pQuote;
+        buffer = (unsigned char*)pQuote;
 
         while (*buffer != '\0')
         {
@@ -507,7 +507,7 @@ unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
 {
         unsigned char* pCommand;
 
-        lineNumber = strtol((char*)mLineBuffer, &(char*)pCommand, 10);
+        lineNumber = strtol((const char*)mLineBuffer, &(char*)pCommand, 10);
 
         if (pCommand == mLineBuffer)
         {
@@ -584,7 +584,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
                 withSpacesIndex++;   
         }
 
-        char* pEnd = pBufferStart + withSpacesIndex;
+        unsigned char* pEnd = pBufferStart + withSpacesIndex;
 
         delete[] pLineBufferWithoutSpaces;
         
@@ -779,7 +779,7 @@ unsigned char IBasicLoader::ExtractByteValue(unsigned char** ppPos, int base)
         {
                 char* pEnd;
                 int value = strtol((char*)*ppPos, &pEnd, base);
-                int numberChars = pEnd - *ppPos;
+                int numberChars = (unsigned char*)pEnd - *ppPos;
                 if (numberChars == 0)
                 {
                         throw runtime_error("Invalid value in numeric block");
@@ -871,12 +871,12 @@ unsigned char IBasicLoader::ConvertFromHexChars(unsigned char chr1, unsigned cha
         
         int d1 = ConvertFromHexChar(chr1);
         int d2 = ConvertFromHexChar(chr2);
-        return (d1 << 4) + d2;
+        return (unsigned char)((d1 << 4) + d2);
 }
 
 unsigned char IBasicLoader::ConvertFromHexChar(unsigned char chr)
 {
-        unsigned char val = isdigit(chr) ? chr - '0' : (chr & 0xDF) - 'A' + 10;
+        unsigned char val = isdigit(chr) ? (unsigned char)(chr - '0') : (unsigned char)((chr & 0xDF) - 'A' + 10);
         return val;
 }
 
@@ -932,7 +932,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 
                 do
                 {
-                        pMatch = strstr((char*)mLineBufferTokenised, (char*)pToken);
+                        pMatch = (unsigned char*)strstr((char*)mLineBufferTokenised, (char*)pToken);
                         bool matchFound = (pMatch != NULL);
 
                         bool startOk = matchFound && (tokenBeginsWithSpace || !tokenBeginsWithAlpha || (!tokenBeginsWithSpace && !isalnum(pMatch[-1])));

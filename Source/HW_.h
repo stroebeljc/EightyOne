@@ -215,7 +215,7 @@ private:	// User declarations
         void PopulateRomCartridgeTS2068List();
         void PopulateRomCartridgeTC2068List();
         void AddRomCartridgeFile(TComboBox* romCartridgeFileBox, RomCartridgeEntry* romCartridgeEntry, AnsiString fileExt);
-        AnsiString DirectSoundError(int errorCode);
+        AnsiString DirectSoundError(unsigned int errorCode);
         void ConfigureDefaultRamSettings();
         void DisplayTotalRam();
         int UpdateRomCartridgeControls(int machine, int spectrumModel);

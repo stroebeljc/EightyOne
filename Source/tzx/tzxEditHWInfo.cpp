@@ -49,8 +49,8 @@ void TEditHWInfoForm::GetRadio(struct TZXHWInfo **p, int *Blocks, int type, int 
 
         (*p) = (struct TZXHWInfo *)realloc( (void *) (*p), ((*Blocks)+1) * sizeof(struct TZXHWInfo) );
 
-        (*p)[*Blocks].Type = type;
-        (*p)[*Blocks].ID = id;
+        (*p)[*Blocks].Type = (unsigned short)type;
+        (*p)[*Blocks].ID = (unsigned short)id;
 
         if (r1->Checked) (*p)[*Blocks].Information = 3;
         if (r2->Checked) (*p)[*Blocks].Information = 1;
@@ -88,7 +88,7 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
 
         Top = My - Height/2;
         Left = Mx - Width/2;
-        TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
+        Forms::TMonitor* monitor = TZXFile.FindMonitor(Left, Top);
         if (Top<monitor->Top) Top=monitor->Top;
         if (Left<monitor->Left) Left=monitor->Left;
         if (Left+Width > monitor->Left+monitor->Width) Left = monitor->Left+monitor->Width - Width;
@@ -193,7 +193,7 @@ void TEditHWInfoForm::Go(int BlockNo, int Mx, int My)
         {
                 if (TZXFile.Tape[BlockNo].Data.HWTypes) free(TZXFile.Tape[BlockNo].Data.HWTypes);
                 TZXFile.Tape[BlockNo].Data.HWTypes = p;
-                TZXFile.Tape[BlockNo].Head.HWType.NoTypes=Blocks;
+                TZXFile.Tape[BlockNo].Head.HWType.NoTypes=(unsigned short)Blocks;
         }
         else    TZXFile.DeleteBlock(BlockNo);
 }

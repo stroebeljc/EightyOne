@@ -201,8 +201,8 @@ void __fastcall THW::OKClick(TObject *Sender)
 void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
 {
         bool machineChanged = (NewMachine != emulator.machine);
-        emulator.newMachine = NewMachine;
-        emulator.machine = NewMachine;
+        emulator.newMachine = (CFGBYTE)NewMachine;
+        emulator.machine = (CFGBYTE)NewMachine;
         spectrum.model = NewSpec;
 
         CloseLiveMemoryWindow(machineChanged);
@@ -749,13 +749,13 @@ void THW::ConfigureColour()
                 machine.colour = COLOURDISABLED;
                 break;
         case MACHINEACE:
-                machine.colour = (ColourBox->ItemIndex > 0) ? COLOURACE : COLOURDISABLED;
+                machine.colour = (CFGBYTE)((ColourBox->ItemIndex > 0) ? COLOURACE : COLOURDISABLED);
                 break;
         case MACHINESPECTRUM:
-                machine.colour = (ColourBox->ItemIndex > 0) ? COLOURSPECTRA : COLOURSINCLAIR;
+                machine.colour = (CFGBYTE)((ColourBox->ItemIndex > 0) ? COLOURSPECTRA : COLOURSINCLAIR);
                 break;
         default:
-                machine.colour = ColourBox->ItemIndex;
+                machine.colour = (CFGBYTE)ColourBox->ItemIndex;
                 break;
         }
 
@@ -800,7 +800,7 @@ void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
 void THW::ConfigureRomCartridge()
 {
         romcartridgetype = UpdateRomCartridgeControls(emulator.machine, spectrum.model);
-        romcartridge.type = romcartridgetype;
+        romcartridge.type = (CFGBYTE)romcartridgetype;
 
         if ((romcartridge.type == ROMCARTRIDGENONE) || (RomCartridgeFileBox->Text.Trim() == ""))
         {
@@ -1063,7 +1063,7 @@ void THW::ConfigureCharacterGenerator()
         }
         else
         {
-                zx81.chrgen = ChrGenBox->ItemIndex;
+                zx81.chrgen = (CFGBYTE)ChrGenBox->ItemIndex;
         }
         Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
@@ -1431,7 +1431,7 @@ void THW::ConfigureCharacterBitmapFile(AnsiString romBase)
         }
 }
 
-AnsiString THW::DirectSoundError(int errorCode)
+AnsiString THW::DirectSoundError(unsigned int errorCode)
 {
         AnsiString errorText;
         switch (errorCode)

@@ -919,9 +919,9 @@ static void GetPixelColour(int x, int y, unsigned char *r, unsigned char *g, uns
         for(i=0;i<256;i++)
                 if (Colours[i]==c)
                 {
-                        *r=Palette[i]&0xff;
-                        *g=(Palette[i]>>8)&0xff;
-                        *b=(Palette[i]>>16)&0xff;
+                        *r=(unsigned char)(Palette[i]&0xff);
+                        *g=(unsigned char)((Palette[i]>>8)&0xff);
+                        *b=(unsigned char)((Palette[i]>>16)&0xff);
                         return;
                 }
 

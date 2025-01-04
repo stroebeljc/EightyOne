@@ -1330,6 +1330,7 @@ void __fastcall TDbg::RunStopClick(TObject *Sender)
         UpdateVals();
         StepOutRequested = 0;
         StackChange = 0;
+        ClearSkipAddresses();
 
         UpdateBreakpointButtons();
 }
@@ -2276,7 +2277,19 @@ void TDbg::ResetBreakpointHits()
                 Breakpoint[b].Hits = 0;
         }
 }
-
+//---------------------------------------------------------------------------
+void TDbg::ClearSkipAddresses()
+{
+        INTRetAddr = -1;
+        NMIRetAddr = -1;
+}
+//---------------------------------------------------------------------------
+void TDbg::Reset()
+{
+        ResetBreakpointHits();
+        RefreshBreakpointList();
+        ClearSkipAddresses();
+}
 //---------------------------------------------------------------------------
 void TDbg::RefreshBreakpointList()
 {

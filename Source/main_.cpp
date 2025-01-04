@@ -692,6 +692,7 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         Sound.AYReset();
         InitialiseChroma();
         DisableSpectra();
+        Dbg->ClearSkipAddresses();
         if (machine.reset) machine.reset();
         emulation_stop=initialStopState;
         DebugUpdate();
@@ -1393,7 +1394,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         machine.initialise();
         Sound.AYReset();
         emulation_stop=initialStopState;
-        Dbg->ResetBreakpointHits();
+        Dbg->Reset();
         DebugUpdate();
         LiveMemoryWindow->Reset();
         if (BasicLister->ListerAvailable())
@@ -2731,5 +2732,6 @@ void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
         ShellExecute(NULL, "open", releaseHistoryFile.c_str(), "", NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
+
 
 

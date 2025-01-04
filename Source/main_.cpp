@@ -23,7 +23,7 @@
 
 #define NO_WIN32_LEAN_AND_MEAN
 
-#include <vcl.h>
+#include <vcl4.h>
 #include <io.h>
 #include <dirent.h>
 #include <ctype.h>
@@ -1045,7 +1045,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
         if (Msg.message == WM_DROPFILES)
         {
-                QtyDroppedFiles = DragQueryFile((HDROP)Msg.wParam, -1,
+                QtyDroppedFiles = (WORD)DragQueryFile((HDROP)Msg.wParam, -1,
                                                 pDroppedFilename, BufferLength);
 
                 for(FileIndex=0; FileIndex<=(QtyDroppedFiles - 1); FileIndex++)
@@ -1122,7 +1122,7 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 {
         InverseVideo->Checked = !InverseVideo->Checked;
-        emulator.inverse = 1 - emulator.inverse;
+        emulator.inverse = (CFGBYTE)(1 - emulator.inverse);
         if (Sender) Artifacts->TrackBarChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -1199,9 +1199,9 @@ void TForm1::LoadSettings(TIniFile *ini)
         if (Large1->Checked) { emulator.bordersize=BORDERLARGE; Large1Click(NULL); }
         if (FullImage1->Checked) { emulator.bordersize=BORDERFULL; FullImage1Click(NULL); }
 
-        emulator.audioout = OutAudioOut->Checked ? 1:0;
-        emulator.TZXin = InTZXManager->Checked ? 1:0;
-        emulator.TZXout = OutTZXManager->Checked ? 1:0;
+        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked ? 1:0);
+        emulator.TZXin = (CFGBYTE)(InTZXManager->Checked ? 1:0);
+        emulator.TZXout = (CFGBYTE)(OutTZXManager->Checked ? 1:0);
 
         AccurateInit(true);
 
@@ -1632,7 +1632,7 @@ void __fastcall TForm1::SaveSnapDialogTypeChange(TObject *Sender)
         ZXString filter, newext;
         ZXString Fname;
 
-        HWND h;
+        THandle *h;
         TSaveDialog *d;
 
         filter=SaveSnapDialog->Filter;
@@ -1658,8 +1658,8 @@ void __fastcall TForm1::SaveSnapDialogTypeChange(TObject *Sender)
         Fname = RemovePath(RemoveExt(SaveSnapDialog->FileName) + newext);
 
         d=(TSaveDialog *)Sender;
-        h=GetParent(d->Handle);
-        SendMessage(h, CDM_SETCONTROLTEXT, edt1, (long)(Fname.c_str()));
+        h=(THandle *)GetParent(d->Handle);
+        SendMessage((HWND)h, CDM_SETCONTROLTEXT, edt1, (long)(Fname.c_str()));
 
 }
 //---------------------------------------------------------------------------

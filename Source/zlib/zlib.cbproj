@@ -88,7 +88,6 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\debug\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
         <BCC_UnderscoreSymbolNames>false</BCC_UnderscoreSymbolNames>
         <BCC_DontUnderscoreExportedSymbolNames>true</BCC_DontUnderscoreExportedSymbolNames>
     </PropertyGroup>

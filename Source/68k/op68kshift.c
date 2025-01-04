@@ -20,6 +20,11 @@
  *  02.10.2002  JH  SetV simplified for ASL.
  *  30.10.2002  JH  Replaced "% 8" with "& 7". Helps lesser compilers to generate faster code.
  */
+
+#pragma warn -8008
+#pragma warn -8066
+#pragma warn -8071
+
 #ifndef PROTOH
 //static char     sccsid[] = "$Id: op68kshift.c,v 1.11 2002/10/30 16:23:06 jhoenig Exp $";
 #include "68000.h"

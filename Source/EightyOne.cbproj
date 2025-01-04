@@ -70,6 +70,22 @@
         <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
         <SubProcessesNumber>2</SubProcessesNumber>
         <BCC_wpar>false</BCC_wpar>
+        <BCC_InstructionSet>6</BCC_InstructionSet>
+        <BCC_wamb>true</BCC_wamb>
+        <BCC_wamp>true</BCC_wamp>
+        <BCC_wasm>true</BCC_wasm>
+        <BCC_wbbf>true</BCC_wbbf>
+        <BCC_wcln>true</BCC_wcln>
+        <BCC_wdef>true</BCC_wdef>
+        <BCC_wnak>true</BCC_wnak>
+        <BCC_wnod>true</BCC_wnod>
+        <BCC_wpin>true</BCC_wpin>
+        <BCC_wstu>true</BCC_wstu>
+        <BCC_wucp>true</BCC_wucp>
+        <BCC_wuse>true</BCC_wuse>
+        <BCC_wprc>true</BCC_wprc>
+        <BCC_ZeroLengthEmptyBaseClass>true</BCC_ZeroLengthEmptyBaseClass>
+        <BCC_ZeroLengthEmptyMemberFuncs>true</BCC_ZeroLengthEmptyMemberFuncs>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindcompvclsmp;bindcompvclwinx;bindengine;CloudService;CPort_R;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;OfficeButton97;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;tethering;vcl;vclactnband;vcldb;vcldsnap;vcledge;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>

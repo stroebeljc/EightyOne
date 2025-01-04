@@ -83,8 +83,8 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "ThemeMgr"
-#pragma link "ThemeMgr"
-#pragma link "ThemeMgr"
+//#pragma link "ThemeMgr"
+//#pragma link "ThemeMgr"
 #pragma resource "*.dfm"
 
 #define ZXDB(msg) Application->MessageBox(msg, "Debug", MB_OK);
@@ -1033,12 +1033,12 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
         if (Msg.message == WM_DROPFILES)
         {
-                QtyDroppedFiles = (WORD)DragQueryFile((void *)Msg.wParam, -1,
+                QtyDroppedFiles = (WORD)DragQueryFile((HDROP)Msg.wParam, -1,
                                                 pDroppedFilename, BufferLength);
 
                 for(FileIndex=0; FileIndex<=(QtyDroppedFiles - 1); FileIndex++)
                 {
-                        DragQueryFile((void *)Msg.wParam, FileIndex, pDroppedFilename, BufferLength);
+                        DragQueryFile((HDROP)Msg.wParam, FileIndex, pDroppedFilename, BufferLength);
 
                         Filename = pDroppedFilename;
                         Ext = GetExt(Filename);
@@ -1086,7 +1086,7 @@ void __fastcall TForm1::AppMessage(TMsg &Msg, bool &Handled)
 
                 }
 
-                DragFinish((void *)Msg.wParam);
+                DragFinish((HDROP)Msg.wParam);
                 Handled = true;
         }
 

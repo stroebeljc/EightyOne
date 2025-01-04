@@ -24,21 +24,19 @@
 #define SNAP_H
 
 #ifdef __cplusplus
-
-extern "C" int load_snap(char *filename);
-extern "C" int save_snap(char *filename);
-extern "C" int load_file(char *filename);
-extern "C" int memory_load(char *filename, int address, int length, int secondbank = 0);
-extern "C" int memory_device_rom_load(char *filename, int address, int length);
-
-#else
-
-extern int load_snap(char *filename);
-extern int save_snap(char *filename);
-extern int load_file(char *filename);
-extern int memory_load(char *filename, int address, int length, int secondbank = 0);
-extern int memory_device_rom_load(char *filename, int address, int length);
-
+extern "C"
+{
 #endif
+
+int load_snap(char *filename);
+int save_snap(char *filename);
+int load_file(char *filename);
+int memory_load(char *filename, int address, int length, int secondbank = 0);
+int memory_device_rom_load(char *filename, int address, int length);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 

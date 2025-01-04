@@ -764,7 +764,7 @@ int ATA_LoadHDF(int drive, char *FileName)
 
                 len=fread( &(Drv->hdf), 1, sizeof(HDF_HEADER), f );
 
-                if (len!=sizeof(HDF_HEADER))
+                if (len!=(int)sizeof(HDF_HEADER))
                 {
                         fclose(f);
                         return(1);

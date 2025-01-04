@@ -37,7 +37,7 @@
 
 #pragma package(smart_init)
 
-char *HWName[]=
+const char *HWName[]=
 {
         "ZX Spectrum 16k",
         "ZX Spectrum 48k, Plus",

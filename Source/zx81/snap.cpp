@@ -59,7 +59,7 @@ void load_snap_interfaces(FILE *f);
 void load_snap_advanced(FILE* f);
 void load_snap_drives(FILE* f);
 void ProcessTag(char* tok, FILE* f);
-void InitialiseHardware();
+//void InitialiseHardware();
 
 extern void HWSetMachine(int machine, int speccy);
 extern void DebugUpdate();
@@ -729,13 +729,14 @@ int do_load_snap(char *filename, bool resetHardware)
         DebugUpdate();
         return(1);
 }
-
+/*
 void InitialiseHardware()
 {
         HWSetMachine(MACHINEZX81, NULL);
 
         InitialiseChroma();
-        
+
+        SetComboBox(HW->SpeechBox, "None");        
         SetComboBox(HW->ColourBox, "None");
         SetComboBox(HW->SoundCardBox, "None");
         SetComboBox(HW->ChrGenBox, "Sinclair");
@@ -781,6 +782,7 @@ void InitialiseHardware()
         zx81.enableQSchrgen = false;
         zx81.chromaColourSwitchOn = false;
 }
+*/
 
 int load_snap(char *filename)
 {

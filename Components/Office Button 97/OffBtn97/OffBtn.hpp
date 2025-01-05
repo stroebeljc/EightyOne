@@ -58,8 +58,8 @@
 #include <Winapi.MsCTF.hpp>	// (rtl)
 #include <Vcl.Controls.hpp>	// (vcl)
 // PRG_EXT: .bpl
-// BPI_DIR: C:\EightyOne_Mig\Components\Office Button 97\OffBtn97
-// OBJ_DIR: C:\EightyOne_Mig\Components\Office Button 97\OffBtn97
+// BPI_DIR: .
+// OBJ_DIR: .
 // OBJ_EXT: .obj
 
 //-- user supplied -----------------------------------------------------------

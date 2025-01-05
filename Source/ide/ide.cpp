@@ -1,5 +1,3 @@
-#pragma warn -8008
-
 #include <stdio.h>
 #include <string.h>
 #include "ide.h"
@@ -321,7 +319,7 @@ static int ATA_CalculateSectorNo(void)
                 }
         }
 
-        if (SectorNo<0 || SectorNo>=Drv->size)
+        if (SectorNo>=Drv->size)
         {
                 Drv->status |= ATA_ERR;
                 Drv->error = ATA_ERR_ABRT | ATA_ERR_IDNF;

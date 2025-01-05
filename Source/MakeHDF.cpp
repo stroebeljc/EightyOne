@@ -22,9 +22,9 @@ void __fastcall TCreateHDF::CylUpDownClick(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-ZXString TCreateHDF::ConvertValue(long Val)
+AnsiString TCreateHDF::ConvertValue(long Val)
 {
-        ZXString output;
+        AnsiString output;
         if (Val>=2097152)
         {
                 Val/=2097152;
@@ -103,7 +103,7 @@ void __fastcall TCreateHDF::EightBitClick(TObject *Sender)
 void __fastcall TCreateHDF::CylTextChange(TObject *Sender)
 {
         int i;
-        i=_ttoi(ZXString(CylText->Text).c_str());
+        i=atoi(AnsiString(CylText->Text).c_str());
 
         if (((i-32769)>=CylUpDown->Min) && ((i-32769)<=CylUpDown->Max))
         {
@@ -118,7 +118,7 @@ void __fastcall TCreateHDF::CylTextChange(TObject *Sender)
 void __fastcall TCreateHDF::HeadTextChange(TObject *Sender)
 {
         int i;
-        i=_ttoi(ZXString(HeadText->Text).c_str());
+        i=atoi(AnsiString(HeadText->Text).c_str());
         if ((i>=HeadUpDown->Min) && (i<=HeadUpDown->Max))
         {
                 HeadText->Color = clWindow;
@@ -133,7 +133,7 @@ void __fastcall TCreateHDF::HeadTextChange(TObject *Sender)
 void __fastcall TCreateHDF::SecTextChange(TObject *Sender)
 {
         int i;
-        i=_ttoi(ZXString(SecText->Text).c_str());
+        i=atoi(AnsiString(SecText->Text).c_str());
         if ((i>=SecUpDown->Min) && (i<=SecUpDown->Max))
         {
                 SecText->Color = clWindow;
@@ -201,7 +201,7 @@ void __fastcall TCreateHDF::OKClick(TObject *Sender)
         Progress->Max=tracks;
         Progress->Visible=true;
 
-        f=_tfopen(FileName.c_str(), _TEXT("wb"));
+        f=fopen(FileName.c_str(), "wb");
         if (!f) Close();
         fwrite(head, 512+16,1,f);
 

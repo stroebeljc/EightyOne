@@ -28,7 +28,7 @@ wd1770_drive PlusDDrives[2], *PlusDCur;
 
 #define LARKENSIZE (80*1984)
 unsigned char LarkenDrive[LARKENSIZE*2];
-_TCHAR LarkenPath0[MAXPATH], LarkenPath1[MAXPATH];
+char LarkenPath0[MAXPATH], LarkenPath1[MAXPATH];
 
 #include "larhead.h"
 
@@ -61,7 +61,7 @@ u765_SetRandomMethodT u765_SetRandomMethod;
 void LoadFDC765DLL(void)
 {
         USEFDC765DLL=1;
-        if ((DLLHandle=LoadLibrary(_TEXT("fdc765"))) != 0) { USEFDC765DLL=0; return; }
+        if ((DLLHandle=LoadLibrary("fdc765")) != 0) { USEFDC765DLL=0; return; }
         if ((u765_Initialise=(u765_InitialiseT)GetProcAddress(DLLHandle,"u765_Initialise")) == 0) USEFDC765DLL=0;
         if ((u765_InsertDisk=(u765_InsertDiskT)GetProcAddress(DLLHandle,"u765_InsertDisk")) == 0) USEFDC765DLL=0;
         if ((u765_EjectDisk=(u765_EjectDiskT)GetProcAddress(DLLHandle,"u765_EjectDisk")) == 0) USEFDC765DLL=0;
@@ -398,7 +398,7 @@ void floppy_shutdown()
 void floppy_init()
 {
         int i=0;
-        _TCHAR filename[MAXPATH]=_TEXT("\0");
+        char filename[MAXPATH]="\0";
 
         Data_Reg_A=0; Data_Dir_A=0; Control_A=0;
         Data_Reg_B=0; Data_Dir_B=0; Control_B=0;
@@ -408,7 +408,7 @@ void floppy_init()
                 memset(LarkenDrive, 0, LARKENSIZE*2);
                 LarkenPath0[0]='\0';
                 LarkenPath1[0]='\0';
-                if (_tcslen(filename)) floppy_setimage(i,filename);
+                if (strlen(filename)) floppy_setimage(i,filename);
                 return;
         }
 
@@ -425,7 +425,7 @@ void floppy_init()
                         {
                                 if (PlusDCur->disk->fd!=-1)
                                 {
-                                        _tcscpy(filename, PlusDCur->disk->filename);
+                                        strcpy(filename, PlusDCur->disk->filename);
                                         floppy_eject(i);
                                 }
 
@@ -485,7 +485,7 @@ void floppy_init()
 
                         if (spectrum.floppytype==FLOPPYOPUSD) PlusDCur->set_datarq=OpusNMI;
 
-                        if (_tcslen(filename)) floppy_setimage(i,filename);
+                        if (strlen(filename)) floppy_setimage(i,filename);
                 }
                 PlusDCur= &PlusDDrives[0];
                 return;
@@ -591,12 +591,12 @@ void floppy_eject(int drive)
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
                 int a;
-                _TCHAR *filename;
+                char *filename;
 
                 if (drive==0) filename=LarkenPath0;
                 else filename=LarkenPath1;
 
-                a=_topen( filename, O_CREAT | O_RDWR | O_BINARY);
+                a=open( filename, O_CREAT | O_RDWR | O_BINARY);
                 if (a>0)
                 {
                         write(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
@@ -641,32 +641,29 @@ void floppy_eject(int drive)
 
 int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format);
 
-void floppy_setimage(int drive, _TCHAR *filename)
+void floppy_setimage(int drive, char *filename)
 {
-#if _UNICODE
-        char temp[MAXPATH];
-#endif
         int a;
 
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
                 floppy_eject(drive);
-                if (_tcslen(filename))
+                if (strlen(filename))
                 {
-                        a=_taccess(filename, 0);
+                        a=access(filename, 0);
                         if (!a)
                         {
-                                a=_topen( filename, O_RDWR | O_BINARY);
+                                a=open( filename, O_RDWR | O_BINARY);
                                 read(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
-                                if (drive==0) _tcscpy(LarkenPath0, filename);
-                                if (drive==1) _tcscpy(LarkenPath1, filename);
+                                if (drive==0) strcpy(LarkenPath0, filename);
+                                if (drive==1) strcpy(LarkenPath1, filename);
                         }
                         else
                         {
                                 if (errno==ENOENT)
                                 {
-                                        if (drive==0) _tcscpy(LarkenPath0, filename);
-                                        if (drive==1) _tcscpy(LarkenPath1, filename);
+                                        if (drive==0) strcpy(LarkenPath0, filename);
+                                        if (drive==1) strcpy(LarkenPath1, filename);
                                         memset(LarkenDrive + (LARKENSIZE*drive), 0, 1984);
                                         memcpy(LarkenDrive + (LARKENSIZE*drive), LarkenHeader,1984);
                                 }
@@ -688,7 +685,7 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 d = &PlusDDrives[ drive ];
                 if( !( d->disk && d->disk->buffer && d->disk->dirty && d->disk->present ) ) return;
 
-                l = _tcslen( filename );
+                l = strlen( filename );
                 if( l >= 5 )
                 {
                         d->disk->numlayers = 2;
@@ -696,11 +693,11 @@ void floppy_setimage(int drive, _TCHAR *filename)
                         d->disk->numsectors = 10;
                         d->disk->sectorsize = 512;
 
-                        if( !_tcscmp( filename + ( l - 4 ), _TEXT(".dsk") ) ) d->disk->alternatesides = 1;
-                        else if( !_tcscmp( filename + ( l - 4 ), _TEXT(".mgt") ) ) d->disk->alternatesides = 1;
-                        else if( !_tcscmp( filename + ( l - 4 ), _TEXT(".img") ) ) d->disk->alternatesides = 0;
-                        else if( !_tcscmp( filename + ( l - 4 ), _TEXT(".opd") )
-                                   || !_tcscmp( filename + ( l - 4 ), _TEXT(".opu") ))
+                        if( !strcmp( filename + ( l - 4 ), ".dsk" ) ) d->disk->alternatesides = 1;
+                        else if( !strcmp( filename + ( l - 4 ), ".mgt" ) ) d->disk->alternatesides = 1;
+                        else if( !strcmp( filename + ( l - 4 ), ".img" ) ) d->disk->alternatesides = 0;
+                        else if( !strcmp( filename + ( l - 4 ), ".opd" )
+                                   || !strcmp( filename + ( l - 4 ), ".opu" ))
                         {
                                 d->disk->alternatesides = 1;
                                 d->disk->numlayers = 1;
@@ -708,7 +705,7 @@ void floppy_setimage(int drive, _TCHAR *filename)
                                 d->disk->numsectors = 18;
                                 d->disk->sectorsize = 256;
                         }
-                        else if( !_tcscmp( filename + ( l - 4 ), _TEXT(".trd") ))
+                        else if( !strcmp( filename + ( l - 4 ), ".trd" ))
                         {
                                 d->disk->alternatesides = 1;
                                 d->disk->numlayers = 2;
@@ -724,9 +721,9 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 d->disk->readonly = 0;
                 d->disk->changed = 0;
 
-                if( ( d->disk->fd = _topen( filename, O_RDWR | O_BINARY) ) == -1 )
+                if( ( d->disk->fd = open( filename, O_RDWR | O_BINARY) ) == -1 )
                 {
-                        if((d->disk->fd = _topen( filename, O_RDONLY | O_BINARY )) == -1 )
+                        if((d->disk->fd = open( filename, O_RDONLY | O_BINARY )) == -1 )
                         {
                                 /*fprintf( stderr, "disciple_disk_insert: open() failed: %s\n",
                                                 strerror( errno ) ); */
@@ -739,7 +736,7 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 memset( d->disk->present, 0, 2 * d->disk->numtracks * d->disk->numsectors );
                 memset( d->disk->dirty, 0, 2 * d->disk->numtracks * d->disk->numsectors );
 
-                _tcsnccpy( d->disk->filename, filename, MAXPATH );
+                strncpy( d->disk->filename, filename, MAXPATH );
                 d->disk->filename[ MAXPATH - 1 ] = '\0';
 
                 return;
@@ -747,7 +744,7 @@ void floppy_setimage(int drive, _TCHAR *filename)
 
         if (spectrum.floppytype==FLOPPYPLUS3)
         {
-                if (_tcslen(filename) && _taccess(filename,0))
+                if (strlen(filename) && access(filename,0))
                 {
                         int drivetype;
                         dsk_format_t format;
@@ -764,28 +761,14 @@ void floppy_setimage(int drive, _TCHAR *filename)
                         case DRIVE35INCHDS: format=FMT_720K; break;
                         }
 
-#if _UNICODE
-                        wcstombs(temp, filename, MAXPATH);
-                        do_format(temp, "dsk", NULL, -1, format);
-#else
                         do_format(filename, "dsk", NULL, -1, format);
-#endif
                 }
 
                 if (USEFDC765DLL)
                 {
                         if (u765_DiskInserted((BYTE)drive))
                                 u765_EjectDisk((BYTE)drive);
-#if _UNICODE
-                        if (_tcslen(filename))
-                        {
-                            char temp[MAXPATH];
-                            wcstombs(temp, filename, MAXPATH);
-                            u765_InsertDisk(temp,drive);
-                        }
-#else
-                        if (_tcslen(filename)) u765_InsertDisk(filename,(BYTE)drive);
-#endif
+                        if (strlen(filename)) u765_InsertDisk(filename, (BYTE)drive);
                         u765_DiskInserted(0);
                         return;
                 }
@@ -793,31 +776,15 @@ void floppy_setimage(int drive, _TCHAR *filename)
                 if ((drive==0) && (p3_drive_a))
                 {
                         fd_eject(p3_drive_a);
-                        if (_tcslen(filename))
-#if _UNICODE
-                        {
-                            char temp[MAXPATH];
-                            wcstombs(temp, filename, MAXPATH);
-                            fdl_setfilename(p3_drive_a, temp);
-                        }
-#else
+                        if (strlen(filename))
                                 fdl_setfilename(p3_drive_a, filename);
-#endif
                 }
 
                 if ((drive==1) && (p3_drive_b))
                 {
                         fd_eject(p3_drive_b);
-                        if (_tcslen(filename))
-#if _UNICODE
-                        {
-                            char temp[MAXPATH];
-                            wcstombs(temp, filename, MAXPATH);
-                            fdl_setfilename(p3_drive_b, temp);
-                        }
-#else
+                        if (strlen(filename))
                                 fdl_setfilename(p3_drive_b, filename);
-#endif
                 }
         }
 }

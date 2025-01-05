@@ -23,18 +23,16 @@
 #ifndef SNAP_H
 #define SNAP_H
 
-#include "zx81config.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-int load_snap(_TCHAR *filename);
-int save_snap(_TCHAR *filename);
-int load_file(_TCHAR *filename);
-int memory_load(_TCHAR *filename, int address, int length, int secondbank = 0);
-int memory_device_rom_load(_TCHAR *filename, int address, int length);
+int load_snap(char *filename);
+int save_snap(char *filename);
+int load_file(char *filename);
+int memory_load(char *filename, int address, int length, int secondbank = 0);
+int memory_device_rom_load(char *filename, int address, int length);
 
 #ifdef __cplusplus
 }

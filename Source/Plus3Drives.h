@@ -115,12 +115,12 @@ private:	// User declarations
         int GetMDVNo(TObject *Sender);
         TObject *GetTextBox(int Drive);
         void BuildHDList(TComboBox *List);
-        ZXString DragFileName;
+        AnsiString DragFileName;
 public:		// User declarations
         __fastcall TP3Drive(TComponent* Owner);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
-        void InsertFile(ZXString Filename);
+        void InsertFile(AnsiString Filename);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TP3Drive *P3Drive;

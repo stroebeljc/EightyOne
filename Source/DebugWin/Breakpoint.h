@@ -127,9 +127,6 @@ struct breakpoint
                         case NotEqual:
                                 addrMatch = (curAddr != Addr);
                                 break;
-
-                        default:
-                                break;
                 }
 
                 return addrMatch;
@@ -162,9 +159,6 @@ struct breakpoint
                         case NotEqual:
                                 match = (curAddr != Addr);
                                 break;
-
-                        default:
-                                break;
                 }
 
                 if (match && (Value != -1) && (ConditionAddr != Range))
@@ -185,9 +179,6 @@ struct breakpoint
 
                                 case NotEqual:
                                         match = (curValue != Value);
-                                        break;
-
-                                default:
                                         break;
                         }
                 }

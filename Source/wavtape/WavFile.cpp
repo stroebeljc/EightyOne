@@ -56,19 +56,19 @@ TWavFile::~TWavFile()
 
 }
 
-bool TWavFile::SaveCSW(ZXString FName)
+bool TWavFile::SaveCSW(AnsiString FName)
 {
         return true;
 }
 
-bool TWavFile::LoadCSW(ZXString FName)
+bool TWavFile::LoadCSW(AnsiString FName)
 {
         FILE *f;
         struct CSW csw;
         unsigned int size;
         int i,c,current;
 
-        f=_tfopen(FName.c_str(), _TEXT("rb"));
+        f=fopen(FName.c_str(), "rb");
 
         fread(&csw,0x20,1,f);
 
@@ -102,7 +102,7 @@ bool TWavFile::LoadCSW(ZXString FName)
         MemAllocated=Data.DataLen;
 
         fclose(f);
-        f=_tfopen(FName.c_str(), _TEXT("rb"));
+        f=fopen(FName.c_str(), "rb");
         fread(&csw,0x20,1,f);
 
         size=0;
@@ -123,13 +123,13 @@ bool TWavFile::LoadCSW(ZXString FName)
         return(true);
 }
 
-bool TWavFile::LoadFile(ZXString FName)
+bool TWavFile::LoadFile(AnsiString FName)
 {
         FILE *f;
 
         if (FileNameGetExt(FName)==".CSW") return(LoadCSW(FName));
 
-        f=_tfopen(FName.c_str(), _TEXT("rb"));
+        f=fopen(FName.c_str(), "rb");
 
         Head.Head[0]='\0';
         Format.Head[0]='\0';
@@ -188,13 +188,13 @@ bool TWavFile::LoadFile(ZXString FName)
         return(true);
 }
 
-bool TWavFile::SaveFile(ZXString FName)
+bool TWavFile::SaveFile(AnsiString FName)
 {
         FILE *f;
 
         if (FileNameGetExt(FName)==".CSW") return(SaveCSW(FName));
 
-        f=_tfopen(FName.c_str(), _TEXT("wb"));
+        f=fopen(FName.c_str(), "wb");
 
         fwrite(&Head, 1, sizeof(Head), f);
         fwrite(&Format, 1, sizeof(Format), f);

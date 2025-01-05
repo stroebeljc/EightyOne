@@ -7,8 +7,8 @@
 
 using namespace std;
 
-typedef map<int, ZXString> VAL2SYM;
-typedef map<ZXString, int> SYM2VAL;
+typedef map<int, AnsiString> VAL2SYM;
+typedef map<AnsiString, int> SYM2VAL;
 
 static VAL2SYM romV2S;
 static SYM2VAL romS2V;
@@ -16,23 +16,23 @@ static SYM2VAL romS2V;
 static VAL2SYM fileV2S;
 static SYM2VAL fileS2V;
 
-void splitnosval(ZXString& inval, ZXString& outval)
+void splitnosval(AnsiString& inval, AnsiString& outval)
 {
-        ZXString tempVal = inval;
+        AnsiString tempVal = inval;
         int wspos = tempVal.LastDelimiter(":");
         if (wspos == 0)
         {
                 return;
         }
 
-        ZXString actualVal(tempVal.SubString(wspos + 1, tempVal.Length() - wspos));
+        AnsiString actualVal(tempVal.SubString(wspos + 1, tempVal.Length() - wspos));
 
         outval = actualVal;
 }
 
-static bool z88Splitter(const char* input, ZXString& symOut, ZXString& valOut)
+static bool z88Splitter(const char* input, AnsiString& symOut, AnsiString& valOut)
 {
-        ZXString sym(input);
+        AnsiString sym(input);
         sym = sym.Trim();
         if (sym.Length() == 0 || sym[1] == ';')
         {
@@ -58,7 +58,7 @@ static bool z88Splitter(const char* input, ZXString& symOut, ZXString& valOut)
 
         if (sym.SubString(1,2) == "__") return false;
 
-        ZXString val(sym.SubString(wspos + 3, sym.Length() - wspos));
+        AnsiString val(sym.SubString(wspos + 3, sym.Length() - wspos));
         sym.SetLength(wspos - 1);
 
         // val = 'xxxx '
@@ -69,9 +69,9 @@ static bool z88Splitter(const char* input, ZXString& symOut, ZXString& valOut)
         return true;
 }
 
-static bool symSplitter(const char* input, ZXString& symOut, ZXString& valOut)
+static bool symSplitter(const char* input, AnsiString& symOut, AnsiString& valOut)
 {
-        ZXString sym(input);
+        AnsiString sym(input);
         sym = sym.Trim();
         if (sym.Length() == 0 || sym[1] == ';')
         {
@@ -86,7 +86,7 @@ static bool symSplitter(const char* input, ZXString& symOut, ZXString& valOut)
                 return false;
         }
 
-        ZXString addr(sym.SubString(wspos + 1, sym.Length() - wspos));
+        AnsiString addr(sym.SubString(wspos + 1, sym.Length() - wspos));
 
         // chop any middle words from the line, leaving the symbol name
         //
@@ -143,7 +143,7 @@ static bool loadSymbols(const char* filename, VAL2SYM& v2s, SYM2VAL& s2v,
         }
 
         char buf[128];
-        ZXString sym, val;
+        AnsiString sym, val;
 
         while(fgets(buf, 128, symfile))
         {
@@ -185,7 +185,7 @@ bool symbolstore::loadZ88FileSymbols(const char* filename)
         return loadSymbols(filename, fileV2S, fileS2V, z88Splitter);
 }
 
-bool symbolstore::addressToSymbol(const int addr, ZXString& result)
+bool symbolstore::addressToSymbol(const int addr, AnsiString& result)
 {
         if (addr == 0) return false;  // zero is always 0
 
@@ -206,13 +206,13 @@ bool symbolstore::addressToSymbol(const int addr, ZXString& result)
         return false;
 }
 
-ZXString symbolstore::addressToSymbolOrHex(const int addr)
+AnsiString symbolstore::addressToSymbolOrHex(const int addr)
 {
-        ZXString temp;
+        AnsiString temp;
         if (!addressToSymbol(addr, temp))
         {
                 temp = temp.IntToHex(addr,4);
-                int len = _tcslen(temp.c_str());
+                int len = strlen(temp.c_str());
                 int delLen = len < 4 ? 0 : len - 4; 
                 temp = "$" + temp.Delete(1, delLen);
         }
@@ -222,7 +222,7 @@ ZXString symbolstore::addressToSymbolOrHex(const int addr)
 
 // NUNS! REVERSE!
 //
-bool symbolstore::symbolToAddress(const ZXString& sym, int& val)
+bool symbolstore::symbolToAddress(const AnsiString& sym, int& val)
 {
         SYM2VAL::iterator it = fileS2V.find(sym);
         if (it != fileS2V.end())
@@ -253,7 +253,7 @@ void symbolstore::beginenumeration(void)
         type = 'r';
 }
 
-bool symbolstore::enumerate(ZXString& sym, int& val, char& storetype)
+bool symbolstore::enumerate(AnsiString& sym, int& val, char& storetype)
 {
         if (nasty == romS2V.end())
         {

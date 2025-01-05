@@ -10,7 +10,6 @@
 #include <ComCtrls.hpp>
 #include <ExtCtrls.hpp>
 #include <Graphics.hpp>
-#include "zx81config.h"
 //---------------------------------------------------------------------------
 class TSplash : public TForm
 {
@@ -21,8 +20,8 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
         __fastcall TSplash(TComponent* Owner);
-        void SetProgress(int Max, ZXString text);
-        void IncProgress(ZXString text);
+        void SetProgress(int Max, AnsiString text);
+        void IncProgress(AnsiString text);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSplash *Splash;

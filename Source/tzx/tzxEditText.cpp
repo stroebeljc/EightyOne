@@ -42,7 +42,7 @@ void TEditTextForm::Go(int BlockNo, int Mx, int My)
 {
         int i,len;
         char c,*p;
-        ZXString text;
+        AnsiString text;
 
         Top = My - Height/2;
         Left = Mx - Width/2;

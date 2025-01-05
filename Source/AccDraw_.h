@@ -26,7 +26,6 @@
 //---------------------------------------------------------------------------
 #endif
 
-#include "zx81config.h"
 
 extern void AccurateInit(int resize);
 extern void AccurateUpdateDisplay(bool singlestep);
@@ -38,4 +37,4 @@ extern void RenderDrawBorder(void);
 extern void CompleteFrame(void);
 extern void AccurateUpdateDisplay(int);
 extern void RecalcWinSize(void);
-extern void SaveScreenShot(ZXString Filename);
+extern void SaveScreenShot(AnsiString Filename);

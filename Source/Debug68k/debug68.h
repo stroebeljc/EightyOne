@@ -7,7 +7,6 @@
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
-#include "zx81config.h"
 //---------------------------------------------------------------------------
 class TDebug68k : public TForm
 {
@@ -65,7 +64,7 @@ __published:	// IDE-managed Components
         void __fastcall SingleStepClick(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
-        ZXString Hex32(int val);
+        AnsiString Hex32(int val);
 public:		// User declarations
         __fastcall TDebug68k(TComponent* Owner);
         void UpdateVals(void);

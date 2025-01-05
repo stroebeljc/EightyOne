@@ -4,7 +4,6 @@
 #pragma hdrstop
 
 #include "BasicListingFormatInfo_.h"
-#include "zx81config.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -39,5 +38,5 @@ void __fastcall TBasicListingFormatInfoForm::Weblink3Click(TObject *Sender)
 //---------------------------------------------------------------------------
 void TBasicListingFormatInfoForm::OpenWebsite()
 {
-        ShellExecute(NULL, _TEXT("open"), _TEXT("http://freestuff.grok.co.uk/zxtext2p/index.html"), NULL, NULL, SW_SHOW );
+        ShellExecute(NULL, "open", "http://freestuff.grok.co.uk/zxtext2p/index.html", NULL, NULL, SW_SHOW );
 }

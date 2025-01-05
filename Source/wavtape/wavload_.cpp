@@ -44,7 +44,7 @@ extern int AutoLoadCount;
 
 #define  TSClick 4
 
-bool TWavLoad::IsWav(ZXString FileName)
+bool TWavLoad::IsWav(AnsiString FileName)
 {
         if (FileNameGetExt(FileName)==".WAV") return(true);
         return(false);
@@ -148,16 +148,16 @@ __fastcall TWavLoad::TWavLoad(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-void TWavLoad::LoadFile(ZXString FName)
+void TWavLoad::LoadFile(AnsiString FName)
 {
-        ZXString Extension;
+        AnsiString Extension;
 
         DoCaption("Loading");
 
         Extension=FileNameGetExt(FName);
         if (Extension == ".ZIP")
         {
-                FName=ZipFile->ExpandZIP(FName, ZXString(LoadWavDialog->Filter));
+                FName=ZipFile->ExpandZIP(FName, LoadWavDialog->Filter);
                 if (FName=="") return;
                 Extension = FileNameGetExt(FName);
         }
@@ -308,7 +308,7 @@ void TWavLoad::StartRec()
         RecordBtnClick(NULL);
 }
 
-void TWavLoad::DoCaption(ZXString Message)
+void TWavLoad::DoCaption(AnsiString Message)
 {
         if (Message=="") Message=StatusText;
         else StatusText=Message;
@@ -316,7 +316,7 @@ void TWavLoad::DoCaption(ZXString Message)
         StatusBar1->Panels->Items[2]->Text=Message;
         if (Wav.SampleRate>0)
         {
-                ZXString text;
+                AnsiString text;
                 text = TapePos / Wav.SampleRate;
                 text += " / ";
                 text += Wav.NoSamples / Wav.SampleRate;
@@ -401,7 +401,7 @@ void TWavLoad::SaveSettings(TIniFile *ini)
 
 void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
 {
-        ZXString Filter = "Windows WAV Files|*.wav";
+        AnsiString Filter = "Windows WAV Files|*.wav";
 
         if (FileName != "") SaveWavDialog->FileName = RemoveExt(FileName);
         else SaveWavDialog->FileName = RemoveExt(SaveWavDialog->FileName);
@@ -415,9 +415,9 @@ void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
         Wav.SaveFile(SaveWavDialog->FileName);
 }
 //---------------------------------------------------------------------------
-ZXString TWavLoad::RemoveExt(ZXString Fname)
+AnsiString TWavLoad::RemoveExt(AnsiString Fname)
 {
-        ZXString Ext;
+        AnsiString Ext;
         int len,pos;
 
         len=Fname.Length();
@@ -596,7 +596,7 @@ void __fastcall TWavLoad::BiasChange(TObject *Sender)
 
 void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
 {
-        ZXString Filter = "Windows WAV Files|*.wav";
+        AnsiString Filter = "Windows WAV Files|*.wav";
 
         if (FileName != "") SaveWavDialog->FileName = RemoveExt(FileName);
         else SaveWavDialog->FileName = RemoveExt(SaveWavDialog->FileName);

@@ -41,7 +41,6 @@
 #include <IniFiles.hpp>
 #include <Buttons.hpp>
 #include "OffBtn.hpp"
-#include "zx81config.h"
 
 extern int frametstates;
 
@@ -145,7 +144,7 @@ public:		// User declarations
         void UpdateTable(bool NewFile);
         void RecStopCheck(void);
         void RecordByte(unsigned char c);
-        void LoadFile(ZXString Filename, bool Insert);
+        void LoadFile(AnsiString Filename, bool Insert);
         bool Playing(void);
         void UpdateButtons(void);
         void ClockTick(int TStates, bool ZX81);

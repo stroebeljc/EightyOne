@@ -43,7 +43,7 @@ void TSetBreakpoint::CentreOn(TForm* parent)
         Left = parent->Left + (parent->Width - Width) / 2;
 }
 //---------------------------------------------------------------------------
-void TSetBreakpoint::SetTitle(ZXString& title)
+void TSetBreakpoint::SetTitle(AnsiString& title)
 {
         Text = title;
 }
@@ -69,7 +69,7 @@ bool TSetBreakpoint::EditBreakpoint(struct breakpoint& bp)
 }
 //---------------------------------------------------------------------------
 
-void ReplaceRegisterName(ZXString& addressValue)
+void ReplaceRegisterName(String& addressValue)
 {
         if (CompareText(addressValue, "PC") == 0)
         {
@@ -121,7 +121,7 @@ void ReplaceRegisterName(ZXString& addressValue)
         }
 }
 
-bool SanitiseEditBox(ZXString addressValue, int& addr, int minValue, int maxValue, bool symbolLookUp = false)
+bool SanitiseEditBox(String addressValue, int& addr, int minValue, int maxValue, bool symbolLookUp = false)
 {
         int newAddr = addr;
 
@@ -156,14 +156,14 @@ bool SanitiseEditBox(ZXString addressValue, int& addr, int minValue, int maxValu
                 addressValue = "0x" + addressValue.SubString(2, addressValue.Length() - 1);
         }
 
-        _TCHAR* endPtr;
+        char* endPtr;
         if (hex)
         {
-                newAddr = int(_tcstol(addressValue.c_str(), &endPtr, 16));
+                newAddr = int(strtol(AnsiString(addressValue).c_str(), &endPtr, 16));
         }
         else
         {
-                newAddr = int(_tcstol(addressValue.c_str(), &endPtr, 10));
+                newAddr = int(strtol(AnsiString(addressValue).c_str(), &endPtr, 10));
         }
 
         if (*endPtr != 0)
@@ -251,8 +251,8 @@ bool SymbolLookUpRequired(int breakType)
 
 bool TSetBreakpoint::GetBreakpointFields(struct breakpoint& bp)
 {
-        ZXString breakAddress;
-        ZXString breakValue;
+        AnsiString breakAddress;
+        AnsiString breakValue;
         int lowerLimit;
         int upperLimit;
         int addr;
@@ -356,7 +356,7 @@ void __fastcall TSetBreakpoint::BreakTypeChange(TObject *Sender)
         BreakConditionAddrChange(Sender);
 }
 
-void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, ZXString conditions)
+void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, AnsiString conditions)
 {
         conditionList->Items->Clear();
 
@@ -374,7 +374,7 @@ void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, ZXString c
                 e++;
         }
 
-        ZXString lastCondition = conditions.SubString(s, e + 1 - s);
+        AnsiString lastCondition = conditions.SubString(s, e + 1 - s);
         conditionList->Items->Add(lastCondition);
         conditionList->ItemIndex = 0;
         conditionList->Enabled = (conditionList->Items->Count > 1);
@@ -390,7 +390,7 @@ void TSetBreakpoint::SetConditionList(TComboBox* const conditionList, ZXString c
         }
 }
 
-void TSetBreakpoint::SetEditBox(TEdit* const editBox, ZXString defaultText)
+void TSetBreakpoint::SetEditBox(TEdit* const editBox, AnsiString defaultText)
 {
         editBox->MaxLength = defaultText.Length();
         editBox->Text = defaultText.Trim();
@@ -461,7 +461,7 @@ void TSetBreakpoint::BreakTypeChangeTStates()
 
 //---------------------------------------------------------------------------
 
-void TSetBreakpoint::SetEditBoxLabels(ZXString breakAddressLabel, ZXString breakValueLabel)
+void TSetBreakpoint::SetEditBoxLabels(AnsiString breakAddressLabel, AnsiString breakValueLabel)
 {
         LabelBreakAddress->Caption = breakAddressLabel + ":";
         LabelBreakValue->Caption = breakValueLabel + ":";

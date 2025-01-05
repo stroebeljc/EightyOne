@@ -16,7 +16,7 @@ void DetectPhysDrives(void)
 {
         int i, drive;
         unsigned long size, size1, size2;
-        _TCHAR path[256];
+        char path[256];
         unsigned char buffer[512];
         HANDLE hDevice;               // handle to the drive to be examined
         BOOL bResult;                 // results flag
@@ -32,7 +32,7 @@ void DetectPhysDrives(void)
         i=0;
         for(drive=0;drive<255;drive++)
         {
-                _stprintf(path,_TEXT("\\\\.\\PhysicalDrive%d"),drive);
+                sprintf(path,"\\\\.\\PhysicalDrive%d",drive);
 
                 memset(buffer, 0 , 512);
                 hDevice = CreateFile(path,  // drive to open
@@ -109,7 +109,7 @@ void DetectPhysDrives(void)
                                 PhysDrives[i].Sectors=secs;
                                 PhysDrives[i].Size = size;
                                 PhysDrives[i].ReadOnly=ReadOnly;
-                                _tcscpy(PhysDrives[i].Path, path);
+                                strcpy(PhysDrives[i].Path, path);
 
                                 i++;
                         }
@@ -321,7 +321,7 @@ static int ATA_CalculateSectorNo(void)
                 }
         }
 
-        if (SectorNo>=Drv->size)
+        if (SectorNo<0 || SectorNo>=Drv->size)
         {
                 Drv->status |= ATA_ERR;
                 Drv->error = ATA_ERR_ABRT | ATA_ERR_IDNF;
@@ -576,7 +576,7 @@ void ATA_SetMode(int mode)
         ATA_Channel.mode=mode;
 }
 
-_TCHAR *ATA_GetHDF(int drive)
+char *ATA_GetHDF(int drive)
 {
         if (ATA_Channel.drive[drive].AccessMode)
                 return(ATA_Channel.drive[drive].filename);
@@ -627,7 +627,7 @@ void ATA_SetCHS(int Drive, int c, int h, int s)
         }
 }
        
-int ATA_LoadHDF(int drive, _TCHAR *FileName)
+int ATA_LoadHDF(int drive, char *FileName)
 {
         FILE *f;
         int len, idlen,i;
@@ -644,7 +644,7 @@ int ATA_LoadHDF(int drive, _TCHAR *FileName)
 
                 while(PhysDrives[i].Drive!=-1)
                 {
-                        if (!_tcscmp(FileName,PhysDrives[i].Path))
+                        if (!strcmp(FileName,PhysDrives[i].Path))
                         {
                                 Drv->h = CreateFile(FileName,  // drive to open
                                                 GENERIC_READ|GENERIC_WRITE,
@@ -665,7 +665,7 @@ int ATA_LoadHDF(int drive, _TCHAR *FileName)
                                 Drv->heads = PhysDrives[i].Heads;
                                 Drv->sectors = PhysDrives[i].Sectors;
                                 Drv->size = PhysDrives[i].Size;
-                                _tcscpy(Drv->filename, FileName);
+                                strcpy(Drv->filename, FileName);
                                 Drv->data = 0;
                                 Drv->sector_size = 512;
                                 Drv->AccessMode=ACCESS_PHY;
@@ -698,12 +698,12 @@ int ATA_LoadHDF(int drive, _TCHAR *FileName)
                 return(1);
         }
 
-        len=_tcslen(FileName);
-        if ( (!_tcscmp(FileName+len-4,_TEXT(".vhd")))
-                || (!_tcscmp(FileName+len-4,_TEXT(".VHD"))) )
+        len=strlen(FileName);
+        if ( (!strcmp(FileName+len-4,".vhd"))
+                || (!strcmp(FileName+len-4,".VHD")) )
         {
                 char ModelName[]="iEhgtynO eiVtrauPl C                    ";
-                f=_tfopen(FileName,_TEXT("rb+"));
+                f=fopen(FileName,"rb+");
                 if (!f) return(1);
 
                 //len=sizeof(VHD_HEADER);
@@ -751,7 +751,7 @@ int ATA_LoadHDF(int drive, _TCHAR *FileName)
                 for(i=0;i<40;i++) Drv->drive_id[54+i]=ModelName[i];
 
                 Drv->f = f;
-                _tcscpy(Drv->filename, FileName);
+                strcpy(Drv->filename, FileName);
 
                 Drv->AccessMode=ACCESS_HDF;
                 ATA_Reset();
@@ -759,7 +759,7 @@ int ATA_LoadHDF(int drive, _TCHAR *FileName)
         }
         else
         {
-                f=_tfopen(FileName,_TEXT("rb+"));
+                f=fopen(FileName,"rb+");
                 if (!f) return(1);
 
                 len=fread( &(Drv->hdf), 1, sizeof(HDF_HEADER), f );
@@ -809,7 +809,7 @@ int ATA_LoadHDF(int drive, _TCHAR *FileName)
                 }
 
                 Drv->f = f;
-                _tcscpy(Drv->filename, FileName);
+                strcpy(Drv->filename, FileName);
 
                 Drv->AccessMode=ACCESS_HDF;
                 ATA_Reset();

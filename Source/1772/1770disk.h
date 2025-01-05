@@ -33,7 +33,7 @@
 typedef struct disk_info 
 {
   	int fd;
-  	_TCHAR filename[ MAXPATH ];
+  	char filename[ MAXPATH ];
   	int numlayers;
   	int numtracks;
   	int numsectors;

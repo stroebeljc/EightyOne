@@ -23,7 +23,6 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "zx81config.h"
 
 using namespace std;
 
@@ -43,7 +42,7 @@ private:
 
         unsigned char ConvertFromHexChar(unsigned char chr);
         bool ReadLine(ifstream& basicFile, string& line, int& sourceLine);
-        void ReadBasicListingFile(ZXString filename);
+        void ReadBasicListingFile(AnsiString filename);
         bool GetLineNumber(LineEntry& lineEntry);
         bool GetLineLabel(LineEntry& lineEntry);
         void ReplaceLabel();
@@ -57,7 +56,7 @@ private:
         void ExtractZxTokenFormatExtensionByteEncoding(bool zxTokenSupport);
 
 public:
-        void LoadBasicFile(ZXString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
+        void LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         unsigned char* ProgramData();
         int ProgramLength();
 
@@ -98,7 +97,7 @@ protected:
         virtual unsigned char AsciiToZX(unsigned char ascii) { return '\0'; }
         virtual void ExtractTokens(bool acceptAlternateKeywordSpelling) {}
         virtual void OutputLine(int lineNumber, int& address) {}
-        virtual void OutputStartOfProgramData(ZXString filename, int& addressOffset) {}
+        virtual void OutputStartOfProgramData(AnsiString filename, int& addressOffset) {}
         virtual void OutputEndOfProgramData(int& addressOffset) {}
         virtual bool SupportUppercaseOnly() { return false; }
         virtual void ExtractInverseCharacters() {}

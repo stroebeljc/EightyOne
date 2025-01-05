@@ -103,10 +103,10 @@ private:	// User declarations
         unsigned int TapePos;
         int Threshold;
         int CurrentTStates, ScreenCounter;
-        ZXString StatusText;
+        AnsiString StatusText;
         int Channel;
-        ZXString FileName;
-        ZXString RemoveExt(ZXString Fname);
+        AnsiString FileName;
+        AnsiString RemoveExt(AnsiString Fname);
         int GetPulse(int *HighLen, int *LowLen, bool start);
         int GetBit(bool *bit, bool started);
         int GetByte(bool start);
@@ -124,9 +124,9 @@ public:		// User declarations
         void Stop(bool force);
         void Start();
         void StartRec();
-        void DoCaption(ZXString Message);
-        bool IsWav(ZXString FileName);
-        void LoadFile(ZXString FileName);
+        void DoCaption(AnsiString Message);
+        bool IsWav(AnsiString FileName);
+        void LoadFile(AnsiString FileName);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void EncodeBlock(char *Data, int Len);

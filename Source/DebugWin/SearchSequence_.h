@@ -8,7 +8,6 @@
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
 #include <vector>
-#include "zx81config.h"
 
 //---------------------------------------------------------------------------
 class TSearchSequence : public TForm
@@ -26,7 +25,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TSearchSequence(TComponent* Owner);
         void CentreOn(TForm* parent);
-        bool EditSequenceBytes(ZXString& searchText, std::vector<int>& bytes);
+        bool EditSequenceBytes(AnsiString& searchText, std::vector<int>& bytes);
         bool ValidateSearchSequence(std::vector<int>& bytes);
 };
 //---------------------------------------------------------------------------

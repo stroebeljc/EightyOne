@@ -34,7 +34,7 @@ void __fastcall TDebug68k::FormClose(TObject *Sender, TCloseAction &Action)
 }
 //---------------------------------------------------------------------------
 
-ZXString TDebug68k::Hex32(int val)
+AnsiString TDebug68k::Hex32(int val)
 {
         return("$"+IntToHex(val, 8));
 }

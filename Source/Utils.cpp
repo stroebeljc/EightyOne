@@ -79,10 +79,10 @@ int CRC32Block(BYTE *block, int len)
         return ulCRC & 0xffff;
 }
 
-ZXString FileNameGetPath(ZXString Fname)
+AnsiString FileNameGetPath(AnsiString Fname)
 {
         int i,Pos;
-        ZXString Result;
+        AnsiString Result;
 
         Pos=0;
         for(i=1;i<=Fname.Length();i++)
@@ -96,10 +96,10 @@ ZXString FileNameGetPath(ZXString Fname)
         return(Result);
 }
 
-ZXString FileNameGetFname(ZXString Fname)
+AnsiString FileNameGetFname(AnsiString Fname)
 {
         int i,Pos1,Pos2;
-        ZXString Result;
+        AnsiString Result;
 
         Pos1=Pos2=0;
         for(i=1;i<=Fname.Length();i++)
@@ -117,10 +117,10 @@ ZXString FileNameGetFname(ZXString Fname)
         return(Result);
 }
 
-ZXString FileNameGetExt(ZXString Fname)
+AnsiString FileNameGetExt(AnsiString Fname)
 {
         int i,Pos1,Pos2;
-        ZXString Result;
+        AnsiString Result;
 
         Pos1=Pos2=0;
         for(i=1;i<=Fname.Length();i++)
@@ -139,9 +139,9 @@ ZXString FileNameGetExt(ZXString Fname)
         return(Result);
 }
 
-ZXString ConvertZX81ASCII(BYTE *str)
+AnsiString ConvertZX81ASCII(BYTE *str)
 {
-        ZXString Output;
+        AnsiString Output;
         BYTE c;
         int len=0;
 
@@ -166,7 +166,7 @@ ZXString ConvertZX81ASCII(BYTE *str)
 
 
 
-void ConvertASCIIZX81(ZXString Str, BYTE *Output)
+void ConvertASCIIZX81(AnsiString Str, BYTE *Output)
 {
         char c, *p;
         int i;
@@ -230,9 +230,9 @@ int ZX81Strlen(BYTE *str)
 }
 
 //---------------------------------------------------------------------------
-ZXString RemoveExt(ZXString Fname)
+AnsiString RemoveExt(AnsiString Fname)
 {
-        ZXString Ext;
+        AnsiString Ext;
         int len,pos;
 
         len=Fname.Length();
@@ -281,9 +281,9 @@ ZXString RemoveExt(ZXString Fname)
         return(Fname);
 }
 
-ZXString GetExt(ZXString Fname)
+AnsiString GetExt(AnsiString Fname)
 {
-        ZXString Ext;
+        AnsiString Ext;
         int len,pos;
 
         len=Fname.Length();
@@ -304,7 +304,7 @@ ZXString GetExt(ZXString Fname)
 }
 //---------------------------------------------------------------------------
 
-ZXString RemovePath(ZXString Str)
+AnsiString RemovePath(AnsiString Str)
 {
         int p;
 
@@ -312,7 +312,7 @@ ZXString RemovePath(ZXString Str)
 
         do
         {
-                p=Str.Pos("\\");
+                p=Str.AnsiPos("\\");
 
                 if (p)
                 {
@@ -328,10 +328,10 @@ ZXString RemovePath(ZXString Str)
 // Enumerate the Serial Ports
 //---------------------------------------------------------------------------
 
-int EnumeratePorts(TStrings *List, ZXString Type)
+int EnumeratePorts(TStrings *List, AnsiString Type)
 {
         int i;
-        ZXString PortName;
+        AnsiString PortName;
         bool Success;
         HANDLE Port;
 

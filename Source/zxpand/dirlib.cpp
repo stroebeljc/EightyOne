@@ -25,14 +25,7 @@ const int FR_NO_PATH = 5;
 
 void dirGetExeLocation(char* buffer, int bufSize)
 {
-#ifdef _UNICODE
-   _TCHAR *tempbuff = (_TCHAR *)malloc(MAX_PATH);
-   GetModuleFileName(NULL, tempbuff, bufSize);
-   wcstombs(buffer, tempbuff, bufSize);
-   free(tempbuff);
-#else
    GetModuleFileName(NULL, buffer, bufSize);
-#endif
    char* lastSlash = strrchr(buffer, '\\');
    if (lastSlash)
    {
@@ -42,7 +35,7 @@ void dirGetExeLocation(char* buffer, int bufSize)
               
 int dirOpen(const char* path)
 {
-   _TCHAR pathPlusExt[MAX_PATH];
+   char pathPlusExt[MAX_PATH];
 
    if (hFind != INVALID_HANDLE_VALUE)
    {
@@ -54,16 +47,12 @@ int dirOpen(const char* path)
       return FR_NO_PATH;
    }
 
-#if _UNICODE
-   mbstowcs(pathPlusExt, path, MAX_PATH);
-#else
    strcpy(pathPlusExt, path);
-#endif
    if (path[strlen(path) - 1] != '/' && path[strlen(path) - 1] != '\\')
    {
-       _tcscat(pathPlusExt, _TEXT("\\"));
+      strcat(pathPlusExt, "\\");
    }
-   _tcscat(pathPlusExt, _TEXT("*.*"));
+   strcat(pathPlusExt, "*.*");
 
    // I will assume here that the 1st file found will always be '.', which for the purposes
    // of this code we can safely sink. The alternative is to work with a 'file-in-hand' and
@@ -127,11 +116,7 @@ void dirReadNext(void* fil)
 
       fileinfo->fsize = findFileData.nFileSizeLow;
       fileinfo->fattrib = attrib;
-#if _UNICODE
-      wcstombs(&fileinfo->fname[0], &findFileData.cFileName[0], sizeof(fileinfo->fname));
-#else
       strcpy(&fileinfo->fname[0], &findFileData.cFileName[0]);
-#endif
    }
 }
 

@@ -17,6 +17,7 @@
  */
 
 #include "zx80BasicLister.h"
+#include "zx81config.h"
 
 using namespace std;
 
@@ -38,7 +39,7 @@ zx80BasicLister::zx80BasicLister(bool zxpandEnabled)
 
         for (int i = 0x40; i <= 0x7F; i++)
         {
-                ZXString hex = ZXString::IntToHex(i, 4).UpperCase();
+                AnsiString hex = AnsiString::IntToHex(i, 4).UpperCase();
                 mZxTokenChars["\\" + hex] = "[HEX:" + hex + "]";
         }
 
@@ -83,13 +84,13 @@ zx80BasicLister::zx80BasicLister(bool zxpandEnabled)
 
         for (int i = 'A'; i <= 'Z'; i++)
         {
-                ZXString letter = (char)i;
+                AnsiString letter = (char)i;
                 mZxTokenChars["%" + letter] = letter.LowerCase();
         }
 
         for (int i = 0xC0; i <= 0xD3; i++)
         {
-                ZXString hex = ZXString::IntToHex(i, 4).UpperCase();
+                AnsiString hex = AnsiString::IntToHex(i, 4).UpperCase();
                 mZxTokenChars["\\" + hex] = "[HEX:" + hex + "]";
         }
 
@@ -127,11 +128,11 @@ std::string zx80BasicLister::GetKeywords()
         return keywords;
 }
 
-ZXString zx80BasicLister::TranslateToZxToken(ZXString chr)
+AnsiString zx80BasicLister::TranslateToZxToken(AnsiString chr)
 {
-        ZXString translatedChr;
+        AnsiString translatedChr;
 
-        map<ZXString, ZXString>::const_iterator it = mZxTokenChars.find(chr);
+        map<AnsiString, AnsiString>::const_iterator it = mZxTokenChars.find(chr);
 
         if (it != mZxTokenChars.end())
         {
@@ -272,14 +273,14 @@ unsigned char zx80BasicLister::GetLineEndingCode()
         return Newline;
 }
 
-ZXString zx80BasicLister::GetMachineName()
+AnsiString zx80BasicLister::GetMachineName()
 {
-        return _TEXT("ZX80");
+        return "ZX80";
 }
 
-ZXString zx80BasicLister::GetBasicFileExtension()
+AnsiString zx80BasicLister::GetBasicFileExtension()
 {
-        return _TEXT("b80");
+        return "b80";
 }
 
 bool zx80BasicLister::ZxTokenSupported()

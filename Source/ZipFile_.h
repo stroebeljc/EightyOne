@@ -8,7 +8,6 @@
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
 #include <IniFiles.hpp>
-#include "zx81config.h"
 
 //---------------------------------------------------------------------------
 class TZipFile : public TForm
@@ -21,10 +20,10 @@ __published:	// IDE-managed Components
         void __fastcall ListBoxDblClick(TObject *Sender);
 private:	// User declarations
         bool Cancelled;
-        ZXString LastFile;
+        AnsiString LastFile;
 public:		// User declarations
         __fastcall TZipFile(TComponent* Owner);
-        ZXString ExpandZIP(ZXString Path, ZXString Filter);
+        AnsiString ExpandZIP(AnsiString Path, AnsiString Filter);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

@@ -11,7 +11,6 @@
 #include <ExtCtrls.hpp>
 #include <vector>
 #include <z80.h>
-#include "zx81config.h"
 
 //---------------------------------------------------------------------------
 class TProfiler : public TForm

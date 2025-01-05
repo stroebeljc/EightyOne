@@ -22,7 +22,7 @@
 #include <sstream>
 #include <cctype>
 
-void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
+void IBasicLoader::LoadBasicFile(AnsiString filename, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport)
 {
         string result;
 
@@ -94,23 +94,23 @@ void IBasicLoader::LoadBasicFile(ZXString filename, bool tokeniseRemContents, bo
         mProgramLength = addressOffset;
 }
 
-void IBasicLoader::ReadBasicListingFile(ZXString filename)
+void IBasicLoader::ReadBasicListingFile(AnsiString filename)
 {
         if (!FileExists(filename))
         {
                 stringstream msg;
                 msg << "File not found:" << endl << endl;
-                msg << AnsiString(filename).c_str() << endl;
+                msg << filename.c_str() << endl;
 
                 throw runtime_error(msg.str());
         }
 
-        ifstream basicFile(AnsiString(filename).c_str());
+        ifstream basicFile(filename.c_str());
         if (basicFile.fail())
         {
                 stringstream msg;
                 msg << "Failed to load file:" << endl << endl;
-                msg << AnsiString(filename).c_str() << endl;
+                msg << filename.c_str() << endl;
 
                 throw runtime_error(msg.str());
         }
@@ -709,7 +709,7 @@ void IBasicLoader::ExtractZxTokenNumericBlocks()
 
                         *pPos = Blank;
                         pPos++;
-
+                        
                         base = ExtractNumericBlockBase(&pPos);
                 }
                 else if (withinBrackets && *pPos != ']')

@@ -40,18 +40,18 @@ __fastcall TZX97Dialog::TZX97Dialog(TComponent* Owner)
         : TForm(Owner)
 {
         FILE *f;
-        _TCHAR filename[256];
+        char filename[256];
         TIniFile *ini;
 
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
-        _tcscpy(filename, emulator.cwd);
-        _tcscat(filename, nvMemoryFolder);
-        _tcscat(filename, _TEXT("zx97.nv"));
+        strcpy(filename, emulator.cwd);
+        strcat(filename, nvMemoryFolder);
+        strcat(filename, "zx97.nv");
 
-        f=_tfopen(filename,_TEXT("rb"));
+        f=fopen(filename,"rb");
         if (f)
         {
                 fread(zx97.bankmem, 16384, 16, f);
@@ -112,7 +112,7 @@ void __fastcall TZX97Dialog::OKClick(TObject *Sender)
 void __fastcall TZX97Dialog::FormDestroy(TObject *Sender)
 {
         FILE *f;
-        _TCHAR filename[256];
+        char filename[256];
         TIniFile *ini;
 
         ini = new TIniFile(emulator.inipath);
@@ -121,11 +121,11 @@ void __fastcall TZX97Dialog::FormDestroy(TObject *Sender)
 
         if (SaveRAM->Checked)
         {
-                _tcscpy(filename, emulator.cwd);
-                _tcscat(filename, nvMemoryFolder);
-                _tcscat(filename, _TEXT("zx97.nv"));
+                strcpy(filename, emulator.cwd);
+                strcat(filename, nvMemoryFolder);
+                strcat(filename, "zx97.nv");
 
-                f=_tfopen(filename,_TEXT("wb"));
+                f=fopen(filename,"wb");
                 if (f)
                 {
                         fwrite(zx97.bankmem, 16384, 16, f);

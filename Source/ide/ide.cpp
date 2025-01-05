@@ -1,5 +1,3 @@
-#pragma warn -8008
-
 #include <stdio.h>
 #include <string.h>
 #include "ide.h"
@@ -321,7 +319,7 @@ static int ATA_CalculateSectorNo(void)
                 }
         }
 
-        if (SectorNo<0 || SectorNo>=Drv->size)
+        if (SectorNo>=Drv->size)
         {
                 Drv->status |= ATA_ERR;
                 Drv->error = ATA_ERR_ABRT | ATA_ERR_IDNF;
@@ -711,7 +709,7 @@ int ATA_LoadHDF(int drive, char *FileName)
 
                 fseek(f, -512, SEEK_END);
                 len=fread( &(Drv->vhd), 1, sizeof(VHD_HEADER), f);
-                if (len!=sizeof(VHD_HEADER))
+                if (len!=(int)sizeof(VHD_HEADER))
                 {
                         fclose(f);
                         return(1);

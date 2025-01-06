@@ -82,7 +82,6 @@ __published:	// IDE-managed Components
         TLabel *LabelB;
         TComboBox *DriveAType;
         TComboBox *DriveBType;
-        TTabSheet *QLSettings;
         TLabel *SoundCardLbl;
         TComboBox *SoundCardBox;
         TLabel *ChrGenLbl;
@@ -93,7 +92,6 @@ __published:	// IDE-managed Components
         TCheckBox *TS2050;
         TCheckBox *Multiface;
         TButton *TS2050Config;
-        TOffice97Button *QLBtn;
         TTabSheet *AdvSettings;
         TLabel *LabelRomFile;
         TButton *BrowseROM;
@@ -102,10 +100,6 @@ __published:	// IDE-managed Components
         TCheckBox *EnableLowRAM;
         TCheckBox *M1Not;
         TCheckBox *Issue2;
-        TComboBox *QLCPU;
-        TComboBox *QLMem;
-        TLabel *LabelProcessor;
-        TLabel *LabelMemory;
         TLabel *LabelFDC;
         TComboBox *FDC;
         TCheckBox *Autoboot;
@@ -177,7 +171,6 @@ __published:	// IDE-managed Components
         void __fastcall IF1ConfigClick(TObject *Sender);
         void __fastcall MultifaceClick(TObject *Sender);
         void __fastcall IDEBoxChange(TObject *Sender);
-        void __fastcall QLBtnClick(TObject *Sender);
         void __fastcall FDCChange(TObject *Sender);
         void __fastcall uSpeechClick(TObject *Sender);
         void __fastcall ZXpandClick(TObject *Sender);
@@ -205,7 +198,6 @@ private:	// User declarations
         AnsiString NewMachineName;
         void SetupForZX81(void);
         void SetupForSpectrum(void);
-        void SetupForQL(void);
         void EnableRomCartridgeOption(bool enable);
         void ResetDisplaySize();
         void SetZX80Icon();
@@ -232,7 +224,6 @@ private:	// User declarations
         void ConfigureRamTop();
         void InitialiseSound(bool machineChanged);
         void CloseLiveMemoryWindow(bool machineChanged);
-        void CloseOtherDebugWindow();
         void DetermineRamSizeLabel(AnsiString newMachineName);
         void ConfigureMultifaceRom();
         void ConfigureRom();

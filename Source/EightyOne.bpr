@@ -8,12 +8,9 @@
       Keyboard_.obj Speed_.obj kb_.obj DebugWin\Debug.obj Utils.obj 
       sound\SoundOP.obj DebugWin\Hist.obj MemSave_.obj zx97Config.obj 
       peripherals\dev8255.obj SerialPort.obj DebugWin\EditValue_.obj 
-      DebugWin\SetBreakpoint_.obj zx81config.obj HW_.obj 68k\68000.obj ql\ql.obj 
-      68k\op68kadd.obj 68k\op68ksub.obj 68k\op68karith.obj 68k\op68klogop.obj 
-      68k\op68kmisc.obj 68k\op68kmove.obj 68k\op68kshift.obj Parallel.obj 
-      ZipFile_.obj Debug68k\debug68.obj SplashScreen.obj rzx\rzx.obj 
-      Debug68k\d68k.obj main_.obj IECBus\iecbus.obj 1541\1541.obj 
-      memoryWindow.obj symbolstore.obj SymBrowse.obj 
+      DebugWin\SetBreakpoint_.obj zx81config.obj HW_.obj Parallel.obj 
+      ZipFile_.obj SplashScreen.obj rzx\rzx.obj main_.obj IECBus\iecbus.obj 
+      1541\1541.obj memoryWindow.obj symbolstore.obj SymBrowse.obj 
       RomCartridge\IF2RomCartridge.obj Spectra\Spectra.obj Chroma\Chroma.obj 
       DebugWin\SearchSequence_.obj LiveMemoryWindow_.obj DebugWin\Profiler.obj 
       DebugWin\ProfSampEdit.obj DebugWin\ProfilePlot_.obj KeyboardFunctions_.obj 
@@ -48,12 +45,11 @@
     <RESDEPEN value="$(RESFILES) About_.dfm Keyboard_.dfm Speed_.dfm kb_.dfm DebugWin\Debug.dfm 
       sound\SoundOP.dfm DebugWin\Hist.dfm MemSave_.dfm zx97Config.dfm 
       SerialPort.dfm DebugWin\EditValue_.dfm DebugWin\SetBreakpoint_.dfm HW_.dfm 
-      Parallel.dfm ZipFile_.dfm Debug68k\debug68.dfm SplashScreen.dfm main_.dfm 
-      memoryWindow.dfm SymBrowse.dfm DebugWin\SearchSequence_.dfm 
-      LiveMemoryWindow_.dfm DebugWin\Profiler.dfm DebugWin\ProfSampEdit.dfm 
-      DebugWin\ProfilePlot_.dfm KeyboardFunctions_.dfm 
-      BasicLister\BasicLister_.dfm BasicLoader\BasicLoaderOptions_.dfm 
-      BasicLister\BasicListerOptions_.dfm 
+      Parallel.dfm ZipFile_.dfm SplashScreen.dfm main_.dfm memoryWindow.dfm 
+      SymBrowse.dfm DebugWin\SearchSequence_.dfm LiveMemoryWindow_.dfm 
+      DebugWin\Profiler.dfm DebugWin\ProfSampEdit.dfm DebugWin\ProfilePlot_.dfm 
+      KeyboardFunctions_.dfm BasicLister\BasicLister_.dfm 
+      BasicLoader\BasicLoaderOptions_.dfm BasicLister\BasicListerOptions_.dfm 
       BasicLister\BasicListingFormatInfo_.dfm tzx\tzxEditArchive.dfm 
       tzx\tzxEditData.dfm tzx\tzxEditGeneral.dfm tzx\tzxEditHWInfo.dfm 
       tzx\tzxEditPause.dfm tzx\tzxEditText.dfm tzx\TZXMan.dfm 
@@ -68,7 +64,7 @@
       ibsmp50.bpi vcldbx50.bpi TeeUI50.bpi TeeDB50.bpi Tee50.bpi TeeQR50.bpi 
       VCLIB50.bpi bcbie50.bpi vclie50.bpi Inetdb50.bpi Inet50.bpi NMFast50.bpi 
       dclocx50.bpi bcb2kaxserver50.bpi THEMEMANAGERC5.bpi CPORTLIBCB5.bpi"/>
-    <PATHCPP value=".;z80;DebugWin;sound;peripherals;68k;ql;Debug68k;rzx;IECBus;1541;RomCartridge;Spectra;Chroma;BasicLister;BasicLoader;Ace;zx81;Spectrum;1772;ide;zxpand;tzx;wavtape;zxprinter;lib765;SP0256"/>
+    <PATHCPP value=".;z80;DebugWin;sound;peripherals;rzx;IECBus;1541;RomCartridge;Spectra;Chroma;BasicLister;BasicLoader;Ace;zx81;Spectrum;1772;ide;zxpand;tzx;wavtape;zxprinter;lib765;SP0256"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>

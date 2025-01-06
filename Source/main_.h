@@ -78,7 +78,6 @@ __published:	// IDE-managed Components
         TTimer *Timer2;
         TMenuItem *WavLoadBtn;
         TMenuItem *DebugWin;
-        TMenuItem *Tools1;
         TMenuItem *PauseZX81;
         TMenuItem *InverseVideo;
         TMenuItem *DisplayArt;
@@ -255,7 +254,6 @@ __published:	// IDE-managed Components
         void __fastcall GatherWindows1Click(TObject *Sender);
         void __fastcall EnableSplashScreenClick(TObject *Sender);
         void __fastcall LiveMemoryOverviewClick(TObject *Sender);
-        void __fastcall Tools1Click(TObject *Sender);
         void __fastcall BasicListerOptionClick(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall HorizontalSyncPulseClick(TObject *Sender);

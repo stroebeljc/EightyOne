@@ -64,7 +64,6 @@
 #include "parallel.h"
 #include "sound\SoundForm.h"
 #include "ZipFile_.h"
-#include "debug68.h"
 #include "symbolstore.h"
 #include "SymBrowse.h"
 #include "Spectra\Spectra.h"
@@ -1019,13 +1018,11 @@ void __fastcall TForm1::DebugWinClick(TObject *Sender)
         DebugWin->Checked = !DebugWin->Checked;
         if (DebugWin->Checked)
         {
-                if (emulator.machine==MACHINEQL) Debug68k->Show();
-                else Dbg->Show();
+                Dbg->Show();
         }
         else
         {
                 Dbg->Close();
-                Debug68k->Close();
         }
 }
 //---------------------------------------------------------------------------
@@ -2176,7 +2173,6 @@ void MoveWindows(int l = -1, int t = -1)
         MoveWindow(P3Drive, l, t);
         MoveWindow(CreateHDF, l, t);
         MoveWindow(HW, l, t);
-        MoveWindow(Debug68k, l, t);
         MoveWindow(LiveMemoryWindow, l, t);
         MoveWindow(ProfilePlot, l, t);
         MoveWindow(Profiler, l, t);
@@ -2219,12 +2215,6 @@ void __fastcall TForm1::LiveMemoryOverviewClick(TObject *Sender)
         }
 }
 
-//---------------------------------------------------------------------------
-
-void __fastcall TForm1::Tools1Click(TObject *Sender)
-{
-        LiveMemoryOverview->Enabled = emulator.machine != MACHINEQL;
-}
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)

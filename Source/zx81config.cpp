@@ -243,7 +243,6 @@ void LoadMachineRoms()
         strcpy(emulator.ROMSP48, "spectrum48.rom");
         strcpy(emulator.ROMSPP, "spectrum48.rom");
         strcpy(emulator.ROMSP128, "spectrum128.rom");
-        strcpy(emulator.ROMQL, "ql.js.rom");
 
         strcpy(emulator.ROMSPP2, "spectrum+2.rom");
         strcpy(emulator.ROMSPP2A, "spectrum+3.version4-1.rom");

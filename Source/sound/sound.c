@@ -182,8 +182,8 @@ void sound_ay_init(void)
                 clock=AY_CLOCK_FULLER;
                 break;
 
-        case AY_TYPE_ACE:
-                clock=AY_CLOCK_ACE;
+        case AY_TYPE_ACE_USER:
+                clock=AY_CLOCK_ACE_USER;
                 break;
 
         case AY_TYPE_SINCLAIR:

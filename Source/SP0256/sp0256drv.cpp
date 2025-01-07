@@ -4,13 +4,14 @@
 #include "sp0256_al2.h"	// SP0256-AL2 "Narrator"
 #include "sp0256_012.h"	// SP0256-012 "Intellivoice"
 
-SP0256 sp0256_AL2(_AL2);
+SP0256* sp0256_AL2;
 //SP0256 sp0256_ivoice(_012);
 
-SP0256::SP0256(model_t model)
+SP0256::SP0256(model_t model, int xtal)
 {
-        const int xtal = 3120000;
-        const int freq = xtal/2/156;
+        //const int xtal = 3120000;
+        //const int freq = xtal/2/156;
+        int freq = xtal/2/156;
 
         m_ThreadHandle=NULL;
 

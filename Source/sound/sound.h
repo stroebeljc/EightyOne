@@ -26,26 +26,29 @@
 
 #include "sound\SoundDX.h"
 
-#define AY_TYPE_NONE            0
-#define AY_TYPE_QUICKSILVA      1
-#define AY_TYPE_ZONX            2
-#define AY_TYPE_FULLER          3
-#define AY_TYPE_ACE             4
-#define AY_TYPE_SINCLAIR        5
-#define AY_TYPE_TIMEX           6
-#define AY_TYPE_BOLDFIELD       7
+#define AY_TYPE_NONE                    0
+#define AY_TYPE_QUICKSILVA              1
+#define AY_TYPE_ZONX_REV1               2
+#define AY_TYPE_ZONX_REV2               3
+#define AY_TYPE_FULLER                  4
+#define AY_TYPE_ACE_USER                5
+#define AY_TYPE_SINCLAIR                6
+#define AY_TYPE_TIMEX                   7
+#define AY_TYPE_BOLDFIELD               8
 
-#define AY_CLOCK_QUICKSILVA	(3250000/4)
-#define AY_CLOCK_ZONX		1625000
-#define AY_CLOCK_FULLER         1625000
-#define AY_CLOCK_ACE            1625000
-#define AY_CLOCK_SINCLAIR       1773400
-#define AY_CLOCK_TIMEX          1764000
-#define AY_CLOCK_BOLDFIELD      1773400
+#define AY_CLOCK_QUICKSILVA	        (3250000/4)
+#define AY_CLOCK_ZONX		        1625000
+#define AY_CLOCK_FULLER                 1625000
+#define AY_CLOCK_ACE_USER               1625000
+#define AY_CLOCK_SINCLAIR               1773400
+#define AY_CLOCK_TIMEX                  1764750
+#define AY_CLOCK_BOLDFIELD              1773400
 
-#define SPEECH_TYPE_NONE        0
-#define SPEECH_TYPE_USPEECH     1
-#define SPEECH_TYPE_PARROT      1
+#define SPEECH_TYPE_NONE                0
+#define SPEECH_TYPE_USPEECH             1
+#define SPEECH_TYPE_PARROT              2
+#define SPEECH_TYPE_SWEETTALKER_REV1    3
+#define SPEECH_TYPE_SWEETTALKER_REV2    4
 
 // assume all three tone channels together match the beeper volume.
 // Must be <=127 for all channels; 4 x 31 = 124.

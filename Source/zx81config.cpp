@@ -169,7 +169,7 @@ void load_config(void)
         strcpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
         AnsiString trdosRom = fdcRomsFolder + AnsiString("trdos.rom");
         strcpy(emulator.ROMBETADISC, trdosRom.c_str());
-        AnsiString mwcfideRom = fdcRomsFolder + AnsiString("mwcfide.rom");
+        AnsiString mwcfideRom = ideRomsFolder + AnsiString("mwcfide.rom");
         strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
         AnsiString larken81Rom = fdcRomsFolder + AnsiString("larken81.rom");
         strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());

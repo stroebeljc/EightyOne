@@ -116,7 +116,6 @@ extern bool Restart;
 int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 
 int AutoLoadCount=0;
-char TEMP1[256];
 
 SCANLINE *BuildLine, Video;
 
@@ -160,7 +159,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
                 emulator.cwd[strlen(emulator.cwd)]='\0';
         }
 
-        strcpy(TEMP1, emulator.cwd);
         GetTempPath(256, emulator.temppath);
         strcat(emulator.temppath, temporaryFolder);
         mkdir(emulator.temppath);

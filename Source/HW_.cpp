@@ -2595,8 +2595,6 @@ void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 void THW::SaveSettings(TIniFile *ini)
 {
         AnsiString Rom;
-        FILE *f;
-        char FileName[256];
 
         ini->WriteInteger("HWARE","Top",Top);
         ini->WriteInteger("HWARE","Left",Left);
@@ -2694,39 +2692,6 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=emulator.ROMZX8BIT; ini->WriteString("HWARE","ZX8BIT",Rom);
         Rom=emulator.ROMZX16BIT; ini->WriteString("HWARE","ZX16BIT",Rom);
         Rom=emulator.ROMZXCF; ini->WriteString("HWARE","ZXCF",Rom);
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "divide.nv");
-
-        f=fopen(FileName,"wb");
-        if (f)
-        {
-                fwrite(divIDEMem, 8192, 1, f);
-                fclose(f);
-        }
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zxcf.nv");
-
-        f=fopen(FileName,"wb");
-        if (f)
-        {
-                fwrite(ZXCFMem, 64, 16384, f);
-                fclose(f);
-        }
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zx1541.nv");
-
-        f=fopen(FileName,"wb");
-        if (f)
-        {
-                fwrite(ZX1541Mem, 1, 8192, f);
-                fclose(f);
-        }
 }
 
 void THW::LoadSettings(TIniFile *ini)

@@ -36,6 +36,7 @@
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
 #include "zx97config.h"
+#include "sp0256drv.h"
 
 //extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
@@ -992,8 +993,8 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
 
         if (zxc1Selected)
         {
-                RomCartridgeFileBox->Left = 277;
-                RomCartridgeFileBox->Width = 88;
+                RomCartridgeFileBox->Left = 181;
+                RomCartridgeFileBox->Width = 185;
 
                 if (ZXC1ConfigurationBox->ItemIndex == -1)
                 {
@@ -1004,8 +1005,8 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
         }
         else
         {
-                RomCartridgeFileBox->Left = 184;
-                RomCartridgeFileBox->Width = 184;
+                RomCartridgeFileBox->Left = 86;
+                RomCartridgeFileBox->Width = 280;
         }
 
         return romcartridgetype;
@@ -1067,17 +1068,48 @@ void THW::ConfigureHiRes()
 
 void THW::ConfigureSound()
 {
-        switch(SoundCardBox->ItemIndex)
+        if (NewMachine == MACHINESPECTRUM)
         {
-        case 1: machine.aysound=1; machine.aytype=AY_TYPE_ACE; break;
-        case 2: machine.aysound=1; machine.aytype=AY_TYPE_BOLDFIELD; break;
-        case 3: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
-        case 4: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
-        case 5: machine.aysound=1; machine.aytype=AY_TYPE_TIMEX; break;
-        case 6: machine.aysound=1; machine.aytype=AY_TYPE_QUICKSILVA; break;
-        case 7: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
-        case 0:
-        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                if (NewSpec != SPECCYTS2068 && NewSpec != SPECCYTC2068)
+                {
+                        switch (SoundCardBox->ItemIndex)
+                        {
+                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_TIMEX; break;
+                        case 0:
+                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        }
+                }
+                else
+                {
+                        switch (SoundCardBox->ItemIndex)
+                        {
+                        case 2: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
+                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
+                        case 0:
+                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        }
+                }
+        }
+        else if (NewMachine == MACHINEACE)
+        {
+                switch (SoundCardBox->ItemIndex)
+                {
+                case 2: machine.aysound=1; machine.aytype=AY_TYPE_BOLDFIELD; break;
+                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ACE_USER; break;
+                case 0:
+                default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                }
+        }
+        else
+        {
+                switch (SoundCardBox->ItemIndex)
+                {
+                case 3: machine.aysound=1; machine.aytype=AY_TYPE_QUICKSILVA; break;
+                case 2: machine.aysound=1; machine.aytype=AY_TYPE_ZONX_REV2; break;
+                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ZONX_REV1; break;
+                case 0:
+                default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                }
         }
 }
 
@@ -1085,20 +1117,30 @@ void THW::ConfigureSpeech()
 {
         if (NewMachine == MACHINESPECTRUM)
         {
-                switch(SpeechBox->ItemIndex)
+                if (sp0256_AL2 != NULL) delete sp0256_AL2;
+                sp0256_AL2 = new SP0256(_AL2, (NewSpec >= SPECCY128) ? 3546900 : 3500000);
+
+                switch (SpeechBox->ItemIndex)
                 {
+                case 3: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                case 2: machine.speech=SPEECH_TYPE_SWEETTALKER_REV1; break;
                 case 1: machine.speech=SPEECH_TYPE_USPEECH; break;
                 case 0:
-                default: machine.speech=SPEECH_TYPE_NONE;break;
+                default: machine.speech=SPEECH_TYPE_NONE; break;
                 }
         }
         else if (NewMachine != MACHINEACE)
         {
-                switch(SpeechBox->ItemIndex)
+                if (sp0256_AL2 != NULL) delete sp0256_AL2;
+                sp0256_AL2 = new SP0256(_AL2, 3250000);
+
+                switch (SpeechBox->ItemIndex)
                 {
+                case 3: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                case 2: machine.speech=SPEECH_TYPE_SWEETTALKER_REV1; break;
                 case 1: machine.speech=SPEECH_TYPE_PARROT; break;
                 case 0:
-                default: machine.speech=SPEECH_TYPE_NONE;break;
+                default: machine.speech=SPEECH_TYPE_NONE; break;
                 }
         }
         else
@@ -1557,8 +1599,6 @@ void THW::SetupForZX81(void)
         RamPackLbl->Enabled=true; RamPackBox->Enabled=true;
         RamPackBox->ItemIndex = machine.defaultRamPackIndex;
         DisplayTotalRam();
-        SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
-        SoundCardBox->ItemIndex=0;
 
         ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenLbl->Enabled=true; ChrGenBox->Enabled=true;
@@ -1615,9 +1655,20 @@ void THW::SetupForZX81(void)
                 if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
         }
 
+        SoundCardBox->Items->Clear();
+        SoundCardBox->Items->Add("None");
+        SoundCardBox->Items->Add("ZON X-81 Rev 1");
+        SoundCardBox->Items->Add("ZON X-81 Rev 2");
+        SoundCardBox->Items->Add("Quicksilva");
+        SoundCardBox->ItemIndex=0;
+        SoundCardBox->Enabled=true;
+        SoundCardLbl->Enabled=true;
+
         SpeechBox->Items->Clear();
         SpeechBox->Items->Add("None");
         SpeechBox->Items->Add("The Parrot");
+        SpeechBox->Items->Add("Sweet Talker Rev 1");
+        SpeechBox->Items->Add("Sweet Talker Rev 2");
         SpeechBox->ItemIndex=0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;
@@ -1725,20 +1776,40 @@ void THW::SetupForSpectrum(void)
         FDC->Enabled=true;
         FDCChange(NULL);
 
+        SoundCardBox->Items->Clear();
+        SoundCardBox->Items->Add("None");
+        SoundCardBox->ItemIndex = 0;
+        SoundCardBox->Enabled = false;
+        SoundCardLbl->Enabled = false;
+        if (NewSpec >= SPECCY128)
+        {
+                SoundCardBox->Items->Add("Sinclair");
+        }
+        else if (NewSpec == SPECCY16 || NewSpec == SPECCY48 || NewSpec == SPECCYPLUS || NewSpec == SPECCYTC2048)
+        {
+                SoundCardBox->Items->Add("Fuller");
+                SoundCardBox->Enabled=true;
+                SoundCardLbl->Enabled=true;
+        }
+        else if (NewSpec == SPECCYTC2068 || NewSpec == SPECCYTS2068)
+        {
+                SoundCardBox->Items->Add("Timex");
+        }
+
         SpeechBox->Items->Clear();
         SpeechBox->Items->Add("None");
-        SpeechBox->ItemIndex=0;
-        SpeechBox->Enabled=false;
-        SpeechBoxLbl->Enabled=false;
+        SpeechBox->Items->Add("µSpeech");
+        SpeechBox->Items->Add("Sweet Talker Rev 1");
+        SpeechBox->Items->Add("Sweet Talker Rev 2");
+        SpeechBox->ItemIndex = 0;
+        SpeechBox->Enabled=true;
+        SpeechBoxLbl->Enabled=true;
 
         uSource->Checked=false;
         uSource->Enabled=false;
 
         RamPackLbl->Enabled=false; RamPackBox->Enabled=false;
         RamPackBox->ItemIndex=-1;
-
-        SoundCardLbl->Enabled=true; SoundCardBox->Enabled=true;
-        SoundCardBox->ItemIndex=0;
 
         ChrGenBox->Items->Strings[0]="Sinclair";
         ChrGenBox->ItemIndex=0;
@@ -1954,10 +2025,6 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec48Btn->Down=true;
 
-        SpeechBox->Items->Add("µSpeech");
-        SpeechBox->Enabled=true;
-        SpeechBoxLbl->Enabled=true;
-
         uSource->Enabled=true;
 
         Issue2->Enabled=true;
@@ -1984,7 +2051,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec128Btn->Down=true;
 
-        SoundCardBox->ItemIndex=4;
+        SoundCardBox->ItemIndex = 1;
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
@@ -2013,10 +2080,6 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         SetupForSpectrum();
         SpecPlusBtn->Down=true;
 
-        SpeechBox->Items->Add("µSpeech");
-        SpeechBox->Enabled=true;
-        SpeechBoxLbl->Enabled=true;
-
         uSource->Enabled=true;
 
         Issue2->Enabled=true;
@@ -2044,10 +2107,6 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec16Btn->Down=true;
 
-        SpeechBox->Items->Add("µSpeech");
-        SpeechBox->Enabled=true;
-        SpeechBoxLbl->Enabled=true;
-
         uSource->Enabled=true;
 
         Issue2->Enabled=true;
@@ -2074,7 +2133,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SetupForSpectrum();
         SpecP2Btn->Down=true;
 
-        SoundCardBox->ItemIndex=4;
+        SoundCardBox->ItemIndex = 1;
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
@@ -2106,7 +2165,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         SpecP2aBtn->Down=true;
         Multiface->Caption = "Multiface 3";
 
-        SoundCardBox->ItemIndex=4;
+        SoundCardBox->ItemIndex = 1;
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
@@ -2139,7 +2198,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
 
         FloppyDrives->TabVisible=true;
 
-        SoundCardBox->ItemIndex=4;
+        SoundCardBox->ItemIndex = 1;
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
@@ -2352,6 +2411,13 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         SpeechBox->ItemIndex=0;
         SpeechBox->Enabled=false;
         SpeechBoxLbl->Enabled=false;
+        SoundCardBox->Items->Clear();
+        SoundCardBox->Items->Add("None");
+        SoundCardBox->Items->Add("Ace User");
+        SoundCardBox->Items->Add("Boldfield");
+        SoundCardBox->ItemIndex=0;
+        SoundCardBox->Enabled=true;
+        SoundCardLbl->Enabled=true;
         IDEBox->Items->Add("AceCF");
         RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
@@ -2411,12 +2477,12 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         Multiface->Enabled = false;
 
         SpeechBox->Enabled = false;
+        SpeechBoxLbl->Enabled = false;
 
         uSource->Checked = false;
         uSource->Enabled = false;
-        
-        SoundCardBox->ItemIndex = AY_TYPE_SINCLAIR;
 
+        SoundCardBox->ItemIndex = 1;
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
@@ -2464,12 +2530,12 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         Multiface->Enabled = false;
 
         SpeechBox->Enabled = false;
+        SpeechBoxLbl->Enabled = false;
 
         uSource->Checked = false;
         uSource->Enabled = false;
         
-        SoundCardBox->ItemIndex = AY_TYPE_SINCLAIR;
-
+        SoundCardBox->ItemIndex = 1;
         SoundCardBox->Enabled=false;
         SoundCardLbl->Enabled=false;
 
@@ -3135,7 +3201,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
         {
                 bool allFacilitiesSelected = (HiResBox->ItemIndex == 1) &&
                                              (RamPackBox->ItemIndex == 5) &&
-                                             (SoundCardBox->ItemIndex == 7) &&
+                                             (SoundCardBox->ItemIndex == 2) &&
                                              EnableLowRAM->Checked;
 
                 if (!allFacilitiesSelected)
@@ -3146,7 +3212,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
                         {
                                 HiResBox->ItemIndex = 1;        // WRX
                                 RamPackBox->ItemIndex = 5;      // 32K RAM
-                                SoundCardBox->ItemIndex = 7;    // ZONX
+                                SoundCardBox->ItemIndex = 2;    // ZONX Rev 2
                                 EnableLowRAM->Checked = true;   // 8K-16K RAM
                         }
                 }

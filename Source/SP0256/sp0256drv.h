@@ -5,7 +5,6 @@
 #include "SystemClock.h"
 #include "sp0256.h"
 
-
 enum model_t
 {
 	_012, _AL2
@@ -15,7 +14,7 @@ enum model_t
 class SP0256
 {
 public:
-        SP0256(model_t model);
+        SP0256(model_t model, int xtal);
         ~SP0256();
         void Write(unsigned char Data);
         unsigned char Busy(void);
@@ -34,8 +33,8 @@ private:
 };
 
 
-extern SP0256 sp0256_AL2;
-extern SP0256 sp0256_ivoice;
+extern SP0256* sp0256_AL2;
+//extern SP0256 sp0256_ivoice;
 
 #endif
 

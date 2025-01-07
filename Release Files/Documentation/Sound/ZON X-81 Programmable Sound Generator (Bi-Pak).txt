@@ -1,8 +1,8 @@
-=================================================
-ZonX 81 Programmable Sound Generator for the ZX81
+==================================================
+ZON X-81 Programmable Sound Generator for the ZX81
 Bi-Pak
 Copyright (c)1982, F. G. Everest
-=================================================
+==================================================
 
 INTRODUCTION
 

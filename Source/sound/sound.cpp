@@ -164,9 +164,10 @@ void CSound::AYInit(void)
         switch(machine.aytype)
         {
         case AY_TYPE_QUICKSILVA: clock=AY_CLOCK_QUICKSILVA; break;
-        case AY_TYPE_ZONX: clock=AY_CLOCK_ZONX; break;
+        case AY_TYPE_ZONX_REV1: clock=AY_CLOCK_ZONX; break;
+        case AY_TYPE_ZONX_REV2: clock=AY_CLOCK_ZONX; break;
         case AY_TYPE_FULLER: clock=AY_CLOCK_FULLER; break;
-        case AY_TYPE_ACE: clock=AY_CLOCK_ACE; break;
+        case AY_TYPE_ACE_USER: clock=AY_CLOCK_ACE_USER; break;
         case AY_TYPE_SINCLAIR: clock=AY_CLOCK_SINCLAIR; break;
         case AY_TYPE_TIMEX: clock=AY_CLOCK_TIMEX; break;
         case AY_TYPE_BOLDFIELD: clock=AY_CLOCK_BOLDFIELD; break;

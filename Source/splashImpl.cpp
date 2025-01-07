@@ -19,7 +19,6 @@
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TEditValue), &EditValue);
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TSetBreakpoint), &SetBreakpoint);
                  spl->IncProgress("Z80 Debugger"); Application->CreateForm(__classid(TSearchSequence), &SearchSequence);
-                 spl->IncProgress("68k Debugger"); Application->CreateForm(__classid(TDebug68k), &Debug68k);
                  spl->IncProgress("ZX Printer Emulation"); Application->CreateForm(__classid(TZXPrinter), &ZXPrinter);
                  spl->IncProgress("TV Emulation"); Application->CreateForm(__classid(TArtifacts), &Artifacts);
                  spl->IncProgress("Sound"); Application->CreateForm(__classid(TSoundOutput), &SoundOutput);

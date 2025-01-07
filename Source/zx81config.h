@@ -45,10 +45,9 @@
 #define MACHINELAMBDA   4
 #define MACHINEZX97LE   5
 #define MACHINESPECTRUM 6
-#define MACHINEQL       7
-#define MACHINER470     8
-#define MACHINETK85     9
-#define MACHINETS1000   10
+#define MACHINER470     7
+#define MACHINETK85     8
+#define MACHINETS1000   9
 
 #define SPECCY16        0
 #define SPECCY48        1
@@ -349,7 +348,6 @@ typedef struct
         char ROMZXCF[256];
         char ROMZX8BIT[256];
         char ROMZX16BIT[256];
-        char ROMQL[256];
         char ROMPLUSD[256];
         char ROMDISCIPLE[256];
         char ROMOPUSD[256];

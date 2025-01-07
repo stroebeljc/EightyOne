@@ -24,8 +24,6 @@
 #include "ide.h"
 #include "interface1.h"
 #include "debug.h"
-#include "debug68.h"
-#include "ql.h"
 #include "symbolstore.h"
 #include "SymBrowse.h"
 #include "Chroma\Chroma.h"
@@ -105,8 +103,6 @@ __fastcall THW::THW(TComponent* Owner)
         FloppyDrives->TabVisible=true;
         DriveAType->ItemIndex=1;
         DriveBType->ItemIndex=0;
-        QLCPU->ItemIndex=0;
-        QLMem->ItemIndex=0;
         ZXCFRAM->ItemIndex=1;
         ZX81BtnClick(NULL);
 
@@ -185,12 +181,6 @@ void ace_writebyteProxy(int address, int data)
         dirtyBird.insert(address);
 }
 
-void ql_writebyteProxy(int address, int data)
-{
-        ql_writebyte(address, data);
-        dirtyBird.insert(address);
-}
-
 void __fastcall THW::OKClick(TObject *Sender)
 {
         const bool reinitialiseStatus = false;
@@ -206,7 +196,6 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         spectrum.model = NewSpec;
 
         CloseLiveMemoryWindow(machineChanged);
-        CloseOtherDebugWindow();
 
         RomBox->Text = RomBox->Text.LowerCase();
         strcpy(machine.CurRom, AnsiString(RomBox->Text).c_str());
@@ -404,7 +393,7 @@ void THW::SelectGroupboxVisibility()
 
 void THW::ConfigureRamTop()
 {
-        if ((NewMachine == MACHINESPECTRUM) || (NewMachine == MACHINEQL))
+        if (NewMachine == MACHINESPECTRUM)
         {
                 zx81.RAMTOP = 65535;
                 machine.ace96k=0;
@@ -455,18 +444,6 @@ void THW::CloseLiveMemoryWindow(bool machineChanged)
                 LiveMemoryWindow->Close();
 }
 
-void THW::CloseOtherDebugWindow()
-{
-        if (NewMachine == MACHINEQL)
-        {
-                if (Dbg && Dbg->Visible) Dbg->Close();
-        }
-        else
-        {
-                if (Debug68k && Debug68k->Visible) Debug68k->Close();
-        }
-}
-
 void THW::DetermineRamSizeLabel(AnsiString newMachineName)
 {
         AnsiString name = newMachineName;
@@ -481,10 +458,6 @@ void THW::DetermineRamSizeLabel(AnsiString newMachineName)
 
                 name = i;
                 name += "K Jupiter Ace";
-        }
-        else if (QLBtn->Down)
-        {
-                name = QLMem->Items->Strings[QLMem->ItemIndex] + " " + newMachineName;
         }
         else if (RamPackBox->Visible)
         {
@@ -577,10 +550,6 @@ void THW::ConfigureRom()
 
         case MACHINEZX97LE:
                 strcpy(emulator.ROM97LE, machine.CurRom);
-                break;
-
-        case MACHINEQL:
-                strcpy(emulator.ROMQL, machine.CurRom);
                 break;
 
         case MACHINESPECTRUM:
@@ -744,9 +713,6 @@ void THW::ConfigureColour()
 
         switch(NewMachine)
         {
-        case MACHINEQL:
-                machine.colour = COLOURDISABLED;
-                break;
         case MACHINEACE:
                 machine.colour = (CFGBYTE)((ColourBox->ItemIndex > 0) ? COLOURACE : COLOURDISABLED);
                 break;
@@ -1065,7 +1031,7 @@ void THW::ConfigureCharacterGenerator()
         }
         Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
-        Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
+        Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         zx81.extfont=0;
         if ((zx81.chrgen==CHRGENDK) || (zx81.chrgen==CHRGENCHR128))
@@ -1078,10 +1044,10 @@ void THW::ConfigureCharacterGenerator()
 void THW::ConfigureHiRes()
 {
         Form1->ResetMemotechHRG->Enabled = false;
-        Form1->ResetMemotechHRG->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
+        Form1->ResetMemotechHRG->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         Form1->ResetQuicksilvaHiRes->Enabled = false;
-        Form1->ResetQuicksilvaHiRes->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINEQL) && (NewMachine != MACHINESPECTRUM);
+        Form1->ResetQuicksilvaHiRes->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         switch(HiResBox->ItemIndex)
         {
@@ -1125,7 +1091,7 @@ void THW::ConfigureSpeech()
                 default: machine.speech=SPEECH_TYPE_NONE;break;
                 }
         }
-        else if (NewMachine != MACHINEACE && NewMachine != MACHINEQL)
+        else if (NewMachine != MACHINEACE)
         {
                 switch(SpeechBox->ItemIndex)
                 {
@@ -1235,23 +1201,6 @@ void THW::ConfigureMachineSettings()
                 machine.writeport = ace_writeport;
                 machine.contendmem = ace_contend;
                 machine.contendio = ace_contend;
-                machine.reset = NULL;
-                machine.exit = NULL;
-                break;
-
-        case MACHINEQL:
-                machine.initialise = ql_initialise;
-                machine.do_scanline = ql_do_scanline;
-                machine.writebyte = ql_writebyteProxy;
-                machine.setbyte = ql_writebyte;
-                machine.readbyte = ql_readbyte;
-                machine.readoperandbyte = ql_readbyte;
-                machine.getbyte = ql_readbyte;
-                machine.opcode_fetch = ql_opcode_fetch;
-                machine.readport = ql_readport;
-                machine.writeport = ql_writeport;
-                machine.contendmem = ql_contend;
-                machine.contendio = ql_contend;
                 machine.reset = NULL;
                 machine.exit = NULL;
                 break;
@@ -1565,7 +1514,6 @@ void THW::SetupForZX81(void)
         TK85Btn->Down=false;
         AceBtn->Down=false;
         ZX97LEBtn->Down=false;
-        QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
         ButtonAdvancedMore->Visible = false;
@@ -1592,7 +1540,6 @@ void THW::SetupForZX81(void)
         DriveAType->Enabled=false;
         DriveBType->Enabled=false;
 
-        QLSettings->TabVisible=false;
         ResetRequired=true;
 
         if (RamPackBox->Items->Strings[RamPackBox->Items->Count-1] == "96K")
@@ -1734,7 +1681,6 @@ void THW::SetupForSpectrum(void)
         TK85Btn->Down=false;
         AceBtn->Down=false;
         ZX97LEBtn->Down=false;
-        QLBtn->Down=false;
 
         FloatingPointHardwareFix->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
@@ -1786,8 +1732,6 @@ void THW::SetupForSpectrum(void)
 
         uSource->Checked=false;
         uSource->Enabled=false;
-
-        QLSettings->TabVisible=false;
 
         RamPackLbl->Enabled=false; RamPackBox->Enabled=false;
         RamPackBox->ItemIndex=-1;
@@ -1884,137 +1828,6 @@ void THW::SetupForSpectrum(void)
         SetSpectrum128Icon();
 }
 
-void THW::SetupForQL(void)
-{
-        AnsiString OldIDE;
-        int i;
-
-        FloatingPointHardwareFix->Enabled = false;
-
-        SetZXpandState(false,false);
-        ZXpand->Caption = "ZXpand+";
-        Multiface->Caption = "Multiface";
-
-        EnableRomCartridgeOption(false);
-
-        ZX80Btn->Down=false;
-        ZX81Btn->Down=false;
-        Spec16Btn->Down=false;
-        Spec48Btn->Down=false;
-        SpecPlusBtn->Down=false;
-        Spec128Btn->Down=false;
-        SpecP2Btn->Down=false;
-        SpecP2aBtn->Down=false;
-        SpecP3Btn->Down=false;
-        TS1000Btn->Down=false;
-        TS1500Btn->Down=false;
-        TC2048Btn->Down=false;
-        TC2068Btn->Down=false;
-        TS2068Btn->Down=false;
-        LambdaBtn->Down=false;
-        R470Btn->Down=false;
-        TK85Btn->Down=false;
-        AceBtn->Down=false;
-        ZX97LEBtn->Down=false;
-        QLBtn->Down=false;
-
-        ButtonAdvancedMore->Visible = false;
-
-        ResetRequired=true;
-
-        SpeechBox->Items->Clear();
-        SpeechBox->Items->Add("None");
-        SpeechBox->ItemIndex=0;
-        SpeechBox->Enabled=false;
-        SpeechBoxLbl->Enabled=false;
-
-        uSource->Checked=false;
-        uSource->Enabled=false;
-
-        QLSettings->TabVisible=true;
-
-        RamPackLbl->Enabled=false; RamPackBox->Enabled=false;
-        RamPackBox->ItemIndex=-1;
-
-        SoundCardLbl->Enabled=false; SoundCardBox->Enabled=false;
-        if (SoundCardBox->ItemIndex==-1) SoundCardBox->ItemIndex=5;
-
-        ChrGenBox->Items->Strings[0]="Sinclair";
-        ChrGenBox->ItemIndex=0;
-        ChrGenLbl->Enabled=false; ChrGenBox->Enabled=false;
-
-        HiResBox->Items->Strings[0]="Sinclair";
-        HiResBox->ItemIndex=0;
-        HiResLbl->Enabled=false; HiResBox->Enabled=false;
-
-        KMouse->Checked = false;
-        KMouse->Enabled = false;
-
-        while(ColourBox->Items->Count>1) ColourBox->Items->Delete(ColourBox->Items->Count-1);
-        ColourBox->Items->Strings[0]="Sinclair";
-        ColourBox->ItemIndex=0;
-        ColourBox->Enabled=false;
-        ColourLabel->Enabled=false;
-        ColourLabel->Caption = "Colour:";
-
-        ProtectROM->Enabled=true;
-        NTSC->Enabled=false;
-        NTSC->Checked=false;
-        EnableLowRAM->Enabled=false;
-        M1Not->Enabled=false;
-        ImprovedWait->Enabled=false;
-        ImprovedWait->Checked=false;
-        TS2050->Enabled=false;
-        TS2050Config->Enabled=TS2050->Enabled && TS2050->Checked;
-
-        Issue2->Checked=false;
-        Issue2->Enabled=false;
-
-        if (RamPackBox->Visible)
-        {
-                Height -= RamPackHeight;
-                RamPackLbl->Visible=false;
-                RamPackBox->Visible=false;
-                LabelTotalRAM->Visible=false;
-        }
-        Multiface->Enabled=false;
-
-        OldIDE=IDEBox->Items->Strings[IDEBox->ItemIndex];
-        while(IDEBox->Items->Count) IDEBox->Items->Delete(0);
-        IDEBox->Items->Add("None");
-        IDEBox->Items->Add("Simple +3e 8-Bit");
-        IDEBox->Items->Add("divIDE 57 (R Gal)");
-        IDEBox->Items->Add("divIDE 57 (R'' Gal)");
-        IDEBox->Items->Add("ZXCF");
-        IDEBox->Items->Add("Pera Putnik CF");
-        IDEBox->ItemIndex=0;
-        IDEBox->Enabled=false;
-        LabelIDE->Enabled=false;
-
-        TS1510RomCartridgeFileBox->Visible = false;
-        TS2068RomCartridgeFileBox->Visible = false;
-        TC2068RomCartridgeFileBox->Visible = false;
-        SinclairRomCartridgeFileBox->Visible = false;
-
-        for(i=0;i<IDEBox->Items->Count;i++)
-                if (IDEBox->Items->Strings[i]==OldIDE) IDEBox->ItemIndex=i;
-
-        AnsiString OldFDC=FDC->Items->Strings[FDC->ItemIndex];
-        while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
-        FDC->Items->Strings[0]="None";
-        FDC->Items->Add("ZX Interface 1");
-        FDC->Items->Add("Beta Disk");
-        FDC->Items->Add("Opus Discovery");
-        FDC->Items->Add("MGT Disciple");
-        FDC->Items->Add("MGT Plus D");
-
-        FDC->ItemIndex=0;
-        for(i=0;i<FDC->Items->Count;i++)
-                if (FDC->Items->Strings[i]==OldFDC) FDC->ItemIndex=i;
-
-        FDC->Enabled=true;
-        FDCChange(NULL);
-}
 //---------------------------------------------------------------------------
 void THW::ConfigureDefaultRamSettings()
 {
@@ -2024,11 +1837,6 @@ void THW::ConfigureDefaultRamSettings()
                 machine.baseRamSize = 3;
                 machine.ramPackSupplementsInternalRam = true;
                 machine.defaultRamPackIndex = 4;
-                break;
-
-        case MACHINEQL:
-                machine.baseRamSize = 128;
-                machine.ramPackSupplementsInternalRam = true;
                 break;
 
         case MACHINESPECTRUM:
@@ -2739,23 +2547,6 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall THW::QLBtnClick(TObject *Sender)
-{
-        if (QLBtn->Down) return;
-
-        NewMachine=MACHINEQL;
-        ConfigureDefaultRamSettings();
-        SetupForQL();
-        QLBtn->Down=true;
-
-        NewMachineName=QLBtn->Caption;
-        Form1->EnableAnnotationOptions();
-        RomBox->Text = emulator.ROMQL;
-        RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
-}
-
-//---------------------------------------------------------------------------
-
 void __fastcall THW::TS2050Click(TObject *Sender)
 {
         TS2050Config->Enabled=TS2050->Enabled && TS2050->Checked;
@@ -2770,7 +2561,7 @@ void __fastcall THW::FormShow(TObject *Sender)
         NewMachine = emulator.machine;
         FloatingPointHardwareFix->Enabled = false;
 
-        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down || Spec128Btn->Down || QLBtn->Down)
+        if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down || Spec128Btn->Down)
         {
                 Machine->ActivePage=Sinclair;
                 FloatingPointHardwareFix->Enabled = ZX81Btn->Down;
@@ -2826,15 +2617,12 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","R470",R470Btn->Down);
         ini->WriteBool("HWARE","TK85",TK85Btn->Down);
         ini->WriteBool("HWARE","ZX97LE",ZX97LEBtn->Down);
-        ini->WriteBool("HWARE","QL",QLBtn->Down);
         ini->WriteBool("HWARE","ACE",AceBtn->Down);
 
         ini->WriteInteger("HWARE","RamPack",RamPackBox->ItemIndex);
         ini->WriteInteger("HWARE","Sound",SoundCardBox->ItemIndex);
         ini->WriteInteger("HWARE","ChrGen",ChrGenBox->ItemIndex);
         ini->WriteInteger("HWARE","HiRes",HiResBox->ItemIndex);
-        ini->WriteInteger("HWARE","QLCPU",QLCPU->ItemIndex);
-        ini->WriteInteger("HWARE","QLMEM",QLMem->ItemIndex);
         ini->WriteInteger("HWARE","Colour",ColourBox->ItemIndex);
         ini->WriteInteger("HWARE","Speech",SpeechBox->ItemIndex);
         ini->WriteInteger("HWARE","RomCartridge",RomCartridgeBox->ItemIndex);
@@ -2882,7 +2670,6 @@ void THW::SaveSettings(TIniFile *ini)
         Rom=emulator.ROMSP48; ini->WriteString("HWARE","ROMSP48",Rom);
         Rom=emulator.ROMSPP; ini->WriteString("HWARE","ROMSPP",Rom);
         Rom=emulator.ROMSP128; ini->WriteString("HWARE","ROMSP128",Rom);
-        Rom=emulator.ROMQL; ini->WriteString("HWARE","ROMQL",Rom);
 
         Rom=emulator.ROMSPP2; ini->WriteString("HWARE","ROMSPP2",Rom);
         Rom=emulator.ROMSPP2A; ini->WriteString("HWARE","ROMSPP2A",Rom);
@@ -2974,7 +2761,6 @@ void THW::LoadSettings(TIniFile *ini)
         Rom=emulator.ROMZX8BIT; Rom=ini->ReadString("HWARE","ZX8BIT",Rom).LowerCase(); strcpy(emulator.ROMZX8BIT, Rom.c_str());
         Rom=emulator.ROMZX16BIT; Rom=ini->ReadString("HWARE","ZX16BIT",Rom).LowerCase(); strcpy(emulator.ROMZX16BIT, Rom.c_str());
         Rom=emulator.ROMZXCF; Rom=ini->ReadString("HWARE","ZXCF",Rom).LowerCase(); strcpy(emulator.ROMZXCF, Rom.c_str());
-        Rom=emulator.ROMQL; Rom=ini->ReadString("HWARE","ROMQL",Rom).LowerCase(); strcpy(emulator.ROMQL, Rom.c_str());
 
         if (ini->ReadBool("HWARE","ZX80",ZX80Btn->Down)) ZX80BtnClick(NULL);
         if (ini->ReadBool("HWARE","ZX81",ZX81Btn->Down)) ZX81BtnClick(NULL);
@@ -2995,14 +2781,11 @@ void THW::LoadSettings(TIniFile *ini)
         if (ini->ReadBool("HWARE","TK85",TK85Btn->Down)) TK85BtnClick(NULL);
         if (ini->ReadBool("HWARE","ZX97LE",ZX97LEBtn->Down)) ZX97LEBtnClick(NULL);
         if (ini->ReadBool("HWARE","ACE",AceBtn->Down)) AceBtnClick(NULL);
-        if (ini->ReadBool("HWARE","QL",QLBtn->Down)) QLBtnClick(NULL);
 
         RamPackBox->ItemIndex=ini->ReadInteger("HWARE","RamPack",RamPackBox->ItemIndex);
         SoundCardBox->ItemIndex=ini->ReadInteger("HWARE","Sound",SoundCardBox->ItemIndex);
         ChrGenBox->ItemIndex=ini->ReadInteger("HWARE","ChrGen",ChrGenBox->ItemIndex);
         HiResBox->ItemIndex=ini->ReadInteger("HWARE","HiRes",HiResBox->ItemIndex);
-        QLMem->ItemIndex=ini->ReadInteger("HWARE","QLMEM",QLMem->ItemIndex);
-        QLCPU->ItemIndex=ini->ReadInteger("HWARE","QLCPU",QLCPU->ItemIndex);
         ColourBox->ItemIndex=ini->ReadInteger("HWARE","Colour",ColourBox->ItemIndex);
         SpeechBox->ItemIndex=ini->ReadInteger("HWARE","Speech",SpeechBox->ItemIndex);
         RomCartridgeBox->ItemIndex=ini->ReadInteger("HWARE","RomCartridge",RomCartridgeBox->ItemIndex);

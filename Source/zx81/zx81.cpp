@@ -1183,6 +1183,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0xbf:
                 if (spectrum.floppytype==FLOPPYZX1541)
+                {
                         ZX1541PORT=(BYTE)Data;
 
                         Data>>=2;
@@ -1191,6 +1192,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                         if (Data&2) IECAssertATN(0); else IECReleaseATN(0);
                         if (Data&4) IECAssertClock(0); else IECReleaseClock(0);
                         if (Data&8) IECAssertData(0); else IECReleaseData(0);
+                }
                 break;
 
         case 0xc7:

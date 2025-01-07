@@ -26,6 +26,7 @@ Version 1.41 - 07/01/2025 (by Paul Farrow and John Stroebel)
   - Spelling corrections to various documentation files.
   - Bug fix to the Basic Loader mechanism.
   - Bug fix to ZX1541 floppy drive support.
+  - Corrected ROM path for the MWCFide IDE drive.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.

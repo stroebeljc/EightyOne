@@ -1159,7 +1159,6 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        while (sp0256_AL2.Busy()) {}
                 }
                 break;
 
@@ -1172,7 +1171,6 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        while (sp0256_AL2.Busy()) {}
                 }
                 break;
 

@@ -168,6 +168,8 @@ RZX_EMULINFO  RZXemulinfo =
 
 int RZXError;
 
+bool waitForSP0256;
+
 void spec48_LoadRZX(char *FileName)
 {
         rzx_playback(FileName);
@@ -330,6 +332,8 @@ void spec48_reset(void)
 
         ResetRomCartridge();
         DisableSpectra();
+
+        waitForSP0256 = false;
 }
 
 void spec48_initialise()
@@ -977,7 +981,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        while (sp0256_AL2.Busy()) {}
+                        waitForSP0256 = true;
                 }
                 break;
 
@@ -991,7 +995,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        while (sp0256_AL2.Busy()) {}
+                        waitForSP0256 = true;
                 }
                 break;
 
@@ -1690,7 +1694,16 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
                 }                 
 
-                ts=z80_do_opcode();
+                if (!waitForSP0256)
+                {
+                        ts=z80_do_opcode();
+                }
+                else
+                {
+                        // Speculation is that the SweetTalker asserts WAIT until the SP0256 is free 
+                        ts = 1;
+                        waitForSP0256 = sp0256_AL2.Busy() ? true : false;
+                }
 
                 if (BasicLister->Visible &&
                     ((spectrumBasicRomPagedIn && z80.pc.w == 0x15AB) ||

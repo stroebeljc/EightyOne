@@ -974,8 +974,11 @@ void spec48_writeport(int Address, int Data, int *tstates)
         switch(Address&255)
         {
         case 0x07:
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV1) sp0256_AL2->Write((BYTE)Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2) sp0256_AL2->Write((BYTE)Data);
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV1 || machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                {
+                        while (sp0256_AL2->Busy()) {}
+                        sp0256_AL2->Write((BYTE)Data);
+                }
                 break;
 
         case 0x1b:
@@ -985,7 +988,11 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0x1f:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2) sp0256_AL2->Write((BYTE)Data);
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                {
+                        while (sp0256_AL2->Busy()) {}
+                        sp0256_AL2->Write((BYTE)Data);
+                }
                 break;
 
         case 0x3f:

@@ -4,7 +4,7 @@ object HW: THW
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
-  ClientHeight = 392
+  ClientHeight = 368
   ClientWidth = 408
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -1294,7 +1294,7 @@ object HW: THW
   end
   object OK: TButton
     Left = 329
-    Top = 363
+    Top = 339
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -1325,7 +1325,7 @@ object HW: THW
     Left = 3
     Top = 140
     Width = 401
-    Height = 217
+    Height = 193
     ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
@@ -1372,8 +1372,8 @@ object HW: THW
         Caption = 'ROM Cartridge:'
       end
       object ZXpandEmulationInfo: TImage
-        Left = 294
-        Top = 112
+        Left = 374
+        Top = 94
         Width = 15
         Height = 15
         AutoSize = True
@@ -1436,7 +1436,7 @@ object HW: THW
       object SoundCardBox: TComboBox
         Left = 86
         Top = 16
-        Width = 120
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1446,7 +1446,7 @@ object HW: THW
       object ChrGenBox: TComboBox
         Left = 86
         Top = 40
-        Width = 120
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1462,7 +1462,7 @@ object HW: THW
       object HiResBox: TComboBox
         Left = 86
         Top = 64
-        Width = 120
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1476,64 +1476,64 @@ object HW: THW
           'Quicksilva')
       end
       object KMouse: TCheckBox
-        Left = 216
+        Left = 184
         Top = 36
         Width = 105
         Height = 17
         Caption = 'Kempston Mouse'
-        TabOrder = 14
+        TabOrder = 7
       end
       object TS2050: TCheckBox
-        Left = 216
+        Left = 184
         Top = 93
         Width = 101
         Height = 17
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 17
+        TabOrder = 10
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
-        Left = 216
+        Left = 184
         Top = 55
         Width = 97
         Height = 17
         Caption = 'Multiface 128'
-        TabOrder = 15
+        TabOrder = 8
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 314
-        Top = 90
+        Left = 184
+        Top = 110
         Width = 76
         Height = 20
         Caption = 'Configure'
-        TabOrder = 18
+        TabOrder = 11
         OnClick = TS2050ConfigClick
       end
       object ZXPrinter: TCheckBox
-        Left = 216
+        Left = 184
         Top = 74
         Width = 97
         Height = 17
         Caption = 'ZX Printer'
-        TabOrder = 16
+        TabOrder = 9
         OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
-        Left = 216
-        Top = 113
+        Left = 300
+        Top = 93
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 19
+        TabOrder = 12
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
         Left = 86
         Top = 88
-        Width = 120
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1545,7 +1545,7 @@ object HW: THW
       object RomCartridgeBox: TComboBox
         Left = 86
         Top = 136
-        Width = 120
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1560,32 +1560,32 @@ object HW: THW
           'ZXC4')
       end
       object BrowseRomCartridge: TButton
-        Left = 371
-        Top = 160
+        Left = 370
+        Top = 136
         Width = 19
         Height = 21
         Caption = '...'
         Enabled = False
-        TabOrder = 12
+        TabOrder = 20
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 314
-        Top = 112
+        Left = 300
+        Top = 110
         Width = 76
         Height = 20
         Caption = 'SD Card'
-        TabOrder = 20
+        TabOrder = 13
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
-        Left = 86
-        Top = 160
+        Left = 184
+        Top = 136
         Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 6
+        TabOrder = 14
         Visible = False
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
@@ -1597,70 +1597,70 @@ object HW: THW
           '48K+Pageout')
       end
       object uSource: TCheckBox
-        Left = 216
+        Left = 184
         Top = 17
         Width = 97
         Height = 17
         Caption = 'Currah µSource'
-        TabOrder = 13
+        TabOrder = 6
         OnClick = uSourceClick
       end
       object RomCartridgeFileBox: TEdit
-        Left = 86
-        Top = 160
-        Width = 280
+        Left = 184
+        Top = 136
+        Width = 184
         Height = 21
         Enabled = False
-        TabOrder = 11
+        TabOrder = 15
       end
       object SinclairRomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 160
-        Width = 280
+        Left = 184
+        Top = 136
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 10
+        TabOrder = 16
         Visible = False
         OnChange = SinclairRomCartridgeFileBoxChange
       end
       object TS1510RomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 160
-        Width = 280
+        Left = 184
+        Top = 136
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 9
+        TabOrder = 17
         Visible = False
         OnChange = TS1510RomCartridgeFileBoxChange
       end
       object TC2068RomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 160
-        Width = 280
+        Left = 184
+        Top = 136
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 8
+        TabOrder = 18
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
       object TS2068RomCartridgeFileBox: TComboBox
-        Left = 86
-        Top = 160
-        Width = 280
+        Left = 184
+        Top = 136
+        Width = 184
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 7
+        TabOrder = 19
         Visible = False
         OnChange = TS2068RomCartridgeFileBoxChange
       end
       object SpeechBox: TComboBox
         Left = 86
         Top = 112
-        Width = 120
+        Width = 89
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -1936,7 +1936,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

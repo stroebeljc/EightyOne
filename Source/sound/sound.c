@@ -74,15 +74,6 @@ int sound_stereo_acb=0;		/* 1 for ACB stereo, else 0 */
 
 /* sound_vsync and sound_ay are in common.c */
 
-
-#define AY_CLOCK_QUICKSILVA	(3250000/4)
-#define AY_CLOCK_ZONX		1625000
-#define AY_CLOCK_FULLER         1625000
-#define AY_CLOCK_ACE            1625000
-#define AY_CLOCK_SINCLAIR       1773400
-#define AY_CLOCK_TIMEX          1764000
-#define AY_CLOCK_BOLDFIELD      1773400
-
 /* assume all three tone channels together match the beeper volume.
  * Must be <=127 for all channels; 4 x 31 = 124.
  */
@@ -190,8 +181,12 @@ void sound_ay_init(void)
                 clock=AY_CLOCK_SINCLAIR;
                 break;
 
-        case AY_TYPE_TIMEX:
-                clock=AY_CLOCK_TIMEX;
+        case AY_TYPE_TS2068:
+                clock=AY_CLOCK_TS2068;
+                break;
+
+        case AY_TYPE_TC2068:
+                clock=AY_CLOCK_TC2068;
                 break;
 
         case AY_TYPE_BOLDFIELD:

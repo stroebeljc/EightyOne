@@ -1146,7 +1146,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         // Note that the Parrot only decodes A7, A5, and A4.
         //  If these are all 0, then the Parrot performs I/O.
-        if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) sp0256_AL2->Write((BYTE)Data);
+        if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) sp0256_AL2.Write((BYTE)Data);
 
         switch(Address&255)
         {
@@ -1156,24 +1156,23 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0x07:
                 if (zxpand) zxpand->IO_Write(Address>>8, Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV1 || machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
-                        sp0256_AL2->Write((BYTE)Data);
-                        while (sp0256_AL2->Busy()) {}
+                        sp0256_AL2.Write((BYTE)Data);
+                        while (sp0256_AL2.Busy()) {}
                 }
                 break;
 
         case 0x0f:
-                if (machine.aytype==AY_TYPE_ZONX_REV1) Sound.AYWrite(SelectAYReg, Data,frametstates);
                 if (machine.aytype==AY_TYPE_ZONX_REV2) Sound.AYWrite(SelectAYReg, Data,frametstates);
                 break;
-
+                
         case 0x1f:
                 if (machine.aytype==AY_TYPE_ZONX_REV2) Sound.AYWrite(SelectAYReg, Data,frametstates);
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
-                        sp0256_AL2->Write((BYTE)Data);
-                        while (sp0256_AL2->Busy()) {}
+                        sp0256_AL2.Write((BYTE)Data);
+                        while (sp0256_AL2.Busy()) {}
                 }
                 break;
 
@@ -1204,7 +1203,6 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xcf:
-                if (machine.aytype==AY_TYPE_ZONX_REV1) SelectAYReg=Data&15;
                 if (machine.aytype==AY_TYPE_ZONX_REV2) SelectAYReg=Data&15;
                 else d8255_write(D8255PRTB, (BYTE)Data);
                 break;
@@ -1285,7 +1283,7 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 // Note that the Parrot only decodes A7, A5, and A4.
                 //  If these are all 0, then the Parrot performs I/O.
-                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return !sp0256_AL2->Busy();
+                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return !sp0256_AL2.Busy();
 
                 switch(Address&255)
                 {

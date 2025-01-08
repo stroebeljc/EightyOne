@@ -1,7 +1,7 @@
-================================
-Sweet Talker for the ZX Spectrum
+=======================================
+Sweet Talker for the ZX81 / ZX Spectrum
 Cheeta Marketing Ltd
-================================
+=======================================
 
 INSTRUCTIONS FOR USE
 
@@ -16,12 +16,12 @@ the card edge connector at the rear of the "Sweet Talker".
 Now simply load "Chatbox" and make yourself a friend.
 
 
-EXAMPLE "CHEETAH"
+EXAMPLE "CHEETAH" (Spectrum)
 
 10 DATA 50, 19, 13, 15, 15, 0
 20 FOR I = 1 TO 6
 30 READ A
-40 OUT 7, A
+40 OUT 7,A
 50 NEXT I
    RUN
 
@@ -102,3 +102,14 @@ Z       ZZ         43    zoo, phase
         ZH         38    beige, pleasure
 
 * These allophones can be doubled.
+
+
+===============================================================================
+
+
+TECHNICAL NOTES
+
+There were two revisions of the Sweet Talker. The first revision used
+output port $07 (decoding address lines A7-A3). This was incompatible
+on the Spectrum fitted with the ZX Interface 1 and so revision 2 changed
+to output port $1F (decoding address lines A7-A5).

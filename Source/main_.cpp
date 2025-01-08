@@ -78,7 +78,6 @@
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
 #include "sound\sound.h"
-#include "sp0256drv.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -746,8 +745,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
                 closedir(dir);
                 _rmdir(emulator.temppath);
         }
-
-        if (sp0256_AL2 != NULL) delete sp0256_AL2;
 }
 //---------------------------------------------------------------------------
 

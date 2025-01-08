@@ -634,7 +634,7 @@ void spec48_WriteByte(int Address, int Data)
 
         if (Address<16384)
         {
-                if ((Address==0x1000) && (machine.speech == SPEECH_TYPE_USPEECH)) sp0256_AL2->Write((unsigned char)Data);
+                if ((Address==0x1000) && (machine.speech == SPEECH_TYPE_USPEECH)) sp0256_AL2.Write((unsigned char)Data);
 
                 if (PlusDPaged)
                 {
@@ -756,7 +756,7 @@ BYTE spec48_ReadByte(int Address)
         {
                 if ((Address==0x1000) && (machine.speech == SPEECH_TYPE_USPEECH))
                 {
-                        data=sp0256_AL2->Busy();
+                        data=sp0256_AL2.Busy();
                         noise = (noise<<8) | data;
                         return data;
                 }
@@ -974,10 +974,10 @@ void spec48_writeport(int Address, int Data, int *tstates)
         switch(Address&255)
         {
         case 0x07:
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV1 || machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
-                        sp0256_AL2->Write((BYTE)Data);
-                        while (sp0256_AL2->Busy()) {}
+                        sp0256_AL2.Write((BYTE)Data);
+                        while (sp0256_AL2.Busy()) {}
                 }
                 break;
 
@@ -990,8 +990,8 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
-                        sp0256_AL2->Write((BYTE)Data);
-                        while (sp0256_AL2->Busy()) {}
+                        sp0256_AL2.Write((BYTE)Data);
+                        while (sp0256_AL2.Busy()) {}
                 }
                 break;
 
@@ -1135,11 +1135,13 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xf5:
-                if (machine.aytype==AY_TYPE_TIMEX && (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)) SelectAYReg=Data;
+                if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068)) SelectAYReg=Data;
                 break;
 
         case 0xf6:
-                if (machine.aytype==AY_TYPE_TIMEX && (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068)) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xf7:
@@ -1507,7 +1509,8 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf6:
-                if (machine.aytype==AY_TYPE_TIMEX && (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068))
+                if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068))
                         return (BYTE)Sound.AYRead(SelectAYReg);
                 break;
 

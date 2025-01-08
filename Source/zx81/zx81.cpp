@@ -1158,8 +1158,8 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (zxpand) zxpand->IO_Write(Address>>8, Data);
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV1 || machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
-                        while (sp0256_AL2->Busy()) {}
                         sp0256_AL2->Write((BYTE)Data);
+                        while (sp0256_AL2->Busy()) {}
                 }
                 break;
 
@@ -1172,8 +1172,8 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.aytype==AY_TYPE_ZONX_REV2) Sound.AYWrite(SelectAYReg, Data,frametstates);
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
-                        while (sp0256_AL2->Busy()) {}
                         sp0256_AL2->Write((BYTE)Data);
+                        while (sp0256_AL2->Busy()) {}
                 }
                 break;
 

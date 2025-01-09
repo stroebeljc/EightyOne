@@ -662,7 +662,9 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         int scrollPos = ScrollBar->Position;
 
+#if __CODEGEARC__ < 0x0620
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
+#endif
 
         int highlightIndex = mLastHighlightedEntryIndex;
 

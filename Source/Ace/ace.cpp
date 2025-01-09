@@ -216,13 +216,6 @@ void ace_writeport(int Address, int Data, int *tstates)
         {
         case 0x01:
                 break;
-        case 0x3f:
-                if (machine.aytype==AY_TYPE_FULLER)
-                        SelectAYReg=Data&15;
-        case 0x5f:
-                if (machine.aytype==AY_TYPE_FULLER)
-                        Sound.AYWrite(SelectAYReg, Data, frametstates);
-                break;
 
         case 0x73:
                 if (machine.ts2050) d8251writeDATA((BYTE)Data);
@@ -244,11 +237,11 @@ void ace_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE) SelectAYReg=Data;
+                if (machine.aytype==AY_TYPE_ACE_USER) SelectAYReg=Data;
                 break;
 
         case 0xdf:
-                if (machine.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.aytype==AY_TYPE_ACE_USER) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xfb:
@@ -313,7 +306,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                 if (machine.ts2050) return(d8251readCTRL());
 
         case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE) return (BYTE)(Sound.AYRead(SelectAYReg));
+                if (machine.aytype==AY_TYPE_ACE_USER) return (BYTE)(Sound.AYRead(SelectAYReg));
 
         case 0xfb:
                 if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));

@@ -1,8 +1,8 @@
-=================================================
-ZonX 81 Programmable Sound Generator for the ZX81
+==================================================
+ZON X-81 Programmable Sound Generator for the ZX81
 Bi-Pak
 Copyright (c)1982, F. G. Everest
-=================================================
+==================================================
 
 INTRODUCTION
 
@@ -658,3 +658,13 @@ the REM statement from the list given in the back of the ZX81 manual.
 The use of YY in the REM statement is chosen merely because the second
 and forth 'Y's are needed to make space for the real data to be POKEd to
 addresses 16515 and 16519 later on.
+
+
+===============================================================================
+
+
+TECHNICAL NOTES
+
+There were two revisions of the ZON X-81. The first revision used output
+port $0F and input port $CF. The second revision to add compatibility
+with the Spectrum used output port $1F and input port $DF.

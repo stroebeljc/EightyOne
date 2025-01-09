@@ -193,6 +193,7 @@ bool zx80rom;
 bool zx81rom;
 BOOL memotechResetPressed;
 BOOL memotechResetRequested;
+BOOL waitForSP0256;
 
 int videoFlipFlop1Q;
 int videoFlipFlop2Q;
@@ -229,6 +230,8 @@ void zx81_reset()
         QuicksilvaHiResMode=0;
         ResetRomCartridge();
         DisableChroma();
+
+        waitForSP0256 = false;
 }
 
 void zx81_initialise()
@@ -1159,6 +1162,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
+                        waitForSP0256 = true;
                 }
                 break;
 
@@ -1171,6 +1175,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
+                        waitForSP0256 = true;
                 }
                 break;
 
@@ -1547,7 +1552,19 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
+                int ts;
+
+                if (waitForSP0256 && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
+                {
+                        // SweetTalker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
+                        ts = 1;
+                        z80.r = (WORD)((z80.r + 1) & 0x7f);
+                        waitForSP0256 = sp0256_AL2.Busy() ? true : false;
+                }
+                else
+                {
+                        ts=z80_do_opcode();
+                }
 
                 if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))
                 {
@@ -1575,8 +1592,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 {
                         int c = 0;
                         int instructionPosition = lineClockCounter;
-                        bool insertedWaitStates = false;
                         bool nmiOffInstruction = (LastInstruction == LASTINSTOUTFD);
+                        bool insertedWaitStates = false;
 
                         while ((mCycles[c] != 0) && !insertedWaitStates)
                         {
@@ -2132,7 +2149,19 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
+                int ts;
+
+                if (waitForSP0256 && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
+                {
+                        // SweetTalker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
+                        ts = 1;
+                        z80.r = (WORD)((z80.r + 1) & 0x7f);
+                        waitForSP0256 = sp0256_AL2.Busy() ? true : false;
+                }
+                else
+                {
+                        ts=z80_do_opcode();
+                }
 
                 if (BasicLister->Visible &&
                     ((zx80rom && z80.pc.w == 0x04F4) ||

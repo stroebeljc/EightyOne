@@ -1442,15 +1442,6 @@ object HW: THW
         ItemHeight = 13
         TabOrder = 0
         OnChange = SoundCardBoxChange
-        Items.Strings = (
-          'None'
-          'Ace User'
-          'Boldfield'
-          'Fuller Box'
-          'Sinclair 128K'
-          'Timex'
-          'Quicksilva'
-          'Zon X')
       end
       object ChrGenBox: TComboBox
         Left = 86

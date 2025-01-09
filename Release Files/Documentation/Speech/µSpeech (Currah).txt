@@ -454,7 +454,7 @@ any keyvoice longer than four allophones will not be voiced.
 
 Summarising:
 
-On a 18K machine, do not CLEAR greater than 32343
+On a 16K machine, do not CLEAR greater than 32343
 
 On a 48K machine, do not CLEAR greater than 65360
 

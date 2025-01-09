@@ -116,7 +116,6 @@ extern bool Restart;
 int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 
 int AutoLoadCount=0;
-char TEMP1[256];
 
 SCANLINE *BuildLine, Video;
 
@@ -160,7 +159,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
                 emulator.cwd[strlen(emulator.cwd)]='\0';
         }
 
-        strcpy(TEMP1, emulator.cwd);
         GetTempPath(256, emulator.temppath);
         strcat(emulator.temppath, temporaryFolder);
         mkdir(emulator.temppath);
@@ -257,7 +255,8 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         BuildConfigMenu();
         BuildDocumentationMenu();
-        BuildExamplesMenu();
+        BuildZX81ExamplesMenu();
+        BuildSpectrumExamplesMenu();
 
         if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
 
@@ -1866,7 +1865,7 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::BuildExamplesMenu()
+void TForm1::BuildZX81ExamplesMenu()
 {
         vector<AnsiString> folders;
         vector<AnsiString>::iterator iter;
@@ -1886,11 +1885,35 @@ void TForm1::BuildExamplesMenu()
                 CategoryFolder += (*iter).c_str();
                 CategoryFolder += "\\";
 
-                AddExampleFolders(CategorySubMenu, CategoryFolder);
+                AddZX81ExampleFolders(CategorySubMenu, CategoryFolder);
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString path)
+void TForm1::BuildSpectrumExamplesMenu()
+{
+        vector<AnsiString> folders;
+        vector<AnsiString>::iterator iter;
+
+        AnsiString path = emulator.cwd;
+        path += exampleSpectrumProgramsFolder;
+
+        FetchFolderList(&folders, path);
+
+        for (iter = folders.begin(); iter != folders.end(); iter++)
+        {
+                TMenuItem* CategorySubMenu = new TMenuItem(ExampleSpectrumProgramsMenuEntry);
+                ExampleSpectrumProgramsMenuEntry->Add(CategorySubMenu);
+                CategorySubMenu->Caption = (*iter).c_str();
+
+                AnsiString CategoryFolder = path;
+                CategoryFolder += (*iter).c_str();
+                CategoryFolder += "\\";
+
+                AddSpectrumExampleFolders(CategorySubMenu, CategoryFolder);
+        }
+}
+//---------------------------------------------------------------------------
+void TForm1::AddZX81ExampleFolders(TMenuItem* CategorySubMenu, AnsiString path)
 {
         vector<AnsiString> files;
         vector<AnsiString>::iterator iter;
@@ -1906,6 +1929,22 @@ void TForm1::AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString path)
         }
 }
 //---------------------------------------------------------------------------
+void TForm1::AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path)
+{
+        vector<AnsiString> files;
+        vector<AnsiString>::iterator iter;
+
+        FetchFolderList(&files, path);
+
+        for (iter = files.begin(); iter != files.end(); iter++)
+        {
+                TMenuItem* ExampleFolderEntry = new TMenuItem(CategorySubMenu);
+                CategorySubMenu->Add(ExampleFolderEntry);
+                ExampleFolderEntry->Caption = (*iter).c_str();
+                ExampleFolderEntry->OnClick = ExampleSpectrumProgramsMenuEntryClick;
+        }
+}
+//---------------------------------------------------------------------------
 void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
 {
         TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
@@ -1918,7 +1957,29 @@ void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
         Path += ClickedItem->Caption;
         Path += "\\";
 
-        ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
+        if (ClickedItem->Count == 0)
+        {
+                ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
+        }
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::ExampleSpectrumProgramsMenuEntryClick(
+      TObject *Sender)
+{
+        TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
+        TMenuItem* ParentItem = ClickedItem->Parent;
+
+        AnsiString Path = emulator.cwd;
+        Path += exampleSpectrumProgramsFolder;
+        Path += ParentItem->Caption;
+        Path += "\\";
+        Path += ClickedItem->Caption;
+        Path += "\\";
+
+        if (ClickedItem->Count == 0)
+        {
+                ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)
@@ -2727,6 +2788,4 @@ void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
         ShellExecute(NULL, "open", releaseHistoryFile.c_str(), "", NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
-
-
 

@@ -40,26 +40,27 @@ int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 bool directMemoryAccess;
 
-const char* iniFolder                 = "EightyOne\\";
-const char* temporaryFolder           = "EightyOne\\";
+const char* iniFolder                     = "EightyOne\\";
+const char* temporaryFolder               = "EightyOne\\";
 
-const char* nvMemoryFolder            = "NV_Memory\\";
-const char* examplesDrivesFolder      = "Examples\\Drives\\";
-const char* documentationFolder       = "Documentation\\";
-const char* exampleZX81ProgramsFolder = "Examples\\ZX81 Programs\\";
+const char* nvMemoryFolder                = "NV_Memory\\";
+const char* examplesDrivesFolder          = "Examples\\Drives\\";
+const char* documentationFolder           = "Documentation\\";
+const char* exampleZX81ProgramsFolder     = "Examples\\ZX81 Programs\\";
+const char* exampleSpectrumProgramsFolder = "Examples\\Spectrum Programs\\";
 
-const char* romsFolder                = "ROMs\\";
-const char* fdcRomsFolder             = "ROMs\\FDCs\\";
-const char* ideRomsFolder             = "ROMs\\IDEs\\";
-const char* interfaceRomsFolder       = "ROMs\\Interfaces\\";
-const char* graphicRomsFolder         = "ROMs\\Graphics\\";
-const char* replacementRomsFolder     = "ROMs\\Replacement ROMs\\";
+const char* romsFolder                    = "ROMs\\";
+const char* fdcRomsFolder                 = "ROMs\\FDCs\\";
+const char* ideRomsFolder                 = "ROMs\\IDEs\\";
+const char* interfaceRomsFolder           = "ROMs\\Interfaces\\";
+const char* graphicRomsFolder             = "ROMs\\Graphics\\";
+const char* replacementRomsFolder         = "ROMs\\Replacement ROMs\\";
 
-const char* romCartridgeFolder        = "ROM Cartridges\\";
-const char* if2RomsFolder             = "ROM Cartridges\\ZX Interface 2\\";
-const char* ts1510RomsFolder          = "ROM Cartridges\\TS1510\\";
-const char* ts2068RomsFolder          = "ROM Cartridges\\TS2068\\";
-const char* tc2068RomsFolder          = "ROM Cartridges\\TC2068\\";
+const char* romCartridgeFolder            = "ROM Cartridges\\";
+const char* if2RomsFolder                 = "ROM Cartridges\\ZX Interface 2\\";
+const char* ts1510RomsFolder              = "ROM Cartridges\\TS1510\\";
+const char* ts2068RomsFolder              = "ROM Cartridges\\TS2068\\";
+const char* tc2068RomsFolder              = "ROM Cartridges\\TC2068\\";
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 
@@ -169,7 +170,7 @@ void load_config(void)
         strcpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
         AnsiString trdosRom = fdcRomsFolder + AnsiString("trdos.rom");
         strcpy(emulator.ROMBETADISC, trdosRom.c_str());
-        AnsiString mwcfideRom = fdcRomsFolder + AnsiString("mwcfide.rom");
+        AnsiString mwcfideRom = ideRomsFolder + AnsiString("mwcfide.rom");
         strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
         AnsiString larken81Rom = fdcRomsFolder + AnsiString("larken81.rom");
         strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());

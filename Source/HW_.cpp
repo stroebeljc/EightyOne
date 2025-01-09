@@ -733,6 +733,17 @@ void THW::ConfigureColour()
         }
         Form1->DisplayArt->Enabled = (machine.colour != COLOURSPECTRA);
 
+        /*
+        if (machine.colour == COLOURCHROMA)
+        {
+                Form1->Sound1->Checked = true;
+        }
+        else if (machine.colour == COLOURDISABLED)
+        {
+                Form1->Sound1->Checked = false;
+        }
+        */
+        
         ConfigureChroma(prevChromaColourSwitchOn);
         ConfigureSpectra(prevSpectraColourSwitchOn);
 }
@@ -1716,6 +1727,8 @@ void THW::SetupForZX81(void)
 
         SetZX80Icon();
         SetSpectrum128Icon();
+
+        Form1->Sound1->Caption = "Video So&und";
 }
 
 void THW::SetZXpandState(bool checked, bool enabled)
@@ -1913,6 +1926,8 @@ void THW::SetupForSpectrum(void)
 
         SetZX80Icon();
         SetSpectrum128Icon();
+
+        Form1->Sound1->Caption = "Beeper So&und";
 }
 
 //---------------------------------------------------------------------------

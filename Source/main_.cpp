@@ -1795,11 +1795,11 @@ void TForm1::BuildDocumentationMenu()
                 CategoryFolder += (*iter).c_str();
                 CategoryFolder += "\\";
 
-                AddInstructionFiles(CategorySubMenu, CategoryFolder);
+                AddDocumentationFiles(CategorySubMenu, CategoryFolder);
         }
 }
 //---------------------------------------------------------------------------
-void TForm1::AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString path)
+void TForm1::AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path)
 {
         vector<AnsiString> files;
         vector<AnsiString>::iterator iter;
@@ -1952,10 +1952,7 @@ void __fastcall TForm1::ExampleZX81ProgramsMenuEntryClick(TObject *Sender)
         Path += ClickedItem->Caption;
         Path += "\\";
 
-        if (ClickedItem->Count == 0)
-        {
-                ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
-        }
+        ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ExampleSpectrumProgramsMenuEntryClick(
@@ -1971,10 +1968,7 @@ void __fastcall TForm1::ExampleSpectrumProgramsMenuEntryClick(
         Path += ClickedItem->Caption;
         Path += "\\";
 
-        if (ClickedItem->Count == 0)
-        {
-                ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
-        }
+        ShellExecute(NULL, "open", Path.c_str(), "", NULL, SW_RESTORE);
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::SaveCurrentConfigClick(TObject *Sender)

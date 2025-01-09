@@ -297,7 +297,7 @@ private:	// User declarations
         void BuildDocumentationMenu();
         void BuildZX81ExamplesMenu();
         void BuildSpectrumExamplesMenu();
-        void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString path);
+        void AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path);
         void AddZX81ExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         void AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;

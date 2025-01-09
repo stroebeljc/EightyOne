@@ -1556,7 +1556,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 if (waitForSP0256 && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
                 {
-                        // SweetTalker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
+                        // Sweet Talker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
                         ts = 1;
                         z80.r = (WORD)((z80.r + 1) & 0x7f);
                         waitForSP0256 = sp0256_AL2.Busy() ? true : false;
@@ -2153,7 +2153,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 if (waitForSP0256 && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
                 {
-                        // SweetTalker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
+                        // Sweet Talker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
                         ts = 1;
                         z80.r = (WORD)((z80.r + 1) & 0x7f);
                         waitForSP0256 = sp0256_AL2.Busy() ? true : false;

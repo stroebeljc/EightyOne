@@ -498,6 +498,11 @@ void zx81_WriteByte(int Address, int Data)
                 if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data,frametstates);
         }
 
+        if (machine.speech == SPEECH_TYPE_TALKBACK)
+        {
+                if (Address == 0x4021) sp0256_AL2.Write((BYTE)Data);
+        }
+
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
         // with a further 8 shadows between 49152 and 57344.
 
@@ -771,6 +776,10 @@ BYTE zx81_ReadByte(int Address)
                  (Address >= 0x2800 && Address < 0x3000)))
         {
                 data=memory[Address];
+        }
+        else if (machine.speech == SPEECH_TYPE_TALKBACK && Address == 0x4021 && (memory[Address] & 0x40)
+        {
+                data = sp0256_AL2.Busy() ? 0x00 : idleDataBus;
         }
         else if (zx81.RAM816k && Address >= 0x2000 && Address < 0x4000)
         {

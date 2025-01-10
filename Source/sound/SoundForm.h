@@ -34,6 +34,9 @@ __published:	// IDE-managed Components
         TRadioButton *RadioButtonACB;
         TGroupBox *BeeperSettingsGroupBox;
         TCheckBox *BeeperExcludeHSyncs;
+        TLabel *Label8;
+        TCheckBox *SpeechMute;
+        TTrackBar *SpeechVol;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
         void __fastcall MidiChange(TObject *Sender);

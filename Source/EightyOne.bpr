@@ -35,9 +35,8 @@
       zxprinter\zxprinter.obj Plus3Drives.obj floppy.obj MakeHDF.obj 
       lib765\765drive.obj lib765\765dsk.obj lib765\765fdc.obj lib765\765ldsk.obj 
       lib765\error.obj AccDraw_.obj Fullscreen.obj Artifacts_.obj 
-      sound\SoundForm.obj Interface1.obj SP0256\audio.obj SP0256\sp0256_al2.obj 
-      SP0256\SystemClock.obj SP0256\Win32Audio.obj SP0256\sp0256drv.obj 
-      SP0256\sp0256.obj SP0256\sp0256_012.obj"/>
+      sound\SoundForm.obj Interface1.obj SP0256\sp0256_al2.obj 
+      SP0256\sp0256drv.obj SP0256\sp0256.obj SP0256\sp0256_012.obj"/>
     <RESFILES value="EightyOne.res WinXP.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>

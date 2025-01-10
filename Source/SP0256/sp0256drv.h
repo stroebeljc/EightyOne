@@ -1,8 +1,6 @@
 #ifndef SP0256DRV_H_
 #define SP0256DRV_H_
 
-#include "Win32Sleeper.h"
-#include "SystemClock.h"
 #include "sp0256.h"
 
 
@@ -16,20 +14,16 @@ class SP0256
 {
 public:
         SP0256(model_t model);
-        ~SP0256();
         void Write(unsigned char Data);
         unsigned char Busy(void);
+        char GetNextSample(void);
         void Reset();
+        void SetSamplingFreq(int freq);
 
 private:
-        void ThreadFN(void);
-        static DWORD WINAPI CallThread(LPVOID Param);
-
-        DWORD m_ThreadID;
-        HANDLE m_ThreadHandle;
-
-        SystemClock systemClock;
-        Win32Sleeper sleeper;
+        double m_sample_count;
+        int m_samplefreq;
+        unsigned char m_lastsample;
 };
 
 

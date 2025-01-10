@@ -60,30 +60,32 @@ object MidiForm: TMidiForm
       Height = 13
       Caption = 'AY Channel'
     end
-    object Label2: TLabel
+    object BeeperLabel: TLabel
       Left = 120
-      Top = 39
-      Width = 34
-      Height = 13
+      Top = 38
+      Width = 38
+      Height = 14
+      Alignment = taCenter
+      AutoSize = False
       Caption = 'Beeper'
     end
     object Label3: TLabel
       Left = 24
-      Top = 39
+      Top = 38
       Width = 7
       Height = 13
       Caption = 'A'
     end
     object Label4: TLabel
       Left = 56
-      Top = 39
+      Top = 38
       Width = 7
       Height = 13
       Caption = 'B'
     end
     object Label5: TLabel
       Left = 88
-      Top = 39
+      Top = 38
       Width = 7
       Height = 13
       Caption = 'C'
@@ -106,7 +108,7 @@ object MidiForm: TMidiForm
     end
     object Label8: TLabel
       Left = 168
-      Top = 39
+      Top = 38
       Width = 37
       Height = 13
       Caption = 'Speech'
@@ -193,7 +195,7 @@ object MidiForm: TMidiForm
     end
     object RadioButtonMono: TRadioButton
       Left = 224
-      Top = 41
+      Top = 38
       Width = 63
       Height = 17
       Caption = 'Mono'
@@ -203,7 +205,7 @@ object MidiForm: TMidiForm
     end
     object RadioButtonACB: TRadioButton
       Left = 224
-      Top = 58
+      Top = 55
       Width = 63
       Height = 17
       Caption = 'ACB'
@@ -218,12 +220,13 @@ object MidiForm: TMidiForm
       OnClick = MidiChange
     end
   end
-  object BeeperSettingsGroupBox: TGroupBox
+  object VideoSoundGroupBox: TGroupBox
     Left = 8
     Top = 256
     Width = 177
     Height = 49
-    Caption = 'Beeper Settings'
+    Caption = 'Video Sound Settings'
+    Enabled = False
     TabOrder = 2
     object BeeperExcludeHSyncs: TCheckBox
       Left = 8

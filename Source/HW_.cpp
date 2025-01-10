@@ -36,6 +36,7 @@
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
 #include "zx97config.h"
+#include "SoundForm.h"
 
 //extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
@@ -1743,6 +1744,8 @@ void THW::SetupForZX81(void)
         SetSpectrum128Icon();
 
         Form1->Sound1->Caption = "Video So&und";
+        const bool zx81 = true;
+        MidiForm->SetComputer(zx81);
 }
 
 void THW::SetZXpandState(bool checked, bool enabled)
@@ -1943,6 +1946,8 @@ void THW::SetupForSpectrum(void)
         SetSpectrum128Icon();
 
         Form1->Sound1->Caption = "Beeper So&und";
+        const bool zx81 = false;
+        MidiForm->SetComputer(zx81);
 }
 
 //---------------------------------------------------------------------------

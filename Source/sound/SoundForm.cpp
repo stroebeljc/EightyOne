@@ -125,4 +125,18 @@ void __fastcall TMidiForm::BeeperExcludeHSyncsClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
+void TMidiForm::SetComputer(bool zx81)
+{
+        if (zx81)
+        {
+                BeeperLabel->Caption = "Video";
+                VideoSoundGroupBox->Enabled = true;
+                BeeperExcludeHSyncs->Enabled = true;
+        }
+        else
+        {
+                BeeperLabel->Caption = "Beeper";
+                VideoSoundGroupBox->Enabled = false;
+                BeeperExcludeHSyncs->Enabled = false;
+        }
+}

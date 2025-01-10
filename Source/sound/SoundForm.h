@@ -22,7 +22,7 @@ __published:	// IDE-managed Components
         TTrackBar *ChCVol;
         TTrackBar *BeeperVol;
         TLabel *Label1;
-        TLabel *Label2;
+        TLabel *BeeperLabel;
         TLabel *Label3;
         TLabel *Label4;
         TLabel *Label5;
@@ -32,7 +32,7 @@ __published:	// IDE-managed Components
         TLabel *Label7;
         TRadioButton *RadioButtonMono;
         TRadioButton *RadioButtonACB;
-        TGroupBox *BeeperSettingsGroupBox;
+        TGroupBox *VideoSoundGroupBox;
         TCheckBox *BeeperExcludeHSyncs;
         TLabel *Label8;
         TCheckBox *SpeechMute;
@@ -46,6 +46,7 @@ public:		// User declarations
         __fastcall TMidiForm(TComponent* Owner);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
+        void SetComputer(bool zx81);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMidiForm *MidiForm;

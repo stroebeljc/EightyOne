@@ -19,6 +19,7 @@ public:
         ~SP0256();
         void Write(unsigned char Data);
         unsigned char Busy(void);
+        void Reset();
 
 private:
         void ThreadFN(void);

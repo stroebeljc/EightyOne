@@ -332,6 +332,7 @@ void spec48_reset(void)
         DisableSpectra();
 
         waitForSP0256 = false;
+        sp0256_AL2.Reset();
 }
 
 void spec48_initialise()

@@ -1167,6 +1167,7 @@ void THW::ConfigureSpeech()
         {
                 switch (SpeechBox->ItemIndex)
                 {
+                case 3: machine.speech=SPEECH_TYPE_MAGECO; break;
                 case 2: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
                 case 1: machine.speech=SPEECH_TYPE_PARROT; break;
                 case 0:
@@ -1697,6 +1698,7 @@ void THW::SetupForZX81(void)
         SpeechBox->Items->Add("None");
         SpeechBox->Items->Add("The Parrot");
         SpeechBox->Items->Add("Sweet Talker");
+        SpeechBox->Items->Add("Mageco");
         SpeechBox->ItemIndex=0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;

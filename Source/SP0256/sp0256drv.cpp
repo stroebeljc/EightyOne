@@ -93,3 +93,8 @@ unsigned char SP0256::Busy(void)
         return !status;
 }
 
+void SP0256::Reset()
+{
+        reset_counter = 1;
+        sp0256_sendCommand( uint32_t( 0x00 ) );
+}

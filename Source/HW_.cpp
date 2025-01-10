@@ -1150,19 +1150,21 @@ void THW::ConfigureSpeech()
                 {
                         switch (SpeechBox->ItemIndex)
                         {
-                        case 1: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                        case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
+                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                         case 0:
-                        default: machine.speech=SPEECH_TYPE_NONE; break;
+                        default: machine.speech = SPEECH_TYPE_NONE; break;
                         }
                 }
                 else
                 {
                         switch (SpeechBox->ItemIndex)
                         {
-                        case 2: machine.speech=SPEECH_TYPE_USPEECH; break;
-                        case 1: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                        case 3: machine.speech = SPEECH_TYPE_USPEECH; break;
+                        case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
+                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                         case 0:
-                        default: machine.speech=SPEECH_TYPE_NONE; break;
+                        default: machine.speech = SPEECH_TYPE_NONE; break;
                         }
                 }
         }
@@ -1170,17 +1172,17 @@ void THW::ConfigureSpeech()
         {
                 switch (SpeechBox->ItemIndex)
                 {
-                case 4: machine.speech=SPEECH_TYPE_TALKBACK; break;
-                case 3: machine.speech=SPEECH_TYPE_MAGECO; break;
-                case 2: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                case 4: machine.speech = SPEECH_TYPE_TALKBACK; break;
+                case 3: machine.speech = SPEECH_TYPE_MAGECO; break;
+                case 2: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                 case 1:
                 {
-                        machine.speech=SPEECH_TYPE_PARROT;
+                        machine.speech = SPEECH_TYPE_PARROT;
                         Form1->ResetParrotSpeech->Enabled = true;
                         break;
                 }
                 case 0:
-                default: machine.speech=SPEECH_TYPE_NONE; break;
+                default: machine.speech = SPEECH_TYPE_NONE; break;
                 }
         }
         else
@@ -1841,6 +1843,7 @@ void THW::SetupForSpectrum(void)
         SpeechBox->Items->Clear();
         SpeechBox->Items->Add("None");
         SpeechBox->Items->Add("Sweet Talker");
+        SpeechBox->Items->Add("dk'tronics");
         SpeechBox->ItemIndex = 0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;

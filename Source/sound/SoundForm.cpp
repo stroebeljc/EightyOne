@@ -68,6 +68,7 @@ void __fastcall TMidiForm::MidiChange(TObject *Sender)
         Sound.VolumeLevel[1]= AYMute->Checked ? 0:ChBVol->Max - ChBVol->Position;
         Sound.VolumeLevel[2]= AYMute->Checked ? 0:ChCVol->Max - ChCVol->Position;
         Sound.VolumeLevel[3]= BeeperMute->Checked ? 0:BeeperVol->Max - BeeperVol->Position;
+        Sound.VolumeLevel[4]= SpeechMute->Checked ? 0:SpeechVol->Max - SpeechVol->Position;
 
         Sound.ACBMix = RadioButtonACB->Checked;
 
@@ -88,9 +89,11 @@ void TMidiForm::SaveSettings(TIniFile *ini)
         ini->WriteInteger("MIDI","ChBVol",ChBVol->Position);
         ini->WriteInteger("MIDI","ChCVol",ChCVol->Position);
         ini->WriteInteger("MIDI","BeeperVol",BeeperVol->Position);
+        ini->WriteInteger("MIDI","SpeechVol",SpeechVol->Position);
         ini->WriteInteger("MIDI","MidiDev",MidiBox->ItemIndex);
         ini->WriteBool("MIDI","AYMute",AYMute->Checked);
         ini->WriteBool("MIDI","BeeperMute",BeeperMute->Checked);
+        ini->WriteBool("MIDI","SpeechMute",SpeechMute->Checked);
         ini->WriteBool("MIDI","AYMixACB",RadioButtonACB->Checked);
         ini->WriteBool("MIDI","BeeperExcludeHSyncs",BeeperExcludeHSyncs->Checked);
 }
@@ -103,9 +106,11 @@ void TMidiForm::LoadSettings(TIniFile *ini)
         ChBVol->Position=ini->ReadInteger("MIDI","ChBVol",ChBVol->Position);
         ChCVol->Position=ini->ReadInteger("MIDI","ChCVol",ChCVol->Position);
         BeeperVol->Position=ini->ReadInteger("MIDI","BeeperVol",BeeperVol->Position);
+        SpeechVol->Position=ini->ReadInteger("MIDI","SpeechVol",SpeechVol->Position);
         MidiBox->ItemIndex=ini->ReadInteger("MIDI","MidiDev",MidiBox->ItemIndex);
         AYMute->Checked=ini->ReadBool("MIDI","AYMute",AYMute->Checked);
         BeeperMute->Checked=ini->ReadBool("MIDI","BeeperMute",BeeperMute->Checked);
+        SpeechMute->Checked=ini->ReadBool("MIDI","SpeechMute",SpeechMute->Checked);
         RadioButtonACB->Checked=ini->ReadBool("MIDI","AYMixACB",RadioButtonACB->Checked);
         BeeperExcludeHSyncs->Checked=ini->ReadBool("MIDI","BeeperExcludeHSyncs",BeeperExcludeHSyncs->Checked);
 

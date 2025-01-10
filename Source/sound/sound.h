@@ -91,7 +91,7 @@ public:
 	void Frame(void);
 	void Beeper(int on, int frametstates);
 
-        int VolumeLevel[4];
+        int VolumeLevel[5];
         bool ACBMix;
 
 private:

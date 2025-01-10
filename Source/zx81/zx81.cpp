@@ -777,7 +777,7 @@ BYTE zx81_ReadByte(int Address)
         {
                 data=memory[Address];
         }
-        else if (machine.speech == SPEECH_TYPE_TALKBACK && Address == 0x4021 && (memory[Address] & 0x40)
+        else if (machine.speech == SPEECH_TYPE_TALKBACK && Address == 0x4021 && memory[Address] & 0x40)
         {
                 data = sp0256_AL2.Busy() ? 0x00 : idleDataBus;
         }

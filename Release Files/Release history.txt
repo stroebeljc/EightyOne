@@ -27,6 +27,8 @@ Version 1.41 - 10/01/2025 (by Paul Farrow and John Stroebel)
   - Bug fix to the Basic Loader mechanism.
   - Bug fix to ZX1541 floppy drive support.
   - Corrected ROM path for the MWCFide IDE drive.
+  - The BASIC Listing loader was not tokenising "" within REM statements on the ZX81 when
+    tokenisation of REM contents was enabled.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.

@@ -306,7 +306,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
         ExtractZxTokenFormatExtensions(zxTokenSupport);
         ExtractInverseCharacters();
         ExtractEscapeCharacters();
-        ExtractDoubleQuoteCharacters();
+        ExtractDoubleQuoteCharacters(tokeniseRemContents, acceptAlternateKeywordSpelling);
         ExtractZxTokenFormatExtensionByteEncoding(zxTokenSupport);
 
         memset(mLineBufferTokenised, 0, sizeof(mLineBufferTokenised));
@@ -321,7 +321,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
                         i++;
                 }
         }
-        
+
         // Append a space at the end of the line to ensure a token without a trailing space is detected
         i = strlen((char*)mLineBufferTokenised);
         mLineBufferTokenised[i] = ' ';

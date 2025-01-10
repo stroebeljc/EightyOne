@@ -50,6 +50,7 @@
 #define SPEECH_TYPE_PARROT              2
 #define SPEECH_TYPE_SWEETTALKER_REV2    3
 #define SPEECH_TYPE_MAGECO              4
+#define SPEECH_TYPE_TALKBACK            5
 
 // assume all three tone channels together match the beeper volume.
 // Must be <=127 for all channels; 4 x 31 = 124.

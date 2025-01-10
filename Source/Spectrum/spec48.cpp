@@ -1024,6 +1024,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         case 0x7f:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_datareg((BYTE)Data);
+                if (machine.speech == SPEECH_TYPE_DKTRONICS) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x9b:
@@ -1308,7 +1309,6 @@ int spec48_contendio(int Address, int states, int time)
 */
 }
 
-
 BYTE spec48_readport(int Address, int *tstates)
 {
         BYTE data = ReadPort(Address, tstates);
@@ -1392,6 +1392,7 @@ BYTE ReadPort(int Address, int *tstates)
 
         case 0x7f:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
+                if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
 
         case 0x9b:

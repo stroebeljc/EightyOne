@@ -20,7 +20,7 @@ allophones together will produce the sound 'seat', not at all like 'cat', so
 letters of the alphabet are pronounced differently according to where they are
 used!
 
-General Instruments' SP0256 Orator Speech Processor makes use of the allophone
+General Instruments' SP0256 Narrator Speech Processor makes use of the allophone
 system by storing sounds, with instructions, in 16K ROM. A Microcontroller
 controls data flow from ROM to a digital filter where speech elements are
 linked together, along with pitch and amplitude information. The resulting

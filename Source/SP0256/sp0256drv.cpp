@@ -48,7 +48,7 @@ char SP0256::GetNextSample(void)
         double scaler = m_samplefreq/freq;
         m_sample_count += 1.0;
 
-        if (m_sample_count >= scaler)
+        while (m_sample_count >= scaler)
         {
                 m_sample_count -= scaler;
                 int sample = sp0256_getNextSample();

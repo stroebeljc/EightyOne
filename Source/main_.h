@@ -177,6 +177,7 @@ __published:	// IDE-managed Components
         TMenuItem *ReleaseHistoryNotes;
         TMenuItem *N14;
         TMenuItem *ExampleSpectrumProgramsMenuEntry;
+        TMenuItem *ResetParrotSpeech;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -289,6 +290,7 @@ __published:	// IDE-managed Components
         void __fastcall ReleaseHistoryNotesClick(TObject *Sender);
         void __fastcall ExampleSpectrumProgramsMenuEntryClick(
           TObject *Sender);
+        void __fastcall ResetParrotSpeechClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

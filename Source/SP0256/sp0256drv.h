@@ -30,8 +30,6 @@ private:
 
         SystemClock systemClock;
         Win32Sleeper sleeper;
-        int reset_counter;
-
 };
 
 

@@ -1321,6 +1321,10 @@ void sp0256_sendCommand( uint32_t cmd )
 	ivoice_wr( 0, cmd );
 }
 
+void sp0256_reset()
+{
+        ivoice_reset();
+}
 
 /*
 int sp0256_isNextSample()

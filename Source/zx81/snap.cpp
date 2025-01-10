@@ -729,60 +729,6 @@ int do_load_snap(char *filename, bool resetHardware)
         DebugUpdate();
         return(1);
 }
-/*
-void InitialiseHardware()
-{
-        HWSetMachine(MACHINEZX81, NULL);
-
-        InitialiseChroma();
-
-        SetComboBox(HW->SpeechBox, "None");        
-        SetComboBox(HW->ColourBox, "None");
-        SetComboBox(HW->SoundCardBox, "None");
-        SetComboBox(HW->ChrGenBox, "Sinclair");
-        SetComboBox(HW->HiResBox, "None");
-        SetComboBox(HW->RomCartridgeBox, "None");
-        SetComboBox(HW->ZXC1ConfigurationBox, "32K");
-        HW->ZXC1ConfigurationBox->Visible = false;
-        HW->RomCartridgeFileBox->Left = 86;
-        HW->RomCartridgeFileBox->Width = 281;
-        HW->RomCartridgeFileBox->Text = "";
-        HW->SinclairRomCartridgeFileBox->Text = "";
-        HW->TS1510RomCartridgeFileBox->Text = "";
-        HW->TS2068RomCartridgeFileBox->Text = "";
-        HW->TC2068RomCartridgeFileBox->Text = "";
-        HW->SinclairRomCartridgeFileBox->Visible = false;
-        HW->TS1510RomCartridgeFileBox->Visible = false;
-        HW->TS2068RomCartridgeFileBox->Visible = false;
-        HW->TC2068RomCartridgeFileBox->Visible = false;
-        HW->RomCartridgeFileBox->Visible = true;
-        HW->BrowseRomCartridge->Enabled = false;
-        HW->ZXPrinter->Checked = false;
-        HW->SetZXpandState(false,false);
-        HW->ProtectROM->Checked=true;
-        HW->EnableLowRAM->Checked=false;
-        HW->M1Not->Checked=false;
-        HW->ImprovedWait->Checked=false;
-        HW->FloatingPointHardwareFix->Checked=false;
-        HW->NTSC->Checked=false;
-
-        Form1->ChromaColourEnable->Checked = false;
-        Form1->ChromaColourEnable->Enabled = false;
-        Form1->ChromaColourEnable->Visible = false;
-        Form1->QSChrEnable->Checked = false;
-        Form1->QSChrEnable->Enabled = false;
-        Form1->QSChrEnable->Visible = false;
-        Form1->ResetMemotechHRG->Visible = false;
-        Form1->ResetMemotechHRG->Enabled = false;
-        Form1->ResetQuicksilvaHiRes->Visible = false;
-        Form1->ResetQuicksilvaHiRes->Enabled = false;
-
-        MemotechMode = 0;
-        QuicksilvaHiResMode = 0;
-        zx81.enableQSchrgen = false;
-        zx81.chromaColourSwitchOn = false;
-}
-*/
 
 int load_snap(char *filename)
 {

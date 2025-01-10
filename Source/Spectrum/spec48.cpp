@@ -330,15 +330,15 @@ void spec48_reset(void)
 
         ResetRomCartridge();
         DisableSpectra();
-
-        waitForSP0256 = false;
-        sp0256_AL2.Reset();
 }
 
 void spec48_initialise()
 {
         int j, romlen, pos, delay;
         unsigned int i;
+
+        waitForSP0256 = false;
+        sp0256_AL2.Reset();
         
         z80_init();
         tStatesCount = 0;

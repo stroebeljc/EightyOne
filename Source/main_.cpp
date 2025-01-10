@@ -78,6 +78,7 @@
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
 #include "sound\sound.h"
+#include "sp0256drv.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -2775,6 +2776,13 @@ void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
         AnsiString releaseHistoryFile = emulator.cwd;
         releaseHistoryFile += "Release history.txt";
         ShellExecute(NULL, "open", releaseHistoryFile.c_str(), "", NULL, SW_RESTORE);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ResetParrotSpeechClick(TObject *Sender)
+{
+        waitForSP0256 = false;
+        sp0256_AL2.Reset();        
 }
 //---------------------------------------------------------------------------
 

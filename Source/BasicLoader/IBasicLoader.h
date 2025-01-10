@@ -102,7 +102,7 @@ protected:
         virtual bool SupportUppercaseOnly() { return false; }
         virtual void ExtractInverseCharacters() {}
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr) { return false; }
-        virtual void ExtractDoubleQuoteCharacters() {}
+        virtual void ExtractDoubleQuoteCharacters(bool tokeniseRemContents, bool acceptAlternateKeywordSpelling) {}
         virtual bool SupportFloatingPointNumbers() { return false; }
         virtual unsigned char GetEmbbededNumberMark() { return '\0'; }
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}

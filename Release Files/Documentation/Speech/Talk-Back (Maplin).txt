@@ -20,7 +20,7 @@ allophones together will produce the sound 'seat', not at all like 'cat', so
 letters of the alphabet are pronounced differently according to where they are
 used!
 
-General Instruments' SP0256 Orator-Speech Processor makes use of the allophone
+General Instruments' SP0256 Orator Speech Processor makes use of the allophone
 system by storing sounds, with instructions, in 16K ROM. A Microcontroller
 controls data flow from ROM to a digital filter where speech elements are
 linked together, along with pitch and amplitude information. The resulting
@@ -95,6 +95,7 @@ can be heard in program 2.
 
 
 CHR$    CODE    ALLOPHONE       CHR$    CODE    ALLOPHONE       CHR$    CODE    ALLOPHONE
+
 ""      192     PAUSE 10ms      CHR$    214     OOW             FOR     235     ZER
 AT      193     PAUSE 30ms      NOT     215     AO              GOTO    236     NA
 TAB     194     PAUSE 50ms      **      216     AA              GOSUB   237     LL
@@ -103,10 +104,10 @@ VAL     197     OY              AND     218     AE              LOAD    239     
 LEN     198     AY              <=      219     HH1             LIST    240     WH
 SIN     199     EH              >=      220     BU              LET     241     YUH
 COS     200     KK3             <>      221     TH              PAUSE   242     CH
-TAN     201     PP              THEN    222     UO              NEXT    243     ERE
+TAN     201     PP              THEN    222     OU              NEXT    243     ERE
 ASN     202     JH              TO      223     UOO             POKE    244     ERR
 ACS     203     NN              STEP    224     OU              PRINT   245     UO
-ATN     204     1H              LPRINT  225     DD2             PLOT    246     DH2
+ATN     204     IH              LPRINT  225     DD2             PLOT    246     DH2
 LN      205     TT2             LLIST   226     GG              RUN     247     SS
 EXP     206     RR1             STOP    227     VE              SAVE    248     NNN
 INT     207     AX              SLOW    228     GU              RAND    249     HER

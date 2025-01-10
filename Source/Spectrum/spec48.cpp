@@ -1031,6 +1031,10 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_secreg((BYTE)Data);
                 break;
 
+        case 0x9f:
+                if (machine.speech == SPEECH_TYPE_ORATOR) sp0256_AL2.Write((BYTE)Data);
+                break;
+
         case 0xbb:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDPaged=0;
                 break;

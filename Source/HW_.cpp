@@ -1151,6 +1151,7 @@ void THW::ConfigureSpeech()
                 {
                         switch (SpeechBox->ItemIndex)
                         {
+                        case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
                         case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
                         case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                         case 0:
@@ -1161,7 +1162,8 @@ void THW::ConfigureSpeech()
                 {
                         switch (SpeechBox->ItemIndex)
                         {
-                        case 3: machine.speech = SPEECH_TYPE_USPEECH; break;
+                        case 4: machine.speech = SPEECH_TYPE_USPEECH; break;
+                        case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
                         case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
                         case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                         case 0:
@@ -1847,6 +1849,7 @@ void THW::SetupForSpectrum(void)
         SpeechBox->Items->Add("None");
         SpeechBox->Items->Add("Sweet Talker");
         SpeechBox->Items->Add("dk'tronics");
+        SpeechBox->Items->Add("Fuller Orator");
         SpeechBox->ItemIndex = 0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;

@@ -1141,6 +1141,9 @@ void THW::ConfigureSound()
 
 void THW::ConfigureSpeech()
 {
+        Form1->ResetParrotSpeech->Enabled = false;
+        Form1->ResetParrotSpeech->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
+
         if (NewMachine == MACHINESPECTRUM)
         {
                 if (NewSpec >= SPECCY128)
@@ -1169,7 +1172,12 @@ void THW::ConfigureSpeech()
                 {
                 case 3: machine.speech=SPEECH_TYPE_MAGECO; break;
                 case 2: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
-                case 1: machine.speech=SPEECH_TYPE_PARROT; break;
+                case 1:
+                {
+                        machine.speech=SPEECH_TYPE_PARROT;
+                        Form1->ResetParrotSpeech->Enabled = true;
+                        break;
+                }
                 case 0:
                 default: machine.speech=SPEECH_TYPE_NONE; break;
                 }

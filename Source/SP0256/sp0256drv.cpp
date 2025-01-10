@@ -31,8 +31,6 @@ SP0256::SP0256(model_t model)
         else
                 ivoice_init( sp0256_al2::mask );
 
-        reset_counter = 0;
-        
         // Create the Audio Thread
         m_ThreadHandle = CreateThread(0, 0, &CallThread, this, 0, &m_ThreadID);
 
@@ -68,21 +66,11 @@ void SP0256::ThreadFN()
 		outWave( uchar( sample ), uchar( sample ) );
 		systemClock.runCycles( 1000 );
 		outWaveCycles( 1 );
-
-                // Since the user doesn't have access to a physical reset
-                // button, this prevents the SP0256 from getting stuck
-                // forever if misprogrammed.
-                if (reset_counter)
-                {
-                        if (!--reset_counter)
-                                ivoice_reset();
-                }
         }
 }
 
 void SP0256::Write(unsigned char Data)
 {
-        reset_counter = 20000;
         sp0256_sendCommand( uint32_t( Data&0x3F ) );
 }
 
@@ -95,6 +83,5 @@ unsigned char SP0256::Busy(void)
 
 void SP0256::Reset()
 {
-        reset_counter = 1;
-        sp0256_sendCommand( uint32_t( 0x00 ) );
+        sp0256_reset();
 }

@@ -230,9 +230,6 @@ void zx81_reset()
         QuicksilvaHiResMode=0;
         ResetRomCartridge();
         DisableChroma();
-
-        waitForSP0256 = false;
-        sp0256_AL2.Reset();
 }
 
 void zx81_initialise()
@@ -240,6 +237,9 @@ void zx81_initialise()
         int i, romlen;
         z80_init();
         tStatesCount = 0;
+
+        waitForSP0256 = false;
+        sp0256_AL2.Reset();
 
         chromaSelected = (machine.colour == COLOURCHROMA);
         lambdaSelected = (emulator.machine == MACHINELAMBDA);

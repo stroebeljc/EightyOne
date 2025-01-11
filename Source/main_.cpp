@@ -2779,7 +2779,7 @@ void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::ResetParrotSpeechClick(TObject *Sender)
+void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
 {
         waitForSP0256 = false;
         sp0256_AL2.Reset();        

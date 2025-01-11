@@ -87,7 +87,7 @@ void ace_initialise()
         z80_init();
         tStatesCount = 0;
 
-        waitForSP0256 = false;
+        insertWaitsWhileSP0256Busy = false;
         sp0256_AL2.Reset();
 
         ResetLastIOAccesses();

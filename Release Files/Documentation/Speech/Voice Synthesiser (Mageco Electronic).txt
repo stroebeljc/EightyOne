@@ -110,7 +110,7 @@ allophones that you will choose wisely from the table in the appendix.
                            Programming For The ZX81
                            ========================
 
-The ZX 81 does not allow access to Input or Output ports simply from BASIC, you
+The ZX81 does not allow access to Input or Output ports simply from BASIC, you
 have to write a program in machine language.
 
 Keys to type                 Corresponding display

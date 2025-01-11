@@ -63,7 +63,6 @@ extern int ace_do_accurate();
 extern BOOL IsAnnotatableROM();
 extern void CreateZXpand();
 extern BOOL memotechResetPressed;
-     
-extern BOOL waitForSP0256;
+extern BOOL insertWaitsWhileSP0256Busy;
 
 #endif

@@ -2781,7 +2781,7 @@ void __fastcall TForm1::ReleaseHistoryNotesClick(TObject *Sender)
 
 void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
 {
-        waitForSP0256 = false;
+        insertWaitsWhileSP0256Busy = false;
         sp0256_AL2.Reset();        
 }
 //---------------------------------------------------------------------------

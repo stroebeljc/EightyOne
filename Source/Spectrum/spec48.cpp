@@ -337,7 +337,7 @@ void spec48_initialise()
         int j, romlen, pos, delay;
         unsigned int i;
 
-        waitForSP0256 = false;
+        insertWaitsWhileSP0256Busy = false;
         sp0256_AL2.Reset();
         
         z80_init();
@@ -980,7 +980,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        waitForSP0256 = true;
+                        insertWaitsWhileSP0256Busy = true;
                 }
                 break;
 
@@ -994,7 +994,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        waitForSP0256 = true;
+                        insertWaitsWhileSP0256Busy = true;
                 }
                 break;
 
@@ -1698,16 +1698,15 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
                 }                 
 
-                if (!waitForSP0256)
+                if (!insertWaitsWhileSP0256Busy)
                 {
                         ts=z80_do_opcode();
                 }
                 else
                 {
-                        // Sweet Talker asserts WAIT until the SP0256 is free, which will extend the length of the OUT
                         ts = 1;
                         z80.r = (WORD)((z80.r + 1) & 0x7f);
-                        waitForSP0256 = sp0256_AL2.Busy() ? true : false;
+                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
                 }
 
                 if (BasicLister->Visible &&

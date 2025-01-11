@@ -1143,7 +1143,7 @@ void THW::ConfigureSound()
 void THW::ConfigureSpeech()
 {
         Form1->ResetSpeech->Enabled = (SpeechBox->ItemIndex != 0);
-        Form1->ResetSpeech->Visible = (SpeechBox->Enabled);
+        Form1->ResetSpeech->Visible = SpeechBox->Enabled;
 
         if (NewMachine == MACHINESPECTRUM)
         {

@@ -478,7 +478,6 @@ void zx81BasicLoader::ExtractDoubleQuoteCharacters(bool tokeniseRemContents, boo
 {
         int i;
         bool withinQuote = false;    
-        bool withinRem = false;
 
         unsigned char* pRemBuffer = new unsigned char[sizeof(mLineBuffer)];
 
@@ -503,7 +502,7 @@ void zx81BasicLoader::ExtractDoubleQuoteCharacters(bool tokeniseRemContents, boo
 
         const char* const rem = "REM ";
         char* pRem = strstr((char*)&pRemBuffer[i], rem);
-        withinRem = (pRem == (char*)&pRemBuffer[i]);
+        bool withinRem = (pRem == (char*)&pRemBuffer[i]);
         if (withinRem && !tokeniseRemContents)
         {
                 return;

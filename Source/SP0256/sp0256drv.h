@@ -15,7 +15,7 @@ class SP0256
 public:
         SP0256(model_t model);
         void Write(unsigned char Data);
-        unsigned char Busy(void);
+        bool Busy(void);
         char GetNextSample(void);
         void Reset();
         void SetSamplingFreq(int freq);
@@ -23,7 +23,7 @@ public:
 private:
         double m_sample_count;
         int m_samplefreq;
-        unsigned char m_lastsample;
+        char m_lastsample;
 };
 
 

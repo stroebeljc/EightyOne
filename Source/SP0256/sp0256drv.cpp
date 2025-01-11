@@ -28,11 +28,11 @@ void SP0256::Write(unsigned char Data)
         sp0256_sendCommand( uint32_t( Data&0x3F ) );
 }
 
-unsigned char SP0256::Busy(void)
+bool SP0256::Busy(void)
 {
         unsigned int status = sp0256_getStatus();
 
-        return !status;
+        return status == 0;
 }
 
 void SP0256::SetSamplingFreq(int freq)
@@ -56,7 +56,7 @@ char SP0256::GetNextSample(void)
                 m_lastsample = (char)(sample & 0xFF);
         }
 
-        return uchar( m_lastsample );
+        return m_lastsample;
 }
 
 void SP0256::Reset()

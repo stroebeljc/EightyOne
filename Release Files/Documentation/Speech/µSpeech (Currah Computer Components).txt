@@ -1,7 +1,7 @@
-===========================
+==============================
 µSpeech for the ZX Spectrum
-Currah
-===========================
+Currah Computer Components Ltd
+==============================
 
 CURRAH µSPEECH programming manual
 

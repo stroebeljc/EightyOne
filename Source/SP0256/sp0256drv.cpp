@@ -43,7 +43,7 @@ void SP0256::SetSamplingFreq(int freq)
 char SP0256::GetNextSample(void)
 {
         const int xtal = 3120000;
-        const int freq = xtal/2/156;
+        const double freq = xtal/2/156;
 
         double scaler = m_samplefreq/freq;
         m_sample_count += 1.0;

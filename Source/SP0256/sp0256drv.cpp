@@ -12,7 +12,6 @@ SP0256::SP0256(model_t model) :
         m_scaler(22000/m_freq),
         m_sample_count(0.0),
         m_lastsample(0)
-
 {
         if (model==_012)
 	        sp0256_setLabels( sp0256_012::nlabels, sp0256_012::labels );

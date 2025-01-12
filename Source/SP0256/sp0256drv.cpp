@@ -6,12 +6,14 @@
 SP0256 sp0256_AL2(_AL2);
 //SP0256 sp0256_ivoice(_012);
 
-SP0256::SP0256(model_t model)
-{
-        m_sample_count = 0.0;
-        m_lastsample = 0;
-        m_samplefreq = 22000;
+SP0256::SP0256(model_t model) :
+        m_xtal(3120000),
+        m_freq(m_xtal/2/156),
+        m_scaler(22000/m_freq),
+        m_sample_count(0.0),
+        m_lastsample(0)
 
+{
         if (model==_012)
 	        sp0256_setLabels( sp0256_012::nlabels, sp0256_012::labels );
         else
@@ -37,20 +39,16 @@ bool SP0256::Busy(void)
 
 void SP0256::SetSamplingFreq(int freq)
 {
-        m_samplefreq = freq;
+        m_scaler = freq/m_freq;
 }
 
 char SP0256::GetNextSample(void)
 {
-        const int xtal = 3120000;
-        const double freq = xtal/2/156;
-
-        double scaler = m_samplefreq/freq;
         m_sample_count += 1.0;
 
-        while (m_sample_count >= scaler)
+        while (m_sample_count >= m_scaler)
         {
-                m_sample_count -= scaler;
+                m_sample_count -= m_scaler;
                 int sample = sp0256_getNextSample();
        	        sample >>= 8;
                 m_lastsample = (char)(sample & 0xFF);

@@ -21,8 +21,10 @@ public:
         void SetSamplingFreq(int freq);
 
 private:
+        const int m_xtal;
+        const double m_freq;
+        double m_scaler;
         double m_sample_count;
-        int m_samplefreq;
         char m_lastsample;
 };
 

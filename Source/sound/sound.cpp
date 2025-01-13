@@ -506,7 +506,7 @@ void CSound::Frame(void)
         ptr=Buffer;
         for(f=0;f<FrameSize;f++)
         {
-                char temp = (sp0256_AL2.GetNextSample()*VolumeLevel[4])/31;
+                char temp = ((sp0256_AL2.GetNextSample()/256)*VolumeLevel[4])/31;
                 *(ptr++)+=temp;
                 if(m_Channels == 2)
                         *(ptr++)+=temp;

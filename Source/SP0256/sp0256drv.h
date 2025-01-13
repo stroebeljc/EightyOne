@@ -16,16 +16,14 @@ public:
         SP0256(model_t model);
         void Write(unsigned char Data);
         bool Busy(void);
-        char GetNextSample(void);
+        int16_t GetNextSample(void);
         void Reset();
         void SetSamplingFreq(int freq);
 
 private:
-        const int m_xtal;
-        const double m_freq;
         double m_scaler;
         double m_sample_count;
-        char m_lastsample;
+        int16_t m_lastsample;
 };
 
 

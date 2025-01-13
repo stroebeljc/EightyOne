@@ -1334,7 +1334,7 @@ int sp0256_isNextSample()
 }
 */
 
-int sp0256_getNextSample()
+int16_t sp0256_getNextSample()
 {
     ivoice_t *ivoice = &intellivoice;
 	uint32_t optr = 0;

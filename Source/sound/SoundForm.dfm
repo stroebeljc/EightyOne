@@ -5,7 +5,7 @@ object MidiForm: TMidiForm
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
   ClientHeight = 312
-  ClientWidth = 273
+  ClientWidth = 312
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,14 @@ object MidiForm: TMidiForm
   object GroupBox1: TGroupBox
     Left = 8
     Top = 184
-    Width = 257
+    Width = 297
     Height = 65
     Caption = 'Send MIDI Output to:'
     TabOrder = 1
     object MidiBox: TComboBox
       Left = 16
       Top = 24
-      Width = 225
+      Width = 265
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akRight]
@@ -37,7 +37,7 @@ object MidiForm: TMidiForm
     end
   end
   object OK: TButton
-    Left = 199
+    Left = 238
     Top = 278
     Width = 67
     Height = 25
@@ -49,7 +49,7 @@ object MidiForm: TMidiForm
   object GroupBox2: TGroupBox
     Left = 8
     Top = 8
-    Width = 257
+    Width = 297
     Height = 169
     Caption = 'Mix'
     TabOrder = 0
@@ -60,30 +60,32 @@ object MidiForm: TMidiForm
       Height = 13
       Caption = 'AY Channel'
     end
-    object Label2: TLabel
+    object BeeperLabel: TLabel
       Left = 120
-      Top = 39
-      Width = 34
-      Height = 13
+      Top = 38
+      Width = 38
+      Height = 14
+      Alignment = taCenter
+      AutoSize = False
       Caption = 'Beeper'
     end
     object Label3: TLabel
       Left = 24
-      Top = 39
+      Top = 38
       Width = 7
       Height = 13
       Caption = 'A'
     end
     object Label4: TLabel
       Left = 56
-      Top = 39
+      Top = 38
       Width = 7
       Height = 13
       Caption = 'B'
     end
     object Label5: TLabel
       Left = 88
-      Top = 39
+      Top = 38
       Width = 7
       Height = 13
       Caption = 'C'
@@ -98,11 +100,18 @@ object MidiForm: TMidiForm
       Caption = '-   Mute   -'
     end
     object Label7: TLabel
-      Left = 177
+      Left = 217
       Top = 20
       Width = 61
       Height = 13
       Caption = 'Stereo Mode'
+    end
+    object Label8: TLabel
+      Left = 168
+      Top = 38
+      Width = 37
+      Height = 13
+      Caption = 'Speech'
     end
     object ChAVol: TTrackBar
       Left = 16
@@ -185,8 +194,8 @@ object MidiForm: TMidiForm
       OnClick = MidiChange
     end
     object RadioButtonMono: TRadioButton
-      Left = 184
-      Top = 41
+      Left = 224
+      Top = 38
       Width = 63
       Height = 17
       Caption = 'Mono'
@@ -195,20 +204,29 @@ object MidiForm: TMidiForm
       TabStop = True
     end
     object RadioButtonACB: TRadioButton
-      Left = 184
-      Top = 58
+      Left = 224
+      Top = 55
       Width = 63
       Height = 17
       Caption = 'ACB'
       TabOrder = 7
     end
+    object SpeechMute: TCheckBox
+      Left = 180
+      Top = 139
+      Width = 17
+      Height = 17
+      TabOrder = 8
+      OnClick = MidiChange
+    end
   end
-  object BeeperSettingsGroupBox: TGroupBox
+  object VideoSoundGroupBox: TGroupBox
     Left = 8
     Top = 256
     Width = 177
     Height = 49
-    Caption = 'Beeper Settings'
+    Caption = 'Video Sound Settings'
+    Enabled = False
     TabOrder = 2
     object BeeperExcludeHSyncs: TCheckBox
       Left = 8
@@ -219,5 +237,21 @@ object MidiForm: TMidiForm
       TabOrder = 0
       OnClick = BeeperExcludeHSyncsClick
     end
+  end
+  object SpeechVol: TTrackBar
+    Left = 184
+    Top = 59
+    Width = 41
+    Height = 89
+    Max = 31
+    Orientation = trVertical
+    Frequency = 16
+    Position = 0
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 4
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = MidiChange
   end
 end

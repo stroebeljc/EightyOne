@@ -419,9 +419,6 @@
             <DependentOn>sound\SoundOP.h</DependentOn>
             <BuildOrder>36</BuildOrder>
         </CppCompile>
-        <CppCompile Include="SP0256\audio.cpp">
-            <BuildOrder>121</BuildOrder>
-        </CppCompile>
         <CppCompile Include="SP0256\sp0256.c">
             <BuildOrder>127</BuildOrder>
         </CppCompile>
@@ -433,12 +430,6 @@
         </CppCompile>
         <CppCompile Include="SP0256\sp0256_al2.cpp">
             <BuildOrder>124</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="SP0256\SystemClock.cpp">
-            <BuildOrder>127</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="SP0256\Win32Audio.cpp">
-            <BuildOrder>128</BuildOrder>
         </CppCompile>
         <CppCompile Include="Spectra\Spectra.cpp">
             <BuildOrder>116</BuildOrder>

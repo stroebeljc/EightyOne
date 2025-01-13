@@ -193,6 +193,7 @@ bool zx80rom;
 bool zx81rom;
 BOOL memotechResetPressed;
 BOOL memotechResetRequested;
+BOOL insertWaitsWhileSP0256Busy;
 
 int videoFlipFlop1Q;
 int videoFlipFlop2Q;
@@ -236,6 +237,9 @@ void zx81_initialise()
         int i, romlen;
         z80_init();
         tStatesCount = 0;
+
+        insertWaitsWhileSP0256Busy = false;
+        sp0256_AL2.Reset();
 
         chromaSelected = (machine.colour == COLOURCHROMA);
         lambdaSelected = (emulator.machine == MACHINELAMBDA);
@@ -492,6 +496,11 @@ void zx81_WriteByte(int Address, int Data)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
                 if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data,frametstates);
+        }
+
+        if (machine.speech == SPEECH_TYPE_TALKBACK)
+        {
+                if (Address == 0x4021) sp0256_AL2.Write((BYTE)Data);
         }
 
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
@@ -767,6 +776,10 @@ BYTE zx81_ReadByte(int Address)
                  (Address >= 0x2800 && Address < 0x3000)))
         {
                 data=memory[Address];
+        }
+        else if ((machine.speech == SPEECH_TYPE_TALKBACK) && (Address == 0x4021) && (memory[Address] & 0x40))
+        {
+                data = sp0256_AL2.Busy() ? (BYTE)0x00 : idleDataBus;
         }
         else if (zx81.RAM816k && Address >= 0x2000 && Address < 0x4000)
         {
@@ -1159,6 +1172,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
+                        insertWaitsWhileSP0256Busy = true;
                 }
                 break;
 
@@ -1171,6 +1185,21 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
+                        insertWaitsWhileSP0256Busy = true;
+                }
+                break;
+
+        case 0x3f:
+                if (machine.speech == SPEECH_TYPE_MAGECO)
+                {
+                        if (Data & 0x80)
+                        {
+                                sp0256_AL2.Reset();
+                        }
+                        else
+                        {
+                                sp0256_AL2.Write((BYTE)Data);
+                        }
                 }
                 break;
 
@@ -1281,7 +1310,7 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 // Note that the Parrot only decodes A7, A5, and A4.
                 //  If these are all 0, then the Parrot performs I/O.
-                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return !sp0256_AL2.Busy();
+                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : idleDataBus;
 
                 switch(Address&255)
                 {
@@ -1300,6 +1329,10 @@ BYTE ReadInputPort(int Address, int *tstates)
                 case 0x17:
                         if (zxpand) return (BYTE)zxpand->IO_ReadStatus();
                         return 0;
+
+                case 0x3f:
+                        if (machine.speech == SPEECH_TYPE_MAGECO) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : idleDataBus;
+                        break;
 
                 case 0x41:
                         if (spectrum.floppytype==FLOPPYLARKEN81) return(0xfe);
@@ -1547,7 +1580,18 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
+                int ts;
+
+                if (insertWaitsWhileSP0256Busy && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
+                {
+                        ts = 1;
+                        z80.r = (WORD)((z80.r + 1) & 0x7f);
+                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
+                }
+                else
+                {
+                        ts=z80_do_opcode();
+                }
 
                 if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))
                 {
@@ -1575,8 +1619,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 {
                         int c = 0;
                         int instructionPosition = lineClockCounter;
-                        bool insertedWaitStates = false;
                         bool nmiOffInstruction = (LastInstruction == LASTINSTOUTFD);
+                        bool insertedWaitStates = false;
 
                         while ((mCycles[c] != 0) && !insertedWaitStates)
                         {
@@ -2132,7 +2176,18 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
+                int ts;
+
+                if (insertWaitsWhileSP0256Busy && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
+                {
+                        ts = 1;
+                        z80.r = (WORD)((z80.r + 1) & 0x7f);
+                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
+                }
+                else
+                {
+                        ts=z80_do_opcode();
+                }
 
                 if (BasicLister->Visible &&
                     ((zx80rom && z80.pc.w == 0x04F4) ||

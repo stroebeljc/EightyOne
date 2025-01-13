@@ -58,7 +58,7 @@ private:
         virtual void OutputEndOfProgramData(int& addressOffset);
         virtual void ExtractInverseCharacters();
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr);
-        virtual void ExtractDoubleQuoteCharacters();
+        virtual void ExtractDoubleQuoteCharacters(bool tokeniseRemContents, bool acceptAlternateKeywordSpelling);
         virtual unsigned char GetEmbbededNumberMark();
         virtual bool SupportUppercaseOnly();
         virtual bool TokenSupportsLineNumber(unsigned char chr);

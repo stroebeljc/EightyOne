@@ -37,6 +37,7 @@
 #include "tzxman.h"
 #include "ide.h"
 #include "LiveMemoryWindow_.h"
+#include "sp0256drv.h"
 
 #define BASE 0
 #define HBLANKCOLOUR (BASE+0*16)
@@ -85,6 +86,9 @@ void ace_initialise()
         int i, romlen;
         z80_init();
         tStatesCount = 0;
+
+        insertWaitsWhileSP0256Busy = false;
+        sp0256_AL2.Reset();
 
         ResetLastIOAccesses();
 

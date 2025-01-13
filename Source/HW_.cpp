@@ -36,6 +36,7 @@
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
 #include "zx97config.h"
+#include "SoundForm.h"
 
 //extern "C" void sound_ay_init(void);
 extern "C" BYTE ZX1541Mem[];
@@ -733,6 +734,17 @@ void THW::ConfigureColour()
         }
         Form1->DisplayArt->Enabled = (machine.colour != COLOURSPECTRA);
 
+        /*
+        if (machine.colour == COLOURCHROMA)
+        {
+                Form1->Sound1->Checked = true;
+        }
+        else if (machine.colour == COLOURDISABLED)
+        {
+                Form1->Sound1->Checked = false;
+        }
+        */
+        
         ConfigureChroma(prevChromaColourSwitchOn);
         ConfigureSpectra(prevSpectraColourSwitchOn);
 }
@@ -1129,25 +1141,32 @@ void THW::ConfigureSound()
 
 void THW::ConfigureSpeech()
 {
+        Form1->ResetSpeech->Enabled = (SpeechBox->ItemIndex != 0);
+        Form1->ResetSpeech->Visible = SpeechBox->Enabled;
+
         if (NewMachine == MACHINESPECTRUM)
         {
                 if (NewSpec >= SPECCY128)
                 {
                         switch (SpeechBox->ItemIndex)
                         {
-                        case 1: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                        case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
+                        case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
+                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                         case 0:
-                        default: machine.speech=SPEECH_TYPE_NONE; break;
+                        default: machine.speech = SPEECH_TYPE_NONE; break;
                         }
                 }
                 else
                 {
                         switch (SpeechBox->ItemIndex)
                         {
-                        case 2: machine.speech=SPEECH_TYPE_USPEECH; break;
-                        case 1: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
+                        case 4: machine.speech = SPEECH_TYPE_USPEECH; break;
+                        case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
+                        case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
+                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
                         case 0:
-                        default: machine.speech=SPEECH_TYPE_NONE; break;
+                        default: machine.speech = SPEECH_TYPE_NONE; break;
                         }
                 }
         }
@@ -1155,15 +1174,21 @@ void THW::ConfigureSpeech()
         {
                 switch (SpeechBox->ItemIndex)
                 {
-                case 2: machine.speech=SPEECH_TYPE_SWEETTALKER_REV2; break;
-                case 1: machine.speech=SPEECH_TYPE_PARROT; break;
+                case 4: machine.speech = SPEECH_TYPE_TALKBACK; break;
+                case 3: machine.speech = SPEECH_TYPE_MAGECO; break;
+                case 2: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
+                case 1:
+                {
+                        machine.speech = SPEECH_TYPE_PARROT;
+                        break;
+                }
                 case 0:
-                default: machine.speech=SPEECH_TYPE_NONE; break;
+                default: machine.speech = SPEECH_TYPE_NONE; break;
                 }
         }
         else
         {
-                machine.speech=SPEECH_TYPE_NONE;
+                machine.speech = SPEECH_TYPE_NONE;
         }
 }
 
@@ -1685,6 +1710,8 @@ void THW::SetupForZX81(void)
         SpeechBox->Items->Add("None");
         SpeechBox->Items->Add("The Parrot");
         SpeechBox->Items->Add("Sweet Talker");
+        SpeechBox->Items->Add("Mageco");
+        SpeechBox->Items->Add("Talk-Back");
         SpeechBox->ItemIndex=0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;
@@ -1715,6 +1742,10 @@ void THW::SetupForZX81(void)
 
         SetZX80Icon();
         SetSpectrum128Icon();
+
+        Form1->Sound1->Caption = "Video So&und";
+        const bool zx81 = true;
+        MidiForm->SetComputer(zx81);
 }
 
 void THW::SetZXpandState(bool checked, bool enabled)
@@ -1815,6 +1846,8 @@ void THW::SetupForSpectrum(void)
         SpeechBox->Items->Clear();
         SpeechBox->Items->Add("None");
         SpeechBox->Items->Add("Sweet Talker");
+        SpeechBox->Items->Add("dk'tronics");
+        SpeechBox->Items->Add("Fuller Orator");
         SpeechBox->ItemIndex = 0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;
@@ -1912,6 +1945,10 @@ void THW::SetupForSpectrum(void)
 
         SetZX80Icon();
         SetSpectrum128Icon();
+
+        Form1->Sound1->Caption = "Beeper So&und";
+        const bool zx81 = false;
+        MidiForm->SetComputer(zx81);
 }
 
 //---------------------------------------------------------------------------

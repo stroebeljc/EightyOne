@@ -96,6 +96,7 @@ void sp0256_setFifoEnabled( int enabled );
 uint32_t sp0256_getStatus();
 int sp0256_halted();
 void sp0256_sendCommand( uint32_t cmd );
+void sp0256_reset();
 /*
 int sp0256_isNextSample();
 */

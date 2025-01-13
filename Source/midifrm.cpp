@@ -100,3 +100,4 @@ void TMidiForm::LoadSettings(TIniFile *ini)
         BeeperMute->Checked=ini->ReadBool("MIDI","BeeperMute",BeeperMute->Checked);
         MidiChange(NULL);
 }
+

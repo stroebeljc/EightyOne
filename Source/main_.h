@@ -176,6 +176,7 @@ __published:	// IDE-managed Components
         TMenuItem *ReleaseHistoryNotes;
         TMenuItem *N14;
         TMenuItem *ExampleSpectrumProgramsMenuEntry;
+        TMenuItem *ResetSpeech;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -288,6 +289,7 @@ __published:	// IDE-managed Components
         void __fastcall ReleaseHistoryNotesClick(TObject *Sender);
         void __fastcall ExampleSpectrumProgramsMenuEntryClick(
           TObject *Sender);
+        void __fastcall ResetSpeechClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -296,7 +298,7 @@ private:	// User declarations
         void BuildDocumentationMenu();
         void BuildZX81ExamplesMenu();
         void BuildSpectrumExamplesMenu();
-        void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString path);
+        void AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path);
         void AddZX81ExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         void AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;

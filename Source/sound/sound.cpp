@@ -50,6 +50,7 @@
 #include "sound\soundop.h"
 #include "sound\midi.h"
 #include "zx81config.h"
+#include "sp0256drv.h"
 
 CSound Sound;
 
@@ -109,6 +110,8 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         BeeperTickIncr=(1<<24)/m_SampleRate;
 
         AYInit();  // initialise the AY Chip
+
+        sp0256_AL2.SetSamplingFreq(m_SampleRate);
 
         DXSound.Play();
         return(0);
@@ -498,6 +501,16 @@ void CSound::Frame(void)
         //        memset(Buffer,128,FrameSize*m_Channels);
 
         if (machine.aysound) AYOverlay();
+
+        // Overlay speech audio
+        ptr=Buffer;
+        for(f=0;f<FrameSize;f++)
+        {
+                char temp = (sp0256_AL2.GetNextSample()*VolumeLevel[4])/31;
+                *(ptr++)+=temp;
+                if(m_Channels == 2)
+                        *(ptr++)+=temp;
+        }
 
         DXSound.Frame(Buffer, FrameSize*m_Channels);
         SoundOutput->UpdateImage(Buffer,FrameSize*m_Channels);

@@ -168,8 +168,6 @@ RZX_EMULINFO  RZXemulinfo =
 
 int RZXError;
 
-bool waitForSP0256;
-
 void spec48_LoadRZX(char *FileName)
 {
         rzx_playback(FileName);
@@ -332,14 +330,15 @@ void spec48_reset(void)
 
         ResetRomCartridge();
         DisableSpectra();
-
-        waitForSP0256 = false;
 }
 
 void spec48_initialise()
 {
         int j, romlen, pos, delay;
         unsigned int i;
+
+        insertWaitsWhileSP0256Busy = false;
+        sp0256_AL2.Reset();
         
         z80_init();
         tStatesCount = 0;
@@ -981,7 +980,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        waitForSP0256 = true;
+                        insertWaitsWhileSP0256Busy = true;
                 }
                 break;
 
@@ -995,7 +994,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
                 {
                         sp0256_AL2.Write((BYTE)Data);
-                        waitForSP0256 = true;
+                        insertWaitsWhileSP0256Busy = true;
                 }
                 break;
 
@@ -1025,10 +1024,15 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         case 0x7f:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_datareg((BYTE)Data);
+                if (machine.speech == SPEECH_TYPE_DKTRONICS) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x9b:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_secreg((BYTE)Data);
+                break;
+
+        case 0x9f:
+                if (machine.speech == SPEECH_TYPE_ORATOR) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0xbb:
@@ -1309,7 +1313,6 @@ int spec48_contendio(int Address, int states, int time)
 */
 }
 
-
 BYTE spec48_readport(int Address, int *tstates)
 {
         BYTE data = ReadPort(Address, tstates);
@@ -1393,6 +1396,7 @@ BYTE ReadPort(int Address, int *tstates)
 
         case 0x7f:
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
+                if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
 
         case 0x9b:
@@ -1694,15 +1698,15 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
                 }                 
 
-                if (!waitForSP0256)
+                if (!insertWaitsWhileSP0256Busy)
                 {
                         ts=z80_do_opcode();
                 }
                 else
                 {
-                        // Speculation is that the SweetTalker asserts WAIT until the SP0256 is free 
                         ts = 1;
-                        waitForSP0256 = sp0256_AL2.Busy() ? true : false;
+                        z80.r = (WORD)((z80.r + 1) & 0x7f);
+                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
                 }
 
                 if (BasicLister->Visible &&

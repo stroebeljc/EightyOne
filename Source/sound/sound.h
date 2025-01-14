@@ -112,7 +112,7 @@ private:
         int FramesPerSecond;
 
         unsigned char AYToneLevels[16];
-        char *Buffer;
+        unsigned char *Buffer;
         int OldPos,FillPos,OldVal,OldValOrig;
 
 	// timer used for fadeout after beeper-toggle;

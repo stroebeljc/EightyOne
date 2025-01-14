@@ -94,7 +94,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         FrameSize=m_SampleRate/m_FPS;
 
-        Buffer = new char[FrameSize*m_Channels*m_BytesPerSample];
+        Buffer = new BYTE[FrameSize*m_Channels*m_BytesPerSample];
 
         if(Buffer==NULL)
         {
@@ -240,7 +240,7 @@ void CSound::AYOverlay(void)
                 AYChange[f].ofs=(unsigned short)((AYChange[f].tstates*m_SampleRate)/machine.clockspeed);
 
         int offset=m_BytesPerSample==2?1:0;
-        for(f=0,ptr=Buffer+offset;f<FrameSize;f++,ptr+=m_Channels*m_BytesPerSample)
+        for(f=0,ptr=(char *)Buffer+offset;f<FrameSize;f++,ptr+=m_Channels*m_BytesPerSample)
         {
                 // update ay registers. All this sub-frame change stuff
                 // is pretty hairy, but how else would you handle the
@@ -486,7 +486,7 @@ void CSound::Frame(void)
 
         //if(zx81.vsyncsound)
         {
-                ptr=Buffer+m_Channels*FillPos*m_BytesPerSample;
+                ptr=(char *)Buffer+m_Channels*FillPos*m_BytesPerSample;
                 for(f=FillPos;f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
@@ -509,7 +509,7 @@ void CSound::Frame(void)
         if (machine.aysound) AYOverlay();
         
         // Overlay speech audio
-        ptr=Buffer;
+        ptr=(char *)Buffer;
         for(f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
@@ -538,7 +538,7 @@ void CSound::Frame(void)
                 }
         }
 
-        DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
+        DXSound.Frame(Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,m_BytesPerSample);
 
         OldPos=-1;
@@ -585,7 +585,7 @@ void CSound::Beeper(int on, int frametstates)
         if(newpos>=0)
         {
                 //  fill gap from previous position
-                ptr=Buffer+m_Channels*FillPos*m_BytesPerSample;
+                ptr=(char *)Buffer+m_Channels*FillPos*m_BytesPerSample;
                 for(f=FillPos;f<newpos && f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
@@ -604,7 +604,7 @@ void CSound::Beeper(int on, int frametstates)
                 if(newpos<FrameSize)
                 {
                         // newpos may be less than FillPos, so...
-                        ptr=Buffer+m_Channels*newpos*m_BytesPerSample;
+                        ptr=(char *)Buffer+m_Channels*newpos*m_BytesPerSample;
 
                         // limit subval in case of faded beeper level,
                         // to avoid slight spikes on ordinary tones.

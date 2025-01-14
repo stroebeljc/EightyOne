@@ -43,6 +43,7 @@ public:		// User declarations
         __fastcall TSoundOutput(TComponent* Owner);
         void UpdateImage(unsigned char *data, int channels, int bytesPerSample);
         void LoadSettings(TIniFile *ini);
+        void SaveSettings(TIniFile *ini);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TSoundOutput *SoundOutput;

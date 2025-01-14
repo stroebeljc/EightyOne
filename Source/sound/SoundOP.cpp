@@ -55,7 +55,7 @@ void TSoundOutput::UpdateImage(unsigned char *data, int len)
         for (x=0; x<Image1->Width; x++)
         {
                 //Img->MoveTo(x,64);
-                Img->LineTo(x, data[x]/2);
+                Img->LineTo(x, data[2*x]/2);
         }
 }
 //---------------------------------------------------------------------------

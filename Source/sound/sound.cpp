@@ -146,8 +146,6 @@ void CSound::AYInit(void)
         int f,clock;
         double v;
 
-        for(f=0;f<4;f++) VolumeLevel[f]=AMPL_AY_TONE;
-
         // logarithmic volume levels, 3dB per step
         v=AMPL_AY_TONE;
         for(f=15;f>0;f--)

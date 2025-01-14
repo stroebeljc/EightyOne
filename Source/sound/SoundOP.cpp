@@ -34,7 +34,7 @@
 TSoundOutput *SoundOutput;
 //---------------------------------------------------------------------------
 
-void TSoundOutput::UpdateImage(unsigned char *data, int len)
+void TSoundOutput::UpdateImage(unsigned char *data, int channels)
 {
         long x;
         static int skip=0;
@@ -55,7 +55,7 @@ void TSoundOutput::UpdateImage(unsigned char *data, int len)
         for (x=0; x<Image1->Width; x++)
         {
                 //Img->MoveTo(x,64);
-                Img->LineTo(x, data[x]/2);
+                Img->LineTo(x, data[channels*x]/2);
         }
 }
 //---------------------------------------------------------------------------

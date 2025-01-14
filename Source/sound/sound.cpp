@@ -357,7 +357,7 @@ void CSound::AYOverlay(void)
                                 // chan c shouldn't be full vol on both channels
                                 int atv = *ptr * 3/4;
                                 ptr[0]=(unsigned char)atv;
-                                ptr[1]=(unsigned char)atv;
+                                ptr[1*m_BytesPerSample]=(unsigned char)atv;
                         }
                 }
                 if((mixer&1)==0 || (mixer&0x08)==0)
@@ -372,11 +372,11 @@ void CSound::AYOverlay(void)
                         // channel B
                         level=(noise_toggle || (mixer&0x10))?tone_level[1]:0;
                         level=(level*VolumeLevel[0])/31;
-                        AY_OVERLAY_TONE(ptr+(ACBMix?1:0),1,level);
+                        AY_OVERLAY_TONE(ptr+(ACBMix?1:0)*m_BytesPerSample,1,level);
                 }
 
                 if(!ACBMix)
-                        ptr[1]=*ptr;
+                        ptr[1*m_BytesPerSample]=*ptr;
 
                 // update noise RNG/filter
                 AYNoiseTick+=AYTickIncr;

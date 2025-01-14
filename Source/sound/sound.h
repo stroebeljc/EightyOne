@@ -100,6 +100,7 @@ private:
 
         HWND m_hWnd;
         int m_BitsPerSample;
+        int m_BytesPerSample;
         int m_SampleRate;
         int m_Channels;
         int m_FPS;
@@ -111,8 +112,7 @@ private:
         int FramesPerSecond;
 
         unsigned char AYToneLevels[16];
-        unsigned char *Buffer;
-        unsigned char *SoundPtr;
+        char *Buffer;
         int OldPos,FillPos,OldVal,OldValOrig;
 
 	// timer used for fadeout after beeper-toggle;

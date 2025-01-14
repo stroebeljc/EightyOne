@@ -61,9 +61,8 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_WFE.nChannels = (WORD)m_Channels;
         m_WFE.nSamplesPerSec = m_SampleRate;
         m_WFE.wBitsPerSample = (WORD)m_BitsPerSample;
-        m_WFE.nBlockAlign = m_WFE.nChannels;
-        m_WFE.nAvgBytesPerSec = m_WFE.nChannels *
-                        m_WFE.nSamplesPerSec * m_WFE.wBitsPerSample/8;
+        m_WFE.nBlockAlign = (WORD)(m_WFE.nChannels * m_BitsPerSample / 8);
+        m_WFE.nAvgBytesPerSec = m_WFE.nSamplesPerSec * m_WFE.nBlockAlign;
 
         // Calculate Bufferlengths
         // AudioQueue is 2 Seconds long

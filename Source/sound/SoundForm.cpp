@@ -45,7 +45,6 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 
-        zx81.beeperExcludeHSyncs = BeeperExcludeHSyncs->Checked;
         Sound.ReInitialise(0, 0, 16, 44100, 2);
 }
 //---------------------------------------------------------------------------
@@ -64,6 +63,9 @@ void __fastcall TMidiForm::FormDestroy(TObject *Sender)
 void __fastcall TMidiForm::MidiChange(TObject *Sender)
 {
         static int LastMidiItem=0;
+
+        //BeeperExcludeHSyncs->Enabled=!RadioButtonACB->Checked;
+        //BeeperExcludeHSyncs->Checked=RadioButtonACB->Checked?true:zx81.beeperExcludeHSyncs;
 
         Sound.VolumeLevel[0]= AYMute->Checked ? 0:ChAVol->Max - ChAVol->Position;
         Sound.VolumeLevel[1]= AYMute->Checked ? 0:ChBVol->Max - ChBVol->Position;
@@ -115,9 +117,9 @@ void TMidiForm::LoadSettings(TIniFile *ini)
         RadioButtonACB->Checked=ini->ReadBool("MIDI","AYMixACB",RadioButtonACB->Checked);
         BeeperExcludeHSyncs->Checked=ini->ReadBool("MIDI","BeeperExcludeHSyncs",BeeperExcludeHSyncs->Checked);
 
-        OKClick(NULL);
+        zx81.beeperExcludeHSyncs = BeeperExcludeHSyncs->Checked;
 
-        MidiChange(NULL);
+        OKClick(NULL);
 }
 
 void __fastcall TMidiForm::BeeperExcludeHSyncsClick(TObject *Sender)

@@ -232,6 +232,7 @@ void CSound::AYOverlay(void)
 
         change_ptr=AYChange;
         changes_left=AYChangeCount;
+        bool stereo = (m_Channels==2)&&ACBMix;
 
         // If no AY chip, don't produce any AY sound (!)
         //if(!sound_ay) return;
@@ -352,7 +353,7 @@ void CSound::AYOverlay(void)
                         // channel C
                         level=(tone_level[2]*VolumeLevel[2])/31;
                         AY_OVERLAY_TONE(ptr,2,level);
-                        if(ACBMix)
+                        if(stereo)
                         {
                                 // chan c shouldn't be full vol on both channels
                                 char atv = *ptr * 3/4;
@@ -370,7 +371,7 @@ void CSound::AYOverlay(void)
                 {
                         // channel B
                         level=(tone_level[1]*VolumeLevel[1])/31;
-                        AY_OVERLAY_TONE(ptr+(ACBMix?1:0)*m_BytesPerSample,1,level);
+                        AY_OVERLAY_TONE(ptr+(stereo?1:0)*m_BytesPerSample,1,level);
                 }
 
                 // generate noise
@@ -393,10 +394,10 @@ void CSound::AYOverlay(void)
                         // channel B
                         level=noise_toggle?tone_level[1]:0;
                         level=(level*VolumeLevel[1])/31;
-                        ptr[(ACBMix?1:0)*m_BytesPerSample]+=level;
+                        ptr[(stereo?1:0)*m_BytesPerSample]+=level;
                 }
 
-                if(!ACBMix)
+                if(!stereo&&(m_Channels==2))
                         ptr[1*m_BytesPerSample]=*ptr;
 
                 // update noise RNG/filter

@@ -228,6 +228,7 @@ void CSound::AYOverlay(void)
         int changes_left;
         int reg,r;
         int was_high;
+        unsigned int FineValue, CoarseValue, TonePeriod;
 
         change_ptr=AYChange;
         changes_left=AYChangeCount;
@@ -343,36 +344,56 @@ void CSound::AYOverlay(void)
                         }
                 }
 
-                // generate tone+noise
+                // generate tone
                 // channel C first to make ACB easier
                 mixer=AYRegisters[7];
-                if((mixer&4)==0 || (mixer&0x20)==0)
+                if((mixer&4)==0)
                 {
                         // channel C
-                        level=(noise_toggle || (mixer&0x20))?tone_level[2]:0;
-                        level=(level*VolumeLevel[2])/31;
+                        level=(tone_level[2]*VolumeLevel[2])/31;
                         AY_OVERLAY_TONE(ptr,2,level);
                         if(ACBMix)
                         {
                                 // chan c shouldn't be full vol on both channels
-                                int atv = *ptr * 3/4;
-                                ptr[0]=(unsigned char)atv;
-                                ptr[1*m_BytesPerSample]=(unsigned char)atv;
+                                char atv = *ptr * 3/4;
+                                ptr[0]=atv;
+                                ptr[1*m_BytesPerSample]=atv;
                         }
                 }
-                if((mixer&1)==0 || (mixer&0x08)==0)
+                if((mixer&1)==0)
                 {
                         // channel A
-                        level=(noise_toggle || (mixer&0x08))?tone_level[0]:0;
-                        level=(level*VolumeLevel[1])/31;
+                        level=(tone_level[0]*VolumeLevel[0])/31;
                         AY_OVERLAY_TONE(ptr,0,level);
                 }
-                if((mixer&2)==0 || (mixer&0x10)==0)
+                if((mixer&2)==0)
                 {
                         // channel B
-                        level=(noise_toggle || (mixer&0x10))?tone_level[1]:0;
-                        level=(level*VolumeLevel[0])/31;
+                        level=(tone_level[1]*VolumeLevel[1])/31;
                         AY_OVERLAY_TONE(ptr+(ACBMix?1:0)*m_BytesPerSample,1,level);
+                }
+
+                // generate noise
+                if((mixer&0x20)==0)
+                {
+                        // channel C
+                        level=noise_toggle?tone_level[2]:0;
+                        level=(level*VolumeLevel[2])/31;
+                        ptr[0]+=level;
+                }
+                if((mixer&0x08)==0)
+                {
+                        // channel A
+                        level=noise_toggle?tone_level[0]:0;
+                        level=(level*VolumeLevel[0])/31;
+                        ptr[0]+=level;
+                }
+                if((mixer&0x10)==0)
+                {
+                        // channel B
+                        level=noise_toggle?tone_level[1]:0;
+                        level=(level*VolumeLevel[1])/31;
+                        ptr[(ACBMix?1:0)*m_BytesPerSample]+=level;
                 }
 
                 if(!ACBMix)
@@ -522,6 +543,8 @@ void CSound::Frame(void)
                         *(ptr++)=buffval/256 & 0xFF;
                         if(m_Channels == 2)
                         {
+                                buffval = *ptr + (*(ptr+1))*256;
+                                buffval+=temp;
                                 *(ptr++)=buffval & 0xFF;
                                 *(ptr++)=buffval/256 & 0xFF;
                         }
@@ -533,6 +556,8 @@ void CSound::Frame(void)
                         *(ptr++)=(buffval+128) & 0xFF;
                         if(m_Channels == 2)
                         {
+                                buffval = *ptr;
+                                buffval+=temp/256;
                                 *(ptr++)=(buffval+128) & 0xFF;
                         }
                 }

@@ -138,7 +138,6 @@ private:
         unsigned char AYRegisterStore[16];
         struct AYChangeTag AYChange[AY_CHANGE_MAX];
         int AYChangeCount;
-        unsigned int FineValue, CoarseValue, TonePeriod;
 
 };
 

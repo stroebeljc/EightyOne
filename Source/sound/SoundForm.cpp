@@ -45,6 +45,7 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 
+        zx81.beeperExcludeHSyncs = BeeperExcludeHSyncs->Checked;
         Sound.ReInitialise(0, 0, 16, 44100, 2);
 }
 //---------------------------------------------------------------------------

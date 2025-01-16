@@ -393,7 +393,7 @@ void CSound::AYOverlay(void)
                 {
                         // channel C
                         level=noise_toggle?tone_level[2]:0;
-                        level=(level*VolumeLevel[2])/31;
+                        level=(256*level*VolumeLevel[2])/31;
                         if(stereo)
                         {
                                 // chan c shouldn't be full vol on both channels
@@ -409,14 +409,14 @@ void CSound::AYOverlay(void)
                 {
                         // channel A
                         level=noise_toggle?tone_level[0]:0;
-                        level=(level*VolumeLevel[0])/31;
+                        level=(256*level*VolumeLevel[0])/31;
                         ch1+=level;
                 }
                 if((mixer&0x10)==0)
                 {
                         // channel B
                         level=noise_toggle?tone_level[1]:0;
-                        level=(level*VolumeLevel[1])/31;
+                        level=(256*level*VolumeLevel[1])/31;
                         if (stereo)
                         {
                                 ch2+=level;
@@ -494,7 +494,6 @@ void CSound::AYReset(void)
         for(f=0;f<16;f++)
                 AYWrite(f,0,0);
 
-        AYWrite(7,255,0);
         AYOverlay();
 }
 

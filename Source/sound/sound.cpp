@@ -538,11 +538,12 @@ void CSound::Frame(void)
                 for(f=FillPos;f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        Buffer[f*m_Channels]=OldVal*256;
+                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]=tempval;
 
                         if(m_Channels == 2)
                         {
-                                Buffer[f*m_Channels+1]=OldVal*256;
+                                Buffer[f*m_Channels+1]=tempval;
                         }
                 }
         }
@@ -581,13 +582,13 @@ void CSound::Beeper(int on, int frametstates)
 
         // if(!sound_enabled) return;
 
-        val=VolumeLevel[3]*(on?1:-1);
+        val=AMPL_BEEPER*(on?1:-1);
 
         if(val==OldValOrig) return;
 
         // XXX a lookup table might help here...
         newpos=(frametstates*FrameSize)/machine.tperframe;
-        subpos=(frametstates*FrameSize*AMPL_BEEPER)/machine.tperframe-VolumeLevel[3]*newpos;
+        subpos=(frametstates*FrameSize*AMPL_BEEPER)/machine.tperframe-AMPL_BEEPER*newpos;
 
         // if we already wrote here, adjust the level.
 
@@ -598,12 +599,12 @@ void CSound::Beeper(int on, int frametstates)
                 // it later by doing this again.)
 
                 if(on)
-                        BeeperLastSubpos+=VolumeLevel[3]-subpos;
+                        BeeperLastSubpos+=AMPL_BEEPER-subpos;
                 else
-                        BeeperLastSubpos-=VolumeLevel[3]-subpos;
+                        BeeperLastSubpos-=AMPL_BEEPER-subpos;
         }
         else
-                BeeperLastSubpos=(on?VolumeLevel[3]-subpos:subpos);
+                BeeperLastSubpos=(on?AMPL_BEEPER-subpos:subpos);
 
         subval=0-AMPL_BEEPER+BeeperLastSubpos;
 
@@ -613,11 +614,12 @@ void CSound::Beeper(int on, int frametstates)
                 for(f=FillPos;f<newpos && f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        Buffer[f*m_Channels]=OldVal*256;
+                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]=tempval;
 
                         if(m_Channels==2)
                         {
-                                Buffer[f*m_Channels+1]=OldVal*256;
+                                Buffer[f*m_Channels+1]=tempval;
                         }
                 }
 
@@ -632,10 +634,11 @@ void CSound::Beeper(int on, int frametstates)
                                         subval=OldVal;
 
                         // write subsample value
-                        Buffer[newpos*m_Channels]=subval*256;
+                        int tempval=(subval*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[newpos*m_Channels]=tempval;
                         if(m_Channels==2)
                         {
-                                Buffer[newpos*m_Channels+1]=subval*256;
+                                Buffer[newpos*m_Channels+1]=tempval;
                         }
                 }
         }

@@ -353,7 +353,7 @@ void CSound::AYOverlay(void)
                 {
                         // channel C
                         int tempval=0;
-                        level=(tone_level[2]*VolumeLevel[2])/31;
+                        level=(tone_level[2]*VolumeLevel[2])/AMPL_AY_TONE;
                         AY_OVERLAY_TONE(tempval,2,level);
                         if(stereo)
                         {
@@ -368,13 +368,13 @@ void CSound::AYOverlay(void)
                 if((mixer&1)==0)
                 {
                         // channel A
-                        level=(tone_level[0]*VolumeLevel[0])/31;
+                        level=(tone_level[0]*VolumeLevel[0])/AMPL_AY_TONE;
                         AY_OVERLAY_TONE(ch1,0,level);
                 }
                 if((mixer&2)==0)
                 {
                         // channel B
-                        level=(tone_level[1]*VolumeLevel[1])/31;
+                        level=(tone_level[1]*VolumeLevel[1])/AMPL_AY_TONE;
                         if (stereo)
                         {
                                 AY_OVERLAY_TONE(ch2,1,level);
@@ -390,7 +390,7 @@ void CSound::AYOverlay(void)
                 {
                         // channel C
                         level=noise_toggle?tone_level[2]:0;
-                        level=(256*level*VolumeLevel[2])/31;
+                        level=(256*level*VolumeLevel[2])/AMPL_AY_TONE;
                         if(stereo)
                         {
                                 // chan c shouldn't be full vol on both channels
@@ -405,14 +405,14 @@ void CSound::AYOverlay(void)
                 {
                         // channel A
                         level=noise_toggle?tone_level[0]:0;
-                        level=(256*level*VolumeLevel[0])/31;
+                        level=(256*level*VolumeLevel[0])/AMPL_AY_TONE;
                         ch1+=level;
                 }
                 if((mixer&0x10)==0)
                 {
                         // channel B
                         level=noise_toggle?tone_level[1]:0;
-                        level=(256*level*VolumeLevel[1])/31;
+                        level=(256*level*VolumeLevel[1])/AMPL_AY_TONE;
                         if (stereo)
                         {
                                 ch2+=level;
@@ -556,7 +556,7 @@ void CSound::Frame(void)
         for(f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
-                temp = (temp*VolumeLevel[4])/31;
+                temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
                 Buffer[f*m_Channels]+=temp;
                 if(m_Channels == 2)
                 {

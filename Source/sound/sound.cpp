@@ -426,7 +426,7 @@ void CSound::AYOverlay(void)
                                 ch1+=level;
                 }
 
-                if(!stereo && !ch2Updated)
+                if(!stereo)
                         ch2=ch1;
 
                 Buffer[f*m_Channels]+=ch1;

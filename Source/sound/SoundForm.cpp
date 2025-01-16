@@ -114,9 +114,9 @@ void TMidiForm::LoadSettings(TIniFile *ini)
         RadioButtonACB->Checked=ini->ReadBool("MIDI","AYMixACB",RadioButtonACB->Checked);
         BeeperExcludeHSyncs->Checked=ini->ReadBool("MIDI","BeeperExcludeHSyncs",BeeperExcludeHSyncs->Checked);
 
-        OKClick(NULL);
+        zx81.beeperExcludeHSyncs = BeeperExcludeHSyncs->Checked;
 
-        MidiChange(NULL);
+        OKClick(NULL);
 }
 
 void __fastcall TMidiForm::BeeperExcludeHSyncsClick(TObject *Sender)

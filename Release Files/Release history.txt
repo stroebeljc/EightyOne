@@ -29,6 +29,9 @@ Version 1.41 - 11/01/2025 (by Paul Farrow and John Stroebel)
   - Corrected ROM path for the MWCFide IDE drive.
   - The BASIC Listing loader was not tokenising "" within REM statements on the ZX81 when
     tokenisation of REM contents was enabled.
+  - Fixed AY sound implementation to align with hardware behavior.
+  - Fixed AY sound controls.
+  - Fixed ACP stereo mode operation and beeper feedback.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.
@@ -38,6 +41,7 @@ Version 1.41 - 11/01/2025 (by Paul Farrow and John Stroebel)
   - Removed unused non-functioning QL emulation.
   - The Sound dropdown in the Hardware dialog now presents options applicable to the selected
     computer.
+  - Switched from 8-bit to 16-bit sound generation.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.

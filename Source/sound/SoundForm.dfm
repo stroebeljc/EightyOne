@@ -202,6 +202,7 @@ object MidiForm: TMidiForm
       Checked = True
       TabOrder = 6
       TabStop = True
+      OnClick = MidiChange
     end
     object RadioButtonACB: TRadioButton
       Left = 224
@@ -210,6 +211,7 @@ object MidiForm: TMidiForm
       Height = 17
       Caption = 'ACB'
       TabOrder = 7
+      OnClick = MidiChange
     end
     object SpeechMute: TCheckBox
       Left = 180

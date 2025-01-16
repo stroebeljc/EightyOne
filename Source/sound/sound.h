@@ -112,7 +112,7 @@ private:
         int FramesPerSecond;
 
         unsigned char AYToneLevels[16];
-        unsigned char *Buffer;
+        short *Buffer;
         int OldPos,FillPos,OldVal,OldValOrig;
 
 	// timer used for fadeout after beeper-toggle;
@@ -138,7 +138,6 @@ private:
         unsigned char AYRegisterStore[16];
         struct AYChangeTag AYChange[AY_CHANGE_MAX];
         int AYChangeCount;
-        unsigned int FineValue, CoarseValue, TonePeriod;
 
 };
 

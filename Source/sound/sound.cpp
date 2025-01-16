@@ -348,7 +348,6 @@ void CSound::AYOverlay(void)
                 // channel C first to make ACB easier
                 int ch1=0;
                 int ch2=0;
-                bool ch2Updated=false;
                 mixer=AYRegisters[7];
                 if((mixer&4)==0)
                 {
@@ -362,7 +361,6 @@ void CSound::AYOverlay(void)
                                 int atv = tempval * 3/4;
                                 ch1+=atv;
                                 ch2+=atv;
-                                ch2Updated=true;
                         }
                         else
                                 ch1+=tempval;
@@ -380,7 +378,6 @@ void CSound::AYOverlay(void)
                         if (stereo)
                         {
                                 AY_OVERLAY_TONE(ch2,1,level);
-                                ch2Updated=true;
                         }
                         else
                         {
@@ -400,7 +397,6 @@ void CSound::AYOverlay(void)
                                 int atv = level * 3/4;
                                 ch1+=atv;
                                 ch2+=atv;
-                                ch2Updated=true;
                         }
                         else
                                 ch1+=level;
@@ -420,7 +416,6 @@ void CSound::AYOverlay(void)
                         if (stereo)
                         {
                                 ch2+=level;
-                                ch2Updated=true;
                         }
                         else
                                 ch1+=level;

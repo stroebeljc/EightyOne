@@ -43,7 +43,8 @@ void CMidi::WriteBit(int Bit)
         //  then 1 stop bit.
 
         if (emulator.machine==MACHINESPECTRUM &&
-                ( spectrum.model==SPECCYPLUS2A || spectrum.model==SPECCYPLUS3))
+                ( spectrum.model==SPECCY128 || spectrum.model==SPECCYPLUS2 ||
+                  spectrum.model==SPECCYPLUS2A || spectrum.model==SPECCYPLUS3))
         {
                 // Midi data arrives in bit 2 of the port, so to build a midi byte
                 // we do the following:

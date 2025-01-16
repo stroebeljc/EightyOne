@@ -353,7 +353,7 @@ void CSound::AYOverlay(void)
                 {
                         // channel C
                         int tempval=0;
-                        level=(tone_level[2]*VolumeLevel[2])/31;
+                        level=(tone_level[2]*VolumeLevel[2])/AMPL_AY_TONE;
                         AY_OVERLAY_TONE(tempval,2,level);
                         if(stereo)
                         {
@@ -368,13 +368,13 @@ void CSound::AYOverlay(void)
                 if((mixer&1)==0)
                 {
                         // channel A
-                        level=(tone_level[0]*VolumeLevel[0])/31;
+                        level=(tone_level[0]*VolumeLevel[0])/AMPL_AY_TONE;
                         AY_OVERLAY_TONE(ch1,0,level);
                 }
                 if((mixer&2)==0)
                 {
                         // channel B
-                        level=(tone_level[1]*VolumeLevel[1])/31;
+                        level=(tone_level[1]*VolumeLevel[1])/AMPL_AY_TONE;
                         if (stereo)
                         {
                                 AY_OVERLAY_TONE(ch2,1,level);
@@ -390,7 +390,7 @@ void CSound::AYOverlay(void)
                 {
                         // channel C
                         level=noise_toggle?tone_level[2]:0;
-                        level=(256*level*VolumeLevel[2])/31;
+                        level=(256*level*VolumeLevel[2])/AMPL_AY_TONE;
                         if(stereo)
                         {
                                 // chan c shouldn't be full vol on both channels
@@ -405,14 +405,14 @@ void CSound::AYOverlay(void)
                 {
                         // channel A
                         level=noise_toggle?tone_level[0]:0;
-                        level=(256*level*VolumeLevel[0])/31;
+                        level=(256*level*VolumeLevel[0])/AMPL_AY_TONE;
                         ch1+=level;
                 }
                 if((mixer&0x10)==0)
                 {
                         // channel B
                         level=noise_toggle?tone_level[1]:0;
-                        level=(256*level*VolumeLevel[1])/31;
+                        level=(256*level*VolumeLevel[1])/AMPL_AY_TONE;
                         if (stereo)
                         {
                                 ch2+=level;
@@ -538,11 +538,12 @@ void CSound::Frame(void)
                 for(f=FillPos;f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        Buffer[f*m_Channels]=OldVal*256;
+                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]=tempval;
 
                         if(m_Channels == 2)
                         {
-                                Buffer[f*m_Channels+1]=OldVal*256;
+                                Buffer[f*m_Channels+1]=tempval;
                         }
                 }
         }
@@ -556,7 +557,7 @@ void CSound::Frame(void)
         for(f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
-                temp = (temp*VolumeLevel[4])/31;
+                temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
                 Buffer[f*m_Channels]+=temp;
                 if(m_Channels == 2)
                 {
@@ -581,13 +582,13 @@ void CSound::Beeper(int on, int frametstates)
 
         // if(!sound_enabled) return;
 
-        val=VolumeLevel[3]*(on?1:-1);
+        val=AMPL_BEEPER*(on?1:-1);
 
         if(val==OldValOrig) return;
 
         // XXX a lookup table might help here...
         newpos=(frametstates*FrameSize)/machine.tperframe;
-        subpos=(frametstates*FrameSize*AMPL_BEEPER)/machine.tperframe-VolumeLevel[3]*newpos;
+        subpos=(frametstates*FrameSize*AMPL_BEEPER)/machine.tperframe-AMPL_BEEPER*newpos;
 
         // if we already wrote here, adjust the level.
 
@@ -598,12 +599,12 @@ void CSound::Beeper(int on, int frametstates)
                 // it later by doing this again.)
 
                 if(on)
-                        BeeperLastSubpos+=VolumeLevel[3]-subpos;
+                        BeeperLastSubpos+=AMPL_BEEPER-subpos;
                 else
-                        BeeperLastSubpos-=VolumeLevel[3]-subpos;
+                        BeeperLastSubpos-=AMPL_BEEPER-subpos;
         }
         else
-                BeeperLastSubpos=(on?VolumeLevel[3]-subpos:subpos);
+                BeeperLastSubpos=(on?AMPL_BEEPER-subpos:subpos);
 
         subval=0-AMPL_BEEPER+BeeperLastSubpos;
 
@@ -613,11 +614,12 @@ void CSound::Beeper(int on, int frametstates)
                 for(f=FillPos;f<newpos && f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        Buffer[f*m_Channels]=OldVal*256;
+                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]=tempval;
 
                         if(m_Channels==2)
                         {
-                                Buffer[f*m_Channels+1]=OldVal*256;
+                                Buffer[f*m_Channels+1]=tempval;
                         }
                 }
 
@@ -632,10 +634,11 @@ void CSound::Beeper(int on, int frametstates)
                                         subval=OldVal;
 
                         // write subsample value
-                        Buffer[newpos*m_Channels]=subval*256;
+                        int tempval=(subval*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[newpos*m_Channels]=tempval;
                         if(m_Channels==2)
                         {
-                                Buffer[newpos*m_Channels+1]=subval*256;
+                                Buffer[newpos*m_Channels+1]=tempval;
                         }
                 }
         }

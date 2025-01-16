@@ -34,7 +34,7 @@
 TSoundOutput *SoundOutput;
 //---------------------------------------------------------------------------
 
-void TSoundOutput::UpdateImage(unsigned char *data, int channels, int bytesPerSample)
+void TSoundOutput::UpdateImage(short *data, int channels)
 {
         long x;
         static int skip=0;
@@ -51,16 +51,15 @@ void TSoundOutput::UpdateImage(unsigned char *data, int channels, int bytesPerSa
         Img->LineTo(Image1->Width,Image1->Height/2);
 
         Img->Pen->Color = clBlack;
-        int offset=bytesPerSample==2?1:0;
-        Img->MoveTo(0, (((char)data[offset]+128*offset)&0xFF)/2);
+        Img->MoveTo(0, ((data[0]/256+128)&0xFF)/2);
         for (x=0; x<Image1->Width; x++)
         {
                 //Img->MoveTo(x,64);
                 int currval=0;
                 for (int i=1;i<=channels;i++)
-                        currval+=(char)data[i*bytesPerSample*x+offset];
+                        currval+=data[i*x];
 
-                Img->LineTo(x, ((currval+128*offset)&0xFF)/2);
+                Img->LineTo(x, ((currval/256+128)&0xFF)/2);
         }
 }
 //---------------------------------------------------------------------------

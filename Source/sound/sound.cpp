@@ -94,7 +94,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         FrameSize=m_SampleRate/m_FPS;
 
-        Buffer = new BYTE[FrameSize*m_Channels*m_BytesPerSample];
+        Buffer = new short[FrameSize*m_Channels];
 
         if(Buffer==NULL)
         {
@@ -195,21 +195,21 @@ void CSound::AYInit(void)
   if(level)								\
     {									\
     if(AYToneTick[chan]>=AYTonePeriod[chan])			\
-      { (val)+=(level); was_high=1; }					\
+      { (val)+=(level)*256; was_high=1; }					\
     else								\
-      (val)-=(level);						\
+      (val)-=(level)*256;						\
     }									\
   									\
   AYToneTick[chan]+=AYTickIncr;					\
   if(level && !was_high && AYToneTick[chan]>=AYTonePeriod[chan])	\
-    (val)+=AY_GET_SUBVAL(AYToneTick[chan],AYTonePeriod[chan]);	\
+    (val)+=AY_GET_SUBVAL(AYToneTick[chan],AYTonePeriod[chan])*256;	\
   									\
   if(AYToneTick[chan]>=AYTonePeriod[chan]*2)			\
     {									\
     AYToneTick[chan]-=AYTonePeriod[chan]*2;				\
     /* sanity check needed to avoid making samples sound terrible */ 	\
     if(level && AYToneTick[chan]<AYTonePeriod[chan]) 		\
-      (val)-=AY_GET_SUBVAL(AYToneTick[chan],0);			\
+      (val)-=AY_GET_SUBVAL(AYToneTick[chan],0)*256;			\
     }                                                           \
   }
 
@@ -224,7 +224,6 @@ void CSound::AYOverlay(void)
         int mixer,envshape;
         int f,g,level;
         int v=0;
-        char *ptr;
         struct AYChangeTag *change_ptr;
         int changes_left;
         int reg,r;
@@ -242,8 +241,7 @@ void CSound::AYOverlay(void)
         for(f=0;f<AYChangeCount;f++)
                 AYChange[f].ofs=(unsigned short)((AYChange[f].tstates*m_SampleRate)/machine.clockspeed);
 
-        int offset=m_BytesPerSample==2?1:0;
-        for(f=0,ptr=(char *)Buffer+offset;f<FrameSize;f++,ptr+=m_Channels*m_BytesPerSample)
+        for(f=0;f<FrameSize;f++)
         {
                 // update ay registers. All this sub-frame change stuff
                 // is pretty hairy, but how else would you handle the
@@ -348,21 +346,20 @@ void CSound::AYOverlay(void)
 
                 // generate tone
                 // channel C first to make ACB easier
-                char in1,in2;
-                char ch1=in1=ptr[0];
-                char ch2=in2=ptr[m_BytesPerSample];
+                int ch1=0;
+                int ch2=0;
                 bool ch2Updated=false;
                 mixer=AYRegisters[7];
                 if((mixer&4)==0)
                 {
                         // channel C
-                        char tempval=0;
+                        int tempval=0;
                         level=(tone_level[2]*VolumeLevel[2])/31;
                         AY_OVERLAY_TONE(tempval,2,level);
                         if(stereo)
                         {
                                 // chan c shouldn't be full vol on both channels
-                                char atv = tempval * 3/4;
+                                int atv = tempval * 3/4;
                                 ch1+=atv;
                                 ch2+=atv;
                                 ch2Updated=true;
@@ -400,7 +397,7 @@ void CSound::AYOverlay(void)
                         if(stereo)
                         {
                                 // chan c shouldn't be full vol on both channels
-                                char atv = level * 3/4;
+                                int atv = level * 3/4;
                                 ch1+=atv;
                                 ch2+=atv;
                                 ch2Updated=true;
@@ -432,11 +429,9 @@ void CSound::AYOverlay(void)
                 if(!ch2Updated)
                         ch2=ch1;
 
-                in1-=ch1;
-                in2-=ch2;
-                ptr[0]=ch1;
+                Buffer[f*m_Channels]+=ch1;
                 if (m_Channels==2)
-                        ptr[m_BytesPerSample]=ch2;
+                        Buffer[f*m_Channels+1]+=ch2;
 
                 // update noise RNG/filter
                 AYNoiseTick+=AYTickIncr;
@@ -540,26 +535,20 @@ void CSound::AYReset(void)
 
 void CSound::Frame(void)
 {                  
-        char *ptr;
         int f;
 
         // if(!sound_enabled) return;
 
         //if(zx81.vsyncsound)
         {
-                ptr=(char *)Buffer+m_Channels*FillPos*m_BytesPerSample;
                 for(f=FillPos;f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        if (m_BytesPerSample==2)
-                                *ptr++=0;
-                        *ptr++=OldVal;
+                        Buffer[f*m_Channels]=OldVal*256;
 
                         if(m_Channels == 2)
                         {
-                                if (m_BytesPerSample==2)
-                                        *ptr++=0;
-                                *ptr++=OldVal;
+                                Buffer[f*m_Channels+1]=OldVal*256;
                         }
                 }
         }
@@ -570,41 +559,19 @@ void CSound::Frame(void)
         if (machine.aysound) AYOverlay();
         
         // Overlay speech audio
-        ptr=(char *)Buffer;
         for(f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
                 temp = (temp*VolumeLevel[4])/31;
-                if (m_BytesPerSample==2)
+                Buffer[f*m_Channels]+=temp;
+                if(m_Channels == 2)
                 {
-                        int buffval = *ptr + (*(ptr+1))*256;
-                        buffval+=temp;
-                        *(ptr++)=buffval & 0xFF;
-                        *(ptr++)=buffval/256 & 0xFF;
-                        if(m_Channels == 2)
-                        {
-                                buffval = *ptr + (*(ptr+1))*256;
-                                buffval+=temp;
-                                *(ptr++)=buffval & 0xFF;
-                                *(ptr++)=buffval/256 & 0xFF;
-                        }
-                }
-                else
-                {
-                        int buffval = *ptr;
-                        buffval+=temp/256;
-                        *(ptr++)=(buffval+128) & 0xFF;
-                        if(m_Channels == 2)
-                        {
-                                buffval = *ptr;
-                                buffval+=temp/256;
-                                *(ptr++)=(buffval+128) & 0xFF;
-                        }
+                        Buffer[f*m_Channels+1]+=temp;
                 }
         }
 
-        DXSound.Frame(Buffer, FrameSize*m_Channels*m_BytesPerSample);
-        SoundOutput->UpdateImage(Buffer,m_Channels,m_BytesPerSample);
+        DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
+        SoundOutput->UpdateImage(Buffer,m_Channels);
 
         OldPos=-1;
         FillPos=0;
@@ -614,7 +581,6 @@ void CSound::Frame(void)
 
 void CSound::Beeper(int on, int frametstates)
 {                                     
-        char *ptr;
         int newpos,subpos;
         int val,subval;
         int f;
@@ -627,7 +593,7 @@ void CSound::Beeper(int on, int frametstates)
 
         // XXX a lookup table might help here...
         newpos=(frametstates*FrameSize)/machine.tperframe;
-        subpos=(frametstates*FrameSize*VolumeLevel[3])/machine.tperframe-VolumeLevel[3]*newpos;
+        subpos=(frametstates*FrameSize*AMPL_BEEPER)/machine.tperframe-VolumeLevel[3]*newpos;
 
         // if we already wrote here, adjust the level.
 
@@ -650,27 +616,20 @@ void CSound::Beeper(int on, int frametstates)
         if(newpos>=0)
         {
                 //  fill gap from previous position
-                ptr=(char *)Buffer+m_Channels*FillPos*m_BytesPerSample;
                 for(f=FillPos;f<newpos && f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        if (m_BytesPerSample==2)
-                                *ptr++=0;
-                        *ptr++=OldVal;
+                        Buffer[f*m_Channels]=OldVal*256;
 
                         if(m_Channels==2)
                         {
-                                if (m_BytesPerSample==2)
-                                        *ptr++=0;
-                                *ptr++=OldVal;
+                                Buffer[f*m_Channels+1]=OldVal*256;
                         }
                 }
 
                 if(newpos<FrameSize)
                 {
                         // newpos may be less than FillPos, so...
-                        ptr=(char *)Buffer+m_Channels*newpos*m_BytesPerSample;
-
                         // limit subval in case of faded beeper level,
                         // to avoid slight spikes on ordinary tones.
 
@@ -679,14 +638,10 @@ void CSound::Beeper(int on, int frametstates)
                                         subval=OldVal;
 
                         // write subsample value
-                        if (m_BytesPerSample==2)
-                                *ptr++=0;
-                        *ptr=subval;
+                        Buffer[newpos*m_Channels]=subval*256;
                         if(m_Channels==2)
                         {
-                                if (m_BytesPerSample==2)
-                                        *ptr++=0;
-                                *ptr=subval;
+                                Buffer[newpos*m_Channels+1]=subval*256;
                         }
                 }
         }

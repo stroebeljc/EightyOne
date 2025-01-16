@@ -64,9 +64,6 @@ void __fastcall TMidiForm::MidiChange(TObject *Sender)
 {
         static int LastMidiItem=0;
 
-        //BeeperExcludeHSyncs->Enabled=!RadioButtonACB->Checked;
-        //BeeperExcludeHSyncs->Checked=RadioButtonACB->Checked?true:zx81.beeperExcludeHSyncs;
-
         Sound.VolumeLevel[0]= AYMute->Checked ? 0:ChAVol->Max - ChAVol->Position;
         Sound.VolumeLevel[1]= AYMute->Checked ? 0:ChBVol->Max - ChBVol->Position;
         Sound.VolumeLevel[2]= AYMute->Checked ? 0:ChCVol->Max - ChCVol->Position;

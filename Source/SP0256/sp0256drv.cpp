@@ -3,13 +3,14 @@
 #include "sp0256_al2.h"	// SP0256-AL2 "Narrator"
 #include "sp0256_012.h"	// SP0256-012 "Intellivoice"
 
+static const int c_xtal = 3120000;
+static const double c_freq = c_xtal/2/156;
+
 SP0256 sp0256_AL2(_AL2);
 //SP0256 sp0256_ivoice(_012);
 
 SP0256::SP0256(model_t model) :
-        m_xtal(3120000),
-        m_freq(m_xtal/2/156),
-        m_scaler(22000/m_freq),
+        m_scaler(1.0),
         m_sample_count(0.0),
         m_lastsample(0)
 {
@@ -38,19 +39,18 @@ bool SP0256::Busy(void)
 
 void SP0256::SetSamplingFreq(int freq)
 {
-        m_scaler = freq/m_freq;
+        if (freq > 0)
+                m_scaler = freq/c_freq;
 }
 
-char SP0256::GetNextSample(void)
+int16_t SP0256::GetNextSample(void)
 {
         m_sample_count += 1.0;
 
         while (m_sample_count >= m_scaler)
         {
                 m_sample_count -= m_scaler;
-                int sample = sp0256_getNextSample();
-       	        sample >>= 8;
-                m_lastsample = (char)(sample & 0xFF);
+                m_lastsample = sp0256_getNextSample();
         }
 
         return m_lastsample;

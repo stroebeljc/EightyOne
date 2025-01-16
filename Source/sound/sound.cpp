@@ -77,6 +77,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         // Otherwise, we're good to go, so configure the sound.
 
+        m_BytesPerSample=m_BitsPerSample/8;
         EnvHeld=0;
         EnvAlternating=0;
         BeeperLastSubpos=0;
@@ -93,7 +94,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         FrameSize=m_SampleRate/m_FPS;
 
-        Buffer = new BYTE[FrameSize*m_Channels];
+        Buffer = new BYTE[FrameSize*m_Channels*m_BytesPerSample];
 
         if(Buffer==NULL)
         {
@@ -101,10 +102,9 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
                 return(-1); // Oh dear, malloc failed
         }
 
-        OldVal=OldValOrig=128;
+        OldVal=OldValOrig=0;
         OldPos=-1;
         FillPos=0;
-        SoundPtr=Buffer;
 
         BeeperTick=0;
         BeeperTickIncr=(1<<24)/m_SampleRate;
@@ -145,8 +145,6 @@ void CSound::AYInit(void)
 {
         int f,clock;
         double v;
-
-        for(f=0;f<4;f++) VolumeLevel[f]=AMPL_AY_TONE;
 
         // logarithmic volume levels, 3dB per step
         v=AMPL_AY_TONE;
@@ -225,7 +223,7 @@ void CSound::AYOverlay(void)
         int mixer,envshape;
         int f,g,level;
         int v=0;
-        unsigned char *ptr;
+        char *ptr;
         struct AYChangeTag *change_ptr;
         int changes_left;
         int reg,r;
@@ -241,7 +239,8 @@ void CSound::AYOverlay(void)
         for(f=0;f<AYChangeCount;f++)
                 AYChange[f].ofs=(unsigned short)((AYChange[f].tstates*m_SampleRate)/machine.clockspeed);
 
-        for(f=0,ptr=Buffer;f<FrameSize;f++,ptr+=m_Channels)
+        int offset=m_BytesPerSample==2?1:0;
+        for(f=0,ptr=(char *)Buffer+offset;f<FrameSize;f++,ptr+=m_Channels*m_BytesPerSample)
         {
                 // update ay registers. All this sub-frame change stuff
                 // is pretty hairy, but how else would you handle the
@@ -470,30 +469,37 @@ void CSound::AYReset(void)
   if(BeeperTick>=BEEPER_FADEOUT)	\
     {					\
     BeeperTick-=BEEPER_FADEOUT;	\
-    if(OldVal>128)		\
+    if(OldVal>0)		\
       OldVal--;			\
     else				\
-      if(OldVal<128)		\
+      if(OldVal<0)		\
         OldVal++;			\
     }
 
 
 void CSound::Frame(void)
 {                  
-        unsigned char *ptr;
+        char *ptr;
         int f;
 
         // if(!sound_enabled) return;
 
         //if(zx81.vsyncsound)
         {
-                ptr=Buffer+(m_Channels*FillPos);
+                ptr=(char *)Buffer+m_Channels*FillPos*m_BytesPerSample;
                 for(f=FillPos;f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        *ptr++=(unsigned char)OldVal;
+                        if (m_BytesPerSample==2)
+                                *ptr++=0;
+                        *ptr++=OldVal;
+
                         if(m_Channels == 2)
-                                *ptr++=(unsigned char)OldVal;
+                        {
+                                if (m_BytesPerSample==2)
+                                        *ptr++=0;
+                                *ptr++=OldVal;
+                        }
                 }
         }
         //else
@@ -501,37 +507,56 @@ void CSound::Frame(void)
         //        memset(Buffer,128,FrameSize*m_Channels);
 
         if (machine.aysound) AYOverlay();
-
+        
         // Overlay speech audio
-        ptr=Buffer;
+        ptr=(char *)Buffer;
         for(f=0;f<FrameSize;f++)
         {
-                char temp = (sp0256_AL2.GetNextSample()*VolumeLevel[4])/31;
-                *(ptr++)+=temp;
-                if(m_Channels == 2)
-                        *(ptr++)+=temp;
+                int temp = sp0256_AL2.GetNextSample();
+                temp = (temp*VolumeLevel[4])/31;
+                if (m_BytesPerSample==2)
+                {
+                        int buffval = *ptr + (*(ptr+1))*256;
+                        buffval+=temp;
+                        *(ptr++)=buffval & 0xFF;
+                        *(ptr++)=buffval/256 & 0xFF;
+                        if(m_Channels == 2)
+                        {
+                                *(ptr++)=buffval & 0xFF;
+                                *(ptr++)=buffval/256 & 0xFF;
+                        }
+                }
+                else
+                {
+                        int buffval = *ptr;
+                        buffval+=temp/256;
+                        *(ptr++)=(buffval+128) & 0xFF;
+                        if(m_Channels == 2)
+                        {
+                                *(ptr++)=(buffval+128) & 0xFF;
+                        }
+                }
         }
 
-        DXSound.Frame(Buffer, FrameSize*m_Channels);
-        SoundOutput->UpdateImage(Buffer,FrameSize*m_Channels);
+        DXSound.Frame(Buffer, FrameSize*m_Channels*m_BytesPerSample);
+        SoundOutput->UpdateImage(Buffer,m_Channels,m_BytesPerSample);
 
         OldPos=-1;
         FillPos=0;
-        SoundPtr=Buffer;
 
         AYChangeCount=0;
 }
 
 void CSound::Beeper(int on, int frametstates)
 {                                     
-        unsigned char *ptr;
+        char *ptr;
         int newpos,subpos;
         int val,subval;
         int f;
 
         // if(!sound_enabled) return;
 
-        val=(on?128+VolumeLevel[3]:128-VolumeLevel[3]);
+        val=(on?0+VolumeLevel[3]:0-VolumeLevel[3]);
 
         if(val==OldValOrig) return;
 
@@ -555,36 +580,49 @@ void CSound::Beeper(int on, int frametstates)
         else
                 BeeperLastSubpos=(on?VolumeLevel[3]-subpos:subpos);
 
-        subval=128-AMPL_BEEPER+BeeperLastSubpos;
+        subval=0-AMPL_BEEPER+BeeperLastSubpos;
 
         if(newpos>=0)
         {
                 //  fill gap from previous position
-                ptr=Buffer+(m_Channels*FillPos);
+                ptr=(char *)Buffer+m_Channels*FillPos*m_BytesPerSample;
                 for(f=FillPos;f<newpos && f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        *ptr++=(unsigned char)OldVal;
+                        if (m_BytesPerSample==2)
+                                *ptr++=0;
+                        *ptr++=OldVal;
+
                         if(m_Channels==2)
-                        *ptr++=(unsigned char)OldVal;
+                        {
+                                if (m_BytesPerSample==2)
+                                        *ptr++=0;
+                                *ptr++=OldVal;
+                        }
                 }
 
                 if(newpos<FrameSize)
                 {
                         // newpos may be less than FillPos, so...
-                        ptr=Buffer+(m_Channels*newpos);
+                        ptr=(char *)Buffer+m_Channels*newpos*m_BytesPerSample;
 
                         // limit subval in case of faded beeper level,
                         // to avoid slight spikes on ordinary tones.
 
-                        if((OldVal<128 && subval<OldVal) ||
-                                (OldVal>=128 && subval>OldVal))
+                        if((OldVal<0 && subval<OldVal) ||
+                                (OldVal>=0 && subval>OldVal))
                                         subval=OldVal;
 
                         // write subsample value
-                        *ptr=(unsigned char)subval;
+                        if (m_BytesPerSample==2)
+                                *ptr++=0;
+                        *ptr=subval;
                         if(m_Channels==2)
-                        *++ptr=(unsigned char)subval;
+                        {
+                                if (m_BytesPerSample==2)
+                                        *ptr++=0;
+                                *ptr=subval;
+                        }
                 }
         }
 

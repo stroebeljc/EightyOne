@@ -51,7 +51,7 @@
 
 static int s_debugSample = 0;
 
-#if 1
+#if 0
 #define dsprintf(x) if( s_debugSample ) { jzp_printf x ; jzp_flush(); }
 #else
 #undef DEBUG_SAMPLE
@@ -65,11 +65,11 @@ static int s_debugSample = 0;
 
 static int s_debug = 0;
 
-#if 1
+#if 0
 #define jzdprintf(x) if( s_debug ) { jzp_printf x ; jzp_flush(); }
 #else
 #undef DEBUG
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define jzdprintf(x) jzp_printf x ; jzp_flush()
 #else
@@ -1334,7 +1334,7 @@ int sp0256_isNextSample()
 }
 */
 
-int sp0256_getNextSample()
+int16_t sp0256_getNextSample()
 {
     ivoice_t *ivoice = &intellivoice;
 	uint32_t optr = 0;

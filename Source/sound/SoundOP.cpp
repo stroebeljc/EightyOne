@@ -34,7 +34,7 @@
 TSoundOutput *SoundOutput;
 //---------------------------------------------------------------------------
 
-void TSoundOutput::UpdateImage(unsigned char *data, int len)
+void TSoundOutput::UpdateImage(unsigned char *data, int channels, int bytesPerSample)
 {
         long x;
         static int skip=0;
@@ -51,11 +51,12 @@ void TSoundOutput::UpdateImage(unsigned char *data, int len)
         Img->LineTo(Image1->Width,Image1->Height/2);
 
         Img->Pen->Color = clBlack;
-        Img->MoveTo(0, data[0]/2);
+        int offset=bytesPerSample==2?1:0;
+        Img->MoveTo(0, ((data[offset]+128*offset)&0xFF)/2);
         for (x=0; x<Image1->Width; x++)
         {
                 //Img->MoveTo(x,64);
-                Img->LineTo(x, data[x]/2);
+                Img->LineTo(x, ((data[channels*bytesPerSample*x+offset]+128*offset)&0xFF)/2);
         }
 }
 //---------------------------------------------------------------------------
@@ -83,5 +84,19 @@ void __fastcall TSoundOutput::FormClose(TObject *Sender,
 
 void TSoundOutput::LoadSettings(TIniFile *ini)
 {
+        Top = ini->ReadInteger("SOUNDOP","Top",Top);
+        Left = ini->ReadInteger("SOUNDOP","Left",Left);
+        Height = ini->ReadInteger("SOUNDOP","Height",Height);
+        Width = ini->ReadInteger("SOUNDOP","Width",Width);
+
         if (Form1->SoundOutput1->Checked) Show();
 }
+
+void TSoundOutput::SaveSettings(TIniFile *ini)
+{
+        ini->WriteInteger("SOUNDOP","Top",Top);
+        ini->WriteInteger("SOUNDOP","Left",Left);
+        ini->WriteInteger("SOUNDOP","Height",Height);
+        ini->WriteInteger("SOUNDOP","Width",Width);
+}
+

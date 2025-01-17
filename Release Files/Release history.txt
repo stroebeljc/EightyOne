@@ -44,6 +44,7 @@ Version 1.41 - 17/01/2025 (by Paul Farrow and John Stroebel)
     computer.
   - Switched from 8-bit to 16-bit sound generation.
   - Added support for MIDI output to Spectrum 128k and +2.
+  - Default sound volume settings are in the middle of the range.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.

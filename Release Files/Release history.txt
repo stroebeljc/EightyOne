@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 16/01/2025 (by Paul Farrow and John Stroebel)
+Version 1.41 - 17/01/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:
   - If a hardware generated ZX81 HSync pulse is output part way through a scanline then it is no
     longer interpreted as starting a new scanline.
@@ -44,6 +44,7 @@ Version 1.41 - 16/01/2025 (by Paul Farrow and John Stroebel)
     computer.
   - Switched from 8-bit to 16-bit sound generation.
   - Added support for MIDI output to Spectrum 128k and +2.
+  - Default sound volume settings are in the middle of the range.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.
@@ -57,6 +58,7 @@ Version 1.41 - 16/01/2025 (by Paul Farrow and John Stroebel)
   - Added example programs for ZX Spectrum specific interfaces.
   - Added the manual for the Multiface 3.
   - Added volume controls for speech interface sounds.
+  - Sound output window is resizeable.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

@@ -566,7 +566,7 @@ void CSound::Frame(void)
         }
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
-        SoundOutput->UpdateImage(Buffer,m_Channels);
+        SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);
 
         OldPos=-1;
         FillPos=0;

@@ -34,9 +34,10 @@
 TSoundOutput *SoundOutput;
 //---------------------------------------------------------------------------
 
-void TSoundOutput::UpdateImage(short *data, int channels)
+void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
 {
         long x;
+        int f;
         static int skip=0;
 
         if (++skip <3) return;
@@ -51,15 +52,17 @@ void TSoundOutput::UpdateImage(short *data, int channels)
         Img->LineTo(Image1->Width,Image1->Height/2);
 
         Img->Pen->Color = clBlack;
-        Img->MoveTo(0, ((data[0]/256+128)&0xFF)/2);
-        for (x=0; x<Image1->Width; x++)
+        for (x=0,f=0; x<Image1->Width; x++,f+=framesize/Image1->Width)
         {
                 //Img->MoveTo(x,64);
                 int currval=0;
-                for (int i=1;i<=channels;i++)
-                        currval+=data[i*x];
+                for (int i=0;i<channels;i++)
+                        currval+=(int)data[channels*f+i];
 
-                Img->LineTo(x, ((currval/256+128)&0xFF)/2);
+                if (x==0)
+                        Img->MoveTo(0, ((currval/channels/256)+128)/2);
+                else
+                        Img->LineTo(x, ((currval/channels/256)+128)/2);
         }
 }
 //---------------------------------------------------------------------------

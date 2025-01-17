@@ -60,9 +60,9 @@ void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
                         currval+=(int)data[channels*f+i];
 
                 if (x==0)
-                        Img->MoveTo(0, ((currval/channels/256)+128)/2);
+                        Img->MoveTo(0, ((currval/channels/256)+Image1->Height)/2);
                 else
-                        Img->LineTo(x, ((currval/channels/256)+128)/2);
+                        Img->LineTo(x, ((currval/channels/256)+Image1->Height)/2);
         }
 }
 //---------------------------------------------------------------------------

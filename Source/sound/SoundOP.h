@@ -36,6 +36,7 @@ class TSoundOutput : public TForm
 __published:	// IDE-managed Components
         TImage *Image1;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+        void __fastcall FormResize(TObject *Sender);
 private:	// User declarations
         TRect rect;
         TCanvas *Img;

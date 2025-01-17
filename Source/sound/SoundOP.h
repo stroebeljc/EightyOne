@@ -41,7 +41,7 @@ private:	// User declarations
         TCanvas *Img;
 public:		// User declarations
         __fastcall TSoundOutput(TComponent* Owner);
-        void UpdateImage(short *data, int channels);
+        void UpdateImage(short *data, int channels, int framesize);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
 };

@@ -121,7 +121,7 @@ object MidiForm: TMidiForm
       Max = 31
       Orientation = trVertical
       Frequency = 16
-      Position = 0
+      Position = 16
       SelEnd = 0
       SelStart = 0
       TabOrder = 0
@@ -137,7 +137,7 @@ object MidiForm: TMidiForm
       Max = 31
       Orientation = trVertical
       Frequency = 16
-      Position = 0
+      Position = 16
       SelEnd = 0
       SelStart = 0
       TabOrder = 1
@@ -153,7 +153,7 @@ object MidiForm: TMidiForm
       Max = 31
       Orientation = trVertical
       Frequency = 16
-      Position = 0
+      Position = 16
       SelEnd = 0
       SelStart = 0
       TabOrder = 2
@@ -169,7 +169,7 @@ object MidiForm: TMidiForm
       Max = 31
       Orientation = trVertical
       Frequency = 16
-      Position = 0
+      Position = 16
       SelEnd = 0
       SelStart = 0
       TabOrder = 3
@@ -248,7 +248,7 @@ object MidiForm: TMidiForm
     Max = 31
     Orientation = trVertical
     Frequency = 16
-    Position = 0
+    Position = 16
     SelEnd = 0
     SelStart = 0
     TabOrder = 4

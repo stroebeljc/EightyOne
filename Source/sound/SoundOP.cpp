@@ -37,7 +37,6 @@ TSoundOutput *SoundOutput;
 void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
 {
         long x;
-        int f;
         static int skip=0;
 
         if (++skip <3) return;
@@ -52,32 +51,32 @@ void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
         Img->LineTo(Image1->Width,Image1->Height/2);
 
         Img->Pen->Color = clBlack;
-        for (x=0,f=0; x<Image1->Width; x++,f+=framesize/Image1->Width)
+        for (x=0; x<framesize; x++)
         {
                 //Img->MoveTo(x,64);
                 int currval=0;
                 for (int i=0;i<channels;i++)
-                        currval+=(int)data[channels*f+i];
+                        currval+=(int)data[channels*x+i];
 
+                int position=Image1->Height*((double)currval/channels/32768+1)/2;
                 if (x==0)
-                        Img->MoveTo(0, ((currval/channels/256)+Image1->Height)/2);
+                        Img->MoveTo(0, position);
                 else
-                        Img->LineTo(x, ((currval/channels/256)+Image1->Height)/2);
+                        Img->LineTo(x*Image1->Width/framesize, position);
         }
 }
 //---------------------------------------------------------------------------
 __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
         : TForm(Owner)
 {
-        Img=Image1->Canvas;
-        rect.Top=0; rect.Left=0;
-        rect.Right=Image1->Width; rect.Bottom=Image1->Height;
-        //ClearImage();
+        Img=this->Canvas;
 
         TIniFile *ini;
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
+
+        FormResize(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -105,4 +104,13 @@ void TSoundOutput::SaveSettings(TIniFile *ini)
         ini->WriteInteger("SOUNDOP","Height",Height);
         ini->WriteInteger("SOUNDOP","Width",Width);
 }
+
+void __fastcall TSoundOutput::FormResize(TObject *Sender)
+{
+        Image1->Height=this->ClientHeight;
+        Image1->Width=this->ClientWidth;
+        rect.Top=0; rect.Left=0;
+        rect.Right=Image1->Width; rect.Bottom=Image1->Height;
+}
+//---------------------------------------------------------------------------
 

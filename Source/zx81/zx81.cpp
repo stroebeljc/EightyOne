@@ -1322,7 +1322,7 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 // Note that the Parrot only decodes A7, A5, and A4.
                 //  If these are all 0, then the Parrot performs I/O.
-                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : idleDataBus;
+                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : (BYTE)(idleDataBus | 0x01);
 
                 switch(Address&255)
                 {
@@ -1343,7 +1343,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         return 0;
 
                 case 0x3f:
-                        if (machine.speech == SPEECH_TYPE_MAGECO) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : idleDataBus;
+                        if (machine.speech == SPEECH_TYPE_MAGECO) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : (BYTE)(idleDataBus | 0x01);
                         break;
 
                 case 0x41:

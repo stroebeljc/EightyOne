@@ -32,6 +32,7 @@ Version 1.41 - 19/01/2025 (by Paul Farrow and John Stroebel)
   - Fixed AY sound controls.
   - Fixed ACP stereo mode operation and beeper feedback.
   - Fixed beeper volume control and addressed noise spikes at low volumes.
+  - Fixed missing " key for Sepctrum 128+ keyboards.
   - Memotech hi-res didn't support a pixel byte of $76 within the hi-res display file.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard

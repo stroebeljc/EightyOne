@@ -1315,6 +1315,8 @@ __fastcall TDbg::TDbg(TComponent* Owner)
         BPList->DefaultColWidth = BPList->Width;
 
         ResetLastIOAccesses();
+
+        MemoryWindowTimer->Interval = 50;
 }
 //---------------------------------------------------------------------------
 
@@ -2315,7 +2317,7 @@ void __fastcall TDbg::AutoUpdateMemoryClick(TObject *Sender)
 
 void __fastcall TDbg::MemoryWindowTimerExpired(TObject *Sender)
 {
-        if (MemoryWindow->Visible)
+        if (this->Visible && MemoryWindow->Visible)
         {
                 MemoryWindow->UpdateChanges();
         }

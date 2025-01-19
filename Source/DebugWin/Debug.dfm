@@ -2142,7 +2142,7 @@ object Dbg: TDbg
   end
   object MemoryWindowTimer: TTimer
     Enabled = False
-    Interval = 50
+    Interval = 10000
     OnTimer = MemoryWindowTimerExpired
     Left = 326
     Top = 216

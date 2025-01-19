@@ -522,7 +522,7 @@ void load_snap_mem(FILE *f)
                 {
                         HW->EnableLowRAM->Checked=hex2dec(get_token(f));
                 }
-                else if (!strcmp(tok,"8K_RAM_PROTECTED"))
+                else if (!strcmp(tok,"ROM_PROTECTED"))
                 {
                         Form1->WriteProtect8KRAM->Checked = hex2dec(get_token(f));
                 }
@@ -804,7 +804,7 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"\n[MEMORY]\n");
 	fprintf(f,"RAM_PACK %s\n", HW->RamPackBox->Text.c_str());
 	fprintf(f,"8K_RAM_ENABLED %02X\n", zx81.RAM816k);
-	fprintf(f,"8K_RAM_PROTECTED %02X\n", zx81.RAM816kWriteProtected);
+	fprintf(f,"ROM_PROTECTED %02X\n", zx81.RAM816kWriteProtected);
 
 	Addr = zx81.RAM816k || zx81.zxpand ? 8192 : zx81.ROMTOP+1;
 	int topOfRAM = zx81.RAMTOP;

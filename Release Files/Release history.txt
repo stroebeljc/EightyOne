@@ -59,6 +59,7 @@ Version 1.41 - 19/01/2025 (by Paul Farrow and John Stroebel)
   - Added the manual for the Multiface 3.
   - Added volume controls for speech interface sounds.
   - Sound output window is resizeable.
+  - Added documentation for various ZX Spectrum IDE and FDC interfaces.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

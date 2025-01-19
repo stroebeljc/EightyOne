@@ -134,7 +134,7 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_QueueStart = 0;
         m_QueueSize = 0;
 
-	memset(m_lpAudioQueue, 0x80, m_QueueLen);
+	memset(m_lpAudioQueue, m_BitsPerSample==8?0x80:0, m_QueueLen);
 
         if (m_lpDSB->Lock(0, m_DXBufLen, &lpvAudio1, &dwBytesAudio1, &lpvAudio2, &dwBytesAudio2, 0))
                 return -1; // Lock DirectSoundBuffer Failed!

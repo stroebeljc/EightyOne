@@ -1,760 +1,484 @@
 =======================================================
-Beta Disk Interface TR-DOS 2 Manual for the ZX Spectrum
+Beta Disk Interface TR-DOS 4 Manual for the ZX Spectrum
 Technology Research Ltd
 =======================================================
 
-Dear customer
+TECHNOLOGY RESEARCH BETA DISK INTERFACE -- TR-DOS v4
+
+TR-DOS v4 for the Technology Research Beta Disk Interface Includes extra facilities and extends or modifies
+some of the original commands . The password is no longer implemented.
+The extra facilities are auto-boot, auto check of drive specification and file handling (both sequential and
+random access). In addition, at the press of a button, the whole image of the RAM may be saved on the disk.
+The image may be retrieved from the disk to the RAM with the program continuing to run from where it was
+stopped. A reset button is also provided.
 
-Congratulation in making a wise choice, Technology Research is confident that you will 
-have many years of reliable service from the Interface.
+The FORMAT and the COPY commands are now in the operating system in addition to the utility programs
+on the disk. The utility program on the disk is now called "FILER", which combines the facilities of "BACKUP",
+"COPY" and "SCOPY" in TR-DOS v3. The CAT command has been extended while the LOAD and SAVE
+commands have been modified.
 
-The Beta disk-interface has many advanced features which are summarised as follow:
+This supplement explains these enhancements and should be used in conjunction with the user manual.
 
--- security: you can use the password facility to stop other copying your valuable 
-   programs,
--- easy and fast access: you will be able to retrieve your data/program a lot faster 
-   than using cassette tape,
--- Wide choice of disk drives: you are not restricted to a particular make of disk 
-   drives. You can use a 40 track or 80 track, single or double sided disk drive, In short 
-   you can use most makes of disk drives in the market today
--- Flexibility : you can increase the number of disk drives to a maximum of 3.
+Contents
 
-This booklet contains all the information that you will need to make full use of the 
-Beta Disk Interface. Technology Research wishes you to have many happy years with the 
-Interface.
+1 AUTO-BOOT
+2 AUTO CHECK OF DRIVE SPECIFICATION
+3 "40" COMMAND
+4 "CAT" COMMAND
+5 "LOAD" COMMAND
+6 "SAVE" COMMAND
+7 "COPY" COMMAND
+8 "FORMAT" COMMAND
+9 DISK ERROR
+10 SEQUENTIAL AND RANDOM ACCESS FILE HANDLING
+11 UTILITY PROGRAMS - TAPECOPY & FILER
+12 RAM IMAGE SAVER AND LOADER
+13 ADDITIONAL INFORMATION
 
 
-CONTENTS.
+TECHNOLOGY RESEARCH BETA DISK INTERFACE TR-DOS v4
 
-A..  Installation Procedure
-B..  A simple guide for those who are not familiar with the Interface
-C..  Manual for the Disk Operating System (D.O.S) commands
-D..  Quick reference guide to D.O.S. commands
-E..  Using D.O.S. commands in BASIC programs
-F..  How to convert programs from cassette to disk
-G..  To call D.O.S. commands from Machine Code programs
-H..  Utility programs
-I..  Error messages
-J..  Pin connection of the disk drive connector
+1. AUTO-BOOT
 
+When the Spectrum is turned on or reset, then TR-DOS v4 will try to load and run a Basic program named
+"boot". If there is no disk in Drive A, or the drive door is open or the disk does not contain the Basic program
+"boot", then an error message is displayed followed by the command line "RUN "boot"". You can run the
+"boot" program by pressing the "ENTER" key, or you can delete the line and enter another command as
+required.
 
-A..  INSTALLATION PROCEDURE
+Having a disk in the disk drive when the Spectrum power is turned on may corrupt the disk, particularly those
+makes of drive with permanently loaded heads. It is therefore recommended that the "boot" disk be loaded
+after the error message or the message be deleted as in the previous paragraph.
+You can run or load the "boot" program by the following commands:
+    RUN <ENTER>
+    LOAD >ENTER>
 
-Now that you have the Interface and a disk drive or a number of drives, please proceed 
-according to the following steps.
 
-1..  Connect the Interface to your Spectrum.
+2. AUTO CHECK DRIVE SPECIFICATION
 
-2..  Plug your disk drive into the "disk drive port" on your Interface using the cable 
-     that comes with your disk drive.
+TR-DOS v3 catered for disk drives with slow step rate, and fixed the step rate accordingly. TR-DOS v4
+checks the step rate of disk drives and adjust the rate automatically. Thus modern drives with fast step rate
+are fully utilised.
+In addition, TR-DOS v4, automatically checks the drive specification, that i s, 40 or 80 track, single or double
+sided and adjust Itself accordingly. The auto check may not work with some old 40 track disk drives because
+they do not have end stop. However the "40" command may be used to inform the system that it is actually a
+40 track drive.
+The auto tests are carried out when power is applied to the Spectrum computer, but to do this, the disk drives
+must be switched on. The tests will be carried out even if there is no disk in the drive. If the disk drives are
+switches off , then the test will be carried out when that particular drive is selected.
 
-3..  Switch on your disk drive and leave your Spectrum switched off. If the "drive on" 
-     indicator of your disk drive is on, then the disk drive socket is upside down. Turn the 
-     socket through 180 degree and try again. You will find that the drive on light should go 
-     out.
 
-4..  Plug the power socket from your Spectrum power supply into the power socket on your 
-     Interface. When you switch on, you will notice your disk drive engaged momentarily. This 
-     is normal.
+3. "40" COMMAND
 
-5..  On your monitor (TV), you will see the current version of the software in your 
-     Interface and the name of Technology Research at the top of the monitor. This means that 
-     your Interface is working.
+The auto check may not work with some old 40 track disk drives because they do not have end stop. That is,
+the system thinks it is a 80 track drive. The "40" command informs the system that the currently selected
+drive is actually a 40 track drive, Please note that the "FORMAT* command ignores the "40" command.
+Therefore, to format a disk on this kind of drive, you must use the "FORMAT" utility program which is on the
+disk supplied.
 
-6..  Insert the Technology Research Software Disk that comes with the Interface into 
-     your disk drive.
 
-7..  You will have to put in a password in order to access the software stored on your 
-     disk. The password that is used in all Software disks is "TRL". You can always change it 
-     later if you wish.
-     On the monitor (TV), you will find the symbol "A>". This prompt is issued by the 
-     Interface program and is a reminder that you are NOT in Sinclair BASIC. You are 
-     connected to disk drive A which is always the default disk drive.
+4. "CAT" COMMAND
 
+4.1 The "CAT" command has been extended so that the listing of files can be dumped to a channel. TRDOS v3
+displays the catalogue on the screen. In TR-DOS v4, it can also be sent to a channel.
 
-IMPORTANT
+For example:
+    CAT #4 sends the listing of a catalogue to channel #4.
+    CAT #6 "B:" sends the listing of a catalogue of drive B to channel #6.
 
-NEVER disconnect the Interface from the Spectrum whilst the power is still applied.
 
-NEVER leave you disk in the disk drive while power is switched on or off.
+4.2 The "CAT" command In the utility disk FILER program displays extended Information. An example of the
+Information displayed by the FILER "CAT" command is as follows:
 
+    Title: mydisk   Disk Drive: B
+    3 File(s)       40 Track s. side
+    1 del. file(s)  Free Sector 580
+    File name       Start Length line
+    filer <C> 32    32768 08000
+    test <B> 5      00298 01200 100
+    phone <#> 7     01780 01780
 
-B..  A SIMPLE GUIDE FOR THOSE WHO ARE NOT FAMILIAR WITH THE INTERFACE
+The display informs you that the name of the disk in drive B is "mydisk". It is 40 track single sided, with 3 files
+stored and 1 file deleted. There are 580 free sectors remaining on the disk.
+The 3 files are " filer", "test" and "phone", "filer" is a machine code program, occupying 32 sectors. The
+starting and executing addresses are 32768 and the length of the program is 8000 bytes.
+The basic program "test" will be auto-run at line 100, while "phone" is a data file (sequential or random
+access).
 
-In this section, you will be introduced to various Disk Operating System (D.O.S.) 
-Commands through simple examples. They are probably something you are likely to do first 
-time you come to use the Interface. The examples are arranged in an order a complete 
-beginner is recommended to follow.
 
-B.1  EXAMPLE 1: SWITCHING FROM Disk Operating System (D.O.S.) TO SPECTRUM BASIC AND VICE 
-                VERSA.
-                (How do I know when to Sinclair RASIC or Disk Operating System (D.O.S.)?)
+5. "LOAD" COMMAND
 
-When you are in Sinclair BASIC, you do NOT get a prompt. If you get the prompt "A>", 
-then you are in D.O.S.
+The "LOAD" command has been changed. If a Basic program is saved with a line number, then when the file
+is loaded from the disk, it will auto run at that line number.
+If a Basic program is saved without a line number, then the program will be listed when the file is loaded from
+the disk.
+During loading and saving of files , the <BREAK> key may be used to abort the command. The commands
+will be also aborted if there is no disk in the drive and "no disk" will be displayed on the screen.
 
-To go from D.O.S. to Spectrum, press the following sequence of keys:
 
-    RETURN   ENTER
+6. "SAVE" COMMAND
 
-To go from Spectrum to D.O.S., type in the following:
+The "SAVE" command has also been changed. When a machine code file is saved in TR-DOS v3. it is saved
+as sectors. That is, if 10 bytes are to be saved, the system actually saves the whole 256 bytes (one sector)
+from the starting address. And when the file is loaded, all 256 bytes are loaded into the memory.
+In TR-DOS v4, this has been corrected, so that the exact number of bytes are saved and loaded. In order to
+implement this change, the "execution address" has to be removed from the directory.
+Therefore, to auto run a machina code file , the "executing address* must be the same as the "starting
+address". If this is not so, than the RANDOMISE USR command can be used in BASIC.
 
-    RAMDONIZE USR 15360
+For example:
+    SAVE "TEST" CODE starting_address, length
 
-and you will get the D.O.S. prompt
+When the program is run, it starts from the "starting_address".
 
-    A>
+For example:
+    RUN "TEST" CODE
 
+NOTE: Irrespective of the actual number of bytes saved the "CAT" command will show a sector. Thus 310
+bytes saved will show, and use, 2 sectors of the disk.
 
-B.2  EXAMPLE 2: PREPARING A NEW DISK (FORMATTING)
-                (What do I have to do before I can use a brand new disk?)
 
-Before you can use a disk, track markers have to be put onto the disk. All subsequent 
-data that you put in will be stored into these marked tracks.
-If you only have one single disk drive, you will need to put in the Software disk into 
-the disk drive first (assuming you have already switched the Spectrum and the disk drive 
-on) and to have a new disk ready.
+7. "COPY" COMMAND
 
-Here is what you have to do:
+The "COPY" command is now implemented in the TR-DOS system instead of on the disk. This command is
+used to copy files from one disk drive to another. The format is:
 
-1. Type in the line
+    COPY "destination file ", "source file" type
+	
+For example:
+    COPY "B:test", "A:pie*
+    COPY "A:new", "B:old" CODE
+    COPY "B:new", "A:old" DATA
 
-    RUN "format"CODE
+If you are copying all the files from disk drive A (source) to disk drive B (destination), then type
 
-(this command loads the program into the Spectrum. Now you will receive further prompts 
-to advise you what to type in).
+    COPY "B:*", "A:*"
 
-IMPORTANT: If you have one SINGLE disk drive, then please take the Software disk out and 
-put the new disk in. If you DO NOT do this, you will format your Software disk and all 
-the information on it will be lost.
+If there is a file with the save name already existing on the destination disk drive, then the system will prompt
+you with the following options:
 
-2. You will need to tell the computer which disk drive you will be using. If you only 
-have one disk drive, then logically you have to call it disk drive "A".
+    overwrite existing file ? (Y/N)
+	
+The file will be overwritten if you answer "Y".
 
-3. Then decide the password for the new disk and write it down somewhere you can refer 
-to easily.
+If you want to duplicate or copy files from one disk to another disk using a single disk drive, then the "FILER"
+utility program should be used.
 
-IMPORTANT: If you lose the password, then you will not be able to access the data again.
 
-4. Please type in the information when you are prompted. If the disk is good, then you 
-will get no error. If the disk is faulty, then you will get an error prompt. In this 
-case, you are advised to return the faulty disk to your dealer.
+8. "FORMAT" COMMAND
 
-5. Let us do one example. Suppose you have a disk drive which you call "A", you name the 
-disk "BLUEPETER" and the password "PETER". Then you will see the following on the screen.
+The "FORMAT" command is now implemented in the TR-DOS system in addition to the utility on the disk.
+This command is used to prepare a blank new disk for storing files.
 
-    A>RUN "format"CODE
+The command automatically checks the drive specification and will format the disk accordingly. The different
+type of disk are as follows:
 
-    * Mini-floppy Format Ver 2.2 *
-    (c) 1984 Technology Research Ltd
+    40 track, single sided
+    40 track, double sided
+    80 track, single sided
+    80 track, double sided.
+	
+For example
 
-    1  -----  40 track single sided
-    2  -----  80 track single sided
-    3  -----  40 track double sided
-    4  -----  80 track double sided
-    Q  -----  Quit
+    FORMAT "mydisk"
+	
+When the formatting has been completed, the following is shown:
 
-    Which format ?
+    mydisk
+    624 / 624
 
-Assuming you are using a 40 track single sided disk drive, then you will select 1. The 
-screen will show:
+where the first line is the name of the disk, and the first number is the number of free sectors on the disk, the
+second is the maximum number of sectors. A track contains 16 sectors and there are 256 bytes in one
+sector. Track 0 is reserved for system use.
+Therefore, there are 39 * 16 = 624 tracks and 624 * 256 = 159744 bytes (156 Ko) in a 40 tracks, single sided
+drive.
 
-    * 40 track single side *
-    Which drive? (A,B,C,D,Menu)    A (your input is required here)
+It is possible to force a double sided disk drive to format a disk as single sided by making the first character
+of the disk name a "$". This is essential for use with the RAM SAVER (see section 12).
+for example
 
-    Please insert disk in drive A
-    When you are ready, type   F   for format
-                               V  for verity
-                               Q for quit
-    F
+    FORMAT "$mydisk"
+	
+	
+9. DISK ERROR
 
-    Please type in a password: PETER
+If a disk error occurs, TR-DOS v4 will display an error message such as "write protected" or "disk error",
+followed by the track sector number where the error has occurred. There are 3 options available, you can
+type "R" to re-try. "A" to abort the operation or "I" to ignore that track and sector and continue with the rest of
+the disk operations.
 
-    Please type a name for this disk: BLUEPETER
 
-    formatting track 00
-    reading track 00
-    formatting track 01
-    reading track 01
-    .....
-    (and so on until it reaches track 39)
+10. SEQUENTIAL AND RANDOM ACCESS FILE HANDLING
 
-    0 Error(s)
+10.1 General description
 
-    Which Drive? (A,B,C,D,Menu)
+Normal datafiles, e.g. SAVE(LOAD) "name"a$(), produced by many programs are still handled as in TR-DOS
+v3. The "CAT" command identifies these as type <D>.
 
-If you wish to proceed to format more than one disk, then you type in the name of the 
-disk drive and repeat the above procedure.
+There are now two additional types of datafiles, sequential and random access. In order to use these
+datafiles, you must first open a channel. The Spectrum contains 16 channels. Channels #0 to #3 are
+reserved for the computer. You can use channels #4 to #15.
+When a disk channel is open for file handling. 336 bytes of RAM are used. When the "CAT* command is
+used to list the catalogue, these datafiles are distinguished from other types by <#>.
 
+For example
 
-B.3  EXAMPLE 3: CHANGE DISK PASSWORD
-                (I don't like the Software disk password, how do I change it?)
+    TEST <#>
 
-You have to know the password before you can change it to another word of your 
-preference. Let us assume that you have already typed in the required password and you 
-are in D.O.S. environment. To change the password to say JENNY, type:
+Both numeric and string variables may be stored in the datafiles. Numeric variables are converted into
+strings by the computer before being put into data file . The string is terminated by a carriage return (ASCII
+code 13).
+The sequential file stores the data serially . In order to read a string towards the end of these files , it is
+necessary to start from the very beginning. The random access file stores data as a number of records. Any
+record in these files may be read or written by specifying the record number.
 
-    USR
-
-and type in the new password after you receive the prompt
-
-    New password: "JENNY"
-
-The password of the disk is now JENNY.
-
-
-B.4  EXAMPLE 4: FILE TABLE
-                (How do I find out what's on the disk and how much space I have got left?)
-
-To find out what is on the disk, you want a CATALOCUE of the items on the disk. The 
-command for this is CAT. If you use this command on the Software disk, you will set the 
-following:
-
-    Title: Utility
-    3 File(s)
-    0 Del. File(s)
-
-    A: format (C) 10     : copy (B) 2
-    A: copy   (C) 14
-
-    364 Free
-
-The first three lines indicate the title of the disk is called “Utility", and there are 
-3 accessible files and there is no deleted file.
-
-The next line informs you that there are three programs called format(C), copy(E) and 
-copy(C) in disk drive A. Take the format(C) as example the letter code C within the 
-bracket means that it is a machine code program. In other words, the file type is CODE. 
-For a BASIC program, the code is (B) and for a data file, the code is (D). The number 
-following the file code is the length of the program. In this case, the length of the 
-program is 10 sectors.
-
-The last line shows you that you have 364 sectors left on the disk.
-
-(NOTE: there are 4 sectors in 1K byte)
-
-
-C..  MANUAL FOR THE DISK OPERATING SYSTEM (D.O.S.) COMMANDS
-
-C.1  ERASE
-
-This command will allow you to remove a file from the disk. You will have to specify the 
-file type as well if the file is not a BASIC program file.
-
-    e.g.
-    ERASE "filename"           for a basic program file
-    ERASE "filename"CODE       for a machine coded program file
-    ERASE "filename" DATA      for a data file
-
-
-C.2  LOAD
-
-This command will allow you to load a program from disk to your Spectrum. Please note 
-that if there is insufficient memory in your Spectrum, you will get an error message.
-
-    *ERROR*
-
-When LOADing is complete and without error, you are automatically returned to Spectrum 
-BASIC and the program is listed.
-
-Example:
-
-    LOAD "filename"
-
-When loading Machine Code program, it can be relocated to a different address.
-
-Example:
-
-    LOAD "filename"CODE 36000
-
-The Machine Code program is loaded into RAM starting from 36000
-
-
-C.3  MERGE
-
-This command is used to combine two or more BASIC program files. i.e. a number of 
-programs can be merged to form a large program,
+The sequential and random access files may be erased, renamed or copied as files of other types.
 
 For example:
 
-    MERGE "OLD"        to merge program OLD with the program in RAM
-    MERGE "B:NEW"      to merge program NEW in disk drive B with the program in RAM
+    ERASE "namadd" #
+    NEW "newfile", "oldfile" #
+    COPY "B:phone","A:phone" #
 
 
-C.4  MOVE
+10.2 Sequential Files
 
-After a file has been deleted from disk, a gap is left behind. As you continue to store 
-programs onto the disk, eventually there will not be enough continuous storage space to 
-store your program. When this happens, the retrieval and storage time for your program 
-will increase. So to ensure this does not happen, you can use this command to repack the 
-files on the disk in order to get rid of these "holes".
+A sequential file may be opened either for write or read, but not both at the same time. To open a file for
+write, the command format is:
 
-Note: this command requires 4K of memory for work space. If there is insufficient memory 
-space, an error message will be displayed:
+    OPEN channel_number,"filename"W
 
-    *ERROR*
-
-Example:
-
-    MOVE
-
-
-C.5  NEW
-
-Use this command when you wish to change the name of an existing file on disk. You will 
-have to specify the file type if the file is not a basic program file.
-
-Example:
-
-    NEW "newfile","oldfile"            for BASIC program files.
-    NEW "newfile","oldfile"CODE        for machine code program files
-    NEW "newfile","oldfile" DATA       for a data file.
-
-
-C.6  PEEK
-
-This command allows you to read and transfer the data into RAM, any part of a file on 
-disk You can only read a sector at a time and transfer the data to any location within 
-the Buffer RAM.
-The command is in the form:
-
-    PEEK "filename" Buffer address,Record number
+When a channel is opened for write, the basic "PRINT" command can be used to write data to this channel.
 
 For example:
 
-    PEEK "RECORD" 30023,1      The first sector of the file "RECORD" is read and its 
-content is written to RAM from the buffer address 30023.
+    10 LET DOS=15363
+    20 RANDOMISE USR DOS:REM: OPEN #4 "test"W
+    30 PRINT #4: "This is a test line ."
+    40 RANDOMISE USR DOS: REM: CLOSE #4
+	
+The string in line 30 will be saved in file "test" on the disk. When a write file is opened, the contents will be
+lost if the power is turned off before the file is closed. The file is closed by closing the channel, as in line 40.
+Any file which is closed may be reopened for a further write operation by reading, adding and re-saving under
+a new name or after erasing the first name.
 
-    PEEK "B:0LD" 30024,10      The 10th sector of the file "OLD" on disk drive 3 is read 
-and its content is written in RAM from the buffer address 30024.
+To open a file for read, the command format is:
 
-
-C.7  POKE
-
-The command allows you to write a sector of data from RAM to any location in a file on 
-disk. The command takes similar form as PEEK, i.e.
-
-    POKE "FILENAME" Buffer address,Record number
-
-For example:
-
-    POKE "RECORD" 30023,1      A sector length of data starting from RAM address 30023 
-                               is written to the first sector of the file "RECORD".
-    POKE "B:0LD" 30024,10      A sector length of data starting from RAM address 30024 
-                               is written to the 10th sector of the file "OLD" in disk drive B.
-
-
-C.8  RANDOMIZE USR 15360
-
-Use this command when you wish to return from Spectrum BASIC.
-
-
-C.9  RUN
-
-This command will load a file from disk and run the program.
-
-You can either run BASIC programs or a machine code program.
+    OPEN #4 "filename"R
+	
+When a channel is opened for read, the basic "INPUT" command can be used to read data from this
+channel.
 
 For example:
 
-    RUN "file1"         for running a BASIC program
-    RUN "file1"CODE     for running a machine code program
-
-Note: When running a BASIC program from disk, D.O,S. always starts from the first line 
-of the BASIC program, i.e. GO TO 1 instruction.
-
-
-C.10 SAVE
-
-This command will save a program in your Spectrum onto disk and the name of that program 
-will be called "filename". You will also need to specify the file type if the program is 
-not a BASIC program file.
-
-For a machine code program, there are three extra inputs: you will have to specify where 
-the code is stored in the Spectrum by putting down the start address and length. The 
-third parameter which is optional, is the address for autorun.
-The format is:
-
-    SAVE "filename" CODE starting address,length,autorun address
-
-For example:
-
-    SAVE "file1"                 to save a basic program
-    SAVE "file1"CODE 10,200      to save a machine code program
-    SAVE "file1" DATA a()        to save a variable array a
-    SAVE "file1" DATA a$()       to save a character array a$
+    10 LET DOS=15363
+    20 RANDOMISE USR DOS: REM: OPEN #7,"test"R
+    30 INPUT #7: A$
+    40 CLOSE #7
+	
+The data file "test" will be loaded to A$ from the disk.
 
 
-C.11 SELECTION OF DISK DRIVE
+10.3 Random access files
 
-The default disk drive is set for disk drive A. The command to select other disk drives 
-is as follows:
+All "OPEN" and "CLOSE" commands require the usual RANDOMISE USR 15363:REM:
+prefix, but not the "PRINT" or "INPUT" commands.
 
-    *"B:"     for selecting disk drive B
-    *"C:"     for selecting disk drive C
-    *"D:"     for selecting disk drive D
+To open a file for random access, the command format is:
 
+    OPEN channel_number, "filename",RND, record_length
 
-C.12 USR
+For example
 
-You can use this command to change the password of your disk. The password must not be 
-longer than 9 characters (alpha-numeric).
+    OPEN #12 ,"test01"RND, 20
+
+In this example, channel #12 is open for the random access file "test1" with a record length of 20 characters.
+The maximum record length is 255 bytes.
+
+The record is stored as a single string. If the string is less than the record length, it is stored left justified
+and is terminated by a carriage return (ASCII code 13) the remaining bytes are not defined. If the string is
+longer than the record length, then it will be truncated to be the same as the record length, and stored
+without the carriage return terminator.
+
+A record may contain more than one variable. However it is the responsibility of the program to link together
+the strings of those variables into a single string for the write operation. The string must be split up during the
+read operation.
+
+To write a record to a file, the command format is:
+
+    PRINT channel_number; record_number, variable_name
 
 For example:
 
-    USR
-    New password: "BLUEPETER"
+    PRINT #4: 20, A$
+	
+The content of A$ is put in record number 20 (21st record). The first record number is 0. The contents will be
+lost if the power is turned off before the file is closed. A file is closed by closing the channel.
 
+To read the record from a file, the command forma is:
 
-D..  QUICK REFERENCE GUIDE TO D.O.S.
-
-------------------------------------------------------------
-    Commands                       Functions
-------------------------------------------------------------
-
-    *"A:"                  to select disk drive A
-    *"B:"                  to select disk drive B
-    *"C:"                  to select disk drive C
-    *"D:"                  to select disk drive D
-    CAT                    to display the file names
-    ERASE                  to rub out (delete) a file e.g. ERASE "filename"
-    LOAD                   to load a program from disk to Spectrum
-    MERGE                  to combine 2 or more BASIC programs
-    MOVE                   to reorganise the location of files and pack them together
-    NEW                    to change the name of a file on disk e.g. NEW "newname","oldname"
-    PEEK                   to random read from a file
-    POKE                   to random write to a file
-    RANDONIZE USR 15360    to go into D.O.S. environment from Spectrum BASIC
-    RETURN                 to return to Sinclair BASIC from D.O.S.
-    RUN                    to load and run a program e.g. RUN "name"CODE
-    SAVE                   to save a program onto disk e.g. SAVE "name"
-    USR                    to change disk password
-
-
-E..   USING D.O.S. COMMANDS IN BASIC PROGRAMS
-
-No doubt as your programming skill develops, you will exploit the fast access time of 
-the disk drive. You can do this from within BASIC. All the D.O.S. commands that are 
-described above can be called up from within BASIC line with the following structure and 
-the line can be anywhere within the BASIC program:
-
-line number RANDOMISE USR 15363: REM : D.O.S. commands
-
+    INPUT channel_number; (record_number), variable_name
+	
 For example:
 
-If you wish to run a program called "sketch" which is stored on disk from line 300 in 
-your BASIC program, then all you have to do is to have the following line in your 
-program:
-
-    300 RANDOMISE USR 15363: REM : RUN "sketch"
+    INPUT #4: (15), A$
+	
+The record in record number 15 (16th record) is read and loaded to variable A$.
 
 
-F..  HOW TO CONVERT PROGRAMS FROM CASSETTE TO DISK
+11. UTILITY PROGRAMS - TAPECOPY & FILER
 
-F.1  Loading from cassette to disk.
-
-You can achieve this in your BASIC program by using the line:
-
-    RANDOMISE USR 15363: REM : LOAD "filename"
-
-For example:
-
-If the LOAD command in your cassette version is:
-
-    200 LOAD "filename"
-
-Then it can be replaced by:
-
-    200 RANDOMISE USR 15363: REM : LOAD "filename"
+There are three utility program to the disk supplied. The "FORMAT" program is the same as TR-DOS v3.
+The "TAPECOPY" program allows you to transfer programs from cassette to disk. And the "FILER" program
+replaces three utility programs in TR-DOS v3, namely, "BACKUP", "COPY" and "SOOPY".
 
 
-F.2  Saving from cassette to disk.
+11.1 TAPECOPY
 
-The process is similar to the LOADING process described in F.1.
-
-For example:
-
-If the SAVE command in your cassette version is
-
-    200 SAVE "filename"
-
-Then it can be replaced by
-
-    200 RANDOMISE USR 15363: REM : SAVE "filename"
-
-
-
-G..  TO CALL DOS COMMANDS FROM MACHINE CODE PROGRAM.
-
-When calling DOS commands from BASIC program, e.g.
-
-    RANDOMISE USR 15363: REM : LOAD "example"
-
-To run above command in Machine code, all you have to do, is to "fool" the system by 
-altering the BASIC variable CHADD to point to an address line buffer, created by your 
-machine code program,
-
-For example:
-
-If you use a buffer address 40000, then the above command will be set to
-
-    address    code            comment
-    40000      234     REM     BASIC REM code
-    40001      58      :
-    40002      239     LOAD    BASIC LOAD code
-    40003      34      "
-    40004      101     e
-    40005      120     x
-    40006      97      a
-    40007      109     m       file name "example"
-    40008      112     p
-    40009      108     l
-    40010      101     e
-    40011      34      "
-    40012      13      ENTER   always end with ENTER
-
-Once the above line is finalized you can call the following example.
-
-    LD HL,(CHADD)      WHERE CHADD IS 23645
-    LD (TEMP),HL       SAVE IT IN SOME PLACE
-    LD HL,40000
-    LD (CHADD),HL      SET CHADD TO 40000
-    CALL 15363         CALL TR-DOS AS FROM BASIC
-
-    LD HL,(TEMP)
-    LD (CHADD),HL      RESTORE CHADD CONTENTS
-    RET
-
-
-H..  UTILITY PROGRAMS
-
-H.1  BACKUP
-
-It is necessary, in many cases, that your files need to be duplicated to another disk 
-for security reason. This program allows you to duplicate all the files (including the 
-disk password) in a disk to another disk for a SINGLE drive user.
-
-You will need a (newly) formatted disk with no files on it. Any files on this disk will 
-be overwritten when this program is executed.
-
-Assuming that the password is BLUEPETER on the disk where there are a number of files
+In many cases you may want to transfer programs from cassette to disk. This program allows you to copy
+most programs onto disk. It can copy BASIC, CODE, ARRAY and DATA file stored on tape, providing that
+the length of the program is not greater than 40,000 bytes.
 
 To execute this program, type
 
-    RUN "backup"
-
+    RUN "tapecopy" <ENTER>
+	
 You will get the following display:
 
-                  * BACKUP 2.2 *
-            ©1984 TECHNOLOGY RESEARCH LTD
+           TAPE TO DISK COPIER VER 4.0
+           TECHNOLOGY RESEARCH LTD
 
-    PASSWORD FOR SOURCE DISK:
+    DATA TYPE:
+    FILENAME:
+    CODE LENGTH:
+    START LINE:
+    BASIC LENGTH:
+	
+    PRESS [BREAK] TO STOP
+    
+	      START TAPE
+	
+The program will wait for you to play the tape. Once the tape HEADER is read, the display will show the
+data type, filename, code length, start line and basic length.
 
-    BLUEPETER
+For example, if a BASIC called example (with auto-run line number 1000 and length of 15000 bytes) is
+loaded, then the display will be shown as:
 
-    INSERT SOURCE DISK THEN PRESS Y.
+           TAPE TO DISK COPIER VER 4.0
+           TECHNOLOGY RESEARCH LTD
+		   
+    DATA TYPE: BASIC
+    FILENAME: EXAMPLE
+    CODE LENGTH: 15000
+    START LINE: 01000
+    BASIC LENGTH: 15000
+	
+    PRESS [BREAK] TO 5TOP
 
-    Y
+          STOP TAPE
 
-    INSERT DESTINATION DISK THEN PRESS Y
+When a file has loaded, the display will inform you to stop the tape, the program is then stored on the disk
+with the same name as that stored on the tape. If a file with the same name has already existed on the disk,
+then it will be overwritten.
 
-    Y
+This process will repeat itself until you press the <BR£AX> key.
 
-Because of the RAM capacity of the Spectrum, only approximately 24 Kbytes of data can be 
-duplicated at one time. That is to say, for a disk with more than 24 Kbytes of data to 
-be duplicated, it will require several operations of the above process.
+The "TAPECOPY" program has its limitations, they are:
 
-NOTE: If you wish to abandon the program before it is executed, press EDIT key.
+1  It can only transfer programs stored in standard format, i.e. with header information.
+2  It cannot transfer programs which are not in standard format, e.g. headless recordings.
+3  It cannot transfer protected programs.
+4  Programs must not be longer than 40,000 bytes.
+5  Programs transferred to disk may still have to be modified to enable the user to use the disk
+   facilities (refer to sections E & F, page 19-20 in the User Manual).
+
+The messages which my be encountered are:
+
+START TAPE:         Press the play key on the cassette recorder to start loading.
+STOP TAPE:          Stop the cassette recorder.
+TAPE LOAD ERROR     Errors encountered in loading, rewind tape and try again.
+NOT ENOUGH MEMORY   This message tells you that you are trying to transfer programs greater than 40000 bytes
+                    long. If so, you can still transfer program by noting down the header information displayed.
 
 
-H.2  COPY
+11.2 FILER
 
-This facility allows you to duplicate programs/data from one disk drive(source) to 
-another disk drive(destination). While you are using this program you can also execute 
-other D.O.S, commands (see below) which are described in Section C.
+The "FILLR" program replaces "BACKUP", "COPY" and "SCOPY" utility programs in TR-DOS v3. In addition,
+the "CAT" and the "COPY" commands have also been enhanced.
 
 To execute this program, type
 
-    RUN "copy"
+    RUN "filer" <ENTER>
+	
+The display in the screen will be:
 
-The display on screen will be:
+           FILER ver 4.0
+    © 1984 Technology Research Ltd.
 
-                  * COPY VER 2.2 *
-            ©1984 TECHNOLOGY RESEARCH LTD
+Commands are:
 
-                  COMMANDS ARE:
-
-                  CAT
-                  NEW "newfile", "oldfile"
-                  ERASE "filename"
-                  MOVE
-                  COPY "newfile", "oldfile"
-                  RETURN
+    CAT                        List of file name
+    NEW "newfile", "oldfile"   Rename
+    ERASE "filename"           Erase a file
+    MOVE                       Remove empty gaps
+    RETURN                     Return to System
+    FORMAT "name"              Format new disk
+    COPY "new","old"           Copy file
+    COPY "b: *" , ' 'a:*"      Copy all files
+    COPY s "file"              Single drive copy
+    COPY b                     Backup whole disk
 
     A*
 
-You will notice that A* is issued rather than A>. It is to remind you that you are in 
-COPY MODE.
-
-Example 1
-If you are copying a file called "Jenny" from disk drive A(source) to disk drive 
-B(destination) and you would like to give a new file name "Jacky" to it, then type
-
-    A* COPY "B:Jacky", "A:Jenny"
-
-Example 2
-If you are copying all the files from disk drive A(source) to disk drive B(destination), 
-then type
-
-    A* COPY "B:*", "A:*"
-
-If there is a file with the same name existing on disk B already, you will have the 
-following options.
-
-    OVERWRITE EXISTING FILE (Y/N)
+The FILER "CAT" facility is fully covered in section 4.2. Single drive copy "SCOPY" is replaced by the "COPY
+s" command, and the "BACKUP" is replaced by the "COPY b" command.
 
 
-H.3  FORMAT
+12 RAM IMAGE SAVER AND LOADER
 
-As described in B.2, this Utility program allows you to format a new disk and to check 
-for any disk errors, (i.e. bad disk)
+When the button on the back of the interface is pressed, the whole image of the computer's memory (48
+kbytes! will be stored on the disk, so that the program which is running may be continued on a later day.
 
-To execute this program, type
+The following sequence show you the detailed operations.
 
-    RUN "format"CODE
+1  Format a single sided disk (see "FORMAT" command, section 8).
+2  Insert the disk in drive A, if it is not already there.
+3  Return to BASIC.
+4  Reset the Spectrum by typing: PRINT USR 0 <ENTER>
+5  Load and run the program from cassette tape as normal.
+6  After the program has loaded and is running, press the button on the back of the Interface, and
+   release the button promptly.
+   The RAM image will then be saved on the disk.
 
-There are 3 options:
+Note that the disk must be formatted as single sided and it must be in drive A. The name of this file is " " and
+the type is CODE.
+The file is stored in track 1 to 12. If there were files stored in track 1 to 12 on the disk, they will be
+overwritten.
 
-a.  F for format
+This file may be renamed using the "NEW* command or it may be copied to another disk. The command "GO TO"
+is used to load and run the image file. During the loading of the file, you will see some random display
+on the screen. And when the loading has been completed, the computer will continue to run the program
+from where it was stopped.
 
-If you like to see a working example, turn to section B example B.2
+To load and run the saved image, type
 
-b.  for verify
+    GO TO "filename"CODE <ENTER>
+	
+Note: some games programs use a non-standard key scan routine. If a program does not work after loading
+from the disk, you must change the name of the file to begin with a "$".
 
-This option will check for disk error (i.e. bad disk) without destroying the data that 
-you have on the disk.
+For example:
 
-c.  Q for quit
+    NEW "$test", ""CODE <ENTER>
+	
+Then you can run the program by typing
 
-When you have finished formatting or verifying your disk, you can use this option to 
-leave the FORMAT environment,
+    GO TO "$test"CODE <ENTER>
+	
+	
+11 ADDITIONAL INFORMATION
 
-
-H.4  SCOPY
-
-This program allows you to cony a single file from one disk to another disk for a SINGLE 
-disk drive user. While you are using this program you can also execute other D.O.S. 
-commands (see below) which are described in Section C.
-
-To execute the program, type
-
-    RUN "scopy"
-
-The display on screen will be:
-
-                  * SCOPY VER 2.2 *
-            ©1984 TECHNOLOGY RESEARCH LTD
-
-                  COMMANDS ARE:
-
-                  CAT
-                  NEW "newfile", "oldfile"
-                  ERASE "filename"
-                  MOVE
-                  COPY "newfile", "oldfile"
-                  RETURN
-
-    A#
-
-You will notice that A# is issued instead of A>. It is to remind you that you are in 
-SCOPY MODE.
-
-Example:
-If you are copying a file "format", then type
-
-    COPY "format"CODE
-
-The display will be:
-
-    INSERT SOURCE DISK THEN PRESS Y
-
-    Y
-
-    INSERT DESTINATION DISK
-    THEN PRESS Y
-
-    Y
-
-When the above process is completed, it will return to
-
-    A#
-
-
-I..  ERROR MESSAGES
-
-If D.O.S. commands are from BASIC or Machine Code programs, then D.O.S. error messages 
-will not be issued on the screen. Instead, they are stored in the Z80 Register Pair (BC) 
-and they are in code. The key to decipher the code is:
-
-    0 ---- No errors
-    1 ---- No files
-    2 ---- File exit
-    3 ---- No space
-    4 ---- Record number overflow
-    5 ---- Disk errors
-    6 ---- Syntax errors
-
-To obtain the error code, set a variable equal to the D.O.S. commands. The variable will 
-take on the value of the error code on the completion of the D.O.S. command.
-
-Example 1:
-
-    LET A=USR 15363: REM : CAT
-
-Example 2:
-
-A simple program illustrating the use of this error code:
-
-    10 CLEAR 65367
-    20 LET ERR=USR 15363: REM : LOAD "COPY"CODE
-    25 REM ERROR CODE IS RETURNED IN THE VARIABLE ERR
-    30 IF ERR=1 THEN GO TO 100
-    35 REM IF ERROR CODE = 1 THEN THE FILE CODE IS NOT ON THE DISK
-    40 RANDOMIZE USR 32768
-    50 RANDOMIZE USR 15360
-   100 CLS
-   110 PRINT AT 10,1;"""COPY"" CODE NOT ON DISK"
-   120 STOP
-
-
-J..  PIN CONNECTIONS OF THE DISK DRIVE CONNECTOR.
-
-The disk drive connector is designed to be Shugart compatible, and the pin connections 
-are detailed as below:
-
-    0V --1    2--
-    0V --3    4--
-    0V --5    6-- Disk drive D
-    0V --7    8-- Index
-    0V --9   10-- Disk drive A
-    0V --11  12-- Disk drive B
-    0V --13  14-- Disk drive C
-    0V --15  16-- Head Load (motor on)
-    0V --17  18-- Direction
-    0V --19  20-- Step
-    0V --21  22-- Write Data
-    0V --23  24-- Write Gate
-    0V --25  26-- Track OO
-    0V --27  28-- Write Protected
-    0V --29  30-- Read Data
-    0V --31  32-- Side 1
-    0V --33  34--
-
-
-2 4                            34
-. . . . . . . . . . . . . . . . .
-
-. . . . . . . . . . . . . . . . .
-1 3                            33
-
-PIN CONNECTIONS OF THE DISK DRIVE CONNECTOR. (SKETCH OF FRONT VIEW)
+The disk system requires a buffer of 256 bytes (one sector), the printer buffer of the Spectrum computer is
+used. However, before the printer buffer is used, it is saved in a free sector on the system track (track 0) of
+the disk. When the operation has been completed, the printer buffer is re-loaded from the disk, if the disk is
+write protected the printer buffer will be lost.

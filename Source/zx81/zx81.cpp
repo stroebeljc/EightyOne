@@ -911,6 +911,7 @@ BYTE zx81_readbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE zx81_opcode_fetch(int Address)
 {
+        static bool startOfDFile = true;
         static int calls = 0;
         int inv;
         int bit6, update=0;
@@ -925,6 +926,11 @@ BYTE zx81_opcode_fetch(int Address)
                 if (zxpand) zxpand->Update(1);
         }
 
+        if (nmiGeneratorEnabled)
+        {
+                startOfDFile = true;
+        }
+
         if (Address < zx81.m1not)
         {
                 // This is not video related, so just return the opcode
@@ -932,7 +938,7 @@ BYTE zx81_opcode_fetch(int Address)
                 data = zx81_ReadByte(Address);
 
                 // The floating point hardware fix intercepts instruction opcode fetches from addresses
-                // matching %-0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
+                // matching %x0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
                 // The fix affects addresses $0335, $0735, $1335, $1735, $2335, $2735, $3335 and $3735,
                 // and upper locations $8335, $8735, $9335, $9735, $A335, $A735, $B335 and $B735 which
                 // can affect programs utilising the M1Not modification that allows code to run from the
@@ -993,7 +999,13 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
                 // when the I register is odd.
-                if (opcode!=118)
+                BYTE rRegister = (BYTE)((z80.r7 & 0x80) | (z80.r & 0x7F));
+
+                if (startOfDFile && opcode != 0x76)
+                {
+                        startOfDFile = false;
+                }
+                if (!startOfDFile && (rRegister != 0x80 && rRegister != 0x81))
                 {
                         inv=(MemotechMode==3);
                         update=1;
@@ -1891,7 +1903,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (memotechResetRequested)
                         {
                                 MemotechMode=0;
-                                z80.i=0x1e;
                         }
 
                         int nmiResponseWaitDuration = 0;

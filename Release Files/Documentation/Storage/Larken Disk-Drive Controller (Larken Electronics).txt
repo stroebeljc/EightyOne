@@ -5,29 +5,29 @@ Larken Electronics
 
 LDOS
 
-Ldos disk operating system (dos) 16 a easy to use DOS for the
+Ldos disk operating system (dos) is a easy to use DOS for the
 ZX-81 that features Basic, Array and code saves; and automatic
 management of the directory and disk file storage.
 
-Ldos resides on a 2K eprom that 15 memory mapped from address
+Ldos resides on a 2K eprom that is memory mapped from address
 14336 to 16383. The controller also has on board a 2K ram buffer
 that is mapped from 12288 to 14335. The dos is always entered
-by USR 14326 command.
+by USR 14336 command.
 
   eg: to enter LDOS :
 type: PRINT USR 14336
 
    LDOS
-   * (should appear)
+   *       (should appear)
 
   
 LDOS COMMANDS
 
 Eight commands are supported by the eprom version of Ldos:
 
-  Directory     Load "xxxxxx.Tx"
-  Format        Save "xxxxxx.Tx"
-  Exit          Delete "xxxxxx.Tx"
+  DIRECTORY     LOAD "xxxxxx.Tx"
+  FORMAT        SAVE "xxxxxx.Tx"
+  EXIT          DELETE "xxxxxx.Tx"
 
 and drive select commands
 
@@ -35,8 +35,8 @@ These commands don't use token words like Timex Basic but are
 typed in letter by letter. Only the first 4 letters of a
 command need to be typed.
 
-  eg: Dele “xxx. B1"
-      Form
+  eg: DELE "xxx.B1"
+      FORM
 
 
 Syntax
@@ -74,24 +74,24 @@ can be executed from running basic programs.
 When a command is to be executed from within a program the
 command is held in a REM statement preceded by the USR call.
 
-  eg: 100 Rand USR 14336
-      120 REM save "prog.Bz"
+  eg: 100 RAND USR 14336
+      120 REM SAVE"prog.Bz"
 
 
 Auto Run Programs
 
 When a program is saved from within a running program, it
 will continue from the next line when it is loaded back in.
-A STOP statement before the saveing lines is sometimes wise to
+A STOP statement before the saving lines is sometimes wise to
 put in so the program doesn't accidently resave itself.
 
   eg: 1 REM program  
      80 STOP
-     90 Rand USR 14336         (use a RAND USR if you don't want
-    100 REM save "Test.B1"      anything printed on the screen.)
-    110 Goto 1
+     90 RAND USR 14336         (use a RAND USR if you don't want
+    100 REM SAVE "TEST.B1"      anything printed on the screen.)
+    110 GOTO 1
 
-(type Goto 90 to save program)
+(type GOTO 90 to save program)
 
 
 Formatting
@@ -109,7 +109,7 @@ Use a good quality double sided disk that is soft sectored.
 - If the system will save and load programs on disks that it has
 Formatted but won't read disks from another Larken system this
 means that one or both of the disk drives is not aligned correctly
-(Most computer stores can align disk drives)
+(most computer stores can align disk drives).
 
 
 Saving "XXXXX.TX"
@@ -127,12 +127,12 @@ file name.
 
   eg: to save a block starting at 50000 that’s 500 bytes long
        256*195+80=50000
-    Poke 12304,80
-    Poke 12305,195
+    POKE 12304,80
+    POKE 12305,195
        256*1+244=500
-    Poke 12306,244
-    Poke 12307,1
-       then save "xxxxx.Cx"
+    POKE 12306,244
+    POKE 12307,1
+       then SAVE "xxxxx.Cx"
 
 
 Saving Code Continued-
@@ -146,30 +146,30 @@ A Basic program for poking these locations could be on disk and
 loaded when ever needed.
 
   eg: 10 REM Poking program
-      15 PRINT "input start address ? ";
-      20 INPUT a
-      25 Print a
-      30 LET b=INT (a/256)
-      35 LET c=a-(256*b)
-      40 Poke 12304,c
-      45 Poke 12305,b
-      47 PRINT "input length? ";
-      50 INPUT a
-      55 PRINT a
-      60 LET B=INT (a/256)
-      65 LET c=a-(256*b)
-      70 Poke 12306,c
-      75 Poke 12307,b
+      15 PRINT "INPUT START ADDRESS ? ";
+      20 INPUT A
+      25 PRINT A
+      30 LET B=INT (A/256)
+      35 LET C=A-(256*B)
+      40 POKE 12304,C
+      45 POKE 12305,B
+      47 PRINT "INPUT LENGTH? ";
+      50 INPUT A
+      55 PRINT A
+      60 LET B=INT (A/256)
+      65 LET C=A-(256*B)
+      70 POKE 12306,C
+      75 POKE 12307,B
 
 ARRAYS must be dimensioned in memory before then can be saved
-or loaded, or a "NO FILE” error will result. Also when an
+or loaded, or a "NO FILE" error will result. Also when an
 array is reloaded the predimensioned array in memory must be the
 same size as when it was saved.
 
   eg: to save the array "a$"
       10 DIM A$(1000)
      100 RAND USR 14336
-     110 REM save "A$XXXX.AX"     (example)
+     110 REM SAVE "A$XXXX.AX"     (example)
 
 
 LOAD "XXXXX.TX"
@@ -235,8 +235,8 @@ poking 12300, port (87) and poking 12301,0 (for drive l) or 2
 selected. It will stay selected until you select drive 2.
 
 - this subroutine at 16374 can be used to output data to any
-port. It is - LD BC (12300) , OUT (c),b - in machine code.
-note- only use odd # ports
+port. It is - LD BC,(12300) / OUT (C),B - in machine code.
+Note- only use odd # ports
 
 
 ERRORS
@@ -267,7 +267,7 @@ DISK FULL
   - Occurs when more than 52 directory entries are made.
 
 
-ADDITIONAL COMMANDS are available an disk from LARKEN
+ADDITIONAL COMMANDS are available on disk from LARKEN
 ELECTRONICS. These include Copy, Move, Badblocks, Backup and also
 extra BASIC commands such as Free, Clear, scroll (up, down,
 left, right) etc.
@@ -288,12 +288,12 @@ variable (16391). If it sees a 255 then this means that the
 program wasn't running and that it should print "LDOS" and enter
 the keyboard input routine. If it is other that 255 then it gets
 the command from the next REM statement in the program. Either
-way the command is transferred to the command buffer at "Cline".
+way the command is transferred to the command buffer at "cline".
 A routine called "sort" then checks syntax and jumps to the
 right routine.
 
 The way to enter the dos from machine code would be to transfer
-your command (eg: Load "xxxxx.XX") to “cline” and the jump or
+your command (eg: LOAD "xxxxx.XX") to "cline" and the jump or
 call sort. (Its not necessary to poke 16391)
 
 Directory Format, Copy and Delete always return to the keyboard
@@ -373,7 +373,7 @@ cline   - command line. For direct entry into dos from assembly
 outport - general purpose port output routine. It can be used to
           select drives 1 or 2, turn the motor on, or output data
           to any odd # port. Poke 12300,port#  Poke 12301,data
-          then call output at 16374. (Rand usr 16374)
+          then call output at 16374. (RAND USR 16374)
         - Port 69 (dec) controls the disk drive.
           Bit 0 - Stepper pulse
           Bit 1 - Stepper direction
@@ -495,7 +495,7 @@ is inserted. This feature is for centering the disk. If the
 motor and LED come on continuously when the power is on, the drive
 ribbon cable may be on wrong. This cannot cause any damage.
 
-Type "Print usr 14336" and you should get LDOS and an "*". You
+Type "PRINT USR 14336" and you should get LDOS and an "*". You
 can try a DIRECTORY command to see if the motor is going to come
 on. If it does you are in luck. If it doesn't your disk drive
 jumpers are probably set wrong.
@@ -512,8 +512,8 @@ can output any value to any port. You have to (poke 12300,port)
 and (poke 12301,value) then Print USR 16374. Note- this subroutine
 is only for testing. Never use even number port addresses.
 
-- To turn motor on,  Poke 12300,69 ; Poke 12301,8 ; Print USR 16374
-- To turn motor off, Poke 12300,69 ; Poke 12301,0 ; Print USR 16374
+- To turn motor on,  POKE 12300,69 ; POKE 12301,8 ; PRINT USR 16374
+- To turn motor off, POKE 12300,69 ; POKE 12301,0 ; PRINT USR 16374
 
 If all is ok then format a disk. It should format with no CRC
 Errors. If it has CRC errors only on the inner most tracks you
@@ -533,4 +533,3 @@ the computer will not hang up when you try to access the disk.
 
 - If you are using a 64k rampack, make sure the 8K to 16k area
 is switched out so it doesn't conflict with the dos.
-

@@ -54,7 +54,7 @@
 
 CSound Sound;
 
-// Initialise - msy br called several time with different data from different
+// Initialise - may be called several time with different data from different
 // sections of the progrm.  eg, first time it's called we provide the window
 // handle, next time we're called we get the fps of the emulated machine
 // third time we get the sample rate requested.
@@ -118,7 +118,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 }
 
 // Reinitialise gets called if something changes... we lose the window handle,
-// The user changes the sample rats - that kind of thing.
+// The user changes the sample rate - that kind of thing.
 
 int CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
@@ -168,10 +168,11 @@ void CSound::AYInit(void)
         case AY_TYPE_ZONX_REV2: clock=AY_CLOCK_ZONX; break;
         case AY_TYPE_FULLER: clock=AY_CLOCK_FULLER; break;
         case AY_TYPE_ACE_USER: clock=AY_CLOCK_ACE_USER; break;
-        case AY_TYPE_SINCLAIR: clock=AY_CLOCK_SINCLAIR; break;
+        case AY_TYPE_SINCLAIR: clock=(spectrum.model >= SPECCY128 ? AY_CLOCK_SINCLAIR_128K : AY_CLOCK_SINCLAIR_48K); break;
         case AY_TYPE_TS2068: clock=AY_CLOCK_TS2068; break;
         case AY_TYPE_TC2068: clock=AY_CLOCK_TC2068; break;
         case AY_TYPE_BOLDFIELD: clock=AY_CLOCK_BOLDFIELD; break;
+        case AY_TYPE_DKTRONICS: clock=(spectrum.model >= SPECCY128 ? AY_CLOCK_DKTRONICS_128K : AY_CLOCK_DKTRONICS_48K); break;
         default:
                 //fprintf(stderr,"AY type not specified - can't happen!\n");
                 //sound_ay=0;

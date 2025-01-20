@@ -62,6 +62,7 @@ Version 1.41 - 20/01/2025 (by Paul Farrow and John Stroebel)
   - Added volume controls for speech interface sounds.
   - Sound output window is resizeable.
   - Added documentation for various ZX Spectrum IDE and FDC interfaces.
+  - Added emulation of 3-Channel Sound Unit by dk'tronics Ltd for the ZX Spectrum.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

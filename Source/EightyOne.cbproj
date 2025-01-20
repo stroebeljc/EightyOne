@@ -636,29 +636,29 @@
             <DependentOn>zxprinter\zxprinter.h</DependentOn>
             <BuildOrder>121</BuildOrder>
         </CppCompile>
-        <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
         <FormResources Include="tzx\tzxEditPause.dfm"/>
         <FormResources Include="tzx\tzxEditText.dfm"/>
-        <FormResources Include="tzx\tzxEditGeneral.dfm"/>
+        <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
         <FormResources Include="tzx\tzxEditArchive.dfm"/>
         <FormResources Include="tzx\tzxEditData.dfm"/>
+        <FormResources Include="tzx\tzxEditGeneral.dfm"/>
         <FormResources Include="tzx\TZXMan.dfm"/>
         <FormResources Include="SymBrowse.dfm"/>
-        <FormResources Include="Speed_.dfm"/>
         <FormResources Include="SplashScreen.dfm"/>
+        <FormResources Include="Speed_.dfm"/>
         <FormResources Include="zx97Config.dfm"/>
         <FormResources Include="zxprinter\zxprinter.dfm"/>
-        <FormResources Include="wavtape\wavload_.dfm"/>
         <FormResources Include="ZipFile_.dfm"/>
+        <FormResources Include="wavtape\wavload_.dfm"/>
+        <FormResources Include="DebugWin\ProfilePlot_.dfm"/>
         <FormResources Include="DebugWin\Profiler.dfm"/>
         <FormResources Include="DebugWin\ProfSampEdit.dfm"/>
-        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
-        <FormResources Include="DebugWin\ProfilePlot_.dfm"/>
+        <FormResources Include="DebugWin\Hist.dfm"/>
         <FormResources Include="DebugWin\Debug.dfm"/>
         <FormResources Include="DebugWin\EditValue_.dfm"/>
-        <FormResources Include="DebugWin\Hist.dfm"/>
-        <FormResources Include="HW_.dfm"/>
         <FormResources Include="FullScreen.dfm"/>
+        <FormResources Include="HW_.dfm"/>
+        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
         <FormResources Include="DebugWin\SetBreakpoint_.dfm"/>
         <FormResources Include="About_.dfm"/>
         <FormResources Include="BasicLoader\BasicLoaderOptions_.dfm"/>
@@ -666,20 +666,20 @@
         <FormResources Include="Artifacts_.dfm"/>
         <FormResources Include="BasicLister\BasicListerOptions_.dfm"/>
         <FormResources Include="BasicLister\BasicLister_.dfm"/>
-        <FormResources Include="SerialPort.dfm"/>
         <FormResources Include="Plus3Drives.dfm"/>
-        <FormResources Include="MemSave_.dfm"/>
         <FormResources Include="Parallel.dfm"/>
-        <FormResources Include="sound\SoundOP.dfm"/>
-        <FormResources Include="sound\SoundForm.dfm"/>
+        <FormResources Include="MakeHDF.dfm"/>
         <FormResources Include="memoryWindow.dfm"/>
-        <FormResources Include="Keyboard_.dfm"/>
+        <FormResources Include="MemSave_.dfm"/>
+        <FormResources Include="sound\SoundForm.dfm"/>
+        <FormResources Include="sound\SoundOP.dfm"/>
+        <FormResources Include="SerialPort.dfm"/>
         <FormResources Include="KeyboardFunctions_.dfm"/>
-        <FormResources Include="Interface1.dfm"/>
+        <FormResources Include="Keyboard_.dfm"/>
         <FormResources Include="kb_.dfm"/>
+        <FormResources Include="Interface1.dfm"/>
         <FormResources Include="LiveMemoryWindow_.dfm"/>
         <FormResources Include="main_.dfm"/>
-        <FormResources Include="MakeHDF.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

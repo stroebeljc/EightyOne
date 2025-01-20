@@ -2317,7 +2317,7 @@ void __fastcall TDbg::AutoUpdateMemoryClick(TObject *Sender)
 
 void __fastcall TDbg::MemoryWindowTimerExpired(TObject *Sender)
 {
-        if (this->Visible && MemoryWindow->Visible)
+        if (MemoryWindow->Visible)
         {
                 MemoryWindow->UpdateChanges();
         }

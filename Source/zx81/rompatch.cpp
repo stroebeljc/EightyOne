@@ -199,12 +199,10 @@ bool LarkenSaveTrack(int& pc)
 
 void InitPatches(int machineType)
 {
-        bool larken = true;
-        
         patches.clear();
 
         if ((machineType == MACHINEZX81) || (machineType == MACHINETS1000) || (machineType == MACHINETS1500) ||
-            (machineType == MACHINETK85) || (machineType == MACHINER470)|| (machineType == MACHINEZX97LE) ||
+            (machineType == MACHINETK85) || (machineType == MACHINER470) || (machineType == MACHINEZX97LE) ||
             ((machineType == MACHINEZX80) && (!strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom"))))
         {
                 patches[0x02ffcd] = ZX81SaveDelayStartSaving;
@@ -227,7 +225,7 @@ void InitPatches(int machineType)
                 patches[0x0203c9] = ZX80ZX81LambdaStopTape;
         }
 
-        if (larken)
+        if (spectrum.floppytype == FLOPPYLARKEN81)
         {
                 patches[0x38DEc9] = LarkenLoadTrack;
                 patches[0x3A10c9] = LarkenSaveTrack;

@@ -360,7 +360,7 @@ typedef struct
         char ROMKAYDE[256];
         char ROMG007[256];
         char ROMMEMOTECH[256];
-        char ROMQUICKSILVAHIRES[256];        
+        char ROMQUICKSILVAHIRES[256];
         char ROMMULTIFACE128[256];
         char ROMMULTIFACE3[256];
         char ROMINTERFACE1ED1[256];

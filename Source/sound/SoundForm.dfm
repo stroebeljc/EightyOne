@@ -1,6 +1,6 @@
 object MidiForm: TMidiForm
-  Left = 313
-  Top = 236
+  Left = 822
+  Top = 516
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
@@ -112,6 +112,15 @@ object MidiForm: TMidiForm
       Width = 37
       Height = 13
       Caption = 'Speech'
+    end
+    object Label2: TLabel
+      Left = 144
+      Top = 141
+      Width = 33
+      Height = 13
+      Alignment = taCenter
+      AutoSize = False
+      Caption = '-'
     end
     object ChAVol: TTrackBar
       Left = 16

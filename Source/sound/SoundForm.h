@@ -37,6 +37,7 @@ __published:	// IDE-managed Components
         TLabel *Label8;
         TCheckBox *SpeechMute;
         TTrackBar *SpeechVol;
+        TLabel *Label2;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
         void __fastcall MidiChange(TObject *Sender);

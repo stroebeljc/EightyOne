@@ -37,8 +37,6 @@ CMidi::CMidi(void)
 
 void CMidi::WriteBit(int Bit)
 {
-        // Only the +2A/+3 have midi out, so if we're emulating
-        // anything else ignore the midi data
         // Midi is transmitted at 31.25 kbs, 1 start bit, 8 data bits, MSB first,
         //  then 1 stop bit.
 

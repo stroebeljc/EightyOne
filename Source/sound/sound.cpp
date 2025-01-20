@@ -168,11 +168,11 @@ void CSound::AYInit(void)
         case AY_TYPE_ZONX_REV2: clock=AY_CLOCK_ZONX; break;
         case AY_TYPE_FULLER: clock=AY_CLOCK_FULLER; break;
         case AY_TYPE_ACE_USER: clock=AY_CLOCK_ACE_USER; break;
-        case AY_TYPE_SINCLAIR_128K: clock=AY_CLOCK_SINCLAIR_128K; break;
-        case AY_TYPE_SINCLAIR_48K: clock=AY_CLOCK_SINCLAIR_48K; break;
+        case AY_TYPE_SINCLAIR: clock=(spectrum.model >= SPECCY128 ? AY_CLOCK_SINCLAIR_128K : AY_CLOCK_SINCLAIR_48K); break;
         case AY_TYPE_TS2068: clock=AY_CLOCK_TS2068; break;
         case AY_TYPE_TC2068: clock=AY_CLOCK_TC2068; break;
         case AY_TYPE_BOLDFIELD: clock=AY_CLOCK_BOLDFIELD; break;
+        case AY_TYPE_DKTRONICS: clock=(spectrum.model >= SPECCY128 ? AY_CLOCK_DKTRONICS_128K : AY_CLOCK_DKTRONICS_48K); break;
         default:
                 //fprintf(stderr,"AY type not specified - can't happen!\n");
                 //sound_ay=0;

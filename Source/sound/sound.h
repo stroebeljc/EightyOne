@@ -31,11 +31,11 @@
 #define AY_TYPE_ZONX_REV2               2
 #define AY_TYPE_FULLER                  3
 #define AY_TYPE_ACE_USER                4
-#define AY_TYPE_SINCLAIR_128K           5
-#define AY_TYPE_SINCLAIR_48K            6
-#define AY_TYPE_TS2068                  7
-#define AY_TYPE_TC2068                  8
-#define AY_TYPE_BOLDFIELD               9
+#define AY_TYPE_SINCLAIR                5
+#define AY_TYPE_TS2068                  6
+#define AY_TYPE_TC2068                  7
+#define AY_TYPE_BOLDFIELD               8
+#define AY_TYPE_DKTRONICS               9
 
 #define AY_CLOCK_QUICKSILVA	        (3250000/4)
 #define AY_CLOCK_ZONX		        1625000
@@ -46,6 +46,8 @@
 #define AY_CLOCK_TS2068                 1764000
 #define AY_CLOCK_TC2068                 1750000
 #define AY_CLOCK_BOLDFIELD              1773400
+#define AY_CLOCK_DKTRONICS_128K         1773400
+#define AY_CLOCK_DKTRONICS_48K          1750000
 
 #define SPEECH_TYPE_NONE                0
 #define SPEECH_TYPE_USPEECH             1

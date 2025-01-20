@@ -51,14 +51,14 @@
 
 #define SPECCY16        0
 #define SPECCY48        1
-#define SPECCYPLUS      3
-#define SPECCYTC2048    4
-#define SPECCYTC2068    5
-#define SPECCYTS2068    6
-#define SPECCY128       7
-#define SPECCYPLUS2     8
-#define SPECCYPLUS2A    9
-#define SPECCYPLUS3     10
+#define SPECCYPLUS      2
+#define SPECCYTC2048    3
+#define SPECCYTC2068    4
+#define SPECCYTS2068    5
+#define SPECCY128       6
+#define SPECCYPLUS2     7
+#define SPECCYPLUS2A    8
+#define SPECCYPLUS3     9
 
 #define SPECKBISS2      0
 #define SPECKBISS3      1

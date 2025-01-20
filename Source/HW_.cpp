@@ -1103,7 +1103,7 @@ void THW::ConfigureSound()
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
+                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR_128K; break;
                         case 0:
                         default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
                         }
@@ -1112,7 +1112,8 @@ void THW::ConfigureSound()
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
+                        case 2: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
+                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR_48K; break;
                         case 0:
                         default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
                         }
@@ -1838,6 +1839,7 @@ void THW::SetupForSpectrum(void)
         }
         else if (NewSpec == SPECCY16 || NewSpec == SPECCY48 || NewSpec == SPECCYPLUS || NewSpec == SPECCYTC2048)
         {
+                SoundCardBox->Items->Add("Sinclair 128K");
                 SoundCardBox->Items->Add("Fuller");
                 SoundCardBox->Enabled=true;
                 SoundCardLbl->Enabled=true;

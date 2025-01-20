@@ -46,6 +46,7 @@
 #include "LiveMemoryWindow_.h"
 #include "BasicLister\BasicLister_.h"
 #include "sp0256drv.h"
+#include "floppy.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1

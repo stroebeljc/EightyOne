@@ -83,8 +83,6 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "ThemeMgr"
-//#pragma link "ThemeMgr"
-//#pragma link "ThemeMgr"
 #pragma resource "*.dfm"
 
 #define ZXDB(msg) Application->MessageBox(msg, "Debug", MB_OK);

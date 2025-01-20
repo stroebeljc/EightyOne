@@ -1,6 +1,6 @@
 object MemoryWindow: TMemoryWindow
-  Left = 450
-  Top = 469
+  Left = 1100
+  Top = 708
   Width = 580
   Height = 302
   HorzScrollBar.Visible = False

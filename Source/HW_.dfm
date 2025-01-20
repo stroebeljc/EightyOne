@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 522
-  Top = 267
+  Left = 1256
+  Top = 584
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1505,7 +1505,7 @@ object HW: THW
       end
       object TS2050Config: TButton
         Left = 184
-        Top = 110
+        Top = 112
         Width = 76
         Height = 20
         Caption = 'Configure'
@@ -1571,7 +1571,7 @@ object HW: THW
       end
       object ButtonZXpandSDCard: TButton
         Left = 300
-        Top = 110
+        Top = 112
         Width = 76
         Height = 20
         Caption = 'SD Card'
@@ -1936,7 +1936,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

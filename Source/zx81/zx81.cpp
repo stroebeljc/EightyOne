@@ -326,12 +326,10 @@ void zx81_initialise()
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
                 memory_device_rom_load(emulator.ROMLARKEN81, 14336, 2048);
-                memory[0x38DB] = 0xCD;
                 memory[0x38DC] = 0x2B;
                 memory[0x38DD] = 0x0F;
                 memory[0x38DE] = 0xC9;
 
-                memory[0x3A0D] = 0xCD;
                 memory[0x3A0E] = 0x2B;
                 memory[0x3A0F] = 0x0F;
                 memory[0x3A10] = 0xC9;
@@ -359,7 +357,8 @@ void zx81_initialise()
         d8255_reset();
         d8251reset();
         z80_reset();
-
+        floppy_init();
+        
         tStatesCount = 0;
 
         CreateZXpand();
@@ -645,6 +644,7 @@ void zx81_setbyte(int Address, int Data)
         directMemoryAccess = false;
 }
 
+// Called by emulated program
 void zx81_writebyte(int Address, int Data)
 {
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;

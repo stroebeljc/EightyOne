@@ -445,8 +445,7 @@ void CSound::AYOverlay(void)
                 }
         }
 }
-
-
+                                     
 // don't make the change immediately; record it for later,
 // to be made by sound_frame() (via sound_ay_overlay()).
 
@@ -475,9 +474,7 @@ int CSound::AYRead(int reg)
 {
 
         return(AYRegisterStore[reg]);
-
 }
-
 
 // no need to call this initially, but should be called
 // on reset otherwise.

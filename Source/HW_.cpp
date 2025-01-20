@@ -1098,20 +1098,13 @@ void THW::ConfigureSound()
                         default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
-                else if (NewSpec >= SPECCY128)
-                {
-                        switch (SoundCardBox->ItemIndex)
-                        {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
-                        case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
-                        }
-                }
                 else
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
+                        case 3: machine.aysound=1; machine.aytype=AY_TYPE_DKTRONICS; break;
+                        case 2: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
+                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
                         case 0:
                         default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
                         }
@@ -1831,13 +1824,11 @@ void THW::SetupForSpectrum(void)
         SoundCardBox->ItemIndex = 0;
         SoundCardBox->Enabled = false;
         SoundCardLbl->Enabled = false;
-        if (NewSpec >= SPECCY128)
+        if (NewSpec >= SPECCY128 || NewSpec == SPECCY16 || NewSpec == SPECCY48 || NewSpec == SPECCYPLUS || NewSpec == SPECCYTC2048)
         {
-                SoundCardBox->Items->Add("Sinclair");
-        }
-        else if (NewSpec == SPECCY16 || NewSpec == SPECCY48 || NewSpec == SPECCYPLUS || NewSpec == SPECCYTC2048)
-        {
-                SoundCardBox->Items->Add("Fuller");
+                SoundCardBox->Items->Add("Sinclair 128K");
+                SoundCardBox->Items->Add("Fuller Box");
+                SoundCardBox->Items->Add("dk'tronics");
                 SoundCardBox->Enabled=true;
                 SoundCardLbl->Enabled=true;
         }

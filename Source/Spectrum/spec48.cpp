@@ -1001,6 +1001,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0x3f:
                 if (spectrum.MFVersion==MF128) MFLockout=1;
                 if (machine.aytype==AY_TYPE_FULLER) SelectAYReg=Data&15;
+                if (machine.aytype==AY_TYPE_DKTRONICS) SelectAYReg=Data&15;
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_trackreg((BYTE)Data);
         case 0x5b:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_trackreg((BYTE)Data);
@@ -1008,6 +1009,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         case 0x5f:
                 if (machine.aytype==AY_TYPE_FULLER) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.aytype==AY_TYPE_DKTRONICS) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg((BYTE)Data);
                 break;
 
@@ -1180,15 +1182,18 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         break;
 
                 case 0x7f:
-                        if (!SPECBankEnable) break;
-                        SPECLast7ffd=(BYTE)Data;
-                        SPECBlk[0]= ((SPECLast1ffd>>1)&2) | ((Data>>4)&1);
-                        SPECBlk[3]=4+(Data&7);
-                        SPECVideoBank=(Data>>3)&1 ? 11:9;
-                        SPECBankEnable=!((Data>>5)&1);
-                        if (machine.colour == COLOURSPECTRA)
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCY128)
                         {
-                                DetermineSpectraDisplayBank();
+                                if (!SPECBankEnable) break;
+                                SPECLast7ffd=(BYTE)Data;
+                                SPECBlk[0]= ((SPECLast1ffd>>1)&2) | ((Data>>4)&1);
+                                SPECBlk[3]=4+(Data&7);
+                                SPECVideoBank=(Data>>3)&1 ? 11:9;
+                                SPECBankEnable=!((Data>>5)&1);
+                                if (machine.colour == COLOURSPECTRA)
+                                {
+                                        DetermineSpectraDisplayBank();
+                                }
                         }
                         break;
 
@@ -1223,11 +1228,19 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         }
                         break;
                 case 0xff:
-                        SelectAYReg=Data;
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
+                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
+                        {
+                                SelectAYReg=Data;
+                        }
                         break;
 
                 case 0xbf:
-                        Sound.AYWrite(SelectAYReg, Data, frametstates);
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
+                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
+                        {
+                                Sound.AYWrite(SelectAYReg, Data, frametstates);
+                        }
                         break;
                 }
                 break;
@@ -1536,12 +1549,31 @@ BYTE ReadPort(int Address, int *tstates)
         case 0xfd:
                 switch((Address>>8)&255)
                 {
-                case 0x0f:      return (BYTE)PrinterBusy();
-                case 0xff:      return (BYTE)Sound.AYRead(SelectAYReg);
+                case 0x0f:
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        {
+                                return (BYTE)PrinterBusy();
+                        }
+                        break;
+                case 0xff:
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
+                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
+                            {
+                                return (BYTE)Sound.AYRead(SelectAYReg);
+                            }
+                            break;
                 case 0x3f:
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        {
                                 return(floppy_read_datareg());
+                        }
+                        break;
                 case 0x2f:
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        {
                                 return(floppy_read_statusreg());
+                        }
+                        break;
                 }
                 break;
 

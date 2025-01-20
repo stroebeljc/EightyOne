@@ -192,5 +192,8 @@ FIGURE 2   ENVELOPE SHAPE CONTROL (REGISTER 13)
 |       |    \/  \/  \/  \/  \   |       |   / |_______________   |
 +-------+------------------------+-------+------------------------+
 
+For further examples LIST the supplied demonstration program and see
+how to make more sounds.
 
-
+Enter your own numbers into the registers using the demo program. See
+how easy it is to use.

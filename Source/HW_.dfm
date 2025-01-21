@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 1256
-  Top = 584
+  Left = 391
+  Top = 232
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1504,9 +1504,9 @@ object HW: THW
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 184
+        Left = 183
         Top = 112
-        Width = 76
+        Width = 70
         Height = 20
         Caption = 'Configure'
         TabOrder = 11
@@ -1570,9 +1570,9 @@ object HW: THW
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 300
+        Left = 299
         Top = 112
-        Width = 76
+        Width = 70
         Height = 20
         Caption = 'SD Card'
         TabOrder = 13
@@ -1936,7 +1936,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

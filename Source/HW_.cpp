@@ -1154,7 +1154,7 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
         if (zxc1Selected)
         {
                 RomCartridgeFileBox->Left = 277;
-                RomCartridgeFileBox->Width = 88;
+                RomCartridgeFileBox->Width = 91;
 
                 if (ZXC1ConfigurationBox->ItemIndex == -1)
                 {
@@ -2247,8 +2247,6 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         Spec128Btn->Down=true;
 
         SoundCardBox->ItemIndex = 1;
-        SoundCardBox->Enabled=false;
-        SoundCardLbl->Enabled=false;
 
         NewMachineName=Spec128Btn->Caption;
         RomBox->Clear();
@@ -2330,8 +2328,6 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SpecP2Btn->Down=true;
 
         SoundCardBox->ItemIndex = 1;
-        SoundCardBox->Enabled=false;
-        SoundCardLbl->Enabled=false;
 
         NewMachineName=SpecP2Btn->Caption;
         RomBox->Clear();
@@ -2361,8 +2357,6 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = 1;
-        SoundCardBox->Enabled=false;
-        SoundCardLbl->Enabled=false;
 
         NewMachineName=SpecP2aBtn->Caption;
         RomBox->Clear();
@@ -2393,8 +2387,6 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         FloppyDrives->TabVisible=true;
 
         SoundCardBox->ItemIndex = 1;
-        SoundCardBox->Enabled=false;
-        SoundCardLbl->Enabled=false;
 
         NewMachineName=SpecP3Btn->Caption;
         RomBox->Clear();

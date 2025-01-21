@@ -44,6 +44,42 @@ public:
         AnsiString Path;
 };
 
+struct HWFormValues
+{
+        AnsiString MachineName;
+        int RamPackBoxItemIndex;
+        int SoundCardBoxItemIndex;
+        int ChrGenBoxItemIndex;
+        int HiResBoxItemIndex;
+        int ColourBoxItemIndex;
+        int SpeechBoxItemIndex;
+        int RomCartridgeBoxItemIndex;
+        AnsiString RomCartridgeFileBoxText;
+        int ZXC1ConfigurationBoxItemIndex;
+        int DriveATypeItemIndex;
+        int DriveBTypeItemIndex;
+        int FDCItemIndex;
+        bool AutobootChecked;
+        bool ZXpandChecked;
+        bool ZXpandEnabled;
+        bool ProtectROMChecked;
+        bool NTSCChecked;
+        bool EnableLowRAMChecked;
+        bool M1NotChecked;
+        bool ImprovedWaitChecked;
+        bool TS2050Checked;
+        bool Issue2Checked;
+        bool KMouseChecked;
+        bool Form1divIDEJumperEClosedChecked;
+        bool MultifaceChecked;
+        bool ZXPrinterChecked;
+        bool FloatingPointHardwareFixChecked;
+        bool UploadChecked;
+        int ZXCFRAMItemIndex;
+        int IDEBoxItemIndex;
+        bool uSourceChecked;
+};
+
 class THW : public TForm
 {
 __published:	// IDE-managed Components
@@ -195,7 +231,14 @@ __published:	// IDE-managed Components
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
+        int defaultRamPackIndex, baseRamSize;
+        bool ramPackSupplementsInternalRam;
         AnsiString NewMachineName;
+        HWFormValues Hwform;
+
+        void ReloadFromInternalSettings();
+        void SaveInternalSettings();
+        void RefreshDefaultRamSettings();
         void SetupForZX81(void);
         void SetupForSpectrum(void);
         void EnableRomCartridgeOption(bool enable);

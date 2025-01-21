@@ -287,7 +287,6 @@ typedef struct
 {
         CFGBYTE emuid, major,minor,testver;
         CFGBYTE machine;
-        CFGBYTE newMachine;
         CFGBYTE checkInstallationPathLength;
 
         CFGBYTE single_step;

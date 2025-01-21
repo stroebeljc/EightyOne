@@ -68,3 +68,4 @@ void TLoadBasicListingOptionsForm::LoadSettings(TIniFile *ini)
         cboAcceptZxTokenFormatExtensions->Checked = ini->ReadBool("BASICLISTING", "SupportZxTokenFormatExtensions", false);
 }
 
+

@@ -208,6 +208,9 @@ void specBasicLoader::ExtractTokens(bool acceptAlternateKeywordSpelling)
                 ReplaceTokenEndCharacters(tokens, '(', '\"');
                 DoTokenise(tokens);
 
+                ReplaceTokenEndCharacters(tokens, '\"', ':');
+                DoTokenise(tokens);
+
                 tokens.clear();
 
                 tokens[206] = " DEFFN ";

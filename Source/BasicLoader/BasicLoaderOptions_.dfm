@@ -102,6 +102,8 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 17
     Alignment = taLeftJustify
     Caption = 'Discard surplus spaces'
+    Checked = True
+    State = cbChecked
     TabOrder = 3
   end
   object cboAcceptAlternateKeywordSpelling: TCheckBox
@@ -111,6 +113,8 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 17
     Alignment = taLeftJustify
     Caption = 'Accept alternate keyword spellings'
+    Checked = True
+    State = cbChecked
     TabOrder = 4
   end
   object cboLineNumberIncrement: TComboBox

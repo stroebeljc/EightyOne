@@ -932,7 +932,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 bool tokenEndsWithSpace = (endChar == ' ');
                 bool tokenEndsWithAlpha = isalpha(endChar);
 
-                if (endChar == '(' || endChar == ')' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';')
+                if (endChar == '(' || endChar == ')' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';' || endChar == ':')
                 {
                         lenToken--;
                 }

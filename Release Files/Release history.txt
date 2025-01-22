@@ -37,6 +37,7 @@ Version 1.41 - 22/01/2025 (by Paul Farrow and John Stroebel)
   - Fixed missing " key for the Spectrum+, Spectrum 128, Spectrum+2, Spectrum+2A and
     Spectrum+3.
   - Memotech hi-res didn't support a pixel byte of $76 within the hi-res display file.
+  - Fixed support for Chroma on TS1000 and TS1500.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.

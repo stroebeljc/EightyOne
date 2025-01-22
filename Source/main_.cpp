@@ -601,7 +601,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         AnsiString Path, Ext;
         stopped=emulation_stop;
 
-        LoadSnapDialog->Filter = "All|*.ace;*.sna;*.z80;*.z81;*.zip|.ACE Snapshot|*.ace|.SNA Snapshot|*.sna|.Z80 Snapshot|*.z80|.Z81 Snapshot|*.z81|Compressed Snapshot|*.zip";
+        LoadSnapDialog->Filter = "All Snapshot Files|*.ace;*.sna;*.z80;*.z81;*.zip|.ACE Snapshot|*.ace|.SNA Snapshot|*.sna|.Z80 Snapshot|*.z80|.Z81 Snapshot|*.z81|Compressed Snapshot|*.zip";
 
         if (!LoadSnapDialog->Execute()) return;
 

@@ -3467,9 +3467,9 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         if (ZX80Btn->Down)
         {
-                bool zx81Ed3ROM = RomBox->Text == "zx81.edition1.rom";
-                FloatingPointHardwareFix->Enabled = zx81Ed3ROM;
-                if (!zx81Ed3ROM)
+                bool zx81Ed1ROM = RomBox->Text == "zx81.edition1.rom";
+                FloatingPointHardwareFix->Enabled = zx81Ed1ROM;
+                if (!zx81Ed1ROM)
                         FloatingPointHardwareFix->Checked = false;
         }
 

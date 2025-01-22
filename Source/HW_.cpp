@@ -2854,7 +2854,7 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","Autoboot",Autoboot->Checked);
         ini->WriteBool("HWARE","uSource",uSource->Checked);
         ini->WriteBool("HWARE","ZXpand",ZXpand->Checked);
-        ini->WriteBool("HWARE","ZXpandEn",ZXpand->Enabled);
+        ini->WriteBool("HWARE","ZXpandEnabled",ZXpand->Enabled);
 
         if (ATA_GetHDF(0)) Rom=ATA_GetHDF(0); else Rom="NULL";
         ini->WriteString("DRIVES","HD0", Rom);
@@ -3019,7 +3019,7 @@ void THW::LoadSettings(TIniFile *ini)
         }
 
         Hwform.ZXpandChecked=ini->ReadBool("HWARE","ZXpand",ZXpand->Checked);
-        Hwform.ZXpandEnabled=ini->ReadBool("HWARE","ZXpandEn",ZXpand->Enabled);
+        Hwform.ZXpandEnabled=ini->ReadBool("HWARE","ZXpandEnabled",ZXpand->Enabled);
         Hwform.ProtectROMChecked=ini->ReadBool("HWARE","ProtectRom",ProtectROM->Checked);
         Hwform.NTSCChecked=ini->ReadBool("HWARE","NTSC",NTSC->Checked);
         Hwform.EnableLowRAMChecked=ini->ReadBool("HWARE","LowRAM",EnableLowRAM->Checked);
@@ -3338,7 +3338,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
                         {
                                 HiResBox->ItemIndex = 1;        // WRX
                                 RamPackBox->ItemIndex = 5;      // 32K RAM
-                                SoundCardBox->ItemIndex = 1;    // ZONX Rev 2
+                                SoundCardBox->ItemIndex = 1;    // ZONX
                                 EnableLowRAM->Checked = true;   // 8K-16K RAM
                         }
                 }

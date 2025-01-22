@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 391
-  Top = 232
+  Left = 313
+  Top = 177
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1372,7 +1372,7 @@ object HW: THW
         Caption = 'ROM Cartridge:'
       end
       object ZXpandEmulationInfo: TImage
-        Left = 374
+        Left = 372
         Top = 94
         Width = 15
         Height = 15
@@ -1868,7 +1868,9 @@ object HW: THW
         Top = 80
         Width = 145
         Height = 17
-        Hint = 'Allows unrestricted machine code to run from the 32k-48k range'
+        Hint = 
+          'Overcomes the restriction that prevents machine code running fro' +
+          'm the 32K-48K range on the ZX81'
         Caption = 'M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
@@ -1895,8 +1897,8 @@ object HW: THW
         Width = 153
         Height = 17
         Hint = 
-          'Sinclair released strap-on board to the Z80 to overcome the floa' +
-          'ting point maths bug in the edition 1 ROM'
+          'Sinclair fitted a strap-on board to the Z80 to overcome the floa' +
+          'ting point maths bug in the edition 1 ZX81 ROM'
         Caption = 'Floating Point Hardware Fix'
         Color = clBtnFace
         ParentColor = False
@@ -1922,7 +1924,7 @@ object HW: THW
         Height = 17
         Hint = 
           'Wilf Rigter'#39's modification to prevent Wait state insertion at ev' +
-          'ery NMI'
+          'ery NMI to speed up ZX81 SLOW mode by 10%'
         Caption = 'Improved Wait Circuit'
         Color = clBtnFace
         ParentColor = False

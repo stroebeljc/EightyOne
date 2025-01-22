@@ -1250,6 +1250,7 @@ void THW::ConfigureSound()
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
+                        case 4: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
                         case 3: machine.aysound=1; machine.aytype=AY_TYPE_DKTRONICS; break;
                         case 2: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
                         case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
@@ -1273,7 +1274,7 @@ void THW::ConfigureSound()
                 switch (SoundCardBox->ItemIndex)
                 {
                 case 2: machine.aysound=1; machine.aytype=AY_TYPE_QUICKSILVA; break;
-                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ZONX_REV2; break;
+                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
                 case 0:
                 default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
                 }
@@ -1293,7 +1294,7 @@ void THW::ConfigureSpeech()
                         {
                         case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
                         case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
-                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
+                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER; break;
                         case 0:
                         default: machine.speech = SPEECH_TYPE_NONE; break;
                         }
@@ -1305,7 +1306,7 @@ void THW::ConfigureSpeech()
                         case 4: machine.speech = SPEECH_TYPE_USPEECH; break;
                         case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
                         case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
-                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
+                        case 1: machine.speech = SPEECH_TYPE_SWEETTALKER; break;
                         case 0:
                         default: machine.speech = SPEECH_TYPE_NONE; break;
                         }
@@ -1317,7 +1318,7 @@ void THW::ConfigureSpeech()
                 {
                 case 4: machine.speech = SPEECH_TYPE_TALKBACK; break;
                 case 3: machine.speech = SPEECH_TYPE_MAGECO; break;
-                case 2: machine.speech = SPEECH_TYPE_SWEETTALKER_REV2; break;
+                case 2: machine.speech = SPEECH_TYPE_SWEETTALKER; break;
                 case 1:
                 {
                         machine.speech = SPEECH_TYPE_PARROT;
@@ -1841,7 +1842,7 @@ void THW::SetupForZX81(void)
 
         SoundCardBox->Items->Clear();
         SoundCardBox->Items->Add("None");
-        SoundCardBox->Items->Add("Zon X");
+        SoundCardBox->Items->Add("ZON X");
         SoundCardBox->Items->Add("Quicksilva");
         SoundCardBox->ItemIndex=0;
         SoundCardBox->Enabled=true;
@@ -1977,6 +1978,7 @@ void THW::SetupForSpectrum(void)
                 SoundCardBox->Items->Add("Sinclair 128K");
                 SoundCardBox->Items->Add("Fuller Box");
                 SoundCardBox->Items->Add("dk'tronics");
+                SoundCardBox->Items->Add("ZON X");
                 SoundCardBox->Enabled=true;
                 SoundCardLbl->Enabled=true;
         }

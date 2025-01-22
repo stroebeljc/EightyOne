@@ -28,7 +28,7 @@
 
 #define AY_TYPE_NONE                    0
 #define AY_TYPE_QUICKSILVA              1
-#define AY_TYPE_ZONX_REV2               2
+#define AY_TYPE_ZONX                    2
 #define AY_TYPE_FULLER                  3
 #define AY_TYPE_ACE_USER                4
 #define AY_TYPE_SINCLAIR                5
@@ -38,7 +38,9 @@
 #define AY_TYPE_DKTRONICS               9
 
 #define AY_CLOCK_QUICKSILVA	        (3250000/4)
-#define AY_CLOCK_ZONX		        1625000
+#define AY_CLOCK_ZONX_ZX81              1625000
+#define AY_CLOCK_ZONX_SPEC48            1750000
+#define AY_CLOCK_ZONX_SPEC128           1773400
 #define AY_CLOCK_FULLER                 1638190
 #define AY_CLOCK_ACE_USER               1625000
 #define AY_CLOCK_SINCLAIR_128K          1773400
@@ -52,7 +54,7 @@
 #define SPEECH_TYPE_NONE                0
 #define SPEECH_TYPE_USPEECH             1
 #define SPEECH_TYPE_PARROT              2
-#define SPEECH_TYPE_SWEETTALKER_REV2    3
+#define SPEECH_TYPE_SWEETTALKER         3
 #define SPEECH_TYPE_MAGECO              4
 #define SPEECH_TYPE_TALKBACK            5
 #define SPEECH_TYPE_DKTRONICS           6

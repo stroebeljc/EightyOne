@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 21/01/2025 (by Paul Farrow and John Stroebel)
+Version 1.41 - 22/01/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:
   - If a hardware generated ZX81 HSync pulse is output part way through a scanline then it is no
     longer interpreted as starting a new scanline.
@@ -65,6 +65,7 @@ Version 1.41 - 21/01/2025 (by Paul Farrow and John Stroebel)
   - Sound output window is resizeable.
   - Added documentation for various ZX Spectrum IDE and FDC interfaces.
   - Added emulation of 3-Channel Sound Unit by dk'tronics Ltd for the ZX Spectrum.
+  - Added emulation of the ZON X sound interface by Bi-Pak for the ZX Spectrum.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

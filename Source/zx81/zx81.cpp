@@ -1174,6 +1174,9 @@ void zx81_writeport(int Address, int Data, int *tstates)
         //  If these are all 0, then the Parrot performs I/O.
         if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) sp0256_AL2.Write((BYTE)Data);
 
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x8F) == 0x0F) Sound.AYWrite(SelectAYReg, Data,frametstates);
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x8F) == 0x8F) SelectAYReg=Data&15;
+
         switch(Address&255)
         {
         case 0x01:
@@ -1182,20 +1185,15 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0x07:
                 if (zxpand) zxpand->IO_Write(Address>>8, Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
                         insertWaitsWhileSP0256Busy = true;
                 }
                 break;
 
-        case 0x0f:
-                if (machine.aytype==AY_TYPE_ZONX_REV2) Sound.AYWrite(SelectAYReg, Data,frametstates);
-                break;
-                
         case 0x1f:
-                if (machine.aytype==AY_TYPE_ZONX_REV2) Sound.AYWrite(SelectAYReg, Data,frametstates);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
                         insertWaitsWhileSP0256Busy = true;
@@ -1243,16 +1241,11 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xcf:
-                if (machine.aytype==AY_TYPE_ZONX_REV2) SelectAYReg=Data&15;
-                else d8255_write(D8255PRTB, (BYTE)Data);
+                d8255_write(D8255PRTB, (BYTE)Data);
                 break;
 
         case 0xd7:
                 d8255_write(D8255PRTC, (BYTE)Data);
-                break;
-
-        case 0xdf:
-                if (machine.aytype==AY_TYPE_ZONX_REV2) SelectAYReg=Data&15;
                 break;
 
         case 0xdd:

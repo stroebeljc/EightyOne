@@ -974,10 +974,13 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 }
         }
 
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x9F) == 0x1F) Sound.AYWrite(SelectAYReg, Data,frametstates);
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x9F) == 0x9F) SelectAYReg=Data&15;
+
         switch(Address&255)
         {
         case 0x07:
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
                         insertWaitsWhileSP0256Busy = true;
@@ -991,7 +994,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0x1f:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
                         insertWaitsWhileSP0256Busy = true;

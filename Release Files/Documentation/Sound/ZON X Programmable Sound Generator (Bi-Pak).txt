@@ -1,31 +1,31 @@
-==================================================
-ZON X-81 Programmable Sound Generator for the ZX81
+===============================================================
+ZON X Programmable Sound Generator for the ZX81 and ZX Spectrum
 Bi-Pak
 Copyright (c)1982, F. G. Everest
-==================================================
+===============================================================
 
 INTRODUCTION
 
 The ZonX 81 programmable sound generator (PSG) is a complex digital device
-which can be easily controlled by the ZX81 computer, to produce a wide
+which can be easily controlled by either computer, to produce a wide
 range of sound effects under BASIC program control. Many effects in games
 need very few commands to produce the desired sounds, which results in
 very little additional delay in the running speed of the full program.
 Some effects, however, require significant program control of the PSG and
-it may be necessary to use the FAST mode to minimize the audible delays in
-the unit’s response to the commands.
+it may be necessary to use the FAST mode (ZX 81 only) to minimize the
+audible delays in the unit’s response to the commands.
 
 
 HOW TO CONNECT THE PSG
 
-The unit simply plugs into the ZX81 output socket, in place of the RAM
+The unit simply plugs into the ZX 81 output socket, in place of the RAM
 pack, which may in turn also be plugged into the rear of the PSG. You can
 also use the printer as well as the PSG all at the same time. The PSG gets
-its power from the ZX81 power supply (or the printer power supply if
+its power from the ZX 81 power supply (or the printer power supply if
 fitted), and does not overload it. The power supply will run slightly
 warmer, but this does not indicate a problem.
 
-The PSG does not occupy address space on the ZX81, and so larger RAM packs
+The PSG does not occupy address space on the ZX 81, and so larger RAM packs
 can also be used with it. The use of add-on ports, etc., cannot be
 guaranteed while the PSG is connected, unless they are used with PEEK and
 POKE instructions in the BASIC program.
@@ -39,11 +39,12 @@ However, to show it off, the first program generates random signals
 to the PSG without further intervention. Type it in as shown. Line 1
 in particular MUST be exactly as shown, and typed in by using keywords,
 rather than typing in the individual letters of 'PEEK', for example. The
-spaces shown in line 1 are thus put in by the ZX81 itself. When the
-whole program is typed in, RUN it. A few moments pass before sounds
-start, but after this anything can happen!
+spaces shown in line 1 are thus put in by the ZX 81 itself. (N.B. For
+the Spectrum see the end of this manual). When the whole program is
+typed in, RUN it. A few moments pass before sounds start, but after this
+anything can happen!
 
-  1 REM YYPEEK TO YYPEEK ?TAN
+  1 REM YYPEEK TO YYPEEK 3TAN
   2 GOTO 7
   3 POKE A,D
   4 POKE B,C
@@ -182,7 +183,7 @@ volume mode, sixteen levels are available between zero (silence) and 15
 (full). In envelope control mode, the volume always varies between
 maximum and minimum level. The rate at which the volume is changed is
 set up in registers 11 and 12, and will be described in the section
- entitled 'Internal operation of the PSG'. Finally, register 13 controls
+entitled 'Internal operation of the PSG'. Finally, register 13 controls
 the way in which the envelopes operate. Effects such as single decays
 (to simulate gunshots, bells, etc.), repetitive sweeps (helicopters,
 sonars) and, single build-ups (approaching aircraft, etc.), can all be
@@ -199,11 +200,11 @@ registers where a change is actually needed. Effects such as explosions,
 can be achieved by a single load to register 13 to start a new envelope.
 
 
-CONTROL BY THE ZX81
+CONTROL BY THE ZX 81
 
 Before describing the functions of the registers in detail, and how to
 use them, the method of controlling the PSG is described. The register
-number and its contents are defined in the ZX81 BASIC program, and these
+number and its contents are defined in the ZX 81 BASIC program, and these
 two data are passed to the PSG by a very simple machine code routine.
 This is stored in a REM statement which must form the first line of any
 program in which you want to use the sound generator.
@@ -212,9 +213,9 @@ The following lines are suggested as the first in any program using the
 PSG, because they result in very fast access to the PSG, and easy use of
 the single subroutine. Line 1 is shown exactly as it first appears on
 the screen, having typed it in using the appropriate key words. No
-spaces should be entered, because the ZX81 inserts them where required.
+spaces should be entered, because the ZX 81 inserts them where required.
 
-   1 REM YYPEEK TO YYPEEK ?TAN
+   1 REM YYPEEK TO YYPEEK 3TAN
    2 GOTO 7
    3 POKE A,D
    4 POKE B,C
@@ -234,7 +235,7 @@ The PSG loader machine code routine is most effectively called by a
 BASIC subroutine, because it will be needed frequently in a complicated
 sequence of sounds, and also because the subroutine can be faster to
 execute if it is placed near the beginning of the BASIC program. The
-number 16514 is the address in the ZX81's memory of the machine code
+number 16514 is the address in the ZX 81's memory of the machine code
 routine stored in the REM statement in the first line of the program.
 The numbers 16515 and 16519 actually point to the second and forth 'Y's
 in the REM statement at line 1, and every time the subroutine is
@@ -634,10 +635,10 @@ WHAT THE MACHINE CODE DOES
 
 The machine code in the REM statement in the first line actually uses
 the data passed by the two POKEs in lines 3 and 4 as follows. The PSG
-'looks' to the ZX81 as if it consists of two ports. The first, with the
-port address CF (hexadecimal, normally written CFH), is the destination
+'looks' to the ZX 81 as if it consists of two ports. The first, with the
+port address DF (hexadecimal, normally written DFH), is the destination
 register by the contents of the microprocessor's accumulator. The
-second, with the port address 0FH, is the contents of the previously
+second, with the port address 1FH, is the contents of the previously
 chosen destination register.
 
 The assembly language version of the REM statement after loading
@@ -645,19 +646,81 @@ register 7 with 63 (3FH) is as follows:
 
 16514  3E  LD A,07H
 16515  07
-16516  D3  OUT (0CFH),A
-16517  CF
+16516  D3  OUT (0DFH),A
+16517  DF
 16518  3E  LD A,3FH
 16519  3F
-16520  D3  OUT (0FH),A
-16521  0F
+16520  D3  OUT (01FH),A
+16521  1F
 16522  C9  RET
 
 You can verify that the hexadecimal codes shown translate into words in
-the REM statement from the list given in the back of the ZX81 manual.
+the REM statement from the list given in the back of the ZX 81 manual.
 The use of YY in the REM statement is chosen merely because the second
-and forth 'Y's are needed to make space for the real data to be POKEd to
-addresses 16515 and 16519 later on.
+and forth 'Y's are needed to make space for the real data to be POKEd
+to addresses 16515 and 16519 later on.
+
+
+ADDING ZonX 81 MACHINE CODE TO OTHER PROGRAMS
+
+If the ZonX 81 is to be used with other machine code routines also
+stored in the first line REM statement, it is a simple matter to relocate
+the addresses of the ZonX 81 code so that both routines are available to
+you without interference. Since most machine code is not relocatable,
+the best way to do this is to add the nine characters of the ZonX 81 code
+at the end of any other machine code entry in the first line REM statement.
+
+The simplest way to enter the ZonX 81 machine code is to do it after the
+other machine code is already in place in the program. It must, of course,
+be a REM statement in the first line, but this is the only condition which
+must be fulfilled. All you have to do is put the cursor onto line 1, and
+EDIT it. Move the cursor to the end (this is the worst part if the REM statement
+is very long!), and then simply enter the characters YYPEEK TO YYPEEK 3TAN
+and follow them with a NEWLINE. Remember they must be typed in using keywords
+rather than typing in “PEEK", for example. The extra code is now part of
+the program, and can be saved along with the rest of the program. Lines 2, 3,
+4, 5, and 6 should be entered as shown on page at the start of this manual.
+
+It is necessary to change lines 7, 8, and 9 to compute the new values for A,
+B, and E, which were simply assigned in lines 7, 8, and 9 of the program
+given at the start of the manual. This is most reliably done by the machine
+itself, using the pointers and line lengths described in Chap. 27 (particularly
+page 171) of the ZX 81 manual. To do these computations, use the following
+lines 7, 8, and 9 instead of the ones given in the ZonX 81 manual.
+
+   7 LET A=16504+(256*PEEK 16512+PEEK 16511)
+   8 LET B=A+4
+   9 LET E=A-1
+
+The number 10504 is arrived at by subtracting 9 (the length of the ZonX 81
+machine code) from the address of the first character (REM) in the first line.
+The two addresses 16512 and 16511 contain the length of the first line,
+including the ZonX 81 code and a NEWLINE. When this length is added to 16504,
+the address formed is that of the second "Y" in the ZonX 81 machine code.
+The other two addresses are then simply calculated relative to the address
+calculated for A. Note that the new lines 7, 8, and 9 work correctly for any
+first line REM statement of any length, including the simple one given at
+the start of this manual.
+
+
+USING THE PSG ON THE SINCLAIR SPECTRUM
+
+The Spectrum computer has a simple way of passing data to external devices
+such as the ZonX-81, using the OUT A,B form of instruction. This means that
+machine code is not required on the Spectrum. The BASIC subroutine which
+passes the Destination register number and Contents is as follows:
+
+   2 GO TO 7
+   3 OUT A,D
+   4 OUT B,C
+   6 RETURN
+   7 LET A=65535
+   8 LET B=A-128
+  10 REM ALL OTHER PROGRAMS AS FOR ZX-81
+
+Note that the subroutine is still at line 3, and will be called correctly by
+all the programs given in this manual. Lines 1, 5, and 9 in the ZX 81 version
+are no longer needed.
 
 
 ===============================================================================

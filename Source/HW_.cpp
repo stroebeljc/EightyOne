@@ -347,7 +347,6 @@ void THW::ReloadFromInternalSettings()
         if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down || Spec128Btn->Down)
         {
                 Machine->ActivePage=Sinclair;
-                FloatingPointHardwareFix->Enabled = ZX81Btn->Down;
         }
         else if (SpecP2Btn->Down || SpecP2aBtn->Down || SpecP3Btn->Down)
         {
@@ -2180,7 +2179,7 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         RomBox->Items->Add("zx81.edition1.rom");
         RomBox->Text = emulator.ROM80;
         RomBox->SelStart=RomBox->Text.Length()-1; RomBox->SelLength=0;
-        FloatingPointHardwareFix->Enabled = true;
+        RomBoxChange(NULL);
         ImprovedWait->Enabled = false;
         ImprovedWait->Checked = false;
 
@@ -3474,6 +3473,14 @@ void __fastcall THW::ColourBoxChange(TObject *Sender)
 
 void __fastcall THW::RomBoxChange(TObject *Sender)
 {
+        if (ZX80Btn->Down)
+        {
+                bool zx81Ed3ROM = RomBox->Text == "zx81.edition1.rom";
+                FloatingPointHardwareFix->Enabled = zx81Ed3ROM;
+                if (!zx81Ed3ROM)
+                        FloatingPointHardwareFix->Checked = false;
+        }
+
         ResetRequired=true;
 
         SetZX80Icon();

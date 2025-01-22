@@ -3500,7 +3500,7 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 {
         AnsiString root(zxpandSDCardFolderRoot);
         AnsiString replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
-        ShellExecute(Application->Handle,"OPEN","EXPLORER.EXE", replaced.c_str(), NULL, 1);
+        ShellExecute(NULL, "explore", replaced.c_str(), NULL, NULL, SW_NORMAL);
 }
 //---------------------------------------------------------------------------
 
@@ -3593,7 +3593,7 @@ void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
 {
         AnsiString path = emulator.cwd;
 
-        ShellExecute(0, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
+        ShellExecute(NULL, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------
 

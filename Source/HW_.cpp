@@ -3332,13 +3332,13 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZON X Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
 
                         if (ret == IDYES)
                         {
                                 HiResBox->ItemIndex = 1;        // WRX
                                 RamPackBox->ItemIndex = 5;      // 32K RAM
-                                SoundCardBox->ItemIndex = 1;    // ZONX
+                                SoundCardBox->ItemIndex = 1;    // ZON X
                                 EnableLowRAM->Checked = true;   // 8K-16K RAM
                         }
                 }

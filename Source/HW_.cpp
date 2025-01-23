@@ -3616,3 +3616,9 @@ void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall THW::CancelClick(TObject *Sender)
+{
+        Close();        
+}
+//---------------------------------------------------------------------------
+

@@ -1313,6 +1313,7 @@ object HW: THW
     Caption = 'Cancel'
     Default = True
     TabOrder = 4
+    OnClick = CancelClick
   end
   object RamPackBox: TComboBox
     Left = 169

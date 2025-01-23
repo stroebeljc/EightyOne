@@ -1320,7 +1320,7 @@ void __fastcall TForm1::DBG1Click(TObject *Sender)
 
 void __fastcall TForm1::HelpTopics2Click(TObject *Sender)
 {
-        ShellExecute(0,NULL, "eightyone.chm", NULL, NULL, SW_SHOW);
+        ShellExecute(NULL, NULL, "eightyone.chm", NULL, NULL, SW_SHOW);
 }
 //---------------------------------------------------------------------------
 

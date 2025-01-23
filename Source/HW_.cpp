@@ -3333,13 +3333,13 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
                 if (!allFacilitiesSelected)
                 {
-                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZonX Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
+                        int ret = Application->MessageBox("Automatically select the following ZXpand+ facilities?\n\n32K RAM Pack, RAM in 8K-16K Region, WRX High Resolution, ZON X Sound", "ZXpand+ Configuration", MB_YESNO | MB_ICONQUESTION);
 
                         if (ret == IDYES)
                         {
                                 HiResBox->ItemIndex = 1;        // WRX
                                 RamPackBox->ItemIndex = 5;      // 32K RAM
-                                SoundCardBox->ItemIndex = 1;    // ZONX
+                                SoundCardBox->ItemIndex = 1;    // ZON X
                                 EnableLowRAM->Checked = true;   // 8K-16K RAM
                         }
                 }
@@ -3501,7 +3501,7 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 {
         AnsiString root(zxpandSDCardFolderRoot);
         AnsiString replaced = StringReplace(root, "/", "\\", TReplaceFlags()<<rfReplaceAll);
-        ShellExecute(Application->Handle,"OPEN","EXPLORER.EXE", replaced.c_str(), NULL, 1);
+        ShellExecute(NULL, "explore", replaced.c_str(), NULL, NULL, SW_NORMAL);
 }
 //---------------------------------------------------------------------------
 
@@ -3594,7 +3594,7 @@ void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
 {
         AnsiString path = emulator.cwd;
 
-        ShellExecute(0, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
+        ShellExecute(NULL, "open", "Notepad.exe", "ZXpand readme.txt", path.c_str(), SW_SHOWNORMAL);
 }
 //---------------------------------------------------------------------------
 

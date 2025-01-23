@@ -8,9 +8,13 @@
 
 #include "ZXpand_emu.h"
 #include "zxpandclass.h"
-
-
+ 
 extern void SetRoot(const char*);
+
+void ZXpand::SetSDCardPath()
+{
+      SetRoot("ZXpand_SD_Card");
+}
 
 ZXpand::ZXpand()
 {
@@ -19,8 +23,6 @@ ZXpand::ZXpand()
       _zxpand = new zxpand_t;
       _zxpand->power_on_reset();
 
-      SetRoot("ZXpand_SD_Card");
-
       LoadEEPROM();
       configByte = eeprom[4];
       fsConfig = eeprom[5];
@@ -28,8 +30,7 @@ ZXpand::ZXpand()
    catch(...)
    {
    }
-}
-
+}     
 
 ZXpand::~ZXpand()
 {

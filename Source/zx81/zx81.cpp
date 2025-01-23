@@ -416,6 +416,8 @@ void zx81_initialise()
 
 void CreateZXpand()
 {
+        ZXpand::SetSDCardPath();
+
         if (zxpand)
         {
                 delete(zxpand);

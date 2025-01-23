@@ -178,6 +178,9 @@ __published:	// IDE-managed Components
         TMenuItem *N14;
         TMenuItem *ExampleSpectrumProgramsMenuEntry;
         TMenuItem *ResetSpeech;
+        TMenuItem *ExampleIDEDiskImages;
+        TMenuItem *ExampleFloppyDiskImages;
+        TMenuItem *N15;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -291,6 +294,8 @@ __published:	// IDE-managed Components
         void __fastcall ExampleSpectrumProgramsMenuEntryClick(
           TObject *Sender);
         void __fastcall ResetSpeechClick(TObject *Sender);
+        void __fastcall ExampleFloppyDiskImagesClick(TObject *Sender);
+        void __fastcall ExampleIDEDiskImagesClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

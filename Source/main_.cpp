@@ -2784,3 +2784,23 @@ void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::ExampleFloppyDiskImagesClick(TObject *Sender)
+{
+        AnsiString path = emulator.cwd;
+        path += examplesDisksFolder;
+        path += "\\";
+
+        ShellExecute(NULL, "explore", path.c_str(), NULL, NULL, SW_NORMAL);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ExampleIDEDiskImagesClick(TObject *Sender)
+{
+        AnsiString path = emulator.cwd;
+        path += examplesDrivesFolder;
+        path += "\\";
+
+        ShellExecute(NULL, "explore", path.c_str(), NULL, NULL, SW_NORMAL);
+}
+//---------------------------------------------------------------------------
+

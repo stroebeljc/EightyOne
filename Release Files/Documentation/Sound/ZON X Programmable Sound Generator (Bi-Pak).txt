@@ -728,6 +728,8 @@ are no longer needed.
 
 TECHNICAL NOTES
 
-There were two revisions of the ZON X-81. The first revision used output
-port $0F and input port $CF. The second revision to add compatibility
-with the Spectrum used output port $1F and input port $DF.
+There were two revisions of the ZON X-81. The first revision was said to use
+output port $0F and input port $CF, although it actually only decodes address
+lines A0-A3=1, A4=0 and A7=0/1. The second revision added compatibility with
+the Spectrum and was said to use output port $1F and input port $DF, although
+it actually only decodes address lines A0-A4=1 and A7=0/1.

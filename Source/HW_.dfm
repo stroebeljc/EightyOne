@@ -1721,10 +1721,10 @@ object HW: THW
         OnChange = DriveATypeChange
         Items.Strings = (
           'None'
-          '3" Single Sided (180k)'
-          '3" Double Sided (360k)'
-          '3.5" Double Sided (720k)'
-          '5.25" Double Sided (720k)')
+          '3" Single-Sided (180K)'
+          '3" Double-Sided (360K)'
+          '3.5" Double-Sided (720K)'
+          '5.25" Double-Sided (720K)')
       end
       object DriveBType: TComboBox
         Left = 224
@@ -1737,10 +1737,10 @@ object HW: THW
         OnChange = DriveBTypeChange
         Items.Strings = (
           'None'
-          '3" Single Sided (180k)'
-          '3" Double Sided (360k)'
-          '3.5" Double Sided (720k)'
-          '5.25" Double Sided (720k)')
+          '3" Single-Sided (180K)'
+          '3" Double-Sided (360K)'
+          '3.5" Double-Sided (720K)'
+          '5.25" Double-Sided (720K)')
       end
       object FDC: TComboBox
         Left = 56
@@ -1938,7 +1938,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

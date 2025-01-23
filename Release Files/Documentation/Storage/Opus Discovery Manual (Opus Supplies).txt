@@ -95,8 +95,8 @@ How to start using your disc system
 This section of the operating manual has been written for those users with a single drive Discovery
 unit. Those with a dual drive system will find certain tasks simpler, particularly disc and file
 copying. Drive 1 is the left hand drive.
-You are now ready to start using your Discovery disc system. Take a disc and insert it, as
-illustrated, into the drive unit, pushing it home until it clicks into place in drive 1.
+You are now ready to start using your Discovery disc system. Take a disc and insert it
+into the drive unit, pushing it home until it clicks into place in drive 1.
 
 
 First steps

@@ -570,13 +570,13 @@ USING A DISK DRIVE
 
 (Before you start using the Disciple with a disk drive, please follow the
 instructions in the previous section - "Making the Disciple compatible with
-your system'.)
+your system".)
 
 Loading the Disk Operating System
 
 Connect the computer, the Disciple and the disk drive(s) to the correct
 connectors, and then turn on the power. The normal title screen for the
-computer will be displayed,
+computer will be displayed.
 
 Insert your system disk in disk drive 1. (Your manual may call it drive A.)
 
@@ -1143,7 +1143,7 @@ If you are using two disk drives, the following command is available:
         FORMAT D1 TO 2
 
 This command formats the disk in drive 1 and copies the contents of the disk in
-drive 2 to the disk in drive 1, sector by sector. BE VERY CAREFUL MOT TO
+drive 2 to the disk in drive 1, sector by sector. BE VERY CAREFUL NOT TO
 FORMAT THE WRONG DISK. Remember that the first-named disk is always the one
 which is cleared of data, and the second-named whose contents are copied.
 Because the copying is done a sector at a time, the copying process takes much

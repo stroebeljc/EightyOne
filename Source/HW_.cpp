@@ -495,7 +495,7 @@ void THW::ConfigurePrinterCentronicsPort()
                 if (spectrum.floppytype==FLOPPYOPUSD)
                         Form1->PrinterPort1->Caption="Opus Printer Port";
                 if (spectrum.floppytype==FLOPPYDISCIPLE)
-                        Form1->PrinterPort1->Caption="Disciple Printer Port";
+                        Form1->PrinterPort1->Caption="DISCiPLE Printer Port";
                 if (spectrum.floppytype==FLOPPYPLUSD)
                         Form1->PrinterPort1->Caption="Plus D Printer Port";
                 if (spectrum.model==SPECCYPLUS2A)
@@ -1362,8 +1362,8 @@ void THW::ConfigureSpectrumIDE()
 void THW::ConfigureFDC()
 {
         spectrum.floppytype=FLOPPYNONE;
-        if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Disciple") spectrum.floppytype=FLOPPYDISCIPLE;
-        if (FDC->Items->Strings[FDC->ItemIndex]=="MGT Plus D") spectrum.floppytype=FLOPPYPLUSD;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="DISCiPLE") spectrum.floppytype=FLOPPYDISCIPLE;
+        if (FDC->Items->Strings[FDC->ItemIndex]=="Plus D") spectrum.floppytype=FLOPPYPLUSD;
         if (FDC->Items->Strings[FDC->ItemIndex]=="+3") spectrum.floppytype=FLOPPYPLUS3;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Opus Discovery") spectrum.floppytype=FLOPPYOPUSD;
         if (FDC->Items->Strings[FDC->ItemIndex]=="Beta Disk") spectrum.floppytype=FLOPPYBETA;
@@ -1956,8 +1956,8 @@ void THW::SetupForSpectrum(void)
         FDC->Items->Add("ZX Interface 1");
         FDC->Items->Add("Beta Disk");
         FDC->Items->Add("Opus Discovery");
-        FDC->Items->Add("MGT Disciple");
-        FDC->Items->Add("MGT Plus D");
+        FDC->Items->Add("DISCiPLE");
+        FDC->Items->Add("Plus D");
 
         FDC->ItemIndex=0;
         for(i=0;i<FDC->Items->Count;i++)

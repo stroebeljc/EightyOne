@@ -228,6 +228,8 @@ __published:	// IDE-managed Components
         void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall ZXpandEmulationInfoClick(TObject *Sender);
         void __fastcall SpeechBoxChange(TObject *Sender);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+        void __fastcall CancelClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

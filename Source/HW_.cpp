@@ -2192,6 +2192,8 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
 
 void __fastcall THW::ZX81BtnClick(TObject *Sender)
 {
+        if (ZX81Btn->Down) return;
+
         NewMachine=MACHINEZX81;
         RefreshDefaultRamSettings();
         SetupForZX81();
@@ -3187,7 +3189,11 @@ void __fastcall THW::ChrGenBoxChange(TObject *Sender)
 
 void __fastcall THW::HiResBoxChange(TObject *Sender)
 {
-        if (HiResBox->Items->Strings[HiResBox->ItemIndex]=="Memotech") ProtectROM->Checked=true;
+        if ((HiResBox->Items->Strings[HiResBox->ItemIndex]=="Quicksilva") ||
+             (HiResBox->Items->Strings[HiResBox->ItemIndex]=="Memotech"))
+        {
+                ProtectROM->Checked=true;
+        }
         ResetRequired=true;
 }
 //---------------------------------------------------------------------------

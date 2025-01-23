@@ -235,7 +235,7 @@ private:	// User declarations
         bool ramPackSupplementsInternalRam;
         AnsiString NewMachineName;
         HWFormValues Hwform;
-
+        
         void ReloadFromInternalSettings();
         void SaveInternalSettings();
         void RefreshDefaultRamSettings();

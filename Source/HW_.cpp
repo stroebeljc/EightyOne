@@ -402,6 +402,7 @@ void THW::SaveInternalSettings()
         Hwform.FDCItemIndex=FDC->ItemIndex;
         Hwform.AutobootChecked=Autoboot->Checked;
         Hwform.ZXpandChecked=ZXpand->Checked;
+        Hwform.ZXpandEnabled=ZXpand->Enabled;
         Hwform.ProtectROMChecked=ProtectROM->Checked;
         Hwform.NTSCChecked=NTSC->Checked;
         Hwform.EnableLowRAMChecked=EnableLowRAM->Checked;

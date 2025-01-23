@@ -3610,3 +3610,9 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
+{
+        ReloadFromInternalSettings();
+}
+//---------------------------------------------------------------------------
+

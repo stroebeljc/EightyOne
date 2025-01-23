@@ -14,6 +14,7 @@ object HW: THW
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -1293,7 +1294,7 @@ object HW: THW
     end
   end
   object OK: TButton
-    Left = 329
+    Left = 249
     Top = 339
     Width = 75
     Height = 25
@@ -1302,6 +1303,16 @@ object HW: THW
     Default = True
     TabOrder = 3
     OnClick = OKClick
+  end
+  object Cancel: TButton
+    Left = 329
+    Top = 339
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    Default = True
+    TabOrder = 4
   end
   object RamPackBox: TComboBox
     Left = 169

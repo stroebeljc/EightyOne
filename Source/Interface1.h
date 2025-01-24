@@ -125,6 +125,7 @@ public:		// User declarations
         void SendSerialData(unsigned char Data, int rate);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
+        void HardReset();
 
         char *MDVGetFileName(int Drive);
         void MDVSetFileName(int Drive, char *FileName);

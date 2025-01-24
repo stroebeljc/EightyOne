@@ -613,6 +613,14 @@ __fastcall TIF1::TIF1(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 }
+
+//---------------------------------------------------------------------------
+
+void TIF1::HardReset()
+{
+        MDVCurDrive = -1;
+}
+
 //---------------------------------------------------------------------------
 
 void __fastcall TIF1::OKClick(TObject *Sender)

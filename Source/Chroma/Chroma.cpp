@@ -125,7 +125,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
         if (machine.colour == COLOURCHROMA)
         {
                 // Check for a write to the Chroma's QS Character RAM
-                if ((emulator.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
+                if ((emulator.machine != MACHINEZX80) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         font[Address - 0x8400] = Data;
                         memory[Address] = Data;
@@ -137,7 +137,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         writeHandled = true;
                 }
                 // Check for a write to the Chroma's 8K-16K RAM
-                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && !zx81.RAM816kWriteProtected && (Address >= 0x2000) && (Address < 0x4000))
+                else if ((emulator.machine != MACHINEZX80) && zx81.RAM816k && !zx81.RAM816kWriteProtected && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         if (zx81.chrgen != CHRGENDK)
                         {
@@ -154,7 +154,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                 // Check for a write to Chroma's 48K-64K colour RAM
                 else if (zx81.chromaColourSwitchOn && Address >= 0xC000)
                 {
-                        if (emulator.machine == MACHINEZX81)
+                        if (emulator.machine != MACHINEZX80)
                         {
                                 if ((Address >= 0xE000) && (zx81.chrgen != CHRGENDK) && zx81.RAM816k)
                                 {
@@ -178,7 +178,7 @@ bool ChromaRAMWrite(int Address, BYTE Data, BYTE* memory, BYTE* font)
                         writeHandled = true;
                 }
                 // Chroma's 8-16K RAM is mirrored at 40K-48K and 56K-64K (if enabled)
-                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
+                else if ((emulator.machine != MACHINEZX80) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         memory[Address] = Data;
                         memory[Address - 0x8000] = Data;
@@ -199,13 +199,13 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
 
         if (machine.colour == COLOURCHROMA)
         {
-                if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
+                if ((emulator.machine != MACHINEZX80) && zx81.RAM816k && (Address >= 0x2000) && (Address < 0x4000))
                 {
                         *pData = memory[Address];
                         readHandled = true;
                 }
                 // QS Character mode must be enabled if Chroma implementation
-                else if ((emulator.machine == MACHINEZX81) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
+                else if ((emulator.machine != MACHINEZX80) && (zx81.chrgen == CHRGENQS) && zx81.enableQSchrgen && (Address >= 0x8400) && (Address < 0x8800))
                 {
                         *pData = memory[Address];
                         readHandled = true;
@@ -222,7 +222,7 @@ bool ChromaRAMRead(int Address, BYTE* pData, BYTE* memory)
                         readHandled = true;
                 }
                 // The 8K RAM is echoed at 40K-48K
-                else if ((emulator.machine == MACHINEZX81) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
+                else if ((emulator.machine != MACHINEZX80) && zx81.RAM816k && (Address >= 0xA000) && (Address < 0xC000))
                 {
                         *pData = memory[Address];
                         readHandled = true;

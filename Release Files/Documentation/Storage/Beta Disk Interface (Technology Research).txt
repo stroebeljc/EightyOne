@@ -240,13 +240,11 @@ floppy disk,  diskette, mini-disk or micro-disk.  We will refer to
 them simply as disk. At present, 5.25" disks are  the most popular
 type. However, the trend is towards the smaller disk of 3.5".
 
-Diagram 2  and  3  show  the  sketches  of  5.25"  and  3.5"  disk
-respectively.  The 5.25" diameter flexible  plastic coated disk is
-kept in its own  little  cardboard  or  plastic  jacket.  Although
-"flexible" the  disks should not  be bent. The  smaller 3.5" disks
-are  housed in stronger  plastic protective cases  which, for some
-time at least, means that their cost will be higher than the 5.25"
-disks.
+The 5.25" diameter flexible plastic coated disk is kept in its own
+little cardboard or plastic jacket.  Although "flexible" the disks
+should not be bent. The smaller 3.5" disks are  housed in stronger
+plastic protective cases which, for some time at least, means that
+their cost will be higher than the 5.25" disks.
 
 When  inserted in  the drive  the disks  are rotated  inside their
 protective covers at 300 RPM.  To  protect  the  disk  the  better
@@ -368,12 +366,12 @@ please  first   read  and  understand   the  following  procedures
 thoroughly before proceeding  with  the installation. If  you have
 other interfaces, please also read Section 2.5 below.
 
-2.1.1  The  first  step  is  to look at Diagram 1 and identify the
-       four connections. The  connection   labelled  A  should  be
-       plugged into the back of the Spectrum unless an Interface 1
-       is fitted.  In that case  the Interface 1  goes between the
-       Spectrum  and the Disk Interface. The connection opposite A
-       is for adding your other interfaces, e.g. joystick.
+2.1.1  The  first  step  is  to identify the four connections. The
+       connector should  be  plugged into the back of the Spectrum
+       unless  an  Interface 1  is  fitted.    In  that  case  the
+       Interface 1   goes   between  the  Spectrum  and  the  Disk
+       Interface. The connection opposite is for adding your other
+       interfaces, e.g. joystick.
 
 2.1.2  Before  connecting the Disk Interface  to the Spectrum, you
        must clean  the connector on the  Spectrum, by rubbing both
@@ -381,9 +379,8 @@ other interfaces, please also read Section 2.5 below.
 
 2.1.3  Your   disk  drive  should  already   be  fitted  with  the
        appropriate  plug on its connecting lead and this should be
-       inserted in the "Disk  Drive  Port" (labelled  B in Diagram
-       1). Make sure the coloured side of the flat ribbon cable is
-       towards the Spectrum.
+       inserted in the "Disk  Drive  Port". Make sure the coloured
+       side of the flat ribbon cable is towards the Spectrum.
 
 2.1.4  Plug in the Disk Drive mains lead and switch on.
 
@@ -396,7 +393,7 @@ other interfaces, please also read Section 2.5 below.
                          position.
 
 2.1.7  Plug the power socket from your Spectrum power supply  into
-       the power supply connection (labelled C in Diagram 1).
+       the power supply connection.
 
 2.1.8  SPECTRUM & PLUS : If more than 1 drive is fitted only drive
                          A  will now engage and after a second you
@@ -545,10 +542,10 @@ to the off position (Section 3.2).
  
 3    THE SYSTEM SWITCH
 
-The System  switch is on the left-hand  side of the Disk Interface
-(see Diagram 1).  It  is  a  three  position  switch.  For  normal
-operation the switch  should be at  position 2. Position  1 is the
-reset position, and 3 is the off position.
+The System  switch is on the left-hand side of the Disk Interface.
+It is a three  position  switch.  For  normal operation the switch
+should be at  position 2. Position  1 is the reset position, and 3
+is the off position.
 
 SPECTRUM 128 : The  System switch  must  be at the off position.
 
@@ -1458,9 +1455,9 @@ As a summary, the rules for conversion are:
 
 11.2 The Magic button
 
-The Magic button is  situated at  the rear  of the  Disk Interface
-(see Diagram 1). The purpose  of  the  Magic  button  is  to  save
-cassette based programs and run on disk without any conversion.
+The Magic button is  situated at  the rear  of the Disk Interface.
+The purpose  of  the  Magic  button  is  to  save  cassette  based
+programs and run on disk without any conversion.
 
 There are  many programs which have been  written in such a manner
 that it is  either difficult or  impossible to convert  and run on 
@@ -2028,8 +2025,8 @@ A simple program illustrating the use of error code 1:
  
 18  PIN CONNECTIONS OF THE DISK DRIVE CONNECTOR
 
-The disk drive connector (see Diagram 1) is designed to be Shugart
-compatible, and the pin connections are detailed as below:
+The disk drive connector is designed to be Shugart compatible,  and
+the pin connections are detailed as below:
 
           0V -- 1              2 --
           0V -- 3              4 --
@@ -2051,7 +2048,7 @@ compatible, and the pin connections are detailed as below:
 
 
 The pin  allocation  of  the  connector,  looking  into  the  Disk
-Interface from the right (see Diagram 1) is a follow:
+Interface from the right is a follow:
 
           2  4                                               34
 

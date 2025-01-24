@@ -482,8 +482,8 @@ struct kb KBSPEC[]=
         { 2, VK_OEM_3 , kbA11, kbD1, kbA15, kbD1 },
         { 0, VK_OEM_4 , kbA12, kbD2, kbA15, kbD1 },
         { 0, VK_OEM_6 , kbA12, kbD1, kbA15, kbD1 },
-        { 1, VK_OEM_7 , kbA12, kbD3, kbA15, kbD1 },
-        { 2, VK_OEM_7 , kbA13, kbD0, kbA15, kbD1 },
+        { 1, VK_OEM_7 , kbA11, kbD2, kbA15, kbD1 },
+        { 2, VK_OEM_7 , kbA11, kbD2, kbA15, kbD1 },
 
         //{ 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },

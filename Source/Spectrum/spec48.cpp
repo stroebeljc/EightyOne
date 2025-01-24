@@ -337,6 +337,8 @@ void spec48_initialise()
         int j, romlen, pos, delay;
         unsigned int i;
 
+        spectrum.drivebusy = -1;
+
         insertWaitsWhileSP0256Busy = false;
         sp0256_AL2.Reset();
         
@@ -424,6 +426,8 @@ void spec48_initialise()
 
                 memcpy(SpecMem+32768,memory,romlen);
                 if (romlen<=8192) memcpy(SpecMem+32768+8192,memory,romlen);
+
+                IF1->HardReset();
         }
 
         romlen=memory_load(machine.CurRom, 0, 65536);
@@ -460,8 +464,8 @@ void spec48_initialise()
 
         if (strlen(emulator.ROMDock)) LoadDock(emulator.ROMDock);
 
-        SPECTopBorder= (machine.NTSC) ? 32:56;
-        SPECLeftBorder=1+37*2;
+        SPECTopBorder = (machine.NTSC) ? 32:56;
+        SPECLeftBorder = 1+37*2;
 
         InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.intposition;
         if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
@@ -974,10 +978,13 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 }
         }
 
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x9F) == 0x1F) Sound.AYWrite(SelectAYReg, Data,frametstates);
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x9F) == 0x9F) SelectAYReg=Data&15;
+
         switch(Address&255)
         {
         case 0x07:
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
                         insertWaitsWhileSP0256Busy = true;
@@ -991,7 +998,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
         case 0x1f:
                 if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER_REV2)
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
                         insertWaitsWhileSP0256Busy = true;

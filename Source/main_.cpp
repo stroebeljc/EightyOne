@@ -106,7 +106,6 @@ extern int frametstates;
 extern "C" void z80_reset();
 extern "C" int z80_nmi();
 extern char **CommandLine;
-extern int LoadDock(char *Filename);
 extern void spec_load_z80(char *fname);
 extern void spec_load_sna(char *fname);
 extern void spec_save_z80(char *fname);
@@ -607,17 +606,17 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
 
         if (emulator.machine==MACHINEACE)
         {
-                LoadSnapDialog->Filter = ".ACE Snapshot|*.ace|Compressed Snapshot|*.zip";
+                LoadSnapDialog->Filter = ".ACE Snapshot|*.ace|Compressed Snapshot|*.zip|All Snapshot Files|*.ace;*.sna;*.z80;*.z81;*.zip";
                 LoadSnapDialog->DefaultExt = "ACE";
         }
         else if (emulator.machine==MACHINESPECTRUM)
         {
-                LoadSnapDialog->Filter = "Spectrum Snapshots|*.z80;*.sna|.Z80 Snapshot|*.z80|.SNA Snapshot|*.sna|Compressed Snapshot|*.zip";
+                LoadSnapDialog->Filter = "Spectrum Snapshots|*.z80;*.sna|.Z80 Snapshot|*.z80|.SNA Snapshot|*.sna|Compressed Snapshot|*.zip|All Snapshot Files|*.ace;*.sna;*.z80;*.z81;*.zip";
                 LoadSnapDialog->DefaultExt = "Z80";
         }
         else
         {
-                LoadSnapDialog->Filter = ".Z81 Snapshot|*.z81|Compressed Snapshot|*.zip";
+                LoadSnapDialog->Filter = ".Z81 Snapshot|*.z81|Compressed Snapshot|*.zip|All Snapshot Files|*.ace;*.sna;*.z80;*.z81;*.zip";
                 LoadSnapDialog->DefaultExt = "Z81";
         }
 
@@ -899,7 +898,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         StatusBar1->Panels->Items[1]->Text = text;
         fps=0;
 
-        if (Sound1->Checked && !zx81.vsyncsound) zx81.vsyncsound=1;
+        zx81.vsyncsound=Sound1->Checked;
         TZX->RecStopCheck();
 }
 //---------------------------------------------------------------------------
@@ -1328,7 +1327,7 @@ void __fastcall TForm1::DBG1Click(TObject *Sender)
 
 void __fastcall TForm1::HelpTopics2Click(TObject *Sender)
 {
-        ShellExecute(0,NULL, "eightyone.chm", NULL, NULL, SW_SHOW);
+        ShellExecute(NULL, NULL, "eightyone.chm", NULL, NULL, SW_SHOW);
 }
 //---------------------------------------------------------------------------
 

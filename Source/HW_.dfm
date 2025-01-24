@@ -1,7 +1,7 @@
 object HW: THW
-  Left = 1256
-  Top = 584
-  BorderIcons = []
+  Left = 313
+  Top = 177
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
   ClientHeight = 368
@@ -12,11 +12,13 @@ object HW: THW
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Scaled = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
+  DesignSize = (
+    408
+    368)
   TextHeight = 13
   object RamPackLbl: TLabel
     Left = 105
@@ -1293,7 +1295,7 @@ object HW: THW
     end
   end
   object OK: TButton
-    Left = 329
+    Left = 249
     Top = 339
     Width = 75
     Height = 25
@@ -1303,13 +1305,23 @@ object HW: THW
     TabOrder = 3
     OnClick = OKClick
   end
+  object Cancel: TButton
+    Left = 329
+    Top = 339
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    Default = True
+    TabOrder = 4
+    OnClick = CancelClick
+  end
   object RamPackBox: TComboBox
     Left = 169
     Top = 110
     Width = 81
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 1
     OnChange = RamPackBoxChange
     Items.Strings = (
@@ -1372,7 +1384,7 @@ object HW: THW
         Caption = 'ROM Cartridge:'
       end
       object ZXpandEmulationInfo: TImage
-        Left = 374
+        Left = 372
         Top = 94
         Width = 15
         Height = 15
@@ -1439,7 +1451,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
         OnChange = SoundCardBoxChange
       end
@@ -1449,7 +1460,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 1
         OnChange = ChrGenBoxChange
         Items.Strings = (
@@ -1465,7 +1475,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 2
         OnChange = HiResBoxChange
         Items.Strings = (
@@ -1504,9 +1513,9 @@ object HW: THW
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 184
+        Left = 183
         Top = 112
-        Width = 76
+        Width = 70
         Height = 20
         Caption = 'Configure'
         TabOrder = 11
@@ -1536,7 +1545,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 3
         OnChange = ColourBoxChange
         Items.Strings = (
@@ -1548,7 +1556,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 5
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
@@ -1570,9 +1577,9 @@ object HW: THW
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 300
+        Left = 299
         Top = 112
-        Width = 76
+        Width = 70
         Height = 20
         Caption = 'SD Card'
         TabOrder = 13
@@ -1584,7 +1591,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 14
         Visible = False
         OnChange = RomCartridgeBoxChange
@@ -1601,7 +1607,7 @@ object HW: THW
         Top = 17
         Width = 97
         Height = 17
-        Caption = 'Currah µSource'
+        Caption = 'Currah '#181'Source'
         TabOrder = 6
         OnClick = uSourceClick
       end
@@ -1619,7 +1625,6 @@ object HW: THW
         Width = 184
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
         TabOrder = 16
         Visible = False
         OnChange = SinclairRomCartridgeFileBoxChange
@@ -1630,7 +1635,6 @@ object HW: THW
         Width = 184
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
         TabOrder = 17
         Visible = False
         OnChange = TS1510RomCartridgeFileBoxChange
@@ -1641,7 +1645,6 @@ object HW: THW
         Width = 184
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
         TabOrder = 18
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
@@ -1652,7 +1655,6 @@ object HW: THW
         Width = 184
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
         TabOrder = 19
         Visible = False
         OnChange = TS2068RomCartridgeFileBoxChange
@@ -1663,7 +1665,6 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 4
         OnChange = SpeechBoxChange
         Items.Strings = (
@@ -1716,15 +1717,14 @@ object HW: THW
         Width = 153
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 3
         OnChange = DriveATypeChange
         Items.Strings = (
           'None'
-          '3" Single Sided (180k)'
-          '3" Double Sided (360k)'
-          '3.5" Double Sided (720k)'
-          '5.25" Double Sided (720k)')
+          '3" Single-Sided (180K)'
+          '3" Double-Sided (360K)'
+          '3.5" Double-Sided (720K)'
+          '5.25" Double-Sided (720K)')
       end
       object DriveBType: TComboBox
         Left = 224
@@ -1732,15 +1732,14 @@ object HW: THW
         Width = 153
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 4
         OnChange = DriveBTypeChange
         Items.Strings = (
           'None'
-          '3" Single Sided (180k)'
-          '3" Double Sided (360k)'
-          '3.5" Double Sided (720k)'
-          '5.25" Double Sided (720k)')
+          '3" Single-Sided (180K)'
+          '3" Double-Sided (360K)'
+          '3.5" Double-Sided (720K)'
+          '5.25" Double-Sided (720K)')
       end
       object FDC: TComboBox
         Left = 56
@@ -1748,7 +1747,6 @@ object HW: THW
         Width = 113
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
         OnChange = FDCChange
         Items.Strings = (
@@ -1780,7 +1778,6 @@ object HW: THW
         Width = 113
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 5
         OnChange = IDEBoxChange
         Items.Strings = (
@@ -1792,7 +1789,6 @@ object HW: THW
         Width = 81
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 6
         Items.Strings = (
           '128k'
@@ -1868,7 +1864,9 @@ object HW: THW
         Top = 80
         Width = 145
         Height = 17
-        Hint = 'Allows unrestricted machine code to run from the 32k-48k range'
+        Hint = 
+          'Overcomes the restriction that prevents machine code running fro' +
+          'm the 32K-48K range on the ZX81'
         Caption = 'M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
@@ -1895,8 +1893,8 @@ object HW: THW
         Width = 153
         Height = 17
         Hint = 
-          'Sinclair released strap-on board to the Z80 to overcome the floa' +
-          'ting point maths bug in the edition 1 ROM'
+          'Sinclair fitted a strap-on board to the Z80 to overcome the floa' +
+          'ting point maths bug in the edition 1 ZX81 ROM'
         Caption = 'Floating Point Hardware Fix'
         Color = clBtnFace
         ParentColor = False
@@ -1922,7 +1920,7 @@ object HW: THW
         Height = 17
         Hint = 
           'Wilf Rigter'#39's modification to prevent Wait state insertion at ev' +
-          'ery NMI'
+          'ery NMI to speed up ZX81 SLOW mode by 10%'
         Caption = 'Improved Wait Circuit'
         Color = clBtnFace
         ParentColor = False
@@ -1936,7 +1934,6 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

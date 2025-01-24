@@ -287,7 +287,6 @@ typedef struct
 {
         CFGBYTE emuid, major,minor,testver;
         CFGBYTE machine;
-        CFGBYTE newMachine;
         CFGBYTE checkInstallationPathLength;
 
         CFGBYTE single_step;
@@ -410,8 +409,9 @@ extern const char* temporaryFolder;
 
 extern const char* romsFolder;
 extern const char* nvMemoryFolder;
-extern const char* examplesDrivesFolder;
 extern const char* documentationFolder;
+extern const char* examplesDisksFolder;
+extern const char* examplesDrivesFolder;
 extern const char* exampleZX81ProgramsFolder;
 extern const char* exampleSpectrumProgramsFolder;
 extern const char* fdcRomsFolder;

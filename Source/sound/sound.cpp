@@ -165,7 +165,16 @@ void CSound::AYInit(void)
         switch(machine.aytype)
         {
         case AY_TYPE_QUICKSILVA: clock=AY_CLOCK_QUICKSILVA; break;
-        case AY_TYPE_ZONX_REV2: clock=AY_CLOCK_ZONX; break;
+        case AY_TYPE_ZONX:
+                if (emulator.machine == MACHINESPECTRUM)
+                {
+                        clock=(spectrum.model >= SPECCY128 ? AY_CLOCK_ZONX_SPEC128 : AY_CLOCK_ZONX_SPEC48); break;
+                }
+                else
+                {
+                        clock=AY_CLOCK_ZONX_ZX81;
+                }
+                break;
         case AY_TYPE_FULLER: clock=AY_CLOCK_FULLER; break;
         case AY_TYPE_ACE_USER: clock=AY_CLOCK_ACE_USER; break;
         case AY_TYPE_SINCLAIR: clock=(spectrum.model >= SPECCY128 ? AY_CLOCK_SINCLAIR_128K : AY_CLOCK_SINCLAIR_48K); break;

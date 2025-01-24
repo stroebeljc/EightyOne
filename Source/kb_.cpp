@@ -137,14 +137,10 @@ void TKb::SaveSettings(TIniFile *ini)
 
 void TKb::UpdateCursors()
 {
-        if (emulator.machine==MACHINELAMBDA && CursorMode->ItemIndex!=3)
+        if (CursorMode->ItemIndex!=4)
         {
-                CursorMode->ItemIndex=3;
-        }
-        else
-        {
-                CursorMode->ItemIndex=1;
-
+                if (emulator.machine==MACHINELAMBDA) CursorMode->ItemIndex=3;
+                else CursorMode->ItemIndex=1;
         }
 
         CursorModeChange(NULL);

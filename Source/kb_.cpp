@@ -135,6 +135,18 @@ void TKb::SaveSettings(TIniFile *ini)
         ini->WriteBool("KB","RIGHTSHIFT", CheckBox1->Checked);
 }
 
+void TKb::UpdateCursors()
+{
+        if (CursorMode->ItemIndex!=4)
+        {
+                if (emulator.machine==MACHINELAMBDA) CursorMode->ItemIndex=3;
+                else CursorMode->ItemIndex=1;
+        }
+
+        CursorModeChange(NULL);
+        OKClick(NULL);
+}
+
 void __fastcall TKb::FormShow(TObject *Sender)
 {
         if (emulator.machine==MACHINESPECTRUM

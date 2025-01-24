@@ -244,7 +244,7 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         AccurateInit(false);
         Speed->Recalc(NULL);
         PCKbInit();
-        Kb->OKClick(NULL);
+        Kb->UpdateCursors();
 
         if (ResetRequired && !disableReset)
         {

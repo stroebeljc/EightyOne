@@ -52,6 +52,7 @@ public:		// User declarations
         __fastcall TKb(TComponent* Owner);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
+        void UpdateCursors();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TKb *Kb;

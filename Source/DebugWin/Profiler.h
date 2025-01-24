@@ -10,7 +10,7 @@
 #include <ComCtrls.hpp>
 #include <ExtCtrls.hpp>
 #include <vector>
-#include <z80.h>
+#include "z80.h"
 
 //---------------------------------------------------------------------------
 class TProfiler : public TForm

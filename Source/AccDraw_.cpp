@@ -650,7 +650,7 @@ int AccurateDraw(SCANLINE *Line)
 {
         static int FrameNo=0;
         static int LastVSyncLen=0, Shade=0;
-        register int i,c;
+        int i,c;
 
         if (!dest) return(0);
 

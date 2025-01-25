@@ -147,7 +147,7 @@ TSplash *spl;
 bool ShowSplash=true;
 bool Restart=false;
 //---------------------------------------------------------------------------
-WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
 {
         int i;
         char *p, *CmdLineRaw;

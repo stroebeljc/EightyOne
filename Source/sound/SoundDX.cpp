@@ -233,7 +233,7 @@ void CDSnd::ThreadFN()
 	
         while(1)
         {
-                int i=WaitForMultipleObjects(2, m_pHEvent, FALSE, -1) - WAIT_OBJECT_0;
+                int i=WaitForMultipleObjects(2, m_pHEvent, FALSE, INFINITE) - WAIT_OBJECT_0;
 
                 switch(i)
                 {

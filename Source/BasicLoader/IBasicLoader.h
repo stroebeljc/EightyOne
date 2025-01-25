@@ -80,7 +80,6 @@ protected:
         void ChangeWord(int addressOffset, int word);
         void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         void MaskOutRemContents(unsigned char* buffer);
-        unsigned char* ExtractLineNumber(int& lineNumber);
         void ReplaceTokenEndCharacters(map<unsigned char, string>& tokens, const unsigned char oldChar, const unsigned char newChar);
         void DoTokenise(map<unsigned char, string> tokens);
         bool StartOfNumber(int index);

@@ -593,6 +593,9 @@ bool TDbg::BPInOutHit(BreakpointType type, int addr, int value, breakpoint* cons
                 case BP_OUTH:
                         addr = addr & 0xFF00;
                         break;
+
+                default:
+                        break;
         }
 
         if (bp->HitRdWrInOut(type, addr, value))
@@ -651,8 +654,11 @@ bool TDbg::BPFlagValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return ((regF & mask) != bp->Value);
+
+                default:
+                        break;
         }
-        
+
         return false;
 }
 
@@ -678,8 +684,11 @@ bool TDbg::BPMemoryValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return (value != bp->Value);
+
+                default:
+                        break;
         }
-        
+
         return false;
 }
 
@@ -705,6 +714,9 @@ bool TDbg::BPRegisterValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return (value != bp->Value);
+
+                default:
+                        break;
         }
 
         return false;

@@ -503,25 +503,6 @@ void IBasicLoader::MaskOutRemContents(unsigned char* buffer)
         memset(pContents, Blank, strlen(pContents));
 }
 
-unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
-{
-        unsigned char* pCommand;
-
-        lineNumber = strtol((const char*)mLineBuffer, &(char*)pCommand, 10);
-
-        if (pCommand == mLineBuffer)
-        {
-                throw runtime_error("Line number missing");
-        }
-
-        if ((lineNumber < 0) || (lineNumber > 16383))
-        {
-                throw out_of_range("Line number too high");
-        }
-
-        return pCommand;
-}
-
 bool IBasicLoader::StartOfNumber(int index)
 {
         if ((mLineBuffer[index] != '.') && !isdigit(mLineBuffer[index]))

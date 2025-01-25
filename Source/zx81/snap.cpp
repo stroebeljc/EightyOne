@@ -285,8 +285,8 @@ void load_snap_hires(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->HiResBox, tok);
                         
-                        if (tok=="G007") HW->EnableLowRAM->Checked=true;
-                        if (tok=="Memotech") HW->ProtectROM->Checked=true;
+                        if (!strcmp(tok,"G007")) HW->EnableLowRAM->Checked=true;
+                        if (!strcmp(tok,"Memotech")) HW->ProtectROM->Checked=true;
                 }
         }
 }

@@ -9,6 +9,7 @@
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
+        <CC_Suffix Condition="'$(CC_Suffix)'==''">c</CC_Suffix>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -86,6 +87,7 @@
         <BCC_wprc>true</BCC_wprc>
         <BCC_ZeroLengthEmptyBaseClass>true</BCC_ZeroLengthEmptyBaseClass>
         <BCC_ZeroLengthEmptyMemberFuncs>true</BCC_ZeroLengthEmptyMemberFuncs>
+        <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindcompvclsmp;bindcompvclwinx;bindengine;CloudService;CPort_R;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;OffBtn;OfficeButton97;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;tethering;vcl;vclactnband;vcldb;vcldsnap;vcledge;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -636,12 +638,12 @@
             <DependentOn>zxprinter\zxprinter.h</DependentOn>
             <BuildOrder>121</BuildOrder>
         </CppCompile>
+        <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
         <FormResources Include="tzx\tzxEditPause.dfm"/>
         <FormResources Include="tzx\tzxEditText.dfm"/>
-        <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
+        <FormResources Include="tzx\tzxEditGeneral.dfm"/>
         <FormResources Include="tzx\tzxEditArchive.dfm"/>
         <FormResources Include="tzx\tzxEditData.dfm"/>
-        <FormResources Include="tzx\tzxEditGeneral.dfm"/>
         <FormResources Include="tzx\TZXMan.dfm"/>
         <FormResources Include="SymBrowse.dfm"/>
         <FormResources Include="SplashScreen.dfm"/>
@@ -667,19 +669,19 @@
         <FormResources Include="BasicLister\BasicListerOptions_.dfm"/>
         <FormResources Include="BasicLister\BasicLister_.dfm"/>
         <FormResources Include="Plus3Drives.dfm"/>
-        <FormResources Include="Parallel.dfm"/>
-        <FormResources Include="MakeHDF.dfm"/>
         <FormResources Include="memoryWindow.dfm"/>
         <FormResources Include="MemSave_.dfm"/>
+        <FormResources Include="Parallel.dfm"/>
         <FormResources Include="sound\SoundForm.dfm"/>
         <FormResources Include="sound\SoundOP.dfm"/>
         <FormResources Include="SerialPort.dfm"/>
-        <FormResources Include="KeyboardFunctions_.dfm"/>
         <FormResources Include="Keyboard_.dfm"/>
-        <FormResources Include="kb_.dfm"/>
+        <FormResources Include="KeyboardFunctions_.dfm"/>
         <FormResources Include="Interface1.dfm"/>
+        <FormResources Include="kb_.dfm"/>
         <FormResources Include="LiveMemoryWindow_.dfm"/>
         <FormResources Include="main_.dfm"/>
+        <FormResources Include="MakeHDF.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -762,7 +764,19 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="..\Components\DirectDraw\ddraw.lib" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\Components\DirectDraw\ddraw.lib" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\Components\DirectSound\dsound.lib" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -786,7 +800,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName=".\EightyOne.tds" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>EightyOne.tds</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="libdsk.lib" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="libdsk.lib" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="zlib.lib" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

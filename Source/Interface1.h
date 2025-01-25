@@ -15,6 +15,7 @@
 #include <stdio.h>
 #if __CODEGEARC__ >= 0x0620
 #include <System.Win.ScktComp.hpp>
+#include <Vcl.Dialogs.hpp>
 #else
 #include <ScktComp.hpp>
 #endif

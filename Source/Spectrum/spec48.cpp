@@ -957,6 +957,11 @@ void spec48_writeport(int Address, int Data, int *tstates)
         if ((spectrum.HDType==HDPITERS16B) && ((Address&0xe9)==0x69))
                 ATA_WriteRegister(((Address>>4)&1) | (Address&6), Data);
 
+        if (spectrum.specdrum && ((Address & 0x20) == 0x00))
+        {
+                Sound.SpecDrumWrite((BYTE)Data,frametstates);
+        }
+
         if (((Address & 0x20) == 0x00) && spectrum.model == SPECCYPLUS3 && emulator.romcrc == CRCARABICPLUS3)
         {
                 if (machine.plus3arabicPagedOut != (~Data & 0x01))

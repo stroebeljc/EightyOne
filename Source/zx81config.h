@@ -209,6 +209,7 @@ typedef struct
         int divIDEAllRamSupported;
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
+        CFGBYTE specdrum;
         int intposition;
 } SPECTRUM;
 
@@ -271,7 +272,6 @@ typedef struct
 
         // Shared Interfaces / facilities
         CFGBYTE zxprinter;
-        CFGBYTE aysound;
         CFGBYTE aytype;
         CFGBYTE speech;
         CFGBYTE ts2050;

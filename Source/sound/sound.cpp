@@ -459,6 +459,8 @@ void CSound::AYOverlay(void)
                         AYNoiseTick-=AYNoisePeriod;
                 }
         }
+
+        AYChangeCount=0;
 }
 
 // don't make the change immediately; record it for later,
@@ -566,6 +568,8 @@ void CSound::SpecDrumOverlay(void)
                 if (m_Channels==2)
                         Buffer[f*m_Channels+1]+=level;
         }
+
+        SpecDrumChangeCount=0;
 }
 
 // XXX currently using speccy beeper code verbatim for VSYNC.
@@ -629,9 +633,6 @@ void CSound::Frame(void)
 
         OldPos=-1;
         FillPos=0;
-
-        AYChangeCount=0;
-        SpecDrumChangeCount=0;
 }
 
 void CSound::Beeper(int on, int frametstates)

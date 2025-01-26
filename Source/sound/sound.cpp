@@ -109,7 +109,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         BeeperTick=0;
         BeeperTickIncr=(1<<24)/m_SampleRate;
 
-        AYInit();  // initialise the AY Chip
+        InitDevices();  // initialise sound generating devices
 
         sp0256_AL2.SetSamplingFreq(m_SampleRate);
 
@@ -139,6 +139,11 @@ void CSound::End(void)
         if(Buffer) delete []Buffer;
 }
 
+void CSound::InitDevices()
+{
+        AYInit();
+        SpecDrumInit();
+}
 
 // Initialise the AY Sound chip
 void CSound::AYInit(void)
@@ -455,7 +460,7 @@ void CSound::AYOverlay(void)
                 }
         }
 }
-                                     
+
 // don't make the change immediately; record it for later,
 // to be made by sound_frame() (via sound_ay_overlay()).
 
@@ -499,6 +504,54 @@ void CSound::AYReset(void)
         AYOverlay();
 }
 
+
+void CSound::SpecDrumInit(void)
+{
+        SpecDrumChangeCount=0;
+        SpecDrumLevel=0;
+}
+
+void CSound::SpecDrumWrite(BYTE data, int frametstates)
+{
+        if(SpecDrumChangeCount<SPECDRUM_BUFFSIZE)
+        {
+                SpecDrumChange[SpecDrumChangeCount].tstates=frametstates>0?frametstates:0;
+                SpecDrumChange[SpecDrumChangeCount].val=data;
+                SpecDrumChangeCount++;
+        }
+}
+
+void CSound::SpecDrumOverlay(void)
+{
+
+        int f;
+        struct SpecDrumChangeTag *change_ptr;
+        int changes_left;
+
+        change_ptr=SpecDrumChange;
+        changes_left=SpecDrumChangeCount;
+
+        // convert change times to sample offsets
+        for(f=0;f<SpecDrumChangeCount;f++)
+                SpecDrumChange[f].ofs=(unsigned short)((SpecDrumChange[f].tstates*m_SampleRate)/machine.clockspeed);
+
+        for(f=0;f<FrameSize;f++)
+        {
+                while(changes_left && (f>=change_ptr->ofs || f==FrameSize-1))
+                {
+                        SpecDrumLevel=256*(change_ptr->val-128);
+                        change_ptr++;
+                        changes_left--;
+                }
+
+                // generate sound
+                int level=(SpecDrumLevel*VolumeLevel[5])/AMPL_SPECDRUM;
+
+                Buffer[f*m_Channels]+=level;
+                if (m_Channels==2)
+                        Buffer[f*m_Channels+1]+=level;
+        }
+}
 
 // XXX currently using speccy beeper code verbatim for VSYNC.
 // Not sure how plausible this is, but for now it'll do.
@@ -559,6 +612,8 @@ void CSound::Frame(void)
         //        memset(Buffer,128,FrameSize*m_Channels);
 
         if (machine.aysound) AYOverlay();
+
+        SpecDrumOverlay();
         
         // Overlay speech audio
         for(f=0;f<FrameSize;f++)
@@ -579,6 +634,7 @@ void CSound::Frame(void)
         FillPos=0;
 
         AYChangeCount=0;
+        SpecDrumChangeCount=0;
 }
 
 void CSound::Beeper(int on, int frametstates)

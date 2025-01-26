@@ -229,6 +229,7 @@ void load_config(void)
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;
+        spectrum.specdrum=0;
 
         mouse.x=0;
         mouse.y=0;

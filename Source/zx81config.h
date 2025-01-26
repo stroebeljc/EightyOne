@@ -209,6 +209,7 @@ typedef struct
         int divIDEAllRamSupported;
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
+        CFGBYTE specdrum;
         int intposition;
 } SPECTRUM;
 

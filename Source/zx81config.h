@@ -272,7 +272,6 @@ typedef struct
 
         // Shared Interfaces / facilities
         CFGBYTE zxprinter;
-        CFGBYTE aysound;
         CFGBYTE aytype;
         CFGBYTE speech;
         CFGBYTE ts2050;

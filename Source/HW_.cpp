@@ -1241,30 +1241,30 @@ void THW::ConfigureSound()
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_TS2068; break;
+                        case 1: machine.aytype=AY_TYPE_TS2068; break;
                         case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        default: machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
                 else if (NewSpec == SPECCYTC2068)
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_TC2068; break;
+                        case 1: machine.aytype=AY_TYPE_TC2068; break;
                         case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        default: machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
                 else
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 4: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
-                        case 3: machine.aysound=1; machine.aytype=AY_TYPE_DKTRONICS; break;
-                        case 2: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
+                        case 4: machine.aytype=AY_TYPE_ZONX; break;
+                        case 3: machine.aytype=AY_TYPE_DKTRONICS; break;
+                        case 2: machine.aytype=AY_TYPE_FULLER; break;
+                        case 1: machine.aytype=AY_TYPE_SINCLAIR; break;
                         case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        default: machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
         }
@@ -1272,20 +1272,20 @@ void THW::ConfigureSound()
         {
                 switch (SoundCardBox->ItemIndex)
                 {
-                case 2: machine.aysound=1; machine.aytype=AY_TYPE_BOLDFIELD; break;
-                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ACE_USER; break;
+                case 2: machine.aytype=AY_TYPE_BOLDFIELD; break;
+                case 1: machine.aytype=AY_TYPE_ACE_USER; break;
                 case 0:
-                default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                default: machine.aytype=AY_TYPE_NONE; break;
                 }
         }
         else
         {
                 switch (SoundCardBox->ItemIndex)
                 {
-                case 2: machine.aysound=1; machine.aytype=AY_TYPE_QUICKSILVA; break;
-                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
+                case 2: machine.aytype=AY_TYPE_QUICKSILVA; break;
+                case 1: machine.aytype=AY_TYPE_ZONX; break;
                 case 0:
-                default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                default: machine.aytype=AY_TYPE_NONE; break;
                 }
         }
 }

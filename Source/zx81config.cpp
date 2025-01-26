@@ -92,7 +92,6 @@ void load_config(void)
         emulator.inverse=0;
         zx81.extfont=0;
         emulator.frameskip=0;
-        machine.aysound=0;
         machine.aytype=0;
         machine.speech=0;
         zx81.vsyncsound=0;

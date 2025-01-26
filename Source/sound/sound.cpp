@@ -591,41 +591,34 @@ void CSound::Frame(void)
 {                  
         int f;
 
-        // if(!sound_enabled) return;
-
-        //if(zx81.vsyncsound)
+        for(f=FillPos;f<FrameSize;f++)
         {
-                for(f=FillPos;f<FrameSize;f++)
-                {
-                        BEEPER_OLDVAL_ADJUST;
-                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
-                        Buffer[f*m_Channels]=tempval;
+                BEEPER_OLDVAL_ADJUST;
+                int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                Buffer[f*m_Channels]=tempval;
 
-                        if(m_Channels == 2)
-                        {
-                                Buffer[f*m_Channels+1]=tempval;
-                        }
-                }
-        }
-        //else
-                // must be AY then, so `zero' buffer ready for it
-        //        memset(Buffer,128,FrameSize*m_Channels);
-
-        if (machine.aysound) AYOverlay();
-
-        SpecDrumOverlay();
-        
-        // Overlay speech audio
-        for(f=0;f<FrameSize;f++)
-        {
-                int temp = sp0256_AL2.GetNextSample();
-                temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
-                Buffer[f*m_Channels]+=temp;
                 if(m_Channels == 2)
                 {
-                        Buffer[f*m_Channels+1]+=temp;
+                        Buffer[f*m_Channels+1]=tempval;
                 }
         }
+
+        if (machine.aytype) AYOverlay();
+
+        if (spectrum.specdrum) SpecDrumOverlay();
+
+        // Overlay speech audio
+        if (machine.speech)
+                for(f=0;f<FrameSize;f++)
+                {
+                        int temp = sp0256_AL2.GetNextSample();
+                        temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]+=temp;
+                        if(m_Channels == 2)
+                        {
+                                Buffer[f*m_Channels+1]+=temp;
+                        }
+                }
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);

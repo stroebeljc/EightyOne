@@ -65,8 +65,8 @@
 
 #define AMPL_BEEPER		31
 #define AMPL_AY_TONE		31	/* three of these */
-#define AMPL_SPEECH		31
 #define AMPL_SPECDRUM		31
+#define AMPL_SPEECH             31
 
 // max. number of sub-frame AY port writes allowed;
 // given the number of port writes theoretically possible in a

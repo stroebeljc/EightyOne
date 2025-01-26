@@ -465,17 +465,13 @@ void CSound::AYOverlay(void)
 
 void CSound::AYWrite(int reg, int val, int frametstates)
 {
-
-        //if(!sound_enabled || !sound_ay) return;
-
         AYRegisterStore[reg]=(unsigned char)val;
 
         // accept r15, in case of the two-I/O-port 8910
         if(reg>=16) return;
         if (reg==14) Midi.WriteBit(val);
 
-//        if(frametstates>=0 && AYChangeCount<AY_CHANGE_MAX)
-          if(AYChangeCount<AY_CHANGE_MAX)
+        if(AYChangeCount<AY_CHANGE_MAX)
         {
                 AYChange[AYChangeCount].ofs=(unsigned short)(frametstates*m_SamplesPerTState);
                 AYChange[AYChangeCount].reg=(unsigned char)reg;
@@ -490,8 +486,7 @@ int CSound::AYRead(int reg)
         return(AYRegisterStore[reg]);
 }
 
-// no need to call this initially, but should be called
-// on reset otherwise.
+// no need to call this initially, but should be called on reset otherwise.
 
 void CSound::AYReset(void)
 {
@@ -502,7 +497,6 @@ void CSound::AYReset(void)
 
         AYOverlay();
 }
-
 
 void CSound::SpeechOverlay(void)
 {
@@ -517,7 +511,6 @@ void CSound::SpeechOverlay(void)
                 }
         }
 }
-
 
 void CSound::SpecDrumInit(void)
 {
@@ -537,7 +530,6 @@ void CSound::SpecDrumWrite(BYTE data, int frametstates)
 
 void CSound::SpecDrumOverlay(void)
 {
-
         int f;
         struct SpecDrumChangeTag *change_ptr;
         int changes_left;

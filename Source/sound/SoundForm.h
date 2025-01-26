@@ -37,7 +37,6 @@ __published:	// IDE-managed Components
         TLabel *Label8;
         TCheckBox *SpeechMute;
         TTrackBar *SpeechVol;
-        TLabel *Label2;
         TTrackBar *SpecDrumVol;
         TLabel *Label9;
         TCheckBox *SpecDrumMute;

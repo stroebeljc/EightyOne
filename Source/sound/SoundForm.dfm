@@ -5,7 +5,7 @@ object MidiForm: TMidiForm
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
   ClientHeight = 312
-  ClientWidth = 353
+  ClientWidth = 360
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,14 @@ object MidiForm: TMidiForm
   object GroupBox1: TGroupBox
     Left = 8
     Top = 184
-    Width = 337
+    Width = 345
     Height = 65
     Caption = 'Send MIDI Output to:'
     TabOrder = 1
     object MidiBox: TComboBox
       Left = 16
       Top = 24
-      Width = 305
+      Width = 313
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akRight]
@@ -37,7 +37,7 @@ object MidiForm: TMidiForm
     end
   end
   object OK: TButton
-    Left = 271
+    Left = 286
     Top = 278
     Width = 67
     Height = 25
@@ -49,7 +49,7 @@ object MidiForm: TMidiForm
   object GroupBox2: TGroupBox
     Left = 8
     Top = 8
-    Width = 337
+    Width = 345
     Height = 169
     Caption = 'Mix'
     TabOrder = 0
@@ -91,13 +91,12 @@ object MidiForm: TMidiForm
       Caption = 'C'
     end
     object Label6: TLabel
-      Left = 64
+      Left = 248
       Top = 141
       Width = 65
       Height = 13
-      Alignment = taCenter
       AutoSize = False
-      Caption = '-   Mute   -'
+      Caption = '=   Mute'
     end
     object Label7: TLabel
       Left = 272
@@ -112,15 +111,6 @@ object MidiForm: TMidiForm
       Width = 37
       Height = 13
       Caption = 'Speech'
-    end
-    object Label2: TLabel
-      Left = 144
-      Top = 141
-      Width = 33
-      Height = 13
-      Alignment = taCenter
-      AutoSize = False
-      Caption = '-'
     end
     object Label9: TLabel
       Left = 214
@@ -204,7 +194,7 @@ object MidiForm: TMidiForm
       Position = 16
       SelEnd = 0
       SelStart = 0
-      TabOrder = 9
+      TabOrder = 5
       TickMarks = tmBottomRight
       TickStyle = tsAuto
       OnChange = MidiChange
@@ -220,7 +210,7 @@ object MidiForm: TMidiForm
       Position = 16
       SelEnd = 0
       SelStart = 0
-      TabOrder = 10
+      TabOrder = 4
       TickMarks = tmBottomRight
       TickStyle = tsAuto
       OnChange = MidiChange
@@ -230,7 +220,7 @@ object MidiForm: TMidiForm
       Top = 139
       Width = 17
       Height = 17
-      TabOrder = 11
+      TabOrder = 9
       OnClick = MidiChange
     end
     object AYMute: TCheckBox
@@ -238,7 +228,7 @@ object MidiForm: TMidiForm
       Top = 139
       Width = 17
       Height = 17
-      TabOrder = 4
+      TabOrder = 6
       OnClick = MidiChange
     end
     object BeeperMute: TCheckBox
@@ -246,7 +236,7 @@ object MidiForm: TMidiForm
       Top = 139
       Width = 17
       Height = 17
-      TabOrder = 5
+      TabOrder = 7
       OnClick = MidiChange
     end
     object RadioButtonMono: TRadioButton
@@ -256,7 +246,7 @@ object MidiForm: TMidiForm
       Height = 17
       Caption = 'Mono'
       Checked = True
-      TabOrder = 6
+      TabOrder = 10
       TabStop = True
       OnClick = MidiChange
     end
@@ -266,7 +256,7 @@ object MidiForm: TMidiForm
       Width = 55
       Height = 17
       Caption = 'ACB'
-      TabOrder = 7
+      TabOrder = 11
       OnClick = MidiChange
     end
     object SpeechMute: TCheckBox

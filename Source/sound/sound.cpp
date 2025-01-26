@@ -468,7 +468,6 @@ void CSound::AYOverlay(void)
 
 void CSound::AYWrite(int reg, int val, int frametstates)
 {
-
         //if(!sound_enabled || !sound_ay) return;
 
         AYRegisterStore[reg]=(unsigned char)val;
@@ -477,10 +476,9 @@ void CSound::AYWrite(int reg, int val, int frametstates)
         if(reg>=16) return;
         if (reg==14) Midi.WriteBit(val);
 
-//        if(frametstates>=0 && AYChangeCount<AY_CHANGE_MAX)
-          if(AYChangeCount<AY_CHANGE_MAX)
+        if(AYChangeCount<AY_CHANGE_MAX)
         {
-                AYChange[AYChangeCount].tstates=frametstates>0?frametstates:0;
+                AYChange[AYChangeCount].tstates=frametstates;
                 AYChange[AYChangeCount].reg=(unsigned char)reg;
                 AYChange[AYChangeCount].val=(unsigned char)val;
                 AYChangeCount++;
@@ -493,8 +491,7 @@ int CSound::AYRead(int reg)
         return(AYRegisterStore[reg]);
 }
 
-// no need to call this initially, but should be called
-// on reset otherwise.
+// no need to call this initially, but should be called on reset otherwise.
 
 void CSound::AYReset(void)
 {
@@ -506,13 +503,12 @@ void CSound::AYReset(void)
         AYOverlay();
 }
 
-
 void CSound::SpeechOverlay(void)
 {
         for(int f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
-                temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
+                temp = (temp*VolumeLevel[4])/AMPL_SPEECH;
                 Buffer[f*m_Channels]+=temp;
                 if(m_Channels == 2)
                 {
@@ -520,7 +516,6 @@ void CSound::SpeechOverlay(void)
                 }
         }
 }
-
 
 void CSound::SpecDrumInit(void)
 {
@@ -532,7 +527,7 @@ void CSound::SpecDrumWrite(BYTE data, int frametstates)
 {
         if(SpecDrumChangeCount<SPECDRUM_BUFFSIZE)
         {
-                SpecDrumChange[SpecDrumChangeCount].tstates=frametstates>0?frametstates:0;
+                SpecDrumChange[SpecDrumChangeCount].tstates=frametstates;
                 SpecDrumChange[SpecDrumChangeCount].val=data;
                 SpecDrumChangeCount++;
         }

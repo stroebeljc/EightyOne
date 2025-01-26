@@ -1158,7 +1158,7 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
         if (zxc1Selected)
         {
                 RomCartridgeFileBox->Left = 277;
-                RomCartridgeFileBox->Width = 91;
+                RomCartridgeFileBox->Width = 101;
 
                 if (ZXC1ConfigurationBox->ItemIndex == -1)
                 {
@@ -1168,7 +1168,7 @@ int THW::UpdateRomCartridgeControls(int machine, int spectrumModel)
         else
         {
                 RomCartridgeFileBox->Left = 184;
-                RomCartridgeFileBox->Width = 184;
+                RomCartridgeFileBox->Width = 194;
         }
 
         return romcartridgetype;

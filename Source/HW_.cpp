@@ -320,6 +320,8 @@ void THW::ReloadFromInternalSettings()
         FDC->ItemIndex=Hwform.FDCItemIndex;
         Autoboot->Checked=Hwform.AutobootChecked;
         ZXpand->Enabled=Hwform.ZXpandEnabled;
+        SpecDrum->Enabled=Hwform.SpecDrumEnabled;
+        SpecDrum->Checked=Hwform.SpecDrumChecked;
         ProtectROM->Checked=Hwform.ProtectROMChecked;
         NTSC->Checked=Hwform.NTSCChecked;
         EnableLowRAM->Checked=Hwform.EnableLowRAMChecked;
@@ -403,6 +405,8 @@ void THW::SaveInternalSettings()
         Hwform.AutobootChecked=Autoboot->Checked;
         Hwform.ZXpandChecked=ZXpand->Checked;
         Hwform.ZXpandEnabled=ZXpand->Enabled;
+        Hwform.SpecDrumChecked=SpecDrum->Checked;
+        Hwform.SpecDrumEnabled=SpecDrum->Enabled;
         Hwform.ProtectROMChecked=ProtectROM->Checked;
         Hwform.NTSCChecked=NTSC->Checked;
         Hwform.EnableLowRAMChecked=EnableLowRAM->Checked;
@@ -570,7 +574,7 @@ void THW::ConfigureRamTop()
 
 void THW::InitialiseSound(bool machineChanged)
 {
-        Sound.AYInit();
+        Sound.InitDevices();
 
         if (machineChanged)
         {
@@ -1228,34 +1232,39 @@ void THW::ConfigureSound()
 {
         if (NewMachine == MACHINESPECTRUM)
         {
+                if (SpecDrum->Checked)
+                        spectrum.specdrum=1;
+                else
+                        spectrum.specdrum=0;
+
                 if (NewSpec == SPECCYTS2068)
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_TS2068; break;
+                        case 1: machine.aytype=AY_TYPE_TS2068; break;
                         case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        default: machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
                 else if (NewSpec == SPECCYTC2068)
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_TC2068; break;
+                        case 1: machine.aytype=AY_TYPE_TC2068; break;
                         case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        default: machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
                 else
                 {
                         switch (SoundCardBox->ItemIndex)
                         {
-                        case 4: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
-                        case 3: machine.aysound=1; machine.aytype=AY_TYPE_DKTRONICS; break;
-                        case 2: machine.aysound=1; machine.aytype=AY_TYPE_FULLER; break;
-                        case 1: machine.aysound=1; machine.aytype=AY_TYPE_SINCLAIR; break;
+                        case 4: machine.aytype=AY_TYPE_ZONX; break;
+                        case 3: machine.aytype=AY_TYPE_DKTRONICS; break;
+                        case 2: machine.aytype=AY_TYPE_FULLER; break;
+                        case 1: machine.aytype=AY_TYPE_SINCLAIR; break;
                         case 0:
-                        default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                        default: machine.aytype=AY_TYPE_NONE; break;
                         }
                 }
         }
@@ -1263,20 +1272,20 @@ void THW::ConfigureSound()
         {
                 switch (SoundCardBox->ItemIndex)
                 {
-                case 2: machine.aysound=1; machine.aytype=AY_TYPE_BOLDFIELD; break;
-                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ACE_USER; break;
+                case 2: machine.aytype=AY_TYPE_BOLDFIELD; break;
+                case 1: machine.aytype=AY_TYPE_ACE_USER; break;
                 case 0:
-                default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                default: machine.aytype=AY_TYPE_NONE; break;
                 }
         }
         else
         {
                 switch (SoundCardBox->ItemIndex)
                 {
-                case 2: machine.aysound=1; machine.aytype=AY_TYPE_QUICKSILVA; break;
-                case 1: machine.aysound=1; machine.aytype=AY_TYPE_ZONX; break;
+                case 2: machine.aytype=AY_TYPE_QUICKSILVA; break;
+                case 1: machine.aytype=AY_TYPE_ZONX; break;
                 case 0:
-                default: machine.aysound=0; machine.aytype=AY_TYPE_NONE; break;
+                default: machine.aytype=AY_TYPE_NONE; break;
                 }
         }
 }
@@ -1864,6 +1873,9 @@ void THW::SetupForZX81(void)
         uSource->Enabled=false;
         uSource->Checked=false;
 
+        SpecDrum->Checked=false;
+        SpecDrum->Enabled=false;
+
         RomCartridgeBox->Items->Clear();
         RomCartridgeBox->Items->Add("None");
 
@@ -1998,6 +2010,9 @@ void THW::SetupForSpectrum(void)
 
         uSource->Checked=false;
         uSource->Enabled=false;
+
+        SpecDrum->Checked=false;
+        SpecDrum->Enabled=true;
 
         RamPackLbl->Enabled=false; RamPackBox->Enabled=false;
         RamPackBox->ItemIndex=-1;
@@ -2858,6 +2873,8 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteBool("HWARE","uSource",uSource->Checked);
         ini->WriteBool("HWARE","ZXpand",ZXpand->Checked);
         ini->WriteBool("HWARE","ZXpandEnabled",ZXpand->Enabled);
+        ini->WriteBool("HWARE","SpecDrum",SpecDrum->Checked);
+        ini->WriteBool("HWARE","SpecDrumEnabled",SpecDrum->Enabled);
 
         if (ATA_GetHDF(0)) Rom=ATA_GetHDF(0); else Rom="NULL";
         ini->WriteString("DRIVES","HD0", Rom);
@@ -3023,6 +3040,8 @@ void THW::LoadSettings(TIniFile *ini)
 
         Hwform.ZXpandChecked=ini->ReadBool("HWARE","ZXpand",ZXpand->Checked);
         Hwform.ZXpandEnabled=ini->ReadBool("HWARE","ZXpandEnabled",ZXpand->Enabled);
+        Hwform.SpecDrumChecked=ini->ReadBool("HWARE","SpecDrum",SpecDrum->Checked);
+        Hwform.SpecDrumEnabled=ini->ReadBool("HWARE","SpecDrumEnabled",SpecDrum->Enabled);
         Hwform.ProtectROMChecked=ini->ReadBool("HWARE","ProtectRom",ProtectROM->Checked);
         Hwform.NTSCChecked=ini->ReadBool("HWARE","NTSC",NTSC->Checked);
         Hwform.EnableLowRAMChecked=ini->ReadBool("HWARE","LowRAM",EnableLowRAM->Checked);

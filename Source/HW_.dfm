@@ -1681,6 +1681,15 @@ object HW: THW
         Items.Strings = (
           'None')
       end
+      object SpecDrum: TCheckBox
+        Left = 264
+        Top = 74
+        Width = 121
+        Height = 17
+        Caption = 'Cheetah SpecDrum'
+        TabOrder = 21
+        OnClick = uSourceClick
+      end
     end
     object FloppyDrives: TTabSheet
       Caption = 'Drives'

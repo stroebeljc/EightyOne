@@ -65,6 +65,7 @@
 
 #define AMPL_BEEPER		31
 #define AMPL_AY_TONE		31	/* three of these */
+#define AMPL_SPECDRUM		31	/* three of these */
 
 // full range of beeper volume
 #define VOL_BEEPER		(AMPL_BEEPER*2)
@@ -75,6 +76,8 @@
 
 #define AY_CHANGE_MAX		8000
 
+#define SPECDRUM_BUFFSIZE       1000
+
 
 struct AYChangeTag
 {
@@ -83,11 +86,18 @@ struct AYChangeTag
         unsigned char reg,val;
 };
 
+struct SpecDrumChangeTag
+{
+        unsigned long tstates;
+        unsigned short ofs;
+        unsigned char val;
+};
+
 
 class CSound
 {
 public:
-	void AYInit(void);
+	void InitDevices(void);
         int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
         int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
 
@@ -95,10 +105,11 @@ public:
 	void AYWrite(int reg,int val, int frametstates);
 	int AYRead(int reg);
 	void AYReset(void);
+        void SpecDrumWrite(BYTE data, int frametstates);
 	void Frame(void);
 	void Beeper(int on, int frametstates);
 
-        int VolumeLevel[5];
+        int VolumeLevel[6];
         bool ACBMix;
 
 private:
@@ -111,7 +122,11 @@ private:
         int m_Channels;
         int m_FPS;
 
+        void AYInit(void);
         void AYOverlay(void);
+        void SpeechOverlay(void);
+        void SpecDrumInit(void);
+        void SpecDrumOverlay(void);
 
         int SelectAYReg;
         int FrameSize;
@@ -144,6 +159,11 @@ private:
         unsigned char AYRegisterStore[16];
         struct AYChangeTag AYChange[AY_CHANGE_MAX];
         int AYChangeCount;
+
+        // SpecDrum buffer
+        struct SpecDrumChangeTag SpecDrumChange[SPECDRUM_BUFFSIZE];
+        int SpecDrumChangeCount;
+        int SpecDrumLevel;
 
 };
 

@@ -64,6 +64,8 @@ struct HWFormValues
         bool AutobootChecked;
         bool ZXpandChecked;
         bool ZXpandEnabled;
+        bool SpecDrumChecked;
+        bool SpecDrumEnabled;
         bool ProtectROMChecked;
         bool NTSCChecked;
         bool EnableLowRAMChecked;
@@ -173,6 +175,7 @@ __published:	// IDE-managed Components
         TImage *ZXpandEmulationInfo;
         TLabel *SpeechBoxLbl;
         TComboBox *SpeechBox;
+        TCheckBox *SpecDrum;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);

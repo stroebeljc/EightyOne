@@ -92,7 +92,6 @@ void load_config(void)
         emulator.inverse=0;
         zx81.extfont=0;
         emulator.frameskip=0;
-        machine.aysound=0;
         machine.aytype=0;
         machine.speech=0;
         zx81.vsyncsound=0;
@@ -229,6 +228,7 @@ void load_config(void)
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;
+        spectrum.specdrum=0;
 
         mouse.x=0;
         mouse.y=0;

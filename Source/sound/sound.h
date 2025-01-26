@@ -124,6 +124,7 @@ private:
 
         void AYInit(void);
         void AYOverlay(void);
+        void SpeechOverlay(void);
         void SpecDrumInit(void);
         void SpecDrumOverlay(void);
 

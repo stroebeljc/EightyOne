@@ -505,6 +505,21 @@ void CSound::AYReset(void)
 }
 
 
+void CSound::SpeechOverlay(void)
+{
+        for(int f=0;f<FrameSize;f++)
+        {
+                int temp = sp0256_AL2.GetNextSample();
+                temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
+                Buffer[f*m_Channels]+=temp;
+                if(m_Channels == 2)
+                {
+                        Buffer[f*m_Channels+1]+=temp;
+                }
+        }
+}
+
+
 void CSound::SpecDrumInit(void)
 {
         SpecDrumChangeCount=0;
@@ -607,18 +622,7 @@ void CSound::Frame(void)
 
         if (spectrum.specdrum) SpecDrumOverlay();
 
-        // Overlay speech audio
-        if (machine.speech)
-                for(f=0;f<FrameSize;f++)
-                {
-                        int temp = sp0256_AL2.GetNextSample();
-                        temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
-                        Buffer[f*m_Channels]+=temp;
-                        if(m_Channels == 2)
-                        {
-                                Buffer[f*m_Channels+1]+=temp;
-                        }
-                }
+        if (machine.speech) SpeechOverlay();
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);

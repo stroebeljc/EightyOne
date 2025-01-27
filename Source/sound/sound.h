@@ -74,19 +74,19 @@
 
 #define AY_CHANGE_MAX		8000
 
+// Measured an approximate sampling rate from the SpecDrum software of 22kHz.
+// At 50fps this is about 440 samples, which I doubled and rounded up to get this. 
 #define SPECDRUM_BUFFSIZE       1000
 
 
 struct AYChangeTag
 {
-        unsigned long tstates;
         unsigned short ofs;
         unsigned char reg,val;
 };
 
 struct SpecDrumChangeTag
 {
-        unsigned long tstates;
         unsigned short ofs;
         unsigned char val;
 };
@@ -119,6 +119,7 @@ private:
         int m_SampleRate;
         int m_Channels;
         int m_FPS;
+        double m_SamplesPerTState;
 
         void AYInit(void);
         void AYOverlay(void);

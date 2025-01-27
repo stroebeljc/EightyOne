@@ -5,20 +5,19 @@ object HW: THW
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
   ClientHeight = 368
-  ClientWidth = 408
+  ClientWidth = 418
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  DesignSize = (
-    408
-    368)
+  PixelsPerInch = 96
   TextHeight = 13
   object RamPackLbl: TLabel
     Left = 105
@@ -37,7 +36,7 @@ object HW: THW
   object Machine: TPageControl
     Left = 3
     Top = 8
-    Width = 402
+    Width = 412
     Height = 93
     ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
@@ -133,7 +132,7 @@ object HW: THW
         OnClick = ZX80BtnClick
       end
       object ZX81Btn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -221,7 +220,7 @@ object HW: THW
         OnClick = ZX81BtnClick
       end
       object Spec48Btn: TOffice97Button
-        Left = 195
+        Left = 201
         Top = 0
         Width = 65
         Height = 65
@@ -309,7 +308,7 @@ object HW: THW
         OnClick = Spec48BtnClick
       end
       object Spec128Btn: TOffice97Button
-        Left = 325
+        Left = 335
         Top = 0
         Width = 65
         Height = 65
@@ -367,7 +366,7 @@ object HW: THW
         OnClick = Spec128BtnClick
       end
       object Spec16Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -455,7 +454,7 @@ object HW: THW
         OnClick = Spec16BtnClick
       end
       object SpecPlusBtn: TOffice97Button
-        Left = 260
+        Left = 268
         Top = 0
         Width = 65
         Height = 65
@@ -559,7 +558,7 @@ object HW: THW
         OnClick = SpecP2BtnClick
       end
       object SpecP2aBtn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -617,7 +616,7 @@ object HW: THW
         OnClick = SpecP2aBtnClick
       end
       object SpecP3Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -767,7 +766,7 @@ object HW: THW
         OnClick = TS1000BtnClick
       end
       object TS1500Btn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -809,7 +808,7 @@ object HW: THW
         OnClick = TS1500BtnClick
       end
       object TC2048Btn: TOffice97Button
-        Left = 195
+        Left = 201
         Top = 0
         Width = 65
         Height = 65
@@ -851,7 +850,7 @@ object HW: THW
         OnClick = TC2048BtnClick
       end
       object TS2068Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -893,7 +892,7 @@ object HW: THW
         OnClick = TS2068BtnClick
       end
       object TC2068Btn: TOffice97Button
-        Left = 260
+        Left = 268
         Top = 0
         Width = 65
         Height = 65
@@ -997,7 +996,7 @@ object HW: THW
         OnClick = LambdaBtnClick
       end
       object R470Btn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -1055,7 +1054,7 @@ object HW: THW
         OnClick = R470BtnClick
       end
       object TK85Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -1113,7 +1112,7 @@ object HW: THW
         OnClick = TK85BtnClick
       end
       object AceBtn: TOffice97Button
-        Left = 195
+        Left = 201
         Top = 0
         Width = 65
         Height = 65
@@ -1295,7 +1294,7 @@ object HW: THW
     end
   end
   object OK: TButton
-    Left = 249
+    Left = 259
     Top = 339
     Width = 75
     Height = 25
@@ -1306,7 +1305,7 @@ object HW: THW
     OnClick = OKClick
   end
   object Cancel: TButton
-    Left = 329
+    Left = 339
     Top = 339
     Width = 75
     Height = 25
@@ -1322,6 +1321,7 @@ object HW: THW
     Width = 81
     Height = 21
     Style = csDropDownList
+    ItemHeight = 13
     TabOrder = 1
     OnChange = RamPackBoxChange
     Items.Strings = (
@@ -1336,7 +1336,7 @@ object HW: THW
   object Advanced: TPageControl
     Left = 3
     Top = 140
-    Width = 401
+    Width = 412
     Height = 193
     ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
@@ -1384,8 +1384,8 @@ object HW: THW
         Caption = 'ROM Cartridge:'
       end
       object ZXpandEmulationInfo: TImage
-        Left = 372
-        Top = 94
+        Left = 382
+        Top = 75
         Width = 15
         Height = 15
         AutoSize = True
@@ -1451,6 +1451,7 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 0
         OnChange = SoundCardBoxChange
       end
@@ -1460,6 +1461,7 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 1
         OnChange = ChrGenBoxChange
         Items.Strings = (
@@ -1475,6 +1477,7 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 2
         OnChange = HiResBoxChange
         Items.Strings = (
@@ -1493,14 +1496,14 @@ object HW: THW
         TabOrder = 7
       end
       object TS2050: TCheckBox
-        Left = 184
-        Top = 93
+        Left = 304
+        Top = 17
         Width = 101
         Height = 17
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 10
+        TabOrder = 11
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
@@ -1513,12 +1516,12 @@ object HW: THW
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 183
-        Top = 112
-        Width = 70
+        Left = 321
+        Top = 34
+        Width = 80
         Height = 20
         Caption = 'Configure'
-        TabOrder = 11
+        TabOrder = 12
         OnClick = TS2050ConfigClick
       end
       object ZXPrinter: TCheckBox
@@ -1531,12 +1534,12 @@ object HW: THW
         OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
-        Left = 300
-        Top = 93
+        Left = 304
+        Top = 74
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 12
+        TabOrder = 13
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
@@ -1545,6 +1548,7 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 3
         OnChange = ColourBoxChange
         Items.Strings = (
@@ -1556,6 +1560,7 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 5
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
@@ -1567,22 +1572,22 @@ object HW: THW
           'ZXC4')
       end
       object BrowseRomCartridge: TButton
-        Left = 370
+        Left = 380
         Top = 136
-        Width = 19
+        Width = 21
         Height = 21
         Caption = '...'
         Enabled = False
-        TabOrder = 20
+        TabOrder = 21
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 299
-        Top = 112
-        Width = 70
+        Left = 321
+        Top = 92
+        Width = 80
         Height = 20
         Caption = 'SD Card'
-        TabOrder = 13
+        TabOrder = 14
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
@@ -1591,7 +1596,8 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
-        TabOrder = 14
+        ItemHeight = 13
+        TabOrder = 15
         Visible = False
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
@@ -1607,55 +1613,59 @@ object HW: THW
         Top = 17
         Width = 97
         Height = 17
-        Caption = 'Currah '#181'Source'
+        Caption = 'Currah µSource'
         TabOrder = 6
         OnClick = uSourceClick
       end
       object RomCartridgeFileBox: TEdit
         Left = 184
         Top = 136
-        Width = 184
+        Width = 194
         Height = 21
         Enabled = False
-        TabOrder = 15
+        TabOrder = 16
       end
       object SinclairRomCartridgeFileBox: TComboBox
         Left = 184
         Top = 136
-        Width = 184
+        Width = 194
         Height = 21
         DropDownCount = 10
-        TabOrder = 16
+        ItemHeight = 13
+        TabOrder = 17
         Visible = False
         OnChange = SinclairRomCartridgeFileBoxChange
       end
       object TS1510RomCartridgeFileBox: TComboBox
         Left = 184
         Top = 136
-        Width = 184
+        Width = 194
         Height = 21
         DropDownCount = 10
-        TabOrder = 17
+        ItemHeight = 13
+        TabOrder = 18
         Visible = False
         OnChange = TS1510RomCartridgeFileBoxChange
       end
       object TC2068RomCartridgeFileBox: TComboBox
         Left = 184
         Top = 136
-        Width = 184
+        Width = 194
         Height = 21
         DropDownCount = 10
-        TabOrder = 18
+        ItemHeight = 13
+        TabOrder = 19
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
       object TS2068RomCartridgeFileBox: TComboBox
         Left = 184
         Top = 136
-        Width = 184
+        Width = 194
         Height = 21
         DropDownCount = 10
-        TabOrder = 19
+        ItemHeight = 13
+        TabOrder = 20
         Visible = False
         OnChange = TS2068RomCartridgeFileBoxChange
       end
@@ -1665,18 +1675,19 @@ object HW: THW
         Width = 89
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 4
         OnChange = SpeechBoxChange
         Items.Strings = (
           'None')
       end
       object SpecDrum: TCheckBox
-        Left = 264
-        Top = 74
+        Left = 184
+        Top = 93
         Width = 121
         Height = 17
         Caption = 'Cheetah SpecDrum'
-        TabOrder = 21
+        TabOrder = 10
         OnClick = uSourceClick
       end
     end
@@ -1726,6 +1737,7 @@ object HW: THW
         Width = 153
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 3
         OnChange = DriveATypeChange
         Items.Strings = (
@@ -1741,6 +1753,7 @@ object HW: THW
         Width = 153
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 4
         OnChange = DriveBTypeChange
         Items.Strings = (
@@ -1756,6 +1769,7 @@ object HW: THW
         Width = 113
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 0
         OnChange = FDCChange
         Items.Strings = (
@@ -1787,6 +1801,7 @@ object HW: THW
         Width = 113
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 5
         OnChange = IDEBoxChange
         Items.Strings = (
@@ -1798,6 +1813,7 @@ object HW: THW
         Width = 81
         Height = 21
         Style = csDropDownList
+        ItemHeight = 13
         TabOrder = 6
         Items.Strings = (
           '128k'
@@ -1943,6 +1959,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

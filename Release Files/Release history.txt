@@ -64,14 +64,14 @@ Version 1.41 - 27/01/2025 (by Paul Farrow and John Stroebel)
   - Support for execution breakpoints on addresses above RAMTOP.
   - Added example programs for ZX Spectrum specific interfaces.
   - Added the manual for the Multiface 3.
-  - Added volume controls for speech interface sounds.
+  - Added volume controls for speech interface and SpecDrum sounds.
   - Sound output window is resizeable.
   - Added documentation for various ZX Spectrum IDE and FDC interfaces.
   - Added emulation of 3-Channel Sound Unit by dk'tronics Ltd for the ZX Spectrum.
   - Added emulation of the ZON X sound interface by Bi-Pak for the ZX Spectrum.
   - Added emulation of the SpecDrum by Cheetah Marketing Ltd for the ZX Spectrum.
-  - Added support for CAPS LOCK key and US keyboards on Spectrum 16k/48k/48k+, Amstrad +2/+2A/+3,
-    TS2068, TC2048, TC2068, and Jupiter Ace.
+  - Added support for CAPS LOCK key and US keyboards on all ZX Spectrum models, TS2068, TC2048,
+    TC2068, and Jupiter Ace.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

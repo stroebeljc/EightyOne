@@ -280,7 +280,7 @@ const struct kb KBACE[]=
 
         { 1, VK_OEM_1, kbA13, kbD1, kbA8, kbD1 },
         { 2, VK_OEM_1, kbA8, kbD2, kbA8, kbD1 },
-        //{ 1, VK_OEM_3, kbA13, kbD1, kbA8, kbD1 },
+        { 1, VK_OEM_3, kbA12, kbD3, kbA8, kbD1 },
         { 2, VK_OEM_3, kbA11, kbD1, kbA8, kbD1 },
         { 1, VK_OEM_7, kbA11, kbD2, kbA8, kbD1 },
         { 2, VK_OEM_7, kbA9, kbD0, kbA8, kbD1 },
@@ -308,6 +308,8 @@ const struct kb KBACE[]=
         { 0, VK_UP , kbA12, kbD4, kbA8, kbD0 },
         { 0, VK_DOWN , kbA12, kbD3, kbA8, kbD0 },
         { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
+
+        { 0, VK_CAPITAL , kbA11, kbD1, kbA8, kbD0 },
         {0, 0, 0, 0, 0, 0 }
 };
 
@@ -699,7 +701,7 @@ void AdjustLocalKeyboard()
                 case 0x00001404: // Chinese (Traditional, Macao S.A.R.) - US
                 case 0x00010402: // Bulgarian (Latin)
                 case 0x00020409: // United States-International
-                        if (emulator.machine==MACHINESPECTRUM)
+                        if (emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE)
                         {
                                 int source=PCFindKey(VK_OEM_3,false);
                                 int dest=PCFindKey(VK_OEM_7,false);
@@ -708,12 +710,14 @@ void AdjustLocalKeyboard()
 
                                 source=PCFindKey('P');
                                 dest=PCFindKey(VK_OEM_7,true);
+                                BYTE tempAddr1=KeyMap[dest].Addr1;
+                                BYTE tempData1=KeyMap[dest].Data1;
                                 KeyMap[dest].Addr1 = KeyMap[source].Addr1;
                                 KeyMap[dest].Data1 = KeyMap[source].Data1;
 
                                 dest=PCFindKey(VK_OEM_3,true);
-                                KeyMap[dest].Addr1 = 0;
-                                KeyMap[dest].Data1 = 0;
+                                KeyMap[dest].Addr1 = tempAddr1;
+                                KeyMap[dest].Data1 = tempData1;
                         }
                         break;
 

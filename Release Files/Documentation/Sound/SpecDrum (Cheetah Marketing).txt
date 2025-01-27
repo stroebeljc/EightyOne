@@ -982,4 +982,11 @@ synchronized sounds on each track, ready for remixing.
 P.S. Watch out for releases of new sets of voices to
 add to your system.
 
-© COPYRIGHT 1986. P.HENNIG, A.PATEMAN,
+© COPYRIGHT 1986. P.HENNIG, A.PATEMAN.
+
+------------------------------------------------------
+
+Cheetah released the following add-on voice packages:
+- SpecDrum - Afro Kit
+- SpecDrum - Electro Kit
+- SpecDrum - Latin Kit

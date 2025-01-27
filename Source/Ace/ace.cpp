@@ -88,7 +88,6 @@ void ace_initialise()
         tStatesCount = 0;
 
         insertWaitsWhileSP0256Busy = false;
-        sp0256_AL2.Reset();
 
         ResetLastIOAccesses();
 

@@ -340,7 +340,6 @@ void spec48_initialise()
         spectrum.drivebusy = -1;
 
         insertWaitsWhileSP0256Busy = false;
-        sp0256_AL2.Reset();
         
         z80_init();
         tStatesCount = 0;

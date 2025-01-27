@@ -78,6 +78,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         // Otherwise, we're good to go, so configure the sound.
 
         m_BytesPerSample=m_BitsPerSample/8;
+        m_SamplesPerTState=m_SampleRate/(double)machine.clockspeed;
         EnvHeld=0;
         EnvAlternating=0;
         BeeperLastSubpos=0;
@@ -251,10 +252,6 @@ void CSound::AYOverlay(void)
 
         // If no AY chip, don't produce any AY sound (!)
         //if(!sound_ay) return;
-
-        // convert change times to sample offsets
-        for(f=0;f<AYChangeCount;f++)
-                AYChange[f].ofs=(unsigned short)((AYChange[f].tstates*m_SampleRate)/machine.clockspeed);
 
         for(f=0;f<FrameSize;f++)
         {
@@ -468,19 +465,15 @@ void CSound::AYOverlay(void)
 
 void CSound::AYWrite(int reg, int val, int frametstates)
 {
-
-        //if(!sound_enabled || !sound_ay) return;
-
         AYRegisterStore[reg]=(unsigned char)val;
 
         // accept r15, in case of the two-I/O-port 8910
         if(reg>=16) return;
         if (reg==14) Midi.WriteBit(val);
 
-//        if(frametstates>=0 && AYChangeCount<AY_CHANGE_MAX)
-          if(AYChangeCount<AY_CHANGE_MAX)
+        if(AYChangeCount<AY_CHANGE_MAX)
         {
-                AYChange[AYChangeCount].tstates=frametstates>0?frametstates:0;
+                AYChange[AYChangeCount].ofs=(unsigned short)(frametstates*m_SamplesPerTState);
                 AYChange[AYChangeCount].reg=(unsigned char)reg;
                 AYChange[AYChangeCount].val=(unsigned char)val;
                 AYChangeCount++;
@@ -493,8 +486,7 @@ int CSound::AYRead(int reg)
         return(AYRegisterStore[reg]);
 }
 
-// no need to call this initially, but should be called
-// on reset otherwise.
+// no need to call this initially, but should be called on reset otherwise.
 
 void CSound::AYReset(void)
 {
@@ -506,13 +498,12 @@ void CSound::AYReset(void)
         AYOverlay();
 }
 
-
 void CSound::SpeechOverlay(void)
 {
         for(int f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
-                temp = (temp*VolumeLevel[4])/AMPL_BEEPER;
+                temp = (temp*VolumeLevel[4])/AMPL_SPEECH;
                 Buffer[f*m_Channels]+=temp;
                 if(m_Channels == 2)
                 {
@@ -520,7 +511,6 @@ void CSound::SpeechOverlay(void)
                 }
         }
 }
-
 
 void CSound::SpecDrumInit(void)
 {
@@ -532,7 +522,7 @@ void CSound::SpecDrumWrite(BYTE data, int frametstates)
 {
         if(SpecDrumChangeCount<SPECDRUM_BUFFSIZE)
         {
-                SpecDrumChange[SpecDrumChangeCount].tstates=frametstates>0?frametstates:0;
+                SpecDrumChange[SpecDrumChangeCount].ofs=(unsigned short)(frametstates*m_SamplesPerTState);
                 SpecDrumChange[SpecDrumChangeCount].val=data;
                 SpecDrumChangeCount++;
         }
@@ -540,17 +530,12 @@ void CSound::SpecDrumWrite(BYTE data, int frametstates)
 
 void CSound::SpecDrumOverlay(void)
 {
-
         int f;
         struct SpecDrumChangeTag *change_ptr;
         int changes_left;
 
         change_ptr=SpecDrumChange;
         changes_left=SpecDrumChangeCount;
-
-        // convert change times to sample offsets
-        for(f=0;f<SpecDrumChangeCount;f++)
-                SpecDrumChange[f].ofs=(unsigned short)((SpecDrumChange[f].tstates*m_SampleRate)/machine.clockspeed);
 
         for(f=0;f<FrameSize;f++)
         {

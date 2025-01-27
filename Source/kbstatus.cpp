@@ -557,7 +557,7 @@ int PCFindKey(Word key, int shift)
         {
                 if (KeyMap[i].WinKey == key)
                 {
-                        if ((KeyMap[i].Shift==2 && shift) || (KeyMap[i].Shift<2 && ! shift))
+                        if ((KeyMap[i].Shift==2 && shift) || (KeyMap[i].Shift<2 && !shift))
                                 return(i);
                 }
                 i++;

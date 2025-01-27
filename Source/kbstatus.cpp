@@ -701,8 +701,8 @@ void AdjustLocalKeyboard()
                 case 0x00020409: // United States-International
                         if (emulator.machine==MACHINESPECTRUM)
                         {
-                                int source=PCFindKey(VK_OEM_3);
-                                int dest=PCFindKey(VK_OEM_7);
+                                int source=PCFindKey(VK_OEM_3,false);
+                                int dest=PCFindKey(VK_OEM_7,false);
                                 KeyMap[dest].Addr1 = KeyMap[source].Addr1;
                                 KeyMap[dest].Data1 = KeyMap[source].Data1;
 

@@ -24,6 +24,7 @@
 #include <vcl4.h>
 #pragma hdrstop
 
+#include <stdio.h>
 #include "kbstatus.h"
 #include "zx81.h"
 #include "zx81config.h"
@@ -38,9 +39,12 @@ struct kb
         BYTE Addr1, Data1, Addr2, Data2;
 };
 
-struct kb *KeyMap;
+void SetKeyMap(const kb *source);
+void AdjustLocalKeyboard();
 
-struct kb KBZX81[]=
+struct kb KeyMap[100];
+
+const struct kb KBZX81[]=
 {
         { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
         { 0, VK_RETURN , kbA14, kbD0, 255,255 },
@@ -135,7 +139,7 @@ struct kb KBZX81[]=
         {0, 0, 0, 0, 0, 0 }
 };
 
-struct kb KBZX80[]=
+const struct kb KBZX80[]=
 {
         { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
         { 0, VK_RETURN , kbA14, kbD0, 255,255 },
@@ -228,7 +232,7 @@ struct kb KBZX80[]=
         {0, 0, 0, 0, 0, 0 }
 };
 
-struct kb KBACE[]=
+const struct kb KBACE[]=
 {
         { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
         { 0, VK_CONTROL , kbA8, kbD1, 255,255 },
@@ -307,7 +311,7 @@ struct kb KBACE[]=
         {0, 0, 0, 0, 0, 0 }
 };
 
-struct kb KBLAMBDA[]=
+const struct kb KBLAMBDA[]=
 {
         { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
         { 0, VK_RETURN , kbA14, kbD0, 255,255 },
@@ -402,7 +406,7 @@ struct kb KBLAMBDA[]=
         {0, 0, 0, 0, 0, 0 }
 };
 
-struct kb KBSPEC[]=
+const struct kb KBSPEC[]=
 {
         { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
         { 0, VK_RETURN , kbA14, kbD0, 255,255 },
@@ -483,7 +487,7 @@ struct kb KBSPEC[]=
         { 0, VK_OEM_4 , kbA12, kbD2, kbA15, kbD1 },
         { 0, VK_OEM_6 , kbA12, kbD1, kbA15, kbD1 },
         { 1, VK_OEM_7 , kbA11, kbD2, kbA15, kbD1 },
-        { 2, VK_OEM_7 , kbA11, kbD2, kbA15, kbD1 },
+        { 2, VK_OEM_7 , 0, 0, kbA15, kbD1 },
 
         //{ 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
@@ -495,6 +499,7 @@ struct kb KBSPEC[]=
         { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
 
         { 0, VK_CONTROL , kbA15, kbD1, 255,255 },
+        { 0, VK_CAPITAL , kbA11, kbD1, kbA8, kbD0 },
 
         {0, 0, 0, 0, 0, 0 }
 };
@@ -509,38 +514,61 @@ void PCKbInit(void)
         switch(emulator.machine)
         {
         case MACHINEZX80:
-                KeyMap=KBZX80;
+                SetKeyMap(KBZX80);
                 break;
 
         case MACHINESPECTRUM:
-                KeyMap=KBSPEC;
+                SetKeyMap(KBSPEC);
                 break;
 
         case MACHINEACE:
-                KeyMap=KBACE;
+                SetKeyMap(KBACE);
                 break;
 
         case MACHINELAMBDA:
-                KeyMap=KBLAMBDA;
+                SetKeyMap(KBLAMBDA);
                 break;
 
         default:
-                KeyMap=KBZX81;
+                SetKeyMap(KBZX81);
                 break;
         }
+
+        AdjustLocalKeyboard();
 }
 
-int PCFindKey(Word key)
+void SetKeyMap(const kb *source)
+{
+        int i=0;
+
+        while (source[i].WinKey)
+        {
+                KeyMap[i]=source[i];
+                i++;
+        }
+        KeyMap[i]=source[i];
+}
+
+int PCFindKey(Word key, int shift)
 {
         int i=0;
 
         while (KeyMap[i].WinKey)
         {
-                if (KeyMap[i].WinKey == key) return(i);
+                if (KeyMap[i].WinKey == key)
+                {
+                        if ((KeyMap[i].Shift==2 && shift) || (KeyMap[i].Shift<2 && ! shift))
+                                return(i);
+                }
                 i++;
         }
 
         return(-1);
+}
+
+int PCFindKey(Word key)
+{
+        return PCFindKey(key,0);
 }
 
 void PCSetKey(WORD dest, int source, int shift)
@@ -653,3 +681,44 @@ void PCAllKeysUp()
         for(i=0; i<8; i++) ZXKeyboard[i]=0;
 }
 
+void AdjustLocalKeyboard()
+{
+        char keyboardName[KL_NAMELENGTH];
+        if (GetKeyboardLayoutName(keyboardName))
+        {
+                unsigned int lcid=0;
+                sscanf(keyboardName,"%x",&lcid);
+
+                switch (lcid)
+                {
+                case 0x00000404: // Chinese (Traditional) - US
+                case 0x00000409: // US
+                case 0x00000804: // Chinese (Simplified) - US
+                case 0x00000c04: // Chinese (Traditional, Hong Kong S.A.R.) - US
+                case 0x00001004: // Chinese (Simplified, Singapore) - US
+                case 0x00001404: // Chinese (Traditional, Macao S.A.R.) - US
+                case 0x00010402: // Bulgarian (Latin)
+                case 0x00020409: // United States-International
+                        if (emulator.machine==MACHINESPECTRUM)
+                        {
+                                int source=PCFindKey(VK_OEM_3);
+                                int dest=PCFindKey(VK_OEM_7);
+                                KeyMap[dest].Addr1 = KeyMap[source].Addr1;
+                                KeyMap[dest].Data1 = KeyMap[source].Data1;
+
+                                source=PCFindKey('P');
+                                dest=PCFindKey(VK_OEM_7,1);
+                                KeyMap[dest].Addr1 = KeyMap[source].Addr1;
+                                KeyMap[dest].Data1 = KeyMap[source].Data1;
+
+                                dest=PCFindKey(VK_OEM_3,1);
+                                KeyMap[dest].Addr1 = 0;
+                                KeyMap[dest].Data1 = 0;
+                        }
+                        break;
+
+                default:
+                        break;
+                }
+        }
+}

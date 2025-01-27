@@ -549,7 +549,7 @@ void SetKeyMap(const kb *source)
         KeyMap[i]=source[i];
 }
 
-int PCFindKey(Word key, int shift)
+int PCFindKey(Word key, bool shift)
 {
         int i=0;
 
@@ -568,7 +568,7 @@ int PCFindKey(Word key, int shift)
 
 int PCFindKey(Word key)
 {
-        return PCFindKey(key,0);
+        return PCFindKey(key,false);
 }
 
 void PCSetKey(WORD dest, int source, int shift)
@@ -707,11 +707,11 @@ void AdjustLocalKeyboard()
                                 KeyMap[dest].Data1 = KeyMap[source].Data1;
 
                                 source=PCFindKey('P');
-                                dest=PCFindKey(VK_OEM_7,1);
+                                dest=PCFindKey(VK_OEM_7,true);
                                 KeyMap[dest].Addr1 = KeyMap[source].Addr1;
                                 KeyMap[dest].Data1 = KeyMap[source].Data1;
 
-                                dest=PCFindKey(VK_OEM_3,1);
+                                dest=PCFindKey(VK_OEM_3,true);
                                 KeyMap[dest].Addr1 = 0;
                                 KeyMap[dest].Data1 = 0;
                         }

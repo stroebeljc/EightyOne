@@ -144,6 +144,7 @@ void CSound::InitDevices()
 {
         AYInit();
         SpecDrumInit();
+        sp0256_AL2.Reset();
 }
 
 // Initialise the AY Sound chip

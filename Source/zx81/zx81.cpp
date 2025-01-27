@@ -240,7 +240,6 @@ void zx81_initialise()
         tStatesCount = 0;
 
         insertWaitsWhileSP0256Busy = false;
-        sp0256_AL2.Reset();
 
         chromaSelected = (machine.colour == COLOURCHROMA);
         lambdaSelected = (emulator.machine == MACHINELAMBDA);

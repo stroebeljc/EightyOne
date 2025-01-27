@@ -630,7 +630,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         }
 
         emulation_stop=1;
-        Sound.AYReset();
+        Sound.InitDevices();
 
         if (BasicLister->ListerAvailable())
         {
@@ -685,7 +685,7 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         PCAllKeysUp();
         emulation_stop=1;
         z80_reset();
-        Sound.AYReset();
+        if (machine.aytype==AY_TYPE_SINCLAIR) Sound.AYReset();
         InitialiseChroma();
         DisableSpectra();
         Dbg->ClearSkipAddresses();
@@ -1387,7 +1387,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         z80_reset();
         AccurateInit(false);
         machine.initialise();
-        Sound.AYReset();
+        Sound.InitDevices();
         emulation_stop=initialStopState;
         Dbg->Reset();
         DebugUpdate();

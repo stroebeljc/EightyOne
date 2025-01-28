@@ -138,6 +138,8 @@ USEUNIT("SP0256\sp0256_al2.cpp");
 USEUNIT("SP0256\sp0256drv.cpp");
 USEUNIT("SP0256\sp0256.c");
 USEUNIT("SP0256\sp0256_012.cpp");
+USEUNIT("Digitalker\Digitalk.cpp");
+USEUNIT("Digitalker\Digitalkdrv.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

@@ -51,6 +51,7 @@
 #include "sound\midi.h"
 #include "zx81config.h"
 #include "sp0256drv.h"
+#include "Digitalkdrv.h"
 
 CSound Sound;
 
@@ -113,6 +114,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         InitDevices();  // initialise sound generating devices
 
         sp0256_AL2.SetSamplingFreq(m_SampleRate);
+        Digitalker.SetSamplingFreq(m_SampleRate);
 
         DXSound.Play();
         return(0);
@@ -145,6 +147,7 @@ void CSound::InitDevices()
         AYInit();
         SpecDrumInit();
         sp0256_AL2.Reset();
+        Digitalker.Reset();
 }
 
 // Initialise the AY Sound chip
@@ -558,6 +561,23 @@ void CSound::SpecDrumOverlay(void)
         SpecDrumChangeCount=0;
 }
 
+
+void CSound::DigiTalkOverlay(void)
+{
+        for(int f=0;f<FrameSize;f++)
+        {
+                int sample = Digitalker.GetNextSample();
+                int level = sample;
+
+                level = (level*VolumeLevel[4])/AMPL_SPEECH;
+                Buffer[f*m_Channels] += level;
+                if(m_Channels == 2)
+                {
+                        Buffer[f*m_Channels+1] += level;
+                }
+        }
+}
+
 // XXX currently using speccy beeper code verbatim for VSYNC.
 // Not sure how plausible this is, but for now it'll do.
 // It does *sound* pretty plausible.
@@ -613,6 +633,9 @@ void CSound::Frame(void)
         if (spectrum.specdrum) SpecDrumOverlay();
 
         if (machine.speech) SpeechOverlay();
+
+
+        DigiTalkOverlay();
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);

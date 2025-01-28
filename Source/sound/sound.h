@@ -126,6 +126,7 @@ private:
         void SpeechOverlay(void);
         void SpecDrumInit(void);
         void SpecDrumOverlay(void);
+        void DigiTalkOverlay(void);
 
         int SelectAYReg;
         int FrameSize;

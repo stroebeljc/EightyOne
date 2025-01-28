@@ -36,7 +36,8 @@
       lib765\765drive.obj lib765\765dsk.obj lib765\765fdc.obj lib765\765ldsk.obj 
       lib765\error.obj AccDraw_.obj Fullscreen.obj Artifacts_.obj 
       sound\SoundForm.obj Interface1.obj SP0256\sp0256_al2.obj 
-      SP0256\sp0256drv.obj SP0256\sp0256.obj SP0256\sp0256_012.obj"/>
+      SP0256\sp0256drv.obj SP0256\sp0256.obj SP0256\sp0256_012.obj 
+      Digitalker\Digitalk.obj Digitalker\Digitalkdrv.obj"/>
     <RESFILES value="EightyOne.res WinXP.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -63,38 +64,39 @@
       ibsmp50.bpi vcldbx50.bpi TeeUI50.bpi TeeDB50.bpi Tee50.bpi TeeQR50.bpi 
       VCLIB50.bpi bcbie50.bpi vclie50.bpi Inetdb50.bpi Inet50.bpi NMFast50.bpi 
       dclocx50.bpi bcb2kaxserver50.bpi THEMEMANAGERC5.bpi CPORTLIBCB5.bpi"/>
-    <PATHCPP value=".;z80;DebugWin;sound;peripherals;rzx;IECBus;1541;RomCartridge;Spectra;Chroma;BasicLister;BasicLoader;Ace;zx81;Spectrum;1772;ide;zxpand;tzx;wavtape;zxprinter;lib765;SP0256"/>
+    <PATHCPP value=".;z80;DebugWin;sound;peripherals;rzx;IECBus;1541;RomCartridge;Spectra;Chroma;BasicLister;BasicLoader;Ace;zx81;Spectrum;1772;ide;zxpand;tzx;wavtape;zxprinter;lib765;SP0256;Digitalker"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="tlink32"/>
-    <USERDEFINES value=""/>
+    <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="EightyOne.cpp"/>
-    <INCLUDEPATH value="SP0256;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;zlib\minizip;zlib;1772;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;&quot;..\Components\Office Button 97\OffBtn97&quot;;&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot;;&quot;..\Components\ComPort Library&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot;"/>
-    <LIBPATH value="SP0256;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;zlib\minizip;zlib;1772;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;&quot;..\Components\Office Button 97\OffBtn97&quot;;&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot;;&quot;..\Components\ComPort Library&quot;;..\Components\DirectSound"/>
+    <INCLUDEPATH value="Digitalker;SP0256;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\include;$(BCB)\include\vcl;zxpand;cr81;1541;IECBus;rzx;zlib\minizip;zlib;1772;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\Animation-Timer\lib;&quot;..\Components\Office Button 97\OffBtn97&quot;;&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot;;&quot;..\Components\ComPort Library&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot;;&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot;"/>
+    <LIBPATH value="Digitalker;SP0256;Display;peripherals\zxprinter;BasicLoader;BasicLister;ProgramLister;Chroma;Spectra;RomCartridge;$(BCB)\lib;$(BCB)\lib\obj;$(BCB)\Projects\lib;zxpand;cr81;1541;IECBus;rzx;zlib\minizip;zlib;1772;ide;libdsk;lib765;Spectrum;Ace;tzx;peripherals;Timer;sound;DebugWin;wavtape;zxprinter;TapeMan;zx81;z80;..\Components\DirectDraw;&quot;..\Components\Office Button 97\OffBtn97&quot;;&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot;;&quot;..\Components\ComPort Library&quot;;..\Components\DirectSound"/>
     <WARNINGS value="-w8092 -w8090 -w8089 -w8087 -wprc -wuse -wucp -wstv -wstu -wsig -wpin 
       -w-par -wnod -wnak -w-8027 -w-8026 -wdef -wcln -wbbf -wasm -wamp -wamb"/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-ISP0256 -IDisplay -Iperipherals\zxprinter -IBasicLoader -IBasicLister 
-      -IProgramLister -IChroma -ISpectra -IRomCartridge -I$(BCB)\include 
-      -I$(BCB)\include\vcl -Izxpand -Icr81 -I1541 -IIECBus -Irzx -Izlib\minizip 
-      -Izlib -I1772 -Iide -Ilibdsk -Ilib765 -ISpectrum -IAce -Itzx -Iperipherals 
-      -ITimer -Isound -IDebugWin -Iwavtape -Izxprinter -ITapeMan -Izx81 -Iz80 
-      -I..\Components\Animation-Timer\lib 
+    <IDLCFLAGS value="-IDigitalker -ISP0256 -IDisplay -Iperipherals\zxprinter -IBasicLoader 
+      -IBasicLister -IProgramLister -IChroma -ISpectra -IRomCartridge 
+      -I$(BCB)\include -I$(BCB)\include\vcl -Izxpand -Icr81 -I1541 -IIECBus 
+      -Irzx -Izlib\minizip -Izlib -I1772 -Iide -Ilibdsk -Ilib765 -ISpectrum -IAce 
+      -Itzx -Iperipherals -ITimer -Isound -IDebugWin -Iwavtape -Izxprinter 
+      -ITapeMan -Izx81 -Iz80 -I..\Components\Animation-Timer\lib 
       -I&quot;..\Components\Office Button 97\OffBtn97&quot; 
       -I&quot;..\Components\Office Button 97\OffBtn97\32-Bit&quot; 
       -I&quot;..\Components\ComPort Library&quot; 
       -I&quot;..\Components\Theme Manager\TMSourceOnly\CBuilder&quot; 
-      -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp -boa"/>
-    <CFLAG1 value="-O2 -Vx -Ve -RT- -X- -a8 -6 -b- -k- -vi -c -tW -tWM"/>
-    <PFLAGS value="-$Y- -$L- -$I- -$D- -$C- -v -JPHNE -M"/>
+      -I&quot;..\Components\Theme Manager\TMSourceOnly\Source&quot; -src_suffix cpp 
+      -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -Vx -Ve -RT- -X- -r- -a8 -6 -b- -k -y -v -vi- -c -tW -tWM"/>
+    <PFLAGS value="-$Y+ -$W -$O- -$I- -$C- -v -JPHNE -M"/>
     <RFLAGS value=""/>
-    <AFLAGS value="/mx /w2 /zn"/>
-    <LFLAGS value="-D&quot;&quot; -V5.0 -aa -Tpe -x -Gn"/>
+    <AFLAGS value="/mx /w2 /zi"/>
+    <LFLAGS value="-D&quot;&quot; -V5.0 -aa -Tpe -x -Gn -v"/>
   </OPTIONS>
   <LINKER>
     <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>

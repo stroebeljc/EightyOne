@@ -29,8 +29,8 @@ public:
 	void device_start();
 
 private:
-	void digitalker_write(uint8_t *adr, uint8_t vol, int8_t dac);
-	uint8_t digitalker_pitch_next(uint8_t val, uint8_t prev, int step);
+	void digitalker_write(uint16_t *adr, uint16_t vol, int8_t dac);
+	uint8_t digitalker_pitch_next(uint16_t val, uint16_t prev, int step);
 	void digitalker_set_intr(uint8_t intr);
 	void digitalker_step_mode_0();
 	void digitalker_step_mode_1();
@@ -53,13 +53,13 @@ private:
 	uint8_t m_segments;
 	uint8_t m_repeats;
 
-	uint8_t m_prev_pitch;
-	uint8_t m_pitch;
-	uint8_t m_pitch_pos;
+	uint16_t m_prev_pitch;
+	uint16_t m_pitch;
+	uint16_t m_pitch_pos;
 
 	uint8_t m_stop_after;
-	uint8_t m_cur_dac;
-	uint8_t m_cur_bits;
+	uint16_t m_cur_dac;
+	uint16_t m_cur_bits;
 
 	// Zero-range size
 	uint32_t m_zero_count; // 0 for done

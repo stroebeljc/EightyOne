@@ -284,7 +284,7 @@ digitalker_device::digitalker_device()
 {
 }
 
-void digitalker_device::digitalker_write(uint8_t *adr, uint8_t vol, int8_t dac)
+void digitalker_device::digitalker_write(uint16_t *adr, uint16_t vol, int8_t dac)
 {
 	int16_t v;
 	dac &= 15;
@@ -297,7 +297,7 @@ void digitalker_device::digitalker_write(uint8_t *adr, uint8_t vol, int8_t dac)
 	m_dac[(*adr)++] = v;
 }
 
-uint8_t digitalker_device::digitalker_pitch_next(uint8_t val, uint8_t prev, int step)
+uint8_t digitalker_device::digitalker_pitch_next(uint16_t val, uint16_t prev, int step)
 {
 	int delta, nv;
 
@@ -333,11 +333,11 @@ void digitalker_device::digitalker_step_mode_0()
 {
 	int8_t dac = 0;
 	int i, k, l;
-	uint8_t wpos = 0;
+	uint16_t wpos = 0;
 	uint8_t h = m_rom[m_apos];
 	uint16_t bits = 0x80;
-	uint8_t vol = h >> 5;
-	uint8_t pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
+	uint16_t vol = h >> 5;
+	uint16_t pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
 
 	m_pitch = pitch_vals[pitch_id];
 
@@ -384,13 +384,13 @@ void digitalker_device::digitalker_step_mode_1()
 
 void digitalker_device::digitalker_step_mode_2()
 {
-	int8_t dac = 0;
+	int16_t dac = 0;
 	int k, l;
-	uint8_t wpos=0;
+	uint16_t wpos=0;
 	uint8_t h = m_rom[m_apos];
 	uint16_t bits = 0x80;
-	uint8_t vol = h >> 5;
-	uint8_t pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
+	uint16_t vol = h >> 5;
+	uint16_t pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
 
 	m_pitch = pitch_vals[pitch_id];
 
@@ -449,9 +449,9 @@ void digitalker_device::digitalker_step_mode_2()
 void digitalker_device::digitalker_step_mode_3()
 {
 	uint8_t h = m_rom[m_apos];
-	uint8_t vol = h >> 5;
+	uint16_t vol = h >> 5;
 	uint16_t bits;
-	uint8_t dac, apos, wpos;
+	uint16_t dac, apos, wpos;
 	int k, l;
 
 	m_pitch = pitch_vals[h & 0x1f];

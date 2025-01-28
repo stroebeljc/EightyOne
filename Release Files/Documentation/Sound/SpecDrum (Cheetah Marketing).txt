@@ -298,7 +298,7 @@ Hints on Programming.
 
   Most music is also divided into groups of Beats called
 BARS. The number of Beats per Bar (BEATS/BAR) is
-defineable for each Pattern written, and is called the
+definable for each Pattern written, and is called the
 "tune signature" of the rhythm. However, from a rhythm
 writing point of view, this only affects the way that a
 Pattern is displayed. At any time when writing a Pattern
@@ -711,7 +711,7 @@ new Pattern.
 
   G for GET then INPUT the number of the Pattern
     required. This can now be edited on the display or
-    in Realtme without altering the filed Pattern.
+    in Realtime without altering the filed Pattern.
 
   To erase a Pattern from the file, press:
 
@@ -826,7 +826,7 @@ sounds or "KITs" of eight sounds may also be loaded.
     SAVE SONG is selected, so make sure that you are
     recording before pressing 2.
 
-  3 LOAD OUMP
+  3 LOAD DUMP
       When 3 is pressed ALL THE SONGS IN MEMORY
     WILL BE ERASED, and Songs from tape will be
     loaded into successive Song numbers
@@ -834,7 +834,7 @@ sounds or "KITs" of eight sounds may also be loaded.
     loaded, hold down SPACE until the red square
     indicating the Song number returns to no. 1.
 
-  4 SAVE OUMP
+  4 SAVE DUMP
       All the Songs in memory are saved in order.
     Again, saving begins as soon as 4 is pressed.
 
@@ -928,7 +928,7 @@ EFFICIENT MEMORY USE
 
 The SpecDrum, being computer based, has a much
 greater storage Capacity than most drum machines, but
-it is always worth while to use the memory as efficiently
+it is always worthwhile to use the memory as efficiently
 as possible. The extremely flexible dynamic filing
 system does much of this for you, allocating as much
 memory as required to what is being written without

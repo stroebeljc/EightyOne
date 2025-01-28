@@ -566,9 +566,7 @@ void CSound::DigiTalkOverlay(void)
 {
         for(int f=0;f<FrameSize;f++)
         {
-                int sample = Digitalker.GetNextSample();
-                int level = sample;
-
+                int level = Digitalker.GetNextSample();
                 level = (level*VolumeLevel[4])/AMPL_SPEECH;
                 Buffer[f*m_Channels] += level;
                 if(m_Channels == 2)

@@ -1301,6 +1301,7 @@ void THW::ConfigureSpeech()
                 {
                         switch (SpeechBox->ItemIndex)
                         {
+                        case 4: machine.speech = SPEECH_TYPE_DIGITALKER; break;
                         case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
                         case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
                         case 1: machine.speech = SPEECH_TYPE_SWEETTALKER; break;
@@ -1312,7 +1313,8 @@ void THW::ConfigureSpeech()
                 {
                         switch (SpeechBox->ItemIndex)
                         {
-                        case 4: machine.speech = SPEECH_TYPE_USPEECH; break;
+                        case 5: machine.speech = SPEECH_TYPE_USPEECH; break;
+                        case 4: machine.speech = SPEECH_TYPE_DIGITALKER; break;
                         case 3: machine.speech = SPEECH_TYPE_ORATOR; break;
                         case 2: machine.speech = SPEECH_TYPE_DKTRONICS; break;
                         case 1: machine.speech = SPEECH_TYPE_SWEETTALKER; break;
@@ -1325,14 +1327,11 @@ void THW::ConfigureSpeech()
         {
                 switch (SpeechBox->ItemIndex)
                 {
-                case 4: machine.speech = SPEECH_TYPE_TALKBACK; break;
+                case 5: machine.speech = SPEECH_TYPE_TALKBACK; break;
+                case 4: machine.speech = SPEECH_TYPE_DIGITALKER; break;
                 case 3: machine.speech = SPEECH_TYPE_MAGECO; break;
                 case 2: machine.speech = SPEECH_TYPE_SWEETTALKER; break;
-                case 1:
-                {
-                        machine.speech = SPEECH_TYPE_PARROT;
-                        break;
-                }
+                case 1: machine.speech = SPEECH_TYPE_PARROT; break;
                 case 0:
                 default: machine.speech = SPEECH_TYPE_NONE; break;
                 }
@@ -1862,6 +1861,7 @@ void THW::SetupForZX81(void)
         SpeechBox->Items->Add("The Parrot");
         SpeechBox->Items->Add("Sweet Talker");
         SpeechBox->Items->Add("Mageco");
+        SpeechBox->Items->Add("S-Pack");
         if (NewMachine != MACHINEZX80)
         {
                 SpeechBox->Items->Add("Talk-Back");
@@ -2004,6 +2004,7 @@ void THW::SetupForSpectrum(void)
         SpeechBox->Items->Add("Sweet Talker");
         SpeechBox->Items->Add("dk'tronics");
         SpeechBox->Items->Add("Fuller Orator");
+        SpeechBox->Items->Add("S-Pack");
         SpeechBox->ItemIndex = 0;
         SpeechBox->Enabled=true;
         SpeechBoxLbl->Enabled=true;

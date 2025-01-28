@@ -49,6 +49,7 @@
 #include "Spectra\Spectra.h"
 #include "LiveMemoryWindow_.h"
 #include "BasicLister\BasicLister_.h"
+#include "Digitalkdrv.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
@@ -1119,6 +1120,10 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 default:
                         break;
                 }
+
+                if (machine.speech==SPEECH_TYPE_DIGITALKER) Digitalker.Write2((BYTE)Data);
+                break;
+
         case 0xe3:
                 if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_cmdreg((BYTE)Data);
                 break;
@@ -1266,6 +1271,8 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         TIMEXColour=(Data>>3)&7;
                         TIMEXBank=(Data>>7)&1;
                 }
+
+                if (machine.speech==SPEECH_TYPE_DIGITALKER) Digitalker.Write1((BYTE)Data);
                 break;
 
         default:

@@ -59,6 +59,7 @@
 #define SPEECH_TYPE_TALKBACK            5
 #define SPEECH_TYPE_DKTRONICS           6
 #define SPEECH_TYPE_ORATOR              7
+#define SPEECH_TYPE_DIGITALKER          8
 
 // assume all three tone channels together match the beeper volume.
 // Must be <=127 for all channels; 4 x 31 = 124.
@@ -126,6 +127,7 @@ private:
         void SpeechOverlay(void);
         void SpecDrumInit(void);
         void SpecDrumOverlay(void);
+        void DigiTalkOverlay(void);
 
         int SelectAYReg;
         int FrameSize;

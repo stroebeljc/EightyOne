@@ -47,6 +47,7 @@
 #include "BasicLister\BasicLister_.h"
 #include "sp0256drv.h"
 #include "floppy.h"
+#include "Digitalkdrv.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -489,6 +490,16 @@ void zx81_WriteByte(int Address, int Data)
                         LiveMemoryWindow->Write((unsigned short)Address);
                         return;
                 }
+        }
+
+        if (Address == 49149)
+        {
+                Digitalker.Write1((BYTE)Data);
+        }
+
+        if (Address == 49148)
+        {
+                Digitalker.Write2((BYTE)Data);
         }
 
         // Quicksilva Sound Board uses a memory mapped AY8912 chip

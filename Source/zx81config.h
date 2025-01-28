@@ -422,6 +422,7 @@ extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;
 extern const char* tc2068RomsFolder;
 extern const char* replacementRomsFolder;
+extern const char* speechRomsFolder;
 
 extern void load_config();
 extern void LoadMachineRoms();

@@ -23,7 +23,7 @@ void Digitalk::Init(const char* romBasePath)
         FILE* f = fopen(romFilePath, "rb");
         if (f)
         {
-                fread((unsigned char*)rombank1, 1, 0x2000, f);
+                fread(rombank1, 1, 0x2000, f);
                 fclose(f);
         }
 
@@ -32,7 +32,7 @@ void Digitalk::Init(const char* romBasePath)
         f = fopen(romFilePath, "rb");
         if (f)
         {
-                fread((unsigned char*)&rombank1[0x2000], 1, 0x2000, f);
+                fread(&rombank1[0x2000], 1, 0x2000, f);
                 fclose(f);
         }
 
@@ -41,7 +41,7 @@ void Digitalk::Init(const char* romBasePath)
         f = fopen(romFilePath, "rb");
         if (f)
         {
-                fread((unsigned char*)rombank2, 1, 0x2000, f);
+                fread(rombank2, 1, 0x2000, f);
                 fclose(f);
         }
 
@@ -50,7 +50,7 @@ void Digitalk::Init(const char* romBasePath)
         f = fopen(romFilePath, "rb");
         if (f)
         {
-                fread((unsigned char*)&rombank2[0x2000], 1, 0x2000, f);
+                fread(&rombank2[0x2000], 1, 0x2000, f);
                 fclose(f);
         }
 }

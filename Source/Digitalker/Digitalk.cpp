@@ -1,5 +1,8 @@
 // license:BSD-3-Clause
 // copyright-holders:Olivier Galibert
+
+#pragma warn -8071
+
 #include "digitalk.h"
 
 /*
@@ -281,9 +284,9 @@ digitalker_device::digitalker_device()
 {
 }
 
-void digitalker_device::digitalker_write(int *adr, int vol, int dac)
+void digitalker_device::digitalker_write(uint16_t *adr, uint16_t vol, int8_t dac)
 {
-	int v;
+	int16_t v;
 	dac &= 15;
 	if(dac >= 9)
 		v = -pcm_levels[vol][15-dac];
@@ -294,7 +297,7 @@ void digitalker_device::digitalker_write(int *adr, int vol, int dac)
 	m_dac[(*adr)++] = v;
 }
 
-int digitalker_device::digitalker_pitch_next(int val, int prev, int step)
+uint8_t digitalker_device::digitalker_pitch_next(uint16_t val, uint16_t prev, int step)
 {
 	int delta, nv;
 
@@ -312,12 +315,12 @@ int digitalker_device::digitalker_pitch_next(int val, int prev, int step)
 	return nv;
 }
 
-void digitalker_device::digitalker_set_intr(int intr)
+void digitalker_device::digitalker_set_intr(uint8_t intr)
 {
 	m_intr = intr;
 }
 
-void digitalker_device::digitalker_start_command(int cmd)
+void digitalker_device::digitalker_start_command(uint8_t cmd)
 {
 	m_bpos = ((m_rom[cmd*2] << 8) | m_rom[cmd*2+1]) & 0x3fff;
 	m_cur_segment = m_segments = m_cur_repeat = m_repeats = 0;
@@ -328,13 +331,13 @@ void digitalker_device::digitalker_start_command(int cmd)
 
 void digitalker_device::digitalker_step_mode_0()
 {
-	int dac = 0;
+	int8_t dac = 0;
 	int i, k, l;
-	int wpos = 0;
-	int h = m_rom[m_apos];
-	int bits = 0x80;
-	int vol = h >> 5;
-	int pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
+	uint16_t wpos = 0;
+	uint8_t h = m_rom[m_apos];
+	uint16_t bits = 0x80;
+	uint16_t vol = h >> 5;
+	uint16_t pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
 
 	m_pitch = pitch_vals[pitch_id];
 
@@ -381,13 +384,13 @@ void digitalker_device::digitalker_step_mode_1()
 
 void digitalker_device::digitalker_step_mode_2()
 {
-	int dac = 0;
+	int16_t dac = 0;
 	int k, l;
-	int wpos=0;
-	int h = m_rom[m_apos];
-	int bits = 0x80;
-	int vol = h >> 5;
-	int pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
+	uint16_t wpos=0;
+	uint8_t h = m_rom[m_apos];
+	uint16_t bits = 0x80;
+	uint16_t vol = h >> 5;
+	uint16_t pitch_id = m_cur_segment ? digitalker_pitch_next(h, m_prev_pitch, m_cur_repeat) : h & 0x1f;
 
 	m_pitch = pitch_vals[pitch_id];
 
@@ -445,10 +448,10 @@ void digitalker_device::digitalker_step_mode_2()
 
 void digitalker_device::digitalker_step_mode_3()
 {
-	int h = m_rom[m_apos];
-	int vol = h >> 5;
-	int bits;
-	int dac, apos, wpos;
+	uint8_t h = m_rom[m_apos];
+	uint16_t vol = h >> 5;
+	uint16_t bits;
+	uint16_t dac, apos, wpos;
 	int k, l;
 
 	m_pitch = pitch_vals[h & 0x1f];
@@ -486,9 +489,9 @@ void digitalker_device::digitalker_step()
 		if(m_stop_after == 0 && m_bpos == 0xffff)
 			return;
 		if(m_stop_after == 0) {
-			int v1 = m_rom[m_bpos++];
-			int v2 = m_rom[m_bpos++];
-			int v3 = m_rom[m_bpos++];
+			uint8_t v1 = m_rom[m_bpos++];
+			uint8_t v2 = m_rom[m_bpos++];
+			uint8_t v3 = m_rom[m_bpos++];
 			m_apos = v2 | ((v3 << 8) & 0x3f00);
 			m_segments = (v1 & 15) + 1;
 			m_repeats = ((v1 >> 4) & 7) + 1;

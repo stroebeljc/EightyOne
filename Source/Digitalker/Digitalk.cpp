@@ -546,35 +546,33 @@ void digitalker_device::digitalker_step()
 int digitalker_device::single_sample(void)
 {
         int result = 0;
-	int cpos = 0;
-		if(m_zero_count == 0 && m_dac_index == 128)
-			digitalker_step();
+        int cpos = 0;
+        if(m_zero_count == 0 && m_dac_index == 128)
+                digitalker_step();
 
-		if(m_zero_count) {
-			unsigned int n = 1;
-			if(n > m_zero_count)
-				n = m_zero_count;
-			result = 0;
-			cpos += n;
-			m_zero_count -= n;
+        if(m_zero_count) {
+                unsigned int n = 1;
+                if(n > m_zero_count)
+                        n = m_zero_count;
+                result = 0;
+                m_zero_count -= n;
 
-		} else if(m_dac_index != 128) {
-			while(cpos != 1 && m_dac_index != 128) {
-				int v = m_dac[m_dac_index];
-				int pp = m_pitch_pos;
-				while(cpos != 1 && pp != m_pitch) {
-                                        result=v;
-					cpos++;
-					pp++;
-				}
-				if(pp == m_pitch) {
-					pp = 0;
-					m_dac_index++;
-				}
-				m_pitch_pos = pp;
-			}
-
-		}
+        } else if(m_dac_index != 128) {
+                while(cpos != 1 && m_dac_index != 128) {
+                        int v = m_dac[m_dac_index];
+                        int pp = m_pitch_pos;
+                        while(cpos != 1 && pp != m_pitch) {
+                                result=v;
+                                cpos++;
+                                pp++;
+                        }
+                        if(pp == m_pitch) {
+                                pp = 0;
+                                m_dac_index++;
+                        }
+                        m_pitch_pos = pp;
+                }
+        }
 	return result;
 }
 

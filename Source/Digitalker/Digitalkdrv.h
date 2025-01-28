@@ -8,18 +8,20 @@ class Digitalk
 {
 public:
         Digitalk();
-        void Write(unsigned char Data);
+        void Write1(unsigned char Data);
+        void Write2(unsigned char Data);
         bool Busy(void);
         int GetNextSample(void);
+        void Init(const char *romBasePath);
         void Reset();
         void SetSamplingFreq(int freq);
-        void LoadRom(char* filePath);
 
 private:
         double m_scaler;
         double m_sample_count;
         double m_lastsample;
         digitalker_device digiTalk;
+        unsigned char rombank1[0x4000],rombank2[0x4000];
 };
 
 

@@ -630,10 +630,13 @@ void CSound::Frame(void)
 
         if (spectrum.specdrum) SpecDrumOverlay();
 
-        if (machine.speech) SpeechOverlay();
-
-
-        DigiTalkOverlay();
+        if (machine.speech)
+        {
+                if (machine.speech!=SPEECH_TYPE_DIGITALKER)
+                        SpeechOverlay();
+                else
+                        DigiTalkOverlay();
+        }
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);

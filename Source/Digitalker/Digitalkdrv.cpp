@@ -1,3 +1,5 @@
+#include <string.h>
+#include <stdio.h>
 #include "Digitalkdrv.h"
 
 static const int c_xtal = 4000000;
@@ -12,15 +14,58 @@ Digitalk::Digitalk() :
 {
 }
 
-void Digitalk::LoadRom(char* filePath)
+void Digitalk::Init(const char* romBasePath)
 {
-        digiTalk.LoadRom(filePath);
+        char romFilePath[256];
+
+        strcpy(romFilePath,romBasePath);
+        strcat(romFilePath,"SSR1.bin");
+        FILE* f = fopen(romFilePath, "rb");
+        if (f)
+        {
+                fread((unsigned char*)rombank1, 1, 0x2000, f);
+                fclose(f);
+        }
+
+        strcpy(romFilePath,romBasePath);
+        strcat(romFilePath,"SSR2.bin");
+        f = fopen(romFilePath, "rb");
+        if (f)
+        {
+                fread((unsigned char*)&rombank1[0x2000], 1, 0x2000, f);
+                fclose(f);
+        }
+
+        strcpy(romFilePath,romBasePath);
+        strcat(romFilePath,"SSR5.bin");
+        f = fopen(romFilePath, "rb");
+        if (f)
+        {
+                fread((unsigned char*)rombank2, 1, 0x2000, f);
+                fclose(f);
+        }
+
+        strcpy(romFilePath,romBasePath);
+        strcat(romFilePath,"SSR6.bin");
+        f = fopen(romFilePath, "rb");
+        if (f)
+        {
+                fread((unsigned char*)&rombank2[0x2000], 1, 0x2000, f);
+                fclose(f);
+        }
 }
 
 
-void Digitalk::Write(unsigned char Data)
+void Digitalk::Write1(unsigned char Data)
 {
-        digiTalk.digitalker_start_command(Data&0x3F);
+        digiTalk.setROM(rombank1);
+        digiTalk.digitalker_start_command(Data);
+}
+
+void Digitalk::Write2(unsigned char Data)
+{
+        digiTalk.setROM(rombank2);
+        digiTalk.digitalker_start_command(Data);
 }
 
 bool Digitalk::Busy(void)
@@ -38,13 +83,14 @@ void Digitalk::SetSamplingFreq(int freq)
 
 int Digitalk::GetNextSample(void)
 {
+        double beta = m_scaler>1.0?1.0:m_scaler;
         m_sample_count += 1.0;
 
         while (m_sample_count >= m_scaler)
         {
                 m_sample_count -= m_scaler;
                 int sample = digiTalk.single_sample();
-                m_lastsample += 0.025*(sample - m_lastsample);
+                m_lastsample += beta*(sample - m_lastsample);
         }
 
         return m_lastsample;

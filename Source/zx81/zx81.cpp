@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <io.h>
-#include <string.h>
 
 #include "zx81.h"
 #include "z80\z80.h"
@@ -413,14 +412,6 @@ void zx81_initialise()
                   !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
 
         annotatableROM = IsAnnotatableROM();
-
-
-        //####
-        char speechRomFilePath[256];
-        strcpy(speechRomFilePath, emulator.cwd);
-        strcat(speechRomFilePath, "\\ROMs\\Speech\\");
-        strcat(speechRomFilePath, "SSR1.bin");
-        Digitalker.LoadRom(speechRomFilePath);
 }
 
 void CreateZXpand()
@@ -503,7 +494,12 @@ void zx81_WriteByte(int Address, int Data)
 
         if (Address == 49149)
         {
-                Digitalker.Write((BYTE)Data);
+                Digitalker.Write1((BYTE)Data);
+        }
+
+        if (Address == 49148)
+        {
+                Digitalker.Write2((BYTE)Data);
         }
 
         // Quicksilva Sound Board uses a memory mapped AY8912 chip

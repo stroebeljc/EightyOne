@@ -79,6 +79,7 @@
 #include "ROMCartridge\IF2ROMCartridge.h"
 #include "sound\sound.h"
 #include "sp0256drv.h"
+#include "Digitalkdrv.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -215,6 +216,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         ATA_Init();
         load_config();
         PCKbInit();
+        Digitalker.Init(speechRomsFolder);
 
         Application->OnDeactivate=FormDeactivate;
 

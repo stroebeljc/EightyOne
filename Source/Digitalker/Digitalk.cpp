@@ -1,7 +1,6 @@
 // license:BSD-3-Clause
 // copyright-holders:Olivier Galibert
 #include "digitalk.h"
-#include <stdio.h>
 
 /*
   National Semiconductor's Digitalker, also known as MM54104.
@@ -277,18 +276,9 @@ digitalker_device::digitalker_device()
 		m_cur_dac(0),
 		m_cur_bits(0),
 		m_zero_count(0),
-		m_dac_index(0)
+		m_dac_index(0),
+                m_rom(NULL)
 {
-}
-
-void digitalker_device::LoadRom(char* filePath)
-{
-        FILE* f = fopen(filePath, "rb");
-        if (f)
-        {
-                fread((char*)m_rom, 1, 8192, f);
-                fclose(f);
-        }
 }
 
 void digitalker_device::digitalker_write(int *adr, int vol, int dac)
@@ -598,5 +588,11 @@ void digitalker_device::device_start()
 int digitalker_device::digitalker_0_intr_r()
 {
 	return digitalker_intr_r();
+}
+
+void digitalker_device::setROM(unsigned char *romPtr)
+{
+        if (romPtr)
+                m_rom=romPtr;
 }
 

@@ -22,7 +22,7 @@ public:
 	void digitalker_start_command(int cmd);
 	int digitalker_0_intr_r();
         int single_sample(void);
-        void LoadRom(char* filePath);
+        void setROM(unsigned char *romPtr);
 
 	// device-level overrides
 	void device_start();
@@ -67,7 +67,7 @@ private:
 	int m_dac_index; // 128 for done
 	int m_dac[128];
 
-        unsigned char m_rom[16384];
+        unsigned char *m_rom;
 };
 
 #endif // MAME_SOUND_DIGITALK_H

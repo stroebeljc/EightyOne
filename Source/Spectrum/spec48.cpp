@@ -1757,7 +1757,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 else
                 {
                         ts = 1;
-                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
+                        insertWaitsWhileSP0256Busy = (sp0256_AL2.Busy() && !emulator.single_step) ? true : false;
                 }
 
                 if (BasicLister->Visible &&

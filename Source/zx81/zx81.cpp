@@ -489,9 +489,11 @@ void zx81_WriteByte(int Address, int Data)
                 }
         }
 
-        if (Address == 49149) Digitalker.Write1((BYTE)Data);
-
-        if (Address == 49148) Digitalker.Write2((BYTE)Data);
+        if (machine.speech == SPEECH_TYPE_DIGITALKER)
+        {
+                if (Address == 49149) Digitalker.Write1((BYTE)Data);
+                if (Address == 49148) Digitalker.Write2((BYTE)Data);
+        }
 
         // Quicksilva Sound Board uses a memory mapped AY8912 chip
 

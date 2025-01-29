@@ -145,6 +145,8 @@ bool romSp128;
 bool romPlus2;
 bool romPlus3;
 
+BOOL insertWaitsWhileSP0256Busy;
+
 extern unsigned short RZXCounter;
 extern RZX_INFO rzx;
 
@@ -1755,7 +1757,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 else
                 {
                         ts = 1;
-                        z80.r = (WORD)((z80.r + 1) & 0x7f);
                         insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
                 }
 

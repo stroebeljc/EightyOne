@@ -105,7 +105,7 @@ public:
 	int AYRead(int reg);
 	void AYReset(void);
         void SpecDrumWrite(BYTE data, int frametstates);
-	void Frame(void);
+	void Frame(bool stop);
 	void Beeper(int on, int frametstates);
 
         int VolumeLevel[6];

@@ -498,8 +498,6 @@ void CSound::AYReset(void)
 
         for(f=0;f<16;f++)
                 AYWrite(f,0,0);
-
-        AYOverlay();
 }
 
 void CSound::SpeechOverlay(void)
@@ -609,40 +607,43 @@ void CSound::DigiTalkOverlay(void)
         OldVal++;			\
     }
 
-
-void CSound::Frame(void)
-{                  
+void CSound::Frame(bool stop)
+{
         int f;
 
-        for(f=FillPos;f<FrameSize;f++)
+        if (stop)
         {
-                BEEPER_OLDVAL_ADJUST;
-                int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
-                Buffer[f*m_Channels]=tempval;
-
-                if(m_Channels == 2)
-                {
-                        Buffer[f*m_Channels+1]=tempval;
-                }
+                memset(Buffer, 0, FrameSize*m_Channels*sizeof(short));
         }
-
-        if (machine.aytype) AYOverlay();
-
-        if (spectrum.specdrum) SpecDrumOverlay();
-
-        if (machine.speech)
+        else
         {
-                if (machine.speech!=SPEECH_TYPE_DIGITALKER)
-                        SpeechOverlay();
-                else
-                        DigiTalkOverlay();
+                for(f=FillPos;f<FrameSize;f++)
+                {
+                        BEEPER_OLDVAL_ADJUST;
+                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]=tempval;
+                        if(m_Channels == 2)
+                        {
+                                Buffer[f*m_Channels+1]=tempval;
+                        }
+                }
+
+                OldPos=-1;
+                FillPos=0;
+
+                if (machine.aytype) AYOverlay();
+                if (spectrum.specdrum) SpecDrumOverlay();
+                if (machine.speech)
+                {
+                        if (machine.speech!=SPEECH_TYPE_DIGITALKER)
+                                SpeechOverlay();
+                        else
+                                DigiTalkOverlay();
+                }
         }
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);
-
-        OldPos=-1;
-        FillPos=0;
 }
 
 void CSound::Beeper(int on, int frametstates)

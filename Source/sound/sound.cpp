@@ -613,7 +613,7 @@ void CSound::Frame(bool stop)
 
         if (stop)
         {
-                memset(Buffer, 0, FrameSize*m_Channels*sizeof(short));
+                memset(Buffer, 0, FrameSize*m_Channels*m_BytesPerSample);
         }
         else
         {

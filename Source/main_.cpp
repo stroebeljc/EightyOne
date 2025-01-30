@@ -457,7 +457,7 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 void __fastcall TForm1::Display1Click(TObject *Sender)
 {
         PCAllKeysUp();
-        HW->ShowModal();
+        HW->Show();
 }
 //---------------------------------------------------------------------------
 

@@ -607,11 +607,11 @@ void CSound::DigiTalkOverlay(void)
         OldVal++;			\
     }
 
-void CSound::Frame(bool stop)
+void CSound::Frame(bool pause)
 {
         int f;
 
-        if (stop)
+        if (pause)
         {
                 memset(Buffer, 0, FrameSize*m_Channels*m_BytesPerSample);
         }

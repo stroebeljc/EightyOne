@@ -2317,7 +2317,7 @@ void __fastcall TForm1::RunFrame()
                 }
         }
 
-        Sound.Frame();
+        Sound.Frame(emulation_stop || emulator.single_step);
 
         if (emulation_stop)
         {

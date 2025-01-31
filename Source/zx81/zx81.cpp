@@ -47,6 +47,7 @@
 #include "BasicLister\BasicLister_.h"
 #include "sp0256drv.h"
 #include "floppy.h"
+#include "Digitalkdrv.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -194,7 +195,6 @@ bool zx80rom;
 bool zx81rom;
 BOOL memotechResetPressed;
 BOOL memotechResetRequested;
-BOOL insertWaitsWhileSP0256Busy;
 
 int videoFlipFlop1Q;
 int videoFlipFlop2Q;
@@ -238,9 +238,6 @@ void zx81_initialise()
         int i, romlen;
         z80_init();
         tStatesCount = 0;
-
-        insertWaitsWhileSP0256Busy = false;
-        sp0256_AL2.Reset();
 
         chromaSelected = (machine.colour == COLOURCHROMA);
         lambdaSelected = (emulator.machine == MACHINELAMBDA);
@@ -490,6 +487,12 @@ void zx81_WriteByte(int Address, int Data)
                         LiveMemoryWindow->Write((unsigned short)Address);
                         return;
                 }
+        }
+
+        if (machine.speech == SPEECH_TYPE_DIGITALKER)
+        {
+                if (Address == 49149) Digitalker.Write1((BYTE)Data);
+                if (Address == 49148) Digitalker.Write2((BYTE)Data);
         }
 
         // Quicksilva Sound Board uses a memory mapped AY8912 chip
@@ -1187,19 +1190,11 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0x07:
                 if (zxpand) zxpand->IO_Write(Address>>8, Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
-                {
-                        sp0256_AL2.Write((BYTE)Data);
-                        insertWaitsWhileSP0256Busy = true;
-                }
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x1f:
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
-                {
-                        sp0256_AL2.Write((BYTE)Data);
-                        insertWaitsWhileSP0256Busy = true;
-                }
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x3f:
@@ -1588,18 +1583,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts;
-
-                if (insertWaitsWhileSP0256Busy && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
-                {
-                        ts = 1;
-                        z80.r = (WORD)((z80.r + 1) & 0x7f);
-                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
-                }
-                else
-                {
-                        ts=z80_do_opcode();
-                }
+                int ts=z80_do_opcode();
 
                 if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))
                 {
@@ -2183,18 +2167,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts;
-
-                if (insertWaitsWhileSP0256Busy && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
-                {
-                        ts = 1;
-                        z80.r = (WORD)((z80.r + 1) & 0x7f);
-                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
-                }
-                else
-                {
-                        ts=z80_do_opcode();
-                }
+                int ts=z80_do_opcode();
 
                 if (BasicLister->Visible &&
                     ((zx80rom && z80.pc.w == 0x04F4) ||

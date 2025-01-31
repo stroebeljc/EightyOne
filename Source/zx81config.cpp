@@ -45,8 +45,6 @@ const char* temporaryFolder               = "EightyOne\\";
 
 const char* nvMemoryFolder                = "NV_Memory\\";
 const char* documentationFolder           = "Documentation\\";
-const char* examplesDisksFolder           = "Examples\\Disks\\";
-const char* examplesDrivesFolder          = "Examples\\Drives\\";
 const char* exampleZX81ProgramsFolder     = "Examples\\ZX81 Programs\\";
 const char* exampleSpectrumProgramsFolder = "Examples\\Spectrum Programs\\";
 
@@ -56,6 +54,7 @@ const char* ideRomsFolder                 = "ROMs\\IDEs\\";
 const char* interfaceRomsFolder           = "ROMs\\Interfaces\\";
 const char* graphicRomsFolder             = "ROMs\\Graphics\\";
 const char* replacementRomsFolder         = "ROMs\\Replacement ROMs\\";
+const char* speechRomsFolder              = "ROMs\\Speech\\";
 
 const char* romCartridgeFolder            = "ROM Cartridges\\";
 const char* if2RomsFolder                 = "ROM Cartridges\\ZX Interface 2\\";

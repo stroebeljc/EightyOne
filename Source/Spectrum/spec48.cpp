@@ -49,6 +49,7 @@
 #include "Spectra\Spectra.h"
 #include "LiveMemoryWindow_.h"
 #include "BasicLister\BasicLister_.h"
+#include "Digitalkdrv.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
@@ -143,6 +144,8 @@ bool rom128;
 bool romSp128;
 bool romPlus2;
 bool romPlus3;
+
+BOOL insertWaitsWhileSP0256Busy;
 
 extern unsigned short RZXCounter;
 extern RZX_INFO rzx;
@@ -340,7 +343,6 @@ void spec48_initialise()
         spectrum.drivebusy = -1;
 
         insertWaitsWhileSP0256Busy = false;
-        sp0256_AL2.Reset();
         
         z80_init();
         tStatesCount = 0;
@@ -1120,6 +1122,10 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 default:
                         break;
                 }
+
+                if (machine.speech==SPEECH_TYPE_DIGITALKER) Digitalker.Write2((BYTE)Data);
+                break;
+
         case 0xe3:
                 if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_cmdreg((BYTE)Data);
                 break;
@@ -1267,6 +1273,8 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         TIMEXColour=(Data>>3)&7;
                         TIMEXBank=(Data>>7)&1;
                 }
+
+                if (machine.speech==SPEECH_TYPE_DIGITALKER) Digitalker.Write1((BYTE)Data);
                 break;
 
         default:
@@ -1749,8 +1757,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 else
                 {
                         ts = 1;
-                        z80.r = (WORD)((z80.r + 1) & 0x7f);
-                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
+                        insertWaitsWhileSP0256Busy = (sp0256_AL2.Busy() && !emulator.single_step) ? true : false;
                 }
 
                 if (BasicLister->Visible &&

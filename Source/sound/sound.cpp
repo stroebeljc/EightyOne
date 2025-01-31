@@ -51,6 +51,7 @@
 #include "sound\midi.h"
 #include "zx81config.h"
 #include "sp0256drv.h"
+#include "Digitalkdrv.h"
 
 CSound Sound;
 
@@ -113,6 +114,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         InitDevices();  // initialise sound generating devices
 
         sp0256_AL2.SetSamplingFreq(m_SampleRate);
+        Digitalker.SetSamplingFreq(m_SampleRate);
 
         DXSound.Play();
         return(0);
@@ -144,6 +146,8 @@ void CSound::InitDevices()
 {
         AYInit();
         SpecDrumInit();
+        sp0256_AL2.Reset();
+        Digitalker.Reset();
 }
 
 // Initialise the AY Sound chip
@@ -494,8 +498,6 @@ void CSound::AYReset(void)
 
         for(f=0;f<16;f++)
                 AYWrite(f,0,0);
-
-        AYOverlay();
 }
 
 void CSound::SpeechOverlay(void)
@@ -557,6 +559,21 @@ void CSound::SpecDrumOverlay(void)
         SpecDrumChangeCount=0;
 }
 
+
+void CSound::DigiTalkOverlay(void)
+{
+        for(int f=0;f<FrameSize;f++)
+        {
+                int level = Digitalker.GetNextSample();
+                level = (level*VolumeLevel[4])/AMPL_SPEECH;
+                Buffer[f*m_Channels] += level;
+                if(m_Channels == 2)
+                {
+                        Buffer[f*m_Channels+1] += level;
+                }
+        }
+}
+
 // XXX currently using speccy beeper code verbatim for VSYNC.
 // Not sure how plausible this is, but for now it'll do.
 // It does *sound* pretty plausible.
@@ -590,34 +607,43 @@ void CSound::SpecDrumOverlay(void)
         OldVal++;			\
     }
 
-
-void CSound::Frame(void)
-{                  
+void CSound::Frame(bool pause)
+{
         int f;
 
-        for(f=FillPos;f<FrameSize;f++)
+        if (pause)
         {
-                BEEPER_OLDVAL_ADJUST;
-                int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
-                Buffer[f*m_Channels]=tempval;
-
-                if(m_Channels == 2)
+                memset(Buffer, 0, FrameSize*m_Channels*m_BytesPerSample);
+        }
+        else
+        {
+                for(f=FillPos;f<FrameSize;f++)
                 {
-                        Buffer[f*m_Channels+1]=tempval;
+                        BEEPER_OLDVAL_ADJUST;
+                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                        Buffer[f*m_Channels]=tempval;
+                        if(m_Channels == 2)
+                        {
+                                Buffer[f*m_Channels+1]=tempval;
+                        }
+                }
+
+                OldPos=-1;
+                FillPos=0;
+
+                if (machine.aytype) AYOverlay();
+                if (spectrum.specdrum) SpecDrumOverlay();
+                if (machine.speech)
+                {
+                        if (machine.speech!=SPEECH_TYPE_DIGITALKER)
+                                SpeechOverlay();
+                        else
+                                DigiTalkOverlay();
                 }
         }
 
-        if (machine.aytype) AYOverlay();
-
-        if (spectrum.specdrum) SpecDrumOverlay();
-
-        if (machine.speech) SpeechOverlay();
-
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);
         SoundOutput->UpdateImage(Buffer,m_Channels,FrameSize);
-
-        OldPos=-1;
-        FillPos=0;
 }
 
 void CSound::Beeper(int on, int frametstates)

@@ -23,12 +23,12 @@
 
 #include <vcl4.h>
 #pragma hdrstop
-USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditPause.cpp", EditPauseForm);
 USEFORM("tzx\tzxEditText.cpp", EditTextForm);
-USEFORM("tzx\tzxEditGeneral.cpp", EditGeneralForm);
+USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditArchive.cpp", EditArchiveInfo);
 USEFORM("tzx\tzxEditData.cpp", EditDataForm);
+USEFORM("tzx\tzxEditGeneral.cpp", EditGeneralForm);
 USEFORM("tzx\TZXMan.cpp", TZX);
 USEFORM("SymBrowse.cpp", SymbolBrowser);
 USEFORM("SplashScreen.cpp", Splash);
@@ -54,19 +54,19 @@ USEFORM("Artifacts_.cpp", Artifacts);
 USEFORM("BasicLister\BasicListerOptions_.cpp", SaveBasicListingOptionsForm);
 USEFORM("BasicLister\BasicLister_.cpp", BasicLister);
 USEFORM("Plus3Drives.cpp", P3Drive);
+USEFORM("Parallel.cpp", ParallelPort);
+USEFORM("MakeHDF.cpp", CreateHDF);
 USEFORM("memoryWindow.cpp", MemoryWindow);
 USEFORM("MemSave_.cpp", MemSave);
-USEFORM("Parallel.cpp", ParallelPort);
 USEFORM("sound\SoundForm.cpp", MidiForm);
 USEFORM("sound\SoundOP.cpp", SoundOutput);
 USEFORM("SerialPort.cpp", SerialConfig);
-USEFORM("Keyboard_.cpp", Keyboard);
 USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
-USEFORM("Interface1.cpp", IF1);
+USEFORM("Keyboard_.cpp", Keyboard);
 USEFORM("kb_.cpp", Kb);
+USEFORM("Interface1.cpp", IF1);
 USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
 USEFORM("main_.cpp", Form1);
-USEFORM("MakeHDF.cpp", CreateHDF);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

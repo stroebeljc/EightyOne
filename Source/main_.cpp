@@ -80,6 +80,7 @@
 #include "ROMCartridge\IF2ROMCartridge.h"
 #include "sound\sound.h"
 #include "sp0256drv.h"
+#include "Digitalkdrv.h"
 #if __CODEGEARC__ >= 0x0620
 #include <System.IOUtils.hpp>
 #endif
@@ -218,6 +219,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         ATA_Init();
         load_config();
         PCKbInit();
+        Digitalker.Init(speechRomsFolder);
 
         Application->OnDeactivate=FormDeactivate;
 
@@ -458,7 +460,7 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 void __fastcall TForm1::Display1Click(TObject *Sender)
 {
         PCAllKeysUp();
-        HW->ShowModal();
+        HW->Show();
 }
 //---------------------------------------------------------------------------
 
@@ -633,7 +635,7 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         }
 
         emulation_stop=1;
-        Sound.AYReset();
+        Sound.InitDevices();
 
         if (BasicLister->ListerAvailable())
         {
@@ -688,7 +690,7 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         PCAllKeysUp();
         emulation_stop=1;
         z80_reset();
-        Sound.AYReset();
+        if (machine.aytype==AY_TYPE_SINCLAIR) Sound.AYReset();
         InitialiseChroma();
         DisableSpectra();
         Dbg->ClearSkipAddresses();
@@ -1394,7 +1396,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         z80_reset();
         AccurateInit(false);
         machine.initialise();
-        Sound.AYReset();
+        Sound.InitDevices();
         emulation_stop=initialStopState;
         Dbg->Reset();
         DebugUpdate();
@@ -2322,7 +2324,7 @@ void __fastcall TForm1::RunFrame()
                 }
         }
 
-        Sound.Frame();
+        Sound.Frame(emulation_stop || emulator.single_step);
 
         if (emulation_stop)
         {

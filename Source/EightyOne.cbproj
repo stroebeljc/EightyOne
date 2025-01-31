@@ -64,8 +64,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <BCC_PCHUsage>None</BCC_PCHUsage>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <IncludePath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>Digitalker\;SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>Digitalker\;SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <BCC_IncludePath>zlib\minizip\;zlib\;..\Components\ComPort Library\;libdsk\;..\Components\Office Button 97\OffBtn97\32-Bit\;$(BCC_IncludePath)</BCC_IncludePath>
         <DCC_LongStrings>false</DCC_LongStrings>
         <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
@@ -271,6 +271,12 @@
             <FormType>dfm</FormType>
             <DependentOn>DebugWin\SetBreakpoint_.h</DependentOn>
             <BuildOrder>10</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="Digitalker\Digitalk.cpp">
+            <BuildOrder>113</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="Digitalker\Digitalkdrv.cpp">
+            <BuildOrder>114</BuildOrder>
         </CppCompile>
         <CppCompile Include="EightyOne.cpp">
             <BuildOrder>0</BuildOrder>
@@ -638,12 +644,12 @@
             <DependentOn>zxprinter\zxprinter.h</DependentOn>
             <BuildOrder>121</BuildOrder>
         </CppCompile>
-        <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
         <FormResources Include="tzx\tzxEditPause.dfm"/>
         <FormResources Include="tzx\tzxEditText.dfm"/>
-        <FormResources Include="tzx\tzxEditGeneral.dfm"/>
+        <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
         <FormResources Include="tzx\tzxEditArchive.dfm"/>
         <FormResources Include="tzx\tzxEditData.dfm"/>
+        <FormResources Include="tzx\tzxEditGeneral.dfm"/>
         <FormResources Include="tzx\TZXMan.dfm"/>
         <FormResources Include="SymBrowse.dfm"/>
         <FormResources Include="SplashScreen.dfm"/>
@@ -669,19 +675,19 @@
         <FormResources Include="BasicLister\BasicListerOptions_.dfm"/>
         <FormResources Include="BasicLister\BasicLister_.dfm"/>
         <FormResources Include="Plus3Drives.dfm"/>
+        <FormResources Include="Parallel.dfm"/>
+        <FormResources Include="MakeHDF.dfm"/>
         <FormResources Include="memoryWindow.dfm"/>
         <FormResources Include="MemSave_.dfm"/>
-        <FormResources Include="Parallel.dfm"/>
         <FormResources Include="sound\SoundForm.dfm"/>
         <FormResources Include="sound\SoundOP.dfm"/>
         <FormResources Include="SerialPort.dfm"/>
-        <FormResources Include="Keyboard_.dfm"/>
         <FormResources Include="KeyboardFunctions_.dfm"/>
-        <FormResources Include="Interface1.dfm"/>
+        <FormResources Include="Keyboard_.dfm"/>
         <FormResources Include="kb_.dfm"/>
+        <FormResources Include="Interface1.dfm"/>
         <FormResources Include="LiveMemoryWindow_.dfm"/>
         <FormResources Include="main_.dfm"/>
-        <FormResources Include="MakeHDF.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

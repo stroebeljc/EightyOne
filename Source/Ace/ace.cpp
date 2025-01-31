@@ -87,8 +87,6 @@ void ace_initialise()
         z80_init();
         tStatesCount = 0;
 
-        insertWaitsWhileSP0256Busy = false;
-
         ResetLastIOAccesses();
 
         for(i=0;i<65536;i++) memory[i]=(BYTE)random(255);

@@ -302,7 +302,7 @@ private:	// User declarations
 public:		// User declarations
         bool ResetRequired;
         __fastcall THW(TComponent* Owner);
-        void UpdateHardwareSettings(bool reinitialiseStatus, bool disableReset);
+        void UpdateHardwareSettings(bool disableReset);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
         void SetZXpandState(bool checked, bool enabled);

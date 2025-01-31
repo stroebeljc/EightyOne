@@ -737,9 +737,8 @@ int load_snap(char *filename)
         if (!ret) return ret;
 
         // Re-apply the settings without a reset
-        const bool reinitialiseStatus = true;
         bool disableResetStatus = true;
-        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        HW->UpdateHardwareSettings(disableResetStatus);
 
         return true;
 }

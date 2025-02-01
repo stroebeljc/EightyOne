@@ -79,7 +79,7 @@ void LoadFDC765DLL(void)
 }
 
 #define NMIREADTICKER 80
-#define NMIWRITETICKER 70
+#define NMIWRITETICKER 100
 
 void OpusNMI( wd1770_drive *d )
 {
@@ -350,8 +350,10 @@ void floppy_ClockTick(int ts)
 
                 if (PlusDCur->state == wd1770_state_read
                         || PlusDCur->state == wd1770_state_write
+                        || PlusDCur->state == wd1770_state_writetrack
                         || PlusDCur->state == wd1770_state_readid)
                 {
+                        spectrum.drivebusy = 1;
                         NMICount -= ts;
                         if (NMICount<0)
                         {
@@ -360,7 +362,11 @@ void floppy_ClockTick(int ts)
                                                                         : NMIWRITETICKER;
                         }
                 }
-                else    NMICount=NMIWRITETICKER;
+                else
+                {
+                        spectrum.drivebusy = 0;
+                        NMICount=NMIWRITETICKER;
+                }
 
 
                 counter -= ts;

@@ -100,7 +100,7 @@ __fastcall THW::THW(TComponent* Owner)
         Advanced->ActivePage=Interfaces;
         FloppyDrives->TabVisible=true;
         DriveAType->ItemIndex=1;
-        DriveBType->ItemIndex=0;
+        DriveBType->ItemIndex=1;
         ZXCFRAM->ItemIndex=1;
         ZX81BtnClick(NULL);
 

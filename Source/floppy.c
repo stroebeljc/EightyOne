@@ -593,7 +593,7 @@ void floppy_eject(int drive)
                 else filename=LarkenPath1;
 
                 a=open( filename, O_CREAT | O_RDWR | O_BINARY);
-                if (a>0)
+                if (a!=-1)
                 {
                         write(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
                         close(a);

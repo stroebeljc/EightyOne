@@ -305,18 +305,21 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
         HD1FSBtn->Enabled=true;
         HD1EjectBtn->Enabled=true;
 
-        if (spectrum.driveatype==DRIVENONE)
+        if (spectrum.floppytype==FLOPPYPLUS3)
         {
-                DriveALabel->Enabled=false;
-                DriveAFSBtn->Enabled=false;
-                DriveAEjectBtn->Enabled=false;
-        }
+                if (spectrum.driveatype==DRIVENONE)
+                {
+                        DriveALabel->Enabled=false;
+                        DriveAFSBtn->Enabled=false;
+                        DriveAEjectBtn->Enabled=false;
+                }
 
-        if (spectrum.drivebtype==DRIVENONE)
-        {
-                DriveBLabel->Enabled=false;
-                DriveBFSBtn->Enabled=false;
-                DriveBEjectBtn->Enabled=false;
+                if (spectrum.drivebtype==DRIVENONE)
+                {
+                        DriveBLabel->Enabled=false;
+                        DriveBFSBtn->Enabled=false;
+                        DriveBEjectBtn->Enabled=false;
+                }
         }
 
         //if (spectrum.HDType==HDNONE)

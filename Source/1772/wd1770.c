@@ -53,8 +53,6 @@ void wd1770_reset(wd1770_drive *d)
   	d->set_cmdint=d->reset_cmdint=d->set_datarq=d->reset_datarq=d->iface=NULL;
 
         d->cmdint = d->datarq = 0;
-
-        //disk_info *disk;
 }
 
 void wd1770_set_cmdint( wd1770_drive *d )
@@ -134,10 +132,6 @@ static void wd1770_seek( wd1770_drive *d, int track, int update, int verify )
 
 BYTE wd1770_sr_read( wd1770_drive *d )
 {
-        //t temp;
-
-        //temp=d->status_register;
-
 	//RDPRINTF( "wd1770_%s()\n", "sr_read" );
   	d->status_register &= ~( WD1770_SR_MOTORON | WD1770_SR_SPINUP | WD1770_SR_CRCERR );
 
@@ -148,16 +142,6 @@ BYTE wd1770_sr_read( wd1770_drive *d )
                         d->status_register |= WD1770_SR_IDX_DRQ;
   	}
 
-        //if (d->state != wd1770_state_none) d->status_register |= WD1770_SR_MOTORON;
-
-        //if( d->status_type == wd1770_status_type2)
-        //{
-        //        if( d->disk->fd == -1)
-        //        {
-        //                d->status_register &= ~(WD1770_SR_IDX_DRQ);
-        //        }
-        //}
-
         return d->status_register;
 }
 
@@ -166,8 +150,8 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 {
 	//DPRINTF( "wd1770_%s( 0x%02x )\n", "cr_write", b );
 
-        //if (d->state == wd1770_state_read) d->state = wd1770_state_none;
         d->type_III_len=0;
+
 	/* command register: */
   	if( ( b & 0xf0 ) == 0xd0 )
 	{                  /* Type IV - Force Interrupt */
@@ -188,12 +172,6 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 	}
 
   	if( d->status_register & WD1770_SR_BUSY ) return;
-
-
-  	//d->status_register |= WD1770_SR_BUSY;
-        //d->busy_counter=3500;
-  	//event_add( tstates + 10 * machine_current->timings.processor_speed / 1000, EVENT_TYPE_DISCIPLE_CMD_DONE );
-
 
   	if( !( b & 0x08 ) )
 	{
@@ -364,21 +342,18 @@ BYTE wd1770_tr_read( wd1770_drive *d )
 void wd1770_tr_write( wd1770_drive *d, BYTE b )
 {
 	//DPRINTF( "wd1770_%s( %i )\n", "tr_write", b );
-	//if (d->state == wd1770_state_read) d->state = wd1770_state_none;
         d->track_register = b;
 }
 
 BYTE wd1770_sec_read( wd1770_drive *d )
 {
 	//DPRINTF( "wd1770_%s()\n", "sec_read" );
-	//if (d->state == wd1770_state_read) d->state = wd1770_state_none;
         return d->sector_register;
 }
 
 void wd1770_sec_write( wd1770_drive *d, BYTE b )
 {
 	//DPRINTF( "wd1770_%s( %i )\n", "sec_write", b );
-	//if (d->state == wd1770_state_read) d->state = wd1770_state_none;
         d->sector_register = b;
 }
 
@@ -490,6 +465,7 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
 
         if (d->state == wd1770_state_writetrack)
         {
+                // MFM Double Density 
                 if (d->data_track_state==0)
                 {
                         if (d->data_track_leader_count<22 && b==0x4E)

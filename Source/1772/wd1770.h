@@ -44,7 +44,7 @@ extern int wd1770_index_interrupt;
 
 typedef struct wd1770_drive 
 {
-	disk_info *disk;
+	disk_info disk;
 
         unsigned char type_III_buffer[6*1024];
         int type_III_len;

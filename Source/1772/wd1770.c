@@ -114,7 +114,7 @@ static void wd1770_seek( wd1770_drive *d, int track, int update, int verify )
 	{
     		if( track < 0 ) 
 			d->status_register |= WD1770_SR_RNF;
-    		else if( track >= d->disk->numtracks )
+    		else if( track >= d->disk.numtracks )
       			d->status_register |= WD1770_SR_RNF;
     		else
       			d->status_register &= ~WD1770_SR_RNF;
@@ -138,7 +138,7 @@ BYTE wd1770_sr_read( wd1770_drive *d )
 	if( d->status_type == wd1770_status_type1 )
 	{
     		d->status_register &= ~WD1770_SR_IDX_DRQ;
-    		if( d->disk->fd == -1 || d->index_pulse )
+    		if( d->disk.fd == -1 || d->index_pulse )
                         d->status_register |= WD1770_SR_IDX_DRQ;
   	}
 
@@ -230,7 +230,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
     		}
 		else
 		{                                            /* Write Sector */
-                        if (d->disk->readonly)
+                        if (d->disk.readonly)
                         {
                                 d->status_register &= ~WD1770_SR_BUSY;
                                 d->status_register |= WD1770_SR_WRPROT;
@@ -245,9 +245,9 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
       			d->state = wd1770_state_write;
     		}
 
-	    	if( d->sector_register >= d->disk->numsectors + 1
+	    	if( d->sector_register >= d->disk.numsectors + 1
 			|| d->sector_register < 1
-			|| d->track >= d->disk->numtracks
+			|| d->track >= d->disk.numtracks
 			|| d->track < 0 )
 		{
       			d->status_register |= WD1770_SR_RNF;
@@ -278,7 +278,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
       			break;
 
 		case 0xf0:                                          /* Write Track */
-                        if (d->disk->readonly)
+                        if (d->disk.readonly)
                         {
                                 d->status_register &= ~WD1770_SR_BUSY;
                                 d->status_register |= WD1770_SR_WRPROT;
@@ -316,7 +316,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
                         d->type_III_buffer[0]=d->track;
                         d->type_III_buffer[1]=d->side;
                         d->type_III_buffer[2]=random(16)+1;
-                        switch(d->disk->sectorsize)
+                        switch(d->disk.sectorsize)
                         {
                         case 128: d->type_III_buffer[3]=0; break;
                         case 256: d->type_III_buffer[3]=1; break;
@@ -366,8 +366,8 @@ BYTE wd1770_dr_read( wd1770_drive *d )
         if (d->state!=wd1770_state_read && d->state!=wd1770_state_readid)
                 return(d->data_register);
 
-        if( d->disk->fd == -1
-                || d->data_track >= d->disk->numtracks
+        if( d->disk.fd == -1
+                || d->data_track >= d->disk.numtracks
                 || d->data_side >= 2 )
         {
                 d->status_register |= WD1770_SR_RNF;
@@ -384,7 +384,7 @@ BYTE wd1770_dr_read( wd1770_drive *d )
                 if( d->data_offset < d->type_III_len )
                 {
                         d->data_register = d->type_III_buffer[d->data_offset];
-                        if( d->data_offset == d->disk->sectorsize )
+                        if( d->data_offset == d->disk.sectorsize )
                         {
                                 d->status_register &= ~WD1770_SR_BUSY;
                                 d->status_type = wd1770_status_type2;
@@ -399,7 +399,7 @@ BYTE wd1770_dr_read( wd1770_drive *d )
 
         if (d->state==wd1770_state_read)
         {
-                sec = disk_read_sector( d->disk, d->data_side, d->data_track,  d->data_sector );
+                sec = disk_read_sector( &d->disk, d->data_side, d->data_track,  d->data_sector );
 
                 if( !sec )
                 {
@@ -410,18 +410,18 @@ BYTE wd1770_dr_read( wd1770_drive *d )
                         wd1770_set_cmdint( d );
                         wd1770_reset_datarq( d );
                 }
-                else if( d->data_offset < d->disk->sectorsize )
+                else if( d->data_offset < d->disk.sectorsize )
                 {
                         d->data_register = sec[ d->data_offset++ ];
-                        if( d->data_offset == d->disk->sectorsize )
+                        if( d->data_offset == d->disk.sectorsize )
                         {
-                                if( d->data_multisector && d->data_sector < d->disk->numsectors )
+                                if( d->data_multisector && d->data_sector < d->disk.numsectors )
                                 {
                                         d->data_sector++;
                                         d->data_offset = 0;
                                 }
 
-                                if( !d->data_multisector || d->data_sector >= d->disk->numsectors)
+                                if( !d->data_multisector || d->data_sector >= d->disk.numsectors)
                                 {
                                         d->status_register &= ~WD1770_SR_BUSY;
                                         d->status_type = wd1770_status_type2;
@@ -449,9 +449,9 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
                 return;
         }
 
-        if( d->disk->fd == -1
-                || d->data_sector >= d->disk->numsectors
-		|| d->data_track >= d->disk->numtracks
+        if( d->disk.fd == -1
+                || d->data_sector >= d->disk.numsectors
+		|| d->data_track >= d->disk.numtracks
 		|| d->data_side >= 2 )
         {
                 d->status_register |= WD1770_SR_RNF;
@@ -485,7 +485,7 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
                                 d->data_track_leader_count=0;
                         return;
                 }
-                else if (d->data_track_state++ > d->disk->sectorsize)
+                else if (d->data_track_state++ > d->disk.sectorsize)
                 {
                         d->data_track_state = 0;
                         d->data_track_leader_count = 0;
@@ -493,22 +493,22 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
                 }
         }
 
-        mempos = disk_phys_to_linear( d->disk, d->data_side, d->data_track, d->data_sector );
-        d->disk->buffer[ ( mempos * d->disk->sectorsize + d->data_offset++ ) ] = b;
-        d->disk->changed=1;
+        mempos = disk_phys_to_linear( &d->disk, d->data_side, d->data_track, d->data_sector );
+        d->disk.buffer[ ( mempos * d->disk.sectorsize + d->data_offset++ ) ] = b;
+        d->disk.changed=1;
 
-        if( d->data_offset == d->disk->sectorsize )
+        if( d->data_offset == d->disk.sectorsize )
         {
-                d->disk->present[ mempos ] = 1;
-                d->disk->dirty[ mempos ] = 1;
+                d->disk.present[ mempos ] = 1;
+                d->disk.dirty[ mempos ] = 1;
 
-                if( d->data_multisector && d->data_sector < d->disk->numsectors )
+                if( d->data_multisector && d->data_sector < d->disk.numsectors )
                 {
                         d->data_sector++;
                         d->data_offset = 0;
                 }
 
-                if( !d->data_multisector || d->data_sector >= d->disk->numsectors )
+                if( !d->data_multisector || d->data_sector >= d->disk.numsectors )
                 {
                         d->status_register &= ~WD1770_SR_BUSY;
                         d->status_type = wd1770_status_type2;

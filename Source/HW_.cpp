@@ -85,9 +85,8 @@ void HWSetMachine(int machine, int speccy)
                 break;
         }
 
-        const bool reinitialiseStatus = true;
         const bool disableResetStatus = false;
-        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        HW->UpdateHardwareSettings(disableResetStatus);
 }
 
 __fastcall THW::THW(TComponent* Owner)
@@ -112,9 +111,8 @@ __fastcall THW::THW(TComponent* Owner)
         SetUpRomCartridges();
 
         ResetRequired=true;
-        const bool reinitialiseStatus = true;
         const bool disableResetStatus = false;
-        UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        UpdateHardwareSettings(disableResetStatus);
 }
 //---------------------------------------------------------------------------
 
@@ -182,12 +180,12 @@ void ace_writebyteProxy(int address, int data)
 
 void __fastcall THW::OKClick(TObject *Sender)
 {
-        const bool reinitialiseStatus = false;
         const bool disableResetStatus = false;
-        UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        UpdateHardwareSettings(disableResetStatus);
+        Close();
 }
 
-void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
+void THW::UpdateHardwareSettings(bool disableReset)
 {
         bool machineChanged = (NewMachine != emulator.machine);
         emulator.machine = (CFGBYTE)NewMachine;
@@ -265,8 +263,6 @@ void THW::UpdateHardwareSettings(bool reinitialise, bool disableReset)
         ResetDisplaySize();
 
         ResetDebugger();
-
-        if (!reinitialise) Close();
 
         if (Dbg->Visible) Dbg->UpdateVals();
 

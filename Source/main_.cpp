@@ -2053,9 +2053,8 @@ void TForm1::LoadIniFile(AnsiString FileName)
 
         delete ini;
 
-        const bool reinitialiseStatus = true;
         const bool disableResetStatus = false;
-        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        HW->UpdateHardwareSettings(disableResetStatus);
 
         HardReset1Click(NULL);
 }

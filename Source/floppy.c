@@ -79,7 +79,7 @@ void LoadFDC765DLL(void)
 }
 
 #define NMIREADTICKER 80
-#define NMIWRITETICKER 70
+#define NMIWRITETICKER 100
 
 void OpusNMI( wd1770_drive *d )
 {
@@ -211,17 +211,7 @@ void floppy_set_motor(BYTE Data)
 
         case FLOPPYOPUSD:
                 if (PlusDCur->state == wd1770_state_read) PlusDCur->state = wd1770_state_none;
-                switch(Data&3)
-                {
-                case 0:
-                case 1:
-                        PlusDCur=&PlusDDrives[0];
-                        break;
-                case 2:
-                case 3:
-                        PlusDCur=&PlusDDrives[1];
-                        break;
-                }
+                PlusDCur=&PlusDDrives[(Data&2)>>1];
                 PlusDCur->side=(Data&16)>>4;
                 break;
 
@@ -350,8 +340,10 @@ void floppy_ClockTick(int ts)
 
                 if (PlusDCur->state == wd1770_state_read
                         || PlusDCur->state == wd1770_state_write
+                        || PlusDCur->state == wd1770_state_writetrack
                         || PlusDCur->state == wd1770_state_readid)
                 {
+                        spectrum.drivebusy = 1;
                         NMICount -= ts;
                         if (NMICount<0)
                         {
@@ -360,7 +352,11 @@ void floppy_ClockTick(int ts)
                                                                         : NMIWRITETICKER;
                         }
                 }
-                else    NMICount=NMIWRITETICKER;
+                else
+                {
+                        spectrum.drivebusy = 0;
+                        NMICount=NMIWRITETICKER;
+                }
 
 
                 counter -= ts;
@@ -597,7 +593,7 @@ void floppy_eject(int drive)
                 else filename=LarkenPath1;
 
                 a=open( filename, O_CREAT | O_RDWR | O_BINARY);
-                if (a>0)
+                if (a!=-1)
                 {
                         write(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
                         close(a);

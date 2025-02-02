@@ -126,6 +126,17 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         DriveAText->Text = Filename;
         DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
         strcpy(spectrum.driveaimg,DriveAText->Text.c_str());
+        
+        FILE *f;
+        if((f = fopen( spectrum.driveaimg, "r" )) != NULL )
+        {
+                fclose(f);
+        }
+        else if((f = fopen( spectrum.driveaimg, "w" )) != NULL )
+        {
+                fclose(f);
+        }
+        
         floppy_setimage(0,spectrum.driveaimg);
 }
 //---------------------------------------------------------------------------
@@ -160,6 +171,17 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
         DriveBText->Text = Filename;
         DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
         strcpy(spectrum.drivebimg,DriveBText->Text.c_str());
+        
+        FILE *f;
+        if((f = fopen( spectrum.drivebimg, "r" )) != NULL )
+        {
+                fclose(f);
+        }
+        else if((f = fopen( spectrum.drivebimg, "w" )) != NULL )
+        {
+                fclose(f);
+        }
+        
         floppy_setimage(1,spectrum.drivebimg);
 }
 //---------------------------------------------------------------------------
@@ -283,18 +305,21 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
         HD1FSBtn->Enabled=true;
         HD1EjectBtn->Enabled=true;
 
-        if (spectrum.driveatype==DRIVENONE)
+        if (spectrum.floppytype==FLOPPYPLUS3)
         {
-                DriveALabel->Enabled=false;
-                DriveAFSBtn->Enabled=false;
-                DriveAEjectBtn->Enabled=false;
-        }
+                if (spectrum.driveatype==DRIVENONE)
+                {
+                        DriveALabel->Enabled=false;
+                        DriveAFSBtn->Enabled=false;
+                        DriveAEjectBtn->Enabled=false;
+                }
 
-        if (spectrum.drivebtype==DRIVENONE)
-        {
-                DriveBLabel->Enabled=false;
-                DriveBFSBtn->Enabled=false;
-                DriveBEjectBtn->Enabled=false;
+                if (spectrum.drivebtype==DRIVENONE)
+                {
+                        DriveBLabel->Enabled=false;
+                        DriveBFSBtn->Enabled=false;
+                        DriveBEjectBtn->Enabled=false;
+                }
         }
 
         //if (spectrum.HDType==HDNONE)

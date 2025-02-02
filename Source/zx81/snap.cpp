@@ -737,9 +737,8 @@ int load_snap(char *filename)
         if (!ret) return ret;
 
         // Re-apply the settings without a reset
-        const bool reinitialiseStatus = true;
         bool disableResetStatus = true;
-        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        HW->UpdateHardwareSettings(disableResetStatus);
 
         return true;
 }
@@ -1043,7 +1042,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length)
         }
 
         fptr=open(file, O_RDONLY | O_BINARY);
-        if (fptr<1)
+        if (fptr<0)
         {
                 int err=errno;
                 AnsiString errMsg = "ROM load to address failed:\n" + AnsiString(filename);
@@ -1071,7 +1070,7 @@ int do_memory_load(char *file, int address, int length, int secondBank)
         int len;
 
         fptr=open(file, O_RDONLY | O_BINARY);
-        if (fptr<1)
+        if (fptr<0)
         {
                 int err=errno;
                 AnsiString errMsg = "ROM load failed:\n" + AnsiString(file);
@@ -1144,7 +1143,7 @@ int font_load(const char *filename, char *address, int length)
         strcat(file, filename);
 
         fptr=open(file, O_RDONLY | O_BINARY);
-        if (fptr<1) return(errno);
+        if (fptr<0) return(errno);
 
         if ((len=read(fptr, address, length))==-1)
         {

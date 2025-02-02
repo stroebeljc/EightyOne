@@ -211,17 +211,7 @@ void floppy_set_motor(BYTE Data)
 
         case FLOPPYOPUSD:
                 if (PlusDCur->state == wd1770_state_read) PlusDCur->state = wd1770_state_none;
-                switch(Data&3)
-                {
-                case 0:
-                case 1:
-                        PlusDCur=&PlusDDrives[0];
-                        break;
-                case 2:
-                case 3:
-                        PlusDCur=&PlusDDrives[1];
-                        break;
-                }
+                PlusDCur=&PlusDDrives[(Data&2)>>1];
                 PlusDCur->side=(Data&16)>>4;
                 break;
 

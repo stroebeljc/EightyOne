@@ -2092,7 +2092,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end
@@ -2103,6 +2103,7 @@ object HW: THW
     Top = 363
     Width = 75
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = 'Defaults'
     TabOrder = 3
     OnClick = DefaultsButtonClick

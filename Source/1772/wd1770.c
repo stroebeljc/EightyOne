@@ -150,10 +150,10 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 {
     //DPRINTF( "wd1770_%s( 0x%02x )\n", "cr_write", b );
 
-    wd1770_reset_cmdint(d);
     /* command register: */
     if( ( b & 0xf0 ) == 0xd0 )
     {                  /* Type IV - Force Interrupt */
+        wd1770_reset_cmdint(d);
         d->status_register &= ~WD1770_SR_BUSY;
         d->status_register &= ~WD1770_SR_WRPROT;
         d->status_register &= ~WD1770_SR_CRCERR;
@@ -172,6 +172,8 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 
     if( d->status_register & WD1770_SR_BUSY ) return;
 
+    wd1770_reset_cmdint(d);
+    
     if( !( b & 0x08 ) )
     {
         d->spin_cycles = 5;
@@ -309,7 +311,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             d->data_multisector = 0;
             d->readid_buffer[0]=d->track;
             d->readid_buffer[1]=d->side;
-            d->readid_buffer[2]=random(16)+1;
+            d->readid_buffer[2]=random(d->disk.numsectors)+1;
             switch(d->disk.sectorsize)
             {
             case 128: d->readid_buffer[3]=0; break;
@@ -375,10 +377,10 @@ BYTE wd1770_dr_read( wd1770_drive *d )
 
     if (d->state==wd1770_state_readid)
     {
-        if( d->data_offset < 6 )
+        if( d->data_offset < READID_BUFFSIZE )
         {
             d->data_register = d->readid_buffer[d->data_offset++];
-            if( d->data_offset >= 6 )
+            if( d->data_offset >= READID_BUFFSIZE )
             {
                 d->status_register &= ~WD1770_SR_BUSY;
                 d->status_type = wd1770_status_type2;
@@ -461,18 +463,19 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
         // MFM Double Density 
         if (d->data_track_state==0)
         {
-            if (d->data_track_leader_count<22 && b==0x4E)
+            if (d->data_track_leader_count<PREAMBLE_COUNT
+                && b==PREAMBLE_VALUE)
                 d->data_track_leader_count++;
-            else if (d->data_track_leader_count>=22
-                && d->data_track_leader_count<(22+12)
-                && b==0x00)
+            else if (d->data_track_leader_count>=PREAMBLE_COUNT
+                && d->data_track_leader_count<(PREAMBLE_COUNT+SYNC_COUNT)
+                && b==SYNC_VALUE)
                 d->data_track_leader_count++;
-            else if (d->data_track_leader_count>=(22+12)
-                && d->data_track_leader_count<(22+12+3)
-                && b==0xF5)
+            else if (d->data_track_leader_count>=(PREAMBLE_COUNT+SYNC_COUNT)
+                && d->data_track_leader_count<(PREAMBLE_COUNT+SYNC_COUNT+PRE_ADDRESS_COUNT)
+                && b==PRE_ADDRESS)
                 d->data_track_leader_count++;
-            else if (d->data_track_leader_count == (22+12+3)
-                && b==0xFB)
+            else if (d->data_track_leader_count == (PREAMBLE_COUNT+SYNC_COUNT+PRE_ADDRESS_COUNT)
+                && b==ADDRESS_MARK)
                 d->data_track_state++;
             else
                 d->data_track_leader_count=0;

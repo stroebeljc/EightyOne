@@ -388,7 +388,7 @@ void floppy_init()
                 memset(LarkenDrive, 0, LARKENSIZE*2);
                 LarkenPath0[0]='\0';
                 LarkenPath1[0]='\0';
-                if (strlen(filename)) floppy_setimage(i,filename);
+                if (strlen(filename)) floppy_setimage(i,filename,1);
                 return;
         }
 
@@ -433,7 +433,7 @@ void floppy_init()
 
                         if (spectrum.floppytype==FLOPPYOPUSD) PlusDCur->set_datarq=OpusNMI;
 
-                        if (strlen(filename)) floppy_setimage(i,filename);
+                        if (strlen(filename)) floppy_setimage(i,filename,1);
                 }
                 PlusDCur= &PlusDDrives[0];
                 return;
@@ -443,8 +443,8 @@ void floppy_init()
         {
                 u765_Shutdown();
                 u765_Initialise();
-                floppy_setimage(0,spectrum.driveaimg);
-                floppy_setimage(1,spectrum.drivebimg);
+                floppy_setimage(0,spectrum.driveaimg,1);
+                floppy_setimage(1,spectrum.drivebimg,1);
                 return;
         }
 
@@ -528,8 +528,8 @@ void floppy_init()
 	        fdc_setdrive(p3_fdc, 2, p3_drive_null);
 	        fdc_setdrive(p3_fdc, 3, p3_drive_null);
 
-                floppy_setimage(0,spectrum.driveaimg);
-                floppy_setimage(1,spectrum.drivebimg);
+                floppy_setimage(0,spectrum.driveaimg,1);
+                floppy_setimage(1,spectrum.drivebimg,1);
         }
 }
 
@@ -589,7 +589,7 @@ void floppy_eject(int drive)
 
 int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format);
 
-void floppy_setimage(int drive, char *filename)
+void floppy_setimage(int drive, char *filename, int readonly)
 {
         int a;
 
@@ -665,7 +665,7 @@ void floppy_setimage(int drive, char *filename)
 
                 if( d->disk.fd != -1 ) floppy_eject( drive );
 
-                d->disk.readonly = 0;
+                d->disk.readonly = readonly;
                 d->disk.changed = 0;
 
                 if( ( d->disk.fd = open( filename, O_RDWR | O_BINARY) ) == -1 )

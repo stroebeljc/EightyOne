@@ -274,8 +274,11 @@ typedef struct
         CFGBYTE zxprinter;
         CFGBYTE aytype;
         CFGBYTE speech;
+        CFGBYTE joystick;
         CFGBYTE ts2050;
         CFGBYTE colour;
+        CFGBYTE joystick1AutoFireEnabled;
+        CFGBYTE joystick2AutoFireEnabled;
 
         // Specific machine options
         CFGBYTE ace96k;

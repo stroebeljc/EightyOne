@@ -82,6 +82,8 @@ typedef struct wd1770_drive
   	int data_side;
   	int data_multisector;
   	int data_offset;
+        int data_track_state;
+        int data_track_leader_count;
 
 	/* what we need:
 	 * 

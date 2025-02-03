@@ -92,7 +92,6 @@ struct SpecDrumChangeTag
         unsigned char val;
 };
 
-
 class CSound
 {
 public:
@@ -100,13 +99,16 @@ public:
         int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
         int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
 
-	void End(void);
-	void AYWrite(int reg,int val, int frametstates);
-	int AYRead(int reg);
-	void AYReset(void);
+        void End(void);
+        void AYWrite(int reg,int val, int frametstates);
+        void AYWrite128(int reg, int val, int frametstates);
+        void AYWriteTimex(int reg, int val, int frametstates);
+        int AYRead(int reg);
+        int AYReadTimex(int reg, int joysticks);
+        void AYReset(void);
         void SpecDrumWrite(BYTE data, int frametstates);
-	void Frame(void);
-	void Beeper(int on, int frametstates);
+        void Frame(bool pause);
+        void Beeper(int on, int frametstates);
 
         int VolumeLevel[6];
         bool ACBMix;

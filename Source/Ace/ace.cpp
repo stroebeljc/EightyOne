@@ -38,6 +38,7 @@
 #include "ide.h"
 #include "LiveMemoryWindow_.h"
 #include "sp0256drv.h"
+#include "Joystick.h"
 
 #define BASE 0
 #define HBLANKCOLOUR (BASE+0*16)
@@ -87,8 +88,6 @@ void ace_initialise()
         z80_init();
         tStatesCount = 0;
 
-        insertWaitsWhileSP0256Busy = false;
-
         ResetLastIOAccesses();
 
         for(i=0;i<65536;i++) memory[i]=(BYTE)random(255);
@@ -114,6 +113,12 @@ void ace_initialise()
         if (spectrum.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
 }
 
+void ace_reset()
+{
+        z80_reset();
+        InitialiseJoysticks();
+}
+
 void ace_writebyte(int Address, int Data)
 {
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
@@ -129,7 +134,7 @@ void ace_writebyte(int Address, int Data)
         if (machine.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
-                if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data, frametstates);
+                if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg, Data, frametstates);
         }
 
         if (Address<=zx81.ROMTOP && machine.protectROM)
@@ -294,11 +299,26 @@ BYTE ReadInputPort(int Address, int *tstates)
                 {
                         if (! (keyb & (1<<i)) ) data |= ZXKeyboard[i];
                 }
-                return (BYTE)(~data);
+
+                data = (BYTE)~data;
+                
+                if (machine.joystick == JOYSTICK_PROGRAMMABLE)
+                {
+                        if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
+                        if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
+                        if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
+                        if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
+                        if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                }
+
+                return data;
         }
 
         if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
                 return (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
+
+        if ((Address & 0x0001) == 0x0001)
+                return (BYTE)~ReadJoystick();
 
         switch(Address&255)
         {

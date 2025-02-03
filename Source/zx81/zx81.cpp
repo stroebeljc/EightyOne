@@ -48,6 +48,7 @@
 #include "sp0256drv.h"
 #include "floppy.h"
 #include "Digitalkdrv.h"
+#include "Joystick.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -195,7 +196,6 @@ bool zx80rom;
 bool zx81rom;
 BOOL memotechResetPressed;
 BOOL memotechResetRequested;
-BOOL insertWaitsWhileSP0256Busy;
 
 int videoFlipFlop1Q;
 int videoFlipFlop2Q;
@@ -232,6 +232,8 @@ void zx81_reset()
         QuicksilvaHiResMode=0;
         ResetRomCartridge();
         DisableChroma();
+
+        InitialiseJoysticks();
 }
 
 void zx81_initialise()
@@ -239,8 +241,6 @@ void zx81_initialise()
         int i, romlen;
         z80_init();
         tStatesCount = 0;
-
-        insertWaitsWhileSP0256Busy = false;
 
         chromaSelected = (machine.colour == COLOURCHROMA);
         lambdaSelected = (emulator.machine == MACHINELAMBDA);
@@ -492,14 +492,10 @@ void zx81_WriteByte(int Address, int Data)
                 }
         }
 
-        if (Address == 49149)
+        if (machine.speech == SPEECH_TYPE_DIGITALKER)
         {
-                Digitalker.Write1((BYTE)Data);
-        }
-
-        if (Address == 49148)
-        {
-                Digitalker.Write2((BYTE)Data);
+                if (Address == 49149) Digitalker.Write1((BYTE)Data);
+                if (Address == 49148) Digitalker.Write2((BYTE)Data);
         }
 
         // Quicksilva Sound Board uses a memory mapped AY8912 chip
@@ -1197,19 +1193,11 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0x07:
                 if (zxpand) zxpand->IO_Write(Address>>8, Data);
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
-                {
-                        sp0256_AL2.Write((BYTE)Data);
-                        insertWaitsWhileSP0256Busy = true;
-                }
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x1f:
-                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
-                {
-                        sp0256_AL2.Write((BYTE)Data);
-                        insertWaitsWhileSP0256Busy = true;
-                }
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x3f:
@@ -1319,7 +1307,34 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (! (keyb & (1<<i)) ) data |= ZXKeyboard[i];
                 }
 
-                return (BYTE)(~data);
+                data = (BYTE)~data;
+
+                if (machine.joystick != JOYSTICK_NONE)
+                {
+                        if (machine.joystick == JOYSTICK_SINCLAIR1)
+                        {
+                                if (!(Address & 0x1000)) data &= ReadJoystick();
+                        }
+                        else if (machine.joystick == JOYSTICK_SINCLAIR2)
+                        {
+                                if (!(Address & 0x0800)) data &= ReadJoystick();
+                        }
+                        else if (machine.joystick == JOYSTICK_CURSOR)
+                        {
+                                if (!(Address & 0x0800)) data &= ReadJoystick_Left();
+                                if (!(Address & 0x1000)) data &= ReadJoystick_RightUpDownFire();
+                        }
+                        else if (machine.joystick == JOYSTICK_PROGRAMMABLE)
+                        {
+                                if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
+                                if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
+                                if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
+                                if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
+                                if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                        }
+                }
+
+                return data;
         }
         else
         {
@@ -1347,6 +1362,10 @@ BYTE ReadInputPort(int Address, int *tstates)
                 case 0x17:
                         if (zxpand) return (BYTE)zxpand->IO_ReadStatus();
                         return 0;
+
+                case 0x1f:
+                        if (machine.joystick == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick();
+                        break;
 
                 case 0x3f:
                         if (machine.speech == SPEECH_TYPE_MAGECO) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : (BYTE)(idleDataBus | 0x01);
@@ -1598,20 +1617,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts;
+                int ts=z80_do_opcode();
 
-                if (insertWaitsWhileSP0256Busy && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
-                {
-                        ts = 1;
-                        z80.r = (WORD)((z80.r + 1) & 0x7f);
-                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
-                }
-                else
-                {
-                        ts=z80_do_opcode();
-                }
-
-                if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))
+                if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);
@@ -2193,22 +2201,11 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts;
-
-                if (insertWaitsWhileSP0256Busy && (z80.pc.w >= 0x2000 && z80.pc.w <= zx81.RAMTOP))
-                {
-                        ts = 1;
-                        z80.r = (WORD)((z80.r + 1) & 0x7f);
-                        insertWaitsWhileSP0256Busy = sp0256_AL2.Busy() ? true : false;
-                }
-                else
-                {
-                        ts=z80_do_opcode();
-                }
+                int ts=z80_do_opcode();
 
                 if (BasicLister->Visible &&
-                    ((zx80rom && z80.pc.w == 0x04F4) ||
-                     (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))))
+                    ((zx80rom && (z80.pc.w == 0x04F4 || z80.pc.w == 0x0202)) ||
+                     (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);

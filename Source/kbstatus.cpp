@@ -29,6 +29,22 @@
 #include "zx81.h"
 #include "zx81config.h"
 
+#define kbD0 1
+#define kbD1 2
+#define kbD2 4
+#define kbD3 8
+#define kbD4 16
+#define kbD5 32
+
+#define kbA8  0
+#define kbA9  1
+#define kbA10 2
+#define kbA11 3
+#define kbA12 4
+#define kbA13 5
+#define kbA14 6
+#define kbA15 7
+
 int PCShift=1;
 unsigned int PCALT=0;
 
@@ -46,66 +62,65 @@ struct kb KeyMap[100];
 
 const struct kb KBZX81[]=
 {
-        { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
-        { 0, VK_RETURN , kbA14, kbD0, 255,255 },
-        { 0, VK_SPACE , kbA15, kbD0, 255,255 },
+        { 0, VK_SHIFT, kbA8, kbD0, 255, 255 },
+        { 0, VK_RETURN, kbA14, kbD0, 255, 255 },
+        { 0, VK_SPACE, kbA15, kbD0, 255, 255 },
 
-        { 0, 'A' , kbA9, kbD0, 255,255 },
-        { 0, 'B' , kbA15, kbD4, 255,255 },
-        { 0, 'C' , kbA8, kbD3, 255,255 },
-        { 0, 'D' , kbA9, kbD2, 255,255 },
-        { 0, 'E' , kbA10, kbD2, 255,255 },
-        { 0, 'F' , kbA9, kbD3, 255,255 },
-        { 0, 'G' , kbA9, kbD4, 255,255 },
-        { 0, 'H' , kbA14, kbD4, 255,255 },
-        { 0, 'I' , kbA13, kbD2, 255,255 },
-        { 0, 'J' , kbA14, kbD3, 255,255 },
-        { 0, 'K' , kbA14, kbD2, 255,255 },
-        { 0, 'L' , kbA14, kbD1, 255,255 },
-        { 0, 'M' , kbA15, kbD2, 255,255 },
-        { 0, 'N' , kbA15, kbD3, 255,255 },
-        { 0, 'O' , kbA13, kbD1, 255,255 },
-        { 0, 'P' , kbA13, kbD0, 255,255 },
-        { 0, 'Q' , kbA10, kbD0, 255,255 },
-        { 0, 'R' , kbA10, kbD3, 255,255 },
-        { 0, 'S' , kbA9, kbD1, 255,255 },
-        { 0, 'T' , kbA10, kbD4, 255,255 },
-        { 0, 'U' , kbA13, kbD3, 255,255 },
-        { 0, 'V' , kbA8, kbD4, 255,255 },
-        { 0, 'W' , kbA10, kbD1, 255,255 },
-        { 0, 'X' , kbA8, kbD2, 255,255 },
-        { 0, 'Y' , kbA13, kbD4, 255,255 },
-        { 0, 'Z' , kbA8, kbD1, 255,255 },
+        { 0, 'A', kbA9, kbD0, 255, 255 },
+        { 0, 'B', kbA15, kbD4, 255, 255 },
+        { 0, 'C', kbA8, kbD3, 255, 255 },
+        { 0, 'D', kbA9, kbD2, 255, 255 },
+        { 0, 'E', kbA10, kbD2, 255, 255 },
+        { 0, 'F', kbA9, kbD3, 255, 255 },
+        { 0, 'G', kbA9, kbD4, 255, 255 },
+        { 0, 'H', kbA14, kbD4, 255, 255 },
+        { 0, 'I', kbA13, kbD2, 255, 255 },
+        { 0, 'J', kbA14, kbD3, 255, 255 },
+        { 0, 'K', kbA14, kbD2, 255, 255 },
+        { 0, 'L', kbA14, kbD1, 255, 255 },
+        { 0, 'M', kbA15, kbD2, 255, 255 },
+        { 0, 'N', kbA15, kbD3, 255, 255 },
+        { 0, 'O', kbA13, kbD1, 255, 255 },
+        { 0, 'P', kbA13, kbD0, 255, 255 },
+        { 0, 'Q', kbA10, kbD0, 255, 255 },
+        { 0, 'R', kbA10, kbD3, 255, 255 },
+        { 0, 'S', kbA9, kbD1, 255, 255 },
+        { 0, 'T', kbA10, kbD4, 255, 255 },
+        { 0, 'U', kbA13, kbD3, 255, 255 },
+        { 0, 'V', kbA8, kbD4, 255, 255 },
+        { 0, 'W', kbA10, kbD1, 255, 255 },
+        { 0, 'X', kbA8, kbD2, 255, 255 },
+        { 0, 'Y', kbA13, kbD4, 255, 255 },
+        { 0, 'Z', kbA8, kbD1, 255, 255 },
 
-        { 0, '1' , kbA11, kbD0, 255,255 },
-        { 0, '2' , kbA11, kbD1, 255,255 },
-        { 0, '3' , kbA11, kbD2, 255,255 },
-        { 0, '4' , kbA11, kbD3, 255,255 },
-        { 0, '5' , kbA11, kbD4, 255,255 },
-        { 0, '6' , kbA12, kbD4, 255,255 },
-        { 0, '7' , kbA12, kbD3, 255,255 },
-        { 0, '8' , kbA12, kbD2, 255,255 },
-        { 0, '9' , kbA12, kbD1, 255,255 },
-        { 0, '0' , kbA12, kbD0, 255,255 },
-
-        { 0, VK_NUMPAD1 , kbA11, kbD0, 255,255 },
-        { 0, VK_NUMPAD2 , kbA11, kbD1, 255,255 },
-        { 0, VK_NUMPAD3 , kbA11, kbD2, 255,255 },
-        { 0, VK_NUMPAD4 , kbA11, kbD3, 255,255 },
-        { 0, VK_NUMPAD5 , kbA11, kbD4, 255,255 },
-        { 0, VK_NUMPAD6 , kbA12, kbD4, 255,255 },
-        { 0, VK_NUMPAD7 , kbA12, kbD3, 255,255 },
-        { 0, VK_NUMPAD8 , kbA12, kbD2, 255,255 },
-        { 0, VK_NUMPAD9 , kbA12, kbD1, 255,255 },
-        { 0, VK_NUMPAD0 , kbA12, kbD0, 255,255 },
-
-        { 0, VK_MULTIPLY , kbA15, kbD4, kbA8, kbD0 },
-        { 0, VK_DIVIDE , kbA8, kbD4, kbA8, kbD0 },
+        { 0, '1', kbA11, kbD0, 255, 255 },
+        { 0, '2', kbA11, kbD1, 255, 255 },
+        { 0, '3', kbA11, kbD2, 255, 255 },
+        { 0, '4', kbA11, kbD3, 255, 255 },
+        { 0, '5', kbA11, kbD4, 255, 255 },
+        { 0, '6', kbA12, kbD4, 255, 255 },
+        { 0, '7', kbA12, kbD3, 255, 255 },
+        { 0, '8', kbA12, kbD2, 255, 255 },
+        { 0, '9', kbA12, kbD1, 255, 255 },
+        { 0, '0', kbA12, kbD0, 255, 255 },
+/*
+        { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
+        { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
+        { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
+        { 0, VK_NUMPAD4, kbA11, kbD3, 255, 255 },
+        { 0, VK_NUMPAD5, kbA11, kbD4, 255, 255 },
+        { 0, VK_NUMPAD6, kbA12, kbD4, 255, 255 },
+        { 0, VK_NUMPAD7, kbA12, kbD3, 255, 255 },
+        { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
+        { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
+        { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
+*/
+        { 0, VK_MULTIPLY, kbA15, kbD4, kbA8, kbD0 },
+        { 0, VK_DIVIDE, kbA8, kbD4, kbA8, kbD0 },
         { 0, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD0 },
         { 0, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
-        { 0, VK_DECIMAL , kbA15, kbD1, 255,255 },
-
-
+        { 0, VK_DECIMAL, kbA15, kbD1, 255, 255 },
+                 
         { 1, VK_OEM_1, kbA8, kbD2, kbA8, kbD0 },
         { 2, VK_OEM_1, kbA8, kbD1, kbA8, kbD0 },
         { 1, VK_OEM_MINUS, kbA14, kbD3, kbA8, kbD0 },
@@ -116,86 +131,86 @@ const struct kb KBZX81[]=
         { 1, VK_OEM_COMMA, kbA15, kbD1, kbA8, kbD0 },
         { 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
 
-        { 1, VK_OEM_PERIOD , kbA15, kbD1, 255,255 },
-        { 2, VK_OEM_PERIOD , kbA15, kbD2, kbA8, kbD0 },
-        { 1, VK_OEM_2 , kbA8, kbD4, kbA8, kbD0 },
-        { 2, VK_OEM_2 , kbA8, kbD3, kbA8, kbD0 },
-        { 0, VK_OEM_4 , kbA13, kbD2, kbA8, kbD0 },
-        { 0, VK_OEM_6 , kbA13, kbD1, kbA8, kbD0 },
-        { 2, VK_OEM_7 , kbA13, kbD0, kbA8, kbD0 },
-        { 0, VK_OEM_3 , kbA13, kbD0, kbA8, kbD0 },
+        { 1, VK_OEM_PERIOD, kbA15, kbD1, 255, 255 },
+        { 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
+        { 1, VK_OEM_2, kbA8, kbD4, kbA8, kbD0 },
+        { 2, VK_OEM_2, kbA8, kbD3, kbA8, kbD0 },
+        { 0, VK_OEM_4, kbA13, kbD2, kbA8, kbD0 },
+        { 0, VK_OEM_6, kbA13, kbD1, kbA8, kbD0 },
+        { 2, VK_OEM_7, kbA13, kbD0, kbA8, kbD0 },
+        { 0, VK_OEM_3, kbA13, kbD0, kbA8, kbD0 },
 
         //{ 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
 
-        { 0, VK_BACK , kbA12, kbD0, kbA8, kbD0 },
-        { 0, VK_LEFT , kbA11, kbD4, kbA8, kbD0 },
-        { 0, VK_DOWN , kbA12, kbD4, kbA8, kbD0 },
-        { 0, VK_UP , kbA12, kbD3, kbA8, kbD0 },
-        { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
+        { 0, VK_BACK, kbA12, kbD0, kbA8, kbD0 },
+        { 0, VK_LEFT, kbA11, kbD4, kbA8, kbD0 },
+        { 0, VK_DOWN, kbA12, kbD4, kbA8, kbD0 },
+        { 0, VK_UP, kbA12, kbD3, kbA8, kbD0 },
+        { 0, VK_RIGHT, kbA12, kbD2, kbA8, kbD0 },
 
-        { 0, VK_CONTROL , kbA14, kbD0, kbA8 , kbD0 },
+        { 0, VK_CONTROL, kbA14, kbD0, kbA8, kbD0 },
 
         {0, 0, 0, 0, 0, 0 }
 };
 
 const struct kb KBZX80[]=
 {
-        { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
-        { 0, VK_RETURN , kbA14, kbD0, 255,255 },
-        { 0, VK_SPACE , kbA15, kbD0, 255,255 },
+        { 0, VK_SHIFT, kbA8, kbD0, 255, 255 },
+        { 0, VK_RETURN, kbA14, kbD0, 255, 255 },
+        { 0, VK_SPACE, kbA15, kbD0, 255, 255 },
 
-        { 0, 'A' , kbA9, kbD0, 255,255 },
-        { 0, 'B' , kbA15, kbD4, 255,255 },
-        { 0, 'C' , kbA8, kbD3, 255,255 },
-        { 0, 'D' , kbA9, kbD2, 255,255 },
-        { 0, 'E' , kbA10, kbD2, 255,255 },
-        { 0, 'F' , kbA9, kbD3, 255,255 },
-        { 0, 'G' , kbA9, kbD4, 255,255 },
-        { 0, 'H' , kbA14, kbD4, 255,255 },
-        { 0, 'I' , kbA13, kbD2, 255,255 },
-        { 0, 'J' , kbA14, kbD3, 255,255 },
-        { 0, 'K' , kbA14, kbD2, 255,255 },
-        { 0, 'L' , kbA14, kbD1, 255,255 },
-        { 0, 'M' , kbA15, kbD2, 255,255 },
-        { 0, 'N' , kbA15, kbD3, 255,255 },
-        { 0, 'O' , kbA13, kbD1, 255,255 },
-        { 0, 'P' , kbA13, kbD0, 255,255 },
-        { 0, 'Q' , kbA10, kbD0, 255,255 },
-        { 0, 'R' , kbA10, kbD3, 255,255 },
-        { 0, 'S' , kbA9, kbD1, 255,255 },
-        { 0, 'T' , kbA10, kbD4, 255,255 },
-        { 0, 'U' , kbA13, kbD3, 255,255 },
-        { 0, 'V' , kbA8, kbD4, 255,255 },
-        { 0, 'W' , kbA10, kbD1, 255,255 },
-        { 0, 'X' , kbA8, kbD2, 255,255 },
-        { 0, 'Y' , kbA13, kbD4, 255,255 },
-        { 0, 'Z' , kbA8, kbD1, 255,255 },
+        { 0, 'A', kbA9, kbD0, 255, 255 },
+        { 0, 'B', kbA15, kbD4, 255, 255 },
+        { 0, 'C', kbA8, kbD3, 255, 255 },
+        { 0, 'D', kbA9, kbD2, 255, 255 },
+        { 0, 'E', kbA10, kbD2, 255, 255 },
+        { 0, 'F', kbA9, kbD3, 255, 255 },
+        { 0, 'G', kbA9, kbD4, 255, 255 },
+        { 0, 'H', kbA14, kbD4, 255, 255 },
+        { 0, 'I', kbA13, kbD2, 255, 255 },
+        { 0, 'J', kbA14, kbD3, 255, 255 },
+        { 0, 'K', kbA14, kbD2, 255, 255 },
+        { 0, 'L', kbA14, kbD1, 255, 255 },
+        { 0, 'M', kbA15, kbD2, 255, 255 },
+        { 0, 'N', kbA15, kbD3, 255, 255 },
+        { 0, 'O', kbA13, kbD1, 255, 255 },
+        { 0, 'P', kbA13, kbD0, 255, 255 },
+        { 0, 'Q', kbA10, kbD0, 255, 255 },
+        { 0, 'R', kbA10, kbD3, 255, 255 },
+        { 0, 'S', kbA9, kbD1, 255, 255 },
+        { 0, 'T', kbA10, kbD4, 255, 255 },
+        { 0, 'U', kbA13, kbD3, 255, 255 },
+        { 0, 'V', kbA8, kbD4, 255, 255 },
+        { 0, 'W', kbA10, kbD1, 255, 255 },
+        { 0, 'X', kbA8, kbD2, 255, 255 },
+        { 0, 'Y', kbA13, kbD4, 255, 255 },
+        { 0, 'Z', kbA8, kbD1, 255, 255 },
 
-        { 0, '1' , kbA11, kbD0, 255,255 },
-        { 0, '2' , kbA11, kbD1, 255,255 },
-        { 0, '3' , kbA11, kbD2, 255,255 },
-        { 0, '4' , kbA11, kbD3, 255,255 },
-        { 0, '5' , kbA11, kbD4, 255,255 },
-        { 0, '6' , kbA12, kbD4, 255,255 },
-        { 0, '7' , kbA12, kbD3, 255,255 },
-        { 0, '8' , kbA12, kbD2, 255,255 },
-        { 0, '9' , kbA12, kbD1, 255,255 },
-        { 0, '0' , kbA12, kbD0, 255,255 },
-
-        { 0, VK_NUMPAD1 , kbA11, kbD0, 255,255 },
-        { 0, VK_NUMPAD2 , kbA11, kbD1, 255,255 },
-        { 0, VK_NUMPAD3 , kbA11, kbD2, 255,255 },
-        { 0, VK_NUMPAD4 , kbA11, kbD3, 255,255 },
-        { 0, VK_NUMPAD5 , kbA11, kbD4, 255,255 },
-        { 0, VK_NUMPAD6 , kbA12, kbD4, 255,255 },
-        { 0, VK_NUMPAD7 , kbA12, kbD3, 255,255 },
-        { 0, VK_NUMPAD8 , kbA12, kbD2, 255,255 },
-        { 0, VK_NUMPAD9 , kbA12, kbD1, 255,255 },
-        { 0, VK_NUMPAD0 , kbA12, kbD0, 255,255 },
-
-        { 0, VK_MULTIPLY , kbA8, kbD4, 255,255 },
-        { 0, VK_DIVIDE , kbA15, kbD4, 255,255 },
+        { 0, '1', kbA11, kbD0, 255, 255 },
+        { 0, '2', kbA11, kbD1, 255, 255 },
+        { 0, '3', kbA11, kbD2, 255, 255 },
+        { 0, '4', kbA11, kbD3, 255, 255 },
+        { 0, '5', kbA11, kbD4, 255, 255 },
+        { 0, '6', kbA12, kbD4, 255, 255 },
+        { 0, '7', kbA12, kbD3, 255, 255 },
+        { 0, '8', kbA12, kbD2, 255, 255 },
+        { 0, '9', kbA12, kbD1, 255, 255 },
+        { 0, '0', kbA12, kbD0, 255, 255 },
+/*
+        { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
+        { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
+        { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
+        { 0, VK_NUMPAD4, kbA11, kbD3, 255, 255 },
+        { 0, VK_NUMPAD5, kbA11, kbD4, 255, 255 },
+        { 0, VK_NUMPAD6, kbA12, kbD4, 255, 255 },
+        { 0, VK_NUMPAD7, kbA12, kbD3, 255, 255 },
+        { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
+        { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
+        { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
+*/
+        { 0, VK_MULTIPLY, kbA8, kbD4, 255, 255 },
+        { 0, VK_DIVIDE, kbA15, kbD4, 255, 255 },
 
         { 1, VK_OEM_1, kbA8, kbD2, kbA8, kbD0 },
         { 2, VK_OEM_1, kbA8, kbD1, kbA8, kbD0 },
@@ -209,74 +224,74 @@ const struct kb KBZX80[]=
         { 1, VK_OEM_COMMA, kbA15, kbD1, kbA8, kbD0 },
         { 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
 
-        { 1, VK_OEM_PERIOD , kbA15, kbD1, 255,255 },
-        { 1, VK_DECIMAL , kbA15, kbD1, 255,255 },
-        { 2, VK_OEM_PERIOD , kbA15, kbD2, kbA8, kbD0 },
-        { 1, VK_OEM_2 , kbA8, kbD4, kbA8, kbD0 },
-        { 2, VK_OEM_2 , kbA8, kbD3, kbA8, kbD0 },
-        { 0, VK_OEM_4 , kbA13, kbD2, kbA8, kbD0 },
-        { 0, VK_OEM_6 , kbA13, kbD1, kbA8, kbD0 },
-        { 2, VK_OEM_7 , kbA13, kbD4, kbA8, kbD0 },
+        { 1, VK_OEM_PERIOD, kbA15, kbD1, 255, 255 },
+        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
+        { 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
+        { 1, VK_OEM_2, kbA8, kbD4, kbA8, kbD0 },
+        { 2, VK_OEM_2, kbA8, kbD3, kbA8, kbD0 },
+        { 0, VK_OEM_4, kbA13, kbD2, kbA8, kbD0 },
+        { 0, VK_OEM_6, kbA13, kbD1, kbA8, kbD0 },
+        { 2, VK_OEM_7, kbA13, kbD4, kbA8, kbD0 },
 
         //{ 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
 
-        { 0, VK_BACK , kbA12, kbD0, kbA8, kbD0 },
-        { 0, VK_LEFT , kbA11, kbD4, kbA8, kbD0 },
-        { 0, VK_DOWN , kbA12, kbD4, kbA8, kbD0 },
-        { 0, VK_UP , kbA12, kbD3, kbA8, kbD0 },
-        { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
+        { 0, VK_BACK, kbA12, kbD0, kbA8, kbD0 },
+        { 0, VK_LEFT, kbA11, kbD4, kbA8, kbD0 },
+        { 0, VK_DOWN, kbA12, kbD4, kbA8, kbD0 },
+        { 0, VK_UP, kbA12, kbD3, kbA8, kbD0 },
+        { 0, VK_RIGHT, kbA12, kbD2, kbA8, kbD0 },
 
-        { 0, VK_CONTROL , kbA14, kbD0, kbA8 , kbD0 },
+        { 0, VK_CONTROL, kbA14, kbD0, kbA8, kbD0 },
 
         {0, 0, 0, 0, 0, 0 }
 };
 
 const struct kb KBACE[]=
 {
-        { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
-        { 0, VK_CONTROL , kbA8, kbD1, 255,255 },
+        { 0, VK_SHIFT, kbA8, kbD0, 255, 255 },
+        { 0, VK_CONTROL, kbA8, kbD1, 255, 255 },
 
-        { 0, VK_RETURN , kbA14, kbD0, 255,255 },
-        { 0, VK_SPACE , kbA15, kbD0, 255,255 },
+        { 0, VK_RETURN, kbA14, kbD0, 255, 255 },
+        { 0, VK_SPACE, kbA15, kbD0, 255, 255 },
 
-        { 0, 'A' , kbA9, kbD0, 255,255 },
-        { 0, 'B' , kbA15, kbD3, 255,255 },
-        { 0, 'C' , kbA8, kbD4, 255,255 },
-        { 0, 'D' , kbA9, kbD2, 255,255 },
-        { 0, 'E' , kbA10, kbD2, 255,255 },
-        { 0, 'F' , kbA9, kbD3, 255,255 },
-        { 0, 'G' , kbA9, kbD4, 255,255 },
-        { 0, 'H' , kbA14, kbD4, 255,255 },
-        { 0, 'I' , kbA13, kbD2, 255,255 },
-        { 0, 'J' , kbA14, kbD3, 255,255 },
-        { 0, 'K' , kbA14, kbD2, 255,255 },
-        { 0, 'L' , kbA14, kbD1, 255,255 },
-        { 0, 'M' , kbA15, kbD1, 255,255 },
-        { 0, 'N' , kbA15, kbD2, 255,255 },
-        { 0, 'O' , kbA13, kbD1, 255,255 },
-        { 0, 'P' , kbA13, kbD0, 255,255 },
-        { 0, 'Q' , kbA10, kbD0, 255,255 },
-        { 0, 'R' , kbA10, kbD3, 255,255 },
-        { 0, 'S' , kbA9, kbD1, 255,255 },
-        { 0, 'T' , kbA10, kbD4, 255,255 },
-        { 0, 'U' , kbA13, kbD3, 255,255 },
-        { 0, 'V' , kbA15, kbD4, 255,255 },
-        { 0, 'W' , kbA10, kbD1, 255,255 },
-        { 0, 'X' , kbA8, kbD3, 255,255 },
-        { 0, 'Y' , kbA13, kbD4, 255,255 },
-        { 0, 'Z' , kbA8, kbD2, 255,255 },
+        { 0, 'A', kbA9, kbD0, 255, 255 },
+        { 0, 'B', kbA15, kbD3, 255, 255 },
+        { 0, 'C', kbA8, kbD4, 255, 255 },
+        { 0, 'D', kbA9, kbD2, 255, 255 },
+        { 0, 'E', kbA10, kbD2, 255, 255 },
+        { 0, 'F', kbA9, kbD3, 255, 255 },
+        { 0, 'G', kbA9, kbD4, 255, 255 },
+        { 0, 'H', kbA14, kbD4, 255, 255 },
+        { 0, 'I', kbA13, kbD2, 255, 255 },
+        { 0, 'J', kbA14, kbD3, 255, 255 },
+        { 0, 'K', kbA14, kbD2, 255, 255 },
+        { 0, 'L', kbA14, kbD1, 255, 255 },
+        { 0, 'M', kbA15, kbD1, 255, 255 },
+        { 0, 'N', kbA15, kbD2, 255, 255 },
+        { 0, 'O', kbA13, kbD1, 255, 255 },
+        { 0, 'P', kbA13, kbD0, 255, 255 },
+        { 0, 'Q', kbA10, kbD0, 255, 255 },
+        { 0, 'R', kbA10, kbD3, 255, 255 },
+        { 0, 'S', kbA9, kbD1, 255, 255 },
+        { 0, 'T', kbA10, kbD4, 255, 255 },
+        { 0, 'U', kbA13, kbD3, 255, 255 },
+        { 0, 'V', kbA15, kbD4, 255, 255 },
+        { 0, 'W', kbA10, kbD1, 255, 255 },
+        { 0, 'X', kbA8, kbD3, 255, 255 },
+        { 0, 'Y', kbA13, kbD4, 255, 255 },
+        { 0, 'Z', kbA8, kbD2, 255, 255 },
 
-        { 0, '1' , kbA11, kbD0, 255,255 },
-        { 0, '2' , kbA11, kbD1, 255,255 },
-        { 0, '3' , kbA11, kbD2, 255,255 },
-        { 0, '4' , kbA11, kbD3, 255,255 },
-        { 0, '5' , kbA11, kbD4, 255,255 },
-        { 0, '6' , kbA12, kbD4, 255,255 },
-        { 0, '7' , kbA12, kbD3, 255,255 },
-        { 0, '8' , kbA12, kbD2, 255,255 },
-        { 0, '9' , kbA12, kbD1, 255,255 },
-        { 0, '0' , kbA12, kbD0, 255,255 },
+        { 0, '1', kbA11, kbD0, 255, 255 },
+        { 0, '2', kbA11, kbD1, 255, 255 },
+        { 0, '3', kbA11, kbD2, 255, 255 },
+        { 0, '4', kbA11, kbD3, 255, 255 },
+        { 0, '5', kbA11, kbD4, 255, 255 },
+        { 0, '6', kbA12, kbD4, 255, 255 },
+        { 0, '7', kbA12, kbD3, 255, 255 },
+        { 0, '8', kbA12, kbD2, 255, 255 },
+        { 0, '9', kbA12, kbD1, 255, 255 },
+        { 0, '0', kbA12, kbD0, 255, 255 },
 
         { 1, VK_OEM_1, kbA13, kbD1, kbA8, kbD1 },
         { 2, VK_OEM_1, kbA8, kbD2, kbA8, kbD1 },
@@ -303,73 +318,73 @@ const struct kb KBACE[]=
         { 1, VK_OEM_5, kbA9, kbD2, kbA8, kbD1 },
         { 2, VK_OEM_5, kbA9, kbD1, kbA8, kbD1 },
 
-        { 0, VK_BACK , kbA12, kbD0, kbA8, kbD0 },
-        { 0, VK_LEFT , kbA11, kbD4, kbA8, kbD0 },
-        { 0, VK_UP , kbA12, kbD4, kbA8, kbD0 },
-        { 0, VK_DOWN , kbA12, kbD3, kbA8, kbD0 },
-        { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
+        { 0, VK_BACK, kbA12, kbD0, kbA8, kbD0 },
+        { 0, VK_LEFT, kbA11, kbD4, kbA8, kbD0 },
+        { 0, VK_UP, kbA12, kbD4, kbA8, kbD0 },
+        { 0, VK_DOWN, kbA12, kbD3, kbA8, kbD0 },
+        { 0, VK_RIGHT, kbA12, kbD2, kbA8, kbD0 },
 
-        { 0, VK_CAPITAL , kbA11, kbD1, kbA8, kbD0 },
+        { 0, VK_CAPITAL, kbA11, kbD1, kbA8, kbD0 },
         {0, 0, 0, 0, 0, 0 }
 };
 
 const struct kb KBLAMBDA[]=
 {
-        { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
-        { 0, VK_RETURN , kbA14, kbD0, 255,255 },
-        { 0, VK_SPACE , kbA15, kbD0, 255,255 },
+        { 0, VK_SHIFT, kbA8, kbD0, 255, 255 },
+        { 0, VK_RETURN, kbA14, kbD0, 255, 255 },
+        { 0, VK_SPACE, kbA15, kbD0, 255, 255 },
 
-        { 0, 'A' , kbA9, kbD0, 255,255 },
-        { 0, 'B' , kbA15, kbD4, 255,255 },
-        { 0, 'C' , kbA8, kbD3, 255,255 },
-        { 0, 'D' , kbA9, kbD2, 255,255 },
-        { 0, 'E' , kbA10, kbD2, 255,255 },
-        { 0, 'F' , kbA9, kbD3, 255,255 },
-        { 0, 'G' , kbA9, kbD4, 255,255 },
-        { 0, 'H' , kbA14, kbD4, 255,255 },
-        { 0, 'I' , kbA13, kbD2, 255,255 },
-        { 0, 'J' , kbA14, kbD3, 255,255 },
-        { 0, 'K' , kbA14, kbD2, 255,255 },
-        { 0, 'L' , kbA14, kbD1, 255,255 },
-        { 0, 'M' , kbA15, kbD2, 255,255 },
-        { 0, 'N' , kbA15, kbD3, 255,255 },
-        { 0, 'O' , kbA13, kbD1, 255,255 },
-        { 0, 'P' , kbA13, kbD0, 255,255 },
-        { 0, 'Q' , kbA10, kbD0, 255,255 },
-        { 0, 'R' , kbA10, kbD3, 255,255 },
-        { 0, 'S' , kbA9, kbD1, 255,255 },
-        { 0, 'T' , kbA10, kbD4, 255,255 },
-        { 0, 'U' , kbA13, kbD3, 255,255 },
-        { 0, 'V' , kbA8, kbD4, 255,255 },
-        { 0, 'W' , kbA10, kbD1, 255,255 },
-        { 0, 'X' , kbA8, kbD2, 255,255 },
-        { 0, 'Y' , kbA13, kbD4, 255,255 },
-        { 0, 'Z' , kbA8, kbD1, 255,255 },
+        { 0, 'A', kbA9, kbD0, 255, 255 },
+        { 0, 'B', kbA15, kbD4, 255, 255 },
+        { 0, 'C', kbA8, kbD3, 255, 255 },
+        { 0, 'D', kbA9, kbD2, 255, 255 },
+        { 0, 'E', kbA10, kbD2, 255, 255 },
+        { 0, 'F', kbA9, kbD3, 255, 255 },
+        { 0, 'G', kbA9, kbD4, 255, 255 },
+        { 0, 'H', kbA14, kbD4, 255, 255 },
+        { 0, 'I', kbA13, kbD2, 255, 255 },
+        { 0, 'J', kbA14, kbD3, 255, 255 },
+        { 0, 'K', kbA14, kbD2, 255, 255 },
+        { 0, 'L', kbA14, kbD1, 255, 255 },
+        { 0, 'M', kbA15, kbD2, 255, 255 },
+        { 0, 'N', kbA15, kbD3, 255, 255 },
+        { 0, 'O', kbA13, kbD1, 255, 255 },
+        { 0, 'P', kbA13, kbD0, 255, 255 },
+        { 0, 'Q', kbA10, kbD0, 255, 255 },
+        { 0, 'R', kbA10, kbD3, 255, 255 },
+        { 0, 'S', kbA9, kbD1, 255, 255 },
+        { 0, 'T', kbA10, kbD4, 255, 255 },
+        { 0, 'U', kbA13, kbD3, 255, 255 },
+        { 0, 'V', kbA8, kbD4, 255, 255 },
+        { 0, 'W', kbA10, kbD1, 255, 255 },
+        { 0, 'X', kbA8, kbD2, 255, 255 },
+        { 0, 'Y', kbA13, kbD4, 255, 255 },
+        { 0, 'Z', kbA8, kbD1, 255, 255 },
 
-        { 0, '1' , kbA11, kbD0, 255,255 },
-        { 0, '2' , kbA11, kbD1, 255,255 },
-        { 0, '3' , kbA11, kbD2, 255,255 },
-        { 0, '4' , kbA11, kbD3, 255,255 },
-        { 0, '5' , kbA11, kbD4, 255,255 },
-        { 0, '6' , kbA12, kbD4, 255,255 },
-        { 0, '7' , kbA12, kbD3, 255,255 },
-        { 0, '8' , kbA12, kbD2, 255,255 },
-        { 0, '9' , kbA12, kbD1, 255,255 },
-        { 0, '0' , kbA12, kbD0, 255,255 },
-
-        { 0, VK_NUMPAD1 , kbA11, kbD0, 255,255 },
-        { 0, VK_NUMPAD2 , kbA11, kbD1, 255,255 },
-        { 0, VK_NUMPAD3 , kbA11, kbD2, 255,255 },
-        { 0, VK_NUMPAD4 , kbA11, kbD3, 255,255 },
-        { 0, VK_NUMPAD5 , kbA11, kbD4, 255,255 },
-        { 0, VK_NUMPAD6 , kbA12, kbD4, 255,255 },
-        { 0, VK_NUMPAD7 , kbA12, kbD3, 255,255 },
-        { 0, VK_NUMPAD8 , kbA12, kbD2, 255,255 },
-        { 0, VK_NUMPAD9 , kbA12, kbD1, 255,255 },
-        { 0, VK_NUMPAD0 , kbA12, kbD0, 255,255 },
-
-        { 0, VK_MULTIPLY , kbA8, kbD4, 255,255 },
-        { 0, VK_DIVIDE , kbA15, kbD4, 255,255 },
+        { 0, '1', kbA11, kbD0, 255, 255 },
+        { 0, '2', kbA11, kbD1, 255, 255 },
+        { 0, '3', kbA11, kbD2, 255, 255 },
+        { 0, '4', kbA11, kbD3, 255, 255 },
+        { 0, '5', kbA11, kbD4, 255, 255 },
+        { 0, '6', kbA12, kbD4, 255, 255 },
+        { 0, '7', kbA12, kbD3, 255, 255 },
+        { 0, '8', kbA12, kbD2, 255, 255 },
+        { 0, '9', kbA12, kbD1, 255, 255 },
+        { 0, '0', kbA12, kbD0, 255, 255 },
+/*
+        { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
+        { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
+        { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
+        { 0, VK_NUMPAD4, kbA11, kbD3, 255, 255 },
+        { 0, VK_NUMPAD5, kbA11, kbD4, 255, 255 },
+        { 0, VK_NUMPAD6, kbA12, kbD4, 255, 255 },
+        { 0, VK_NUMPAD7, kbA12, kbD3, 255, 255 },
+        { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
+        { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
+        { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
+*/
+        { 0, VK_MULTIPLY, kbA8, kbD4, 255, 255 },
+        { 0, VK_DIVIDE, kbA15, kbD4, 255, 255 },
 
         { 1, VK_OEM_1, kbA12, kbD4, kbA8, kbD0 },
         //{ 2, VK_OEM_1, kbA8, kbD1, kbA8, kbD0 }, // No : on the lambda
@@ -383,88 +398,88 @@ const struct kb KBLAMBDA[]=
         { 1, VK_OEM_COMMA, kbA12, kbD3, kbA8, kbD0 },
         { 2, VK_OEM_COMMA, kbA13, kbD1, kbA8, kbD0 },
 
-        { 1, VK_OEM_PERIOD , kbA15, kbD1, 255,255 },
-        { 1, VK_DECIMAL , kbA15, kbD1, 255,255 },
-        { 2, VK_OEM_PERIOD , kbA13, kbD0, kbA8, kbD0 },
-        { 1, VK_OEM_2 , kbA14, kbD4, kbA8, kbD0 },
+        { 1, VK_OEM_PERIOD, kbA15, kbD1, 255, 255 },
+        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
+        { 2, VK_OEM_PERIOD, kbA13, kbD0, kbA8, kbD0 },
+        { 1, VK_OEM_2, kbA14, kbD4, kbA8, kbD0 },
 
-        { 0, VK_OEM_4 , kbA12, kbD2, kbA8, kbD0 },
-        { 0, VK_OEM_6 , kbA12, kbD1, kbA8, kbD0 },
+        { 0, VK_OEM_4, kbA12, kbD2, kbA8, kbD0 },
+        { 0, VK_OEM_6, kbA12, kbD1, kbA8, kbD0 },
 
-        // { 2, VK_OEM_2 , kbA8, kbD3, kbA8, kbD0 }, // Lambda has no ? symbol!
-        { 2, VK_OEM_7 , kbA11, kbD4, kbA8, kbD0 },
+        // { 2, VK_OEM_2, kbA8, kbD3, kbA8, kbD0 }, // Lambda has no ? symbol!
+        { 2, VK_OEM_7, kbA11, kbD4, kbA8, kbD0 },
 
         //{ 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
 
-        { 0, VK_BACK , kbA15, kbD1, kbA8, kbD0 },
-        { 0, VK_LEFT , kbA11, kbD4, kbA8, kbD0 },
-        { 0, VK_DOWN , kbA12, kbD4, kbA8, kbD0 },
-        { 0, VK_UP , kbA12, kbD3, kbA8, kbD0 },
-        { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
+        { 0, VK_BACK, kbA15, kbD1, kbA8, kbD0 },
+        { 0, VK_LEFT, kbA11, kbD4, kbA8, kbD0 },
+        { 0, VK_DOWN, kbA12, kbD4, kbA8, kbD0 },
+        { 0, VK_UP, kbA12, kbD3, kbA8, kbD0 },
+        { 0, VK_RIGHT, kbA12, kbD2, kbA8, kbD0 },
 
-        { 0, VK_CONTROL , kbA14, kbD0, kbA8 , kbD0 },
+        { 0, VK_CONTROL, kbA14, kbD0, kbA8, kbD0 },
 
         {0, 0, 0, 0, 0, 0 }
 };
 
 const struct kb KBSPEC[]=
 {
-        { 0, VK_SHIFT , kbA8, kbD0, 255,255 },
-        { 0, VK_RETURN , kbA14, kbD0, 255,255 },
-        { 0, VK_SPACE , kbA15, kbD0, 255,255 },
+        { 0, VK_SHIFT, kbA8, kbD0, 255, 255 },
+        { 0, VK_RETURN, kbA14, kbD0, 255, 255 },
+        { 0, VK_SPACE, kbA15, kbD0, 255, 255 },
 
-        { 0, 'A' , kbA9, kbD0, 255,255 },
-        { 0, 'B' , kbA15, kbD4, 255,255 },
-        { 0, 'C' , kbA8, kbD3, 255,255 },
-        { 0, 'D' , kbA9, kbD2, 255,255 },
-        { 0, 'E' , kbA10, kbD2, 255,255 },
-        { 0, 'F' , kbA9, kbD3, 255,255 },
-        { 0, 'G' , kbA9, kbD4, 255,255 },
-        { 0, 'H' , kbA14, kbD4, 255,255 },
-        { 0, 'I' , kbA13, kbD2, 255,255 },
-        { 0, 'J' , kbA14, kbD3, 255,255 },
-        { 0, 'K' , kbA14, kbD2, 255,255 },
-        { 0, 'L' , kbA14, kbD1, 255,255 },
-        { 0, 'M' , kbA15, kbD2, 255,255 },
-        { 0, 'N' , kbA15, kbD3, 255,255 },
-        { 0, 'O' , kbA13, kbD1, 255,255 },
-        { 0, 'P' , kbA13, kbD0, 255,255 },
-        { 0, 'Q' , kbA10, kbD0, 255,255 },
-        { 0, 'R' , kbA10, kbD3, 255,255 },
-        { 0, 'S' , kbA9, kbD1, 255,255 },
-        { 0, 'T' , kbA10, kbD4, 255,255 },
-        { 0, 'U' , kbA13, kbD3, 255,255 },
-        { 0, 'V' , kbA8, kbD4, 255,255 },
-        { 0, 'W' , kbA10, kbD1, 255,255 },
-        { 0, 'X' , kbA8, kbD2, 255,255 },
-        { 0, 'Y' , kbA13, kbD4, 255,255 },
-        { 0, 'Z' , kbA8, kbD1, 255,255 },
+        { 0, 'A', kbA9, kbD0, 255, 255 },
+        { 0, 'B', kbA15, kbD4, 255, 255 },
+        { 0, 'C', kbA8, kbD3, 255, 255 },
+        { 0, 'D', kbA9, kbD2, 255, 255 },
+        { 0, 'E', kbA10, kbD2, 255, 255 },
+        { 0, 'F', kbA9, kbD3, 255, 255 },
+        { 0, 'G', kbA9, kbD4, 255, 255 },
+        { 0, 'H', kbA14, kbD4, 255, 255 },
+        { 0, 'I', kbA13, kbD2, 255, 255 },
+        { 0, 'J', kbA14, kbD3, 255, 255 },
+        { 0, 'K', kbA14, kbD2, 255, 255 },
+        { 0, 'L', kbA14, kbD1, 255, 255 },
+        { 0, 'M', kbA15, kbD2, 255, 255 },
+        { 0, 'N', kbA15, kbD3, 255, 255 },
+        { 0, 'O', kbA13, kbD1, 255, 255 },
+        { 0, 'P', kbA13, kbD0, 255, 255 },
+        { 0, 'Q', kbA10, kbD0, 255, 255 },
+        { 0, 'R', kbA10, kbD3, 255, 255 },
+        { 0, 'S', kbA9, kbD1, 255, 255 },
+        { 0, 'T', kbA10, kbD4, 255, 255 },
+        { 0, 'U', kbA13, kbD3, 255, 255 },
+        { 0, 'V', kbA8, kbD4, 255, 255 },
+        { 0, 'W', kbA10, kbD1, 255, 255 },
+        { 0, 'X', kbA8, kbD2, 255, 255 },
+        { 0, 'Y', kbA13, kbD4, 255, 255 },
+        { 0, 'Z', kbA8, kbD1, 255, 255 },
 
-        { 0, '1' , kbA11, kbD0, 255,255 },
-        { 0, '2' , kbA11, kbD1, 255,255 },
-        { 0, '3' , kbA11, kbD2, 255,255 },
-        { 0, '4' , kbA11, kbD3, 255,255 },
-        { 0, '5' , kbA11, kbD4, 255,255 },
-        { 0, '6' , kbA12, kbD4, 255,255 },
-        { 0, '7' , kbA12, kbD3, 255,255 },
-        { 0, '8' , kbA12, kbD2, 255,255 },
-        { 0, '9' , kbA12, kbD1, 255,255 },
-        { 0, '0' , kbA12, kbD0, 255,255 },
-
-        { 0, VK_NUMPAD1 , kbA11, kbD0, 255,255 },
-        { 0, VK_NUMPAD2 , kbA11, kbD1, 255,255 },
-        { 0, VK_NUMPAD3 , kbA11, kbD2, 255,255 },
-        { 0, VK_NUMPAD4 , kbA11, kbD3, 255,255 },
-        { 0, VK_NUMPAD5 , kbA11, kbD4, 255,255 },
-        { 0, VK_NUMPAD6 , kbA12, kbD4, 255,255 },
-        { 0, VK_NUMPAD7 , kbA12, kbD3, 255,255 },
-        { 0, VK_NUMPAD8 , kbA12, kbD2, 255,255 },
-        { 0, VK_NUMPAD9 , kbA12, kbD1, 255,255 },
-        { 0, VK_NUMPAD0 , kbA12, kbD0, 255,255 },
-
-        { 0, VK_MULTIPLY , kbA8, kbD4, 255,255 },
-        { 0, VK_DIVIDE , kbA15, kbD4, 255,255 },
+        { 0, '1', kbA11, kbD0, 255, 255 },
+        { 0, '2', kbA11, kbD1, 255, 255 },
+        { 0, '3', kbA11, kbD2, 255, 255 },
+        { 0, '4', kbA11, kbD3, 255, 255 },
+        { 0, '5', kbA11, kbD4, 255, 255 },
+        { 0, '6', kbA12, kbD4, 255, 255 },
+        { 0, '7', kbA12, kbD3, 255, 255 },
+        { 0, '8', kbA12, kbD2, 255, 255 },
+        { 0, '9', kbA12, kbD1, 255, 255 },
+        { 0, '0', kbA12, kbD0, 255, 255 },
+/*
+        { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
+        { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
+        { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
+        { 0, VK_NUMPAD4, kbA11, kbD3, 255, 255 },
+        { 0, VK_NUMPAD5, kbA11, kbD4, 255, 255 },
+        { 0, VK_NUMPAD6, kbA12, kbD4, 255, 255 },
+        { 0, VK_NUMPAD7, kbA12, kbD3, 255, 255 },
+        { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
+        { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
+        { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
+*/
+        { 0, VK_MULTIPLY, kbA8, kbD4, 255, 255 },
+        { 0, VK_DIVIDE, kbA15, kbD4, 255, 255 },
 
         { 1, VK_OEM_1, kbA13, kbD1, kbA15, kbD1 },
         { 2, VK_OEM_1, kbA8, kbD1, kbA15, kbD1 },
@@ -479,29 +494,29 @@ const struct kb KBSPEC[]=
         { 1, VK_OEM_COMMA, kbA15, kbD3, kbA15, kbD1 },
         { 2, VK_OEM_COMMA, kbA10, kbD3, kbA15, kbD1 },
 
-        { 1, VK_OEM_PERIOD , kbA15, kbD2, kbA15, kbD1 },
-        { 2, VK_OEM_PERIOD , kbA10, kbD4, kbA15, kbD1 },
-        { 1, VK_DECIMAL , kbA15, kbD1, 255,255 },
-        { 1, VK_OEM_2 , kbA8, kbD4, kbA15, kbD1 },
-        { 2, VK_OEM_2 , kbA8, kbD3, kbA15, kbD1 },
-        { 1, VK_OEM_3 , kbA12, kbD3, kbA15, kbD1 },
-        { 2, VK_OEM_3 , kbA11, kbD1, kbA15, kbD1 },
-        { 0, VK_OEM_4 , kbA12, kbD2, kbA15, kbD1 },
-        { 0, VK_OEM_6 , kbA12, kbD1, kbA15, kbD1 },
-        { 1, VK_OEM_7 , kbA11, kbD2, kbA15, kbD1 },
-        { 2, VK_OEM_7 , 0, 0, kbA15, kbD1 },
+        { 1, VK_OEM_PERIOD, kbA15, kbD2, kbA15, kbD1 },
+        { 2, VK_OEM_PERIOD, kbA10, kbD4, kbA15, kbD1 },
+        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
+        { 1, VK_OEM_2, kbA8, kbD4, kbA15, kbD1 },
+        { 2, VK_OEM_2, kbA8, kbD3, kbA15, kbD1 },
+        { 1, VK_OEM_3, kbA12, kbD3, kbA15, kbD1 },
+        { 2, VK_OEM_3, kbA11, kbD1, kbA15, kbD1 },
+        { 0, VK_OEM_4, kbA12, kbD2, kbA15, kbD1 },
+        { 0, VK_OEM_6, kbA12, kbD1, kbA15, kbD1 },
+        { 1, VK_OEM_7, kbA11, kbD2, kbA15, kbD1 },
+        { 2, VK_OEM_7, 0, 0, kbA15, kbD1 },
 
         //{ 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
         //{ 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
 
-        { 0, VK_BACK , kbA12, kbD0, kbA8, kbD0 },
-        { 0, VK_LEFT , kbA11, kbD4, kbA8, kbD0 },
-        { 0, VK_DOWN , kbA12, kbD4, kbA8, kbD0 },
-        { 0, VK_UP , kbA12, kbD3, kbA8, kbD0 },
-        { 0, VK_RIGHT , kbA12, kbD2, kbA8, kbD0 },
+        { 0, VK_BACK, kbA12, kbD0, kbA8, kbD0 },
+        { 0, VK_LEFT, kbA11, kbD4, kbA8, kbD0 },
+        { 0, VK_DOWN, kbA12, kbD4, kbA8, kbD0 },
+        { 0, VK_UP, kbA12, kbD3, kbA8, kbD0 },
+        { 0, VK_RIGHT, kbA12, kbD2, kbA8, kbD0 },
 
-        { 0, VK_CONTROL , kbA15, kbD1, 255,255 },
-        { 0, VK_CAPITAL , kbA11, kbD1, kbA8, kbD0 },
+        { 0, VK_CONTROL, kbA15, kbD1, 255, 255 },
+        { 0, VK_CAPITAL, kbA11, kbD1, kbA8, kbD0 },
 
         {0, 0, 0, 0, 0, 0 }
 };
@@ -724,5 +739,64 @@ void AdjustLocalKeyboard()
                 default:
                         break;
                 }
+        }
+}
+
+void DetermineKeyMatrixPosition(int machine, KeyInfo& keyInfo)
+{
+        const kb* mapEntry;
+
+        switch (machine)
+        {
+        case MACHINEZX80:
+                mapEntry = KBZX80;
+                break;
+
+        case MACHINESPECTRUM:
+                mapEntry = KBSPEC;
+                break;
+
+        case MACHINEACE:
+                mapEntry = KBACE;
+                break;
+
+        case MACHINELAMBDA:
+                mapEntry = KBLAMBDA;
+                break;
+
+        default:
+                mapEntry = KBZX81;
+                break;
+        }
+        
+        char c;
+
+        if (keyInfo.Character == '^')
+        {
+                c = VK_SHIFT;
+        }
+        else if (keyInfo.Character == '.')
+        {
+                c = VK_CONTROL;
+        }
+        else if (keyInfo.Character == '#')
+        {
+                c = VK_RETURN;
+        }
+        else
+        {
+                c = keyInfo.Character;
+        }
+
+        while (mapEntry->WinKey != 0)
+        {
+                if (mapEntry->Shift == 0 && mapEntry->WinKey == c)
+                {
+                        keyInfo.AddressMask = (WORD)(1 << (mapEntry->Addr1 + 8));
+                        keyInfo.Data = (BYTE)~(mapEntry->Data1);
+                        return;
+                }
+
+                mapEntry++;
         }
 }

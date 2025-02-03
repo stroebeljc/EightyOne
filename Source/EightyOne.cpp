@@ -91,7 +91,6 @@ USEUNIT("Spectrum\spec128BasicLister.cpp");
 USEUNIT("Spectrum\specBasicLoader.cpp");
 USEUNIT("1772\1770disk.c");
 USEUNIT("ide\ide.cpp");
-USEUNIT("zxpand\js.cpp");
 USEUNIT("tzx\tzxadd.cpp");
 USEFORM("tzx\tzxEditArchive.cpp", EditArchiveInfo);
 USEFORM("tzx\tzxEditData.cpp", EditDataForm);
@@ -140,6 +139,7 @@ USEUNIT("SP0256\sp0256.c");
 USEUNIT("SP0256\sp0256_012.cpp");
 USEUNIT("Digitalker\Digitalk.cpp");
 USEUNIT("Digitalker\Digitalkdrv.cpp");
+USEUNIT("Joystick\Joystick.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

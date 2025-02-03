@@ -109,11 +109,10 @@ Z       ZZ         43    zoo, phase
 
 TECHNICAL NOTES
 
-There were two revisions of the Sweet Talker. The first revision used
-output port $07 (decoding address lines A7-A3). This was incompatible
-on the Spectrum fitted with the ZX Interface 1 and so revision 2 changed
-to output port $1F (decoding address lines A7-A5).
+The ZX81 version of the interface uses output port $07 (decoding address lines
+A7-A3), whereas the Spectrum version uses output port $1F (decoding address
+lines A7-A5) to make it compatible with the ZX Interface 1.
 
-The interface asserts the WAIT line until an allophone has finished being
-rendered. The drawback of this approach is that is stops the CPU performing
-other tasks while the allophone is being played.
+The Spectrum version of the interface asserts the WAIT line until an allophone
+has finished being rendered. The drawback of this approach is that is stops the
+CPU performing other tasks while the allophone is being played.

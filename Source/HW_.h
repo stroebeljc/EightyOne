@@ -28,6 +28,7 @@ using namespace std;
 #include <Buttons.hpp>
 #include <ImgList.hpp>
 #include <Graphics.hpp>
+#include "Joystick.h"
 
 //---------------------------------------------------------------------------
 
@@ -53,9 +54,15 @@ struct HWFormValues
         int HiResBoxItemIndex;
         int ColourBoxItemIndex;
         int SpeechBoxItemIndex;
+        int JoystickBoxItemIndex;
         int RomCartridgeBoxItemIndex;
         AnsiString RomCartridgeFileBoxText;
         int ZXC1ConfigurationBoxItemIndex;
+        AnsiString JoystickLeftBoxText;
+        AnsiString JoystickRightBoxText;
+        AnsiString JoystickUpBoxText;
+        AnsiString JoystickDownBoxText;
+        AnsiString JoystickFireBoxText;
         int DriveATypeItemIndex;
         int DriveBTypeItemIndex;
         int FDCItemIndex;
@@ -174,6 +181,19 @@ __published:	// IDE-managed Components
         TLabel *SpeechBoxLbl;
         TComboBox *SpeechBox;
         TCheckBox *SpecDrum;
+        TComboBox *JoystickBox;
+        TLabel *JoystickBoxLabel;
+        TLabel *JoystickLeftBoxLabel;
+        TEdit *JoystickLeftBox;
+        TLabel *JoystickRightBoxLabel;
+        TEdit *JoystickRightBox;
+        TLabel *JoystickUpBoxLabel;
+        TEdit *JoystickUpBox;
+        TLabel *JoystickDownBoxLabel;
+        TEdit *JoystickDownBox;
+        TLabel *JoystickFireBoxLabel;
+        TEdit *JoystickFireBox;
+        TButton *DefaultsButton;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -233,6 +253,13 @@ __published:	// IDE-managed Components
         void __fastcall SpeechBoxChange(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall CancelClick(TObject *Sender);
+        void __fastcall JoystickBoxChange(TObject *Sender);
+        void __fastcall JoystickBoxMouseUp(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall JoystickBoxKeyDown(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+        void __fastcall JoystickBoxEnter(TObject *Sender);
+        void __fastcall DefaultsButtonClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -260,6 +287,9 @@ private:	// User declarations
         void DisplayTotalRam();
         int UpdateRomCartridgeControls(int machine, int spectrumModel);
         int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
+        bool ValidCharacter(TEdit* textBox);
+        void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
+        int FindEntry(TComboBox* comboBox, AnsiString text);
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -293,6 +323,7 @@ private:	// User declarations
         void ConfigureCharacterBitmapFile(AnsiString romBase);
         void SetUpRomCartridges();
         void Configure8K16KRam();
+        void ConfigureJoystick();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

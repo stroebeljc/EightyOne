@@ -6,9 +6,6 @@ bool disabled;
 extern void zx_initprocessor(void);
 extern void zx_process_write(void);
 
-extern void initJoy(void);
-extern unsigned char readJoy(void);
-
 BYTE* gdp;
 BYTE mode;
 
@@ -37,8 +34,6 @@ zxpand_t::zxpand_t()
    mapJS(2, 0x21); // 5
    mapJS(3, 0x24); // 8
    mapJS(4, 0x1b); // 0
-
-   initJoy();
 }
 
 bool zxpand_t::isDisabled(void)

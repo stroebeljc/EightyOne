@@ -48,7 +48,7 @@ void TP3Drive::LoadSettings(TIniFile *ini)
 
         Top=ini->ReadInteger("P3DRIVE","Top",Top);
         Left=ini->ReadInteger("P3DRIVE","Left",Left);
-        OpenDialog1->FileName=ini->ReadString("P3DRIVE","LastFile",OpenDialog1->FileName);
+        OpenDialogFloppyDiskImage->FileName=ini->ReadString("P3DRIVE","LastFile",OpenDialogFloppyDiskImage->FileName);
 
         if (Form1->DiskDrives1->Checked) Show();
 }
@@ -58,7 +58,7 @@ void TP3Drive::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("P3DRIVE","Top",Top);
         ini->WriteInteger("P3DRIVE","Left",Left);
-        ini->WriteString("P3DRIVE","LastFile",OpenDialog1->FileName);
+        ini->WriteString("P3DRIVE","LastFile",OpenDialogFloppyDiskImage->FileName);
 }
 //---------------------------------------------------------------------------
 
@@ -106,9 +106,9 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         if (Sender)
         {
                 //if (strlen(spectrum.driveaimg)) OpenDialog1->FileName=spectrum.driveaimg;
-                if (!OpenDialog1->Execute()) return;
+                if (!OpenDialogFloppyDiskImage->Execute()) return;
 
-                Filename=OpenDialog1->FileName;
+                Filename=OpenDialogFloppyDiskImage->FileName;
         }
         else    Filename=DragFileName;
 
@@ -116,7 +116,7 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 
         if (Ext == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialog1->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
                 if (Filename=="") return;
                 Ext = FileNameGetExt(Filename);
         }
@@ -154,14 +154,14 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
         AnsiString Filename, Ext;
 
         // if (strlen(spectrum.driveaimg)) OpenDialog1->FileName=spectrum.driveaimg;
-        if (!OpenDialog1->Execute()) return;
+        if (!OpenDialogFloppyDiskImage->Execute()) return;
 
-        Filename=OpenDialog1->FileName;
+        Filename=OpenDialogFloppyDiskImage->FileName;
         Ext=FileNameGetExt(Filename);
 
         if (Ext == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialog1->Filter);
+                Filename=ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
                 if (Filename=="") return;
                 Ext = FileNameGetExt(Filename);
         }
@@ -307,18 +307,18 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
 
         if (spectrum.floppytype==FLOPPYPLUS3)
         {
-                if (spectrum.driveatype==DRIVENONE)
-                {
-                        DriveALabel->Enabled=false;
-                        DriveAFSBtn->Enabled=false;
-                        DriveAEjectBtn->Enabled=false;
-                }
+        if (spectrum.driveatype==DRIVENONE)
+        {
+                DriveALabel->Enabled=false;
+                DriveAFSBtn->Enabled=false;
+                DriveAEjectBtn->Enabled=false;
+        }
 
-                if (spectrum.drivebtype==DRIVENONE)
-                {
-                        DriveBLabel->Enabled=false;
-                        DriveBFSBtn->Enabled=false;
-                        DriveBEjectBtn->Enabled=false;
+        if (spectrum.drivebtype==DRIVENONE)
+        {
+                DriveBLabel->Enabled=false;
+                DriveBFSBtn->Enabled=false;
+                DriveBEjectBtn->Enabled=false;
                 }
         }
 
@@ -414,7 +414,7 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
         if (Height<80) Form1->DiskDrives1->Enabled=false;
         else Form1->DiskDrives1->Enabled=true;
 
-        btnCreateCartridge->Visible = MicroGroup->Visible;
+        btnNewFloppyDrive->Visible = MicroGroup->Visible;
 }
 //---------------------------------------------------------------------------
 
@@ -445,16 +445,16 @@ void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
                 else
                 {
                         HD0List->ItemIndex=0;
-                        if (ATA_GetHDF(0)) OpenDialog2->FileName=ATA_GetHDF(0);
+                        if (ATA_GetHDF(0)) OpenDialogHardDriveImage->FileName=ATA_GetHDF(0);
 
-                        if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+                        if (OpenDialogHardDriveImage->FileName.Length() == 0 || *(OpenDialogHardDriveImage->FileName.AnsiLastChar()) == '\\')
                         {
-                                OpenDialog2->FileName = "";
+                                OpenDialogHardDriveImage->FileName = "";
                         }
 
-                        if (!OpenDialog2->Execute()) return;
+                        if (!OpenDialogHardDriveImage->Execute()) return;
 
-                        Filename=OpenDialog2->FileName;
+                        Filename=OpenDialogHardDriveImage->FileName;
                         Ext=FileNameGetExt(Filename);
 
                         if (Ext!=".HDF" && Ext!=".VHD") Filename += ".hdf";
@@ -526,16 +526,16 @@ void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
         else
         {
                 HD1List->ItemIndex=0;
-                if (ATA_GetHDF(1)) OpenDialog2->FileName=ATA_GetHDF(1);
+                if (ATA_GetHDF(1)) OpenDialogHardDriveImage->FileName=ATA_GetHDF(1);
 
-                if (OpenDialog2->FileName.Length() == 0 || *(OpenDialog2->FileName.AnsiLastChar()) == '\\')
+                if (OpenDialogHardDriveImage->FileName.Length() == 0 || *(OpenDialogHardDriveImage->FileName.AnsiLastChar()) == '\\')
                 {
-                        OpenDialog2->FileName = "";
+                        OpenDialogHardDriveImage->FileName = "";
                 }
 
-                if (!OpenDialog2->Execute()) return;
+                if (!OpenDialogHardDriveImage->Execute()) return;
 
-                Filename=OpenDialog2->FileName;
+                Filename=OpenDialogHardDriveImage->FileName;
                 Ext=FileNameGetExt(Filename);
 
                 if (Ext!=".HDF") Filename += ".hdf";
@@ -656,10 +656,10 @@ void __fastcall TP3Drive::MDV0FSBtnClick(TObject *Sender)
         {
                 FileName = Text->Text;
                 if (FileName!="< Empty >")
-                        OpenDialog3->FileName = FileName;
+                        OpenDialogMicrodriveCartridge->FileName = FileName;
 
-                if (!OpenDialog3->Execute()) return;
-                FileName=OpenDialog3->FileName;
+                if (!OpenDialogMicrodriveCartridge->Execute()) return;
+                FileName=OpenDialogMicrodriveCartridge->FileName;
         }
         else    FileName=DragFileName;
 
@@ -774,19 +774,43 @@ void P3DriveMachineHasInitialised(void)
 }
 //---------------------------------------------------------------------------
 
-
-
-void __fastcall TP3Drive::btnCreateCartridgeClick(TObject *Sender)
+void __fastcall TP3Drive::btnNewFloppyDriveClick(TObject *Sender)
 {
-        btnCreateCartridge->Enabled = false;
+        btnNewFloppyDrive->Enabled = false;
 
-        if (SaveDialog1->Execute())
+        switch (spectrum.floppytype)
         {
-                AnsiString FileName;
-                FileName = SaveDialog1->FileName;
+        case FLOPPYIF1:
+                NewMicrodriveCartridge();
+                break;
+
+        case FLOPPYPLUS3:
+        case FLOPPYPLUSD:
+        case FLOPPYDISCIPLE:
+        case FLOPPYBETA:
+        case FLOPPYOPUSD:
+        case FLOPPYLARKEN81:
+        case FLOPPYZX1541:
+        default:
+                break;
+        }
+
+        btnNewFloppyDrive->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::NewMicrodriveCartridge()
+{
+        SaveDialogNewFloppyDisk-> Title = "Create New Microdrive Cartridge";
+        SaveDialogNewFloppyDisk->Filter = "Microdrive Cartridge (*.mdr)|*.mdr";
+        SaveDialogNewFloppyDisk->DefaultExt = ".mdr";
+
+        if (SaveDialogNewFloppyDisk->Execute())
+        {
+                AnsiString FileName = SaveDialogNewFloppyDisk->FileName;
                 bool success = true;
 
-                FILE* f=fopen(FileName.c_str(), "wb");
+                FILE* f = fopen(FileName.c_str(), "wb");
                 if (f)
                 {
                         try
@@ -814,11 +838,7 @@ void __fastcall TP3Drive::btnCreateCartridgeClick(TObject *Sender)
 
                 if (!success)
                 {
-                        ShowMessage("Failed to create microdrive file");
+                        ShowMessage("Failed to create Microdrive Cartridge");
                 }
         }
-
-        btnCreateCartridge->Enabled = true;
 }
-//---------------------------------------------------------------------------
-

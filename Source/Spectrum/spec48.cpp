@@ -50,13 +50,15 @@
 #include "LiveMemoryWindow_.h"
 #include "BasicLister\BasicLister_.h"
 #include "Digitalkdrv.h"
+#include "Joystick.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
 #define VSYNCCOLOUR     VBLANKCOLOUR
 #define BACKPORCHCOLOUR VBLANKCOLOUR
 
-#define FLAG_Z	      0x40
+#define FLAG_C	        0x01
+#define FLAG_Z	        0x40
 
 extern "C"
 {
@@ -333,6 +335,8 @@ void spec48_reset(void)
 
         ResetRomCartridge();
         DisableSpectra();
+
+        InitialiseJoysticks();
 }
 
 void spec48_initialise()
@@ -343,7 +347,7 @@ void spec48_initialise()
         spectrum.drivebusy = -1;
 
         insertWaitsWhileSP0256Busy = false;
-        
+
         z80_init();
         tStatesCount = 0;
 
@@ -1169,7 +1173,8 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
         case 0xf6:
                 if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
-                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068)) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068))
+                        Sound.AYWriteTimex(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xf7:
@@ -1257,7 +1262,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
                             ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
                         {
-                                Sound.AYWrite(SelectAYReg, Data, frametstates);
+                                Sound.AYWrite128(SelectAYReg, Data, frametstates);
                         }
                         break;
                 }
@@ -1381,9 +1386,9 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x1f:
+                if (machine.joystick == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick();
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
-                if (spectrum.floppytype==FLOPPYDISCIPLE)
-                        return (BYTE)(PrinterBusy()<<6);
+                if (spectrum.floppytype==FLOPPYDISCIPLE) return (BYTE)(PrinterBusy()<<6);
                 break;
 
         case 0x3f:
@@ -1428,6 +1433,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x7f:
+                if (machine.joystick == JOYSTICK_FULLER) return ReadJoystick();
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
                 if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
@@ -1552,7 +1558,16 @@ BYTE ReadPort(int Address, int *tstates)
         case 0xf6:
                 if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
                     (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068))
-                        return (BYTE)Sound.AYRead(SelectAYReg);
+                {
+                        if ((machine.joystick == JOYSTICK_TIMEX) && (Address & 0x0300) != 0x0000)
+                        {
+                                return (BYTE)Sound.AYReadTimex(SelectAYReg, (Address >> 8) & 0x03);
+                        }
+                        else
+                        {
+                                return (BYTE)Sound.AYRead(SelectAYReg);
+                        }
+                }
                 break;
 
         case 0xf7:
@@ -1621,13 +1636,36 @@ BYTE ReadPort(int Address, int *tstates)
                         keyb=(BYTE)(Address/256);
                         for(i=0; i<8; i++) if (! (keyb & (1<<i)) ) data |= ZXKeyboard[i];
 
-                        //if (z80.pc.w==0x05f3)
-                        //{
-                        //        TZXStartPlaying();
-                        //        if (TZXFlashLoad()) SPECFlashLoading=1;
-                        //}
+                        data = (BYTE)(~data);
 
-                        return (BYTE)(~data);
+                        if (machine.joystick != JOYSTICK_NONE)
+                        {
+                                if (machine.joystick == JOYSTICK_SINCLAIR1)
+                                {
+                                        if (!(Address & 0x1000)) data &= ReadJoystick();
+                                        if (!(Address & 0x0800)) data &= ReadJoystick2();
+                                }
+                                else if (machine.joystick == JOYSTICK_SINCLAIR2)
+                                {
+                                        if (!(Address & 0x0800)) data &= ReadJoystick();
+                                        if (!(Address & 0x1000)) data &= ReadJoystick2();
+                                }
+                                else if (machine.joystick == JOYSTICK_CURSOR)
+                                {
+                                        if (!(Address & 0x0800)) data &= ReadJoystick_Left();
+                                        if (!(Address & 0x1000)) data &= ReadJoystick_RightUpDownFire();
+                                }
+                                else if (machine.joystick == JOYSTICK_PROGRAMMABLE)
+                                {
+                                        if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
+                                        if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
+                                        if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
+                                        if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
+                                        if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                                }
+                        }
+                        
+                        return data;
                 }
                 break;
         }
@@ -1761,7 +1799,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 }
 
                 if (BasicLister->Visible &&
-                    ((spectrumBasicRomPagedIn && z80.pc.w == 0x15AB) ||
+                    ((spectrumBasicRomPagedIn && (z80.pc.w == 0x15AB || (z80.pc.w == 0x0805 && FLAG_C) || z80.pc.w == 0x08F0)) ||
                      (spectrum128BasicRomPagedIn && z80.pc.w == 0x2CEE) ||
                      (spanish128BasicRomPagedIn && z80.pc.w == 0x03E5) ||
                      (spectrumPlus2BasicRomPagedIn && z80.pc.w == spectrumPlus2AddLineAddress) ||
@@ -2050,14 +2088,14 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 Sy++;
                 if (Sy>=machine.scanlines)
                 {
-                        fts =0; //-= machine.tperframe;
+                        fts = 0;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_type = SYNCTYPEV;
                         emulator.scanlinesPerFrame = Sy;
                         Sy=0;
-                        //borrow=0;
                         loop=machine.tperscanline;
                 }
+
                 clean_exit=1;
         }
         else    clean_exit=0;

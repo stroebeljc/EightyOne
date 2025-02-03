@@ -1,6 +1,6 @@
 object P3Drive: TP3Drive
-  Left = 232
-  Top = 137
+  Left = 326
+  Top = 146
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Drives'
@@ -659,42 +659,44 @@ object P3Drive: TP3Drive
       OnClick = MDV0EjectBtnClick
     end
   end
-  object btnCreateCartridge: TButton
+  object btnNewFloppyDrive: TButton
     Left = 8
     Top = 544
-    Width = 185
+    Width = 113
     Height = 25
     Anchors = [akLeft, akBottom]
-    Caption = 'Create blank microdrive cartridge...'
+    Caption = 'New Cartridge...'
     TabOrder = 4
-    OnClick = btnCreateCartridgeClick
+    OnClick = btnNewFloppyDriveClick
   end
-  object OpenDialog1: TOpenDialog
+  object OpenDialogFloppyDiskImage: TOpenDialog
     Filter = 
       'Disk Images|*.dsk;*.mgt;*.img;*.opd;*.opu;*.trd;*.lar;*.zip|+3 D' +
-      'isk Images (*.dsk)|*.dsk|Plus D/Disciple Images (*.mgt, *.img)|*' +
-      '.mgt;*.img|Opus Discovery Images (*.opd, *.opu)|*.opd;*.opu|TR-D' +
-      'OS Images (*.trd)|*.trd|Larken Images (*.lar)|*.lar|Compressed I' +
-      'mages (*.zip)|*.zip'
+      'isk Images (*.dsk)|*.dsk|Plus D/Disciple Disk Images (*.mgt, *.i' +
+      'mg)|*.mgt;*.img|Opus Discovery Disk Images (*.opd, *.opu)|*.opd;' +
+      '*.opu|TR-DOS Disk Images (*.trd)|*.trd|Larken Disk Images (*.lar' +
+      ')|*.lar|Compressed Disk Images (*.zip)|*.zip'
+    Title = 'Select Floppy Disk Image'
     Left = 224
     Top = 392
   end
-  object OpenDialog2: TOpenDialog
+  object OpenDialogHardDriveImage: TOpenDialog
+    DefaultExt = '.hdf'
     Filter = 
-      'All Hard Drive Images|*.hdf;*.vhd|ZX Hard Drive Images (*.hdf)|*' +
-      '.hdf|VirtualPC Uncompressed Images (*.vhd)|*.vhd'
+      'All Hard Drive Images (*.hdf; *.vhd)|*.hdf;*.vhd|ZX Hard Drive I' +
+      'mages (*.hdf)|*.hdf|VirtualPC Uncompressed Images (*.vhd)|*.vhd'
+    Title = 'Select Hard Drive Image'
     Left = 192
     Top = 392
   end
-  object OpenDialog3: TOpenDialog
+  object OpenDialogMicrodriveCartridge: TOpenDialog
+    DefaultExt = '.mdr'
     Filter = 'All Microdrive Cartridges (*.mdr, *.mdv)|*.mdr;*.mdv'
+    Title = 'Select Microdrive Cartridge'
     Left = 160
     Top = 392
   end
-  object SaveDialog1: TSaveDialog
-    DefaultExt = 'mdr'
-    Filter = 'Microdrive Cartridge (*.mdr)|*.mdr'
-    Title = 'Create Blank Microdrive File'
+  object SaveDialogNewFloppyDisk: TSaveDialog
     Left = 128
     Top = 392
   end

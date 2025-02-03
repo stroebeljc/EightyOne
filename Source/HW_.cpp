@@ -4173,6 +4173,8 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         Issue2->Checked = false;
         NTSC->Checked = false;
 
+        RomBox->ItemIndex = 0;
+        
         if (RamPackBox->Visible)
         {
                 RamPackBox->ItemIndex = 0;
@@ -4184,7 +4186,9 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                         RamPackBox->ItemIndex = RamPackBox->ItemIndex + 1;
                         DisplayTotalRam();
                 }
-        }                                              
+        }
+
+        ResetRequired = true;
 }
 //---------------------------------------------------------------------------
 

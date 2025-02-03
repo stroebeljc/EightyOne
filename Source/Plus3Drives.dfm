@@ -28,7 +28,7 @@ object P3Drive: TP3Drive
     TabOrder = 3
     OnClick = OKClick
   end
-  object FloppyGroup: TGroupBox
+  object FloppyDriveGroup: TGroupBox
     Left = 8
     Top = 8
     Width = 321
@@ -110,7 +110,7 @@ object P3Drive: TP3Drive
       OnClick = DriveBEjectBtnClick
     end
   end
-  object HardGroup: TGroupBox
+  object HardDriveGroup: TGroupBox
     Left = 8
     Top = 88
     Width = 321
@@ -355,7 +355,7 @@ object P3Drive: TP3Drive
       OnClick = HD1ReadOnlyClick
     end
   end
-  object MicroGroup: TGroupBox
+  object MicrodriveGroup: TGroupBox
     Left = 8
     Top = 320
     Width = 321
@@ -659,15 +659,15 @@ object P3Drive: TP3Drive
       OnClick = MDV0EjectBtnClick
     end
   end
-  object btnNewFloppyDrive: TButton
+  object btnNewFloppyDisk: TButton
     Left = 8
     Top = 544
-    Width = 113
+    Width = 145
     Height = 25
     Anchors = [akLeft, akBottom]
-    Caption = 'New Cartridge...'
+    Caption = 'New Microdrive Cartridge...'
     TabOrder = 4
-    OnClick = btnNewFloppyDriveClick
+    OnClick = btnNewFloppyDiskClick
   end
   object OpenDialogFloppyDiskImage: TOpenDialog
     Filter = 
@@ -678,8 +678,8 @@ object P3Drive: TP3Drive
       ')|*.lar|Compressed Disk Images (*.zip)|*.zip'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofCreatePrompt, ofEnableSizing]
     Title = 'Select Floppy Disk Image'
-    Left = 192
-    Top = 392
+    Left = 224
+    Top = 544
   end
   object OpenDialogHardDriveImage: TOpenDialog
     DefaultExt = '.hdf'
@@ -688,11 +688,11 @@ object P3Drive: TP3Drive
       'mages (*.hdf)|*.hdf|VirtualPC Uncompressed Images (*.vhd)|*.vhd'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofCreatePrompt, ofEnableSizing]
     Title = 'Select Hard Drive Image'
-    Left = 160
-    Top = 392
+    Left = 192
+    Top = 544
   end
   object SaveDialogNewFloppyDisk: TSaveDialog
-    Left = 128
-    Top = 392
+    Left = 160
+    Top = 544
   end
 end

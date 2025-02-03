@@ -18,7 +18,7 @@ __published:	// IDE-managed Components
         TButton *OK;
         TOpenDialog *OpenDialogFloppyDiskImage;
         TOpenDialog *OpenDialogHardDriveImage;
-        TGroupBox *FloppyGroup;
+        TGroupBox *FloppyDriveGroup;
         TLabel *DriveALabel;
         TLabel *DriveBLabel;
         TEdit *DriveAText;
@@ -27,12 +27,12 @@ __published:	// IDE-managed Components
         TButton *DriveBFSBtn;
         TButton *DriveAEjectBtn;
         TButton *DriveBEjectBtn;
-        TGroupBox *HardGroup;
+        TGroupBox *HardDriveGroup;
         TLabel *HD1Label;
         TEdit *HD1Text;
         TButton *HD1FSBtn;
         TButton *HD1EjectBtn;
-        TGroupBox *MicroGroup;
+        TGroupBox *MicrodriveGroup;
         TLabel *MDV0Label;
         TEdit *MDV0Text;
         TButton *MDV0FSBtn;
@@ -86,7 +86,7 @@ __published:	// IDE-managed Components
         TUpDown *HD0SUD;
         TCheckBox *HD0ReadOnly;
         TCheckBox *HD1ReadOnly;
-        TButton *btnNewFloppyDrive;
+        TButton *btnNewFloppyDisk;
         TSaveDialog *SaveDialogNewFloppyDisk;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall DriveAFSBtnClick(TObject *Sender);
@@ -108,7 +108,7 @@ __published:	// IDE-managed Components
         void __fastcall HD1HUDClick(TObject *Sender, TUDBtnType Button);
         void __fastcall HD0ReadOnlyClick(TObject *Sender);
         void __fastcall HD1ReadOnlyClick(TObject *Sender);
-        void __fastcall btnNewFloppyDriveClick(TObject *Sender);
+        void __fastcall btnNewFloppyDiskClick(TObject *Sender);
 private:	// User declarations
         int FloppyTop, HDTop, MicroTop;
         int GetMDVNo(TObject *Sender);
@@ -117,6 +117,9 @@ private:	// User declarations
         AnsiString DragFileName;
         void NewMicrodriveCartridge();
         void ConfigureOpenFloppyDiskImageDialog();
+        void ConfigureFloppyDiskGroup();
+        void ConfigureHardDiskGroup();
+        void ConfigureMicrodriveGroup();
 
 public:		// User declarations
         __fastcall TP3Drive(TComponent* Owner);

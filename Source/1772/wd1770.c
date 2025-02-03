@@ -383,7 +383,7 @@ BYTE wd1770_dr_read( wd1770_drive *d )
                 if( d->data_offset < d->type_III_len )
                 {
                         d->data_register = d->type_III_buffer[d->data_offset++];
-                        if( d->data_offset == 6 )
+                        if( d->data_offset >= d->type_III_len )
                         {
                                 d->status_register &= ~WD1770_SR_BUSY;
                                 d->status_type = wd1770_status_type2;

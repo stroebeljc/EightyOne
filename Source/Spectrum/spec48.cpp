@@ -1850,7 +1850,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         divIDEPage();
                                 }
 
-                                if (LastPC==0x00 || LastPC==0x08 || LastPC==0x38 || LastPC==0x66 ||
+                                if (LastPC==0x0000 || LastPC==0x0008 || LastPC==0x0038 || LastPC==0x0066 ||
                                     LastPC==0x04c6 || LastPC==0x0562 || (z80.pc.w>=0x3d00 && z80.pc.w<=0x3dff))
                                 {
                                         divIDEPaged |= 1;

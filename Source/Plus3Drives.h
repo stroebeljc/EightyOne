@@ -120,6 +120,7 @@ private:	// User declarations
         void ConfigureFloppyDiskGroup();
         void ConfigureHardDiskGroup();
         void ConfigureMicrodriveGroup();
+        void NewFloppyDisk(AnsiString title, AnsiString filter, AnsiString defaultExt);
 
 public:		// User declarations
         __fastcall TP3Drive(TComponent* Owner);

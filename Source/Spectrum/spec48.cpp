@@ -1799,7 +1799,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 }
 
                 if (BasicLister->Visible &&
-                    ((spectrumBasicRomPagedIn && (z80.pc.w == 0x15AB || (z80.pc.w == 0x0805 & FLAG_C) || z80.pc.w == 0x08F0)) ||
+                    ((spectrumBasicRomPagedIn && (z80.pc.w == 0x15AB || (z80.pc.w == 0x0805 && FLAG_C) || z80.pc.w == 0x08F0)) ||
                      (spectrum128BasicRomPagedIn && z80.pc.w == 0x2CEE) ||
                      (spanish128BasicRomPagedIn && z80.pc.w == 0x03E5) ||
                      (spectrumPlus2BasicRomPagedIn && z80.pc.w == spectrumPlus2AddLineAddress) ||

@@ -3691,17 +3691,15 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 
 int THW::FindEntry(TComboBox* comboBox, AnsiString text)
 {
-        int i = -1;
-
-        for (i = 0; i < comboBox->Items->Count; i++)
+        for (int i = 0; i < comboBox->Items->Count; i++)
         {
                 if (comboBox->Items->Strings[i] == text)
                 {
-                        break;
+                        return i;
                 }
         }
 
-        return i;
+        return -1;
 }
 //---------------------------------------------------------------------------
 

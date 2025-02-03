@@ -25,22 +25,6 @@
 #include "z80\config.h"
 #include "zx81config.h"
 
-#define kbD0 1
-#define kbD1 2
-#define kbD2 4
-#define kbD3 8
-#define kbD4 16
-#define kbD5 32
-
-#define kbA8  0
-#define kbA9  1
-#define kbA10 2
-#define kbA11 3
-#define kbA12 4
-#define kbA13 5
-#define kbA14 6
-#define kbA15 7
-
 #ifdef __cplusplus
 
 extern "C" BYTE memory[];

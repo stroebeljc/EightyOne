@@ -52,6 +52,7 @@
 #include "zx81config.h"
 #include "sp0256drv.h"
 #include "Digitalkdrv.h"
+#include "Joystick.h"
 
 CSound Sound;
 
@@ -464,30 +465,85 @@ void CSound::AYOverlay(void)
         AYChangeCount=0;
 }
 
+void CSound::AYWrite128(int reg, int val, int frametstates)
+{
+        // This should also handle writing RS232 data
+        if ((reg == 14) && ((AYRegisterStore[7] & 0x40) == 0x40))
+        {
+                Midi.WriteBit(val);
+        }
+
+        AYWrite(reg, val, frametstates);
+}
+
+void CSound::AYWriteTimex(int reg, int val, int frametstates)
+{
+        AYWrite(reg, val, frametstates);
+}
+
 // don't make the change immediately; record it for later,
 // to be made by sound_frame() (via sound_ay_overlay()).
 
 void CSound::AYWrite(int reg, int val, int frametstates)
 {
-        AYRegisterStore[reg]=(unsigned char)val;
+        if(reg >= 16) return;
 
-        // accept r15, in case of the two-I/O-port 8910
-        if(reg>=16) return;
-        if (reg==14) Midi.WriteBit(val);
-
-        if(AYChangeCount<AY_CHANGE_MAX)
+        if ((reg < 14) || (reg == 14 && ((AYRegisterStore[7] & 0x40) == 0x40)) || (reg == 15 && ((AYRegisterStore[7] & 0x80) == 0x80)))
         {
-                AYChange[AYChangeCount].ofs=(unsigned short)(frametstates*m_SamplesPerTState);
-                AYChange[AYChangeCount].reg=(unsigned char)reg;
-                AYChange[AYChangeCount].val=(unsigned char)val;
-                AYChangeCount++;
+                AYRegisterStore[reg] = (unsigned char)val;
+
+                if(AYChangeCount < AY_CHANGE_MAX)
+                {
+                        AYChange[AYChangeCount].ofs = (unsigned short)(frametstates * m_SamplesPerTState);
+                        AYChange[AYChangeCount].reg = (unsigned char)reg;
+                        AYChange[AYChangeCount].val = (unsigned char)val;
+                        AYChangeCount++;
+                }
         }
+}
+
+int CSound::AYReadTimex(int reg, int joysticks = 0)
+{
+        if ((reg < 14))
+        {
+                return AYRegisterStore[reg];
+        }
+
+        BYTE data = 0xFF;
+
+        if (reg == 14)
+        {
+                if (joysticks & 0x01)
+                {
+                        data &= (byte)(ReadJoystick() & 0x8F);
+                }
+                if (joysticks & 0x02)
+                {
+                        data &= (byte)(ReadJoystick2() & 0x8F);
+                }
+
+                if ((AYRegisterStore[7] & 0x40) == 0x00)
+                {
+                        data |= (BYTE)0x70;
+                }
+                else
+                {
+                        data |= (BYTE)((~AYRegisterStore[7]) & 0x8F);
+                        data |= (BYTE)(AYRegisterStore[7] & 0x70);
+                }
+        }
+
+        return data;
 }
 
 int CSound::AYRead(int reg)
 {
+        if ((reg < 14) || (reg == 14 && ((AYRegisterStore[7] & 0x40) == 0x00)) || (reg == 15 && ((AYRegisterStore[7] & 0x80) == 0x00)))
+        {
+                return AYRegisterStore[reg];
+        }
 
-        return(AYRegisterStore[reg]);
+        return 0xFF;
 }
 
 // no need to call this initially, but should be called on reset otherwise.
@@ -608,7 +664,7 @@ void CSound::DigiTalkOverlay(void)
     }
 
 void CSound::Frame(bool pause)
-{
+{                  
         int f;
 
         if (pause)
@@ -617,29 +673,31 @@ void CSound::Frame(bool pause)
         }
         else
         {
-                for(f=FillPos;f<FrameSize;f++)
+        for(f=FillPos;f<FrameSize;f++)
+        {
+                BEEPER_OLDVAL_ADJUST;
+                int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
+                Buffer[f*m_Channels]=tempval;
+
+                if(m_Channels == 2)
                 {
-                        BEEPER_OLDVAL_ADJUST;
-                        int tempval=(OldVal*256*VolumeLevel[3])/AMPL_BEEPER;
-                        Buffer[f*m_Channels]=tempval;
-                        if(m_Channels == 2)
-                        {
-                                Buffer[f*m_Channels+1]=tempval;
-                        }
+                        Buffer[f*m_Channels+1]=tempval;
                 }
+        }
 
                 OldPos=-1;
                 FillPos=0;
 
                 if (machine.aytype) AYOverlay();
-                if (spectrum.specdrum) SpecDrumOverlay();
-                if (machine.speech)
-                {
-                        if (machine.speech!=SPEECH_TYPE_DIGITALKER)
-                                SpeechOverlay();
-                        else
-                                DigiTalkOverlay();
-                }
+        if (spectrum.specdrum) SpecDrumOverlay();
+
+        if (machine.speech)
+        {
+                if (machine.speech!=SPEECH_TYPE_DIGITALKER)
+                        SpeechOverlay();
+                else
+                        DigiTalkOverlay();
+        }
         }
 
         DXSound.Frame((unsigned char *)Buffer, FrameSize*m_Channels*m_BytesPerSample);

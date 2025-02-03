@@ -152,7 +152,6 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 
         wd1770_reset_cmdint(d);
         d->type_III_len=0;
-
 	/* command register: */
   	if( ( b & 0xf0 ) == 0xd0 )
 	{                  /* Type IV - Force Interrupt */
@@ -407,6 +406,7 @@ BYTE wd1770_dr_read( wd1770_drive *d )
                         d->status_register &= ~WD1770_SR_BUSY;
                         d->status_type = wd1770_status_type2;
                         d->state = wd1770_state_none;
+
                         wd1770_set_cmdint( d );
                         wd1770_reset_datarq( d );
                 }
@@ -444,15 +444,15 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
   	d->data_register = b;
         if (d->state != wd1770_state_write
                 && d->state != wd1770_state_writetrack)
-        {
+	{
                 d->state = wd1770_state_none;
                 return;
         }
 
         if( d->disk.fd == -1
                 || d->data_sector >= d->disk.numsectors
-		|| d->data_track >= d->disk.numtracks
-		|| d->data_side >= 2 )
+                || d->data_track >= d->disk.numtracks
+                || d->data_side >= 2 )
         {
                 d->status_register |= WD1770_SR_RNF;
                 d->status_register &= ~WD1770_SR_BUSY;
@@ -489,8 +489,8 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
                 {
                         d->data_track_state = 0;
                         d->data_track_leader_count = 0;
-                        return;
-                }
+      			return;
+    		}
         }
 
         mempos = disk_phys_to_linear( &d->disk, d->data_side, d->data_track, d->data_sector );

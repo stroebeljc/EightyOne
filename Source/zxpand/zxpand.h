@@ -8,18 +8,14 @@
 
 #define redSignal(c);
 
-extern void initJoy(void);
-extern unsigned char readJoy(void);
-
 extern void setMouseSpeed(int);
-
+extern unsigned char ReadJoystick();
 
 extern int TRISD;
 #define PORTC 0
 #define GOMOUSE
 
-
-#define GETJS readJoy()
+#define GETJS ReadJoystick()
 
 #define ROM
 #define rom

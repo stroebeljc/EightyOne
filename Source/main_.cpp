@@ -2784,4 +2784,20 @@ void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
         sp0256_AL2.Reset();        
 }
 //---------------------------------------------------------------------------
+           
+void __fastcall TForm1::EnableJoystick1AutoFireClick(TObject *Sender)
+{
+        EnableJoystick1AutoFire->Checked = !EnableJoystick1AutoFire->Checked;
+
+        machine.joystick1AutoFireEnabled = EnableJoystick1AutoFire->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
+{
+        EnableJoystick2AutoFire->Checked = !EnableJoystick2AutoFire->Checked;
+
+        machine.joystick2AutoFireEnabled = EnableJoystick2AutoFire->Checked;
+}
+//---------------------------------------------------------------------------
 

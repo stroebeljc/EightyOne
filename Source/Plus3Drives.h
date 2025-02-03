@@ -16,8 +16,8 @@ class TP3Drive : public TForm
 {
 __published:	// IDE-managed Components
         TButton *OK;
-        TOpenDialog *OpenDialog1;
-        TOpenDialog *OpenDialog2;
+        TOpenDialog *OpenDialogFloppyDiskImage;
+        TOpenDialog *OpenDialogHardDriveImage;
         TGroupBox *FloppyGroup;
         TLabel *DriveALabel;
         TLabel *DriveBLabel;
@@ -65,7 +65,7 @@ __published:	// IDE-managed Components
         TButton *MDV6EjectBtn;
         TButton *MDV5EjectBtn;
         TButton *MDV4EjectBtn;
-        TOpenDialog *OpenDialog3;
+        TOpenDialog *OpenDialogMicrodriveCartridge;
         TButton *RedetectDrives;
         TComboBox *HD1List;
         TLabel *HD1CHS;
@@ -87,8 +87,8 @@ __published:	// IDE-managed Components
         TUpDown *HD0SUD;
         TCheckBox *HD0ReadOnly;
         TCheckBox *HD1ReadOnly;
-        TButton *btnCreateCartridge;
-        TSaveDialog *SaveDialog1;
+        TButton *btnNewFloppyDrive;
+        TSaveDialog *SaveDialogNewFloppyDisk;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall DriveAFSBtnClick(TObject *Sender);
         void __fastcall DriveAEjectBtnClick(TObject *Sender);
@@ -109,13 +109,15 @@ __published:	// IDE-managed Components
         void __fastcall HD1HUDClick(TObject *Sender, TUDBtnType Button);
         void __fastcall HD0ReadOnlyClick(TObject *Sender);
         void __fastcall HD1ReadOnlyClick(TObject *Sender);
-        void __fastcall btnCreateCartridgeClick(TObject *Sender);
+        void __fastcall btnNewFloppyDriveClick(TObject *Sender);
 private:	// User declarations
         int FloppyTop, HDTop, MicroTop;
         int GetMDVNo(TObject *Sender);
         TObject *GetTextBox(int Drive);
         void BuildHDList(TComboBox *List);
         AnsiString DragFileName;
+        void NewMicrodriveCartridge();
+        
 public:		// User declarations
         __fastcall TP3Drive(TComponent* Owner);
         void LoadSettings(TIniFile *ini);

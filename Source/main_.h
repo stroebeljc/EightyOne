@@ -58,7 +58,6 @@ __published:	// IDE-managed Components
         TMenuItem *N4001;
         TMenuItem *UserDefined1;
         TMenuItem *Options1;
-        TMenuItem *Joystick1;
         TMenuItem *Keyboard1;
         TMenuItem *Sound1;
         TMenuItem *Display1;
@@ -179,6 +178,8 @@ __published:	// IDE-managed Components
         TMenuItem *ExampleSpectrumProgramsMenuEntry;
         TMenuItem *ResetSpeech;
         TMenuItem *N15;
+        TMenuItem *EnableJoystick1AutoFire;
+        TMenuItem *EnableJoystick2AutoFire;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -292,6 +293,8 @@ __published:	// IDE-managed Components
         void __fastcall ExampleSpectrumProgramsMenuEntryClick(
           TObject *Sender);
         void __fastcall ResetSpeechClick(TObject *Sender);
+        void __fastcall EnableJoystick1AutoFireClick(TObject *Sender);
+        void __fastcall EnableJoystick2AutoFireClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

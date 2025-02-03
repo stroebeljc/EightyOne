@@ -65,7 +65,6 @@ __published:	// IDE-managed Components
         TButton *MDV6EjectBtn;
         TButton *MDV5EjectBtn;
         TButton *MDV4EjectBtn;
-        TOpenDialog *OpenDialogMicrodriveCartridge;
         TButton *RedetectDrives;
         TComboBox *HD1List;
         TLabel *HD1CHS;
@@ -117,7 +116,8 @@ private:	// User declarations
         void BuildHDList(TComboBox *List);
         AnsiString DragFileName;
         void NewMicrodriveCartridge();
-        
+        void ConfigureOpenFloppyDiskImageDialog();
+
 public:		// User declarations
         __fastcall TP3Drive(TComponent* Owner);
         void LoadSettings(TIniFile *ini);

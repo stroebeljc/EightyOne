@@ -676,8 +676,9 @@ object P3Drive: TP3Drive
       'mg)|*.mgt;*.img|Opus Discovery Disk Images (*.opd, *.opu)|*.opd;' +
       '*.opu|TR-DOS Disk Images (*.trd)|*.trd|Larken Disk Images (*.lar' +
       ')|*.lar|Compressed Disk Images (*.zip)|*.zip'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofCreatePrompt, ofEnableSizing]
     Title = 'Select Floppy Disk Image'
-    Left = 224
+    Left = 192
     Top = 392
   end
   object OpenDialogHardDriveImage: TOpenDialog
@@ -685,14 +686,8 @@ object P3Drive: TP3Drive
     Filter = 
       'All Hard Drive Images (*.hdf; *.vhd)|*.hdf;*.vhd|ZX Hard Drive I' +
       'mages (*.hdf)|*.hdf|VirtualPC Uncompressed Images (*.vhd)|*.vhd'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofCreatePrompt, ofEnableSizing]
     Title = 'Select Hard Drive Image'
-    Left = 192
-    Top = 392
-  end
-  object OpenDialogMicrodriveCartridge: TOpenDialog
-    DefaultExt = '.mdr'
-    Filter = 'All Microdrive Cartridges (*.mdr, *.mdv)|*.mdr;*.mdv'
-    Title = 'Select Microdrive Cartridge'
     Left = 160
     Top = 392
   end

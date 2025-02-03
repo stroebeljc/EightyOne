@@ -99,13 +99,80 @@ void __fastcall TP3Drive::OKClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TP3Drive::ConfigureOpenFloppyDiskImageDialog()
+{
+        switch (spectrum.floppytype)
+        {
+        case FLOPPYIF1:
+                OpenDialogFloppyDiskImage->DefaultExt = ".mdr";
+                OpenDialogFloppyDiskImage->Filter = "Microdrive Cartridges (*.mdr;*.mdv)|*.mdr;*.mdv";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select Microdrive Cartridge";
+                break;
+
+        case FLOPPYPLUS3:
+                OpenDialogFloppyDiskImage->DefaultExt = ".dsk";
+                OpenDialogFloppyDiskImage->Filter = "+3 Disk Images (*.dsk)|*.dsk|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*.dsk;*.zip)|*.dsk;*.zip";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select +3 Disk";
+                break;
+
+        case FLOPPYPLUSD:
+                OpenDialogFloppyDiskImage->DefaultExt = ".mgt";
+                OpenDialogFloppyDiskImage->Filter = "Plus D Disk Images (*.mgt;*.img)|*.mgt;*.img|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*.mgt;*.img;*.zip)|*.mgt;*.img;*.zip";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select Plus D Disk";
+                break;
+
+        case FLOPPYDISCIPLE:
+                OpenDialogFloppyDiskImage->DefaultExt = ".mgt";
+                OpenDialogFloppyDiskImage->Filter = "DISCiPLE Disk Images (*.mgt;*.img)|*.mgt;*.img|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*.mgt;*.img;*.zip)|*.mgt;*.img;*.zip";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select DISCiPLE Disk";
+                break;
+
+        case FLOPPYBETA:
+                OpenDialogFloppyDiskImage->DefaultExt = ".trd";
+                OpenDialogFloppyDiskImage->Filter = "TR-DOS Disk Images (*.trd)|*.trd|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*.trd;*.zip)|*.trd;*.zip";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select Beta Disk";
+                break;
+
+        case FLOPPYOPUSD:
+                OpenDialogFloppyDiskImage->DefaultExt = ".trd";
+                OpenDialogFloppyDiskImage->Filter = "Opus Discovery Disk Images (*.opd;*.opu)|*.opd;*.opu|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*.opd;*.opu;*.zip)|*.opd;*.opu;*.zip";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select Opus Discovery Disk";
+                break;
+
+        case FLOPPYLARKEN81:
+                OpenDialogFloppyDiskImage->DefaultExt = ".lar";
+                OpenDialogFloppyDiskImage->Filter = "Larken Disk Images (*.lar)|*.lar|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*lar;*.zip)|*.lar;*.zip";
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select Opus Discovery Disk";
+                break;
+
+        case FLOPPYZX1541:
+                OpenDialogFloppyDiskImage->DefaultExt = ".dsk";
+                OpenDialogFloppyDiskImage->Filter = "All Disk Images (*dsk;*.zip)|*.dsk;*.zip";  //#### TO BE UPDATED ONCE PROPER FORMAT DETERMINED
+                OpenDialogFloppyDiskImage->FilterIndex = 1;
+                OpenDialogFloppyDiskImage->Title = "Select ZX1541 Disk";
+                break;
+
+        default:
+                break;
+        }
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 {
         AnsiString Filename, Ext;
 
         if (Sender)
         {
-                //if (strlen(spectrum.driveaimg)) OpenDialog1->FileName=spectrum.driveaimg;
+                ConfigureOpenFloppyDiskImageDialog();
+
                 if (!OpenDialogFloppyDiskImage->Execute()) return;
 
                 Filename=OpenDialogFloppyDiskImage->FileName;
@@ -120,8 +187,6 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
                 if (Filename=="") return;
                 Ext = FileNameGetExt(Filename);
         }
-
-        //if (Ext!=".DSK") Filename += ".dsk";
 
         DriveAText->Text = Filename;
         DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
@@ -153,7 +218,8 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 {
         AnsiString Filename, Ext;
 
-        // if (strlen(spectrum.driveaimg)) OpenDialog1->FileName=spectrum.driveaimg;
+        ConfigureOpenFloppyDiskImageDialog();
+
         if (!OpenDialogFloppyDiskImage->Execute()) return;
 
         Filename=OpenDialogFloppyDiskImage->FileName;
@@ -165,8 +231,6 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
                 if (Filename=="") return;
                 Ext = FileNameGetExt(Filename);
         }
-
-        //if (Ext!=".DSK") Filename += ".dsk";
 
         DriveBText->Text = Filename;
         DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
@@ -654,12 +718,14 @@ void __fastcall TP3Drive::MDV0FSBtnClick(TObject *Sender)
 
         if (Sender)
         {
+                ConfigureOpenFloppyDiskImageDialog();
+
                 FileName = Text->Text;
                 if (FileName!="< Empty >")
-                        OpenDialogMicrodriveCartridge->FileName = FileName;
+                        OpenDialogFloppyDiskImage->FileName = FileName;
 
-                if (!OpenDialogMicrodriveCartridge->Execute()) return;
-                FileName=OpenDialogMicrodriveCartridge->FileName;
+                if (!OpenDialogFloppyDiskImage->Execute()) return;
+                FileName=OpenDialogFloppyDiskImage->FileName;
         }
         else    FileName=DragFileName;
 
@@ -842,3 +908,4 @@ void TP3Drive::NewMicrodriveCartridge()
                 }
         }
 }
+

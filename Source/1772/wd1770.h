@@ -44,75 +44,72 @@ extern int wd1770_index_interrupt;
 
 typedef struct wd1770_drive 
 {
-	disk_info *disk;
+    disk_info disk;
 
-        unsigned char type_III_buffer[6*1024];
-        int type_III_len;
+    unsigned char readid_buffer[6];
 
-        int busy_counter;
+    int index_pulse;
+    int index_interrupt;
 
-	int index_pulse;
-	int index_interrupt;
+    int rates[ 4 ];
+    int spin_cycles;
+    int track;
+    int side;
+    int direction; /* 0 = spindlewards, 1 = rimwards */
 
-	int rates[ 4 ];
-	int spin_cycles;
-	int track;
-	int side;
-	int direction; /* 0 = spindlewards, 1 = rimwards */
+    enum wd1770_state 
+    {
+        wd1770_state_none = 0,
+        wd1770_state_seek,
+        wd1770_state_read,
+        wd1770_state_write,
+        wd1770_state_readtrack,
+        wd1770_state_writetrack,
+        wd1770_state_readid,
+    } state;
 
-	enum wd1770_state 
-	{
-    		wd1770_state_none = 0,
-    		wd1770_state_seek,
-    		wd1770_state_read,
-    		wd1770_state_write,
-		wd1770_state_readtrack,
-    		wd1770_state_writetrack,
-    		wd1770_state_readid,
-  	} state;
+    enum wd1770_status_type 
+    {
+        wd1770_status_type1,
+        wd1770_status_type2,
+    } status_type;
 
-	enum wd1770_status_type 
-	{
-    		wd1770_status_type1,
-    		wd1770_status_type2,
-  	} status_type;
+    int data_track;               /* state during transfer */
+    int data_sector;
+    int data_side;
+    int data_multisector;
+    int data_offset;
+    int data_track_state;
+    int data_track_leader_count;
 
-  	int data_track;               /* state during transfer */
-  	int data_sector;
-  	int data_side;
-  	int data_multisector;
-  	int data_offset;
-        int data_track_state;
-        int data_track_leader_count;
+    /* what we need:
+     * 
+     * ideally some abstraction between the disk/drive and the controller
+     * for now, fixed sized tracks/sectors will do
+     * 
+     * later on, variable numbers of sectors per track will be needed,
+     * as well as varying sector sizes - this needs clever memory management	
+     *
+     * so a track holds of the number of sectors in that track
+     * a sector holds of the number of bytes in that sector and the data
+     * a bad write_track command should just mark the track as "bad", so
+     * CRCERR is set and a bad CRC is generated.
+     */
 
-	/* what we need:
-	 * 
-	 * ideally some abstraction between the disk/drive and the controller
-	 * for now, fixed sized tracks/sectors will do
-	 * 
-	 * later on, variable numbers of sectors per track will be needed,
-	 * as well as varying sector sizes - this needs clever memory management	
-	 *
-	 * so a track holds of the number of sectors in that track
-	 * a sector holds of the number of bytes in that sector and the data
-	 * a bad write_track command should just mark the track as "bad", so
-	 * CRCERR is set and a bad CRC is generated.
-	 */
+    BYTE status_register;     /* status register */
+    BYTE track_register;      /* track register */
+    BYTE sector_register;     /* sector register */
+    BYTE data_register;       /* data register */
 
-  	BYTE status_register;     /* status register */
-  	BYTE track_register;      /* track register */
-  	BYTE sector_register;     /* sector register */
-  	BYTE data_register;       /* data register */
+    void ( *set_cmdint ) ( struct wd1770_drive *d );
+    void ( *reset_cmdint ) ( struct wd1770_drive *d );
+    void ( *set_datarq ) ( struct wd1770_drive *d );
+    void ( *reset_datarq ) ( struct wd1770_drive *d );
+    void *iface;
 
-  	void ( *set_cmdint ) ( struct wd1770_drive *d );
-  	void ( *reset_cmdint ) ( struct wd1770_drive *d );
-  	void ( *set_datarq ) ( struct wd1770_drive *d );
-  	void ( *reset_datarq ) ( struct wd1770_drive *d );
-  	void *iface;
+    int cmdint,datarq;
 
-        int cmdint,datarq;
-
-        int NMICounter;
+    int NMICounter;
 
 } wd1770_drive;
 

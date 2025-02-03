@@ -217,7 +217,7 @@ void floppy_set_motor(BYTE Data)
 
         case FLOPPYBETA:
                 PlusDCur = &PlusDDrives[(Data&1)];
-                PlusDCur->side=((~Data&16)>>4);
+                PlusDCur->side=(~Data&16)>>4;
                 break;
         }
 }

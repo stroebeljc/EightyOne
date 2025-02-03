@@ -49,8 +49,6 @@ typedef struct wd1770_drive
         unsigned char type_III_buffer[6*1024];
         int type_III_len;
 
-        int busy_counter;
-
 	int index_pulse;
 	int index_interrupt;
 

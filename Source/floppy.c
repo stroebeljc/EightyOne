@@ -170,8 +170,8 @@ BYTE floppy_get_state(void)
 {
         BYTE b=0;
 
-        if (!PlusDCur->cmdint) b |= 128;
-        if (!PlusDCur->datarq) b |= 64;
+        if (PlusDCur->cmdint) b |= 128;
+        if (PlusDCur->datarq) b |= 64;
 
         return(b);
 }
@@ -217,7 +217,7 @@ void floppy_set_motor(BYTE Data)
 
         case FLOPPYBETA:
                 PlusDCur = &PlusDDrives[(Data&1)];
-                PlusDCur->side=(Data&16)>>4;
+                PlusDCur->side=((~Data&16)>>4);
                 break;
         }
 }
@@ -325,19 +325,6 @@ void floppy_ClockTick(int ts)
         {
                 int i;
 
-                if (PlusDCur->busy_counter != -99999)
-                {
-                        if (PlusDCur->busy_counter > 0)
-                                PlusDCur->busy_counter-=ts;
-                        else
-                        {
-                                PlusDCur->status_register &= ~1;
-                                wd1770_reset_cmdint(PlusDCur);
-                                PlusDCur->busy_counter=-99999;
-                        }
-                }
-
-
                 if (PlusDCur->state == wd1770_state_read
                         || PlusDCur->state == wd1770_state_write
                         || PlusDCur->state == wd1770_state_writetrack
@@ -374,9 +361,6 @@ void floppy_ClockTick(int ts)
                                         wd1770_set_cmdint( d );
                                         d->index_interrupt = 0;
                                 }
-
-                                if (d->cmdint && d->state==wd1770_state_none)
-                                        wd1770_reset_cmdint(d);
                         }
 
                         counter += (index_pulse ? 10 : 190) * 3500;

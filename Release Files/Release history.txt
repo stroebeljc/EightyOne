@@ -38,6 +38,11 @@ Version 1.41 - 28/01/2025 (by Paul Farrow and John Stroebel)
   - Fixed support for Chroma 81 on TS1000 and TS1500.
   - The Microdrive LED would be left on if the Spectrum was hard reset whilst a Microdrive
     was running.
+  - Fixed illegal memory access errors in Spectrum floppy drive subsystem.
+  - Fixed intermittent issue opening Spectrum floppy data files.
+  - Fixed interactions in floppy drive image file selections between the Spectrum+3 and other
+    machines.
+  - Fixed support for TR-DOS on Beta floppy drives, allowing reading of TRD image files.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.
@@ -52,6 +57,7 @@ Version 1.41 - 28/01/2025 (by Paul Farrow and John Stroebel)
   - Default sound volume settings are in the middle of the range.
   - Added ability to cancel changes on the hardware configuration dialog.
   - Default cursor keys are selected based on the chosen machine unless custom keys are defined.
+  - Support Spectrum floppy drive write protection.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.
@@ -74,6 +80,9 @@ Version 1.41 - 28/01/2025 (by Paul Farrow and John Stroebel)
     TC2068, and Jupiter Ace.
   - Added emulation of S-Pack speech interface by DCP Microdevelopments Ltd for the ZX81 and
     ZX Spectrum.
+  - Added utility programs for Plus D and DISCiPLE floppy drives.
+  - Added ability to create new image files for Spectrum floppy drives.
+  - Added support for floppy DOS-based formatting on Spectrum floppy drives.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

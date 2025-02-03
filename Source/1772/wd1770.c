@@ -39,7 +39,7 @@
 
 void wd1770_reset(wd1770_drive *d)
 {
-        d->busy_counter=d->NMICounter=0;
+        d->NMICounter=0;
 	d->index_pulse=d->index_interrupt=0;
 
 	d->rates[0]=d->rates[1]=d->rates[2]=d->rates[3]=0;
@@ -86,8 +86,7 @@ static void wd1770_seek( wd1770_drive *d, int track, int update, int verify )
   	if( track < d->track ) 
 	{
     		d->direction = -1;
-    		if( d->track_register == 0 ) d->track_register = 255;
-    		else if( update )
+    		if( update )
 		{
       			int trk = d->track_register;
 
@@ -95,12 +94,11 @@ static void wd1770_seek( wd1770_drive *d, int track, int update, int verify )
       			trk %= 256;
       			d->track_register = trk;
     		}
-  	} 
-	else if( track > d->track ) 
+  	}
+	else if( track > d->track )
 	{
     		d->direction = 1;
-    		if( d->track_register == 255 ) d->track_register = 0;
-    		else if( update ) 
+    		if( update )
 		{
       			int trk = d->track_register;
 
@@ -142,6 +140,8 @@ BYTE wd1770_sr_read( wd1770_drive *d )
                         d->status_register |= WD1770_SR_IDX_DRQ;
   	}
 
+        wd1770_reset_cmdint(d);
+        
         return d->status_register;
 }
 
@@ -150,6 +150,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 {
 	//DPRINTF( "wd1770_%s( 0x%02x )\n", "cr_write", b );
 
+        wd1770_reset_cmdint(d);
         d->type_III_len=0;
 
 	/* command register: */
@@ -303,7 +304,6 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 
 		case 0xc0:                                          /* Read Address */
       			d->state = wd1770_state_readid;
-      			wd1770_set_datarq( d );
       			d->status_register |= WD1770_SR_BUSY;
       			d->status_register &= ~( WD1770_SR_WRPROT | WD1770_SR_RNF | WD1770_SR_CRCERR | WD1770_SR_LOST );
       			d->data_track = d->track;
@@ -383,8 +383,8 @@ BYTE wd1770_dr_read( wd1770_drive *d )
         {
                 if( d->data_offset < d->type_III_len )
                 {
-                        d->data_register = d->type_III_buffer[d->data_offset];
-                        if( d->data_offset == d->disk.sectorsize )
+                        d->data_register = d->type_III_buffer[d->data_offset++];
+                        if( d->data_offset == 6 )
                         {
                                 d->status_register &= ~WD1770_SR_BUSY;
                                 d->status_type = wd1770_status_type2;

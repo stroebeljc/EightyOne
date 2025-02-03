@@ -168,6 +168,7 @@ void TP3Drive::ConfigureOpenFloppyDiskImageDialog()
 void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 {
         AnsiString Filename, Ext;
+        int readonly = 0;
 
         if (Sender)
         {
@@ -180,6 +181,14 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         else    Filename=DragFileName;
 
         Ext=FileNameGetExt(Filename);
+
+        if (Ext == ".ZIP")
+        {
+                Filename=ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
+                if (Filename=="") return;
+                Ext = FileNameGetExt(Filename);
+                readonly = 1;
+        }
 
         DriveAText->Text = Filename;
         DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
@@ -195,7 +204,7 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
                 fclose(f);
         }
         
-        floppy_setimage(0,spectrum.driveaimg);
+        floppy_setimage(0,spectrum.driveaimg,readonly);
 }
 //---------------------------------------------------------------------------
 
@@ -203,13 +212,14 @@ void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
 {
         DriveAText->Text = "< Empty >";
         spectrum.driveaimg[0]='\0';
-        floppy_setimage(0,spectrum.driveaimg);
+        floppy_setimage(0,spectrum.driveaimg,1);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 {
         AnsiString Filename, Ext;
+        int readonly = 0;
 
         ConfigureOpenFloppyDiskImageDialog();
 
@@ -217,6 +227,14 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 
         Filename=OpenDialogFloppyDiskImage->FileName;
         Ext=FileNameGetExt(Filename);
+
+        if (Ext == ".ZIP")
+        {
+                Filename=ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
+                if (Filename=="") return;
+                Ext = FileNameGetExt(Filename);
+                readonly = 1;
+        }
 
         DriveBText->Text = Filename;
         DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
@@ -232,7 +250,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
                 fclose(f);
         }
         
-        floppy_setimage(1,spectrum.drivebimg);
+        floppy_setimage(1,spectrum.drivebimg,readonly);
 }
 //---------------------------------------------------------------------------
 
@@ -803,10 +821,10 @@ void TP3Drive::InsertFile(AnsiString Filename)
 void P3DriveMachineHasInitialised(void)
 {
         if (P3Drive->DriveAText->Text != "< Empty >")
-                floppy_setimage(0, P3Drive->DriveAText->Text.c_str());
+                floppy_setimage(0, P3Drive->DriveAText->Text.c_str(),0);
 
         if (P3Drive->DriveBText->Text != "< Empty >")
-                floppy_setimage(1, P3Drive->DriveBText->Text.c_str());
+                floppy_setimage(1, P3Drive->DriveBText->Text.c_str(),0);
 }
 //---------------------------------------------------------------------------
 

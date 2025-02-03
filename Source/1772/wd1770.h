@@ -38,6 +38,15 @@
 #define WD1770_SR_IDX_DRQ  (1<<1) /* Index pulse / Data request */
 #define WD1770_SR_BUSY     (1<<0) /* Busy (command under execution) */
 
+#define PREAMBLE_COUNT     22
+#define PREAMBLE_VALUE     0x4E
+#define SYNC_COUNT         12
+#define SYNC_VALUE         0x00
+#define PRE_ADDRESS_COUNT  3
+#define PRE_ADDRESS        0xF5
+#define ADDRESS_MARK       0xFB
+
+#define READID_BUFFSIZE    6
 
 extern int wd1770_index_pulse;
 extern int wd1770_index_interrupt;
@@ -46,7 +55,7 @@ typedef struct wd1770_drive
 {
     disk_info disk;
 
-    unsigned char readid_buffer[6];
+    unsigned char readid_buffer[READID_BUFFSIZE];
 
     int index_pulse;
     int index_interrupt;

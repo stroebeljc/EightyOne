@@ -12,6 +12,7 @@
 #include "main_.h"
 #include "MakeHDF.h"
 #include "interface1.h"
+#include "ZipFile_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -258,7 +259,7 @@ void __fastcall TP3Drive::DriveBEjectBtnClick(TObject *Sender)
 {
         DriveBText->Text = "< Empty >";
         spectrum.drivebimg[0]='\0';
-        floppy_setimage(1,spectrum.drivebimg);
+        floppy_setimage(1,spectrum.drivebimg,1);
 }
 //---------------------------------------------------------------------------
 

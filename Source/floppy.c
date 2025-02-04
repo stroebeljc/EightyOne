@@ -79,7 +79,7 @@ void LoadFDC765DLL(void)
 }
 
 #define NMIREADTICKER 80
-#define NMIWRITETICKER 70
+#define NMIWRITETICKER 100
 
 void OpusNMI( wd1770_drive *d )
 {
@@ -170,8 +170,8 @@ BYTE floppy_get_state(void)
 {
         BYTE b=0;
 
-        if (!PlusDCur->cmdint) b |= 128;
-        if (!PlusDCur->datarq) b |= 64;
+        if (PlusDCur->cmdint) b |= 128;
+        if (PlusDCur->datarq) b |= 64;
 
         return(b);
 }
@@ -211,23 +211,13 @@ void floppy_set_motor(BYTE Data)
 
         case FLOPPYOPUSD:
                 if (PlusDCur->state == wd1770_state_read) PlusDCur->state = wd1770_state_none;
-                switch(Data&3)
-                {
-                case 0:
-                case 1:
-                        PlusDCur=&PlusDDrives[0];
-                        break;
-                case 2:
-                case 3:
-                        PlusDCur=&PlusDDrives[1];
-                        break;
-                }
+                PlusDCur=&PlusDDrives[(Data&2)>>1];
                 PlusDCur->side=(Data&16)>>4;
                 break;
 
         case FLOPPYBETA:
                 PlusDCur = &PlusDDrives[(Data&1)];
-                PlusDCur->side=(Data&16)>>4;
+                PlusDCur->side=(~Data&16)>>4;
                 break;
         }
 }
@@ -335,23 +325,12 @@ void floppy_ClockTick(int ts)
         {
                 int i;
 
-                if (PlusDCur->busy_counter != -99999)
-                {
-                        if (PlusDCur->busy_counter > 0)
-                                PlusDCur->busy_counter-=ts;
-                        else
-                        {
-                                PlusDCur->status_register &= ~1;
-                                wd1770_reset_cmdint(PlusDCur);
-                                PlusDCur->busy_counter=-99999;
-                        }
-                }
-
-
                 if (PlusDCur->state == wd1770_state_read
                         || PlusDCur->state == wd1770_state_write
+                        || PlusDCur->state == wd1770_state_writetrack
                         || PlusDCur->state == wd1770_state_readid)
                 {
+                        spectrum.drivebusy = 1;
                         NMICount -= ts;
                         if (NMICount<0)
                         {
@@ -360,7 +339,11 @@ void floppy_ClockTick(int ts)
                                                                         : NMIWRITETICKER;
                         }
                 }
-                else    NMICount=NMIWRITETICKER;
+                else
+                {
+                        spectrum.drivebusy = 0;
+                        NMICount=NMIWRITETICKER;
+                }
 
 
                 counter -= ts;
@@ -378,9 +361,6 @@ void floppy_ClockTick(int ts)
                                         wd1770_set_cmdint( d );
                                         d->index_interrupt = 0;
                                 }
-
-                                if (d->cmdint && d->state==wd1770_state_none)
-                                        wd1770_reset_cmdint(d);
                         }
 
                         counter += (index_pulse ? 10 : 190) * 3500;
@@ -408,7 +388,7 @@ void floppy_init()
                 memset(LarkenDrive, 0, LARKENSIZE*2);
                 LarkenPath0[0]='\0';
                 LarkenPath1[0]='\0';
-                if (strlen(filename)) floppy_setimage(i,filename);
+                if (strlen(filename)) floppy_setimage(i,filename,1);
                 return;
         }
 
@@ -421,56 +401,24 @@ void floppy_init()
                 {
                         PlusDCur= &PlusDDrives[ i ];
 
-                        if (PlusDCur->disk)
+                        if (PlusDCur->disk.fd!=-1)
                         {
-                                if (PlusDCur->disk->fd!=-1)
-                                {
-                                        strcpy(filename, PlusDCur->disk->filename);
-                                        floppy_eject(i);
-                                }
-
-                                free(PlusDCur->disk->buffer);
-                                free(PlusDCur->disk->dirty);
-                                free(PlusDCur->disk->present);
-                                free(PlusDCur->disk);
+                                strcpy(filename, PlusDCur->disk.filename);
+                                floppy_eject(i);
                         }
 
-                        PlusDCur->disk = malloc( sizeof( *PlusDCur->disk ) );
-                        if( !PlusDCur->disk ) return;
+                        memset(PlusDCur->disk.buffer,0,sizeof(PlusDCur->disk.buffer));
+                        memset(PlusDCur->disk.dirty,0,sizeof(PlusDCur->disk.dirty));
+                        memset(PlusDCur->disk.present,0,sizeof(PlusDCur->disk.present));
 
                         wd1770_reset(PlusDCur);
 
-                        PlusDCur->disk->fd = -1;
-                        PlusDCur->disk->alternatesides = 0;
-                        PlusDCur->disk->numlayers = 2;
-                        PlusDCur->disk->numtracks = 80;
-                        PlusDCur->disk->numsectors = 10;
-                        PlusDCur->disk->sectorsize = 512;
-
-                        PlusDCur->disk->buffer = calloc( PlusDCur->disk->numlayers
-                                                                * PlusDCur->disk->numtracks
-                                                                * PlusDCur->disk->numsectors
-                                                                * PlusDCur->disk->sectorsize, sizeof( BYTE ) );
-
-                        PlusDCur->disk->dirty = calloc( PlusDCur->disk->numlayers
-                                                        * PlusDCur->disk->numtracks
-                                                        * PlusDCur->disk->numsectors, sizeof( BYTE ) );
-
-                        PlusDCur->disk->present = calloc( PlusDCur->disk->numlayers
-                                                                * PlusDCur->disk->numtracks
-                                                                * PlusDCur->disk->numsectors, sizeof( BYTE ) );
-
-                        if( !( PlusDCur->disk->buffer && PlusDCur->disk->dirty && PlusDCur->disk->present ) )
-                        {
-                                if( PlusDCur->disk->buffer ) free( PlusDCur->disk->buffer );
-                                if( PlusDCur->disk->dirty ) free( PlusDCur->disk->dirty );
-                                if( PlusDCur->disk->present ) free( PlusDCur->disk->present );
-                                PlusDCur->disk->buffer = NULL;
-                                PlusDCur->disk->dirty = NULL;
-                                PlusDCur->disk->present = NULL;
-                                free( PlusDCur->disk );
-                                PlusDCur->disk = NULL;
-                        }
+                        PlusDCur->disk.fd = -1;
+                        PlusDCur->disk.alternatesides = 0;
+                        PlusDCur->disk.numlayers = MAXNUMLAYERS;
+                        PlusDCur->disk.numtracks = MAXNUMTRACKS;
+                        PlusDCur->disk.numsectors = MAXNUMSECTORS;
+                        PlusDCur->disk.sectorsize = MAXSECTORSIZE;
 
                         PlusDCur->rates[ 0 ] = 6;
                         PlusDCur->rates[ 1 ] = 12;
@@ -485,7 +433,7 @@ void floppy_init()
 
                         if (spectrum.floppytype==FLOPPYOPUSD) PlusDCur->set_datarq=OpusNMI;
 
-                        if (strlen(filename)) floppy_setimage(i,filename);
+                        if (strlen(filename)) floppy_setimage(i,filename,1);
                 }
                 PlusDCur= &PlusDDrives[0];
                 return;
@@ -495,8 +443,8 @@ void floppy_init()
         {
                 u765_Shutdown();
                 u765_Initialise();
-                floppy_setimage(0,spectrum.driveaimg);
-                floppy_setimage(1,spectrum.drivebimg);
+                floppy_setimage(0,spectrum.driveaimg,1);
+                floppy_setimage(1,spectrum.drivebimg,1);
                 return;
         }
 
@@ -580,8 +528,8 @@ void floppy_init()
 	        fdc_setdrive(p3_fdc, 2, p3_drive_null);
 	        fdc_setdrive(p3_fdc, 3, p3_drive_null);
 
-                floppy_setimage(0,spectrum.driveaimg);
-                floppy_setimage(1,spectrum.drivebimg);
+                floppy_setimage(0,spectrum.driveaimg,1);
+                floppy_setimage(1,spectrum.drivebimg,1);
         }
 }
 
@@ -597,7 +545,7 @@ void floppy_eject(int drive)
                 else filename=LarkenPath1;
 
                 a=open( filename, O_CREAT | O_RDWR | O_BINARY);
-                if (a>0)
+                if (a!=-1)
                 {
                         write(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
                         close(a);
@@ -631,17 +579,17 @@ void floppy_eject(int drive)
 
                 d = &PlusDDrives[ drive ];
 
-                if( !d->disk || d->disk->fd == -1 ) return;
+                if( d->disk.fd == -1 ) return;
 
-                if( d->disk->changed ) disk_image_write( d->disk);
-                close( d->disk->fd );
-                d->disk->fd = -1;
+                if( d->disk.changed ) disk_image_write( &d->disk);
+                close( d->disk.fd );
+                d->disk.fd = -1;
         }
 }
 
 int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_format_t format);
 
-void floppy_setimage(int drive, char *filename)
+void floppy_setimage(int drive, char *filename, int readonly)
 {
         int a;
 
@@ -683,61 +631,60 @@ void floppy_setimage(int drive, char *filename)
                 if( drive >= 2 ) return;
 
                 d = &PlusDDrives[ drive ];
-                if( !( d->disk && d->disk->buffer && d->disk->dirty && d->disk->present ) ) return;
 
                 l = strlen( filename );
                 if( l >= 5 )
                 {
-                        d->disk->numlayers = 2;
-                        d->disk->numtracks = 80;
-                        d->disk->numsectors = 10;
-                        d->disk->sectorsize = 512;
+                        d->disk.numlayers = 2;
+                        d->disk.numtracks = 80;
+                        d->disk.numsectors = 10;
+                        d->disk.sectorsize = 512;
 
-                        if( !strcmp( filename + ( l - 4 ), ".dsk" ) ) d->disk->alternatesides = 1;
-                        else if( !strcmp( filename + ( l - 4 ), ".mgt" ) ) d->disk->alternatesides = 1;
-                        else if( !strcmp( filename + ( l - 4 ), ".img" ) ) d->disk->alternatesides = 0;
+                        if( !strcmp( filename + ( l - 4 ), ".dsk" ) ) d->disk.alternatesides = 1;
+                        else if( !strcmp( filename + ( l - 4 ), ".mgt" ) ) d->disk.alternatesides = 1;
+                        else if( !strcmp( filename + ( l - 4 ), ".img" ) ) d->disk.alternatesides = 0;
                         else if( !strcmp( filename + ( l - 4 ), ".opd" )
                                    || !strcmp( filename + ( l - 4 ), ".opu" ))
                         {
-                                d->disk->alternatesides = 1;
-                                d->disk->numlayers = 1;
-                                d->disk->numtracks = 40;
-                                d->disk->numsectors = 18;
-                                d->disk->sectorsize = 256;
+                                d->disk.alternatesides = 1;
+                                d->disk.numlayers = 1;
+                                d->disk.numtracks = 40;
+                                d->disk.numsectors = 18;
+                                d->disk.sectorsize = 256;
                         }
                         else if( !strcmp( filename + ( l - 4 ), ".trd" ))
                         {
-                                d->disk->alternatesides = 1;
-                                d->disk->numlayers = 2;
-                                d->disk->numtracks = 80;
-                                d->disk->numsectors = 16;
-                                d->disk->sectorsize = 256;
+                                d->disk.alternatesides = 1;
+                                d->disk.numlayers = 2;
+                                d->disk.numtracks = 80;
+                                d->disk.numsectors = 16;
+                                d->disk.sectorsize = 256;
                         }
                         else return;
                 }
 
-                if( d->disk->fd != -1 ) floppy_eject( drive );
+                if( d->disk.fd != -1 ) floppy_eject( drive );
 
-                d->disk->readonly = 0;
-                d->disk->changed = 0;
+                d->disk.readonly = readonly;
+                d->disk.changed = 0;
 
-                if( ( d->disk->fd = open( filename, O_RDWR | O_BINARY) ) == -1 )
+                if( ( d->disk.fd = open( filename, O_RDWR | O_BINARY) ) == -1 )
                 {
-                        if((d->disk->fd = open( filename, O_RDONLY | O_BINARY )) == -1 )
+                        if((d->disk.fd = open( filename, O_RDONLY | O_BINARY )) == -1 )
                         {
                                 /*fprintf( stderr, "disciple_disk_insert: open() failed: %s\n",
                                                 strerror( errno ) ); */
                                 return;
                         }
 
-                        d->disk->readonly = 1;
+                        d->disk.readonly = 1;
                 }
 
-                memset( d->disk->present, 0, 2 * d->disk->numtracks * d->disk->numsectors );
-                memset( d->disk->dirty, 0, 2 * d->disk->numtracks * d->disk->numsectors );
+                memset( d->disk.present, 0, sizeof(d->disk.present) );
+                memset( d->disk.dirty, 0, sizeof(d->disk.dirty) );
 
-                strncpy( d->disk->filename, filename, MAXPATH );
-                d->disk->filename[ MAXPATH - 1 ] = '\0';
+                strncpy( d->disk.filename, filename, MAXPATH );
+                d->disk.filename[ MAXPATH - 1 ] = '\0';
 
                 return;
         }

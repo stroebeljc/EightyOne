@@ -30,6 +30,11 @@
 #include <dir.h>
 #include "zx81config.h"
 
+#define MAXNUMLAYERS       2
+#define MAXNUMTRACKS       80
+#define MAXNUMSECTORS      18
+#define MAXSECTORSIZE      512
+
 typedef struct disk_info 
 {
   	int fd;
@@ -42,11 +47,10 @@ typedef struct disk_info
   	int readonly;
         int changed;
 
-  	BYTE *buffer;
-  	BYTE *dirty;
-  	BYTE *present;
+  	BYTE buffer[MAXNUMLAYERS*MAXNUMTRACKS*MAXNUMSECTORS*MAXSECTORSIZE];
+  	BYTE dirty[MAXNUMLAYERS*MAXNUMTRACKS*MAXNUMSECTORS];
+  	BYTE present[MAXNUMLAYERS*MAXNUMTRACKS*MAXNUMSECTORS];
 } disk_info;
-
 int disk_read_byte( disk_info *disk, int layer, int track, int sector, int offset );
 int disk_write_byte( disk_info *disk, int layer, int track, int sector, int offset );
 int disk_phys_to_linear( disk_info *disk, int layer, int track, int sector );

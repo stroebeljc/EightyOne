@@ -777,8 +777,7 @@ Cassette program line
         CLS: PRINT "Press any key"
 
 Converted to disk
-     10 INK 7: PAPER 1: RANDOMIZE USR 15619: REM: LOAD
-        "TITLE" CODE
+     10 INK 7: PAPER 1: RANDOMIZE USR 15619: REM : LOAD "TITLE"CODE
      20 GOSUB 500: CLS: PRINT "Press any key"
 
 Note  how the empty "" cannot be used for the disk. In addition to
@@ -1324,7 +1323,7 @@ instructions, eg:
 
 When running a machine code program the auto-run address should be
 the same as the strating address of the program, eg:
-     RUN "Discound"CODE 47800
+     RUN "Discount"CODE 47800
 
 provided the  code is meant to auto-run  from 47800 on loading all
 will be well.
@@ -1332,11 +1331,11 @@ will be well.
 The alternative is to  use  a  two   line  loader,  eg,  SAVE  the
 following program on disk as say "DCTLOAD"LINE 10
 
-     10 RANDOMIZE USR 15619:REM:LOAD "Dsicount"CODE 47800
+     10 RANDOMIZE USR 15619: REM : LOAD "Discount"CODE 47800
      20 RANDOMIZE USR 47838
 
 To run the program you now enter RUN "DCTLOAD" which will load the
-machine code and the "run it" fom 47838.
+machine code and the "run it" from 47838.
 
 The two line loader is necessary because the TRDOS command must be
 the last entry in a line.
@@ -1971,7 +1970,7 @@ A simple program illustrating the use of error code 1:
      10 CLEAR 65367
      20 LET ERR = USR 15619: REM: LOAD "COPY"CODE
      25 REM error code is returned in the variable ERR
-     30 IF ERR = 1 THE CLS: PRINT AT 10, 1;"""COPY""CODE NOT
+     30 IF ERR=1 THEN CLS : PRINT AT 10, 1;"""COPY""CODE NOT
         ON DISK": STOP
      40 RANDOMIZE USR 32768
      50 RANDOMIZE UST 15616

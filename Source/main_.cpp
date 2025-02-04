@@ -2060,9 +2060,8 @@ void TForm1::LoadIniFile(AnsiString FileName)
 
         delete ini;
 
-        const bool reinitialiseStatus = true;
         const bool disableResetStatus = false;
-        HW->UpdateHardwareSettings(reinitialiseStatus, disableResetStatus);
+        HW->UpdateHardwareSettings(disableResetStatus);
 
         HardReset1Click(NULL);
 }
@@ -2790,6 +2789,22 @@ void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
 {
         insertWaitsWhileSP0256Busy = false;
         sp0256_AL2.Reset();        
+}
+//---------------------------------------------------------------------------
+           
+void __fastcall TForm1::EnableJoystick1AutoFireClick(TObject *Sender)
+{
+        EnableJoystick1AutoFire->Checked = !EnableJoystick1AutoFire->Checked;
+
+        machine.joystick1AutoFireEnabled = EnableJoystick1AutoFire->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
+{
+        EnableJoystick2AutoFire->Checked = !EnableJoystick2AutoFire->Checked;
+
+        machine.joystick2AutoFireEnabled = EnableJoystick2AutoFire->Checked;
 }
 //---------------------------------------------------------------------------
 

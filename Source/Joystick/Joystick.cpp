@@ -34,8 +34,8 @@ static DWORD rPosMinTrip2;
 static DWORD rPosMaxTrip2;
 static JOYINFOEX joyInfo2;
 
-static joystick1AutoFireReadCount;
-static joystick2AutoFireReadCount;
+static int joystick1AutoFireReadCount;
+static int joystick2AutoFireReadCount;
 
 static const int JoystickReadsOn = 5;
 static const int JoystickReadsOff = 5;

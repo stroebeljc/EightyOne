@@ -58,6 +58,8 @@ Version 1.41 - 04/02/2025 (by Paul Farrow and John Stroebel)
   - Added ability to cancel changes on the hardware configuration dialog.
   - Default cursor keys are selected based on the chosen machine unless custom keys are defined.
   - Support Spectrum floppy drive write protection.
+  - Implemented the correct auto-boot operation of the Beta Disk interface depending on the
+    Spectrum model.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.

@@ -1,5 +1,3 @@
-//---------------------------------------------------------------------------
-
 #include <vcl4.h>
 #include <io.h>
 #pragma hdrstop
@@ -13,6 +11,8 @@
 #include "MakeHDF.h"
 #include "interface1.h"
 #include "ZipFile_.h"
+
+#define F_OK 0
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -35,10 +35,6 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 
-        FloppyTop=FloppyDriveGroup->Top;
-        HDTop=HardDriveGroup->Top;
-        MicroTop=MicrodriveGroup->Top;
-
         FormShow(Owner);
 }
 //---------------------------------------------------------------------------
@@ -46,9 +42,9 @@ void TP3Drive::LoadSettings(TIniFile *ini)
 {
         AnsiString Rom;
 
-        Top=ini->ReadInteger("P3DRIVE","Top",Top);
-        Left=ini->ReadInteger("P3DRIVE","Left",Left);
-        OpenDialogFloppyDiskImage->FileName=ini->ReadString("P3DRIVE","LastFile",OpenDialogFloppyDiskImage->FileName);
+        Top = ini->ReadInteger("P3DRIVE", "Top", Top);
+        Left = ini->ReadInteger("P3DRIVE", "Left", Left);
+        OpenDialogFloppyDiskImage->FileName = ini->ReadString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
 
         if (Form1->DiskDrives1->Checked) Show();
 }
@@ -56,9 +52,9 @@ void TP3Drive::LoadSettings(TIniFile *ini)
 
 void TP3Drive::SaveSettings(TIniFile *ini)
 {
-        ini->WriteInteger("P3DRIVE","Top",Top);
-        ini->WriteInteger("P3DRIVE","Left",Left);
-        ini->WriteString("P3DRIVE","LastFile",OpenDialogFloppyDiskImage->FileName);
+        ini->WriteInteger("P3DRIVE", "Top", Top);
+        ini->WriteInteger("P3DRIVE", "Left", Left);
+        ini->WriteString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
 }
 //---------------------------------------------------------------------------
 
@@ -67,30 +63,32 @@ void TP3Drive::BuildHDList(TComboBox *List)
         AnsiString old, temp;
         int i, size;
 
-        old=List->Items->Strings[List->ItemIndex];
+        old = List->Items->Strings[List->ItemIndex];
 
-        while(List->Items->Count) List->Items->Delete(0);
+        while (List->Items->Count) List->Items->Delete(0);
         List->Items->Add("HDF Image File...");
 
-        i=0;
-        while(PhysDrives[i].Drive!=-1)
+        i = 0;
+        while (PhysDrives[i].Drive != -1)
         {
-                if (PhysDrives[i].Type) temp="Removable Drive, ";
-                else temp="Fixed Drive, ";
+                if (PhysDrives[i].Type) temp = "Removable Drive, ";
+                else temp = "Fixed Drive, ";
 
-                size=PhysDrives[i].Size/2;
+                size = PhysDrives[i].Size / 2;
 
-                if (size<1024) { temp = temp + size; temp=temp+"kB"; }
-                else if (size<(1024*1024)) { temp = temp + (size/1024); temp=temp+"MB"; }
-                else { temp = temp + (size/(1024*1024)); temp=temp+"GB"; }
+                if (size < 1024) { temp = temp + size; temp = temp + "KB"; }
+                else if (size < (1024*1024)) { temp = temp + (size/1024); temp = temp + "MB"; }
+                else { temp = temp + (size/(1024*1024)); temp = temp + "GB"; }
 
                 List->Items->Add(temp);
                 i++;
         }
 
-        List->ItemIndex=0;
-        for(i=0;i<List->Items->Count;i++)
-                if (List->Items->Strings[i]==old) List->ItemIndex=i;
+        List->ItemIndex = 0;
+        for(i = 0; i < List->Items->Count; i++)
+        {
+                if (List->Items->Strings[i] == old) List->ItemIndex = i;
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -177,43 +175,28 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
 
                 if (!OpenDialogFloppyDiskImage->Execute()) return;
 
-                Filename=OpenDialogFloppyDiskImage->FileName;
+                Filename = OpenDialogFloppyDiskImage->FileName;
         }
-        else    Filename=DragFileName;
+        else
+        {
+                Filename = DragFileName;
+        }
 
-        Ext=FileNameGetExt(Filename);
+        Ext = FileNameGetExt(Filename);
 
         if (Ext == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
-                if (Filename=="") return;
+                Filename = ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
+                if (Filename == "") return;
                 Ext = FileNameGetExt(Filename);
                 readonly = 1;
         }
 
         DriveAText->Text = Filename;
-        DriveAText->SelStart=DriveAText->Text.Length()-1; DriveAText->SelLength=0;
-        strcpy(spectrum.driveaimg,DriveAText->Text.c_str());
-        
-        FILE *f;
-        if((f = fopen( spectrum.driveaimg, "r" )) != NULL )
-        {
-                fclose(f);
-        }
-        else if((f = fopen( spectrum.driveaimg, "w" )) != NULL )
-        {
-                fclose(f);
-        }
-        
-        floppy_setimage(0,spectrum.driveaimg,readonly);
-}
-//---------------------------------------------------------------------------
+        DriveAText->SelStart = DriveAText->Text.Length() - 1;
+        DriveAText->SelLength = 0;
 
-void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
-{
-        DriveAText->Text = "< Empty >";
-        spectrum.driveaimg[0]='\0';
-        floppy_setimage(0,spectrum.driveaimg,1);
+        OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
 }
 //---------------------------------------------------------------------------
 
@@ -221,52 +204,66 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
 {
         AnsiString Filename, Ext;
         int readonly = 0;
-
         ConfigureOpenFloppyDiskImageDialog();
 
         if (!OpenDialogFloppyDiskImage->Execute()) return;
 
-        Filename=OpenDialogFloppyDiskImage->FileName;
-        Ext=FileNameGetExt(Filename);
+        Filename = OpenDialogFloppyDiskImage->FileName;
+        Ext = FileNameGetExt(Filename);
 
         if (Ext == ".ZIP")
         {
-                Filename=ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
-                if (Filename=="") return;
+                Filename = ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
+                if (Filename == "") return;
                 Ext = FileNameGetExt(Filename);
                 readonly = 1;
         }
 
         DriveBText->Text = Filename;
-        DriveBText->SelStart=DriveBText->Text.Length()-1; DriveBText->SelLength=0;
-        strcpy(spectrum.drivebimg,DriveBText->Text.c_str());
-        
-        FILE *f;
-        if((f = fopen( spectrum.drivebimg, "r" )) != NULL )
+        DriveBText->SelStart = DriveBText->Text.Length() - 1;
+        DriveBText->SelLength = 0;
+
+        OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driveText, int readonly)
+{
+        strcpy(driveimg, driveText->Text.c_str());
+
+        if (access(driveimg, F_OK) && !readonly)
         {
-                fclose(f);
+                FILE *f;
+                if ((f = fopen(driveimg, "w")) != NULL)
+                {
+                        fclose(f);
+                }
         }
-        else if((f = fopen( spectrum.drivebimg, "w" )) != NULL )
-        {
-                fclose(f);
-        }
-        
-        floppy_setimage(1,spectrum.drivebimg,readonly);
+
+        floppy_setimage(driveNumber, driveimg, readonly);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
+{
+        DriveAText->Text = "< Empty >";
+        spectrum.driveaimg[0] = '\0';
+        floppy_setimage(0, spectrum.driveaimg, 1);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::DriveBEjectBtnClick(TObject *Sender)
 {
         DriveBText->Text = "< Empty >";
-        spectrum.drivebimg[0]='\0';
-        floppy_setimage(1,spectrum.drivebimg,1);
+        spectrum.drivebimg[0] = '\0';
+        floppy_setimage(1, spectrum.drivebimg, 1);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::FormShow(TObject *Sender)
 {
-        ConfigureFloppyDiskGroup();
-        ConfigureHardDiskGroup();
+        ConfigureFloppyDriveGroup();
+        ConfigureHardDriveGroup();
         ConfigureMicrodriveGroup();
 
         int yPos = 8;
@@ -295,16 +292,18 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TP3Drive::ConfigureFloppyDiskGroup()
+void TP3Drive::ConfigureFloppyDriveGroup()
 {
-        DriveAText->Text="< Empty >";
-        DriveBText->Text="< Empty >";
+        DriveAText->Text = "< Empty >";
+        DriveBText->Text = "< Empty >";
 
         if (strlen(spectrum.driveaimg)) DriveAText->Text = spectrum.driveaimg;
         if (strlen(spectrum.drivebimg)) DriveBText->Text = spectrum.drivebimg;
 
-        DriveAText->SelStart = DriveAText->Text.Length() - 1; DriveAText->SelLength = 0;
-        DriveBText->SelStart = DriveBText->Text.Length() - 1; DriveBText->SelLength = 0;
+        DriveAText->SelStart = DriveAText->Text.Length() - 1;
+        DriveAText->SelLength = 0;
+        DriveBText->SelStart = DriveBText->Text.Length() - 1;
+        DriveBText->SelLength = 0;
 
         bool plus3NoDriveA = (spectrum.floppytype == FLOPPYPLUS3 && spectrum.driveatype == DRIVENONE);
         bool plus3NoDriveB = (spectrum.floppytype == FLOPPYPLUS3 && spectrum.drivebtype == DRIVENONE);
@@ -323,462 +322,316 @@ void TP3Drive::ConfigureFloppyDiskGroup()
 }
 //---------------------------------------------------------------------------
 
-void TP3Drive::ConfigureHardDiskGroup()
+void TP3Drive::ConfigureHardDriveGroup()
 {
-        HD0Text->Text="< Empty >";
-        HD1Text->Text="< Empty >";
-
-        HD0CHS->Visible = false; HD0C->Visible   = false; HD0H->Visible   = false;
-        HD0S->Visible   = false; HD0HUD->Visible = false; HD0SUD->Visible = false;
-
-        if (ATA_GetHDF(0))
-        {
-                int i, c, h, s;
-                unsigned long size;
-
-                HD0Text->Text = ATA_GetHDF(0);
-                i = 0;
-
-                while (PhysDrives[i].Drive != -1)
-                {
-                        if (HD0Text->Text == PhysDrives[i].Path) HD0List->ItemIndex = i + 1;
-                        i++;
-                }
-
-                ATA_GetCHS(0, &c, &h, &s, &size);
-                HD0C->Text = c;
-                HD0H->Text = h; HD0HUD->Position = (short)h; HD0HUD->Min = 1; HD0HUD->Max = 15;
-                HD0S->Text = s; HD0SUD->Position = (short)s; HD0SUD->Min = 1; HD0SUD->Max = 255;
-
-                if (HD0Text->Text[1] == '\\' && HD0Text->Text[2] == '\\')
-                {
-                        HD0CHS->Visible = true; HD0C->Visible   = true; HD0H->Visible   = true;
-                        HD0S->Visible   = true; HD0HUD->Visible = true; HD0SUD->Visible = true;
-                }
-        }
-
-        HD1CHS->Visible = false; HD1C->Visible   = false; HD1H->Visible   = false;
-        HD1S->Visible   = false; HD1HUD->Visible = false; HD1SUD->Visible = false;
-
-        if (ATA_GetHDF(1))
-        {
-                int i, c, h, s;
-                unsigned long size;
-
-                HD1Text->Text = ATA_GetHDF(1);
-                i = 0;
-
-                while (PhysDrives[i].Drive != -1)
-                {
-                        if (HD1Text->Text == PhysDrives[i].Path) HD1List->ItemIndex = i + 1;
-                        i++;
-                }
-
-                ATA_GetCHS(1, &c, &h, &s, &size);
-                HD1C->Text = c;
-                HD1H->Text = h; HD1HUD->Position = (short)h; HD1HUD->Min = 1; HD1HUD->Max = 15;
-                HD1S->Text = s; HD1SUD->Position = (short)s; HD1SUD->Min = 1; HD1SUD->Max = 255;
-
-                if (HD1Text->Text[1] == '\\' && HD1Text->Text[2] == '\\')
-                {
-                        HD1CHS->Visible = true; HD1C->Visible   = true; HD1H->Visible   = true;
-                        HD1S->Visible   = true; HD1HUD->Visible = true; HD1SUD->Visible = true;
-                }
-        }
-
-        HD0ReadOnly->Checked = ATA_GetReadOnly(0);
-        HD1ReadOnly->Checked = ATA_GetReadOnly(1);
-
-        HD0Text->SelStart = HD0Text->Text.Length() - 1; HD0Text->SelLength = 0;
-        HD1Text->SelStart = HD1Text->Text.Length() - 1; HD1Text->SelLength = 0;
-
-        HD0Label->Enabled    = true;
-        HD0FSBtn->Enabled    = true;
-        HD0NewBtn->Enabled   = true;
-        HD0EjectBtn->Enabled = true;
-
-        HD1Label->Enabled    = true;
-        HD1FSBtn->Enabled    = true;
-        HD1NewBtn->Enabled   = true;
-        HD1EjectBtn->Enabled = true;
+        ConfigureHardDrive(0, HD0Label, HD0Text, HD0List, HD0ReadOnly, HD0FSBtn, HD0NewBtn, HD0EjectBtn);
+        ConfigureHardDrive(1, HD1Label, HD1Text, HD1List, HD1ReadOnly, HD1FSBtn, HD1NewBtn, HD1EjectBtn);
 
         HardDriveGroup->Visible = (spectrum.HDType != HDNONE);
 }
 //---------------------------------------------------------------------------
 
+void TP3Drive::ConfigureHardDrive(int driveNumber, TLabel* HDLabel, TEdit* HDText, TComboBox* HDList, TCheckBox* HDReadOnly, TButton* HDFSBtn, TButton* HDNewBtn, TButton* HDEjectBtn)
+{
+        bool parametersVisible = false;
+
+        HDText->Text="< Empty >";
+
+        if (ATA_GetHDF(driveNumber))
+        {
+                HDText->Text = ATA_GetHDF(driveNumber);
+                int i = 0;
+
+                while (PhysDrives[i].Drive != -1)
+                {
+                        if (HDText->Text == PhysDrives[i].Path)
+                        {
+                                HDList->ItemIndex = i + 1;
+                                break;
+                        }
+                        i++;
+                }
+
+                int c, h, s;
+                unsigned long size;
+                ATA_GetCHS(driveNumber, &c, &h, &s, &size);
+                SetHardDriveParameters(driveNumber, c, h, s);
+
+                if (HDText->Text[1] == '\\' && HDText->Text[2] == '\\')
+                {
+                        parametersVisible = true;
+                }
+        }
+
+        SetHardDriveParameterVisibility(driveNumber, parametersVisible);
+
+        HDReadOnly->Checked = ATA_GetReadOnly(driveNumber);
+
+        HDText->SelStart = HDText->Text.Length() - 1;
+        HDText->SelLength = 0;
+
+        HDLabel->Enabled    = true;
+        HDFSBtn->Enabled    = true;
+        HDNewBtn->Enabled   = true;
+        HDEjectBtn->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
 void TP3Drive::ConfigureMicrodriveGroup()
 {
-        MDV0Text->Text = IF1->MDVGetFileName(0) ? IF1->MDVGetFileName(0) : "< Empty >";
-        MDV1Text->Text = IF1->MDVGetFileName(1) ? IF1->MDVGetFileName(1) : "< Empty >";
-        MDV2Text->Text = IF1->MDVGetFileName(2) ? IF1->MDVGetFileName(2) : "< Empty >";
-        MDV3Text->Text = IF1->MDVGetFileName(3) ? IF1->MDVGetFileName(3) : "< Empty >";
-        MDV4Text->Text = IF1->MDVGetFileName(4) ? IF1->MDVGetFileName(4) : "< Empty >";
-        MDV5Text->Text = IF1->MDVGetFileName(5) ? IF1->MDVGetFileName(5) : "< Empty >";
-        MDV6Text->Text = IF1->MDVGetFileName(6) ? IF1->MDVGetFileName(6) : "< Empty >";
-        MDV7Text->Text = IF1->MDVGetFileName(7) ? IF1->MDVGetFileName(7) : "< Empty >";
-
-        MDV0Text->SelStart = MDV0Text->Text.Length() - 1; MDV0Text->SelLength = 0;
-        MDV1Text->SelStart = MDV1Text->Text.Length() - 1; MDV1Text->SelLength = 0;
-        MDV2Text->SelStart = MDV2Text->Text.Length() - 1; MDV2Text->SelLength = 0;
-        MDV3Text->SelStart = MDV3Text->Text.Length() - 1; MDV3Text->SelLength = 0;
-        MDV4Text->SelStart = MDV4Text->Text.Length() - 1; MDV4Text->SelLength = 0;
-        MDV5Text->SelStart = MDV5Text->Text.Length() - 1; MDV5Text->SelLength = 0;
-        MDV6Text->SelStart = MDV6Text->Text.Length() - 1; MDV6Text->SelLength = 0;
-        MDV7Text->SelStart = MDV7Text->Text.Length() - 1; MDV7Text->SelLength = 0;
-
-        MDV0Label->Visible    = (IF1->MDVNoDrives > 0);
-        MDV0Text->Visible     = (IF1->MDVNoDrives > 0);
-        MDV0FSBtn->Visible    = (IF1->MDVNoDrives > 0);
-        MDV0NewBtn->Visible   = (IF1->MDVNoDrives > 0);
-        MDV0EjectBtn->Visible = (IF1->MDVNoDrives > 0);
-
-        MDV1Label->Visible    = (IF1->MDVNoDrives > 1);
-        MDV1Text->Visible     = (IF1->MDVNoDrives > 1);
-        MDV1FSBtn->Visible    = (IF1->MDVNoDrives > 1);
-        MDV1NewBtn->Visible   = (IF1->MDVNoDrives > 1);
-        MDV1EjectBtn->Visible = (IF1->MDVNoDrives > 1);
-
-        MDV2Label->Visible    = (IF1->MDVNoDrives > 2);
-        MDV2Text->Visible     = (IF1->MDVNoDrives > 2);
-        MDV2FSBtn->Visible    = (IF1->MDVNoDrives > 2);
-        MDV2NewBtn->Visible   = (IF1->MDVNoDrives > 2);
-        MDV2EjectBtn->Visible = (IF1->MDVNoDrives > 2);
-
-        MDV3Label->Visible    = (IF1->MDVNoDrives > 3);
-        MDV3Text->Visible     = (IF1->MDVNoDrives > 3);
-        MDV3FSBtn->Visible    = (IF1->MDVNoDrives > 3);
-        MDV3NewBtn->Visible   = (IF1->MDVNoDrives > 3);
-        MDV3EjectBtn->Visible = (IF1->MDVNoDrives > 3);
-
-        MDV4Label->Visible    = (IF1->MDVNoDrives > 4);
-        MDV4Text->Visible     = (IF1->MDVNoDrives > 4);
-        MDV4FSBtn->Visible    = (IF1->MDVNoDrives > 4);
-        MDV4NewBtn->Visible   = (IF1->MDVNoDrives > 4);
-        MDV4EjectBtn->Visible = (IF1->MDVNoDrives > 4);
-
-        MDV5Label->Visible    = (IF1->MDVNoDrives > 5);
-        MDV5Text->Visible     = (IF1->MDVNoDrives > 5);
-        MDV5FSBtn->Visible    = (IF1->MDVNoDrives > 5);
-        MDV5NewBtn->Visible   = (IF1->MDVNoDrives > 5);
-        MDV5EjectBtn->Visible = (IF1->MDVNoDrives > 5);
-
-        MDV6Label->Visible    = (IF1->MDVNoDrives > 6);
-        MDV6Text->Visible     = (IF1->MDVNoDrives > 6);
-        MDV6FSBtn->Visible    = (IF1->MDVNoDrives > 6);
-        MDV6NewBtn->Visible   = (IF1->MDVNoDrives > 6);
-        MDV6EjectBtn->Visible = (IF1->MDVNoDrives > 6);
-
-        MDV7Label->Visible    = (IF1->MDVNoDrives > 7);
-        MDV7Text->Visible     = (IF1->MDVNoDrives > 7);
-        MDV7FSBtn->Visible    = (IF1->MDVNoDrives > 7);
-        MDV7NewBtn->Visible   = (IF1->MDVNoDrives > 7);
-        MDV7EjectBtn->Visible = (IF1->MDVNoDrives > 7);
+        ConfigureMicrodrive(MDV0Label, MDV0Text, MDV0FSBtn, MDV0NewBtn, MDV0EjectBtn);
+        ConfigureMicrodrive(MDV1Label, MDV1Text, MDV1FSBtn, MDV1NewBtn, MDV1EjectBtn);
+        ConfigureMicrodrive(MDV2Label, MDV2Text, MDV2FSBtn, MDV2NewBtn, MDV2EjectBtn);
+        ConfigureMicrodrive(MDV3Label, MDV3Text, MDV3FSBtn, MDV3NewBtn, MDV3EjectBtn);
+        ConfigureMicrodrive(MDV4Label, MDV4Text, MDV4FSBtn, MDV4NewBtn, MDV4EjectBtn);
+        ConfigureMicrodrive(MDV5Label, MDV5Text, MDV5FSBtn, MDV5NewBtn, MDV5EjectBtn);
+        ConfigureMicrodrive(MDV6Label, MDV6Text, MDV6FSBtn, MDV6NewBtn, MDV6EjectBtn);
+        ConfigureMicrodrive(MDV7Label, MDV7Text, MDV7FSBtn, MDV7NewBtn, MDV7EjectBtn);
 
         MicrodriveGroup->Visible = (spectrum.floppytype == FLOPPYIF1 && IF1->MDVNoDrives > 0);
         MicrodriveGroup->Height  = MDV0Text->Top + ((MDV1Text->Top - MDV0Text->Top) * IF1->MDVNoDrives) + 8;
 }
 //---------------------------------------------------------------------------
 
+void TP3Drive::ConfigureMicrodrive(TLabel* MDVLabel, TEdit* MDVText, TButton* MDVFSBtn, TButton* MDVNewBtn, TButton* MDVEjectBtn)
+{
+        int driveNumber = GetMDVNo((TObject*)MDVLabel);
+
+        MDVText->Text = IF1->MDVGetFileName(driveNumber) ? IF1->MDVGetFileName(driveNumber) : "< Empty >";
+        MDVText->SelStart = MDVText->Text.Length() - 1;
+        MDVText->SelLength = 0;
+
+        bool drivePresent = (IF1->MDVNoDrives > driveNumber);
+        MDVLabel->Visible    = drivePresent;
+        MDVText->Visible     = drivePresent;
+        MDVFSBtn->Visible    = drivePresent;
+        MDVNewBtn->Visible   = drivePresent;
+        MDVEjectBtn->Visible = drivePresent;
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TP3Drive::FormClose(TObject *Sender, TCloseAction &Action)
 {
-        Form1->DiskDrives1->Checked=false;
-        if (Height<80) Form1->DiskDrives1->Enabled=false;
-        else Form1->DiskDrives1->Enabled=true;
+        Form1->DiskDrives1->Checked = false;                                                                             
+        Form1->DiskDrives1->Enabled = (FloppyDriveGroup->Visible || HardDriveGroup->Visible || MicrodriveGroup->Visible);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD0FSBtnClick(TObject *Sender)
 {
-        int c,h,s;
-        unsigned long size;
-        AnsiString Filename, Ext;
+        AnsiString Filename;
 
-        if (DragFileName!="")
+        if (DragFileName != "")
         {
-                Filename=DragFileName;
+                Filename = DragFileName;
         }
         else
         {
-                if (!Sender && (HD0List->ItemIndex!=0))
+                if (!Sender && (HD0List->ItemIndex != 0))
                 {
-                        Filename=PhysDrives[HD0List->ItemIndex-1].Path;
+                        Filename = PhysDrives[HD0List->ItemIndex - 1].Path;
                 }
                 else
                 {
-                        HD0List->ItemIndex=0;
-                        if (ATA_GetHDF(0)) OpenDialogHardDriveImage->FileName=ATA_GetHDF(0);
+                        HD0List->ItemIndex = 0;
 
-                        if (OpenDialogHardDriveImage->FileName.Length() == 0 || *(OpenDialogHardDriveImage->FileName.AnsiLastChar()) == '\\')
-                        {
-                                OpenDialogHardDriveImage->FileName = "";
-                        }
-
-                        if (!OpenDialogHardDriveImage->Execute()) return;
-
-                        Filename=OpenDialogHardDriveImage->FileName;
-                        Ext=FileNameGetExt(Filename);
-
-                        if (Ext!=".HDF" && Ext!=".VHD") Filename += ".hdf";
-                        Ext=FileNameGetExt(Filename);
-
-                        if (access(Filename.c_str(), 0) && Ext==".HDF")
-                        {
-                                char Message[256];
-                                int ret;
-
-                                strcpy(Message,Filename.c_str());
-                                strcat(Message," Does not exist.\nWould you like to create it?");
-
-                                ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
-
-                                if (ret!=IDOK) return;
-
-                                CreateHDF->FileName=Filename;
-                                CreateHDF->ShowModal();
-                        }
-                        if (access(Filename.c_str(), 0)) return;
+                        Filename = SelectHardDiskImage(0);
+                        if (Filename == NULL) return;
                 }
         }
 
-        HD0Text->Text = Filename;
-        HD0Text->SelStart=HD0Text->Text.Length()-1; HD0Text->SelLength=0;
-        if (ATA_LoadHDF(0,Filename.c_str()))
-        {
-                HD0EjectBtnClick(NULL);
-                return;
-        }
-        ATA_GetCHS(0, &c, &h, &s, &size);
-        HD0ReadOnly->Checked=ATA_GetReadOnly(0);
-
-        HD0C->Text=c;
-        HD0H->Text=h; HD0HUD->Position=(short)h; HD0HUD->Min=1; HD0HUD->Max=15;
-        HD0S->Text=s; HD0SUD->Position=(short)s; HD0SUD->Min=1; HD0SUD->Max=255;
-        if (HD0Text->Text[1]=='\\' && HD0Text->Text[2]=='\\')
-        {
-                HD0CHS->Visible=true;
-                HD0C->Visible=true;
-                HD0H->Visible=true;
-                HD0S->Visible=true;
-                HD0HUD->Visible=true;
-                HD0SUD->Visible=true;
-        }
-        else
-        {
-                HD0CHS->Visible=false;
-                HD0C->Visible=false;
-                HD0H->Visible=false;
-                HD0S->Visible=false;
-                HD0HUD->Visible=false;
-                HD0SUD->Visible=false;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::HD0NewBtnClick(TObject *Sender)
-{
-        int c,h,s;
-        unsigned long size;
-
-        if (!SaveDialogNewHardDriveImage->Execute()) return;
-
-        AnsiString Filename = SaveDialogNewHardDriveImage->FileName;
-
-        CreateHDF->FileName=Filename;
-        CreateHDF->ShowModal();
-
-        if (access(Filename.c_str(), 0)) return;
-
-        HD0Text->Text = Filename;
-        HD0Text->SelStart=HD0Text->Text.Length()-1; HD0Text->SelLength=0;
-        if (ATA_LoadHDF(0,Filename.c_str()))
-        {
-                HD0EjectBtnClick(NULL);
-                return;
-        }
-        ATA_GetCHS(0, &c, &h, &s, &size);
-        HD0ReadOnly->Checked=ATA_GetReadOnly(0);
-
-        HD0C->Text=c;
-        HD0H->Text=h; HD0HUD->Position=(short)h; HD0HUD->Min=1; HD0HUD->Max=15;
-        HD0S->Text=s; HD0SUD->Position=(short)s; HD0SUD->Min=1; HD0SUD->Max=255;
-        if (HD0Text->Text[1]=='\\' && HD0Text->Text[2]=='\\')
-        {
-                HD0CHS->Visible=true;
-                HD0C->Visible=true;
-                HD0H->Visible=true;
-                HD0S->Visible=true;
-                HD0HUD->Visible=true;
-                HD0SUD->Visible=true;
-        }
-        else
-        {
-                HD0CHS->Visible=false;
-                HD0C->Visible=false;
-                HD0H->Visible=false;
-                HD0S->Visible=false;
-                HD0HUD->Visible=false;
-                HD0SUD->Visible=false;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::HD1NewBtnClick(TObject *Sender)
-{
-        int c,h,s;
-        unsigned long size;
-
-        if (!SaveDialogNewHardDriveImage->Execute()) return;
-
-        AnsiString Filename = SaveDialogNewHardDriveImage->FileName;
-
-        CreateHDF->FileName=Filename;
-        CreateHDF->ShowModal();
-        if (access(Filename.c_str(), 0)) return;       
-
-        HD1Text->Text = Filename;
-        HD1Text->SelStart=HD1Text->Text.Length()-1; HD1Text->SelLength=0;
-        if (ATA_LoadHDF(1,Filename.c_str()))
-        {
-                HD1EjectBtnClick(NULL);
-                return;
-        }
-
-        ATA_GetCHS(1, &c, &h, &s, &size);
-        HD1ReadOnly->Checked=ATA_GetReadOnly(1);
-        HD1C->Text=c;
-        HD1H->Text=h; HD1HUD->Position=(short)h; HD1HUD->Min=1; HD1HUD->Max=15;
-        HD1S->Text=s; HD1SUD->Position=(short)s; HD1SUD->Min=1; HD1SUD->Max=255;
-        if (HD1Text->Text[1]=='\\' && HD1Text->Text[2]=='\\')
-        {
-                HD1CHS->Visible=true; HD1C->Visible=true; HD1H->Visible=true;
-                HD1S->Visible=true; HD1HUD->Visible=true; HD1SUD->Visible=true;
-        }
-        else
-        {
-                HD1CHS->Visible=false; HD1C->Visible=false; HD1H->Visible=false;
-                HD1S->Visible=false; HD1HUD->Visible=false; HD1SUD->Visible=false;
-        }
+        CreateHardDiskImage(0, Filename, HD0Text, HD0ReadOnly, HD0List);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD1FSBtnClick(TObject *Sender)
 {
-        int c,h,s;
-        unsigned long size;
-        AnsiString Filename, Ext;
+        AnsiString Filename;
 
-        if (!Sender && (HD1List->ItemIndex!=0))
+        if (!Sender && (HD1List->ItemIndex != 0))
         {
-                Filename=PhysDrives[HD1List->ItemIndex-1].Path;
+                Filename = PhysDrives[HD1List->ItemIndex - 1].Path;
         }
         else
         {
-                HD1List->ItemIndex=0;
-                if (ATA_GetHDF(1)) OpenDialogHardDriveImage->FileName=ATA_GetHDF(1);
+                HD1List->ItemIndex = 0;
 
-                if (OpenDialogHardDriveImage->FileName.Length() == 0 || *(OpenDialogHardDriveImage->FileName.AnsiLastChar()) == '\\')
-                {
-                        OpenDialogHardDriveImage->FileName = "";
-                }
-
-                if (!OpenDialogHardDriveImage->Execute()) return;
-
-                Filename=OpenDialogHardDriveImage->FileName;
-                Ext=FileNameGetExt(Filename);
-
-                if (Ext!=".HDF") Filename += ".hdf";
-
-                if (access(Filename.c_str(), 0))
-                {
-                        char Message[256];
-                        int ret;
-
-                        strcpy(Message,Filename.c_str());
-                        strcat(Message," Does not exist.\nWould you like to create it?");
-
-                        ret=Application->MessageBox(Message, "File does not exist", MB_OKCANCEL | MB_ICONWARNING);
-
-                        if (ret!=IDOK) return;
-
-                        CreateHDF->FileName=Filename;
-                        CreateHDF->ShowModal();
-                        if (access(Filename.c_str(), 0)) return;
-                }
+                Filename = SelectHardDiskImage(1);
+                if (Filename == NULL) return;
         }
 
+        CreateHardDiskImage(1, Filename, HD1Text, HD1ReadOnly, HD1List);
+}
+//---------------------------------------------------------------------------
 
-        HD1Text->Text = Filename;
-        HD1Text->SelStart=HD1Text->Text.Length()-1; HD1Text->SelLength=0;
-        if (ATA_LoadHDF(1,Filename.c_str()))
+AnsiString TP3Drive::SelectHardDiskImage(int driveNumber)
+{
+        char* lastFileName = ATA_GetHDF(driveNumber);
+
+        if (lastFileName) OpenDialogHardDriveImage->FileName = lastFileName;
+
+        if (OpenDialogHardDriveImage->FileName.Length() == 0 || *(OpenDialogHardDriveImage->FileName.AnsiLastChar()) == '\\')
         {
-                HD1EjectBtnClick(NULL);
+                OpenDialogHardDriveImage->FileName = "";
+        }
+
+        if (!OpenDialogHardDriveImage->Execute()) return NULL;
+
+        AnsiString Filename = OpenDialogHardDriveImage->FileName;
+        AnsiString Ext = FileNameGetExt(Filename);
+
+        if (Ext != ".HDF" && Ext != ".VHD") Filename += ".hdf";
+        Ext = FileNameGetExt(Filename);
+
+        if (access(Filename.c_str(), F_OK) && Ext == ".HDF")
+        {
+                AnsiString message = Filename + " does not exist.\nWould you like to create it?";
+                int ret = Application->MessageBox(message.c_str(), "Select Hard Disk Image", MB_OKCANCEL | MB_ICONQUESTION);
+
+                if (ret != IDOK) return NULL;
+
+                CreateHDF->FileName = Filename;
+                CreateHDF->ShowModal();
+        }
+
+        if (access(Filename.c_str(), F_OK)) return NULL;
+
+        return Filename;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TP3Drive::HD0NewBtnClick(TObject *Sender)
+{
+        NewHardDiskImage(0, HD0Text, HD0ReadOnly, HD0List);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TP3Drive::HD1NewBtnClick(TObject *Sender)
+{
+        NewHardDiskImage(1, HD1Text, HD1ReadOnly, HD1List);
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::NewHardDiskImage(int driveNumber, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList)
+{
+        if (!SaveDialogNewHardDriveImage->Execute()) return;
+
+        AnsiString Filename = SaveDialogNewHardDriveImage->FileName;
+
+        CreateHDF->FileName = Filename;
+        CreateHDF->ShowModal();
+
+        if (access(Filename.c_str(), F_OK)) return;
+
+        CreateHardDiskImage(driveNumber, Filename, HDText, HDReadOnly, HDList);
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::CreateHardDiskImage(int driveNumber, AnsiString Filename, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList)
+{
+        HDText->Text = Filename;
+        HDText->SelStart = HDText->Text.Length() - 1;
+        HDText->SelLength = 0;
+
+        if (ATA_LoadHDF(driveNumber, HDText->Text.c_str()))
+        {
+                HardDiskEject(driveNumber, HDText, HDList);
                 return;
         }
 
-        ATA_GetCHS(1, &c, &h, &s, &size);
-        HD1ReadOnly->Checked=ATA_GetReadOnly(1);
-        HD1C->Text=c;
-        HD1H->Text=h; HD1HUD->Position=(short)h; HD1HUD->Min=1; HD1HUD->Max=15;
-        HD1S->Text=s; HD1SUD->Position=(short)s; HD1SUD->Min=1; HD1SUD->Max=255;
-        if (HD1Text->Text[1]=='\\' && HD1Text->Text[2]=='\\')
-        {
-                HD1CHS->Visible=true; HD1C->Visible=true; HD1H->Visible=true;
-                HD1S->Visible=true; HD1HUD->Visible=true; HD1SUD->Visible=true;
-        }
-        else
-        {
-                HD1CHS->Visible=false; HD1C->Visible=false; HD1H->Visible=false;
-                HD1S->Visible=false; HD1HUD->Visible=false; HD1SUD->Visible=false;
-        }
+        HDReadOnly->Checked = ATA_GetReadOnly(driveNumber);
+
+        int c, h, s;
+        unsigned long size;
+        ATA_GetCHS(driveNumber, &c, &h, &s, &size);
+        SetHardDriveParameters(driveNumber, c, h, s);
+
+        bool showParameters = (HDText->Text[1] == '\\' && HDText->Text[2] == '\\');
+        SetHardDriveParameterVisibility(driveNumber, showParameters);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD0EjectBtnClick(TObject *Sender)
 {
-        HD0Text->Text = "< Empty >";
-        ATA_EjectHDF(0);
-        HD0List->ItemIndex=0;
-        HD0CHS->Visible=false; HD0C->Visible=false; HD0H->Visible=false;
-        HD0S->Visible=false; HD0HUD->Visible=false; HD0SUD->Visible=false;
+        HardDiskEject(0, HD0Text, HD0List);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD1EjectBtnClick(TObject *Sender)
 {
-        HD1Text->Text = "< Empty >";
-        ATA_EjectHDF(1);
-        HD1List->ItemIndex=0;
-        HD1CHS->Visible=false; HD1C->Visible=false; HD1H->Visible=false;
-        HD1S->Visible=false; HD1HUD->Visible=false; HD1SUD->Visible=false;
+        HardDiskEject(1, HD1Text, HD1List);
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::HardDiskEject(int driveNumber, TEdit* HDText, TComboBox* HDList)
+{
+        HDText->Text = "< Empty >";
+        ATA_EjectHDF(driveNumber);
+        HDList->ItemIndex = 0;
+        SetHardDriveParameterVisibility(driveNumber, false);
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::SetHardDriveParameterVisibility(int driveNumber, bool visible)
+{
+        if (driveNumber == 0)
+        {
+                HD0CHS->Visible = visible; HD0C->Visible   = visible; HD0H->Visible   = visible;
+                HD0S->Visible   = visible; HD0HUD->Visible = visible; HD0SUD->Visible = visible;
+        }
+        else
+        {
+                HD1CHS->Visible = visible; HD1C->Visible   = visible; HD1H->Visible   = visible;
+                HD1S->Visible   = visible; HD1HUD->Visible = visible; HD1SUD->Visible = visible;
+        }
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::SetHardDriveParameters(int driveNumber, int c, int h, int s)
+{
+        if (driveNumber == 0)
+        {
+                HD0C->Text = c;
+                HD0H->Text = h; HD0HUD->Position = (short)h; HD0HUD->Min = 1; HD0HUD->Max = 15;
+                HD0S->Text = s; HD0SUD->Position = (short)s; HD0SUD->Min = 1; HD0SUD->Max = 255;
+        }
+        else
+        {
+                HD1C->Text = c;
+                HD1H->Text = h; HD1HUD->Position = (short)h; HD1HUD->Min = 1; HD1HUD->Max = 15;
+                HD1S->Text = s; HD1SUD->Position = (short)s; HD1SUD->Min = 1; HD1SUD->Max = 255;
+        }
 }
 //---------------------------------------------------------------------------
 
 int TP3Drive::GetMDVNo(TObject *Sender)
 {
-        if (Sender==MDV0Text || Sender==MDV0FSBtn || Sender==MDV0EjectBtn) return(0);
-        if (Sender==MDV1Text || Sender==MDV1FSBtn || Sender==MDV1EjectBtn) return(1);
-        if (Sender==MDV2Text || Sender==MDV2FSBtn || Sender==MDV2EjectBtn) return(2);
-        if (Sender==MDV3Text || Sender==MDV3FSBtn || Sender==MDV3EjectBtn) return(3);
-        if (Sender==MDV4Text || Sender==MDV4FSBtn || Sender==MDV4EjectBtn) return(4);
-        if (Sender==MDV5Text || Sender==MDV5FSBtn || Sender==MDV5EjectBtn) return(5);
-        if (Sender==MDV6Text || Sender==MDV6FSBtn || Sender==MDV6EjectBtn) return(6);
-        if (Sender==MDV7Text || Sender==MDV7FSBtn || Sender==MDV7EjectBtn) return(7);
-        return(0);
-}
+        if (Sender == MDV0Label || Sender == MDV0Text || Sender == MDV0FSBtn || Sender == MDV0NewBtn || Sender == MDV0EjectBtn) return 0;
+        if (Sender == MDV1Label || Sender == MDV1Text || Sender == MDV1FSBtn || Sender == MDV1NewBtn || Sender == MDV1EjectBtn) return 1;
+        if (Sender == MDV2Label || Sender == MDV2Text || Sender == MDV2FSBtn || Sender == MDV2NewBtn || Sender == MDV2EjectBtn) return 2;
+        if (Sender == MDV3Label || Sender == MDV3Text || Sender == MDV3FSBtn || Sender == MDV3NewBtn || Sender == MDV3EjectBtn) return 3;
+        if (Sender == MDV4Label || Sender == MDV4Text || Sender == MDV4FSBtn || Sender == MDV4NewBtn || Sender == MDV4EjectBtn) return 4;
+        if (Sender == MDV5Label || Sender == MDV5Text || Sender == MDV5FSBtn || Sender == MDV5NewBtn || Sender == MDV5EjectBtn) return 5;
+        if (Sender == MDV6Label || Sender == MDV6Text || Sender == MDV6FSBtn || Sender == MDV6NewBtn || Sender == MDV6EjectBtn) return 6;
+        if (Sender == MDV7Label || Sender == MDV7Text || Sender == MDV7FSBtn || Sender == MDV7NewBtn || Sender == MDV7EjectBtn) return 7;
 
-TObject *TP3Drive::GetTextBox(int Drive)
+        return 0;
+}
+//---------------------------------------------------------------------------
+
+TEdit* TP3Drive::GetMDVTextBox(int Drive)
 {
-        switch(Drive)
+        switch (Drive)
         {
-        case 0: return(MDV0Text);
-        case 1: return(MDV1Text);
-        case 2: return(MDV2Text);
-        case 3: return(MDV3Text);
-        case 4: return(MDV4Text);
-        case 5: return(MDV5Text);
-        case 6: return(MDV6Text);
-        case 7: return(MDV7Text);
-        default: return(MDV0Text);
+        case 0: return MDV0Text;
+        case 1: return MDV1Text;
+        case 2: return MDV2Text;
+        case 3: return MDV3Text;
+        case 4: return MDV4Text;
+        case 5: return MDV5Text;
+        case 6: return MDV6Text;
+        case 7: return MDV7Text;
+        default: return MDV0Text;
         }
 }
 //---------------------------------------------------------------------------
@@ -786,40 +639,43 @@ TObject *TP3Drive::GetTextBox(int Drive)
 void __fastcall TP3Drive::MDV0EjectBtnClick(TObject *Sender)
 {
         int Drive = GetMDVNo(Sender);
-        IF1->MDVSetFileName(Drive,NULL);
-        ((TEdit *)GetTextBox(Drive))->Text="< Empty >";
-
+        IF1->MDVSetFileName(Drive, NULL);
+        GetMDVTextBox(Drive)->Text = "< Empty >";
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::MDV0FSBtnClick(TObject *Sender)
 {
-        int Drive = GetMDVNo(Sender);
         AnsiString FileName;
-        TEdit *Text;
 
-        Text=(TEdit *)GetTextBox(Drive);
+        int driveNumber = GetMDVNo(Sender);
+        TEdit* Text = GetMDVTextBox(driveNumber);
 
         if (Sender)
         {
                 ConfigureOpenFloppyDiskImageDialog();
 
                 FileName = Text->Text;
-                if (FileName!="< Empty >")
+                if (FileName != "< Empty >")
+                {
                         OpenDialogFloppyDiskImage->FileName = FileName;
+                }
 
                 if (!OpenDialogFloppyDiskImage->Execute()) return;
-                FileName=OpenDialogFloppyDiskImage->FileName;
+                FileName = OpenDialogFloppyDiskImage->FileName;
         }
-        else    FileName=DragFileName;
+        else
+        {
+                FileName = DragFileName;
+        }
 
-        IF1->MDVSetFileName(Drive,FileName.c_str());
-        Text->Text=FileName;
-        Text->SelStart=Text->Text.Length()-1; Text->SelLength=0;
+        IF1->MDVSetFileName(driveNumber, FileName.c_str());
+        
+        Text->Text = FileName;
+        Text->SelStart = Text->Text.Length() - 1;
+        Text->SelLength = 0;
 }
 //---------------------------------------------------------------------------
-
-
 
 void __fastcall TP3Drive::RedetectDrivesClick(TObject *Sender)
 {
@@ -831,19 +687,18 @@ void __fastcall TP3Drive::RedetectDrivesClick(TObject *Sender)
 
 void __fastcall TP3Drive::HD0ListChange(TObject *Sender)
 {
-        if (HD0List->ItemIndex>0) HD0FSBtnClick(NULL);
+        if (HD0List->ItemIndex > 0) HD0FSBtnClick(NULL);
         else HD0EjectBtnClick(NULL);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD1ListChange(TObject *Sender)
 {
-        if (HD1List->ItemIndex>0) HD1FSBtnClick(NULL);
+        if (HD1List->ItemIndex > 0) HD1FSBtnClick(NULL);
         else HD1EjectBtnClick(NULL);
 }
 //---------------------------------------------------------------------------
-
-
+          
 void __fastcall TP3Drive::HD0HUDClick(TObject *Sender, TUDBtnType Button)
 {
         int c,h,s;
@@ -851,13 +706,12 @@ void __fastcall TP3Drive::HD0HUDClick(TObject *Sender, TUDBtnType Button)
 
         ATA_GetCHS(0, &c, &h, &s, &size);
 
-        h=HD0HUD->Position;
-        s=HD0SUD->Position;
-        c=size/(h*s); if (c>65535) c=65535;
+        h = HD0HUD->Position;
+        s = HD0SUD->Position;
+        c = size / (h * s);
+        if (c > 65535) c = 65535;
 
-        HD0H->Text=h; HD0HUD->Position=(short)h; HD0HUD->Min=1; HD0HUD->Max=15;
-        HD0S->Text=s; HD0SUD->Position=(short)s; HD0SUD->Min=1; HD0SUD->Max=255;
-        HD0C->Text=c;
+        SetHardDriveParameters(0, c, h, s);
 
         ATA_SetCHS(0, c, h, s);
 }
@@ -870,47 +724,51 @@ void __fastcall TP3Drive::HD1HUDClick(TObject *Sender, TUDBtnType Button)
 
         ATA_GetCHS(1, &c, &h, &s, &size);
 
-        h=HD0HUD->Position;
-        s=HD0SUD->Position;
-        c=size/(h*s); if (c>65535) c=65535;
+        h = HD0HUD->Position;
+        s = HD0SUD->Position;
+        c = size / (h * s);
+        if (c > 65535) c = 65535;
 
-        HD1H->Text=h; HD1HUD->Position=(short)h; HD1HUD->Min=1; HD1HUD->Max=15;
-        HD1S->Text=s; HD1SUD->Position=(short)s; HD1SUD->Min=1; HD1SUD->Max=255;
-        HD1C->Text=c;
+        SetHardDriveParameters(1, c, h, s);
 
         ATA_SetCHS(1, c, h, s);
-
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD0ReadOnlyClick(TObject *Sender)
 {
-        ATA_SetReadOnly(0,HD0ReadOnly->Checked);
-        HD0ReadOnly->Checked=ATA_GetReadOnly(0);
+        ATA_SetReadOnly(0, HD0ReadOnly->Checked);
+        HD0ReadOnly->Checked = ATA_GetReadOnly(0);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::HD1ReadOnlyClick(TObject *Sender)
 {
-        ATA_SetReadOnly(1,HD1ReadOnly->Checked);
-        HD1ReadOnly->Checked=ATA_GetReadOnly(1);
+        ATA_SetReadOnly(1, HD1ReadOnly->Checked);
+        HD1ReadOnly->Checked = ATA_GetReadOnly(1);
 }
 //---------------------------------------------------------------------------
 
 void TP3Drive::InsertFile(AnsiString Filename)
 {
-        AnsiString Ext;
+        DragFileName = Filename;
 
-        DragFileName=Filename;
+        AnsiString Ext = GetExt(Filename);
 
-        Ext = GetExt(Filename);
+        if (Ext==".MDR" || Ext==".MDV")
+        {
+                MDV0FSBtnClick(NULL);
+        }
+        else if (Ext == ".HDF" || Ext == ".VHD")
+        {
+                HD0FSBtnClick(NULL);
+        }
+        else if (Ext == ".DSK" || Ext == ".MGT" || Ext == ".IMG" || Ext == ".OPD" || Ext == ".OPU" || Ext == ".TRD" || Ext == ".LAR")
+        {
+                DriveAFSBtnClick(NULL);
+        }
 
-        if (Ext==".MDR" || Ext==".MDV") MDV0FSBtnClick(NULL);
-        else if (Ext==".HDF") HD0FSBtnClick(NULL);
-        else if (Ext==".DSK" || Ext==".MGT" || Ext==".IMG"
-                  || Ext==".OPD" || Ext==".OPU" || Ext==".TRD" || Ext==".LAR") DriveAFSBtnClick(NULL);
-
-        DragFileName="";
+        DragFileName = "";
 }
 //---------------------------------------------------------------------------
 
@@ -931,6 +789,11 @@ void __fastcall TP3Drive::DriveANewBtnClick(TObject *Sender)
         if (NewFloppyDisk(filePath))
         {
                 DriveAText->Text = filePath;
+                DriveAText->SelStart = DriveAText->Text.Length() - 1;
+                DriveAText->SelLength = 0;
+
+                int readonly = 0;
+                OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
         }
 }
 //---------------------------------------------------------------------------
@@ -942,6 +805,11 @@ void __fastcall TP3Drive::DriveBNewBtnClick(TObject *Sender)
         if (NewFloppyDisk(filePath))
         {
                 DriveBText->Text = filePath;
+                DriveBText->SelStart = DriveBText->Text.Length() - 1;
+                DriveBText->SelLength = 0;
+
+                int readonly = 0;
+                OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
         }
 }
 //---------------------------------------------------------------------------
@@ -953,31 +821,31 @@ bool TP3Drive::NewFloppyDisk(AnsiString& filePath)
         switch (spectrum.floppytype)
         {
         case FLOPPYPLUS3:
-                success = CreateFloppyDisk("Create New +3 Floppy Disk", "DSK Disk Images (*.dsk)|*.dsk", ".dsk", filePath);
+                success = CreateFloppyDiskImage("Create New +3 Floppy Disk", "DSK Disk Images (*.dsk)|*.dsk", ".dsk", filePath);
                 break;
 
         case FLOPPYPLUSD:
-                success = CreateFloppyDisk("Create New Plus D Floppy Disk", "Plus D Disk Images (*.mgt;*.img)|*.mgt;*.img|DSK Disk Images (*.dsk)|*.dsk", ".mgt", filePath);
+                success = CreateFloppyDiskImage("Create New Plus D Floppy Disk", "Plus D Disk Images (*.mgt;*.img)|*.mgt;*.img|DSK Disk Images (*.dsk)|*.dsk", ".mgt", filePath);
                 break;
 
         case FLOPPYDISCIPLE:
-                success = CreateFloppyDisk("Create New DISCiPLE Floppy Disk", "DISCiPLE Disk Images (*.mgt;*.img)|*.mgt;*.img|DSK Disk Images (*.dsk)|*.dsk", ".mgt", filePath);
+                success = CreateFloppyDiskImage("Create New DISCiPLE Floppy Disk", "DISCiPLE Disk Images (*.mgt;*.img)|*.mgt;*.img|DSK Disk Images (*.dsk)|*.dsk", ".mgt", filePath);
                 break;
 
         case FLOPPYBETA:
-                success = CreateFloppyDisk("Create New Beta Floppy Disk", "TR-DOS Disk Images (*.trd)|*.trd|DSK Disk Images (*.dsk)|*.dsk", ".trd", filePath);
+                success = CreateFloppyDiskImage("Create New Beta Floppy Disk", "TR-DOS Disk Images (*.trd)|*.trd|DSK Disk Images (*.dsk)|*.dsk", ".trd", filePath);
                 break;
 
         case FLOPPYOPUSD:
-                success = CreateFloppyDisk("Create New Opus Discovory Floppy Disk", "Opus Discovery Disk Images (*.opd;*.opu)|*.opd;*.opu|DSK Disk Images (*.dsk)|*.dsk", ".opd", filePath);
+                success = CreateFloppyDiskImage("Create New Opus Discovory Floppy Disk", "Opus Discovery Disk Images (*.opd;*.opu)|*.opd;*.opu|DSK Disk Images (*.dsk)|*.dsk", ".opd", filePath);
                 break;
 
         case FLOPPYLARKEN81:
-                success = CreateFloppyDisk("Create New Larken Floppy Disk", "Larken Disk Images (*.lar)|*.lar|DSK Disk Images (*.dsk)|*.dsk", ".lar", filePath);
+                success = CreateFloppyDiskImage("Create New Larken Floppy Disk", "Larken Disk Images (*.lar)|*.lar|DSK Disk Images (*.dsk)|*.dsk", ".lar", filePath);
                 break;
 
         case FLOPPYZX1541:
-                success = CreateFloppyDisk("Create New ZX1541 Floppy Disk", "DSK Disk Images (*.dsk)|*.dsk", ".dsk", filePath);
+                success = CreateFloppyDiskImage("Create New ZX1541 Floppy Disk", "DSK Disk Images (*.dsk)|*.dsk", ".dsk", filePath);
                 break;
 
         default:
@@ -990,7 +858,7 @@ bool TP3Drive::NewFloppyDisk(AnsiString& filePath)
 }
 //---------------------------------------------------------------------------
 
-bool TP3Drive::CreateFloppyDisk(AnsiString title, AnsiString filter, AnsiString defaultExt, AnsiString& filePath)
+bool TP3Drive::CreateFloppyDiskImage(AnsiString title, AnsiString filter, AnsiString defaultExt, AnsiString& filePath)
 {
         P3Drive->Enabled = false;
 
@@ -1031,90 +899,14 @@ bool TP3Drive::CreateFloppyDisk(AnsiString title, AnsiString filter, AnsiString 
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TP3Drive::MDV0NewBtnClick(TObject *Sender)
+void __fastcall TP3Drive::MDVNewBtnClick(TObject *Sender)
 {
         AnsiString filePath;
 
         if (CreateMicrodriveCartridge(filePath))
         {
-                MDV0Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV1NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV1Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV2NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV2Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV3NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV3Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV4NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV4Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV5NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV5Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV6NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV6Text->Text = filePath;
-        }
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TP3Drive::MDV7NewBtnClick(TObject *Sender)
-{
-        AnsiString filePath;
-
-        if (CreateMicrodriveCartridge(filePath))
-        {
-                MDV7Text->Text = filePath;
+                int driveNumber = GetMDVNo(Sender);
+                GetMDVTextBox(driveNumber)->Text = filePath;
         }
 }
 //---------------------------------------------------------------------------
@@ -1141,7 +933,7 @@ bool TP3Drive::CreateMicrodriveCartridge(AnsiString& filePath)
                         {
                                 for (int i = 0; i < 137922; i++)
                                 {
-                                        // 'Empty' data
+                                        // 'Blank' data
                         	        fputc(0xFC, f);
                                 }
 

@@ -1,6 +1,6 @@
 object P3Drive: TP3Drive
-  Left = 191
-  Top = 169
+  Left = 205
+  Top = 164
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Drives'
@@ -701,7 +701,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 2
-      OnClick = MDV0NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV1NewBtn: TButton
       Left = 272
@@ -710,7 +710,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 6
-      OnClick = MDV1NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV2NewBtn: TButton
       Left = 272
@@ -719,7 +719,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 10
-      OnClick = MDV2NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV3NewBtn: TButton
       Left = 272
@@ -728,7 +728,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 14
-      OnClick = MDV3NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV4NewBtn: TButton
       Left = 272
@@ -737,7 +737,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 18
-      OnClick = MDV4NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV5NewBtn: TButton
       Left = 272
@@ -746,7 +746,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 22
-      OnClick = MDV5NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV6NewBtn: TButton
       Left = 272
@@ -755,7 +755,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 26
-      OnClick = MDV6NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV7NewBtn: TButton
       Left = 272
@@ -764,7 +764,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 30
-      OnClick = MDV7NewBtnClick
+      OnClick = MDVNewBtnClick
     end
   end
   object OpenDialogFloppyDiskImage: TOpenDialog

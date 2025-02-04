@@ -66,7 +66,6 @@ struct HWFormValues
         int DriveATypeItemIndex;
         int DriveBTypeItemIndex;
         int FDCItemIndex;
-        bool AutobootChecked;
         bool ZXpandChecked;
         bool ZXpandEnabled;
         bool SpecDrumChecked;
@@ -147,7 +146,6 @@ __published:	// IDE-managed Components
         TCheckBox *Issue2;
         TLabel *LabelFDC;
         TComboBox *FDC;
-        TCheckBox *Autoboot;
         TButton *IF1Config;
         TComboBox *IDEBox;
         TComboBox *ZXCFRAM;

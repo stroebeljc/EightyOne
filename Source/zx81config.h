@@ -195,9 +195,11 @@ typedef struct
         int usource;
         int kbissue;
         int kmouse;
-        int floppytype, autoboot;
-        int driveatype, drivebtype;
-        char driveaimg[256], drivebimg[256];
+        int floppytype;
+        int driveatype;
+        int drivebtype;
+        char driveaimg[256];
+        char drivebimg[256];
         int drivebusy;
         int HDType;
         int divIDEJumperEClosed;

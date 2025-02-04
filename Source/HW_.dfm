@@ -1871,7 +1871,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 3
+        TabOrder = 2
         OnChange = DriveATypeChange
         Items.Strings = (
           'None'
@@ -1887,7 +1887,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 4
+        TabOrder = 3
         OnChange = DriveBTypeChange
         Items.Strings = (
           'None'
@@ -1911,14 +1911,6 @@ object HW: THW
           'MGT Disciple'
           'MGT Plus D')
       end
-      object Autoboot: TCheckBox
-        Left = 224
-        Top = 19
-        Width = 113
-        Height = 15
-        Caption = 'Autoboot TR-DOS'
-        TabOrder = 2
-      end
       object IF1Config: TButton
         Left = 224
         Top = 16
@@ -1935,7 +1927,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 5
+        TabOrder = 4
         OnChange = IDEBoxChange
         Items.Strings = (
           'Simple +3e 8-Bit')
@@ -1947,7 +1939,7 @@ object HW: THW
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 6
+        TabOrder = 5
         Items.Strings = (
           '128k'
           '512k'
@@ -1961,7 +1953,7 @@ object HW: THW
         Caption = 'Upload Jumper'
         Checked = True
         State = cbChecked
-        TabOrder = 7
+        TabOrder = 6
       end
     end
     object AdvSettings: TTabSheet

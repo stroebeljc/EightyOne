@@ -331,7 +331,6 @@ void THW::ReloadFromInternalSettings()
         DriveAType->ItemIndex  = Hwform.DriveATypeItemIndex;
         DriveBType->ItemIndex  = Hwform.DriveBTypeItemIndex;
         FDC->ItemIndex         = Hwform.FDCItemIndex;
-        Autoboot->Checked      = Hwform.AutobootChecked;
         ZXpand->Enabled        = Hwform.ZXpandEnabled;
         SpecDrum->Enabled      = Hwform.SpecDrumEnabled;
         SpecDrum->Checked      = Hwform.SpecDrumChecked;
@@ -421,7 +420,6 @@ void THW::SaveInternalSettings()
         Hwform.DriveATypeItemIndex      = DriveAType->ItemIndex;
         Hwform.DriveBTypeItemIndex      = DriveBType->ItemIndex;
         Hwform.FDCItemIndex             = FDC->ItemIndex;
-        Hwform.AutobootChecked          = Autoboot->Checked;
         Hwform.ZXpandChecked            = ZXpand->Checked;
         Hwform.ZXpandEnabled            = ZXpand->Enabled;
         Hwform.SpecDrumChecked          = SpecDrum->Checked;
@@ -727,27 +725,27 @@ void THW::ConfigureRom()
                 case SPECCY16:
                         spectrum.RAMBanks = 1;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP16, machine.CurRom);
                         break;
 
                 case SPECCY48:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP48, machine.CurRom);
                         break;
 
                 case SPECCYPLUS:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSPP, machine.CurRom);
                         break;
 
@@ -772,9 +770,9 @@ void THW::ConfigureRom()
                 case SPECCY128:
                         spectrum.RAMBanks = 8;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
+                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
                         else strcpy(emulator.ROMSP128, machine.CurRom);
                         break;
 
@@ -1537,9 +1535,9 @@ void THW::ConfigureSpectrumIDE()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)") { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = true; }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")    spectrum.HDType = HDPLUS3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")               spectrum.HDType = HDACECF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik CF")      spectrum.HDType = HDPITERSCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 8-Bit")   spectrum.HDType = HDPITERS8B;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 16-Bit")  spectrum.HDType = HDPITERS16B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")      spectrum.HDType = HDPITERSCF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")   spectrum.HDType = HDPITERS8B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")  spectrum.HDType = HDPITERS16B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")             spectrum.HDType = HDPITERSCF;
         spectrum.divIDEJumperEClosed = Form1->divIDEJumperEClosed->Checked;
         spectrum.UploadJumperZXCF = Upload->Checked;
@@ -1563,9 +1561,6 @@ void THW::ConfigureFDC()
         if (FDC->Items->Strings[FDC->ItemIndex] == "ZX Interface 1") spectrum.floppytype = FLOPPYIF1;
         if (FDC->Items->Strings[FDC->ItemIndex] == "ZX1541")         spectrum.floppytype = FLOPPYZX1541;
         if (FDC->Items->Strings[FDC->ItemIndex] == "Larken")         spectrum.floppytype = FLOPPYLARKEN81;
-
-        if (Autoboot->Checked) spectrum.autoboot = true;
-        else spectrum.autoboot = false;
 
         switch(DriveAType->ItemIndex)
         {
@@ -2179,17 +2174,25 @@ void THW::SetupForSpectrum(void)
 
         OldFDC = FDC->Items->Strings[FDC->ItemIndex];
         while(FDC->Items->Count > 1) FDC->Items->Delete(FDC->Items->Count - 1);
+        
         FDC->Items->Strings[0] = "None";
         FDC->Items->Add("ZX Interface 1");
-        FDC->Items->Add("Beta Disk");
-        FDC->Items->Add("Opus Discovery");
-        FDC->Items->Add("DISCiPLE");
-        FDC->Items->Add("Plus D");
+        if (NewSpec != SPECCYTC2068 && NewSpec != SPECCYTS2068)
+        {
+                FDC->Items->Add("Beta Disk");
+                FDC->Items->Add("Opus Discovery");
+                FDC->Items->Add("DISCiPLE");
+                FDC->Items->Add("Plus D");
+        }
 
         FDC->ItemIndex = 0;
         for (i = 0; i < FDC->Items->Count; i++)
         {
-                if (FDC->Items->Strings[i] == OldFDC) FDC->ItemIndex = i;
+                if (FDC->Items->Strings[i] == OldFDC)
+                {
+                        FDC->ItemIndex = i;
+                        break;
+                }
         }
 
         FDC->Enabled = true;
@@ -2321,9 +2324,9 @@ void THW::SetupForSpectrum(void)
         IDEBox->Items->Add("divIDE 57 (R Gal)");
         IDEBox->Items->Add("divIDE 57 (R'' Gal)");
         IDEBox->Items->Add("ZXCF");
-        IDEBox->Items->Add("Pera Putnik CF");
-        IDEBox->Items->Add("Pera Putnik 8-Bit");
-        IDEBox->Items->Add("Pera Putnik 16-Bit");
+        IDEBox->Items->Add("Simple IDE CF");
+        IDEBox->Items->Add("Simple IDE 8-Bit");
+        IDEBox->Items->Add("Simple IDE 16-Bit");
         IDEBox->ItemIndex = 0;
         IDEBox->Enabled = true;
         LabelIDE->Enabled = true;
@@ -3150,7 +3153,6 @@ void THW::SaveSettings(TIniFile *ini)
         ini->WriteString("DRIVES", "DriveA", spectrum.driveaimg);
         ini->WriteString("DRIVES", "DriveB", spectrum.drivebimg);
         ini->WriteInteger("HWARE", "FDCType", FDC->ItemIndex);
-        ini->WriteBool("HWARE", "Autoboot", Autoboot->Checked);
         ini->WriteBool("HWARE", "uSource", uSource->Checked);
         ini->WriteBool("HWARE", "ZXpand", ZXpand->Checked);
         ini->WriteBool("HWARE", "ZXpandEnabled", ZXpand->Enabled);
@@ -3303,7 +3305,6 @@ void THW::LoadSettings(TIniFile *ini)
         Hwform.DriveATypeItemIndex = ini->ReadInteger("HWARE", "DriveAType", DriveAType->ItemIndex);
         Hwform.DriveBTypeItemIndex = ini->ReadInteger("HWARE", "DriveBType", DriveBType->ItemIndex);
         Hwform.FDCItemIndex = ini->ReadInteger("HWARE", "FDCType", FDC->ItemIndex);
-        Hwform.AutobootChecked = ini->ReadBool("HWARE", "Autoboot", Autoboot->Checked);
 
         Rom = ini->ReadString("DRIVES", "DriveA", spectrum.driveaimg);
         strcpy(spectrum.driveaimg, Rom.c_str());
@@ -3565,23 +3566,23 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 Form1->divIDEJumperEClosed->Enabled = true;
                 Form1->divIDEJumperEClosed->Checked = true;
         }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit") RomBox->Text = emulator.ROMSPP3E;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik CF") RomBox->Text = emulator.ROMZXCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 8-Bit") RomBox->Text = emulator.ROMZX8BIT;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Pera Putnik 16-Bit") RomBox->Text = emulator.ROMZX16BIT;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")  RomBox->Text = emulator.ROMSPP3E;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")     RomBox->Text = emulator.ROMZXCF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")  RomBox->Text = emulator.ROMZX8BIT;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") RomBox->Text = emulator.ROMZX16BIT;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "None")
         {
-                if (SpecP2aBtn->Down) RomBox->Text = emulator.ROMSPP2A;
-                if (SpecP3Btn->Down) RomBox->Text = emulator.ROMSPP3;
-                if (Spec16Btn->Down) RomBox->Text = emulator.ROMSP16;
-                if (Spec48Btn->Down) RomBox->Text = emulator.ROMSP48;
+                if (SpecP2aBtn->Down) RomBox->Text  = emulator.ROMSPP2A;
+                if (SpecP3Btn->Down) RomBox->Text   = emulator.ROMSPP3;
+                if (Spec16Btn->Down) RomBox->Text   = emulator.ROMSP16;
+                if (Spec48Btn->Down) RomBox->Text   = emulator.ROMSP48;
                 if (SpecPlusBtn->Down) RomBox->Text = emulator.ROMSPP;
-                if (Spec128Btn->Down) RomBox->Text = emulator.ROMSP128;
-                if (SpecP2Btn->Down) RomBox->Text = emulator.ROMSPP2;
-                if (TC2048Btn->Down) RomBox->Text = emulator.ROMTC2048;
-                if (TC2068Btn->Down) RomBox->Text = emulator.ROMTC2068;
-                if (TS2068Btn->Down) RomBox->Text = emulator.ROMTS2068;
+                if (Spec128Btn->Down) RomBox->Text  = emulator.ROMSP128;
+                if (SpecP2Btn->Down) RomBox->Text   = emulator.ROMSPP2;
+                if (TC2048Btn->Down) RomBox->Text   = emulator.ROMTC2048;
+                if (TC2068Btn->Down) RomBox->Text   = emulator.ROMTC2068;
+                if (TS2068Btn->Down) RomBox->Text   = emulator.ROMTS2068;
         }
 
         DisplayTotalRam();
@@ -3614,10 +3615,6 @@ void __fastcall THW::FDCChange(TObject *Sender)
                 LabelA->Visible = false;
                 LabelB->Visible = false;
         }
-
-        if (FDC->Items->Strings[FDC->ItemIndex] == "Beta Disk")
-                Autoboot->Visible = true;
-        else    Autoboot->Visible = false;
 
         if (FDC->Items->Strings[FDC->ItemIndex] == "ZX Interface 1")
         {

@@ -317,7 +317,10 @@ void spec48_reset(void)
         PlusDPaged=PlusDMemSwap=0;
         PlusDCur= &PlusDDrives[0];
         PlusDCur->side=0;
-        if (spectrum.floppytype==FLOPPYBETA && spectrum.autoboot) PlusDPaged=1;
+        if (spectrum.floppytype==FLOPPYBETA && spectrum.model == SPECCY16 || spectrum.model == SPECCY48 || spectrum.model == SPECCYPLUS)
+        {
+                PlusDPaged=1;
+        }
 
         z80_reset();
         d8255_reset();

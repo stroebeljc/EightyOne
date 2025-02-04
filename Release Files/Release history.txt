@@ -92,6 +92,7 @@ Version 1.41 - 04/02/2025 (by Paul Farrow and John Stroebel)
   - Added utility programs for Plus D and DISCiPLE floppy drives.
   - Added ability to create new image files for Spectrum floppy drives.
   - Added support for floppy DOS-based formatting on Spectrum floppy drives.
+  - Added support for Microdrive cartridge write protection.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

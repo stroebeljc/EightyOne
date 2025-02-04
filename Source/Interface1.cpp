@@ -11,8 +11,12 @@
 #include "utils.h"
 #include "Plus3Drives.h"
 
-#define MDVTPERBYTE 265  // Tape Speed - No of T states for 1 byte to
-                         // pass the tape head
+#define MDVTPERBYTE 265  // Tape Speed - No of T states for 1 byte to pass the tape head
+
+#define	F_OK	0
+#define	R_OK	4
+#define	W_OK	2
+#define	X_OK	1
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -52,12 +56,16 @@ void TIF1::PortEFWrite(int Data)
                         default:   MDVCurDrive=-1; break;
                         }
 
-                        if (MDVCurDrive>=0)
+                        if (MDVCurDrive >= 0)
                         {
                                 if (!Drives[MDVCurDrive].data) MDVCurDrive=-1;
                                 if (MDVCurDrive>=MDVNoDrives) MDVCurDrive=-1;
                         }
 
+                        if (MDVCurDrive >= 0)
+                        {
+                                Drives[MDVCurDrive].writeProtected = access(Drives[MDVCurDrive].FileName, W_OK);
+                        }
                 }
                 CommsClock=Data&2;
         }
@@ -92,7 +100,7 @@ void TIF1::PortF7Write(int Data)
 
 int TIF1::PortEFRead(void)
 {
-        int Data= 128|64|32;
+        int Data = 128|64|32;
 
         Data |= 8; // DTR
 
@@ -101,7 +109,10 @@ int TIF1::PortEFRead(void)
         if (MDVGap) Data |= 4;  // Gap
         if (MDVSync) Data |= 2; // Sync
 
-        Data |= 1; // Write Protect
+        if (!(Drives[MDVCurDrive].writeProtected))
+        {
+                Data |= 1; // Not write protected
+        }
 
         return(Data);
 }
@@ -171,7 +182,6 @@ void TIF1::ClockTick(int ts)
                         }
 
                         MDVStream[0] = Drives[MDVCurDrive].data[Drives[MDVCurDrive].position];
-
 
                         // Advance the tape position by 1
                         // wrapping if we're at the end
@@ -578,8 +588,8 @@ void TIF1::MDVSetFileName(int Drive, char *FileName)
         }
         else    MDVLoadFile(Drive, FileName);
 }
-
 //---------------------------------------------------------------------------
+
 __fastcall TIF1::TIF1(TComponent* Owner)
         : TForm(Owner)
 {
@@ -600,11 +610,7 @@ __fastcall TIF1::TIF1(TComponent* Owner)
         Parity->ItemIndex=0;
 
         MDVCurDrive=-1;
-
-        //GroupDrives->Enabled=false;
-        //NoMicroDrives->Enabled=false;
-        //Label4->Enabled=false;
-
+        
         ComPortListChange(NULL);
 
         for(i=0;i<8;i++) Drives[i].FileName[0]='\0';
@@ -613,14 +619,12 @@ __fastcall TIF1::TIF1(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 }
-
 //---------------------------------------------------------------------------
 
 void TIF1::HardReset()
 {
         MDVCurDrive = -1;
 }
-
 //---------------------------------------------------------------------------
 
 void __fastcall TIF1::OKClick(TObject *Sender)
@@ -753,7 +757,6 @@ void __fastcall TIF1::OutputFileButtonClick(TObject *Sender)
 {
         if (SaveDialog->Execute())
                 OutputFileEdit->Text = SaveDialog->FileName;
-
 }
 //---------------------------------------------------------------------------
 
@@ -777,6 +780,7 @@ void __fastcall TIF1::ClientSocketError(TObject *Sender,
         ErrorCode=0;
 }
 //---------------------------------------------------------------------------
+
 void TIF1::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("INTERFACE1","Top",Top);
@@ -797,6 +801,7 @@ void TIF1::SaveSettings(TIniFile *ini)
         ini->WriteInteger("INTERFACE1","Microdrives",NoMicroDrives->ItemIndex);
         ini->WriteInteger("INTERFACE1","RomEdition",RomEdition->ItemIndex);
 }
+//---------------------------------------------------------------------------
 
 void TIF1::LoadSettings(TIniFile *ini)
 {
@@ -824,6 +829,7 @@ void TIF1::LoadSettings(TIniFile *ini)
         ComPortListChange(NULL);
         OKClick(NULL);
 }
+//---------------------------------------------------------------------------
 
 void __fastcall TIF1::FormDestroy(TObject *Sender)
 {

@@ -34,6 +34,7 @@ typedef struct
         unsigned char *data;
         int length, position;
         bool changed;
+        bool writeProtected;
 } MDVDrive;
 
 class TIF1 : public TForm

@@ -1,6 +1,6 @@
 object IF1: TIF1
-  Left = 500
-  Top = 141
+  Left = 1240
+  Top = 308
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'ZX Interface 1'

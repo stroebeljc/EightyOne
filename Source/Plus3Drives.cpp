@@ -12,7 +12,10 @@
 #include "interface1.h"
 #include "ZipFile_.h"
 
-#define F_OK 0
+#define	F_OK	0
+#define	R_OK	4
+#define	W_OK	2
+#define	X_OK	1
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -931,13 +934,15 @@ bool TP3Drive::CreateMicrodriveCartridge(AnsiString& filePath)
                 {
                         try
                         {
-                                for (int i = 0; i < 137922; i++)
+                                const int sizeOfMicrodriveFile = (254 * 543) + 1;
+
+                                for (int i = 0; i < sizeOfMicrodriveFile - 1; i++)
                                 {
                                         // 'Blank' data
                         	        fputc(0xFC, f);
                                 }
 
-                                // The cartridge is not write protected
+                                // The cartridge is not write protected (this byte is not used by EightyOne)
                                 fputc(0x00, f);
                         }
                         catch (...)

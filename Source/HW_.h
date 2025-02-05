@@ -32,6 +32,12 @@ using namespace std;
 
 //---------------------------------------------------------------------------
 
+enum IniFileAccessType
+{
+        Read,
+        Write
+};
+
 struct RomCartridgeEntry
 {
 public:
@@ -48,28 +54,33 @@ public:
 struct HWFormValues
 {
         AnsiString MachineName;
-        int RamPackBoxItemIndex;
-        int SoundCardBoxItemIndex;
-        int ChrGenBoxItemIndex;
-        int HiResBoxItemIndex;
-        int ColourBoxItemIndex;
-        int SpeechBoxItemIndex;
-        int JoystickBoxItemIndex;
-        int RomCartridgeBoxItemIndex;
+        AnsiString RamPackBoxText;
+        AnsiString SoundCardBoxText;
+        AnsiString ChrGenBoxText;
+        AnsiString HiResBoxText;
+        AnsiString ColourBoxText;
+        AnsiString SpeechBoxText;
+        AnsiString JoystickBoxText;
+        AnsiString RomCartridgeBoxText;
+        AnsiString ZXC1ConfigurationBoxText;
         AnsiString RomCartridgeFileBoxText;
-        int ZXC1ConfigurationBoxItemIndex;
-        AnsiString JoystickLeftBoxText;
-        AnsiString JoystickRightBoxText;
-        AnsiString JoystickUpBoxText;
-        AnsiString JoystickDownBoxText;
-        AnsiString JoystickFireBoxText;
-        int DriveATypeItemIndex;
-        int DriveBTypeItemIndex;
-        int FDCItemIndex;
+        AnsiString ProgrammableJoystickLeft;
+        AnsiString ProgrammableJoystickRight;
+        AnsiString ProgrammableJoystickUp;
+        AnsiString ProgrammableJoystickDown;
+        AnsiString ProgrammableJoystickFire;
+        AnsiString FDCBoxText;
+        AnsiString IDEBoxText;
+        AnsiString DriveATypeText;
+        AnsiString DriveBTypeText;
+        AnsiString ZXCFRAMText;
+        AnsiString HD0;
+        AnsiString HD1;
+        AnsiString DriveA;
+        AnsiString DriveB;
+        AnsiString MDV[8];
         bool ZXpandChecked;
-        bool ZXpandEnabled;
         bool SpecDrumChecked;
-        bool SpecDrumEnabled;
         bool ProtectROMChecked;
         bool NTSCChecked;
         bool EnableLowRAMChecked;
@@ -78,14 +89,13 @@ struct HWFormValues
         bool TS2050Checked;
         bool Issue2Checked;
         bool KMouseChecked;
-        bool Form1divIDEJumperEClosedChecked;
+        bool DivIDEJumperEClosedChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
-        int ZXCFRAMItemIndex;
-        int IDEBoxItemIndex;
         bool uSourceChecked;
+        int MDVNoDrives;
 };
 
 class THW : public TForm
@@ -145,7 +155,7 @@ __published:	// IDE-managed Components
         TCheckBox *M1Not;
         TCheckBox *Issue2;
         TLabel *LabelFDC;
-        TComboBox *FDC;
+        TComboBox *FDCBox;
         TButton *IF1Config;
         TComboBox *IDEBox;
         TComboBox *ZXCFRAM;
@@ -228,7 +238,7 @@ __published:	// IDE-managed Components
         void __fastcall IF1ConfigClick(TObject *Sender);
         void __fastcall MultifaceClick(TObject *Sender);
         void __fastcall IDEBoxChange(TObject *Sender);
-        void __fastcall FDCChange(TObject *Sender);
+        void __fastcall FDCBoxChange(TObject *Sender);
         void __fastcall uSpeechClick(TObject *Sender);
         void __fastcall ZXpandClick(TObject *Sender);
         void __fastcall BrowseRomCartridgeClick(TObject *Sender);
@@ -254,10 +264,12 @@ __published:	// IDE-managed Components
         void __fastcall JoystickBoxChange(TObject *Sender);
         void __fastcall JoystickBoxMouseUp(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall DefaultsButtonClick(TObject *Sender);
+        void __fastcall JoystickBoxExit(TObject *Sender);
+        void __fastcall JoystickBoxKeyPress(TObject *Sender,
+          char &Key);
         void __fastcall JoystickBoxKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
-        void __fastcall JoystickBoxEnter(TObject *Sender);
-        void __fastcall DefaultsButtonClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -266,8 +278,8 @@ private:	// User declarations
         AnsiString NewMachineName;
         HWFormValues Hwform;
         
-        void ReloadFromInternalSettings();
-        void SaveInternalSettings();
+        void LoadFromInternalSettings();
+        void SaveToInternalSettings();
         void RefreshDefaultRamSettings();
         void SetupForZX81(void);
         void SetupForSpectrum(void);
@@ -285,10 +297,20 @@ private:	// User declarations
         void DisplayTotalRam();
         int UpdateRomCartridgeControls(int machine, int spectrumModel);
         int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
-        bool ValidCharacter(TEdit* textBox);
+        bool ValidCharacter(TEdit* textBox, char newKey);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
         int FindEntry(TComboBox* comboBox, AnsiString text);
         void UpdateJoystickOptions();
+        void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
+        void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
+        void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue, AnsiString defaultValue = NULL);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue, AnsiString defaultValue = NULL);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TComboBox* entryComboBox, AnsiString defaultValue = NULL);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TEdit* entryEditBox, AnsiString defaultValue = NULL);
+        void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
+        void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
+        bool NewKey(TEdit* textBox, char key);
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();

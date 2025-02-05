@@ -594,11 +594,11 @@ void load_snap_drives(FILE* f)
                         return;
                 }
 
-                if (!strcmp(tok,"FDC"))
+                if (!strcmp(tok, "FDC"))
                 {
-                        SetComboBox(HW->FDC, get_token(f));
+                        SetComboBox(HW->FDCBox, get_token(f));
                 }
-                else if (!strcmp(tok,"IDE"))
+                else if (!strcmp(tok, "IDE"))
                 {
                         SetComboBox(HW->IDEBox, get_token(f));
                 }
@@ -914,7 +914,7 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
 
 	fprintf(f,"\n[DRIVES]\n");
-	fprintf(f,"FDC %s\n", HW->FDC->Text.c_str());
+	fprintf(f,"FDC %s\n", HW->FDCBox->Text.c_str());
 	fprintf(f,"IDE %s\n", HW->IDEBox->Text.c_str());
 
         fprintf(f,"\n[EOF]\n");

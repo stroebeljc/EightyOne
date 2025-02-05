@@ -251,7 +251,7 @@ void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
 {
         DriveAText->Text = "< Empty >";
         spectrum.driveaimg[0] = '\0';
-        floppy_setimage(0, spectrum.driveaimg, 1);
+        floppy_eject(0);
 }
 //---------------------------------------------------------------------------
 
@@ -259,7 +259,7 @@ void __fastcall TP3Drive::DriveBEjectBtnClick(TObject *Sender)
 {
         DriveBText->Text = "< Empty >";
         spectrum.drivebimg[0] = '\0';
-        floppy_setimage(1, spectrum.drivebimg, 1);
+        floppy_eject(1);
 }
 //---------------------------------------------------------------------------
 
@@ -666,6 +666,8 @@ void __fastcall TP3Drive::MDV0FSBtnClick(TObject *Sender)
 
                 if (!OpenDialogFloppyDiskImage->Execute()) return;
                 FileName = OpenDialogFloppyDiskImage->FileName;
+
+                if (!CreateMicrodriveCartridge(FileName)) return;
         }
         else
         {
@@ -797,6 +799,7 @@ void __fastcall TP3Drive::DriveANewBtnClick(TObject *Sender)
 
                 int readonly = 0;
                 OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
+                floppy_setimage(0, DriveAText->Text.c_str(),0);
         }
 }
 //---------------------------------------------------------------------------
@@ -813,6 +816,7 @@ void __fastcall TP3Drive::DriveBNewBtnClick(TObject *Sender)
 
                 int readonly = 0;
                 OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
+                floppy_setimage(1, DriveBText->Text.c_str(),0);
         }
 }
 //---------------------------------------------------------------------------
@@ -910,6 +914,7 @@ void __fastcall TP3Drive::MDVNewBtnClick(TObject *Sender)
         {
                 int driveNumber = GetMDVNo(Sender);
                 GetMDVTextBox(driveNumber)->Text = filePath;
+                IF1->MDVSetFileName(driveNumber,filePath.c_str());
         }
 }
 //---------------------------------------------------------------------------
@@ -920,15 +925,21 @@ bool TP3Drive::CreateMicrodriveCartridge(AnsiString& filePath)
 
         bool success = true;
 
-        SaveDialogNewFloppyDisk-> Title = "Create New Microdrive Cartridge";
-        SaveDialogNewFloppyDisk->Filter = "Microdrive Cartridge (*.mdr)|*.mdr";
-        SaveDialogNewFloppyDisk->DefaultExt = ".mdr";
-        SaveDialogNewFloppyDisk->FilterIndex = 1;
-
-        if (SaveDialogNewFloppyDisk->Execute())
+        if (filePath.IsEmpty())
         {
-                filePath = SaveDialogNewFloppyDisk->FileName;
+                SaveDialogNewFloppyDisk-> Title = "Create New Microdrive Cartridge";
+                SaveDialogNewFloppyDisk->Filter = "Microdrive Cartridge (*.mdr)|*.mdr";
+                SaveDialogNewFloppyDisk->DefaultExt = ".mdr";
+                SaveDialogNewFloppyDisk->FilterIndex = 1;
 
+                if (SaveDialogNewFloppyDisk->Execute())
+                {
+                        filePath = SaveDialogNewFloppyDisk->FileName;
+                }
+        }
+
+        if (!filePath.IsEmpty())
+        {
                 FILE* f = fopen(filePath.c_str(), "wb");
                 if (f)
                 {

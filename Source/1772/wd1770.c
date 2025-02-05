@@ -43,7 +43,7 @@ void wd1770_reset(wd1770_drive *d)
     d->index_pulse=d->index_interrupt=0;
 
     d->rates[0]=d->rates[1]=d->rates[2]=d->rates[3]=0;
-    d->spin_cycles=d->track=d->side=d->direction=0;
+    d->spin_cycles=d->track=d->side=d->direction=d->density=0;
     d->state=wd1770_state_none;
     d->status_type=wd1770_status_type1;
 
@@ -460,25 +460,44 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
 
     if (d->state == wd1770_state_writetrack)
     {
-        // MFM Double Density 
         if (d->data_track_state==0)
         {
-            if (d->data_track_leader_count<PREAMBLE_COUNT
-                && b==PREAMBLE_VALUE)
-                d->data_track_leader_count++;
-            else if (d->data_track_leader_count>=PREAMBLE_COUNT
-                && d->data_track_leader_count<(PREAMBLE_COUNT+SYNC_COUNT)
-                && b==SYNC_VALUE)
-                d->data_track_leader_count++;
-            else if (d->data_track_leader_count>=(PREAMBLE_COUNT+SYNC_COUNT)
-                && d->data_track_leader_count<(PREAMBLE_COUNT+SYNC_COUNT+PRE_ADDRESS_COUNT)
-                && b==PRE_ADDRESS)
-                d->data_track_leader_count++;
-            else if (d->data_track_leader_count == (PREAMBLE_COUNT+SYNC_COUNT+PRE_ADDRESS_COUNT)
-                && b==ADDRESS_MARK)
-                d->data_track_state++;
+            // MFM Double Density
+            if (d->density==0)
+            {
+                if (d->data_track_leader_count<DD_PREAMBLE_COUNT
+                    && b==DD_PREAMBLE_VALUE)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count>=DD_PREAMBLE_COUNT
+                    && d->data_track_leader_count<(DD_PREAMBLE_COUNT+DD_SYNC_COUNT)
+                    && b==DD_SYNC_VALUE)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count>=(DD_PREAMBLE_COUNT+DD_SYNC_COUNT)
+                    && d->data_track_leader_count<(DD_PREAMBLE_COUNT+DD_SYNC_COUNT+DD_PRE_ADDRESS_COUNT)
+                    && b==DD_PRE_ADDRESS)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count == (DD_PREAMBLE_COUNT+DD_SYNC_COUNT+DD_PRE_ADDRESS_COUNT)
+                    && b==DD_ADDRESS_MARK)
+                    d->data_track_state++;
+                else
+                    d->data_track_leader_count=0;
+            }
             else
-                d->data_track_leader_count=0;
+            {
+                // FM Single Density
+                if (d->data_track_leader_count<SD_PREAMBLE_COUNT
+                    && (b==SD_PREAMBLE_VALUE1 || b==SD_PREAMBLE_VALUE2))
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count>=SD_PREAMBLE_COUNT
+                    && d->data_track_leader_count<(SD_PREAMBLE_COUNT+SD_SYNC_COUNT)
+                    && b==SD_SYNC_VALUE)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count == (SD_PREAMBLE_COUNT+SD_SYNC_COUNT)
+                    && b==SD_ADDRESS_MARK)
+                    d->data_track_state++;
+                else
+                    d->data_track_leader_count=0;
+            }
             return;
         }
         else if (d->data_track_state++ > d->disk.sectorsize)

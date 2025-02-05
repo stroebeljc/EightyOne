@@ -38,13 +38,20 @@
 #define WD1770_SR_IDX_DRQ  (1<<1) /* Index pulse / Data request */
 #define WD1770_SR_BUSY     (1<<0) /* Busy (command under execution) */
 
-#define PREAMBLE_COUNT     22
-#define PREAMBLE_VALUE     0x4E
-#define SYNC_COUNT         12
-#define SYNC_VALUE         0x00
-#define PRE_ADDRESS_COUNT  3
-#define PRE_ADDRESS        0xF5
-#define ADDRESS_MARK       0xFB
+#define DD_PREAMBLE_COUNT     22
+#define DD_PREAMBLE_VALUE     0x4E
+#define DD_SYNC_COUNT         12
+#define DD_SYNC_VALUE         0x00
+#define DD_PRE_ADDRESS_COUNT  3
+#define DD_PRE_ADDRESS        0xF5
+#define DD_ADDRESS_MARK       0xFB
+
+#define SD_PREAMBLE_COUNT     11
+#define SD_PREAMBLE_VALUE1    0xFF
+#define SD_PREAMBLE_VALUE2    0x00
+#define SD_SYNC_COUNT         6
+#define SD_SYNC_VALUE         0x00
+#define SD_ADDRESS_MARK       0xFB
 
 #define READID_BUFFSIZE    6
 
@@ -64,6 +71,7 @@ typedef struct wd1770_drive
     int spin_cycles;
     int track;
     int side;
+    int density;
     int direction; /* 0 = spindlewards, 1 = rimwards */
 
     enum wd1770_state 

@@ -288,6 +288,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
                 return;
             }
 
+            wd1770_set_datarq(d);
             d->state = wd1770_state_writetrack;
             d->status_register |= WD1770_SR_BUSY;
             d->status_register &= ~( WD1770_SR_WRPROT | WD1770_SR_RNF | WD1770_SR_CRCERR | WD1770_SR_LOST );
@@ -528,7 +529,8 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
             d->status_register &= ~WD1770_SR_BUSY;
             d->status_type = wd1770_status_type2;
             d->state = wd1770_state_none;
-            wd1770_set_cmdint( d );
+            if (d->state == wd1770_state_writetrack) d->index_interrupt=1;
+            else wd1770_set_cmdint( d );
             wd1770_reset_datarq( d );
         }
     }

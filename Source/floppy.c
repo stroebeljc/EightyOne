@@ -186,8 +186,9 @@ void floppy_set_motor(BYTE Data)
                 break;
 
         case FLOPPYDISCIPLE:
-                PlusDCur=&PlusDDrives[1-(Data&1)];
-                PlusDCur->side=(Data&2)>>1;
+                PlusDCur=&PlusDDrives[(Data&1)==0];
+                PlusDCur->side=(Data&2)!=0;
+                PlusDCur->density=(Data&4)!=0;
                 PrinterSetStrobe((unsigned char)(Data&64));
                 break;
 
@@ -205,19 +206,21 @@ void floppy_set_motor(BYTE Data)
                         PlusDCur=&PlusDDrives[0];
                 }
 
-                PlusDCur->side=(Data&128)>>7;
+                PlusDCur->side=(Data&128)!=0;
                 PrinterSetStrobe((unsigned char)(Data&64));
                 break;
 
         case FLOPPYOPUSD:
                 if (PlusDCur->state == wd1770_state_read) PlusDCur->state = wd1770_state_none;
                 PlusDCur=&PlusDDrives[(Data&2)>>1];
-                PlusDCur->side=(Data&16)>>4;
+                PlusDCur->side=(Data&0x10)!=0;
+                PlusDCur->density=(Data&0x20)!=0;
                 break;
 
         case FLOPPYBETA:
                 PlusDCur = &PlusDDrives[(Data&1)];
-                PlusDCur->side=(~Data&16)>>4;
+                PlusDCur->side=(Data&0x10)==0;
+                PlusDCur->density=(Data&0x40)!=0;
                 break;
         }
 }
@@ -399,42 +402,9 @@ void floppy_init()
         {
                 for( i = 0; i < 2; i++ )
                 {
-                        PlusDCur= &PlusDDrives[ i ];
-
-                        if (PlusDCur->disk.fd!=-1)
-                        {
-                                strcpy(filename, PlusDCur->disk.filename);
-                                floppy_eject(i);
-                        }
-
-                        memset(PlusDCur->disk.buffer,0,sizeof(PlusDCur->disk.buffer));
-                        memset(PlusDCur->disk.dirty,0,sizeof(PlusDCur->disk.dirty));
-                        memset(PlusDCur->disk.present,0,sizeof(PlusDCur->disk.present));
-
-                        wd1770_reset(PlusDCur);
-
-                        PlusDCur->disk.fd = -1;
-                        PlusDCur->disk.alternatesides = 0;
-                        PlusDCur->disk.numlayers = MAXNUMLAYERS;
-                        PlusDCur->disk.numtracks = MAXNUMTRACKS;
-                        PlusDCur->disk.numsectors = MAXNUMSECTORS;
-                        PlusDCur->disk.sectorsize = MAXSECTORSIZE;
-
-                        PlusDCur->rates[ 0 ] = 6;
-                        PlusDCur->rates[ 1 ] = 12;
-                        PlusDCur->rates[ 2 ] = 2;
-                        PlusDCur->rates[ 3 ] = 3;
-
-                        PlusDCur->set_cmdint = NULL;
-                        PlusDCur->reset_cmdint = NULL;
-                        PlusDCur->set_datarq = NULL;
-                        PlusDCur->reset_datarq = NULL;
-                        PlusDCur->iface = NULL;
-
-                        if (spectrum.floppytype==FLOPPYOPUSD) PlusDCur->set_datarq=OpusNMI;
-
-                        if (strlen(filename)) floppy_setimage(i,filename,1);
+                    floppy_eject(i);
                 }
+
                 PlusDCur= &PlusDDrives[0];
                 return;
         }
@@ -579,11 +549,37 @@ void floppy_eject(int drive)
 
                 d = &PlusDDrives[ drive ];
 
-                if( d->disk.fd == -1 ) return;
+                if( d->disk.fd != -1 )
+                {
+                    if( d->disk.changed ) disk_image_write( &d->disk);
+                    close( d->disk.fd );
+                }
 
-                if( d->disk.changed ) disk_image_write( &d->disk);
-                close( d->disk.fd );
+                memset(d->disk.buffer,0,sizeof(PlusDDrives[0].disk.buffer));
+                memset(d->disk.dirty,0,sizeof(PlusDDrives[0].disk.dirty));
+                memset(d->disk.present,0,sizeof(PlusDDrives[0].disk.present));
+
+                wd1770_reset(d);
+
                 d->disk.fd = -1;
+                d->disk.alternatesides = 0;
+                d->disk.numlayers = 0;
+                d->disk.numtracks = 0;
+                d->disk.numsectors = 0;
+                d->disk.sectorsize = 0;
+
+                d->rates[ 0 ] = 6;
+                d->rates[ 1 ] = 12;
+                d->rates[ 2 ] = 2;
+                d->rates[ 3 ] = 3;
+
+                d->set_cmdint = NULL;
+                d->reset_cmdint = NULL;
+                d->set_datarq = NULL;
+                d->reset_datarq = NULL;
+                d->iface = NULL;
+
+                if (spectrum.floppytype==FLOPPYOPUSD) d->set_datarq=OpusNMI;
         }
 }
 
@@ -630,6 +626,8 @@ void floppy_setimage(int drive, char *filename, int readonly)
 
                 if( drive >= 2 ) return;
 
+                floppy_eject(drive);
+
                 d = &PlusDDrives[ drive ];
 
                 l = strlen( filename );
@@ -662,8 +660,6 @@ void floppy_setimage(int drive, char *filename, int readonly)
                         }
                         else return;
                 }
-
-                if( d->disk.fd != -1 ) floppy_eject( drive );
 
                 d->disk.readonly = readonly;
                 d->disk.changed = 0;

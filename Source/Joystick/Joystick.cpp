@@ -41,6 +41,25 @@ static const int JoystickReadsOn = 5;
 static const int JoystickReadsOff = 5;
 static const int JoystickTotalReads = JoystickReadsOn + JoystickReadsOff;
 
+int NumberOfJoysticks()
+{
+        joyInfo2.dwFlags = JOY_RETURNALL;
+
+        if (joyGetPosEx(JOYSTICKID2, &joyInfo2) == JOYERR_NOERROR)
+        {
+                return 2;
+        }
+
+        joyInfo.dwFlags = JOY_RETURNALL;
+
+        if (joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        {
+                return 1;
+        }
+
+        return 0;
+}
+
 void InitialiseJoysticks()
 {
         JOYCAPS caps;

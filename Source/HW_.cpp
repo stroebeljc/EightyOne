@@ -2231,9 +2231,19 @@ void THW::SetupForSpectrum(void)
         JoystickBox->Items->Add("None");
         if (NewSpec != SPECCYTS2068 && NewSpec != SPECCYTC2068)
         {
-                JoystickBox->Items->Add("Cursor/Protek");
-                JoystickBox->Items->Add("Sinclair 1");
-                JoystickBox->Items->Add("Sinclair 2");
+                int numberOfJoysticks = NumberOfJoysticks();
+
+                JoystickBox->Items->Add("Cursor (Protek)");
+                if (numberOfJoysticks == 2)
+                {
+                        JoystickBox->Items->Add("Sinclair 1 & 2");
+                        JoystickBox->Items->Add("Sinclair 2 & 1");
+                }
+                else
+                {
+                        JoystickBox->Items->Add("Sinclair 1");
+                        JoystickBox->Items->Add("Sinclair 2");
+                }
                 JoystickBox->Items->Add("Kempston");
                 JoystickBox->Items->Add("Fuller");
                 JoystickBox->ItemIndex = 0;
@@ -2929,6 +2939,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         ColourBox->Enabled = false;
         ColourLabel->Caption = "Color:";
         ColourLabel->Enabled = false;
+        JoystickBox->ItemIndex = 4;
         if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
         IDEBox->Items->Delete(4);
         if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
@@ -3993,7 +4004,7 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
                 AnsiString joystickRightText = "-";
                 AnsiString joystickFireText  = "-";
 
-                if (joystickType == "Cursor" || joystickType == "Cursor/Protek")
+                if (joystickType == "Cursor" || joystickType == "Cursor (Protek)")
                 {
                         joystickUpText    = "7";
                         joystickDownText  = "6";
@@ -4001,7 +4012,7 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
                         joystickRightText = "8";
                         joystickFireText  = "0";
                 }
-                else if (joystickType == "Sinclair 1")
+                else if (joystickType == "Sinclair 1" || joystickType == "Sinclair 1 & 2")
                 {
                         joystickUpText    = "9";
                         joystickDownText  = "8";
@@ -4009,7 +4020,7 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
                         joystickRightText = "7";
                         joystickFireText  = "0";
                 }
-                else if (joystickType == "Sinclair 2")
+                else if (joystickType == "Sinclair 2" || joystickType == "Sinclair 2 & 1")
                 {
                         joystickUpText    = "4";
                         joystickDownText  = "3";

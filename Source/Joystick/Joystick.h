@@ -28,6 +28,7 @@ extern KeyInfo JoystickUp2;
 extern KeyInfo JoystickDown2;
 extern KeyInfo JoystickFire2;
 
+extern int NumberOfJoysticks();
 extern void InitialiseJoysticks();
 extern BYTE ReadJoystick();
 extern BYTE ReadJoystick2();

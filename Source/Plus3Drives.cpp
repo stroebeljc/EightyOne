@@ -28,13 +28,11 @@ extern "C" void P3DriveMachineHasInitialised(void);
 __fastcall TP3Drive::TP3Drive(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
         DetectPhysDrives();
         BuildHDList(HD0List);
         BuildHDList(HD1List);
 
-        ini = new TIniFile(emulator.inipath);
+        TIniFile* ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
 
@@ -43,8 +41,6 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
 //---------------------------------------------------------------------------
 void TP3Drive::LoadSettings(TIniFile *ini)
 {
-        AnsiString Rom;
-
         Top = ini->ReadInteger("P3DRIVE", "Top", Top);
         Left = ini->ReadInteger("P3DRIVE", "Left", Left);
         OpenDialogFloppyDiskImage->FileName = ini->ReadString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
@@ -249,17 +245,21 @@ void TP3Drive::OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driv
 
 void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
 {
-        DriveAText->Text = "< Empty >";
-        spectrum.driveaimg[0] = '\0';
-        floppy_eject(0);
+        FloppyDiskEject(0, DriveAText, spectrum.driveaimg);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::DriveBEjectBtnClick(TObject *Sender)
 {
-        DriveBText->Text = "< Empty >";
-        spectrum.drivebimg[0] = '\0';
-        floppy_eject(1);
+        FloppyDiskEject(1, DriveBText, spectrum.drivebimg);
+}
+//---------------------------------------------------------------------------
+
+void TP3Drive::FloppyDiskEject(int driveNumber, TEdit* DriveText, char* driveimg)
+{
+        DriveText->Text = "< Empty >";
+        driveimg[0] = '\0';
+        floppy_eject(driveNumber);
 }
 //---------------------------------------------------------------------------
 
@@ -639,7 +639,7 @@ TEdit* TP3Drive::GetMDVTextBox(int Drive)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TP3Drive::MDV0EjectBtnClick(TObject *Sender)
+void __fastcall TP3Drive::MDVEjectBtnClick(TObject *Sender)
 {
         int Drive = GetMDVNo(Sender);
         IF1->MDVSetFileName(Drive, NULL);
@@ -647,7 +647,7 @@ void __fastcall TP3Drive::MDV0EjectBtnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TP3Drive::MDV0FSBtnClick(TObject *Sender)
+void __fastcall TP3Drive::MDVFSBtnClick(TObject *Sender)
 {
         AnsiString FileName;
 
@@ -760,9 +760,9 @@ void TP3Drive::InsertFile(AnsiString Filename)
 
         AnsiString Ext = GetExt(Filename);
 
-        if (Ext==".MDR" || Ext==".MDV")
+        if (Ext == ".MDR" || Ext == ".MDV")
         {
-                MDV0FSBtnClick(NULL);
+                MDVFSBtnClick(NULL);
         }
         else if (Ext == ".HDF" || Ext == ".VHD")
         {
@@ -780,10 +780,10 @@ void TP3Drive::InsertFile(AnsiString Filename)
 void P3DriveMachineHasInitialised(void)
 {
         if (P3Drive->DriveAText->Text != "< Empty >")
-                floppy_setimage(0, P3Drive->DriveAText->Text.c_str(),0);
+                floppy_setimage(0, P3Drive->DriveAText->Text.c_str(), 0);
 
         if (P3Drive->DriveBText->Text != "< Empty >")
-                floppy_setimage(1, P3Drive->DriveBText->Text.c_str(),0);
+                floppy_setimage(1, P3Drive->DriveBText->Text.c_str(), 0);
 }
 //---------------------------------------------------------------------------
 
@@ -799,7 +799,7 @@ void __fastcall TP3Drive::DriveANewBtnClick(TObject *Sender)
 
                 int readonly = 0;
                 OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
-                floppy_setimage(0, DriveAText->Text.c_str(),0);
+                floppy_setimage(0, DriveAText->Text.c_str(), 0);
         }
 }
 //---------------------------------------------------------------------------
@@ -816,7 +816,7 @@ void __fastcall TP3Drive::DriveBNewBtnClick(TObject *Sender)
 
                 int readonly = 0;
                 OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
-                floppy_setimage(1, DriveBText->Text.c_str(),0);
+                floppy_setimage(1, DriveBText->Text.c_str(), 0);
         }
 }
 //---------------------------------------------------------------------------

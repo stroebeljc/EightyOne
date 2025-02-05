@@ -2231,10 +2231,8 @@ void THW::SetupForSpectrum(void)
         JoystickBox->Items->Add("None");
         if (NewSpec != SPECCYTS2068 && NewSpec != SPECCYTC2068)
         {
-                int numberOfJoysticks = NumberOfJoysticks();
-
                 JoystickBox->Items->Add("Cursor (Protek)");
-                if (numberOfJoysticks == 2)
+                if (NumberOfJoysticks() == 2)
                 {
                         JoystickBox->Items->Add("Sinclair 1 & 2");
                         JoystickBox->Items->Add("Sinclair 2 & 1");
@@ -2446,6 +2444,33 @@ void THW::DisplayTotalRam()
 }
 //---------------------------------------------------------------------------
 
+void THW::UpdateJoystickOptions()
+{
+        if (NumberOfJoysticks() == 2)
+        {
+                int index = FindEntry(JoystickBox, "Sinclair 1");
+                if (index >= 0)
+                {
+                        JoystickBox->Items->Strings[index] = "Sinclair 1 & 2";
+
+                        index = FindEntry(JoystickBox, "Sinclair 2");
+                        JoystickBox->Items->Strings[index] = "Sinclair 2 & 1";
+                }
+        }
+        else
+        {
+                int index = FindEntry(JoystickBox, "Sinclair 1 & 2");
+                if (index >= 0)
+                {
+                        JoystickBox->Items->Strings[index] = "Sinclair 1";
+
+                        index = FindEntry(JoystickBox, "Sinclair 2 & 1");
+                        JoystickBox->Items->Strings[index] = "Sinclair 2";
+                }
+        }
+}
+//---------------------------------------------------------------------------
+
 void __fastcall THW::ZX80BtnClick(TObject *Sender)
 {
         if (ZX80Btn->Down) return;
@@ -2495,6 +2520,8 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
 
 void __fastcall THW::Spec48BtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (Spec48Btn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2522,6 +2549,8 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
 
 void __fastcall THW::Spec128BtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (Spec128Btn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2548,6 +2577,8 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
 
 void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (SpecPlusBtn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2576,6 +2607,8 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
 
 void __fastcall THW::Spec16BtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (Spec16Btn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2603,6 +2636,8 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
 
 void __fastcall THW::SpecP2BtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (SpecP2Btn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2631,6 +2666,8 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
 
 void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (SpecP2aBtn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2659,6 +2696,8 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
 
 void __fastcall THW::SpecP3BtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (SpecP3Btn->Down) return;
 
         NewMachine = MACHINESPECTRUM;
@@ -2912,6 +2951,8 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
 
 void __fastcall THW::TC2048BtnClick(TObject *Sender)
 {
+        UpdateJoystickOptions();
+
         if (TC2048Btn->Down) return;
 
         NewMachine = MACHINESPECTRUM;

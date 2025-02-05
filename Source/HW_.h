@@ -288,6 +288,7 @@ private:	// User declarations
         bool ValidCharacter(TEdit* textBox);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
         int FindEntry(TComboBox* comboBox, AnsiString text);
+        void UpdateJoystickOptions();
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();

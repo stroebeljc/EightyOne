@@ -111,8 +111,8 @@ __published:	// IDE-managed Components
         void __fastcall HD1FSBtnClick(TObject *Sender);
         void __fastcall HD0EjectBtnClick(TObject *Sender);
         void __fastcall HD1EjectBtnClick(TObject *Sender);
-        void __fastcall MDV0EjectBtnClick(TObject *Sender);
-        void __fastcall MDV0FSBtnClick(TObject *Sender);
+        void __fastcall MDVEjectBtnClick(TObject *Sender);
+        void __fastcall MDVFSBtnClick(TObject *Sender);
         void __fastcall RedetectDrivesClick(TObject *Sender);
         void __fastcall HD0ListChange(TObject *Sender);
         void __fastcall HD1ListChange(TObject *Sender);
@@ -143,6 +143,7 @@ private:	// User declarations
         bool NewFloppyDisk(AnsiString& filePath);
         bool CreateFloppyDiskImage(AnsiString title, AnsiString filter, AnsiString defaultExt, AnsiString& filePath);
         void OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driveText, int readonly);
+        void FloppyDiskEject(int driveNumber, TEdit* DriveText, char* driveimg);
 
         void NewHardDiskImage(int driveNumber, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList);
         void CreateHardDiskImage(int driveNumber, AnsiString Filename, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList);

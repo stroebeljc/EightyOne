@@ -50,7 +50,6 @@ extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
 extern int LoadDock(char *Filename);
 
-static AnsiString currentKey;
 static AnsiString programmableJoystickLeft;
 static AnsiString programmableJoystickRight;
 static AnsiString programmableJoystickUp;
@@ -277,10 +276,10 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         ReInitialiseSound();
 
-        SaveInternalSettings();
+        SaveToInternalSettings();
 }
 
-void THW::ReloadFromInternalSettings()
+void THW::LoadFromInternalSettings()
 {
         if (Hwform.MachineName == "ZX80")          ZX80BtnClick(NULL);
         else if (Hwform.MachineName == "Spec16")   Spec16BtnClick(NULL);
@@ -300,63 +299,79 @@ void THW::ReloadFromInternalSettings()
         else if (Hwform.MachineName == "TK85")     TK85BtnClick(NULL);
         else if (Hwform.MachineName == "ZX97LE")   ZX97LEBtnClick(NULL);
         else if (Hwform.MachineName == "ACE")      AceBtnClick(NULL);
-        else ZX81BtnClick(NULL);
+        else                                       ZX81BtnClick(NULL);
 
-        RamPackBox->ItemIndex      = Hwform.RamPackBoxItemIndex;
-        SoundCardBox->ItemIndex    = Hwform.SoundCardBoxItemIndex;
-        ChrGenBox->ItemIndex       = Hwform.ChrGenBoxItemIndex;
-        HiResBox->ItemIndex        = Hwform.HiResBoxItemIndex;
-        ColourBox->ItemIndex       = Hwform.ColourBoxItemIndex;
-        SpeechBox->ItemIndex       = Hwform.SpeechBoxItemIndex;
-        RomCartridgeBox->ItemIndex = Hwform.RomCartridgeBoxItemIndex;
-        RomCartridgeFileBox->Text  = Hwform.RomCartridgeFileBoxText;
-        ZXC1ConfigurationBox->ItemIndex = Hwform.ZXC1ConfigurationBoxItemIndex;
+        if (Hwform.ZXpandChecked && JoystickBox->Items->Strings[JoystickBox->Items->Count - 1] != "ZXpand")
+        {
+                JoystickBox->Items->Add("ZXpand");
+        }
+
+        RamPackBox->ItemIndex               = FindEntry(RamPackBox,           Hwform.RamPackBoxText);
+        SoundCardBox->ItemIndex             = FindEntry(SoundCardBox,         Hwform.SoundCardBoxText);
+        ChrGenBox->ItemIndex                = FindEntry(ChrGenBox,            Hwform.ChrGenBoxText);
+        HiResBox->ItemIndex                 = FindEntry(HiResBox,             Hwform.HiResBoxText);
+        ColourBox->ItemIndex                = FindEntry(ColourBox,            Hwform.ColourBoxText);
+        SpeechBox->ItemIndex                = FindEntry(SpeechBox,            Hwform.SpeechBoxText);
+        RomCartridgeBox->ItemIndex          = FindEntry(RomCartridgeBox,      Hwform.RomCartridgeBoxText);
+        ZXC1ConfigurationBox->ItemIndex     = FindEntry(ZXC1ConfigurationBox, Hwform.ZXC1ConfigurationBoxText);
+        JoystickBox->ItemIndex              = FindEntry(JoystickBox,          Hwform.JoystickBoxText);
+        DriveAType->ItemIndex               = FindEntry(DriveAType,           Hwform.DriveATypeText);
+        DriveBType->ItemIndex               = FindEntry(DriveBType,           Hwform.DriveBTypeText);
+        ZXCFRAM->ItemIndex                  = FindEntry(ZXCFRAM,              Hwform.ZXCFRAMText);
+        IDEBox->ItemIndex                   = FindEntry(IDEBox,               Hwform.IDEBoxText);
+        FDCBox->ItemIndex                   = FindEntry(FDCBox,               Hwform.FDCBoxText);
+
+        RomCartridgeFileBox->Text           = Hwform.RomCartridgeFileBoxText;
+        SinclairRomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
+        TS1510RomCartridgeFileBox->Text     = Hwform.RomCartridgeFileBoxText;
+        TC2068RomCartridgeFileBox->Text     = Hwform.RomCartridgeFileBoxText;
+        TS2068RomCartridgeFileBox->Text     = Hwform.RomCartridgeFileBoxText;
+
+        programmableJoystickLeft            = Hwform.ProgrammableJoystickLeft;
+        programmableJoystickRight           = Hwform.ProgrammableJoystickRight;
+        programmableJoystickUp              = Hwform.ProgrammableJoystickUp;
+        programmableJoystickDown            = Hwform.ProgrammableJoystickDown;
+        programmableJoystickFire            = Hwform.ProgrammableJoystickFire;
+
+        SpecDrum->Checked                   = Hwform.SpecDrumChecked;
+        ProtectROM->Checked                 = Hwform.ProtectROMChecked;
+        NTSC->Checked                       = Hwform.NTSCChecked;
+        EnableLowRAM->Checked               = Hwform.EnableLowRAMChecked;
+        M1Not->Checked                      = Hwform.M1NotChecked;
+        ImprovedWait->Checked               = Hwform.ImprovedWaitChecked;
+        TS2050->Checked                     = Hwform.TS2050Checked;
+        Issue2->Checked                     = Hwform.Issue2Checked;
+        KMouse->Checked                     = Hwform.KMouseChecked;
+        Form1->divIDEJumperEClosed->Checked = Hwform.DivIDEJumperEClosedChecked;
+        Multiface->Checked                  = Hwform.MultifaceChecked;
+        ZXPrinter->Checked                  = Hwform.ZXPrinterChecked;
+        FloatingPointHardwareFix->Checked   = Hwform.FloatingPointHardwareFixChecked;
+        Upload->Checked                     = Hwform.UploadChecked;
+        uSource->Checked                    = Hwform.uSourceChecked;
+
+        if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD1.c_str());
+        if (Hwform.HD1 != "NULL") ATA_LoadHDF(1, Hwform.HD1.c_str());
+
+        for (int i = 0; i < 8; i++)
+        {
+                if (Hwform.MDV[i] != "NULL") IF1->MDVSetFileName(i, Hwform.MDV[i].c_str());
+        }
+
+        //---- APPLY THE SETTINGS ----
+
+        JoystickBoxChange(JoystickBox);
+
         if (RomCartridgeFileBox->Text.Length() > 0)
         {
-                RomCartridgeFileBox->SelStart = RomCartridgeFileBox->Text.Length()-1;
+                RomCartridgeFileBox->SelStart = RomCartridgeFileBox->Text.Length() - 1;
                 RomCartridgeFileBox->SelLength = 0;
         }
-        SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
-        TS1510RomCartridgeFileBox->Text   = RomCartridgeFileBox->Text;
-        TC2068RomCartridgeFileBox->Text   = RomCartridgeFileBox->Text;
-        TS2068RomCartridgeFileBox->Text   = RomCartridgeFileBox->Text;
 
-        JoystickBox->ItemIndex = Hwform.JoystickBoxItemIndex;
-        programmableJoystickLeft  = Hwform.JoystickLeftBoxText;
-        programmableJoystickRight = Hwform.JoystickRightBoxText;
-        programmableJoystickUp    = Hwform.JoystickUpBoxText;
-        programmableJoystickDown  = Hwform.JoystickDownBoxText;
-        programmableJoystickFire  = Hwform.JoystickFireBoxText;
-        JoystickBoxChange(JoystickBox);
-        DriveAType->ItemIndex  = Hwform.DriveATypeItemIndex;
-        DriveBType->ItemIndex  = Hwform.DriveBTypeItemIndex;
-        FDC->ItemIndex         = Hwform.FDCItemIndex;
-        ZXpand->Enabled        = Hwform.ZXpandEnabled;
-        SpecDrum->Enabled      = Hwform.SpecDrumEnabled;
-        SpecDrum->Checked      = Hwform.SpecDrumChecked;
-        ProtectROM->Checked    = Hwform.ProtectROMChecked;
-        NTSC->Checked          = Hwform.NTSCChecked;
-        EnableLowRAM->Checked  = Hwform.EnableLowRAMChecked;
-        M1Not->Checked         = Hwform.M1NotChecked;
-        ImprovedWait->Checked  = Hwform.ImprovedWaitChecked;
-        TS2050->Checked        = Hwform.TS2050Checked;
-        Issue2->Checked        = Hwform.Issue2Checked;
-        KMouse->Checked        = Hwform.KMouseChecked;
-        Form1->divIDEJumperEClosed->Checked = Hwform.Form1divIDEJumperEClosedChecked;
-        Multiface->Checked     = Hwform.MultifaceChecked;
-        ZXPrinter->Checked     = Hwform.ZXPrinterChecked;
-        FloatingPointHardwareFix->Checked = Hwform.FloatingPointHardwareFixChecked;
-        Upload->Checked        = Hwform.UploadChecked;
-        ZXCFRAM->ItemIndex     = Hwform.ZXCFRAMItemIndex;
-        IDEBox->ItemIndex      = Hwform.IDEBoxItemIndex;
-        uSource->Checked       = Hwform.uSourceChecked;
+        // Do this after all ZXpand dependencies have been assigned
+        SetZXpandState(Hwform.ZXpandChecked, ZXpand->Enabled);
 
-        // Do this after all ZXpand dependencies have been assigned.
-        ZXpand->Checked = Hwform.ZXpandChecked;
-
-        SetZXpandState(ZXpand->Checked,ZXpand->Enabled);
         IDEBoxChange(NULL);
-        FDCChange(NULL);
+        FDCBoxChange(NULL);
 
         if (ZX80Btn->Down || ZX81Btn->Down || Spec16Btn->Down || Spec48Btn->Down || SpecPlusBtn->Down || Spec128Btn->Down)
         {
@@ -380,7 +395,7 @@ void THW::ReloadFromInternalSettings()
         }
 }
 
-void THW::SaveInternalSettings()
+void THW::SaveToInternalSettings()
 {
         if (ZX80Btn->Down)          Hwform.MachineName = "ZX80";
         else if (Spec16Btn->Down)   Hwform.MachineName = "Spec16";
@@ -400,46 +415,55 @@ void THW::SaveInternalSettings()
         else if (TK85Btn->Down)     Hwform.MachineName = "TK85";
         else if (ZX97LEBtn->Down)   Hwform.MachineName = "ZX97LE";
         else if (AceBtn->Down)      Hwform.MachineName = "ACE";
-        else Hwform.MachineName = "ZX81";          
+        else                        Hwform.MachineName = "ZX81";
 
-        Hwform.RamPackBoxItemIndex      = RamPackBox->ItemIndex;
-        Hwform.SoundCardBoxItemIndex    = SoundCardBox->ItemIndex;
-        Hwform.ChrGenBoxItemIndex       = ChrGenBox->ItemIndex;
-        Hwform.HiResBoxItemIndex        = HiResBox->ItemIndex;
-        Hwform.ColourBoxItemIndex       = ColourBox->ItemIndex;
-        Hwform.SpeechBoxItemIndex       = SpeechBox->ItemIndex;
-        Hwform.JoystickBoxItemIndex     = JoystickBox->ItemIndex;
-        Hwform.RomCartridgeBoxItemIndex = RomCartridgeBox->ItemIndex;
-        Hwform.RomCartridgeFileBoxText  = RomCartridgeFileBox->Text;
-        Hwform.ZXC1ConfigurationBoxItemIndex = ZXC1ConfigurationBox->ItemIndex;
-        Hwform.JoystickLeftBoxText      = programmableJoystickLeft;
-        Hwform.JoystickRightBoxText     = programmableJoystickRight;
-        Hwform.JoystickUpBoxText        = programmableJoystickUp;
-        Hwform.JoystickDownBoxText      = programmableJoystickDown;
-        Hwform.JoystickFireBoxText      = programmableJoystickFire;
-        Hwform.DriveATypeItemIndex      = DriveAType->ItemIndex;
-        Hwform.DriveBTypeItemIndex      = DriveBType->ItemIndex;
-        Hwform.FDCItemIndex             = FDC->ItemIndex;
-        Hwform.ZXpandChecked            = ZXpand->Checked;
-        Hwform.ZXpandEnabled            = ZXpand->Enabled;
-        Hwform.SpecDrumChecked          = SpecDrum->Checked;
-        Hwform.SpecDrumEnabled          = SpecDrum->Enabled;
-        Hwform.ProtectROMChecked        = ProtectROM->Checked;
-        Hwform.NTSCChecked              = NTSC->Checked;
-        Hwform.EnableLowRAMChecked      = EnableLowRAM->Checked;
-        Hwform.M1NotChecked             = M1Not->Checked;
-        Hwform.ImprovedWaitChecked      = ImprovedWait->Checked;
-        Hwform.TS2050Checked            = TS2050->Checked;
-        Hwform.Issue2Checked            = Issue2->Checked;
-        Hwform.KMouseChecked            = KMouse->Checked;
-        Hwform.Form1divIDEJumperEClosedChecked = Form1->divIDEJumperEClosed->Checked;
-        Hwform.MultifaceChecked         = Multiface->Checked;
-        Hwform.ZXPrinterChecked         = ZXPrinter->Checked;
+        Hwform.RamPackBoxText                  = RamPackBox->Text;
+        Hwform.SoundCardBoxText                = SoundCardBox->Text;
+        Hwform.ChrGenBoxText                   = ChrGenBox->Text;
+        Hwform.HiResBoxText                    = HiResBox->Text;
+        Hwform.ColourBoxText                   = ColourBox->Text;
+        Hwform.SpeechBoxText                   = SpeechBox->Text;
+        Hwform.JoystickBoxText                 = JoystickBox->Text;
+        Hwform.RomCartridgeBoxText             = RomCartridgeBox->Text;
+        Hwform.RomCartridgeFileBoxText         = RomCartridgeFileBox->Text;
+        Hwform.ZXC1ConfigurationBoxText        = ZXC1ConfigurationBox->Text;
+        Hwform.FDCBoxText                      = FDCBox->Text;
+        Hwform.IDEBoxText                      = IDEBox->Text;
+
+        Hwform.ProgrammableJoystickLeft        = programmableJoystickLeft;
+        Hwform.ProgrammableJoystickRight       = programmableJoystickRight;
+        Hwform.ProgrammableJoystickUp          = programmableJoystickUp;
+        Hwform.ProgrammableJoystickDown        = programmableJoystickDown;
+        Hwform.ProgrammableJoystickFire        = programmableJoystickFire;
+
+        Hwform.DriveATypeText                  = DriveAType->Text;
+        Hwform.DriveBTypeText                  = DriveBType->Text;
+        Hwform.ZXCFRAMText                     = ZXCFRAM->Text;
+
+        Hwform.ZXpandChecked                   = ZXpand->Checked;
+        Hwform.SpecDrumChecked                 = SpecDrum->Checked;
+        Hwform.ProtectROMChecked               = ProtectROM->Checked;
+        Hwform.NTSCChecked                     = NTSC->Checked;
+        Hwform.EnableLowRAMChecked             = EnableLowRAM->Checked;
+        Hwform.M1NotChecked                    = M1Not->Checked;
+        Hwform.ImprovedWaitChecked             = ImprovedWait->Checked;
+        Hwform.TS2050Checked                   = TS2050->Checked;
+        Hwform.Issue2Checked                   = Issue2->Checked;
+        Hwform.KMouseChecked                   = KMouse->Checked;
+        Hwform.MultifaceChecked                = Multiface->Checked;
+        Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
+        Hwform.DivIDEJumperEClosedChecked      = Form1->divIDEJumperEClosed->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
-        Hwform.UploadChecked            = Upload->Checked;
-        Hwform.ZXCFRAMItemIndex         = ZXCFRAM->ItemIndex;
-        Hwform.IDEBoxItemIndex          = IDEBox->ItemIndex;
-        Hwform.uSourceChecked           = uSource->Checked;
+        Hwform.UploadChecked                   = Upload->Checked;
+        Hwform.uSourceChecked                  = uSource->Checked;
+
+        Hwform.HD0                             = ATA_GetHDF(0) ? ATA_GetHDF(0) : "NULL";
+        Hwform.HD1                             = ATA_GetHDF(1) ? ATA_GetHDF(1) : "NULL";
+        
+        for (int i = 0; i < 8; i++)
+        {
+                Hwform.MDV[i] = IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "NULL";
+        }
 }
 
 void THW::Configure8K16KRam()
@@ -1553,14 +1577,14 @@ void THW::ConfigureSpectrumIDE()
 void THW::ConfigureFDC()
 {
         spectrum.floppytype = FLOPPYNONE;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "DISCiPLE")       spectrum.floppytype = FLOPPYDISCIPLE;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "Plus D")         spectrum.floppytype = FLOPPYPLUSD;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "+3")             spectrum.floppytype = FLOPPYPLUS3;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "Opus Discovery") spectrum.floppytype = FLOPPYOPUSD;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "Beta Disk")      spectrum.floppytype = FLOPPYBETA;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "ZX Interface 1") spectrum.floppytype = FLOPPYIF1;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "ZX1541")         spectrum.floppytype = FLOPPYZX1541;
-        if (FDC->Items->Strings[FDC->ItemIndex] == "Larken")         spectrum.floppytype = FLOPPYLARKEN81;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "DISCiPLE")       spectrum.floppytype = FLOPPYDISCIPLE;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Plus D")         spectrum.floppytype = FLOPPYPLUSD;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")             spectrum.floppytype = FLOPPYPLUS3;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Opus Discovery") spectrum.floppytype = FLOPPYOPUSD;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Beta Disk")      spectrum.floppytype = FLOPPYBETA;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1") spectrum.floppytype = FLOPPYIF1;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX1541")         spectrum.floppytype = FLOPPYZX1541;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Larken")         spectrum.floppytype = FLOPPYLARKEN81;
 
         switch(DriveAType->ItemIndex)
         {
@@ -1942,17 +1966,17 @@ void THW::SetupForZX81(void)
         KMouse->Checked = false;
         KMouse->Enabled = false;
 
-        OldFloppy = FDC->Items->Strings[FDC->ItemIndex];
-        while(FDC->Items->Count > 1) FDC->Items->Delete(FDC->Items->Count - 1);
-        FDC->Items->Strings[0] = "None";
-        FDC->Items->Add("ZX1541");
-        FDC->Items->Add("Larken");
-        FDC->ItemIndex = 0;
+        OldFloppy = FDCBox->Items->Strings[FDCBox->ItemIndex];
+        while(FDCBox->Items->Count > 1) FDCBox->Items->Delete(FDCBox->Items->Count - 1);
+        FDCBox->Items->Strings[0] = "None";
+        FDCBox->Items->Add("ZX1541");
+        FDCBox->Items->Add("Larken");
+        FDCBox->ItemIndex = 0;
 
-        for (i = 0; i < FDC->Items->Count; i++)
-                if (FDC->Items->Strings[i] == OldFloppy) FDC->ItemIndex = i;
+        for (i = 0; i < FDCBox->Items->Count; i++)
+                if (FDCBox->Items->Strings[i] == OldFloppy) FDCBox->ItemIndex = i;
 
-        FDC->Enabled = true;
+        FDCBox->Enabled = true;
         DriveAType->Enabled = false;
         DriveBType->Enabled = false;
 
@@ -2172,31 +2196,31 @@ void THW::SetupForSpectrum(void)
 
         EnableRomCartridgeOption(true);
 
-        OldFDC = FDC->Items->Strings[FDC->ItemIndex];
-        while(FDC->Items->Count > 1) FDC->Items->Delete(FDC->Items->Count - 1);
+        OldFDC = FDCBox->Items->Strings[FDCBox->ItemIndex];
+        while(FDCBox->Items->Count > 1) FDCBox->Items->Delete(FDCBox->Items->Count - 1);
         
-        FDC->Items->Strings[0] = "None";
-        FDC->Items->Add("ZX Interface 1");
+        FDCBox->Items->Strings[0] = "None";
+        FDCBox->Items->Add("ZX Interface 1");
         if (NewSpec != SPECCYTC2068 && NewSpec != SPECCYTS2068)
         {
-                FDC->Items->Add("Beta Disk");
-                FDC->Items->Add("Opus Discovery");
-                FDC->Items->Add("DISCiPLE");
-                FDC->Items->Add("Plus D");
+                FDCBox->Items->Add("Beta Disk");
+                FDCBox->Items->Add("Opus Discovery");
+                FDCBox->Items->Add("DISCiPLE");
+                FDCBox->Items->Add("Plus D");
         }
 
-        FDC->ItemIndex = 0;
-        for (i = 0; i < FDC->Items->Count; i++)
+        FDCBox->ItemIndex = 0;
+        for (i = 0; i < FDCBox->Items->Count; i++)
         {
-                if (FDC->Items->Strings[i] == OldFDC)
+                if (FDCBox->Items->Strings[i] == OldFDC)
                 {
-                        FDC->ItemIndex = i;
+                        FDCBox->ItemIndex = i;
                         break;
                 }
         }
 
-        FDC->Enabled = true;
-        FDCChange(NULL);
+        FDCBox->Enabled = true;
+        FDCBoxChange(NULL);
 
         SoundCardBox->Items->Clear();
         SoundCardBox->Items->Add("None");
@@ -2724,12 +2748,12 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         IDEBox->Items->Delete(4);
         IDEBoxChange(NULL);
 
-        while(FDC->Items->Count>1) FDC->Items->Delete(FDC->Items->Count-1);
-        FDC->Items->Strings[0] = "+3";
-        FDC->ItemIndex = 0;
+        while(FDCBox->Items->Count>1) FDCBox->Items->Delete(FDCBox->Items->Count-1);
+        FDCBox->Items->Strings[0] = "+3";
+        FDCBox->ItemIndex = 0;
 
-        FDC->Enabled = false;
-        FDCChange(NULL);
+        FDCBox->Enabled = false;
+        FDCBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -3144,7 +3168,7 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
-        ReloadFromInternalSettings();
+        LoadFromInternalSettings();
         ResetRequired = false;
 }
 //---------------------------------------------------------------------------
@@ -3153,297 +3177,235 @@ void __fastcall THW::TS2050ConfigClick(TObject *Sender)
         SerialConfig->ShowModal();
 }
 //---------------------------------------------------------------------------
-void THW::SaveSettings(TIniFile *ini)
+
+void THW::SaveSettings(TIniFile* ini)
 {
-        AnsiString Rom, MachineName;
-        FILE *f;
-        char FileName[256];
+        SaveToInternalSettings();
 
-        if (ZX80Btn->Down) MachineName = "ZX80";
-        else if (Spec16Btn->Down) MachineName = "Spec16";
-        else if (Spec48Btn->Down) MachineName = "Spec48";
-        else if (SpecPlusBtn->Down) MachineName = "SpecPlus";
-        else if (Spec128Btn->Down) MachineName = "Spec128";
-        else if (SpecP2Btn->Down) MachineName = "SpecP2";
-        else if (SpecP2aBtn->Down) MachineName = "SpecP2A";
-        else if (SpecP3Btn->Down) MachineName = "SpecP3";
-        else if (TS1000Btn->Down) MachineName = "TS1000";
-        else if (TS1500Btn->Down) MachineName = "TS1500";
-        else if (TC2048Btn->Down) MachineName = "TC2048";
-        else if (TC2068Btn->Down) MachineName = "TC2068";
-        else if (TS2068Btn->Down) MachineName = "TS2068";
-        else if (LambdaBtn->Down) MachineName = "Lambda";
-        else if (R470Btn->Down) MachineName = "R470";
-        else if (TK85Btn->Down) MachineName = "TK85";
-        else if (ZX97LEBtn->Down) MachineName = "ZX97LE";
-        else if (AceBtn->Down) MachineName = "ACE";
-        else MachineName = "ZX81";
+        AccessIniFile(ini, Write);
 
-        ini->WriteInteger("HWARE", "Top",Top);
-        ini->WriteInteger("HWARE", "Left",Left);
-        ini->WriteString("HWARE", "MachineName",MachineName);
+        WriteNVMemory(divIDEMem, 8192, 1,     "divide.nv");
+        WriteNVMemory(ZXCFMem,   64,   16384, "zxcf.nv");
+        WriteNVMemory(ZX1541Mem, 1,    8192,  "zx1541.nv");
+}
+//---------------------------------------------------------------------------
 
-        ini->WriteInteger("HWARE", "RamPack", RamPackBox->ItemIndex);
-        ini->WriteInteger("HWARE", "Sound", SoundCardBox->ItemIndex);
-        ini->WriteInteger("HWARE", "ChrGen", ChrGenBox->ItemIndex);
-        ini->WriteInteger("HWARE", "HiRes", HiResBox->ItemIndex);
-        ini->WriteInteger("HWARE", "Colour", ColourBox->ItemIndex);
-        ini->WriteInteger("HWARE", "Speech", SpeechBox->ItemIndex);
-        ini->WriteInteger("HWARE", "Joystick", JoystickBox->ItemIndex);
-        ini->WriteInteger("HWARE", "RomCartridge", RomCartridgeBox->ItemIndex);
-        ini->WriteString("HWARE", "RomCartridgeFile", RomCartridgeFileBox->Text);
-        ini->WriteInteger("HWARE", "ZXC1Configuration", ZXC1ConfigurationBox->ItemIndex);
+void THW::LoadSettings(TIniFile* ini)
+{
+        AccessIniFile(ini, Read);
+                                    
+        LoadFromInternalSettings();
 
-        ini->WriteString("HWARE", "JoystickLeft",  programmableJoystickLeft);
-        ini->WriteString("HWARE", "JoystickRight", programmableJoystickRight);
-        ini->WriteString("HWARE", "JoystickUp",    programmableJoystickUp);
-        ini->WriteString("HWARE", "JoystickDown",  programmableJoystickDown);
-        ini->WriteString("HWARE", "JoystickFire",  programmableJoystickFire);
+        JoystickLeft.Character  = *(programmableJoystickLeft.c_str());
+        JoystickRight.Character = *(programmableJoystickRight.c_str());
+        JoystickUp.Character    = *(programmableJoystickUp.c_str());
+        JoystickDown.Character  = *(programmableJoystickDown.c_str());
+        JoystickFire.Character  = *(programmableJoystickFire.c_str());
 
-        ini->WriteInteger("HWARE", "DriveAType", DriveAType->ItemIndex);
-        ini->WriteInteger("HWARE", "DriveBType", DriveBType->ItemIndex);
-        ini->WriteString("DRIVES", "DriveA", spectrum.driveaimg);
-        ini->WriteString("DRIVES", "DriveB", spectrum.drivebimg);
-        ini->WriteInteger("HWARE", "FDCType", FDC->ItemIndex);
-        ini->WriteBool("HWARE", "uSource", uSource->Checked);
-        ini->WriteBool("HWARE", "ZXpand", ZXpand->Checked);
-        ini->WriteBool("HWARE", "ZXpandEnabled", ZXpand->Enabled);
-        ini->WriteBool("HWARE", "SpecDrum", SpecDrum->Checked);
-        ini->WriteBool("HWARE", "SpecDrumEnabled", SpecDrum->Enabled);
+        ReadNVMemory(divIDEMem, 8192, 1,     "divide.nv");      //#### 64,16384
+        ReadNVMemory(ZXCFMem,   64,   16384, "zxcf.nv");
+        ReadNVMemory(ZX1541Mem, 1,    8192,  "zx1541.nv");
+}
+//---------------------------------------------------------------------------
 
-        if (ATA_GetHDF(0)) Rom = ATA_GetHDF(0); else Rom = "NULL";
-        ini->WriteString("DRIVES", "HD0", Rom);
-        if (ATA_GetHDF(1)) Rom = ATA_GetHDF(1); else Rom = "NULL";
-        ini->WriteString("DRIVES", "HD1", Rom);
-        for (int i = 0; i < IF1->MDVNoDrives; i++)
+void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
+{
+        //---- MACHINE ----
+
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top", Top);
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", Left);
+
+        AccessIniFileString(ini, accessType, "HARDWARE", "MachineName", Hwform.MachineName);
+
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROM80",     emulator.ROM80);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROM81",     emulator.ROM81);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP16",   emulator.ROMSP16);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP48",   emulator.ROMSP48);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP",    emulator.ROMSPP);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP128",  emulator.ROMSP128);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP2",   emulator.ROMSPP2);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP2A",  emulator.ROMSPP2A);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP3",   emulator.ROMSPP3);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS1000", emulator.ROMTS1000);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS1500", emulator.ROMTS1500);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTC2048", emulator.ROMTC2048);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTC2068", emulator.ROMTC2068);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS2068", emulator.ROMTS2068);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMLAMBDA", emulator.ROMLAMBDA);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTK85",   emulator.ROMTK85);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMACE",    emulator.ROMACE);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMR470",   emulator.ROMR470);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROM97LE",   emulator.ROM97LE);
+        
+        //---- INTERFACES TAB ----
+
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RamPack",            Hwform.RamPackBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Sound",              Hwform.SoundCardBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "CharacterGenerator", Hwform.ChrGenBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "HighResolution",     Hwform.HiResBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Colour",             Hwform.ColourBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Speech",             Hwform.SpeechBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Joystick",           Hwform.JoystickBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RomCartridge",       Hwform.RomCartridgeBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "ZXC1Configuration",  Hwform.ZXC1ConfigurationBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RomCartridgeFile",   Hwform.RomCartridgeFileBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickLeft",       Hwform.ProgrammableJoystickLeft);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickRight",      Hwform.ProgrammableJoystickRight, JoystickRight.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickUp",         Hwform.ProgrammableJoystickUp,    JoystickUp.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickDown",       Hwform.ProgrammableJoystickDown,  JoystickDown.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickFire",       Hwform.ProgrammableJoystickFire,  JoystickFire.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Dock",               emulator.ROMDock);
+
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "MicroSource",   Hwform.uSourceChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "ZXpand",        Hwform.ZXpandChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "SpecDrum",      Hwform.SpecDrumChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "TS2050",        Hwform.TS2050Checked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "KempstonMouse", Hwform.KMouseChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "Multiface",     Hwform.MultifaceChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "ZXPrinter",     Hwform.ZXPrinterChecked);
+
+        //---- DRIVES TAB ----
+
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "FDCType",    Hwform.FDCBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveAType", Hwform.DriveATypeText);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveBType", Hwform.DriveBTypeText);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "IDEType",    Hwform.IDEBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZXCFRAM",    Hwform.ZXCFRAMText);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveA",     Hwform.DriveA);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveB",     Hwform.DriveB);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "HD0",        Hwform.HD0);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "HD1",        Hwform.HD1);
+
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSPP3E", emulator.ROMSPP3E);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZX8BIT",   emulator.ROMZX8BIT);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZX16BIT",  emulator.ROMZX16BIT);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZXCF",     emulator.ROMZXCF);
+
+        AccessIniFileInteger(ini, accessType, "HARDWARE_DRIVES", "MDVNoDrives", Hwform.MDVNoDrives);
+
+        for (int i = 0; i < 8; i++)
         {
-            Rom = "NULL"; if (IF1->MDVGetFileName(i)) Rom = IF1->MDVGetFileName(i);
-            ini->WriteString("DRIVES", "MDV"+AnsiString(i), Rom);
+                AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "MDV" + AnsiString(i), Hwform.MDV[i]);
         }
 
-        ini->WriteBool("HWARE", "ProtectRom", ProtectROM->Checked);
-        ini->WriteBool("HWARE", "NTSC", NTSC->Checked);
-        ini->WriteBool("HWARE", "LowRAM", EnableLowRAM->Checked);
-        ini->WriteBool("HWARE", "M1NOT", M1Not->Checked);
-        ini->WriteBool("HWARE", "IMPROVED_WAIT", ImprovedWait->Checked);
-        ini->WriteBool("HWARE", "TS2050", TS2050->Checked);
-        ini->WriteBool("HWARE", "Iss2Kb", Issue2->Checked);
-        ini->WriteBool("HWARE", "KMouse", KMouse->Checked);
-        ini->WriteBool("HWARE", "divIDEWP", Form1->divIDEJumperEClosed->Checked);
-        ini->WriteBool("HWARE", "ZXCFWP", Upload->Checked);
-        ini->WriteBool("HWARE", "MFace", Multiface->Checked);
-        ini->WriteBool("HWARE", "ZXPrinter", ZXPrinter->Checked);
-        ini->WriteInteger("HWARE", "ZXCFRAM", ZXCFRAM->ItemIndex);
-        ini->WriteInteger("HWARE", "HDRIVE", IDEBox->ItemIndex);
-        ini->WriteBool("HWARE", "FloatingPointHardwareFix", FloatingPointHardwareFix->Checked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_DRIVES", "divIDEJumperE", Hwform.DivIDEJumperEClosedChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_DRIVES", "ZXCFJumper",    Hwform.UploadChecked);
 
-        Rom = emulator.ROM80; ini->WriteString("HWARE", "ROM80", Rom);
-        Rom = emulator.ROM81; ini->WriteString("HWARE", "ROM81", Rom);
-        Rom = emulator.ROMSP16; ini->WriteString("HWARE", "ROMSP16", Rom);
-        Rom = emulator.ROMSP48; ini->WriteString("HWARE", "ROMSP48", Rom);
-        Rom = emulator.ROMSPP; ini->WriteString("HWARE", "ROMSPP", Rom);
-        Rom = emulator.ROMSP128; ini->WriteString("HWARE", "ROMSP128", Rom);
+        //---- ADVANCED TAB ----
 
-        Rom = emulator.ROMSPP2; ini->WriteString("HWARE", "ROMSPP2", Rom);
-        Rom = emulator.ROMSPP2A; ini->WriteString("HWARE", "ROMSPP2A", Rom);
-        Rom = emulator.ROMSPP3; ini->WriteString("HWARE", "ROMSPP3", Rom);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "ProtectRom",               Hwform.ProtectROMChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "NTSC",                     Hwform.NTSCChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "8KRAM",                    Hwform.EnableLowRAMChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "M1Not",                    Hwform.M1NotChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "ImprovedWait",             Hwform.ImprovedWaitChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "Issue2Keyboard",           Hwform.Issue2Checked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked);
+}
 
-        Rom = emulator.ROMTS1000; ini->WriteString("HWARE", "ROMTS1000", Rom);
-        Rom = emulator.ROMTS1500; ini->WriteString("HWARE", "ROMTS1500", Rom);
-        Rom = emulator.ROMTC2048; ini->WriteString("HWARE", "ROMTC2048", Rom);
-        Rom = emulator.ROMTC2068; ini->WriteString("HWARE", "ROMTC2068", Rom);
-        Rom = emulator.ROMTS2068; ini->WriteString("HWARE", "ROMTS2068", Rom);
-
-        Rom = emulator.ROMLAMBDA; ini->WriteString("HWARE", "ROMLAMBDA", Rom);
-        Rom = emulator.ROMTK85; ini->WriteString("HWARE", "ROMTK85", Rom);
-        Rom = emulator.ROMACE; ini->WriteString("HWARE", "ROMACE", Rom);
-        Rom = emulator.ROMR470; ini->WriteString("HWARE", "ROMR470", Rom);
-
-        Rom = emulator.ROM97LE; ini->WriteString("HWARE", "ROM97LE", Rom);
-
-        Rom = emulator.ROMSPP3E; ini->WriteString("HWARE", "ROMSPP3E", Rom);
-        Rom = emulator.ROMDock; ini->WriteString("HWARE", "Dock", Rom);
-        Rom = emulator.ROMZX8BIT; ini->WriteString("HWARE", "ZX8BIT", Rom);
-        Rom = emulator.ROMZX16BIT; ini->WriteString("HWARE", "ZX16BIT", Rom);
-        Rom = emulator.ROMZXCF; ini->WriteString("HWARE", "ZXCF",Rom);
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "divide.nv");
-
-        f = fopen(FileName, "wb");
-        if (f)
+void THW::AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue)
+{
+        if (accessType == Write)
         {
-                fwrite(divIDEMem, 8192, 1, f);
-                fclose(f);
+                ini->WriteInteger(section, entryName, entryValue);
         }
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zxcf.nv");
-
-        f = fopen(FileName, "wb");
-        if (f)
+        else
         {
-                fwrite(ZXCFMem, 64, 16384, f);
-                fclose(f);
+                entryValue = ini->ReadInteger(section, entryName, entryValue);
         }
+}
 
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zx1541.nv");
+void THW::AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteBool(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadBool(section, entryName, entryValue);
+        }
+}
 
-        f = fopen(FileName, "wb");
+void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue, AnsiString defaultValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : entryValue);
+        }
+}
+
+void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue, AnsiString defaultValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryValue);
+        }
+        else
+        {
+                AnsiString value = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : AnsiString(entryValue));
+                strcpy(entryValue, value.c_str());
+        }
+}
+
+void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TComboBox* entryComboBox, AnsiString defaultValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryComboBox->Text);
+        }
+        else
+        {
+                AnsiString value = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : entryComboBox->Text);
+                entryComboBox->ItemIndex = FindEntry(entryComboBox, value);
+        }
+}
+
+void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TEdit* entryEditBox, AnsiString defaultValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryEditBox->Text);
+        }
+        else
+        {
+                entryEditBox->Text = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : entryEditBox->Text);
+        }
+}
+
+void THW::WriteNVMemory(BYTE* memory, int size, int count, char* fileName)
+{
+        char FilePath[256];
+
+        strcpy(FilePath, emulator.cwd);
+        strcat(FilePath, nvMemoryFolder);
+        strcat(FilePath, fileName);
+
+        FILE* f = fopen(FilePath, "wb");
         if (f)
         {
-                fwrite(ZX1541Mem, 1, 8192, f);
+                fwrite(memory, size, count, f);
                 fclose(f);
         }
 }
 
-void THW::LoadSettings(TIniFile *ini)
+void THW::ReadNVMemory(BYTE* memory, int size, int count, char* fileName)
 {
-        AnsiString Rom;
-        char FileName[256];
-        FILE *f;
+        char FilePath[256];
 
-        Top = ini->ReadInteger("HWARE", "Top", Top);
-        Left = ini->ReadInteger("HWARE", "Left", Left);
+        strcpy(FilePath, emulator.cwd);
+        strcat(FilePath, nvMemoryFolder);
+        strcat(FilePath, fileName);
 
-        Rom = emulator.ROM80; Rom = ini->ReadString("HWARE", "ROM80",Rom).LowerCase(); strcpy(emulator.ROM80, Rom.c_str());
-        Rom = emulator.ROM81; Rom = ini->ReadString("HWARE", "ROM81",Rom).LowerCase(); strcpy(emulator.ROM81, Rom.c_str());
-        Rom = emulator.ROMACE; Rom = ini->ReadString("HWARE", "ROMACE",Rom).LowerCase(); strcpy(emulator.ROMACE, Rom.c_str());
-        Rom = emulator.ROMTS1000; Rom = ini->ReadString("HWARE", "ROMTS1000",Rom).LowerCase(); strcpy(emulator.ROMTS1000, Rom.c_str());
-        Rom = emulator.ROMTS1500; Rom = ini->ReadString("HWARE", "ROMTS1500",Rom).LowerCase(); strcpy(emulator.ROMTS1500, Rom.c_str());
-        Rom = emulator.ROMTC2048; Rom = ini->ReadString("HWARE", "ROMTC2048",Rom).LowerCase(); strcpy(emulator.ROMTC2048, Rom.c_str());
-        Rom = emulator.ROMTC2068; Rom = ini->ReadString("HWARE", "ROMTC2068",Rom).LowerCase(); strcpy(emulator.ROMTC2068, Rom.c_str());
-        Rom = emulator.ROMTS2068; Rom = ini->ReadString("HWARE", "ROMTS2068",Rom).LowerCase(); strcpy(emulator.ROMTS2068, Rom.c_str());
-        Rom = emulator.ROMLAMBDA; Rom = ini->ReadString("HWARE", "ROMLAMBDA",Rom).LowerCase(); strcpy(emulator.ROMLAMBDA, Rom.c_str());
-        Rom = emulator.ROMTK85; Rom = ini->ReadString("HWARE", "ROMTK85",Rom).LowerCase(); strcpy(emulator.ROMTK85, Rom.c_str());
-        Rom = emulator.ROM97LE; Rom = ini->ReadString("HWARE", "ROM97LE",Rom).LowerCase(); strcpy(emulator.ROM97LE, Rom.c_str());
-        Rom = emulator.ROMR470; Rom = ini->ReadString("HWARE", "ROMR470",Rom).LowerCase(); strcpy(emulator.ROMR470, Rom.c_str());
-        Rom = emulator.ROMSP16; Rom = ini->ReadString("HWARE", "ROMSP16",Rom).LowerCase(); strcpy(emulator.ROMSP16, Rom.c_str());
-        Rom = emulator.ROMSP48; Rom = ini->ReadString("HWARE", "ROMSP48",Rom).LowerCase(); strcpy(emulator.ROMSP48, Rom.c_str());
-        Rom = emulator.ROMSPP; Rom = ini->ReadString("HWARE", "ROMSPP",Rom).LowerCase(); strcpy(emulator.ROMSPP, Rom.c_str());
-        Rom = emulator.ROMSP128; Rom = ini->ReadString("HWARE", "ROMSP128",Rom).LowerCase(); strcpy(emulator.ROMSP128, Rom.c_str());
-        Rom = emulator.ROMSPP2; Rom = ini->ReadString("HWARE", "ROMSPP2",Rom).LowerCase(); strcpy(emulator.ROMSPP2, Rom.c_str());
-        Rom = emulator.ROMSPP2A; Rom = ini->ReadString("HWARE", "ROMSPP2A",Rom).LowerCase(); strcpy(emulator.ROMSPP2A, Rom.c_str());
-        Rom = emulator.ROMSPP3; Rom = ini->ReadString("HWARE", "ROMSPP3",Rom).LowerCase(); strcpy(emulator.ROMSPP3, Rom.c_str());
-        Rom = emulator.ROMSPP3E; Rom = ini->ReadString("HWARE", "ROMSPP3E",Rom).LowerCase(); strcpy(emulator.ROMSPP3E, Rom.c_str());
-        Rom = emulator.ROMDock; Rom = ini->ReadString("HWARE", "Dock",Rom).LowerCase(); strcpy(emulator.ROMDock, Rom.c_str());
-        Rom = emulator.ROMZX8BIT; Rom = ini->ReadString("HWARE", "ZX8BIT",Rom).LowerCase(); strcpy(emulator.ROMZX8BIT, Rom.c_str());
-        Rom = emulator.ROMZX16BIT; Rom = ini->ReadString("HWARE", "ZX16BIT",Rom).LowerCase(); strcpy(emulator.ROMZX16BIT, Rom.c_str());
-        Rom = emulator.ROMZXCF; Rom = ini->ReadString("HWARE", "ZXCF",Rom).LowerCase(); strcpy(emulator.ROMZXCF, Rom.c_str());
-
-        Hwform.MachineName = ini->ReadString("HWARE", "MachineName", "ZX81");
-
-        Hwform.RamPackBoxItemIndex = ini->ReadInteger("HWARE", "RamPack", RamPackBox->ItemIndex);
-        Hwform.SoundCardBoxItemIndex = ini->ReadInteger("HWARE", "Sound", SoundCardBox->ItemIndex);
-        Hwform.ChrGenBoxItemIndex = ini->ReadInteger("HWARE", "ChrGen", ChrGenBox->ItemIndex);
-        Hwform.HiResBoxItemIndex = ini->ReadInteger("HWARE", "HiRes", HiResBox->ItemIndex);
-        Hwform.ColourBoxItemIndex = ini->ReadInteger("HWARE", "Colour", ColourBox->ItemIndex);
-        Hwform.SpeechBoxItemIndex = ini->ReadInteger("HWARE", "Speech", SpeechBox->ItemIndex);
-        Hwform.JoystickBoxItemIndex = ini->ReadInteger("HWARE", "Joystick", JoystickBox->ItemIndex);
-        Hwform.RomCartridgeBoxItemIndex = ini->ReadInteger("HWARE", "RomCartridge", RomCartridgeBox->ItemIndex);
-        Hwform.RomCartridgeFileBoxText = ini->ReadString("HWARE", "RomCartridgeFile", "");
-        Hwform.ZXC1ConfigurationBoxItemIndex = ini->ReadInteger("HWARE", "ZXC1Configuration", ZXC1ConfigurationBox->ItemIndex);
-
-        Hwform.JoystickLeftBoxText  = programmableJoystickLeft  = *(ini->ReadString("HWARE", "JoystickLeft",  JoystickLeft.Character).c_str());
-        Hwform.JoystickRightBoxText = programmableJoystickRight = *(ini->ReadString("HWARE", "JoystickRight", JoystickRight.Character).c_str());
-        Hwform.JoystickUpBoxText    = programmableJoystickUp    = *(ini->ReadString("HWARE", "JoystickUp",    JoystickUp.Character).c_str());
-        Hwform.JoystickDownBoxText  = programmableJoystickDown  = *(ini->ReadString("HWARE", "JoystickDown",  JoystickDown.Character).c_str());
-        Hwform.JoystickFireBoxText  = programmableJoystickFire  = *(ini->ReadString("HWARE", "JoystickFire",  JoystickFire.Character).c_str());
-
-        Hwform.DriveATypeItemIndex = ini->ReadInteger("HWARE", "DriveAType", DriveAType->ItemIndex);
-        Hwform.DriveBTypeItemIndex = ini->ReadInteger("HWARE", "DriveBType", DriveBType->ItemIndex);
-        Hwform.FDCItemIndex = ini->ReadInteger("HWARE", "FDCType", FDC->ItemIndex);
-
-        Rom = ini->ReadString("DRIVES", "DriveA", spectrum.driveaimg);
-        strcpy(spectrum.driveaimg, Rom.c_str());
-        Rom = ini->ReadString("DRIVES", "DriveB", spectrum.drivebimg);
-        strcpy(spectrum.drivebimg, Rom.c_str());
-
-        Rom = ini->ReadString("DRIVES", "HD0", "NULL");
-        if (Rom!= "NULL") ATA_LoadHDF(0,Rom.c_str());
-        Rom = ini->ReadString("DRIVES", "HD1", "NULL");
-        if (Rom!= "NULL") ATA_LoadHDF(1,Rom.c_str());
-
-        if (ATA_GetHDF(0)) Rom = ATA_GetHDF(0); else Rom = "NULL";
-        ini->WriteString("DRIVES", "HD0", Rom);
-        if (ATA_GetHDF(1)) Rom = ATA_GetHDF(1); else Rom = "NULL";
-        ini->WriteString("DRIVES", "HD1", Rom);
-
-        for (int i = 0; i < IF1->MDVNoDrives; i++)
-        {
-            Rom = ini->ReadString("DRIVES", "MDV"+AnsiString(i), "NULL");
-            if (Rom!= "NULL") IF1->MDVSetFileName(i,Rom.c_str());
-        }
-
-        Hwform.ZXpandChecked = ini->ReadBool("HWARE", "ZXpand", ZXpand->Checked);
-        Hwform.ZXpandEnabled = ini->ReadBool("HWARE", "ZXpandEnabled", ZXpand->Enabled);
-        Hwform.SpecDrumChecked = ini->ReadBool("HWARE", "SpecDrum", SpecDrum->Checked);
-        Hwform.SpecDrumEnabled = ini->ReadBool("HWARE", "SpecDrumEnabled", SpecDrum->Enabled);
-        Hwform.ProtectROMChecked = ini->ReadBool("HWARE", "ProtectRom", ProtectROM->Checked);
-        Hwform.NTSCChecked = ini->ReadBool("HWARE", "NTSC", NTSC->Checked);
-        Hwform.EnableLowRAMChecked = ini->ReadBool("HWARE", "LowRAM", EnableLowRAM->Checked);
-        Hwform.M1NotChecked = ini->ReadBool("HWARE", "M1NOT", M1Not->Checked);
-        Hwform.ImprovedWaitChecked = ini->ReadBool("HWARE", "IMPROVED_WAIT", ImprovedWait->Checked);
-        Hwform.TS2050Checked = ini->ReadBool("HWARE", "TS2050", TS2050->Checked);
-        Hwform.Issue2Checked = ini->ReadBool("HWARE", "Iss2Kb", Issue2->Checked);
-        Hwform.KMouseChecked = ini->ReadBool("HWARE", "KMouse", KMouse->Checked);
-        Hwform.Form1divIDEJumperEClosedChecked = ini->ReadBool("HWARE", "divIDEWP", Form1->divIDEJumperEClosed->Checked);
-        Hwform.MultifaceChecked = ini->ReadBool("HWARE", "MFace", Multiface->Checked);
-        Hwform.ZXPrinterChecked = ini->ReadBool("HWARE", "ZXPrinter", ZXPrinter->Checked);
-        Hwform.FloatingPointHardwareFixChecked = ini->ReadBool("HWARE", "FloatingPointHardwareFix", FloatingPointHardwareFix->Checked);
-
-        if (Hwform.ZXpandChecked)
-        {
-                if (JoystickBox->Items->Strings[JoystickBox->Items->Count - 1] != "ZXpand")
-                {
-                        JoystickBox->Items->Add("ZXpand");
-                }
-        }
-
-        Hwform.UploadChecked = ini->ReadBool("HWARE", "ZXCFWP", Upload->Checked);
-        Hwform.ZXCFRAMItemIndex = ini->ReadInteger("HWARE", "ZXCFRAM", ZXCFRAM->ItemIndex);
-        Hwform.IDEBoxItemIndex = ini->ReadInteger("HWARE", "HDRIVE", IDEBox->ItemIndex);
-
-        Hwform.uSourceChecked = ini->ReadBool("HWARE", "uSource", uSource->Checked);
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zxcf.nv");
-
-        f = fopen(FileName, "rb");
+        FILE* f = fopen(FilePath, "rb");
         if (f)
         {
-                fread(ZXCFMem, 64, 16384, f);
+                fread(ZXCFMem, size, count, f);
                 fclose(f);
         }
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "divide.nv");
-
-        f = fopen(FileName, "rb");
-        if (f)
-        {
-                fread(divIDEMem, 64, 16384, f);
-                fclose(f);
-        }
-
-        strcpy(FileName, emulator.cwd);
-        strcat(FileName, nvMemoryFolder);
-        strcat(FileName, "zx1541.nv");
-
-        f = fopen(FileName, "rb");
-        if (f)
-        {
-                fread(ZX1541Mem, 1, 8192, f);
-                fclose(f);
-        }
-
-        ReloadFromInternalSettings();
 }
 
 void __fastcall THW::BrowseROMClick(TObject *Sender)
@@ -3644,12 +3606,12 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall THW::FDCChange(TObject *Sender)
+void __fastcall THW::FDCBoxChange(TObject *Sender)
 {
-        if (FDC->Items->Strings[FDC->ItemIndex] == "Larken")
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Larken")
                 EnableLowRAM->Checked = true;
 
-        if (FDC->Items->Strings[FDC->ItemIndex] == "+3")
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")
         {
                 DriveAType->Enabled = true;
                 DriveBType->Enabled = true;
@@ -3668,7 +3630,7 @@ void __fastcall THW::FDCChange(TObject *Sender)
                 LabelB->Visible = false;
         }
 
-        if (FDC->Items->Strings[FDC->ItemIndex] == "ZX Interface 1")
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1")
         {
                 IF1Config->Visible = true;
                 IF1Config->Enabled = true;
@@ -3679,6 +3641,7 @@ void __fastcall THW::FDCChange(TObject *Sender)
                 IF1Config->Visible = false;
                 Form1->IFace1->Enabled = false;
         }
+        
         ResetRequired = true;
 }
 //---------------------------------------------------------------------------
@@ -4012,7 +3975,7 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 
 void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
 {
-        ReloadFromInternalSettings();
+        LoadFromInternalSettings();
 }
 //---------------------------------------------------------------------------
 
@@ -4092,15 +4055,14 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
 
 //---------------------------------------------------------------------------
 
-bool THW::ValidCharacter(TEdit* textBox)
+bool THW::ValidCharacter(TEdit* textBox, char newKey)
 {
-        bool invalid = (!isalnum(*(textBox->Text.c_str())) && textBox->Text != " " && textBox->Text != "^" &&
-                        textBox->Text != "." && textBox->Text != "#") ||
-                        (textBox != JoystickLeftBox  && textBox->Text == JoystickLeftBox->Text) ||
-                        (textBox != JoystickRightBox && textBox->Text == JoystickRightBox->Text) ||
-                        (textBox != JoystickDownBox  && textBox->Text == JoystickDownBox->Text) ||
-                        (textBox != JoystickUpBox    && textBox->Text == JoystickUpBox->Text) ||
-                        (textBox != JoystickFireBox  && textBox->Text == JoystickFireBox->Text);
+        bool invalid = (!isalnum(newKey) && newKey != ' ' && newKey != '^' && newKey != '.' && newKey != '#') ||
+                        (textBox != JoystickLeftBox  && newKey == *(JoystickLeftBox->Text.c_str())) ||
+                        (textBox != JoystickRightBox && newKey == *(JoystickRightBox->Text.c_str())) ||
+                        (textBox != JoystickDownBox  && newKey == *(JoystickDownBox->Text.c_str())) ||
+                        (textBox != JoystickUpBox    && newKey == *(JoystickUpBox->Text.c_str())) ||
+                        (textBox != JoystickFireBox  && newKey == *(JoystickFireBox->Text.c_str()));
 
         return !invalid;
 }
@@ -4118,10 +4080,17 @@ void __fastcall THW::JoystickBoxMouseUp(TObject *Sender,
         }
 }
 //---------------------------------------------------------------------------
-
-void __fastcall THW::JoystickBoxEnter(TObject *Sender)
+     
+void __fastcall THW::JoystickBoxExit(TObject *Sender)
 {
-        currentKey = ((TEdit*)Sender)->Text;
+        TEdit* textBox = (TEdit*)Sender;
+
+        if (!ValidCharacter(textBox, *(textBox->Text.c_str())))
+        {
+                textBox->SetFocus();
+                textBox->SelStart = 0;
+                textBox->SelLength = 1;
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -4129,44 +4098,67 @@ void __fastcall THW::JoystickBoxKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
         TEdit* textBox = (TEdit*)Sender;
-        char key = (char)Key;
+        AnsiString keyString = (char)Key;
+        char key = *(keyString.UpperCase().c_str());
 
         if (Key == VK_SHIFT)
         {
                 bool supportRightShift = (NewMachine == MACHINESPECTRUM || NewMachine == MACHINEACE);
                 bool rightShiftPressed = (GetKeyState(VK_RSHIFT) & 0x8000) ? true : false;
-                textBox->Text = (supportRightShift && emulator.UseRShift && rightShiftPressed) ? "." : "^";
-                key = *(textBox->Text.c_str());
+                key = (supportRightShift && emulator.UseRShift && rightShiftPressed) ? '.' : '^';
+                if (NewKey(textBox, key))
+                {
+                        textBox->Text = key;
+                }
         }
         else if (Key == VK_CONTROL)
         {
-                textBox->Text = ".";
-                key = *(textBox->Text.c_str());
+                key = '.';
+                if (NewKey(textBox, key))
+                {
+                        textBox->Text = key;
+                }
         }
         else if (Key == VK_RETURN)
         {
-                textBox->Text = "#";
-                key = *(textBox->Text.c_str());
-        }
-
-        if (ValidCharacter(textBox))
-        {
-                if (JoystickBox->Text == "Programmable")
+                key = '#';
+                if (NewKey(textBox, key))
                 {
-                        if (textBox == JoystickUpBox)    programmableJoystickUp    = key;
-                        if (textBox == JoystickDownBox)  programmableJoystickDown  = key;
-                        if (textBox == JoystickLeftBox)  programmableJoystickLeft  = key;
-                        if (textBox == JoystickRightBox) programmableJoystickRight = key;
-                        if (textBox == JoystickFireBox)  programmableJoystickFire  = key;
+                        textBox->Text = key;
                 }
-
-                SelectNext(textBox, true, true);
         }
-        else
+
+        textBox->SelStart = 0;
+        textBox->SelLength = 1;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::JoystickBoxKeyPress(TObject *Sender, char &Key)
+{
+        TEdit* textBox = (TEdit*)Sender;
+        AnsiString keyString = (char)Key;
+        char key = *(keyString.UpperCase().c_str());
+
+        if (!NewKey(textBox, key))
         {
-                textBox->Text = currentKey;
+                Key = 0;
                 textBox->SelStart = 0;
                 textBox->SelLength = 1;
+        }
+}
+//---------------------------------------------------------------------------
+
+bool THW::NewKey(TEdit* textBox, char key)
+{
+        if (ValidCharacter(textBox, key))
+        {
+                if (textBox == JoystickUpBox)    programmableJoystickUp    = key;
+                if (textBox == JoystickDownBox)  programmableJoystickDown  = key;
+                if (textBox == JoystickLeftBox)  programmableJoystickLeft  = key;
+                if (textBox == JoystickRightBox) programmableJoystickRight = key;
+                if (textBox == JoystickFireBox)  programmableJoystickFire  = key;
+
+                SelectNext(textBox, true, true);
         }
 }
 //---------------------------------------------------------------------------
@@ -4211,10 +4203,10 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         TS2050->Checked = false;
         ZXpand->Checked = false;
 
-        FDC->ItemIndex = 0;
+        FDCBox->ItemIndex = 0;
         IDEBox->ItemIndex = 0;
 
-        ProtectROM->Checked = false;
+        ProtectROM->Checked = true;
         EnableLowRAM->Checked = false;
         M1Not->Checked = false;
         ImprovedWait->Checked = false;

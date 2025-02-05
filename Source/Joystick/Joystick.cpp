@@ -43,14 +43,14 @@ static const int JoystickTotalReads = JoystickReadsOn + JoystickReadsOff;
 
 int NumberOfJoysticks()
 {
-        joyInfo2.dwFlags = JOY_RETURNALL;
+        joyInfo2.dwFlags = JOY_RETURNBUTTONS;
 
         if (joyGetPosEx(JOYSTICKID2, &joyInfo2) == JOYERR_NOERROR)
         {
                 return 2;
         }
 
-        joyInfo.dwFlags = JOY_RETURNALL;
+        joyInfo.dwFlags = JOY_RETURNBUTTONS;
 
         if (joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
         {

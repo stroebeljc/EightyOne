@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 313
-  Top = 177
+  Left = 194
+  Top = 118
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1759,8 +1759,9 @@ object HW: THW
         MaxLength = 1
         TabOrder = 6
         Text = '-'
-        OnEnter = JoystickBoxEnter
+        OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
       end
       object JoystickRightBox: TEdit
@@ -1774,8 +1775,9 @@ object HW: THW
         MaxLength = 1
         TabOrder = 7
         Text = '-'
-        OnEnter = JoystickBoxEnter
+        OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
       end
       object JoystickUpBox: TEdit
@@ -1789,8 +1791,9 @@ object HW: THW
         MaxLength = 1
         TabOrder = 8
         Text = '-'
-        OnEnter = JoystickBoxEnter
+        OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
       end
       object JoystickDownBox: TEdit
@@ -1804,8 +1807,9 @@ object HW: THW
         MaxLength = 1
         TabOrder = 9
         Text = '-'
-        OnEnter = JoystickBoxEnter
+        OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
       end
       object JoystickFireBox: TEdit
@@ -1819,8 +1823,9 @@ object HW: THW
         MaxLength = 1
         TabOrder = 10
         Text = '-'
-        OnEnter = JoystickBoxEnter
+        OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
       end
     end
@@ -1896,7 +1901,7 @@ object HW: THW
           '3.5" Double-Sided (720K)'
           '5.25" Double-Sided (720K)')
       end
-      object FDC: TComboBox
+      object FDCBox: TComboBox
         Left = 56
         Top = 16
         Width = 113
@@ -1904,7 +1909,7 @@ object HW: THW
         Style = csDropDownList
         ItemHeight = 13
         TabOrder = 0
-        OnChange = FDCChange
+        OnChange = FDCBoxChange
         Items.Strings = (
           'None'
           '+3'
@@ -2084,7 +2089,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

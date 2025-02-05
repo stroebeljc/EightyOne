@@ -43,6 +43,8 @@ Version 1.41 - 05/02/2025 (by Paul Farrow and John Stroebel)
   - Fixed interactions in floppy drive image file selections between the Spectrum+3 and other
     machines.
   - Fixed support for TR-DOS on Beta floppy drives, allowing reading of TRD image files.
+  - Corrected the title and file types of the open dialog when selecting a replacement ROM
+    from the Hardware dialog.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.

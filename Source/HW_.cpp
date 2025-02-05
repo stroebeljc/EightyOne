@@ -3184,9 +3184,9 @@ void THW::SaveSettings(TIniFile* ini)
 
         AccessIniFile(ini, Write);
 
-        WriteNVMemory(divIDEMem, 8192, 1,     "divide.nv");
-        WriteNVMemory(ZXCFMem,   64,   16384, "zxcf.nv");
-        WriteNVMemory(ZX1541Mem, 1,    8192,  "zx1541.nv");
+        WriteNVMemory(divIDEMem, 1,  8192,  "divide.nv");
+        WriteNVMemory(ZXCFMem,   64, 16384, "zxcf.nv");
+        WriteNVMemory(ZX1541Mem, 1,  8192,  "zx1541.nv");
 }
 //---------------------------------------------------------------------------
 
@@ -3202,9 +3202,9 @@ void THW::LoadSettings(TIniFile* ini)
         JoystickDown.Character  = *(programmableJoystickDown.c_str());
         JoystickFire.Character  = *(programmableJoystickFire.c_str());
 
-        ReadNVMemory(divIDEMem, 8192, 1,     "divide.nv");      //#### 64,16384
-        ReadNVMemory(ZXCFMem,   64,   16384, "zxcf.nv");
-        ReadNVMemory(ZX1541Mem, 1,    8192,  "zx1541.nv");
+        ReadNVMemory(divIDEMem, 1,  8192,  "divide.nv");
+        ReadNVMemory(ZXCFMem,   64, 16384, "zxcf.nv");
+        ReadNVMemory(ZX1541Mem, 1,  8192,  "zx1541.nv");
 }
 //---------------------------------------------------------------------------
 
@@ -3416,6 +3416,8 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         Path = emulator.cwd;
         Path += romsFolder;
 
+        RomSelect->Title = "Select ROM File";
+        RomSelect->Filter = "ROM Files (*.rom;*.bin)|*.rom;*.bin";
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomBox->Text;
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
@@ -3744,6 +3746,8 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
                 Path += romCartridgeFolder;
         }
 
+        RomSelect->Title = "Select ROM Cartridge File";
+        RomSelect->Filter = "ROM Cartridge Files (*.rom;*.bin;*.dck)|*.rom;*.bin;*.dck";
         RomSelect->InitialDir = Path;
         RomSelect->FileName = RomCartridgeFileBox->Text;
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')

@@ -2106,6 +2106,7 @@ object HW: THW
     OnClick = DefaultsButtonClick
   end
   object RomSelect: TOpenDialog
+    DefaultExt = '.rom'
     Filter = 'Cartridge Files|*.rom;*.bin;*.dck'
     Options = [ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Select Cartridge File'

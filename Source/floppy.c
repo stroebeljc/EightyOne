@@ -359,12 +359,7 @@ void floppy_ClockTick(int ts)
                         {
                                 wd1770_drive *d = &PlusDDrives[ i ];
 
-                                d->index_pulse = index_pulse;
-                                if( !index_pulse && d->index_interrupt )
-                                {
-                                        wd1770_set_cmdint( d );
-                                        d->index_interrupt = 0;
-                                }
+                                if (!index_pulse) wd1770_index_event( d );
                         }
 
                         counter += (index_pulse ? 10 : 190) * 3500;

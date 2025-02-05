@@ -2121,6 +2121,7 @@ DISCIPLE COMMAND CODES IN USE - EXAMPLES
 These examples show How to use the command codes; firstly to save a code file
 from screen memory, then to load it back into screen memory. Please remember
 to save your registers before using a command code.
+
 0000           00001  ;**********************
 0000           00002
 0000           00003  ;Example ONE
@@ -2223,7 +2224,7 @@ BFFE FFFF      00089  HD11   DEFW 0FFFFh    ;Not used
 
 TECHNICAL SPECIFICATIONS
 
-Compatibility:          With the entire rape of ZX Spectrum computers, including
+Compatibility:          With the entire range of ZX Spectrum computers, including
                         the ZX Spectrum 128K.
 
 Dimensions:             295mm wide x 94mm deep x 27mm high at rear.

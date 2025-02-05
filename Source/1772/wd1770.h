@@ -64,7 +64,7 @@ typedef struct wd1770_drive
 
     unsigned char readid_buffer[READID_BUFFSIZE];
 
-    int index_pulse;
+    int write_queued;
     int index_interrupt;
 
     int rates[ 4 ];
@@ -83,12 +83,14 @@ typedef struct wd1770_drive
         wd1770_state_readtrack,
         wd1770_state_writetrack,
         wd1770_state_readid,
+        wd1770_state_writetrack_wait,
     } state;
 
     enum wd1770_status_type 
     {
         wd1770_status_type1,
         wd1770_status_type2,
+        wd1770_status_type3,
     } status_type;
 
     int data_track;               /* state during transfer */
@@ -143,6 +145,8 @@ void wd1770_sec_write( wd1770_drive *d, BYTE b );
 
 BYTE wd1770_dr_read( wd1770_drive *d );
 void wd1770_dr_write( wd1770_drive *d, BYTE b );
+
+void wd1770_index_event( wd1770_drive *d );
 
 /* temporarily exported: */
 void wd1770_set_cmdint( wd1770_drive *d );

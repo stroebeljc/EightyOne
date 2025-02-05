@@ -220,7 +220,8 @@ void floppy_set_motor(BYTE Data)
         case FLOPPYBETA:
                 PlusDCur = &PlusDDrives[(Data&1)];
                 PlusDCur->side=(Data&0x10)==0;
-                PlusDCur->density=(Data&0x40)!=0;
+                PlusDCur->density=(Data&0x20)==0;
+                if ((Data&0x04)==0) wd1770_reset(PlusDCur);
                 break;
         }
 }
@@ -637,6 +638,8 @@ void floppy_setimage(int drive, char *filename, int readonly)
                         d->disk.numtracks = 80;
                         d->disk.numsectors = 10;
                         d->disk.sectorsize = 512;
+
+                        if (spectrum.floppytype==FLOPPYDISCIPLE && d->density!=0) d->disk.sectorsize = 256;
 
                         if( !strcmp( filename + ( l - 4 ), ".dsk" ) ) d->disk.alternatesides = 1;
                         else if( !strcmp( filename + ( l - 4 ), ".mgt" ) ) d->disk.alternatesides = 1;

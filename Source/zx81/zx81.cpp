@@ -407,9 +407,8 @@ void zx81_initialise()
         videoFlipFlop3Clear = 0;
         prevVideoFlipFlop3Q = 0;
 
-        zx80rom = !strcmp(machine.CurRom, "zx80.rom");
-        zx81rom = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                  !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
+        zx80rom = (emulator.romcrc == CRCZX80);
+        zx81rom = (emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTK85) || (emulator.romcrc == CRCTS1500);
 
         annotatableROM = IsAnnotatableROM();
 }
@@ -443,7 +442,7 @@ BOOL IsAnnotatableROM()
         case MACHINEZX80:
                 if (zx80rom)
                 {
-                        annotatableROM = !strcmp(machine.CurRom, "zx80.rom");
+                        annotatableROM = (emulator.romcrc == CRCZX80);
                         break;
                 }
 
@@ -452,11 +451,11 @@ BOOL IsAnnotatableROM()
         case MACHINETK85:
         case MACHINER470:
         case MACHINETS1500:
-                annotatableROM = zx81rom || !strcmp(machine.CurRom, "ringo470.rom");
+                annotatableROM = zx81rom || (emulator.romcrc == CRCR470);
                 break;
 
         case MACHINELAMBDA:
-                annotatableROM = !strcmp(machine.CurRom, "lambda8300.rom") || !strcmp(machine.CurRom, "lambda8300colour.rom");
+                annotatableROM = (emulator.romcrc == CRCLAMBDA) || (emulator.romcrc == CRCLAMBDACOLOUR);
                 break;
 
         default:
@@ -830,7 +829,7 @@ BYTE zx81_ReadByte(int Address)
                         // Shadow 8-16K RAM at 40-48K
                         data=memory[Address & 0x7FFF];
                 }
-                else if ((emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom") && !zx81.zxpand && (Address & 0x1000))
+                else if ((emulator.machine == MACHINEZX80) && (emulator.romcrc == CRCZX80) && !zx81.zxpand && (Address & 0x1000))
                 {
                         data = idleDataBus;
                 }

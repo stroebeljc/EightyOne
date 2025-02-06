@@ -311,6 +311,9 @@ private:	// User declarations
         void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         bool NewKey(TEdit* textBox, char key);
+        void LoadRomBox();
+        bool IdeRom();
+        bool Plus3IdeRom();
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -345,6 +348,7 @@ private:	// User declarations
         void SetUpRomCartridges();
         void Configure8K16KRam();
         void ConfigureJoystick();
+        bool ConfigureIdeRom();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

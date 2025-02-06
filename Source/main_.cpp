@@ -1490,7 +1490,8 @@ void TForm1::DoAutoLoad(void)
 #define AUTOINC(i)  (340+i*10)
 
         if (emulator.machine==MACHINEACE) return;
-        bool zx80 = (emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom");
+
+        bool zx80 = (emulator.machine == MACHINEZX80) && (emulator.romcrc == CRCZX80);
 
         switch(AutoLoadCount)
         {

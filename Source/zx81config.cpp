@@ -153,14 +153,14 @@ void load_config(void)
 
         LoadMachineRoms();
 
-        AnsiString simplePlus3Rom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom");
-        strcpy(emulator.ROMSPP3E, simplePlus3Rom.c_str());
-        AnsiString zxcflbaRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zxcflba.rom");
-        strcpy(emulator.ROMZXCF, zxcflbaRom.c_str());
-        AnsiString zx8blbsRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zx8blbs.rom");
-        strcpy(emulator.ROMZX8BIT, zx8blbsRom.c_str());
-        AnsiString zxidelbsRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zxidelbs.rom");
-        strcpy(emulator.ROMZX16BIT, zxidelbsRom.c_str());
+        AnsiString simplePlus3Rom = ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom");
+        strcpy(emulator.ROMSIMPLE3E, simplePlus3Rom.c_str());
+        AnsiString zxcflbaRom = ideRomsFolder + AnsiString("zxcflba.rom");
+        strcpy(emulator.ROMSIMPLECF, zxcflbaRom.c_str());
+        AnsiString zx8blbsRom = ideRomsFolder + AnsiString("zx8blbs.rom");
+        strcpy(emulator.ROMSIMPLE8BIT, zx8blbsRom.c_str());
+        AnsiString zxidelbsRom = ideRomsFolder + AnsiString("zxidelbs.rom");
+        strcpy(emulator.ROMSIMPLE16BIT, zxidelbsRom.c_str());
 
         AnsiString plusdRom = fdcRomsFolder + AnsiString("plusd.rom");
         strcpy(emulator.ROMPLUSD, plusdRom.c_str());

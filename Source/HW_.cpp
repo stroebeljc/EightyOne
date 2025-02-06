@@ -200,7 +200,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         CloseLiveMemoryWindow(machineChanged);
 
-        RomBox->Text = RomBox->Text.LowerCase();
         strcpy(machine.CurRom, RomBox->Text.c_str());
 
         AnsiString romBase = DetermineRomBase();
@@ -749,81 +748,120 @@ void THW::ConfigureRom()
                 case SPECCY16:
                         spectrum.RAMBanks = 1;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP16, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSP16, machine.CurRom);
+                        }
                         break;
 
                 case SPECCY48:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP48, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSP48, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYPLUS:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSPP, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSPP, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYTC2048:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        strcpy(emulator.ROMTC2048, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMTC2048, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYTC2068:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        strcpy(emulator.ROMTC2068, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMTC2068, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYTS2068:
                         spectrum.RAMBanks = 3;
                         spectrum.ROMBanks = 1;
-                        strcpy(emulator.ROMTS2068, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMTS2068, machine.CurRom);
+                        }
                         break;
 
                 case SPECCY128:
                         spectrum.RAMBanks = 8;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF") strcpy(emulator.ROMZXCF, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit") strcpy(emulator.ROMZX8BIT, machine.CurRom);
-                        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") strcpy(emulator.ROMZX16BIT, machine.CurRom);
-                        else strcpy(emulator.ROMSP128, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSP128, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYPLUS2:
                         spectrum.RAMBanks = 8;
                         spectrum.ROMBanks = 1;
-                        strcpy(emulator.ROMSPP2, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSPP2, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYPLUS2A:
                         spectrum.RAMBanks = 8;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
-                                strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        else strcpy(emulator.ROMSPP2A, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSPP2A, machine.CurRom);
+                        }
                         break;
 
                 case SPECCYPLUS3:
                         spectrum.RAMBanks = 8;
                         spectrum.ROMBanks = 1;
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
-                                strcpy(emulator.ROMSPP3E, machine.CurRom);
-                        else strcpy(emulator.ROMSPP3, machine.CurRom);
+                        if (!ConfigureIdeRom())
+                        {
+                                strcpy(emulator.ROMSPP3, machine.CurRom);
+                        }
                         break;
                 }
                 break;
         }
+}
+
+bool THW::ConfigureIdeRom()
+{
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
+        {
+                strcpy(emulator.ROMSIMPLE3E, machine.CurRom);
+        }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
+        {
+                strcpy(emulator.ROMSIMPLECF, machine.CurRom);
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")
+        {
+                strcpy(emulator.ROMSIMPLE8BIT, machine.CurRom);
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")
+        {
+                strcpy(emulator.ROMSIMPLE16BIT, machine.CurRom);
+                return true;
+        }
+
+        return false;
 }
 
 void THW::ConfigureZXpand()
@@ -856,36 +894,31 @@ void THW::ConfigureBasicLister()
         }
 
         Form1->BasicListerOption->Enabled = false;
-        
-        if (!strcmp(machine.CurRom, "zx80.rom"))
+
+        if (emulator.romcrc == CRCZX80)
         {
                 BasicLister->SetBasicLister(new zx80BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
-                 !strcmp(machine.CurRom, "zx81.edition2.rom") ||
-                 !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                 !strcmp(machine.CurRom, "ts1500.rom") ||
-                 !strcmp(machine.CurRom, "tk85.rom"))
+        else if ((emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTS1500) || (emulator.romcrc == CRCTK85))
         {
                 BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spectrum48.rom") ||
-                 !strcmp(machine.CurRom, "spectrum48.spanish.rom"))
+        else if ((emulator.romcrc == CRCSP48) || (emulator.romcrc == CRCSPANISH48))
         {
                 BasicLister->SetBasicLister(new spec48BasicLister());
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spectrum128.rom") ||
-                 !strcmp(machine.CurRom, "spectrum128.spanish.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+2.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-0.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-1.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+2.french.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+2.spanish.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-0.spanish.rom") ||
-                 !strcmp(machine.CurRom, "spectrum+3.version4-1.spanish.rom"))
+        else if ((emulator.romcrc == CRCSP128) ||
+                 (emulator.romcrc == CRCSPANISH128) ||
+                 (emulator.romcrc == CRCPLUS2) ||
+                 (emulator.romcrc == CRCPLUS3V40) ||
+                 (emulator.romcrc == CRCPLUS3V41) ||
+                 (emulator.romcrc == CRCFRENCHPLUS2) ||
+                 (emulator.romcrc == CRCSPANISHPLUS2) ||
+                 (emulator.romcrc == CRCSPANISHPLUS3V40) ||
+                 (emulator.romcrc == CRCSPANISHPLUS3V41))
         {
                 BasicLister->SetBasicLister(new spec128BasicLister());
                 Form1->BasicListerOption->Enabled = true;
@@ -1559,9 +1592,9 @@ void THW::ConfigureSpectrumIDE()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)") { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = true; }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")    spectrum.HDType = HDPLUS3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")               spectrum.HDType = HDACECF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")      spectrum.HDType = HDPITERSCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")   spectrum.HDType = HDPITERS8B;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")  spectrum.HDType = HDPITERS16B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")       spectrum.HDType = HDPITERSCF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")    spectrum.HDType = HDPITERS8B;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")   spectrum.HDType = HDPITERS16B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")             spectrum.HDType = HDPITERSCF;
         spectrum.divIDEJumperEClosed = Form1->divIDEJumperEClosed->Checked;
         spectrum.UploadJumperZXCF = Upload->Checked;
@@ -1906,7 +1939,7 @@ void THW::SetZX80Icon()
 
         AnsiString romRoot = LowerCase(getMachineRoot(romName));
         Graphics::TBitmap* zx80Icon = new Graphics::TBitmap;
-        int iconIndex = (romRoot == "zx81" || romRoot == "ts1500") ? 1 : 0;
+        int iconIndex = ((emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTS1500)) ? 1 : 0;
         ZX80Icons->GetBitmap(iconIndex, zx80Icon);
         ZX80Btn->InactiveGlyph = zx80Icon;
 }
@@ -1925,7 +1958,7 @@ void THW::SetSpectrum128Icon()
         }
 
         Graphics::TBitmap* spec128Icon = new Graphics::TBitmap;
-        int iconIndex = (romName == "spectrum128.spanish.rom") ? 1 : 0;
+        int iconIndex = (emulator.romcrc == CRCSPANISH128) ? 1 : 0;
         Spec128Icons->GetBitmap(iconIndex, spec128Icon);
         Spec128Btn->InactiveGlyph = spec128Icon;
 }
@@ -2495,6 +2528,228 @@ void THW::UpdateJoystickOptions()
 }
 //---------------------------------------------------------------------------
 
+void THW::LoadRomBox()
+{
+        RomBox->Clear();
+
+        switch (NewMachine)
+        {
+        case MACHINEZX80:
+                RomBox->Items->Add("zx80.rom");
+                RomBox->Items->Add("zx81.edition1.rom");
+                RomBox->Text = emulator.ROM80;
+                break;
+
+        case MACHINEZX81:
+                RomBox->Items->Add("zx81.edition1.rom");
+                RomBox->Items->Add("zx81.edition2.rom");
+                RomBox->Items->Add("zx81.edition3.rom");
+                RomBox->Text = emulator.ROM81;
+                break;
+
+        case MACHINETS1000:
+                RomBox->Items->Add("zx81.edition3.rom");
+                RomBox->Text = emulator.ROMTS1000;
+                break;
+
+        case MACHINETS1500:
+                RomBox->Items->Add("ts1500.rom");
+                RomBox->Text = emulator.ROMTS1500;
+                break;
+                
+        case MACHINELAMBDA:
+                RomBox->Items->Add("lambda8300.rom");
+                RomBox->Items->Add("lambda8300colour.rom");
+                RomBox->Text = emulator.ROMLAMBDA;
+                break;
+
+        case MACHINER470:
+                RomBox->Items->Add("ringo470.rom");
+                RomBox->Text = emulator.ROMR470;
+                break;
+                
+        case MACHINETK85:
+                RomBox->Items->Add("tk85.rom");
+                RomBox->Text = emulator.ROMTK85;
+                break;
+
+        case MACHINEACE:
+                RomBox->Items->Add("jupiterace.rom");
+                RomBox->Text = emulator.ROMACE;
+                break;
+        
+        case MACHINEZX97LE:
+                RomBox->Items->Add("zx97.rom");
+                RomBox->Text = emulator.ROM97LE;
+                break;
+
+        case MACHINESPECTRUM:
+                switch (NewSpec)
+                {
+                case SPECCY16:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum48.rom");
+                                RomBox->Text = emulator.ROMSP16;
+                        }
+                        break;
+
+                case SPECCY48:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum48.rom");
+                                RomBox->Items->Add("spectrum48.nordic.rom");
+                                RomBox->Text = emulator.ROMSP48;
+                        }
+                        break;
+
+                case SPECCYPLUS:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum48.rom");
+                                RomBox->Items->Add("spectrum48.spanish.rom");
+                                RomBox->Items->Add("spectrum48.arabic.version1.rom");
+                                RomBox->Text = emulator.ROMSPP;
+                        }
+                        break;
+                
+                case SPECCY128:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum128.rom");
+                                RomBox->Items->Add("spectrum128.spanish.rom");
+                                RomBox->Items->Add("spectrum48.arabic.version1.rom");
+                                RomBox->Text = emulator.ROMSP128;
+                        }
+                        break;
+
+                case SPECCYPLUS2:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum+2.rom");
+                                RomBox->Items->Add("spectrum+2.french.rom");
+                                RomBox->Items->Add("spectrum+2.spanish.rom");
+                                RomBox->Items->Add("spectrum48.arabic.version2.rom");
+                                RomBox->Text = emulator.ROMSPP2;
+                        }
+                        break;
+                       
+                case SPECCYPLUS2A:
+                        if (!Plus3IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum+3.version4-0.rom");
+                                RomBox->Items->Add("spectrum+3.version4-1.rom");
+                                RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
+                                RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
+                                RomBox->Items->Add("spectrum48.arabic.version2.rom");
+                                RomBox->Text = emulator.ROMSPP2A;
+                        }
+                        break;
+
+                case SPECCYPLUS3:
+                        if (!Plus3IdeRom())
+                        {
+                                RomBox->Items->Add("spectrum+3.version4-0.rom");
+                                RomBox->Items->Add("spectrum+3.version4-1.rom");
+                                RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
+                                RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
+                                RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
+                                RomBox->Text = emulator.ROMSPP3;
+                        }
+                        break;
+                
+                case SPECCYTC2048:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("tc2048.rom");
+                                RomBox->Text = emulator.ROMTC2048;
+                        }
+                        break;
+
+                case SPECCYTC2068:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("ts2068.rom");
+                                RomBox->Text = emulator.ROMTC2068;
+                        }
+                        break;
+
+                 case SPECCYTS2068:
+                        if (!IdeRom())
+                        {
+                                RomBox->Items->Add("ts2068.rom");
+                                RomBox->Text = emulator.ROMTS2068;
+                        }
+                        break;
+                }
+        }
+
+        RomBox->SelStart = RomBox->Text.Length() - 1;
+        RomBox->SelLength = 0;
+
+        RomBoxChange(NULL);
+}
+//---------------------------------------------------------------------------
+
+bool THW::IdeRom()
+{
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zxcflba.rom"));
+                RomBox->Text = emulator.ROMSIMPLECF;
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zx8blbs.rom"));
+                RomBox->Text = emulator.ROMSIMPLE8BIT;
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zxidelbs.rom"));
+                RomBox->Text = emulator.ROMSIMPLE16BIT;
+                return true;
+        }
+
+        return false;
+}
+//---------------------------------------------------------------------------
+
+bool THW::Plus3IdeRom()
+{
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom"));
+                RomBox->Text = emulator.ROMSIMPLE3E;
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zxcflba.rom"));
+                RomBox->Items->Add(ideRomsFolder + AnsiString("pcfen3ee.rom"));
+                RomBox->Text = emulator.ROMSIMPLECF;
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zx8blbs.rom"));
+                RomBox->Items->Add(ideRomsFolder + AnsiString("pe8en3ee.rom"));
+                RomBox->Text = emulator.ROMSIMPLE8BIT;
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zxidelbs.rom"));
+                RomBox->Items->Add(ideRomsFolder + AnsiString("p16en3ee.rom"));
+                RomBox->Text = emulator.ROMSIMPLE16BIT;
+                return true;
+        }
+
+        return false;
+}
+//---------------------------------------------------------------------------
+
 void __fastcall THW::ZX80BtnClick(TObject *Sender)
 {
         if (ZX80Btn->Down) return;
@@ -2502,16 +2757,11 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         NewMachine = MACHINEZX80;
         RefreshDefaultRamSettings();
         SetupForZX81();
-        SetZXpandState(false,true);
+        SetZXpandState(false, true);
         ZXpand->Caption = "ZXpand";
         ZX80Btn->Down = true;
         NewMachineName = ZX80Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("zx80.rom");
-        RomBox->Items->Add("zx81.edition1.rom");
-        RomBox->Text = emulator.ROM80;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        RomBoxChange(NULL);
+        LoadRomBox();
         ImprovedWait->Enabled = false;
         ImprovedWait->Checked = false;
 
@@ -2526,15 +2776,10 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         NewMachine = MACHINEZX81;
         RefreshDefaultRamSettings();
         SetupForZX81();
-        SetZXpandState(false,true);
+        SetZXpandState(false, true);
         ZX81Btn->Down = true;
         NewMachineName = ZX81Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("zx81.edition1.rom");
-        RomBox->Items->Add("zx81.edition2.rom");
-        RomBox->Items->Add("zx81.edition3.rom");
-        RomBox->Text = emulator.ROM81;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         FloatingPointHardwareFix->Enabled = true;
         NTSC->Checked = false;
 
@@ -2560,13 +2805,12 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
 
         Issue2->Enabled = true;
         NewMachineName = Spec48Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum48.rom");
-        RomBox->Items->Add("spectrum48.nordic.rom");
-        RomBox->Text = emulator.ROMSP48;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        LoadRomBox();
+
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2583,18 +2827,15 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec128Btn->Down = true;
 
-        SoundCardBox->ItemIndex = 1;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
 
         NewMachineName = Spec128Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum128.rom");
-        RomBox->Items->Add("spectrum128.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version1.rom");
-        RomBox->Text = emulator.ROMSP128;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
 
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2617,14 +2858,12 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
 
         Issue2->Enabled = true;
         NewMachineName = SpecPlusBtn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum48.rom");
-        RomBox->Items->Add("spectrum48.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version1.rom");
-        RomBox->Text = emulator.ROMSPP;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        LoadRomBox();
+
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2648,12 +2887,12 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         Issue2->Enabled = true;
         Issue2->Checked = true;
         NewMachineName = Spec16Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum48.rom");
-        RomBox->Text = emulator.ROMSP16;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        LoadRomBox();
+
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2670,20 +2909,15 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SetupForSpectrum();
         SpecP2Btn->Down = true;
 
-        SoundCardBox->ItemIndex = 1;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
 
         NewMachineName = SpecP2Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum+2.rom");
-        RomBox->Items->Add("spectrum+2.french.rom");
-        RomBox->Items->Add("spectrum+2.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version2.rom");
-        RomBox->Text = emulator.ROMSPP2;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(4);
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        LoadRomBox();
+
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2701,19 +2935,11 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         SpecP2aBtn->Down = true;
         Multiface->Caption = "Multiface 3";
 
-        SoundCardBox->ItemIndex = 1;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
 
         NewMachineName = SpecP2aBtn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum+3.version4-0.rom");
-        RomBox->Items->Add("spectrum+3.version4-1.rom");
-        RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
-        RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum48.arabic.version2.rom");
-        RomBox->Text = emulator.ROMSPP2A;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(4);
+        LoadRomBox();
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -2733,22 +2959,14 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
 
         FloppyDrives->TabVisible = true;
 
-        SoundCardBox->ItemIndex = 1;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
 
         NewMachineName = SpecP3Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("spectrum+3.version4-0.rom");
-        RomBox->Items->Add("spectrum+3.version4-1.rom");
-        RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
-        RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
-        RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
-        RomBox->Text = emulator.ROMSPP3;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(4);
+        LoadRomBox();
+
         IDEBoxChange(NULL);
 
-        while(FDCBox->Items->Count>1) FDCBox->Items->Delete(FDCBox->Items->Count-1);
+        while(FDCBox->Items->Count>1) FDCBox->Items->Delete(FDCBox->Items->Count - 1);
         FDCBox->Items->Strings[0] = "+3";
         FDCBox->ItemIndex = 0;
 
@@ -2768,10 +2986,7 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         TS1000Btn->Down = true;
         NewMachineName = TS1000Btn->Caption;
         FloatingPointHardwareFix->Checked = false;
-        RomBox->Clear();
-        RomBox->Items->Add("zx81.edition3.rom");
-        RomBox->Text = emulator.ROMTS1000;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         ColourLabel->Caption = "Color:";
         NTSC->Checked = true;
         IDEBoxChange(NULL);
@@ -2789,10 +3004,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         TS1500Btn->Down = true;
         NewMachineName = TS1500Btn->Caption;
         FloatingPointHardwareFix->Checked = false;
-        RomBox->Clear();
-        RomBox->Items->Add("ts1500.rom");
-        RomBox->Text = emulator.ROMTS1500;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         ColourLabel->Caption = "Color:";
         NTSC->Checked = true;
         IDEBoxChange(NULL);
@@ -2806,14 +3018,10 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         NewMachine = MACHINELAMBDA;
         RefreshDefaultRamSettings();
         SetupForZX81();
-        SetZXpandState(false,false);
+        SetZXpandState(false, false);
         LambdaBtn->Down = true;
         NewMachineName = LambdaBtn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("lambda8300.rom");
-        RomBox->Items->Add("lambda8300colour.rom");
-        RomBox->Text = emulator.ROMLAMBDA;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         NTSC->Checked = true;
         ChrGenBox->Items->Strings[0] = "Lambda";
         ChrGenBox->ItemIndex = 0;
@@ -2847,13 +3055,10 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         NewMachine = MACHINER470;
         RefreshDefaultRamSettings();
         SetupForZX81();
-        SetZXpandState(false,false);
+        SetZXpandState(false, false);
         R470Btn->Down = true;
         NewMachineName = R470Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("ringo470.rom");
-        RomBox->Text = emulator.ROMR470;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         NTSC->Checked = true;
         EnableLowRAM->Checked = false;
         EnableLowRAM->Enabled = false;
@@ -2875,13 +3080,10 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         NewMachine = MACHINETK85;
         RefreshDefaultRamSettings();
         SetupForZX81();
-        SetZXpandState(false,false);
+        SetZXpandState(false, false);
         TK85Btn->Down = true;
         NewMachineName = TK85Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("tk85.rom");
-        RomBox->Text = emulator.ROMTK85;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         NTSC->Checked = true;
         ColourBox->Items->Clear();
         ColourBox->Items->Add("None");
@@ -2906,10 +3108,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
 
         AceBtn->Down = true;
         NewMachineName = AceBtn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("jupiterace.rom");
-        RomBox->Text = emulator.ROMACE;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         NTSC->Checked = false;
         NTSC->Enabled = false;
         EnableLowRAM->Checked = false;
@@ -2991,10 +3190,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
 
         NewMachineName = TC2048Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("tc2048.rom");
-        RomBox->Text = emulator.ROMTC2048;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         ChrGenBox->Items->Strings[0] = "Timex";
         ChrGenBox->ItemIndex = 0;
         HiResBox->Items->Strings[0] = "Timex";
@@ -3004,11 +3200,12 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         ColourBox->Enabled = false;
         ColourLabel->Caption = "Color:";
         ColourLabel->Enabled = false;
-        JoystickBox->ItemIndex = 4;
-        if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(4);
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        JoystickBox->ItemIndex = FindEntry(JoystickBox, "Kempston");
+
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -3030,7 +3227,7 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         uSource->Checked = false;
         uSource->Enabled = false;
 
-        SoundCardBox->ItemIndex = 1;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");;
         SoundCardBox->Enabled = false;
         SoundCardLbl->Enabled = false;
 
@@ -3042,10 +3239,7 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         EnableRomCartridgeOption(true);
 
         NewMachineName = TC2068Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("ts2068.rom");
-        RomBox->Text = emulator.ROMTC2068;
-        RomBox->SelStart = RomBox->Text.Length( )- 1; RomBox->SelLength = 0;
+        LoadRomBox();
         ChrGenBox->Items->Strings[0] = "Timex";
         ChrGenBox->ItemIndex = 0;
         HiResBox->Items->Strings[0] = "Timex";
@@ -3056,10 +3250,10 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         ColourLabel->Caption = "Color:";
         ColourLabel->Enabled = false;
 
-        if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(4);
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 
@@ -3082,7 +3276,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         uSource->Checked = false;
         uSource->Enabled = false;
         
-        SoundCardBox->ItemIndex = 1;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");;
         SoundCardBox->Enabled = false;
         SoundCardLbl->Enabled = false;
 
@@ -3094,10 +3288,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         EnableRomCartridgeOption(true);
 
         NewMachineName = TS2068Btn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("ts2068.rom");
-        RomBox->Text = emulator.ROMTS2068;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
+        LoadRomBox();
         ChrGenBox->Items->Strings[0] = "Timex";
         ChrGenBox->ItemIndex = 0;
         HiResBox->Items->Strings[0] = "Timex";
@@ -3108,10 +3299,10 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         ColourLabel->Caption = "Color:";
         ColourLabel->Enabled = false;
 
-        if (IDEBox->ItemIndex == 4) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(4);
-        if (IDEBox->ItemIndex == 1) IDEBox->ItemIndex = 0;
-        IDEBox->Items->Delete(1);
+        int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
+        if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
+        IDEBox->Items->Delete(index);
+
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -3126,13 +3317,10 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         SetZXpandState(false,false);
         ZX97LEBtn->Down = true;
         NewMachineName = ZX97LEBtn->Caption;
-        RomBox->Clear();
-        RomBox->Items->Add("zx97.rom");
-        RomBox->Text = emulator.ROM97LE;
-        RomBox->SelStart = RomBox->Text.Length() - 1; RomBox->SelLength = 0;
-        ChrGenBox->ItemIndex = 3;
+        LoadRomBox();
+        ChrGenBox->ItemIndex = FindEntry(ChrGenBox, "CHR$128");
         ChrGenBox->Enabled = false;
-        HiResBox->ItemIndex = 1;
+        HiResBox->ItemIndex = FindEntry(HiResBox, "WRX");
         HiResBox->Enabled = false;
         EnableLowRAM->Checked = true;
         EnableLowRAM->Enabled = false;
@@ -3236,7 +3424,7 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMACE",    emulator.ROMACE);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMR470",   emulator.ROMR470);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROM97LE",   emulator.ROM97LE);
-        
+
         //---- INTERFACES TAB ----
 
         AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RamPack",            Hwform.RamPackBoxText);
@@ -3276,10 +3464,10 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "HD0",        Hwform.HD0);
         AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "HD1",        Hwform.HD1);
 
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSPP3E", emulator.ROMSPP3E);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZX8BIT",   emulator.ROMZX8BIT);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZX16BIT",  emulator.ROMZX16BIT);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZXCF",     emulator.ROMZXCF);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLE3E",    emulator.ROMSIMPLE3E);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT);
+        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLECF",    emulator.ROMSIMPLECF);
 
         AccessIniFileInteger(ini, accessType, "HARDWARE_DRIVES", "MDVNoDrives", Hwform.MDVNoDrives);
 
@@ -3298,7 +3486,7 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "8KRAM",                    Hwform.EnableLowRAMChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "M1Not",                    Hwform.M1NotChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "ImprovedWait",             Hwform.ImprovedWaitChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "Issue2Keyboard",           Hwform.Issue2Checked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "Issue2EarBehaviour",       Hwform.Issue2Checked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked);
 }
 
@@ -3442,7 +3630,7 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
         {
             Path = RomSelect->FileName;
         }
-        
+
         RomBox->Text = Path;
         RomBox->SelStart = 0;
         ResetRequired = true;
@@ -3563,48 +3751,30 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")
         {
-                RamPackBox->ItemIndex = RamPackBox->Items->Count-2;
+                RamPackBox->ItemIndex = FindEntry(RamPackBox, "32K");
                 M1Not->Checked = true;
         }
-
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")
-                RamPackBox->ItemIndex = RamPackBox->Items->Count-1;
-
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")
+        {
+                RamPackBox->ItemIndex = FindEntry(RamPackBox, "96K");
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
                 Upload->Visible = true;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
         }
-
-        if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
+        else if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
         {
                 Form1->divIDEJumperEClosed->Enabled = true;
                 Form1->divIDEJumperEClosed->Checked = true;
         }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")  RomBox->Text = emulator.ROMSPP3E;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")     RomBox->Text = emulator.ROMZXCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")  RomBox->Text = emulator.ROMZX8BIT;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit") RomBox->Text = emulator.ROMZX16BIT;
 
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "None")
-        {
-                if (SpecP2aBtn->Down) RomBox->Text  = emulator.ROMSPP2A;
-                if (SpecP3Btn->Down) RomBox->Text   = emulator.ROMSPP3;
-                if (Spec16Btn->Down) RomBox->Text   = emulator.ROMSP16;
-                if (Spec48Btn->Down) RomBox->Text   = emulator.ROMSP48;
-                if (SpecPlusBtn->Down) RomBox->Text = emulator.ROMSPP;
-                if (Spec128Btn->Down) RomBox->Text  = emulator.ROMSP128;
-                if (SpecP2Btn->Down) RomBox->Text   = emulator.ROMSPP2;
-                if (TC2048Btn->Down) RomBox->Text   = emulator.ROMTC2048;
-                if (TC2068Btn->Down) RomBox->Text   = emulator.ROMTC2068;
-                if (TS2068Btn->Down) RomBox->Text   = emulator.ROMTS2068;
-        }
+        LoadRomBox();
 
         DisplayTotalRam();
 
         ResetRequired = true;
-        RomBox->SelStart = RomBox->Text.Length()-1; RomBox->SelLength = 0;
 }
 //---------------------------------------------------------------------------
 
@@ -3842,7 +4012,7 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         if (ZX80Btn->Down)
         {
-                bool zx81Ed1ROM = (RomBox->Text == "zx81.edition1.rom");
+                bool zx81Ed1ROM = (emulator.romcrc == CRCZX81_ED1);
                 FloatingPointHardwareFix->Enabled = zx81Ed1ROM;
                 if (!zx81Ed1ROM)
                         FloatingPointHardwareFix->Checked = false;
@@ -4163,7 +4333,11 @@ bool THW::NewKey(TEdit* textBox, char key)
                 if (textBox == JoystickFireBox)  programmableJoystickFire  = key;
 
                 SelectNext(textBox, true, true);
+
+                return true;
         }
+
+        return false;
 }
 //---------------------------------------------------------------------------
 

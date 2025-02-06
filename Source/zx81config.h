@@ -107,8 +107,10 @@
 #define CRCZX80		   0x3a68
 #define CRCZX97LE	   0x68bb
 #define CRCZX81_ED1	   0x29E8
-#define CRCZX81_ED2_3	   0x2914
-#define CRCLAMBDA	   0x4d3c
+#define CRCZX81_ED2	   0xc847
+#define CRCZX81_ED3	   0x2914
+#define CRCLAMBDA	   0x5e48
+#define CRCLAMBDACOLOUR    0x4d3c
 #define CRCR470            0x5413
 #define CRCSP48            0xace0
 #define CRCARABIC48V1      0x236a
@@ -344,14 +346,14 @@ typedef struct
         char ROMSPP2[256];
         char ROMSPP2A[256];
         char ROMSPP3[256];
-        char ROMSPP3E[256];
+        char ROMSIMPLE3E[256];
         char ROMTC2048[256];
         char ROMTC2068[256];
         char ROMTS2068[256];
         char ROMDock[256];
-        char ROMZXCF[256];
-        char ROMZX8BIT[256];
-        char ROMZX16BIT[256];
+        char ROMSIMPLECF[256];
+        char ROMSIMPLE8BIT[256];
+        char ROMSIMPLE16BIT[256];
         char ROMPLUSD[256];
         char ROMDISCIPLE[256];
         char ROMOPUSD[256];

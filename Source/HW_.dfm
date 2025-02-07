@@ -1497,7 +1497,7 @@ object HW: THW
         Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = SoundCardBoxChange
       end
@@ -1677,7 +1677,7 @@ object HW: THW
         Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 15
         Visible = False
         OnChange = SinclairRomCartridgeFileBoxChange
@@ -1688,7 +1688,7 @@ object HW: THW
         Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 14
         Visible = False
         OnChange = TS1510RomCartridgeFileBoxChange
@@ -1699,7 +1699,7 @@ object HW: THW
         Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 26
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
@@ -1710,7 +1710,7 @@ object HW: THW
         Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 13
         Visible = False
         OnChange = TS2068RomCartridgeFileBoxChange
@@ -2089,7 +2089,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

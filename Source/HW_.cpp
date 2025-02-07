@@ -101,6 +101,8 @@ __fastcall THW::THW(TComponent* Owner)
 {
         TIniFile *ini;
 
+        InitialiseInternalSettings();
+
         RomCartridgeCapacity = 0;
         RamPackHeight = RamPackBox->Height;
         Machine->ActivePage = Sinclair;
@@ -276,6 +278,27 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ReInitialiseSound();
 
         SaveToInternalSettings();
+}
+
+void THW::InitialiseInternalSettings()
+{
+        Hwform.ZXpandChecked                   = INT_MIN;
+        Hwform.SpecDrumChecked                 = INT_MIN;
+        Hwform.ProtectROMChecked               = INT_MIN;
+        Hwform.NTSCChecked                     = INT_MIN;
+        Hwform.EnableLowRAMChecked             = INT_MIN;
+        Hwform.M1NotChecked                    = INT_MIN;
+        Hwform.ImprovedWaitChecked             = INT_MIN;
+        Hwform.TS2050Checked                   = INT_MIN;
+        Hwform.Issue2Checked                   = INT_MIN;
+        Hwform.KMouseChecked                   = INT_MIN;
+        Hwform.DivIDEJumperEClosedChecked      = INT_MIN;
+        Hwform.MultifaceChecked                = INT_MIN;
+        Hwform.ZXPrinterChecked                = INT_MIN;
+        Hwform.FloatingPointHardwareFixChecked = INT_MIN;
+        Hwform.UploadChecked                   = INT_MIN;
+        Hwform.uSourceChecked                  = INT_MIN;
+        Hwform.MDVNoDrives                     = INT_MIN;
 }
 
 void THW::LoadFromInternalSettings()
@@ -3405,97 +3428,97 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
 {
         //---- MACHINE ----
 
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top", Top);
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", Left);
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top",  Top, 0);
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", Left, 0);
 
-        AccessIniFileString(ini, accessType, "HARDWARE", "MachineName", Hwform.MachineName);
+        AccessIniFileString(ini, accessType, "HARDWARE", "MachineName", Hwform.MachineName, "ZX81");
 
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROM80",     emulator.ROM80);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROM81",     emulator.ROM81);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP16",   emulator.ROMSP16);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP48",   emulator.ROMSP48);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP",    emulator.ROMSPP);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP128",  emulator.ROMSP128);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP2",   emulator.ROMSPP2);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP2A",  emulator.ROMSPP2A);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP3",   emulator.ROMSPP3);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS1000", emulator.ROMTS1000);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS1500", emulator.ROMTS1500);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTC2048", emulator.ROMTC2048);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTC2068", emulator.ROMTC2068);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS2068", emulator.ROMTS2068);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMLAMBDA", emulator.ROMLAMBDA);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTK85",   emulator.ROMTK85);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMACE",    emulator.ROMACE);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMR470",   emulator.ROMR470);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROM97LE",   emulator.ROM97LE);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROM80",     emulator.ROM80,     NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROM81",     emulator.ROM81,     NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP16",   emulator.ROMSP16,   NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP48",   emulator.ROMSP48,   NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP",    emulator.ROMSPP,    NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSP128",  emulator.ROMSP128,  NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP2",   emulator.ROMSPP2,   NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP2A",  emulator.ROMSPP2A,  NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSPP3",   emulator.ROMSPP3,   NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS1000", emulator.ROMTS1000, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS1500", emulator.ROMTS1500, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTC2048", emulator.ROMTC2048, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTC2068", emulator.ROMTC2068, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTS2068", emulator.ROMTS2068, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMLAMBDA", emulator.ROMLAMBDA, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMTK85",   emulator.ROMTK85,   NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMACE",    emulator.ROMACE,    NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMR470",   emulator.ROMR470,   NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROM97LE",   emulator.ROM97LE,   NULL);
 
         //---- INTERFACES TAB ----
 
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RamPack",            Hwform.RamPackBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Sound",              Hwform.SoundCardBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "CharacterGenerator", Hwform.ChrGenBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "HighResolution",     Hwform.HiResBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Colour",             Hwform.ColourBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Speech",             Hwform.SpeechBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Joystick",           Hwform.JoystickBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RomCartridge",       Hwform.RomCartridgeBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "ZXC1Configuration",  Hwform.ZXC1ConfigurationBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "RomCartridgeFile",   Hwform.RomCartridgeFileBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickLeft",       Hwform.ProgrammableJoystickLeft);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickRight",      Hwform.ProgrammableJoystickRight, JoystickRight.Character);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickUp",         Hwform.ProgrammableJoystickUp,    JoystickUp.Character);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickDown",       Hwform.ProgrammableJoystickDown,  JoystickDown.Character);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "JoystickFire",       Hwform.ProgrammableJoystickFire,  JoystickFire.Character);
-        AccessIniFileString(ini, accessType, "HARDWARE_INTERFACES", "Dock",               emulator.ROMDock);
+        AccessIniFileString(ini, accessType, "HARDWARE", "RamPack",            Hwform.RamPackBoxText,           "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "Sound",              Hwform.SoundCardBoxText,         "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "CharacterGenerator", Hwform.ChrGenBoxText,            "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "HighResolution",     Hwform.HiResBoxText,             "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "Colour",             Hwform.ColourBoxText,            "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "Speech",             Hwform.SpeechBoxText,            "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "Joystick",           Hwform.JoystickBoxText,          "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "RomCartridge",       Hwform.RomCartridgeBoxText,      "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "ZXC1Configuration",  Hwform.ZXC1ConfigurationBoxText, "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "RomCartridgeFile",   Hwform.RomCartridgeFileBoxText,  "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "JoystickLeft",       Hwform.ProgrammableJoystickLeft,  JoystickLeft.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE", "JoystickRight",      Hwform.ProgrammableJoystickRight, JoystickRight.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE", "JoystickUp",         Hwform.ProgrammableJoystickUp,    JoystickUp.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE", "JoystickDown",       Hwform.ProgrammableJoystickDown,  JoystickDown.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE", "JoystickFire",       Hwform.ProgrammableJoystickFire,  JoystickFire.Character);
+        AccessIniFileString(ini, accessType, "HARDWARE", "Dock",               emulator.ROMDock,                 "");
 
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "MicroSource",   Hwform.uSourceChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "ZXpand",        Hwform.ZXpandChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "SpecDrum",      Hwform.SpecDrumChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "TS2050",        Hwform.TS2050Checked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "KempstonMouse", Hwform.KMouseChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "Multiface",     Hwform.MultifaceChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_INTERFACES", "ZXPrinter",     Hwform.ZXPrinterChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "MicroSource",   Hwform.uSourceChecked,   false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXpand",        Hwform.ZXpandChecked,    false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "SpecDrum",      Hwform.SpecDrumChecked,  false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "TS2050",        Hwform.TS2050Checked,    false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "KempstonMouse", Hwform.KMouseChecked,    false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Multiface",     Hwform.MultifaceChecked, false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXPrinter",     Hwform.ZXPrinterChecked, false);
 
         //---- DRIVES TAB ----
 
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "FDCType",    Hwform.FDCBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveAType", Hwform.DriveATypeText);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveBType", Hwform.DriveBTypeText);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "IDEType",    Hwform.IDEBoxText);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ZXCFRAM",    Hwform.ZXCFRAMText);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveA",     Hwform.DriveA);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "DriveB",     Hwform.DriveB);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "HD0",        Hwform.HD0);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "HD1",        Hwform.HD1);
+        AccessIniFileString(ini, accessType, "HARDWARE", "FDCType",    Hwform.FDCBoxText,     "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "DriveAType", Hwform.DriveATypeText, "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "DriveBType", Hwform.DriveBTypeText, "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "IDEType",    Hwform.IDEBoxText,     "None");
+        AccessIniFileString(ini, accessType, "HARDWARE", "ZXCFRAM",    Hwform.ZXCFRAMText,    "1024K");
+        AccessIniFileString(ini, accessType, "HARDWARE", "DriveA",     Hwform.DriveA,         "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "DriveB",     Hwform.DriveB,         "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "HD0",        Hwform.HD0,            "");
+        AccessIniFileString(ini, accessType, "HARDWARE", "HD1",        Hwform.HD1,            "");
 
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLE3E",    emulator.ROMSIMPLE3E);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT);
-        AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "ROMSIMPLECF",    emulator.ROMSIMPLECF);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE3E",    emulator.ROMSIMPLE3E,    NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT,  NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT, NULL);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLECF",    emulator.ROMSIMPLECF,    NULL);
 
-        AccessIniFileInteger(ini, accessType, "HARDWARE_DRIVES", "MDVNoDrives", Hwform.MDVNoDrives);
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "MDVNoDrives", Hwform.MDVNoDrives, 0);
 
         for (int i = 0; i < 8; i++)
         {
-                AccessIniFileString(ini, accessType, "HARDWARE_DRIVES", "MDV" + AnsiString(i), Hwform.MDV[i]);
+                AccessIniFileString(ini, accessType, "HARDWARE", "MDV" + AnsiString(i), Hwform.MDV[i], "");
         }
 
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_DRIVES", "divIDEJumperE", Hwform.DivIDEJumperEClosedChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_DRIVES", "ZXCFJumper",    Hwform.UploadChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "divIDEJumperE", Hwform.DivIDEJumperEClosedChecked, false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXCFJumper",    Hwform.UploadChecked,              false);
 
         //---- ADVANCED TAB ----
 
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "ProtectRom",               Hwform.ProtectROMChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "NTSC",                     Hwform.NTSCChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "8KRAM",                    Hwform.EnableLowRAMChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "M1Not",                    Hwform.M1NotChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "ImprovedWait",             Hwform.ImprovedWaitChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "Issue2EarBehaviour",       Hwform.Issue2Checked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE_ADVANCED", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ProtectRom",               Hwform.ProtectROMChecked,               false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "NTSC",                     Hwform.NTSCChecked,                     false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "8KRAM",                    Hwform.EnableLowRAMChecked,             false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "M1Not",                    Hwform.M1NotChecked,                    false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ImprovedWait",             Hwform.ImprovedWaitChecked,             false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Issue2EarBehaviour",       Hwform.Issue2Checked,                   false);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked, false);
 }
 
-void THW::AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue)
+void THW::AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue, int defaultValue)
 {
         if (accessType == Write)
         {
@@ -3503,19 +3526,19 @@ void THW::AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, Ansi
         }
         else
         {
-                entryValue = ini->ReadInteger(section, entryName, entryValue);
+                entryValue = ini->ReadInteger(section, entryName, entryValue != INT_MIN ? entryValue : defaultValue);
         }
 }
 
-void THW::AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue)
+void THW::AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue, bool defaultValue)
 {
         if (accessType == Write)
         {
-                ini->WriteBool(section, entryName, entryValue);
+                ini->WriteBool(section, entryName, (bool)entryValue);
         }
         else
         {
-                entryValue = ini->ReadBool(section, entryName, entryValue);
+                (int)entryValue = ini->ReadBool(section, entryName, entryValue != INT_MIN ? (bool)entryValue : defaultValue);
         }
 }
 
@@ -3527,7 +3550,7 @@ void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiS
         }
         else
         {
-                entryValue = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : entryValue);
+                entryValue = ini->ReadString(section, entryName, (entryValue != NULL) ? entryValue : defaultValue);
         }
 }
 
@@ -3539,7 +3562,7 @@ void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiS
         }
         else
         {
-                AnsiString value = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : AnsiString(entryValue));
+                AnsiString value = ini->ReadString(section, entryName, (entryValue != NULL) ? AnsiString(entryValue) : defaultValue);
                 strcpy(entryValue, value.c_str());
         }
 }
@@ -3552,7 +3575,7 @@ void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiS
         }
         else
         {
-                AnsiString value = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : entryComboBox->Text);
+                AnsiString value = ini->ReadString(section, entryName, (entryComboBox->Text != NULL) ? entryComboBox->Text : defaultValue);
                 entryComboBox->ItemIndex = FindEntry(entryComboBox, value);
         }
 }
@@ -3565,7 +3588,7 @@ void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiS
         }
         else
         {
-                entryEditBox->Text = ini->ReadString(section, entryName, (defaultValue != NULL) ? defaultValue : entryEditBox->Text);
+                entryEditBox->Text = ini->ReadString(section, entryName, (entryEditBox->Text != NULL) ? entryEditBox->Text : defaultValue);
         }
 }
 
@@ -3769,7 +3792,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 Upload->Checked = true;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
-                ZXCFRAM->ItemIndex = FindEntry(ZXCFRAM, "1024K");
+//####                ZXCFRAM->ItemIndex = FindEntry(ZXCFRAM, "1024K");
         }
         else if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
         {

@@ -307,7 +307,7 @@ void spec48_reset(void)
         ZXCFPort=128;
         if (spectrum.HDType==HDZXCF)
         {
-                if (spectrum.UploadJumperZXCF) ZXCFPort=192;
+                if (!spectrum.UploadJumperZXCF) ZXCFPort=192;
                 else ZXCFPort=0;
         }
 
@@ -479,7 +479,7 @@ void spec48_initialise()
         InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.intposition;
         if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
 
-        for(i=0;i<79999;i++) ContendArray[i]=0;
+        for(i=0;i<80000;i++) ContendArray[i]=0;
 
         pos=spectrum.intposition-1;
 

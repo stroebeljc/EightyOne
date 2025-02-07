@@ -1336,7 +1336,7 @@ object HW: THW
     Top = 140
     Width = 412
     Height = 217
-    ActivePage = AdvSettings
+    ActivePage = FloppyDrives
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1946,16 +1946,16 @@ object HW: THW
         ItemHeight = 13
         TabOrder = 5
         Items.Strings = (
-          '128k'
-          '512k'
-          '1024k')
+          '128K'
+          '512K'
+          '1024K')
       end
       object Upload: TCheckBox
         Left = 56
         Top = 100
-        Width = 97
+        Width = 113
         Height = 17
-        Caption = 'Upload Jumper'
+        Caption = 'UPLOAD Jumper'
         Checked = True
         State = cbChecked
         TabOrder = 6

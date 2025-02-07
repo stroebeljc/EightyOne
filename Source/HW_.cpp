@@ -895,30 +895,35 @@ void THW::ConfigureBasicLister()
 
         Form1->BasicListerOption->Enabled = false;
 
-        if (emulator.romcrc == CRCZX80)
+        if (!strcmp(machine.CurRom, "zx80.rom"))
         {
                 BasicLister->SetBasicLister(new zx80BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if ((emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTS1500) || (emulator.romcrc == CRCTK85))
+        else if (!strcmp(machine.CurRom, "zx81.edition1.rom") ||
+                 !strcmp(machine.CurRom, "zx81.edition2.rom") ||
+                 !strcmp(machine.CurRom, "zx81.edition3.rom") ||
+                 !strcmp(machine.CurRom, "ts1500.rom") ||
+                 !strcmp(machine.CurRom, "tk85.rom"))
         {
                 BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if ((emulator.romcrc == CRCSP48) || (emulator.romcrc == CRCSPANISH48))
+        else if (!strcmp(machine.CurRom, "spectrum48.rom") ||
+                 !strcmp(machine.CurRom, "spectrum48.spanish.rom"))
         {
                 BasicLister->SetBasicLister(new spec48BasicLister());
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if ((emulator.romcrc == CRCSP128) ||
-                 (emulator.romcrc == CRCSPANISH128) ||
-                 (emulator.romcrc == CRCPLUS2) ||
-                 (emulator.romcrc == CRCPLUS3V40) ||
-                 (emulator.romcrc == CRCPLUS3V41) ||
-                 (emulator.romcrc == CRCFRENCHPLUS2) ||
-                 (emulator.romcrc == CRCSPANISHPLUS2) ||
-                 (emulator.romcrc == CRCSPANISHPLUS3V40) ||
-                 (emulator.romcrc == CRCSPANISHPLUS3V41))
+        else if (!strcmp(machine.CurRom, "spectrum128.rom") ||
+                 !strcmp(machine.CurRom, "spectrum128.spanish.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+2.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-0.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-1.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+2.french.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+2.spanish.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-0.spanish.rom") ||
+                 !strcmp(machine.CurRom, "spectrum+3.version4-1.spanish.rom"))
         {
                 BasicLister->SetBasicLister(new spec128BasicLister());
                 Form1->BasicListerOption->Enabled = true;
@@ -1939,7 +1944,7 @@ void THW::SetZX80Icon()
 
         AnsiString romRoot = LowerCase(getMachineRoot(romName));
         Graphics::TBitmap* zx80Icon = new Graphics::TBitmap;
-        int iconIndex = ((emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTS1500)) ? 1 : 0;
+        int iconIndex = (romRoot== "zx81" || romRoot == "ts1500") ? 1 : 0;
         ZX80Icons->GetBitmap(iconIndex, zx80Icon);
         ZX80Btn->InactiveGlyph = zx80Icon;
 }
@@ -1958,7 +1963,7 @@ void THW::SetSpectrum128Icon()
         }
 
         Graphics::TBitmap* spec128Icon = new Graphics::TBitmap;
-        int iconIndex = (emulator.romcrc == CRCSPANISH128) ? 1 : 0;
+        int iconIndex = (romName== "spectrum128.spanish.rom") ? 1 : 0;
         Spec128Icons->GetBitmap(iconIndex, spec128Icon);
         Spec128Btn->InactiveGlyph = spec128Icon;
 }
@@ -2505,7 +2510,7 @@ void THW::UpdateJoystickOptions()
 {
         if (NumberOfJoysticks() == 2)
         {
-                int index = FindEntry(JoystickBox, "Sinclair 1");
+                int index = FindEntry(JoystickBox, "Sinclair 1", -1);
                 if (index >= 0)
                 {
                         JoystickBox->Items->Strings[index] = "Sinclair 1 & 2";
@@ -2516,7 +2521,7 @@ void THW::UpdateJoystickOptions()
         }
         else
         {
-                int index = FindEntry(JoystickBox, "Sinclair 1 & 2");
+                int index = FindEntry(JoystickBox, "Sinclair 1 & 2", -1);
                 if (index >= 0)
                 {
                         JoystickBox->Items->Strings[index] = "Sinclair 1";
@@ -3591,7 +3596,7 @@ void THW::ReadNVMemory(BYTE* memory, int size, int count, char* fileName)
         FILE* f = fopen(FilePath, "rb");
         if (f)
         {
-                fread(ZXCFMem, size, count, f);
+                fread(memory, size, count, f);
                 fclose(f);
         }
 }
@@ -3761,8 +3766,10 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
                 Upload->Visible = true;
+                Upload->Checked = true;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
+                ZXCFRAM->ItemIndex = FindEntry(ZXCFRAM, "1024K");
         }
         else if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
         {
@@ -3873,7 +3880,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-int THW::FindEntry(TComboBox* comboBox, AnsiString text)
+int THW::FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue)
 {
         for (int i = 0; i < comboBox->Items->Count; i++)
         {
@@ -3883,7 +3890,7 @@ int THW::FindEntry(TComboBox* comboBox, AnsiString text)
                 }
         }
 
-        return -1;
+        return notFoundValue;
 }
 //---------------------------------------------------------------------------
 
@@ -4012,7 +4019,7 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         if (ZX80Btn->Down)
         {
-                bool zx81Ed1ROM = (emulator.romcrc == CRCZX81_ED1);
+                bool zx81Ed1ROM = RomBox->Text == "zx81.edition1.rom";
                 FloatingPointHardwareFix->Enabled = zx81Ed1ROM;
                 if (!zx81Ed1ROM)
                         FloatingPointHardwareFix->Checked = false;

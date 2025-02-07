@@ -224,7 +224,7 @@ void load_config(void)
         spectrum.kmouse=0;
         spectrum.HDType=HDNONE;
         spectrum.divIDEJumperEClosed=0;
-        spectrum.UploadJumperZXCF=0;
+        spectrum.UploadJumperZXCF=1;
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;

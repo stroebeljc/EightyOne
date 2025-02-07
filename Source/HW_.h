@@ -79,24 +79,23 @@ struct HWFormValues
         AnsiString DriveA;
         AnsiString DriveB;
         AnsiString MDV[8];
-        int ZXpandChecked;
-        int SpecDrumChecked;
-        int ProtectROMChecked;
-        int NTSCChecked;
-        int EnableLowRAMChecked;
-        int M1NotChecked;
-        int ImprovedWaitChecked;
-        int TS2050Checked;
-        int Issue2Checked;
-        int KMouseChecked;
-        int DivIDEJumperEClosedChecked;
-        int MultifaceChecked;
-        int ZXPrinterChecked;
-        int FloatingPointHardwareFixChecked;
-        int UploadChecked;
-        int uSourceChecked;
+        bool ZXpandChecked;
+        bool SpecDrumChecked;
+        bool ProtectROMChecked;
+        bool NTSCChecked;
+        bool EnableLowRAMChecked;
+        bool M1NotChecked;
+        bool ImprovedWaitChecked;
+        bool TS2050Checked;
+        bool Issue2Checked;
+        bool KMouseChecked;
+        bool DivIDEJumperEClosedChecked;
+        bool MultifaceChecked;
+        bool ZXPrinterChecked;
+        bool FloatingPointHardwareFixChecked;
+        bool UploadChecked;
+        bool uSourceChecked;
         int MDVNoDrives;
-        // When adding further items, make sure to set the default values in InitialiseInternalSettings()
 };
 
 class THW : public TForm
@@ -279,7 +278,6 @@ private:	// User declarations
         AnsiString NewMachineName;
         HWFormValues Hwform;
 
-        void InitialiseInternalSettings();
         void LoadFromInternalSettings();
         void SaveToInternalSettings();
         void RefreshDefaultRamSettings();
@@ -305,12 +303,10 @@ private:	// User declarations
         void UpdateJoystickOptions();
         void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
         void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
-        void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue, bool defaultValue);
-        void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue, int defaultValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue, AnsiString defaultValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue, AnsiString defaultValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TComboBox* entryComboBox, AnsiString defaultValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TEdit* entryEditBox, AnsiString defaultValue);
+        void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
+        void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         bool NewKey(TEdit* textBox, char key);
         void LoadRomBox();
@@ -361,8 +357,8 @@ public:		// User declarations
         bool ResetRequired;
         __fastcall THW(TComponent* Owner);
         void UpdateHardwareSettings(bool disableReset);
-        void SaveSettings(TIniFile *ini);
-        void LoadSettings(TIniFile *ini);
+        void SaveSettings(TIniFile* ini);
+        void LoadSettings(TIniFile* ini);
         void SetZXpandState(bool checked, bool enabled);
 };
 //---------------------------------------------------------------------------

@@ -132,6 +132,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         }
                         else if (GetLineLabel(entry))
                         {
+                                if (currentLineNumber == -1) currentLineNumber = 0;
                                 entry.lineNumber = currentLineNumber + lineNumberIncrement;
                                 if (BasicLineExists(entry))
                                 {
@@ -140,6 +141,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         }
                         else
                         {
+                                if (currentLineNumber == -1) currentLineNumber = 0;
                                 currentLineNumber += lineNumberIncrement;
                                 entry.lineNumber = currentLineNumber;
                         }

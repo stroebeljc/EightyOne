@@ -7,7 +7,7 @@ This is a CompactFlash interface with 512KB/1024KB onboard memory
 (operating system etc.) for ZX Spectrum range of computers.
 Please note that CompactFlash R/W is done in memmode.
 This new interface is intended mainly for assembling in a ZX Spectrum (all models).
-The pcb has a size of 57x86mm.
+The PCB has a size of 57x86mm.
 
 JP2  upload (this is used when installing ResiDOS on the interface)
 JP6  pos 1-2 = +2A/+3, pos 2-3 = 16/48/128/+2
@@ -20,7 +20,7 @@ I/O decoder
 cf        X    X   X   0   *   *   *   *   1   0   1   1   1   1   X   X
 mem       X    X   X   1   X   X   X   X   1   0   1   1   1   1   X   X
 
-          * CompactFlash card adress space
+          * CompactFlash card address space
 
 
 I/O #10BF (4287d) memory control

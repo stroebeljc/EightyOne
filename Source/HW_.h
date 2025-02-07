@@ -277,7 +277,7 @@ private:	// User declarations
         bool ramPackSupplementsInternalRam;
         AnsiString NewMachineName;
         HWFormValues Hwform;
-        
+
         void LoadFromInternalSettings();
         void SaveToInternalSettings();
         void RefreshDefaultRamSettings();
@@ -303,12 +303,10 @@ private:	// User declarations
         void UpdateJoystickOptions();
         void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
         void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
-        void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue, AnsiString defaultValue = NULL);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue, AnsiString defaultValue = NULL);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TComboBox* entryComboBox, AnsiString defaultValue = NULL);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, TEdit* entryEditBox, AnsiString defaultValue = NULL);
         void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
+        void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue);
+        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         bool NewKey(TEdit* textBox, char key);
         void LoadRomBox();
@@ -359,8 +357,8 @@ public:		// User declarations
         bool ResetRequired;
         __fastcall THW(TComponent* Owner);
         void UpdateHardwareSettings(bool disableReset);
-        void SaveSettings(TIniFile *ini);
-        void LoadSettings(TIniFile *ini);
+        void SaveSettings(TIniFile* ini);
+        void LoadSettings(TIniFile* ini);
         void SetZXpandState(bool checked, bool enabled);
 };
 //---------------------------------------------------------------------------

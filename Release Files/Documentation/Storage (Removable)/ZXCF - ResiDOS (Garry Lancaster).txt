@@ -475,7 +475,7 @@ you try to load a 128K snapshot when in 48K mode. Note also that the command dec
 the snapshot is in from the file extension, so be sure to name your snapshots with the
 appropriate extension (.Z80 or .SNA).
 
-To aid compatiblity with certain snapshots, there are two additional options with this command.
+To aid compatibility with certain snapshots, there are two additional options with this command.
 Use "+" to make the snapshot loader use a small amount of screen memory (normally it uses the
 stack area, which is okay in most cases). Use "-" to run the snapshot using the Spectrum's
 built-in ROM rather than the patched one used with ResiDOS. Either or both of these options may
@@ -1361,7 +1361,7 @@ streams
         CLOSE #5
 
 FN ptr#(stream)
-    This function returns the current position of the the pointer in the stream specified. Not
+    This function returns the current position of the pointer in the stream specified. Not
 all
     channels support this function; see the documentation for individual channels.
 
@@ -2075,7 +2075,7 @@ Drive, directory and path commands
 %CD "location:path"
     Makes the specified location and path the default. The location can be a user area (0-15) or
 a
-    drive (A-P), or both. The path can be any list of directories (seperated with / or \
+    drive (A-P), or both. The path can be any list of directories (separated with / or \
 characters)
     from the current directory. If you don't specify all of these, the current default for the
 others

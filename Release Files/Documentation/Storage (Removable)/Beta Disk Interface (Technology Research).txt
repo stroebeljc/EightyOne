@@ -405,8 +405,8 @@ other interfaces, please also read Section 2.5 below.
 
                               A>
 
-                        where 5.xx is the  version number, and A>
-                        is the TRDOS prompt.
+                         where 5.xx is the  version number, and A>
+                         is the TRDOS prompt.
 
                               page 9
 

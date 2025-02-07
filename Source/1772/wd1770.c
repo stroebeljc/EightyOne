@@ -273,7 +273,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
     {           /* Type III */
         //int delay = b & 0x04;
 
-        switch( b & 0xf3 )
+        switch( b & 0xf1 )
         {
         case 0xe0:                                          /* Read Track */
             fprintf( stderr, "read track not yet implemented\n" );

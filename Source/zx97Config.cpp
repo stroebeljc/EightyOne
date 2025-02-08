@@ -39,6 +39,7 @@ __fastcall TZX97Dialog::TZX97Dialog(TComponent* Owner)
 {
         TIniFile *ini;
 
+        SaveToInternalSettings(); // save in case there is no INI file
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;

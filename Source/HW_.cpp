@@ -114,6 +114,7 @@ __fastcall THW::THW(TComponent* Owner)
         ZXCFRAM->ItemIndex = FindEntry(ZXCFRAM, "1024K");
         ZX81BtnClick(NULL);
 
+        SaveToInternalSettings(); // save in case there is no INI file
         TIniFile* ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;

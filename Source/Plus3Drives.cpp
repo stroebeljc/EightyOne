@@ -925,7 +925,7 @@ bool TP3Drive::CreateMicrodriveCartridge(AnsiString& filePath)
                 }
         }
 
-        if (!filePath.IsEmpty())
+        if (success && !filePath.IsEmpty())
         {
                 if (access(filePath.c_str(),F_OK))
                 {

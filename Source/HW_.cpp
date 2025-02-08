@@ -253,6 +253,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
         Speed->Recalc(NULL);
         PCKbInit();
         Kb->UpdateCursors();
+        ZX97Dialog->UpdateRequired();
 
         if (ResetRequired && !disableReset)
         {
@@ -278,7 +279,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         ReInitialiseSound();
 
-        SaveToInternalSettings();
+        SaveToInternalSettings(); // save copy to keep user choices
 }
 
 void THW::LoadFromInternalSettings()
@@ -3384,7 +3385,7 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
-        LoadFromInternalSettings();
+        LoadFromInternalSettings();  // restore form settings from copy
         ResetRequired = false;
 }
 //---------------------------------------------------------------------------
@@ -3396,8 +3397,6 @@ void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 
 void THW::SaveSettings(TIniFile* ini)
 {
-        SaveToInternalSettings();
-
         AccessIniFile(ini, Write);
 
         WriteNVMemory(divIDEMem, 1,  8192,  "divide.nv");
@@ -3408,10 +3407,8 @@ void THW::SaveSettings(TIniFile* ini)
 
 void THW::LoadSettings(TIniFile* ini)
 {
-        SaveToInternalSettings();    // Set up default internal settings from the default state of the UI controls
-
-        AccessIniFile(ini, Read);    // Read the ini file into the internal settings
-        LoadFromInternalSettings();  // Set the UI controls from the internal settings
+        AccessIniFile(ini, Read);    // Read the ini file into the internal copy
+        LoadFromInternalSettings();  // restore form settings from copy
 
         ReadNVMemory(divIDEMem, 1,  8192,  "divide.nv");
         ReadNVMemory(ZXCFMem,   64, 16384, "zxcf.nv");
@@ -3511,55 +3508,6 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ImprovedWait",             Hwform.ImprovedWaitChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Issue2EarBehaviour",       Hwform.Issue2Checked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked);
-}
-
-void THW::AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteInteger(section, entryName, entryValue);
-        }
-        else
-        {
-                entryValue = ini->ReadInteger(section, entryName, entryValue);
-        }
-}
-
-void THW::AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteBool(section, entryName, entryValue);
-        }
-        else
-        {
-                entryValue = ini->ReadBool(section, entryName, entryValue);
-        }
-}
-
-void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteString(section, entryName, entryValue);
-        }
-        else
-        {
-                entryValue = ini->ReadString(section, entryName, entryValue);
-        }
-}
-
-void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteString(section, entryName, entryValue);
-        }
-        else
-        {
-                AnsiString value = ini->ReadString(section, entryName, entryValue);
-                strcpy(entryValue, value.c_str());
-        }
 }
 
 void THW::WriteNVMemory(BYTE* memory, int size, int count, char* fileName)
@@ -4053,7 +4001,7 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
-        ZX97Dialog->ShowModal();
+        if (ZX97Dialog->ShowModal()==mrOk) ResetRequired = true;
 }
 //---------------------------------------------------------------------------
 
@@ -4151,11 +4099,6 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
-{
-        LoadFromInternalSettings();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall THW::CancelClick(TObject *Sender)
 {
@@ -4277,7 +4220,7 @@ void __fastcall THW::JoystickBoxKeyDown(TObject *Sender, WORD &Key,
 {
         TEdit* textBox = (TEdit*)Sender;
         AnsiString keyString = (char)Key;
-        char key = *(keyString.UpperCase().c_str());
+        char key;
 
         if (Key == VK_SHIFT)
         {

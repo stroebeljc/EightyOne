@@ -1336,7 +1336,7 @@ object HW: THW
     Top = 140
     Width = 412
     Height = 217
-    ActivePage = FloppyDrives
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet

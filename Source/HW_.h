@@ -90,6 +90,7 @@ struct HWFormValues
         bool Issue2Checked;
         bool KMouseChecked;
         bool DivIDEJumperEClosedChecked;
+        bool ZXCFUploadJumperOpenedChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
         bool FloatingPointHardwareFixChecked;

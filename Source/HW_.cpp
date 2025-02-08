@@ -308,47 +308,48 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
-        RamPackBox->ItemIndex               = FindEntry(RamPackBox,           Hwform.RamPackBoxText);
-        SoundCardBox->ItemIndex             = FindEntry(SoundCardBox,         Hwform.SoundCardBoxText);
-        ChrGenBox->ItemIndex                = FindEntry(ChrGenBox,            Hwform.ChrGenBoxText);
-        HiResBox->ItemIndex                 = FindEntry(HiResBox,             Hwform.HiResBoxText);
-        ColourBox->ItemIndex                = FindEntry(ColourBox,            Hwform.ColourBoxText);
-        SpeechBox->ItemIndex                = FindEntry(SpeechBox,            Hwform.SpeechBoxText);
-        RomCartridgeBox->ItemIndex          = FindEntry(RomCartridgeBox,      Hwform.RomCartridgeBoxText);
-        ZXC1ConfigurationBox->ItemIndex     = FindEntry(ZXC1ConfigurationBox, Hwform.ZXC1ConfigurationBoxText);
-        JoystickBox->ItemIndex              = FindEntry(JoystickBox,          Hwform.JoystickBoxText);
-        DriveAType->ItemIndex               = FindEntry(DriveAType,           Hwform.DriveATypeText);
-        DriveBType->ItemIndex               = FindEntry(DriveBType,           Hwform.DriveBTypeText);
-        ZXCFRAM->ItemIndex                  = FindEntry(ZXCFRAM,              Hwform.ZXCFRAMText);
-        IDEBox->ItemIndex                   = FindEntry(IDEBox,               Hwform.IDEBoxText);
-        FDCBox->ItemIndex                   = FindEntry(FDCBox,               Hwform.FDCBoxText);
+        RamPackBox->ItemIndex             = FindEntry(RamPackBox,           Hwform.RamPackBoxText);
+        SoundCardBox->ItemIndex           = FindEntry(SoundCardBox,         Hwform.SoundCardBoxText);
+        ChrGenBox->ItemIndex              = FindEntry(ChrGenBox,            Hwform.ChrGenBoxText);
+        HiResBox->ItemIndex               = FindEntry(HiResBox,             Hwform.HiResBoxText);
+        ColourBox->ItemIndex              = FindEntry(ColourBox,            Hwform.ColourBoxText);
+        SpeechBox->ItemIndex              = FindEntry(SpeechBox,            Hwform.SpeechBoxText);
+        RomCartridgeBox->ItemIndex        = FindEntry(RomCartridgeBox,      Hwform.RomCartridgeBoxText);
+        ZXC1ConfigurationBox->ItemIndex   = FindEntry(ZXC1ConfigurationBox, Hwform.ZXC1ConfigurationBoxText);
+        JoystickBox->ItemIndex            = FindEntry(JoystickBox,          Hwform.JoystickBoxText);
+        DriveAType->ItemIndex             = FindEntry(DriveAType,           Hwform.DriveATypeText);
+        DriveBType->ItemIndex             = FindEntry(DriveBType,           Hwform.DriveBTypeText);
+        ZXCFRAM->ItemIndex                = FindEntry(ZXCFRAM,              Hwform.ZXCFRAMText);
+        IDEBox->ItemIndex                 = FindEntry(IDEBox,               Hwform.IDEBoxText);
+        FDCBox->ItemIndex                 = FindEntry(FDCBox,               Hwform.FDCBoxText);
 
-        RomCartridgeFileBox->Text           = Hwform.RomCartridgeFileBoxText;
-        SinclairRomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
-        TS1510RomCartridgeFileBox->Text     = Hwform.RomCartridgeFileBoxText;
-        TC2068RomCartridgeFileBox->Text     = Hwform.RomCartridgeFileBoxText;
-        TS2068RomCartridgeFileBox->Text     = Hwform.RomCartridgeFileBoxText;
+        RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
+        SinclairRomCartridgeFileBox->Text = Hwform.RomCartridgeFileBoxText;
+        TS1510RomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
+        TC2068RomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
+        TS2068RomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
 
-        programmableJoystickLeft            = Hwform.ProgrammableJoystickLeft;
-        programmableJoystickRight           = Hwform.ProgrammableJoystickRight;
-        programmableJoystickUp              = Hwform.ProgrammableJoystickUp;
-        programmableJoystickDown            = Hwform.ProgrammableJoystickDown;
-        programmableJoystickFire            = Hwform.ProgrammableJoystickFire;
+        programmableJoystickLeft          = Hwform.ProgrammableJoystickLeft;
+        programmableJoystickRight         = Hwform.ProgrammableJoystickRight;
+        programmableJoystickUp            = Hwform.ProgrammableJoystickUp;
+        programmableJoystickDown          = Hwform.ProgrammableJoystickDown;
+        programmableJoystickFire          = Hwform.ProgrammableJoystickFire;
 
-        SpecDrum->Checked                   = Hwform.SpecDrumChecked;
-        ProtectROM->Checked                 = Hwform.ProtectROMChecked;
-        NTSC->Checked                       = Hwform.NTSCChecked;
-        EnableLowRAM->Checked               = Hwform.EnableLowRAMChecked;
-        M1Not->Checked                      = Hwform.M1NotChecked;
-        ImprovedWait->Checked               = Hwform.ImprovedWaitChecked;
-        TS2050->Checked                     = Hwform.TS2050Checked;
-        Issue2->Checked                     = Hwform.Issue2Checked;
-        KMouse->Checked                     = Hwform.KMouseChecked;
-        Form1->divIDEJumperEClosed->Checked = Hwform.DivIDEJumperEClosedChecked;
-        Multiface->Checked                  = Hwform.MultifaceChecked;
-        ZXPrinter->Checked                  = Hwform.ZXPrinterChecked;
-        FloatingPointHardwareFix->Checked   = Hwform.FloatingPointHardwareFixChecked;
-        uSource->Checked                    = Hwform.uSourceChecked;
+        SpecDrum->Checked                      = Hwform.SpecDrumChecked;
+        ProtectROM->Checked                    = Hwform.ProtectROMChecked;
+        NTSC->Checked                          = Hwform.NTSCChecked;
+        EnableLowRAM->Checked                  = Hwform.EnableLowRAMChecked;
+        M1Not->Checked                         = Hwform.M1NotChecked;
+        ImprovedWait->Checked                  = Hwform.ImprovedWaitChecked;
+        TS2050->Checked                        = Hwform.TS2050Checked;
+        Issue2->Checked                        = Hwform.Issue2Checked;
+        KMouse->Checked                        = Hwform.KMouseChecked;
+        Form1->divIDEJumperEClosed->Checked    = Hwform.DivIDEJumperEClosedChecked;
+        Form1->ZXCFUploadJumperOpened->Checked = Hwform.ZXCFUploadJumperOpenedChecked;
+        Multiface->Checked                     = Hwform.MultifaceChecked;
+        ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
+        FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
+        uSource->Checked                       = Hwform.uSourceChecked;
 
         if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD1.c_str());
         if (Hwform.HD1 != "NULL") ATA_LoadHDF(1, Hwform.HD1.c_str());
@@ -454,6 +455,7 @@ void THW::SaveToInternalSettings()
         Hwform.MultifaceChecked                = Multiface->Checked;
         Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
         Hwform.DivIDEJumperEClosedChecked      = Form1->divIDEJumperEClosed->Checked;
+        Hwform.ZXCFUploadJumperOpenedChecked   = Form1->ZXCFUploadJumperOpened->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
 
@@ -1591,6 +1593,7 @@ void THW::ConfigureJoystick()
 void THW::ConfigureSpectrumIDE()
 {
         Form1->divIDEJumperEClosed->Visible = (NewMachine == MACHINESPECTRUM) && ((NewSpec != SPECCYTC2048) && (NewSpec != SPECCYTC2068) && (NewSpec != SPECCYTS2068));
+        Form1->ZXCFUploadJumperOpened->Visible = (NewMachine == MACHINESPECTRUM) && ((NewSpec != SPECCYTC2048) && (NewSpec != SPECCYTC2068) && (NewSpec != SPECCYTS2068));
 
         spectrum.HDType = HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")                spectrum.HDType = HDZXCF;
@@ -2733,7 +2736,7 @@ bool THW::Plus3IdeRom()
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
                 RomBox->Items->Add(ideRomsFolder + AnsiString("zxcen3ee.rom"));
-                RomBox->Text = emulator.ROMSPP3;
+                RomBox->ItemIndex = 0;
                 return true;
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
@@ -2761,7 +2764,7 @@ bool THW::Plus3IdeRom()
                  (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)"))
         {
                 RomBox->Items->Add(ideRomsFolder + AnsiString("diven3ee.rom"));
-                RomBox->Text = emulator.ROMSPP3;
+                RomBox->ItemIndex = 0;
                 return true;
         }
 
@@ -3181,10 +3184,18 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         JoystickLeftBoxLabel->Enabled  = false;
         JoystickRightBoxLabel->Enabled = false;
         JoystickFireBoxLabel->Enabled  = false;
-        IDEBox->Items->Add("AceCF");
+        FDCBox->Items->Clear();
+        FDCBox->Items->Add("None");
+        FDCBox->ItemIndex = 0;
+        FDCBox->Enabled = false;
+        IDEBox->Items->Clear();
+        IDEBox->Items->Add("None");
+        IDEBox->ItemIndex = 0;
+        IDEBox->Enabled = false;
+//        IDEBox->Items->Add("AceCF");
         RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
-        SetZXpandState(false,false);
+        SetZXpandState(false, false);
         IDEBoxChange(NULL);
 }
 //---------------------------------------------------------------------------
@@ -3489,7 +3500,7 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         }
 
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "divIDEJumperE", Hwform.DivIDEJumperEClosedChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXCFJumper",    Hwform.UploadChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXCFJumper",    Hwform.ZXCFUploadJumperOpenedChecked);
 
         //---- ADVANCED TAB ----
 
@@ -3734,6 +3745,8 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         ZXCFLabel->Visible = false;
         ZXCFRAM->Visible = false;
         M1Not->Enabled = true;
+        Form1->divIDEJumperEClosed->Enabled = false;
+        Form1->ZXCFUploadJumperOpened->Enabled = false;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")
         {
@@ -3748,6 +3761,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
                 Form1->ZXCFUploadJumperOpened->Checked = (NewSpec == SPECCYPLUS2A || NewSpec == SPECCYPLUS3);;
+                Form1->ZXCFUploadJumperOpened->Enabled = true;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
         }
@@ -3755,8 +3769,9 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                  (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)"))
         {
                 Form1->divIDEJumperEClosed->Checked = (NewSpec != SPECCYPLUS2A && NewSpec != SPECCYPLUS3);
+                Form1->divIDEJumperEClosed->Enabled = true;
         }
-        
+
         LoadRomBox();
 
         DisplayTotalRam();

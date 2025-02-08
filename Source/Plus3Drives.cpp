@@ -168,19 +168,11 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         AnsiString Filename, Ext;
         int readonly = 0;
 
-        if (Sender)
-        {
-                ConfigureOpenFloppyDiskImageDialog();
+        ConfigureOpenFloppyDiskImageDialog();
 
-                if (!OpenDialogFloppyDiskImage->Execute()) return;
+        if (!OpenDialogFloppyDiskImage->Execute()) return;
 
-                Filename = OpenDialogFloppyDiskImage->FileName;
-        }
-        else
-        {
-                Filename = DragFileName;
-        }
-
+        Filename = OpenDialogFloppyDiskImage->FileName;
         Ext = FileNameGetExt(Filename);
 
         if (Ext == ".ZIP")
@@ -230,7 +222,7 @@ void TP3Drive::OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driv
 {
         strcpy(driveimg, driveText->Text.c_str());
 
-        if (access(driveimg, F_OK) && !readonly)
+        if (spectrum.floppytype!=FLOPPYPLUS3 && access(driveimg, F_OK) && !readonly)
         {
                 FILE *f;
                 if ((f = fopen(driveimg, "w")) != NULL)
@@ -799,7 +791,6 @@ void __fastcall TP3Drive::DriveANewBtnClick(TObject *Sender)
 
                 int readonly = 0;
                 OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
-                floppy_setimage(0, DriveAText->Text.c_str(), 0);
         }
 }
 //---------------------------------------------------------------------------
@@ -816,7 +807,6 @@ void __fastcall TP3Drive::DriveBNewBtnClick(TObject *Sender)
 
                 int readonly = 0;
                 OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
-                floppy_setimage(1, DriveBText->Text.c_str(), 0);
         }
 }
 //---------------------------------------------------------------------------
@@ -880,19 +870,10 @@ bool TP3Drive::CreateFloppyDiskImage(AnsiString title, AnsiString filter, AnsiSt
         {
                 filePath = SaveDialogNewFloppyDisk->FileName;
 
-                FILE* f = fopen(filePath.c_str(), "wb");
-                if (!f)
+                if (!access(filePath.c_str(), F_OK))
                 {
+                        ShowMessage("File already exists.");
                         success = false;
-                }
-                else if (fclose(f))
-                {
-                        success = false;
-                }
-
-                if (!success)
-                {
-                        ShowMessage("Failed to create floppy disk");
                 }
         }
         else

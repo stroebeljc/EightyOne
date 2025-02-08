@@ -307,7 +307,7 @@ void spec48_reset(void)
         ZXCFPort=128;
         if (spectrum.HDType==HDZXCF)
         {
-                if (!spectrum.UploadJumperZXCF) ZXCFPort=192;
+                if (spectrum.UploadJumperZXCF) ZXCFPort=192;
                 else ZXCFPort=0;
         }
 

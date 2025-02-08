@@ -159,7 +159,6 @@ __published:	// IDE-managed Components
         TButton *IF1Config;
         TComboBox *IDEBox;
         TComboBox *ZXCFRAM;
-        TCheckBox *Upload;
         TLabel *LabelIDE;
         TLabel *ZXCFLabel;
         TCheckBox *ZXPrinter;

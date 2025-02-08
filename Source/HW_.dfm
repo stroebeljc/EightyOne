@@ -1336,7 +1336,7 @@ object HW: THW
     Top = 140
     Width = 412
     Height = 217
-    ActivePage = Interfaces
+    ActivePage = FloppyDrives
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1950,16 +1950,6 @@ object HW: THW
           '512K'
           '1024K')
       end
-      object Upload: TCheckBox
-        Left = 56
-        Top = 100
-        Width = 113
-        Height = 17
-        Caption = 'UPLOAD Jumper'
-        Checked = True
-        State = cbChecked
-        TabOrder = 6
-      end
     end
     object AdvSettings: TTabSheet
       Caption = 'Advanced Settings'
@@ -2089,7 +2079,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

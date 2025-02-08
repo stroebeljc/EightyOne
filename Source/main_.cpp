@@ -2802,3 +2802,10 @@ void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::ZXCFUploadJumperOpenedClick(TObject *Sender)
+{
+        ZXCFUploadJumperOpened->Checked = !ZXCFUploadJumperOpened->Checked;
+        spectrum.UploadJumperZXCF = ZXCFUploadJumperOpened->Checked;
+}
+//---------------------------------------------------------------------------
+

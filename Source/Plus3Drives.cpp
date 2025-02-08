@@ -916,40 +916,49 @@ bool TP3Drive::CreateMicrodriveCartridge(AnsiString& filePath)
                 if (SaveDialogNewFloppyDisk->Execute())
                 {
                         filePath = SaveDialogNewFloppyDisk->FileName;
+
+                        if (!access(filePath.c_str(), F_OK))
+                        {
+                                ShowMessage("File already exists.");
+                                success = false;
+                        }
                 }
         }
 
         if (!filePath.IsEmpty())
         {
-                FILE* f = fopen(filePath.c_str(), "wb");
-                if (f)
+                if (access(filePath.c_str(),F_OK))
                 {
-                        try
+                        FILE* f = fopen(filePath.c_str(), "wb");
+                        if (f)
                         {
-                                const int sizeOfMicrodriveFile = (254 * 543) + 1;
-
-                                for (int i = 0; i < sizeOfMicrodriveFile - 1; i++)
+                                try
                                 {
-                                        // 'Blank' data
-                        	        fputc(0xFC, f);
+                                        const int sizeOfMicrodriveFile = (254 * 543) + 1;
+
+                                        for (int i = 0; i < sizeOfMicrodriveFile - 1; i++)
+                                        {
+                                                // 'Blank' data
+                                	        fputc(0xFC, f);
+                                        }
+
+                                        // The cartridge is not write protected (this byte is not used by EightyOne)
+                                        fputc(0x00, f);
+                                }
+                                catch (...)
+                                {
+                                        success = false;
                                 }
 
-                                // The cartridge is not write protected (this byte is not used by EightyOne)
-                                fputc(0x00, f);
+                                if (fclose(f))
+                                {
+                                        success = false;
+                                }
                         }
-                        catch (...)
+                        else
                         {
                                 success = false;
                         }
-
-                        if (fclose(f))
-                        {
-                                success = false;
-                        }
-                }
-                else
-                {
-                        success = false;
                 }
 
                 if (!success)

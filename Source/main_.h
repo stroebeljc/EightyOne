@@ -180,6 +180,7 @@ __published:	// IDE-managed Components
         TMenuItem *N15;
         TMenuItem *EnableJoystick1AutoFire;
         TMenuItem *EnableJoystick2AutoFire;
+        TMenuItem *ZXCFUploadJumperOpened;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -295,6 +296,7 @@ __published:	// IDE-managed Components
         void __fastcall ResetSpeechClick(TObject *Sender);
         void __fastcall EnableJoystick1AutoFireClick(TObject *Sender);
         void __fastcall EnableJoystick2AutoFireClick(TObject *Sender);
+        void __fastcall ZXCFUploadJumperOpenedClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

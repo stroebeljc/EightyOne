@@ -348,7 +348,6 @@ void THW::LoadFromInternalSettings()
         Multiface->Checked                  = Hwform.MultifaceChecked;
         ZXPrinter->Checked                  = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked   = Hwform.FloatingPointHardwareFixChecked;
-        Upload->Checked                     = Hwform.UploadChecked;
         uSource->Checked                    = Hwform.uSourceChecked;
 
         if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD1.c_str());
@@ -456,7 +455,6 @@ void THW::SaveToInternalSettings()
         Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
         Hwform.DivIDEJumperEClosedChecked      = Form1->divIDEJumperEClosed->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
-        Hwform.UploadChecked                   = Upload->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
 
         Hwform.HD0                             = ATA_GetHDF(0) ? ATA_GetHDF(0) : "NULL";
@@ -1605,7 +1603,7 @@ void THW::ConfigureSpectrumIDE()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")   spectrum.HDType = HDPITERS16B;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")             spectrum.HDType = HDPITERSCF;
         spectrum.divIDEJumperEClosed = Form1->divIDEJumperEClosed->Checked;
-        spectrum.UploadJumperZXCF = Upload->Checked;
+        spectrum.UploadJumperZXCF = Form1->ZXCFUploadJumperOpened->Checked;
 
         switch(ZXCFRAM->ItemIndex)
         {
@@ -2728,8 +2726,14 @@ bool THW::Plus3IdeRom()
 {
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
         {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom"));
+                RomBox->Items->Add(ideRomsFolder + AnsiString("sm8en3ee.rom"));
                 RomBox->Text = emulator.ROMSIMPLE3E;
+                return true;
+        }
+        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("zxcen3ee.rom"));
+                RomBox->Text = emulator.ROMSPP3;
                 return true;
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
@@ -2751,6 +2755,13 @@ bool THW::Plus3IdeRom()
                 RomBox->Items->Add(ideRomsFolder + AnsiString("zxidelbs.rom"));
                 RomBox->Items->Add(ideRomsFolder + AnsiString("p16en3ee.rom"));
                 RomBox->Text = emulator.ROMSIMPLE16BIT;
+                return true;
+        }
+        else if ((IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)") ||
+                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)"))
+        {
+                RomBox->Items->Add(ideRomsFolder + AnsiString("diven3ee.rom"));
+                RomBox->Text = emulator.ROMSPP3;
                 return true;
         }
 
@@ -3720,15 +3731,15 @@ void __fastcall THW::MultifaceClick(TObject *Sender)
 
 void __fastcall THW::IDEBoxChange(TObject *Sender)
 {
-        Upload->Visible = false;
         ZXCFLabel->Visible = false;
         ZXCFRAM->Visible = false;
-        Form1->divIDEJumperEClosed->Enabled = false;
+        M1Not->Enabled = true;
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")
         {
                 RamPackBox->ItemIndex = FindEntry(RamPackBox, "32K");
                 M1Not->Checked = true;
+                M1Not->Enabled = false;
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")
         {
@@ -3736,17 +3747,16 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
-                Upload->Visible = true;
-                Upload->Checked = true;
+                Form1->ZXCFUploadJumperOpened->Checked = (NewSpec == SPECCYPLUS2A || NewSpec == SPECCYPLUS3);;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
         }
-        else if ((IDEBox->Items->Strings[IDEBox->ItemIndex]).Pos("divIDE"))
+        else if ((IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)") ||
+                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)"))
         {
-                Form1->divIDEJumperEClosed->Enabled = true;
-                Form1->divIDEJumperEClosed->Checked = true;
+                Form1->divIDEJumperEClosed->Checked = (NewSpec != SPECCYPLUS2A && NewSpec != SPECCYPLUS3);
         }
-
+        
         LoadRomBox();
 
         DisplayTotalRam();
@@ -3758,7 +3768,9 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 void __fastcall THW::FDCBoxChange(TObject *Sender)
 {
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Larken")
+        {
                 EnableLowRAM->Checked = true;
+        }
 
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")
         {

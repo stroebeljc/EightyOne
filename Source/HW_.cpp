@@ -353,14 +353,6 @@ void THW::LoadFromInternalSettings()
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
 
-        if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD1.c_str());
-        if (Hwform.HD1 != "NULL") ATA_LoadHDF(1, Hwform.HD1.c_str());
-
-        for (int i = 0; i < 8; i++)
-        {
-                if (Hwform.MDV[i] != "NULL") IF1->MDVSetFileName(i, Hwform.MDV[i].c_str());
-        }
-
         //---- APPLY THE SETTINGS ----
 
         JoystickBoxChange(JoystickBox);
@@ -460,14 +452,6 @@ void THW::SaveToInternalSettings()
         Hwform.ZXCFUploadJumperOpenedChecked   = Form1->ZXCFUploadJumperOpened->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
-
-        Hwform.HD0                             = ATA_GetHDF(0) ? ATA_GetHDF(0) : "NULL";
-        Hwform.HD1                             = ATA_GetHDF(1) ? ATA_GetHDF(1) : "NULL";
-        
-        for (int i = 0; i < 8; i++)
-        {
-                Hwform.MDV[i] = IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "NULL";
-        }
 }
 
 void THW::Configure8K16KRam()
@@ -3480,22 +3464,11 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "DriveBType", Hwform.DriveBTypeText);
         AccessIniFileString(ini, accessType, "HARDWARE", "IDEType",    Hwform.IDEBoxText);
         AccessIniFileString(ini, accessType, "HARDWARE", "ZXCFRAM",    Hwform.ZXCFRAMText);
-        AccessIniFileString(ini, accessType, "HARDWARE", "DriveA",     Hwform.DriveA);
-        AccessIniFileString(ini, accessType, "HARDWARE", "DriveB",     Hwform.DriveB);
-        AccessIniFileString(ini, accessType, "HARDWARE", "HD0",        Hwform.HD0);
-        AccessIniFileString(ini, accessType, "HARDWARE", "HD1",        Hwform.HD1);
 
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE3E",    emulator.ROMSIMPLE3E);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLECF",    emulator.ROMSIMPLECF);
-
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "MDVNoDrives", Hwform.MDVNoDrives);
-
-        for (int i = 0; i < 8; i++)
-        {
-                AccessIniFileString(ini, accessType, "HARDWARE", "MDV" + AnsiString(i), Hwform.MDV[i]);
-        }
 
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "divIDEJumperE", Hwform.DivIDEJumperEClosedChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXCFJumper",    Hwform.ZXCFUploadJumperOpenedChecked);

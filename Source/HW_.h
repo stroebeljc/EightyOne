@@ -69,11 +69,6 @@ struct HWFormValues
         AnsiString DriveATypeText;
         AnsiString DriveBTypeText;
         AnsiString ZXCFRAMText;
-        AnsiString HD0;
-        AnsiString HD1;
-        AnsiString DriveA;
-        AnsiString DriveB;
-        AnsiString MDV[8];
         bool ZXpandChecked;
         bool SpecDrumChecked;
         bool ProtectROMChecked;
@@ -91,7 +86,6 @@ struct HWFormValues
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
         bool uSourceChecked;
-        int MDVNoDrives;
 };
 
 class THW : public TForm

@@ -45,6 +45,18 @@ void TP3Drive::LoadSettings(TIniFile *ini)
         Left = ini->ReadInteger("P3DRIVE", "Left", Left);
         OpenDialogFloppyDiskImage->FileName = ini->ReadString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
 
+        ATA_LoadHDF(0, AnsiString(ini->ReadString("P3DRIVE", "HD0", "")).c_str());
+        ATA_LoadHDF(1, AnsiString(ini->ReadString("P3DRIVE", "HD1", "")).c_str());
+
+        DriveAText->Text = ini->ReadString("P3DRIVE", "DriveA", "< Empty >");
+        DriveBText->Text = ini->ReadString("P3DRIVE", "DriveB", "< Empty >");
+
+        IF1->MDVNoDrives = ini->ReadInteger("P3DRIVE", "MDVNoDrives", 0);
+        for (int i = 0; i < 8; i++)
+        {
+                IF1->MDVSetFileName(i, AnsiString(ini->ReadString("P3DRIVE", "MDV" + AnsiString(i), "")).c_str());
+        }
+
         if (Form1->DiskDrives1->Checked) Show();
 }
 //---------------------------------------------------------------------------
@@ -54,6 +66,20 @@ void TP3Drive::SaveSettings(TIniFile *ini)
         ini->WriteInteger("P3DRIVE", "Top", Top);
         ini->WriteInteger("P3DRIVE", "Left", Left);
         ini->WriteString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
+
+        ini->WriteString("P3DRIVE", "HD0", ATA_GetHDF(0) ? ATA_GetHDF(0) : "");
+        ini->WriteString("P3DRIVE", "HD1", ATA_GetHDF(1) ? ATA_GetHDF(1) : "");
+
+        ini->WriteString("P3DRIVE", "DriveA", DriveAText->Text);
+        ini->WriteString("P3DRIVE", "DriveB", DriveBText->Text);
+
+        ini->WriteInteger("P3DRIVE", "MDVNoDrives", IF1->MDVNoDrives);
+        for (int i = 0; i < 8; i++)
+        {
+                ini->WriteString("P3DRIVE", "MDV" + AnsiString(i),
+                        IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "");
+        }
+
 }
 //---------------------------------------------------------------------------
 
@@ -289,9 +315,6 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
 
 void TP3Drive::ConfigureFloppyDriveGroup()
 {
-        DriveAText->Text = "< Empty >";
-        DriveBText->Text = "< Empty >";
-
         if (strlen(spectrum.driveaimg)) DriveAText->Text = spectrum.driveaimg;
         if (strlen(spectrum.drivebimg)) DriveBText->Text = spectrum.drivebimg;
 

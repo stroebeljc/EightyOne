@@ -711,6 +711,13 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Dbg->DisableMemoryWindowAutoUpdates();
 
+        if (!Restart)
+        {
+                ini = new TIniFile(emulator.inipath);
+                SaveSettings(ini);
+                delete ini;
+        }
+
         P3Drive->DriveAEjectBtnClick(NULL);
         P3Drive->DriveBEjectBtnClick(NULL);
 
@@ -724,13 +731,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         PCAllKeysUp();
 
         Sound.End();
-
-        if (!Restart)
-        {
-                ini = new TIniFile(emulator.inipath);
-                SaveSettings(ini);
-                delete ini;
-        }
 
         RenderEnd();
 

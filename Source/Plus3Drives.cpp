@@ -47,6 +47,8 @@ void TP3Drive::LoadSettings(TIniFile *ini)
 
         ATA_LoadHDF(0, AnsiString(ini->ReadString("P3DRIVE", "HD0", "")).c_str());
         ATA_LoadHDF(1, AnsiString(ini->ReadString("P3DRIVE", "HD1", "")).c_str());
+        ATA_SetReadOnly(0, ini->ReadBool("P3DRIVE", "HD0RO", FALSE));
+        ATA_SetReadOnly(1, ini->ReadBool("P3DRIVE", "HD1RO", FALSE));
 
         DriveAText->Text = ini->ReadString("P3DRIVE", "DriveA", "< Empty >");
         DriveBText->Text = ini->ReadString("P3DRIVE", "DriveB", "< Empty >");
@@ -69,6 +71,8 @@ void TP3Drive::SaveSettings(TIniFile *ini)
 
         ini->WriteString("P3DRIVE", "HD0", ATA_GetHDF(0) ? ATA_GetHDF(0) : "");
         ini->WriteString("P3DRIVE", "HD1", ATA_GetHDF(1) ? ATA_GetHDF(1) : "");
+        ini->WriteBool("P3DRIVE", "HD0RO", ATA_GetReadOnly(0));
+        ini->WriteBool("P3DRIVE", "HD1RO", ATA_GetReadOnly(1));
 
         ini->WriteString("P3DRIVE", "DriveA", DriveAText->Text);
         ini->WriteString("P3DRIVE", "DriveB", DriveBText->Text);

@@ -711,6 +711,9 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Dbg->DisableMemoryWindowAutoUpdates();
 
+        P3Drive->DriveAEjectBtnClick(NULL);
+        P3Drive->DriveBEjectBtnClick(NULL);
+
         char escKey = 27;
         if (FullScreen) FormKeyPress(NULL, escKey);
         if (machine.exit) machine.exit();
@@ -728,9 +731,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
                 SaveSettings(ini);
                 delete ini;
         }
-
-        P3Drive->DriveAEjectBtnClick(NULL);
-        P3Drive->DriveBEjectBtnClick(NULL);
 
         RenderEnd();
 

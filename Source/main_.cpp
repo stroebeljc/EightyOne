@@ -711,6 +711,9 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Dbg->DisableMemoryWindowAutoUpdates();
 
+        char escKey = 27;
+        if (FullScreen) FormKeyPress(NULL, escKey);
+        
         if (!Restart)
         {
                 ini = new TIniFile(emulator.inipath);
@@ -721,8 +724,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         P3Drive->DriveAEjectBtnClick(NULL);
         P3Drive->DriveBEjectBtnClick(NULL);
 
-        char escKey = 27;
-        if (FullScreen) FormKeyPress(NULL, escKey);
         if (machine.exit) machine.exit();
 
         emulation_stop=true;

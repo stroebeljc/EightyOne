@@ -25,7 +25,15 @@
 #define UtilsH
 //---------------------------------------------------------------------------
 
+#include <IniFiles.hpp>
 #include "zx81config.h"
+
+enum IniFileAccessType
+{
+        Read,
+        Write
+};
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +56,10 @@ AnsiString RemoveExt(AnsiString Fname);
 AnsiString GetExt(AnsiString Fname);
 AnsiString RemovePath(AnsiString Str);
 int EnumeratePorts(TStrings *List, AnsiString Type);
+void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
+void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue);
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue);
 
 #endif
 

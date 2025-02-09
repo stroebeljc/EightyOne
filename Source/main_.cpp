@@ -1290,6 +1290,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         FSSettings->SaveSettings(ini);
         P3Drive->SaveSettings(ini);
         SoundOutput->SaveSettings(ini);
+        ZX97Dialog->SaveSettings(ini);
         IF1->SaveSettings(ini);
         ParallelPort->SaveSettings(ini);
         MidiForm->SaveSettings(ini);

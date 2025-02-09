@@ -721,9 +721,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
                 delete ini;
         }
 
-        P3Drive->DriveAEjectBtnClick(NULL);
-        P3Drive->DriveBEjectBtnClick(NULL);
-
         if (machine.exit) machine.exit();
 
         emulation_stop=true;

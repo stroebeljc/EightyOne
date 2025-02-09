@@ -374,6 +374,8 @@ void floppy_ClockTick(int ts)
 
 void floppy_shutdown()
 {
+        floppy_eject(0);
+        floppy_eject(1);
 
         if (USEFDC765DLL) u765_Shutdown();
         if (DLLHandle) FreeLibrary(DLLHandle);

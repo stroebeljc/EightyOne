@@ -338,9 +338,7 @@ case 0xa3:	/* OUTI */
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
-  B--;		/* This does happen first, despite what the specs say */
-                /* Erm, no it doesn't - MW */
-                /* Erm, yes it does? - JCS */
+  B--;
   writeport(BC,outitemp,&tstates);
   HL++;
   F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
@@ -405,10 +403,9 @@ case 0xab:	/* OUTD */
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
-  HL--;
+  B--;
   writeport(BC,outitemp,&tstates);
-  B--;		/* This does happen first, despite what the specs say */
-                /* Erm, no it doesn't - MW */
+  HL--;
   F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
   /* C,H and P/V flags not implemented */
 }
@@ -486,9 +483,9 @@ case 0xb3:	/* OTIR */
   AddToMCycle(1);
   InsertMCycle(3);
   tstates++; contend( HL, 4 );
+  B--;
   writeport(BC,outitemp,&tstates);
-  B--;	HL++;	/* This does happen first, despite what the specs say */
-                /* Erm, no it doesn't - MW */
+  HL++;
   F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
   /* C,H and P/V flags not implemented */
   InsertMCycle(4);
@@ -577,9 +574,9 @@ case 0xbb:	/* OTDR */
   AddToMCycle(1);
   InsertMCycle(3);
   tstates++; contend( HL, 4 );
+  B--;
   writeport(BC,outitemp,&tstates);
-  B--; HL--;	/* This does happen first, despite what the specs say */
-                /* Erm, no it doesn't - MW */
+  HL--;
   F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
   /* C,H and P/V flags not implemented */
   InsertMCycle(4);

@@ -711,8 +711,16 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Dbg->DisableMemoryWindowAutoUpdates();
 
-        char escKey = 27;
+        char escKey = VK_ESCAPE;
         if (FullScreen) FormKeyPress(NULL, escKey);
+        
+        if (!Restart)
+        {
+                ini = new TIniFile(emulator.inipath);
+                SaveSettings(ini);
+                delete ini;
+        }
+
         if (machine.exit) machine.exit();
 
         emulation_stop=true;
@@ -721,16 +729,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         PCAllKeysUp();
 
         Sound.End();
-
-        if (!Restart)
-        {
-                ini = new TIniFile(emulator.inipath);
-                SaveSettings(ini);
-                delete ini;
-        }
-
-        P3Drive->DriveAEjectBtnClick(NULL);
-        P3Drive->DriveBEjectBtnClick(NULL);
 
         RenderEnd();
 

@@ -338,11 +338,11 @@ case 0xa3:	/* OUTI */
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   tstates++; contend( HL, 4 ); contend_io( BC, 3 );
-  HL++;
   B--;		/* This does happen first, despite what the specs say */
                 /* Erm, no it doesn't - MW */
                 /* Erm, yes it does? - JCS */
   writeport(BC,outitemp,&tstates);
+  HL++;
   F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
   /* C,H and P/V flags not implemented */
 }

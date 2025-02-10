@@ -214,6 +214,7 @@ typedef struct
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
         CFGBYTE specdrum;
+        CFGBYTE spectrum128Keypad;
         int intposition;
 } SPECTRUM;
 

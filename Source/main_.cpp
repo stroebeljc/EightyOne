@@ -124,7 +124,6 @@ char webBuffer[bufferLength];
 
 //---------------------------------------------------------------------------
 
-
 void __fastcall TForm1::WndProc(TMessage &Message)
 {
         switch(Message.Msg)
@@ -302,6 +301,12 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
+        if (GetKeyState(VK_ESCAPE) & 0x8000)
+        {
+                Key = NULL;
+                return;
+        }
+
         if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;

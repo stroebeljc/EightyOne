@@ -104,6 +104,7 @@ public:
         void AYWrite128(int reg, int val, int frametstates);
         void AYWriteTimex(int reg, int val, int frametstates);
         int AYRead(int reg);
+        int AYRead128(int reg);
         int AYReadTimex(int reg, int joysticks);
         void AYReset(void);
         void SpecDrumWrite(BYTE data, int frametstates);

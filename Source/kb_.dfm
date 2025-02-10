@@ -1,6 +1,6 @@
 object Kb: TKb
-  Left = 485
-  Top = 120
+  Left = 279
+  Top = 155
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Keyboard'
@@ -17,14 +17,14 @@ object Kb: TKb
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
+  object CursorKeysLabel: TLabel
     Left = 8
     Top = 18
     Width = 58
     Height = 13
     Caption = 'Cursor keys:'
   end
-  object Label2: TLabel
+  object CtrlKeyMapsToLabel: TLabel
     Left = 8
     Top = 56
     Width = 93
@@ -113,7 +113,7 @@ object Kb: TKb
     Caption = '0 (Zero)'
     TabOrder = 6
   end
-  object CheckBox1: TCheckBox
+  object UseRightShiftCheckBox: TCheckBox
     Left = 8
     Top = 56
     Width = 177

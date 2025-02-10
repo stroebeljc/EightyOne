@@ -25,7 +25,8 @@
 #include <fcntl.h>
 #include <io.h>
 #include <mem.h>
-#include <midi.h>
+#include "midi.h"
+#include "keypad.h"
 #include "zx81.h"
 #include "z80\z80.h"
 #include "snap.h"
@@ -1594,12 +1595,18 @@ BYTE ReadPort(int Address, int *tstates)
                         }
                         break;
                 case 0xff:
-                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
-                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
-                            {
-                                return (BYTE)Sound.AYRead(SelectAYReg);
-                            }
-                            break;
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR)
+                        {
+                                if ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCYPLUS2A))
+                                {
+                                        return (BYTE)Sound.AYRead(SelectAYReg);
+                                }
+                                else if (spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2)
+                                {
+                                        return (BYTE)Sound.AYRead128(SelectAYReg);
+                                }
+                        }
+                        break;
                 case 0x3f:
                         if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
                         {
@@ -1816,6 +1823,10 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (machine.zxprinter) ZXPrinterClockTick(ts);
                 PrinterClockTick(ts);
                 Midi.ClockTick(ts);
+                if (spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2)
+                {
+                        Keypad.ClockTick(ts);
+                }
                 if (spectrum.floppytype==FLOPPYIF1) IF1ClockTick(ts);
                 else if (spectrum.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 

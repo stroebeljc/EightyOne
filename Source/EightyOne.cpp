@@ -74,7 +74,6 @@ USEFORM("BasicLister\BasicListerOptions_.cpp", SaveBasicListingOptionsForm);
 USEFORM("BasicLister\BasicListingFormatInfo_.cpp", BasicListingFormatInfoForm);
 USELIB("..\components\directsound\dsound.lib");
 USEUNIT("sound\sound.cpp");
-USEUNIT("sound\midi.cpp");
 USEUNIT("sound\SoundDX.cpp");
 USEUNIT("Ace\ace.cpp");
 USEUNIT("zx81\rompatch.cpp");
@@ -140,6 +139,9 @@ USEUNIT("SP0256\sp0256_012.cpp");
 USEUNIT("Digitalker\Digitalk.cpp");
 USEUNIT("Digitalker\Digitalkdrv.cpp");
 USEUNIT("Joystick\Joystick.cpp");
+USEUNIT("sound\midi.cpp");
+USEFORM("Keypad_.cpp", Keypad128);
+USEUNIT("Keypad\keypad.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
@@ -208,7 +210,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
         {
                 Application->Initialize();
                 Application->Title = "EightyOne";
-                #include "splashImpl.cpp"
+                 #include "splashImpl.cpp"
 
                 Application->ProcessMessages();
                 delete spl;

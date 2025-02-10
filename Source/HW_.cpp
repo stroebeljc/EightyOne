@@ -121,6 +121,7 @@ __fastcall THW::THW(TComponent* Owner)
         SetUpRomCartridges();
 
         ResetRequired = true;
+
         const bool disableResetStatus = false;
         UpdateHardwareSettings(disableResetStatus);
 }
@@ -195,6 +196,12 @@ void __fastcall THW::OKClick(TObject *Sender)
         Close();
 }
 
+void __fastcall THW::ApplyClick(TObject *Sender)
+{
+        const bool disableResetStatus = false;
+        UpdateHardwareSettings(disableResetStatus);
+}
+
 void THW::UpdateHardwareSettings(bool disableReset)
 {
         bool machineChanged = (NewMachine != emulator.machine);
@@ -227,6 +234,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureJoystick();
         ConfigureM1Not();
         ConfigureDisplayArtifacts();
+        ConfigureKeypad();
 
         ConfigureSpectrumIDE();
         ConfigureFDC();
@@ -279,6 +287,8 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ReInitialiseSound();
 
         SaveToInternalSettings();
+
+        UpdateApplyButton();
 }
 
 void THW::LoadFromInternalSettings()
@@ -336,6 +346,7 @@ void THW::LoadFromInternalSettings()
         programmableJoystickFire          = Hwform.ProgrammableJoystickFire;
 
         SpecDrum->Checked                      = Hwform.SpecDrumChecked;
+        Spectrum128Keypad->Checked             = Hwform.Spectrum128KeypadChecked;
         ProtectROM->Checked                    = Hwform.ProtectROMChecked;
         NTSC->Checked                          = Hwform.NTSCChecked;
         EnableLowRAM->Checked                  = Hwform.EnableLowRAMChecked;
@@ -351,7 +362,7 @@ void THW::LoadFromInternalSettings()
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
 
-        if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD1.c_str());
+        if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD0.c_str());
         if (Hwform.HD1 != "NULL") ATA_LoadHDF(1, Hwform.HD1.c_str());
 
         for (int i = 0; i < 8; i++)
@@ -444,6 +455,7 @@ void THW::SaveToInternalSettings()
 
         Hwform.ZXpandChecked                   = ZXpand->Checked;
         Hwform.SpecDrumChecked                 = SpecDrum->Checked;
+        Hwform.Spectrum128KeypadChecked        = Spectrum128Keypad->Checked;
         Hwform.ProtectROMChecked               = ProtectROM->Checked;
         Hwform.NTSCChecked                     = NTSC->Checked;
         Hwform.EnableLowRAMChecked             = EnableLowRAM->Checked;
@@ -1310,6 +1322,15 @@ void THW::ConfigureHiRes()
         }
 }
 
+void THW::ConfigureKeypad()
+{
+        if (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128)
+        {
+                spectrum.spectrum128Keypad = (CFGBYTE)(Spectrum128Keypad->Checked ? 1 : 0);
+                Kb->AllowRightShiftAsSymbolShift(!Spectrum128Keypad->Checked);
+        }
+}
+
 void THW::ConfigureSound()
 {
         if (NewMachine == MACHINESPECTRUM)
@@ -2152,6 +2173,9 @@ void THW::SetupForZX81(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
+        Spectrum128Keypad->Checked = false;
+        Spectrum128Keypad->Enabled = false;
+
         RomCartridgeBox->Items->Clear();
         RomCartridgeBox->Items->Add("None");
 
@@ -2220,7 +2244,7 @@ void THW::SetupForSpectrum(void)
         machine.plus3arabicPagedOut = 0;
 
         KMouse->Enabled = true;
-
+        
         ButtonAdvancedMore->Visible = false;
 
         SetZXpandState(false, false);
@@ -2342,6 +2366,9 @@ void THW::SetupForSpectrum(void)
 
         SpecDrum->Checked = false;
         SpecDrum->Enabled = true;
+
+        Spectrum128Keypad->Checked = false;
+        Spectrum128Keypad->Enabled = false;
 
         RamPackLbl->Enabled = false; RamPackBox->Enabled = false;
         RamPackBox->ItemIndex = -1;
@@ -2788,6 +2815,8 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         ImprovedWait->Checked = false;
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2806,6 +2835,8 @@ void __fastcall THW::ZX81BtnClick(TObject *Sender)
         NTSC->Checked = false;
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2834,6 +2865,8 @@ void __fastcall THW::Spec48BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2850,6 +2883,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         Spec128Btn->Down = true;
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        Spectrum128Keypad->Enabled = true;
 
         NewMachineName = Spec128Btn->Caption;
         LoadRomBox();
@@ -2859,6 +2893,8 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2887,6 +2923,8 @@ void __fastcall THW::SpecPlusBtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2916,6 +2954,8 @@ void __fastcall THW::Spec16BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2932,6 +2972,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SpecP2Btn->Down = true;
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        Spectrum128Keypad->Enabled = true;
 
         NewMachineName = SpecP2Btn->Caption;
         LoadRomBox();
@@ -2941,6 +2982,8 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2958,11 +3001,14 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        Spectrum128Keypad->Enabled = true;
 
         NewMachineName = SpecP2aBtn->Caption;
         LoadRomBox();
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2980,6 +3026,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        Spectrum128Keypad->Enabled = true;
 
         NewMachineName = SpecP3Btn->Caption;
         LoadRomBox();
@@ -2992,6 +3039,8 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
 
         FDCBox->Enabled = false;
         FDCBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3010,6 +3059,8 @@ void __fastcall THW::TS1000BtnClick(TObject *Sender)
         ColourLabel->Caption = "Color:";
         NTSC->Checked = true;
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3028,6 +3079,8 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         ColourLabel->Caption = "Color:";
         NTSC->Checked = true;
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3065,6 +3118,8 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3090,6 +3145,8 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3113,6 +3170,8 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3192,11 +3251,12 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         IDEBox->Items->Add("None");
         IDEBox->ItemIndex = 0;
         IDEBox->Enabled = false;
-//        IDEBox->Items->Add("AceCF");
         RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
         SetZXpandState(false, false);
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3235,6 +3295,8 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3283,8 +3345,9 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
-}
 
+        UpdateApplyButton();
+}
 //---------------------------------------------------------------------------
 
 void __fastcall THW::TS2068BtnClick(TObject *Sender)
@@ -3332,6 +3395,8 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         IDEBox->Items->Delete(index);
 
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3372,13 +3437,16 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         }
         ButtonAdvancedMore->Visible = true;
         IDEBoxChange(NULL);
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::TS2050Click(TObject *Sender)
 {
         TS2050Config->Enabled = TS2050->Enabled && TS2050->Checked;
-        ResetRequired = true;
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3391,6 +3459,7 @@ void __fastcall THW::FormShow(TObject *Sender)
 void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 {
         SerialConfig->ShowModal();
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3467,13 +3536,14 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "JoystickDown",       Hwform.ProgrammableJoystickDown);
         AccessIniFileString(ini, accessType, "HARDWARE", "JoystickFire",       Hwform.ProgrammableJoystickFire);
 
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "MicroSource",   Hwform.uSourceChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXpand",        Hwform.ZXpandChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "SpecDrum",      Hwform.SpecDrumChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "TS2050",        Hwform.TS2050Checked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "KempstonMouse", Hwform.KMouseChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Multiface",     Hwform.MultifaceChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXPrinter",     Hwform.ZXPrinterChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "MicroSource",       Hwform.uSourceChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXpand",            Hwform.ZXpandChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "SpecDrum",          Hwform.SpecDrumChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "TS2050",            Hwform.TS2050Checked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "KempstonMouse",     Hwform.KMouseChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Multiface",         Hwform.MultifaceChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXPrinter",         Hwform.ZXPrinterChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Spectrum128Keypad", Hwform.Spectrum128KeypadChecked);
 
         //---- DRIVES TAB ----
 
@@ -3665,25 +3735,25 @@ void __fastcall THW::RamPackBoxChange(TObject *Sender)
 {
         DisplayTotalRam();
 
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::NTSCClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::EnableLowRAMClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::M1NotClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3695,14 +3765,15 @@ void __fastcall THW::LambdaColourClick(TObject *Sender)
 
 void __fastcall THW::SoundCardBoxChange(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::ChrGenBoxChange(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
+
 //---------------------------------------------------------------------------
 
 void __fastcall THW::HiResBoxChange(TObject *Sender)
@@ -3712,31 +3783,33 @@ void __fastcall THW::HiResBoxChange(TObject *Sender)
         {
                 ProtectROM->Checked = true;
         }
-        ResetRequired = true;
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::DriveATypeChange(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::DriveBTypeChange(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::IF1ConfigClick(TObject *Sender)
 {
         IF1->ShowModal();
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::MultifaceClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3776,7 +3849,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
         DisplayTotalRam();
 
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3818,7 +3891,7 @@ void __fastcall THW::FDCBoxChange(TObject *Sender)
                 Form1->IFace1->Enabled = false;
         }
         
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3830,7 +3903,6 @@ void __fastcall THW::uSpeechClick(TObject *Sender)
 
 void __fastcall THW::ZXpandClick(TObject *Sender)
 {
-        ResetRequired = true;
         SetZXpandState(ZXpand->Checked,true);
 
         if (HW->Visible)
@@ -3874,6 +3946,8 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
                         JoystickBox->Items->Delete(JoystickBox->Items->Count - 1);
                 }
         }
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3966,7 +4040,8 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         TC2068RomCartridgeFileBox->Text = "";
 
         UpdateRomCartridgeControls(NewMachine, NewSpec);
-        ResetRequired = true;
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
@@ -3984,8 +4059,7 @@ void __fastcall THW::TC2068RomCartridgeFileBoxChange(TObject *Sender)
         {
                 RomCartridgeFileBox->Text = TC2068RomCartridgeFileBox->Text;
                 ResetRequired = true;
-        }
-
+        }  
 }
 //---------------------------------------------------------------------------
 void __fastcall THW::TS2068RomCartridgeFileBoxChange(TObject *Sender)
@@ -4008,7 +4082,7 @@ void __fastcall THW::TS1510RomCartridgeFileBoxChange(TObject *Sender)
 
 void __fastcall THW::ColourBoxChange(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -4022,7 +4096,7 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
                         FloatingPointHardwareFix->Checked = false;
         }
 
-        ResetRequired = true;
+        UpdateApplyButton();
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -4031,13 +4105,13 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
 
 void __fastcall THW::ZXPrinterClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
   
 void __fastcall THW::FloatingPointHardwareFixClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
                 
@@ -4054,16 +4128,19 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
         ZX97Dialog->ShowModal();
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::ImprovedWaitClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
+//---------------------------------------------------------------------------
+
 void __fastcall THW::uSourceClick(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -4147,7 +4224,7 @@ void __fastcall THW::ZXpandEmulationInfoClick(TObject *Sender)
 
 void __fastcall THW::SpeechBoxChange(TObject *Sender)
 {
-        ResetRequired = true;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -4229,6 +4306,8 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
         JoystickLeftBoxLabel->Enabled  = keySelectionEnabled;
         JoystickRightBoxLabel->Enabled = keySelectionEnabled;
         JoystickFireBoxLabel->Enabled  = keySelectionEnabled;
+
+        UpdateApplyButton();
 }
 
 //---------------------------------------------------------------------------
@@ -4392,6 +4471,7 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         SpecDrum->Checked = false;
         TS2050->Checked = false;
         ZXpand->Checked = false;
+        Spectrum128Keypad->Checked = false;
 
         FDCBox->ItemIndex = 0;
         IDEBox->ItemIndex = 0;
@@ -4424,7 +4504,163 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                 }
         }
 
-        ResetRequired = true;
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::Spectrum128KeypadClick(TObject *Sender)
+{
+        if (Spectrum128Keypad->Checked && emulator.UseRShift)
+        {
+                Application->MessageBox("The Right Shift key is used to operate the Spectrum 128 Keypad. It is currerntly mapped as the Symbol Shift key and so the mapping will be changed to use the Control key for the Symbol Shift key.", "Spectrum 128 Keypad Configuration", MB_OK | MB_ICONINFORMATION);
+        }
+
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::KMouseClick(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::SpecDrumClick(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::JoystickLeftBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::JoystickRightBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::JoystickUpBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::JoystickDownBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void THW::UpdateApplyButton()
+{
+        AnsiString machineName;  //#### save this on each click
+
+        if (ZX80Btn->Down)          machineName = "ZX80";
+        else if (Spec16Btn->Down)   machineName = "Spec16";
+        else if (Spec48Btn->Down)   machineName = "Spec48";
+        else if (SpecPlusBtn->Down) machineName = "SpecPlus";
+        else if (Spec128Btn->Down)  machineName = "Spec128";
+        else if (SpecP2Btn->Down)   machineName = "SpecP2";
+        else if (SpecP2aBtn->Down)  machineName = "SpecP2A";
+        else if (SpecP3Btn->Down)   machineName = "SpecP3";
+        else if (TS1000Btn->Down)   machineName = "TS1000";
+        else if (TS1500Btn->Down)   machineName = "TS1500";
+        else if (TC2048Btn->Down)   machineName = "TC2048";
+        else if (TC2068Btn->Down)   machineName = "TC2068";
+        else if (TS2068Btn->Down)   machineName = "TS2068";
+        else if (LambdaBtn->Down)   machineName = "Lambda";
+        else if (R470Btn->Down)     machineName = "R470";
+        else if (TK85Btn->Down)     machineName = "TK85";
+        else if (ZX97LEBtn->Down)   machineName = "ZX97LE";
+        else if (AceBtn->Down)      machineName = "ACE";
+        else                        machineName = "ZX81";
+
+        bool settingsChanged = (machineName != Hwform.MachineName);
+
+        settingsChanged |= (RamPackBox->Text           != Hwform.RamPackBoxText);
+        settingsChanged |= (SoundCardBox->Text         != Hwform.SoundCardBoxText);
+        settingsChanged |= (ChrGenBox->Text            != Hwform.ChrGenBoxText);
+        settingsChanged |= (HiResBox->Text             != Hwform.HiResBoxText);
+        settingsChanged |= (ColourBox->Text            != Hwform.ColourBoxText);
+        settingsChanged |= (SpeechBox->Text            != Hwform.SpeechBoxText);
+        settingsChanged |= (RomCartridgeBox->Text      != Hwform.RomCartridgeBoxText);
+        settingsChanged |= (ZXC1ConfigurationBox->Text != Hwform.ZXC1ConfigurationBoxText);
+        settingsChanged |= (JoystickBox->Text          != Hwform.JoystickBoxText);
+        settingsChanged |= (DriveAType->Text           != Hwform.DriveATypeText);
+        settingsChanged |= (DriveBType->Text           != Hwform.DriveBTypeText);
+        settingsChanged |= (ZXCFRAM->Text              != Hwform.ZXCFRAMText);
+        settingsChanged |= (IDEBox->Text               != Hwform.IDEBoxText);
+        settingsChanged |= (FDCBox->Text               != Hwform.FDCBoxText);
+
+        settingsChanged |= (RomCartridgeFileBox->Text         != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (SinclairRomCartridgeFileBox->Text != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (TS1510RomCartridgeFileBox->Text   != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (TC2068RomCartridgeFileBox->Text   != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (TS2068RomCartridgeFileBox->Text   != Hwform.RomCartridgeFileBoxText);
+
+        settingsChanged |= (programmableJoystickLeft  != Hwform.ProgrammableJoystickLeft);
+        settingsChanged |= (programmableJoystickRight != Hwform.ProgrammableJoystickRight);
+        settingsChanged |= (programmableJoystickUp    != Hwform.ProgrammableJoystickUp);
+        settingsChanged |= (programmableJoystickDown  != Hwform.ProgrammableJoystickDown);
+        settingsChanged |= (programmableJoystickFire  != Hwform.ProgrammableJoystickFire);
+
+        settingsChanged |= (SpecDrum->Checked                      != Hwform.SpecDrumChecked);
+        settingsChanged |= (ProtectROM->Checked                    != Hwform.ProtectROMChecked);
+        settingsChanged |= (NTSC->Checked                          != Hwform.NTSCChecked);
+        settingsChanged |= (EnableLowRAM->Checked                  != Hwform.EnableLowRAMChecked);
+        settingsChanged |= (M1Not->Checked                         != Hwform.M1NotChecked);
+        settingsChanged |= (ImprovedWait->Checked                  != Hwform.ImprovedWaitChecked);
+        settingsChanged |= (TS2050->Checked                        != Hwform.TS2050Checked);
+        settingsChanged |= (Issue2->Checked                        != Hwform.Issue2Checked);
+        settingsChanged |= (KMouse->Checked                        != Hwform.KMouseChecked);
+        settingsChanged |= (Form1->divIDEJumperEClosed->Checked    != Hwform.DivIDEJumperEClosedChecked);
+        settingsChanged |= (Form1->ZXCFUploadJumperOpened->Checked != Hwform.ZXCFUploadJumperOpenedChecked);
+        settingsChanged |= (Multiface->Checked                     != Hwform.MultifaceChecked);
+        settingsChanged |= (ZXPrinter->Checked                     != Hwform.ZXPrinterChecked);
+        settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
+        settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
+
+        settingsChanged |= (Hwform.HD0 != (ATA_GetHDF(0) ? ATA_GetHDF(0) : "NULL"));
+        settingsChanged |= (Hwform.HD1 != (ATA_GetHDF(1) ? ATA_GetHDF(1) : "NULL"));
+
+        for (int i = 0; i < 8; i++)
+        {
+                settingsChanged |= (Hwform.MDV[i] != (IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "NULL"));
+        }
+
+        ResetRequired = settingsChanged;
+
+        // Allow the following to be changed without forcing a reset
+        settingsChanged |= (Spectrum128Keypad->Checked != Hwform.Spectrum128KeypadChecked);
+
+        Apply->Enabled = settingsChanged;
+}
+void __fastcall THW::ProtectROMClick(TObject *Sender)
+{
+        UpdateApplyButton();
+        
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::Issue2Click(TObject *Sender)
+{
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::ZXCFRAMChange(TObject *Sender)
+{
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 

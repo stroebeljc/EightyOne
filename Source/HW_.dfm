@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 194
-  Top = 118
+  Left = 197
+  Top = 278
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1294,7 +1294,7 @@ object HW: THW
     end
   end
   object OK: TButton
-    Left = 259
+    Left = 179
     Top = 363
     Width = 75
     Height = 25
@@ -1304,7 +1304,7 @@ object HW: THW
     OnClick = OKClick
   end
   object Cancel: TButton
-    Left = 339
+    Left = 259
     Top = 363
     Width = 75
     Height = 25
@@ -1540,6 +1540,7 @@ object HW: THW
         Height = 17
         Caption = 'Kempston Mouse'
         TabOrder = 19
+        OnClick = KMouseClick
       end
       object TS2050: TCheckBox
         Left = 304
@@ -1549,7 +1550,7 @@ object HW: THW
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 23
+        TabOrder = 24
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
@@ -1567,7 +1568,7 @@ object HW: THW
         Width = 80
         Height = 20
         Caption = 'Configure'
-        TabOrder = 24
+        TabOrder = 25
         OnClick = TS2050ConfigClick
       end
       object ZXPrinter: TCheckBox
@@ -1585,7 +1586,7 @@ object HW: THW
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 25
+        TabOrder = 26
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
@@ -1633,7 +1634,7 @@ object HW: THW
         Width = 80
         Height = 20
         Caption = 'SD Card'
-        TabOrder = 27
+        TabOrder = 28
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
@@ -1700,7 +1701,7 @@ object HW: THW
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 26
+        TabOrder = 27
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
@@ -1734,7 +1735,7 @@ object HW: THW
         Height = 17
         Caption = 'Cheetah SpecDrum'
         TabOrder = 22
-        OnClick = uSourceClick
+        OnClick = SpecDrumClick
       end
       object JoystickBox: TComboBox
         Left = 85
@@ -1759,6 +1760,7 @@ object HW: THW
         MaxLength = 1
         TabOrder = 6
         Text = '-'
+        OnChange = JoystickLeftBoxChange
         OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
@@ -1775,6 +1777,7 @@ object HW: THW
         MaxLength = 1
         TabOrder = 7
         Text = '-'
+        OnChange = JoystickRightBoxChange
         OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
@@ -1791,6 +1794,7 @@ object HW: THW
         MaxLength = 1
         TabOrder = 8
         Text = '-'
+        OnChange = JoystickUpBoxChange
         OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
@@ -1807,6 +1811,7 @@ object HW: THW
         MaxLength = 1
         TabOrder = 9
         Text = '-'
+        OnChange = JoystickDownBoxChange
         OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
@@ -1823,10 +1828,20 @@ object HW: THW
         MaxLength = 1
         TabOrder = 10
         Text = '-'
+        OnChange = JoystickFireBoxChange
         OnExit = JoystickBoxExit
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
+      end
+      object Spectrum128Keypad: TCheckBox
+        Left = 184
+        Top = 112
+        Width = 129
+        Height = 17
+        Caption = 'Spectrum 128 Keypad'
+        TabOrder = 23
+        OnClick = Spectrum128KeypadClick
       end
     end
     object FloppyDrives: TTabSheet
@@ -1945,6 +1960,7 @@ object HW: THW
         Style = csDropDownList
         ItemHeight = 13
         TabOrder = 5
+        OnChange = ZXCFRAMChange
         Items.Strings = (
           '128K'
           '512K'
@@ -1981,6 +1997,7 @@ object HW: THW
         ParentColor = False
         State = cbChecked
         TabOrder = 2
+        OnClick = ProtectROMClick
       end
       object NTSC: TCheckBox
         Left = 72
@@ -2031,6 +2048,7 @@ object HW: THW
         ParentBiDiMode = False
         ParentColor = False
         TabOrder = 7
+        OnClick = Issue2Click
       end
       object FloatingPointHardwareFix: TCheckBox
         Left = 72
@@ -2094,6 +2112,17 @@ object HW: THW
     Caption = 'Defaults'
     TabOrder = 3
     OnClick = DefaultsButtonClick
+  end
+  object Apply: TButton
+    Left = 340
+    Top = 363
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = 'Apply'
+    Enabled = False
+    TabOrder = 6
+    OnClick = ApplyClick
   end
   object RomSelect: TOpenDialog
     DefaultExt = '.rom'

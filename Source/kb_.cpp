@@ -74,7 +74,7 @@ void __fastcall TKb::OKClick(TObject *Sender)
         if (RadioButton1->Checked) PCKeySetCTRL(0);
         if (RadioButton2->Checked) PCKeySetCTRL('0');
 
-        if (CheckBox1->Checked && (emulator.machine==MACHINESPECTRUM
+        if (UseRightShiftCheckBox->Checked && (emulator.machine==MACHINESPECTRUM
                                     || emulator.machine==MACHINEACE)) emulator.UseRShift=true;
         else emulator.UseRShift=false;
 
@@ -112,7 +112,7 @@ void TKb::LoadSettings(TIniFile *ini)
 
         RadioButton1->Checked = ini->ReadBool("KB","CTRLFunc", RadioButton1->Checked);
         RadioButton2->Checked = ini->ReadBool("KB","CTRL0", RadioButton2->Checked);
-        CheckBox1->Checked = ini->ReadBool("KB","RIGHTSHIFT", CheckBox1->Checked);
+        UseRightShiftCheckBox->Checked = ini->ReadBool("KB","RIGHTSHIFT", UseRightShiftCheckBox->Checked);
         CursorMode->ItemIndex = ini->ReadInteger("KB","CursorMode", CursorMode->ItemIndex);
 
         CursorModeChange(NULL);
@@ -132,7 +132,7 @@ void TKb::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("KB","CTRLFunc", RadioButton1->Checked);
         ini->WriteBool("KB","CTRL0", RadioButton2->Checked);
-        ini->WriteBool("KB","RIGHTSHIFT", CheckBox1->Checked);
+        ini->WriteBool("KB","RIGHTSHIFT", UseRightShiftCheckBox->Checked);
 }
 
 void TKb::UpdateCursors()
@@ -149,21 +149,45 @@ void TKb::UpdateCursors()
 
 void __fastcall TKb::FormShow(TObject *Sender)
 {
-        if (emulator.machine==MACHINESPECTRUM
-                || emulator.machine==MACHINEACE)
+        if (emulator.machine==MACHINESPECTRUM)
         {
-                Label2->Visible=false;
+                CtrlKeyMapsToLabel->Visible=false;
                 RadioButton1->Visible=false;
                 RadioButton2->Visible=false;
-                CheckBox1->Visible=true;
+                if (spectrum.spectrum128Keypad)
+                {
+                        UseRightShiftCheckBox->Checked = false;
+                }
+                UseRightShiftCheckBox->Enabled = !spectrum.spectrum128Keypad;
+        }
+        else if (emulator.machine==MACHINEACE)
+        {
+                CtrlKeyMapsToLabel->Visible=false;
+                RadioButton1->Visible=false;
+                RadioButton2->Visible=false;
+                UseRightShiftCheckBox->Visible=true;
         }
         else
         {
-                Label2->Visible=true;
+                CtrlKeyMapsToLabel->Visible=true;
                 RadioButton1->Visible=true;
                 RadioButton2->Visible=true;
-                CheckBox1->Visible=false;
+                UseRightShiftCheckBox->Visible=false;
         }
 }
 //---------------------------------------------------------------------------
 
+void TKb::AllowRightShiftAsSymbolShift(bool allow)
+{
+        if (!allow && UseRightShiftCheckBox->Checked)
+        {
+                UseRightShiftCheckBox->Checked = false;
+                UseRightShiftCheckBox->Enabled = false;
+                OKClick(NULL);
+        }
+        else if (allow && !UseRightShiftCheckBox->Enabled)
+        {
+                UseRightShiftCheckBox->Enabled = true;
+                OKClick(NULL);
+        }
+}

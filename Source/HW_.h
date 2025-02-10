@@ -81,6 +81,7 @@ struct HWFormValues
         AnsiString MDV[8];
         bool ZXpandChecked;
         bool SpecDrumChecked;
+        bool Spectrum128KeypadChecked;
         bool ProtectROMChecked;
         bool NTSCChecked;
         bool EnableLowRAMChecked;
@@ -202,6 +203,8 @@ __published:	// IDE-managed Components
         TLabel *JoystickFireBoxLabel;
         TEdit *JoystickFireBox;
         TButton *DefaultsButton;
+        TCheckBox *Spectrum128Keypad;
+        TButton *Apply;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -270,6 +273,18 @@ __published:	// IDE-managed Components
           char &Key);
         void __fastcall JoystickBoxKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
+        void __fastcall Spectrum128KeypadClick(TObject *Sender);
+        void __fastcall ApplyClick(TObject *Sender);
+        void __fastcall KMouseClick(TObject *Sender);
+        void __fastcall SpecDrumClick(TObject *Sender);
+        void __fastcall JoystickLeftBoxChange(TObject *Sender);
+        void __fastcall JoystickRightBoxChange(TObject *Sender);
+        void __fastcall JoystickUpBoxChange(TObject *Sender);
+        void __fastcall JoystickDownBoxChange(TObject *Sender);
+        void __fastcall JoystickFireBoxChange(TObject *Sender);
+        void __fastcall ProtectROMClick(TObject *Sender);
+        void __fastcall Issue2Click(TObject *Sender);
+        void __fastcall ZXCFRAMChange(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -312,6 +327,7 @@ private:	// User declarations
         void LoadRomBox();
         bool IdeRom();
         bool Plus3IdeRom();
+        void UpdateApplyButton();
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -347,15 +363,16 @@ private:	// User declarations
         void Configure8K16KRam();
         void ConfigureJoystick();
         bool ConfigureIdeRom();
-
+        void ConfigureKeypad();
+        
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;
         vector<RomCartridgeEntry> tc2068RomCartridges;
         vector<RomCartridgeEntry> sinclairRomCartridges;
 
 public:		// User declarations
-        bool ResetRequired;
         __fastcall THW(TComponent* Owner);
+        bool ResetRequired;
         void UpdateHardwareSettings(bool disableReset);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);

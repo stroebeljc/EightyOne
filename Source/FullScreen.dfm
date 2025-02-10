@@ -94,7 +94,9 @@ object FSSettings: TFSSettings
     Width = 65
     Height = 17
     Caption = 'GDI'
+    Checked = True
     TabOrder = 0
+    TabStop = True
     OnClick = GDIBtnClick
   end
   object DDrawBtn: TRadioButton
@@ -103,9 +105,7 @@ object FSSettings: TFSSettings
     Width = 89
     Height = 17
     Caption = 'DirectDraw'
-    Checked = True
     TabOrder = 1
-    TabStop = True
     OnClick = GDIBtnClick
   end
 end

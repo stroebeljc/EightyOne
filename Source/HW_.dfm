@@ -14,7 +14,6 @@ object HW: THW
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
-  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96

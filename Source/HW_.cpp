@@ -114,6 +114,7 @@ __fastcall THW::THW(TComponent* Owner)
         ZXCFRAM->ItemIndex = FindEntry(ZXCFRAM, "1024K");
         ZX81BtnClick(NULL);
 
+        SaveToInternalSettings(); // save in case there is no INI file
         TIniFile* ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
@@ -261,6 +262,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
         Speed->Recalc(NULL);
         PCKbInit();
         Kb->UpdateCursors();
+        ZX97Dialog->UpdateRequired();
 
         if (ResetRequired && !disableReset)
         {
@@ -286,7 +288,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         ReInitialiseSound();
 
-        SaveToInternalSettings();
+        SaveToInternalSettings(); // save copy to keep user choices
 
         UpdateApplyButton();
 }
@@ -361,14 +363,6 @@ void THW::LoadFromInternalSettings()
         ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
-
-        if (Hwform.HD0 != "NULL") ATA_LoadHDF(0, Hwform.HD0.c_str());
-        if (Hwform.HD1 != "NULL") ATA_LoadHDF(1, Hwform.HD1.c_str());
-
-        for (int i = 0; i < 8; i++)
-        {
-                if (Hwform.MDV[i] != "NULL") IF1->MDVSetFileName(i, Hwform.MDV[i].c_str());
-        }
 
         //---- APPLY THE SETTINGS ----
 
@@ -470,14 +464,6 @@ void THW::SaveToInternalSettings()
         Hwform.ZXCFUploadJumperOpenedChecked   = Form1->ZXCFUploadJumperOpened->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
-
-        Hwform.HD0                             = ATA_GetHDF(0) ? ATA_GetHDF(0) : "NULL";
-        Hwform.HD1                             = ATA_GetHDF(1) ? ATA_GetHDF(1) : "NULL";
-        
-        for (int i = 0; i < 8; i++)
-        {
-                Hwform.MDV[i] = IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "NULL";
-        }
 }
 
 void THW::Configure8K16KRam()
@@ -3452,7 +3438,7 @@ void __fastcall THW::TS2050Click(TObject *Sender)
 
 void __fastcall THW::FormShow(TObject *Sender)
 {
-        LoadFromInternalSettings();
+        LoadFromInternalSettings();  // restore form settings from copy
         ResetRequired = false;
 }
 //---------------------------------------------------------------------------
@@ -3465,8 +3451,6 @@ void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 
 void THW::SaveSettings(TIniFile* ini)
 {
-        SaveToInternalSettings();
-
         AccessIniFile(ini, Write);
 
         WriteNVMemory(divIDEMem, 1,  8192,  "divide.nv");
@@ -3477,10 +3461,8 @@ void THW::SaveSettings(TIniFile* ini)
 
 void THW::LoadSettings(TIniFile* ini)
 {
-        SaveToInternalSettings();    // Set up default internal settings from the default state of the UI controls
-
-        AccessIniFile(ini, Read);    // Read the ini file into the internal settings
-        LoadFromInternalSettings();  // Set the UI controls from the internal settings
+        AccessIniFile(ini, Read);    // Read the ini file into the internal copy
+        LoadFromInternalSettings();  // restore form settings from copy
 
         ReadNVMemory(divIDEMem, 1,  8192,  "divide.nv");
         ReadNVMemory(ZXCFMem,   64, 16384, "zxcf.nv");
@@ -3552,22 +3534,11 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "DriveBType", Hwform.DriveBTypeText);
         AccessIniFileString(ini, accessType, "HARDWARE", "IDEType",    Hwform.IDEBoxText);
         AccessIniFileString(ini, accessType, "HARDWARE", "ZXCFRAM",    Hwform.ZXCFRAMText);
-        AccessIniFileString(ini, accessType, "HARDWARE", "DriveA",     Hwform.DriveA);
-        AccessIniFileString(ini, accessType, "HARDWARE", "DriveB",     Hwform.DriveB);
-        AccessIniFileString(ini, accessType, "HARDWARE", "HD0",        Hwform.HD0);
-        AccessIniFileString(ini, accessType, "HARDWARE", "HD1",        Hwform.HD1);
 
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE3E",    emulator.ROMSIMPLE3E);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLECF",    emulator.ROMSIMPLECF);
-
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "MDVNoDrives", Hwform.MDVNoDrives);
-
-        for (int i = 0; i < 8; i++)
-        {
-                AccessIniFileString(ini, accessType, "HARDWARE", "MDV" + AnsiString(i), Hwform.MDV[i]);
-        }
 
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "divIDEJumperE", Hwform.DivIDEJumperEClosedChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXCFJumper",    Hwform.ZXCFUploadJumperOpenedChecked);
@@ -3581,55 +3552,6 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ImprovedWait",             Hwform.ImprovedWaitChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Issue2EarBehaviour",       Hwform.Issue2Checked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked);
-}
-
-void THW::AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteInteger(section, entryName, entryValue);
-        }
-        else
-        {
-                entryValue = ini->ReadInteger(section, entryName, entryValue);
-        }
-}
-
-void THW::AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteBool(section, entryName, entryValue);
-        }
-        else
-        {
-                entryValue = ini->ReadBool(section, entryName, entryValue);
-        }
-}
-
-void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteString(section, entryName, entryValue);
-        }
-        else
-        {
-                entryValue = ini->ReadString(section, entryName, entryValue);
-        }
-}
-
-void THW::AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue)
-{
-        if (accessType == Write)
-        {
-                ini->WriteString(section, entryName, entryValue);
-        }
-        else
-        {
-                AnsiString value = ini->ReadString(section, entryName, entryValue);
-                strcpy(entryValue, value.c_str());
-        }
 }
 
 void THW::WriteNVMemory(BYTE* memory, int size, int count, char* fileName)
@@ -4127,7 +4049,7 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
-        ZX97Dialog->ShowModal();
+        if (ZX97Dialog->ShowModal()==mrOk) ResetRequired = true;
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -4228,11 +4150,6 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
-{
-        LoadFromInternalSettings();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall THW::CancelClick(TObject *Sender)
 {
@@ -4356,7 +4273,7 @@ void __fastcall THW::JoystickBoxKeyDown(TObject *Sender, WORD &Key,
 {
         TEdit* textBox = (TEdit*)Sender;
         AnsiString keyString = (char)Key;
-        char key = *(keyString.UpperCase().c_str());
+        char key;
 
         if (Key == VK_SHIFT)
         {
@@ -4638,7 +4555,7 @@ void THW::UpdateApplyButton()
                 settingsChanged |= (Hwform.MDV[i] != (IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "NULL"));
         }
 
-        ResetRequired = settingsChanged;
+        ResetRequired = ResetRequired | settingsChanged;
 
         // Allow the following to be changed without forcing a reset
         settingsChanged |= (Spectrum128Keypad->Checked != Hwform.Spectrum128KeypadChecked);

@@ -61,7 +61,7 @@ u765_SetRandomMethodT u765_SetRandomMethod;
 void LoadFDC765DLL(void)
 {
         USEFDC765DLL=1;
-        if ((DLLHandle=LoadLibrary("fdc765")) != 0) { USEFDC765DLL=0; return; }
+        if ((DLLHandle=LoadLibrary("fdc765")) == NULL) { USEFDC765DLL=0; return; }
         if ((u765_Initialise=(u765_InitialiseT)GetProcAddress(DLLHandle,"u765_Initialise")) == 0) USEFDC765DLL=0;
         if ((u765_InsertDisk=(u765_InsertDiskT)GetProcAddress(DLLHandle,"u765_InsertDisk")) == 0) USEFDC765DLL=0;
         if ((u765_EjectDisk=(u765_EjectDiskT)GetProcAddress(DLLHandle,"u765_EjectDisk")) == 0) USEFDC765DLL=0;
@@ -374,6 +374,8 @@ void floppy_ClockTick(int ts)
 
 void floppy_shutdown()
 {
+        floppy_eject(0);
+        floppy_eject(1);
 
         if (USEFDC765DLL) u765_Shutdown();
         if (DLLHandle) FreeLibrary(DLLHandle);

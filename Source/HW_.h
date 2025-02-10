@@ -29,14 +29,9 @@ using namespace std;
 #include <ImgList.hpp>
 #include <Graphics.hpp>
 #include "Joystick.h"
+#include "Utils.h"
 
 //---------------------------------------------------------------------------
-
-enum IniFileAccessType
-{
-        Read,
-        Write
-};
 
 struct RomCartridgeEntry
 {
@@ -74,11 +69,6 @@ struct HWFormValues
         AnsiString DriveATypeText;
         AnsiString DriveBTypeText;
         AnsiString ZXCFRAMText;
-        AnsiString HD0;
-        AnsiString HD1;
-        AnsiString DriveA;
-        AnsiString DriveB;
-        AnsiString MDV[8];
         bool ZXpandChecked;
         bool SpecDrumChecked;
         bool Spectrum128KeypadChecked;
@@ -97,7 +87,6 @@ struct HWFormValues
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
         bool uSourceChecked;
-        int MDVNoDrives;
 };
 
 class THW : public TForm
@@ -262,7 +251,6 @@ __published:	// IDE-managed Components
         void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall ZXpandEmulationInfoClick(TObject *Sender);
         void __fastcall SpeechBoxChange(TObject *Sender);
-        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall JoystickBoxChange(TObject *Sender);
         void __fastcall JoystickBoxMouseUp(TObject *Sender,
@@ -318,10 +306,6 @@ private:	// User declarations
         void UpdateJoystickOptions();
         void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
         void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
-        void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
-        void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue);
-        void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         bool NewKey(TEdit* textBox, char key);
         void LoadRomBox();

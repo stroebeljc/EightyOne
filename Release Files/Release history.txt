@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 10/02/2025 (by Paul Farrow and John Stroebel)
+Version 1.41 - 11/02/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:
   - If a hardware generated ZX81 HSync pulse is output part way through a scanline then it is no
     longer interpreted as starting a new scanline.
@@ -49,6 +49,7 @@ Version 1.41 - 10/02/2025 (by Paul Farrow and John Stroebel)
   - Attempting to load a program via the BASIC Listing loader that did not have a line number
     defined for the first line would result in all automatically generated line numbers being
     out of step.
+  - Z80 instructions OUTI, OTIR, OUTD, and OTDR operational execution sequences were corrected.
 * Changes:
   - Renamed the 'Discard Redundant Spaces' option of the BASIC Listing loader to be 'Discard
     Surplus Spaces'.
@@ -101,6 +102,7 @@ Version 1.41 - 10/02/2025 (by Paul Farrow and John Stroebel)
   - Added support for Microdrive cartridge write protection.
   - Added +3e ROMs for the ZXCF, divIDE 57 (R Gal), divIDE 57 (R'' Gal), Simple IDE 8-Bit,
     Simple IDE 16-Bit and Simple IDE CF interfaces.
+  - Enabled support for writing and formatting floppy disks on Spectrum +3 disk drives.
   - Added support for the Spectrum 128 Keypad.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)

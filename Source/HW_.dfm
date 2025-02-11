@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 412
     Height = 93
-    ActivePage = Sinclair
+    ActivePage = Timex
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
@@ -1838,7 +1838,13 @@ object HW: THW
         Top = 112
         Width = 129
         Height = 17
+        Hint = 
+          'The keypad is operated by holding down the right shift key whils' +
+          't pressing the following keys: 0-9, -, +, /, # for *, [ for (, a' +
+          'nd ] for )'
         Caption = 'Spectrum 128 Keypad'
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 23
         OnClick = Spectrum128KeypadClick
       end

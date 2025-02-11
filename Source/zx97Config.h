@@ -53,10 +53,10 @@ private:	// User declarations
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         ZX97 Zx97form;
 public:		// User declarations
+        __fastcall TZX97Dialog(TComponent* Owner);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void UpdateRequired(void);
-        __fastcall TZX97Dialog(TComponent* Owner);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TZX97Dialog *ZX97Dialog;

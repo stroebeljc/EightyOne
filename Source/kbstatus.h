@@ -23,6 +23,9 @@
 
 #ifndef kbstatusH
 #define kbstatusH
+
+#include <vcl4.h>
+
 //---------------------------------------------------------------------------
 
 struct KeyInfo
@@ -39,5 +42,6 @@ extern void PCKeySetCTRL(char key);
 extern void PCAllKeysUp(void);
 extern void PCKbInit(void);
 extern void DetermineKeyMatrixPosition(int machine, KeyInfo& keyInfo);
+extern AnsiString GetKeypadMultiplyKey();
 
 #endif

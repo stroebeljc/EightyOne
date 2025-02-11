@@ -261,6 +261,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
         AccurateInit(false);
         Speed->Recalc(NULL);
         PCKbInit();
+        Spectrum128Keypad->Hint = StringReplace(Spectrum128Keypad->Hint, "#", GetKeypadMultiplyKey(), TReplaceFlags() << rfReplaceAll);
         Kb->UpdateCursors();
         ZX97Dialog->UpdateRequired();
 
@@ -404,25 +405,7 @@ void THW::LoadFromInternalSettings()
 
 void THW::SaveToInternalSettings()
 {
-        if (ZX80Btn->Down)          Hwform.MachineName = "ZX80";
-        else if (Spec16Btn->Down)   Hwform.MachineName = "Spec16";
-        else if (Spec48Btn->Down)   Hwform.MachineName = "Spec48";
-        else if (SpecPlusBtn->Down) Hwform.MachineName = "SpecPlus";
-        else if (Spec128Btn->Down)  Hwform.MachineName = "Spec128";
-        else if (SpecP2Btn->Down)   Hwform.MachineName = "SpecP2";
-        else if (SpecP2aBtn->Down)  Hwform.MachineName = "SpecP2A";
-        else if (SpecP3Btn->Down)   Hwform.MachineName = "SpecP3";
-        else if (TS1000Btn->Down)   Hwform.MachineName = "TS1000";
-        else if (TS1500Btn->Down)   Hwform.MachineName = "TS1500";
-        else if (TC2048Btn->Down)   Hwform.MachineName = "TC2048";
-        else if (TC2068Btn->Down)   Hwform.MachineName = "TC2068";
-        else if (TS2068Btn->Down)   Hwform.MachineName = "TS2068";
-        else if (LambdaBtn->Down)   Hwform.MachineName = "Lambda";
-        else if (R470Btn->Down)     Hwform.MachineName = "R470";
-        else if (TK85Btn->Down)     Hwform.MachineName = "TK85";
-        else if (ZX97LEBtn->Down)   Hwform.MachineName = "ZX97LE";
-        else if (AceBtn->Down)      Hwform.MachineName = "ACE";
-        else                        Hwform.MachineName = "ZX81";
+        Hwform.MachineName                     = NewMachineName;
 
         Hwform.RamPackBoxText                  = RamPackBox->Text;
         Hwform.SoundCardBoxText                = SoundCardBox->Text;
@@ -1123,8 +1106,6 @@ void THW::ConfigureRomCartridge()
 
                         LoadDock((char *)"");
                 }
-
-                ResetRequired = true;
         }
 }
 
@@ -1979,6 +1960,7 @@ void THW::SetSpectrum128Icon()
         Spec128Btn->InactiveGlyph = spec128Icon;
 }
 //---------------------------------------------------------------------------
+
 void THW::SetupForZX81(void)
 {
         int i;
@@ -2028,8 +2010,6 @@ void THW::SetupForZX81(void)
         FDCBox->Enabled = true;
         DriveAType->Enabled = false;
         DriveBType->Enabled = false;
-
-        ResetRequired = true;
 
         if (RamPackBox->Items->Strings[RamPackBox->Items->Count - 1] == "96K")
                 RamPackBox->Items->Delete(RamPackBox->Items->Count-1);
@@ -2243,8 +2223,6 @@ void THW::SetupForSpectrum(void)
         {
                 Multiface->Caption = "Multiface 128";
         }
-
-        ResetRequired = true;
 
         EnableRomCartridgeOption(true);
 
@@ -3303,14 +3281,12 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         uSource->Checked = false;
         uSource->Enabled = false;
 
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");;
+        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
         SoundCardBox->Enabled = false;
         SoundCardLbl->Enabled = false;
 
         Issue2->Enabled = false;
         Issue2->Checked = false;
-
-        NTSC->Checked = false;
 
         EnableRomCartridgeOption(true);
 
@@ -3445,6 +3421,7 @@ void __fastcall THW::FormShow(TObject *Sender)
 void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 {
         SerialConfig->ShowModal();
+        ResetRequired = true;
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -3623,7 +3600,6 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         RomBox->Text = Path;
         RomBox->SelStart = 0;
-        ResetRequired = true;
 
         SetZX80Icon();
         SetSpectrum128Icon();
@@ -3677,12 +3653,7 @@ void __fastcall THW::M1NotClick(TObject *Sender)
 {
         UpdateApplyButton();
 }
-//---------------------------------------------------------------------------
 
-void __fastcall THW::LambdaColourClick(TObject *Sender)
-{
-        ResetRequired = true;
-}
 //---------------------------------------------------------------------------
 
 void __fastcall THW::SoundCardBoxChange(TObject *Sender)
@@ -3725,6 +3696,7 @@ void __fastcall THW::DriveBTypeChange(TObject *Sender)
 void __fastcall THW::IF1ConfigClick(TObject *Sender)
 {
         IF1->ShowModal();
+        ResetRequired = true;
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -3814,12 +3786,6 @@ void __fastcall THW::FDCBoxChange(TObject *Sender)
         }
         
         UpdateApplyButton();
-}
-//---------------------------------------------------------------------------
-
-void __fastcall THW::uSpeechClick(TObject *Sender)
-{
-        ResetRequired = true;
 }
 //---------------------------------------------------------------------------
 
@@ -3948,8 +3914,6 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
         SinclairRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
         SinclairRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
-
-        ResetRequired = true;
 }
 //---------------------------------------------------------------------------
 
@@ -3971,7 +3935,6 @@ void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
         if (SinclairRomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text;
-                ResetRequired = true;
         }
 }
 //---------------------------------------------------------------------------
@@ -3980,7 +3943,6 @@ void __fastcall THW::TC2068RomCartridgeFileBoxChange(TObject *Sender)
         if (TC2068RomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = TC2068RomCartridgeFileBox->Text;
-                ResetRequired = true;
         }  
 }
 //---------------------------------------------------------------------------
@@ -3989,7 +3951,6 @@ void __fastcall THW::TS2068RomCartridgeFileBoxChange(TObject *Sender)
         if (TC2068RomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = TC2068RomCartridgeFileBox->Text;
-                ResetRequired = true;
         }
 }
 //---------------------------------------------------------------------------
@@ -3998,7 +3959,6 @@ void __fastcall THW::TS1510RomCartridgeFileBoxChange(TObject *Sender)
         if (TS1510RomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = TS1510RomCartridgeFileBox->Text;
-                ResetRequired = true;
         }
 }//---------------------------------------------------------------------------
 
@@ -4049,7 +4009,8 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
-        if (ZX97Dialog->ShowModal()==mrOk) ResetRequired = true;
+        ZX97Dialog->ShowModal();
+        ResetRequired = true;
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -4365,13 +4326,162 @@ void THW::SetCharacter(TEdit* textBox, KeyInfo& keyInfo)
 
 void __fastcall THW::DefaultsButtonClick(TObject *Sender)
 {
-        SoundCardBox->ItemIndex = 0;
-        ChrGenBox->ItemIndex = 0;
-        HiResBox->ItemIndex = 0;
-        ColourBox->ItemIndex = 0;
-        SpeechBox->ItemIndex = 0;
-        JoystickBox->ItemIndex = 0;
+        SoundCardBox->ItemIndex    = 0;
+        ChrGenBox->ItemIndex       = 0;
+        HiResBox->ItemIndex        = 0;
+        ColourBox->ItemIndex       = 0;
+        SpeechBox->ItemIndex       = 0;
+        JoystickBox->ItemIndex     = 0;
         RomCartridgeBox->ItemIndex = 0;
+        FDCBox->ItemIndex          = 0;
+        IDEBox->ItemIndex          = 0;
+        RomBox->ItemIndex          = 0;
+
+        DriveAType->ItemIndex = FindEntry(DriveAType, "3\" Single-Sided (180K)");
+        DriveBType->ItemIndex = FindEntry(DriveBType, "None");
+        ZXCFRAM->ItemIndex    = FindEntry(ZXCFRAM,    "1024K");
+        
+        uSource->Checked                  = false;
+        KMouse->Checked                   = false;
+        Multiface->Checked                = false;
+        ZXPrinter->Checked                = false;
+        SpecDrum->Checked                 = false;
+        TS2050->Checked                   = false;
+        ZXpand->Checked                   = false;
+        Spectrum128Keypad->Checked        = false;
+        EnableLowRAM->Checked             = false;
+        M1Not->Checked                    = false;
+        ImprovedWait->Checked             = false;
+        FloatingPointHardwareFix->Checked = false;
+        Issue2->Checked                   = false;
+        NTSC->Checked                     = false;
+        ProtectROM->Checked               = true;
+
+        programmableJoystickLeft  = "O";
+        programmableJoystickRight = "P";
+        programmableJoystickUp    = "Q";
+        programmableJoystickDown  = "A";
+        programmableJoystickFire  = "M";
+
+        EnableRomCartridgeOption(true);
+
+        switch (NewMachine)
+        {
+        case MACHINEZX80:
+                RomBox->Text = "zx80.rom";
+                break;
+
+        case MACHINEZX81:
+                RomBox->Text = "zx81.edition3.rom";
+                break;
+                
+        case MACHINEACE:
+                RomBox->Text = "jupiterace.rom";
+                EnableRomCartridgeOption(false);
+                break;
+                
+        case MACHINETS1500:
+                RomBox->Text = "ts1500.rom";
+                NTSC->Checked = true;
+                break;
+                
+        case MACHINELAMBDA:
+                RomBox->Text = "lambda8300.rom";
+                NTSC->Checked = true;
+                EnableRomCartridgeOption(false);
+                break;
+                
+        case MACHINEZX97LE:
+                RomBox->Text = "zx97.rom";
+                ChrGenBox->ItemIndex = FindEntry(ChrGenBox, "CHR$128");
+                HiResBox->ItemIndex  = FindEntry(HiResBox,  "WRX");
+                EnableLowRAM->Checked = true;
+                M1Not->Checked = true;
+                break;
+                
+        case MACHINER470:
+                RomBox->Text = "ringo470.rom";
+                NTSC->Checked = true;
+                EnableRomCartridgeOption(false);
+                break;
+                
+        case MACHINETK85:
+                RomBox->Text = "tk85.rom";
+                NTSC->Checked = true;
+                EnableRomCartridgeOption(false);
+                break;
+                
+        case MACHINETS1000:
+                RomBox->Text = "zx81.edition3.rom";
+                NTSC->Checked = true;
+                break;
+
+        case MACHINESPECTRUM:
+                switch (NewSpec)
+                {
+                        case SPECCY16:
+                                RomBox->Text = "spectrum48.rom";
+                                Issue2->Checked = true;
+                                break;
+
+                        case SPECCY48:
+                                RomBox->Text = "spectrum48.rom";
+                                break;
+
+                        case SPECCYPLUS:
+                                RomBox->Text = "spectrum48.rom";
+                                break;
+                                
+                        case SPECCYTC2048:
+                                RomBox->Text = "tc2048.rom";
+                                ChrGenBox->ItemIndex   = FindEntry(ChrGenBox,   "Timex");
+                                HiResBox->ItemIndex    = FindEntry(HiResBox,    "Timex");
+                                ColourBox->ItemIndex   = FindEntry(ColourBox,   "Timex");
+                                JoystickBox->ItemIndex = FindEntry(JoystickBox, "Kempston");
+                                EnableRomCartridgeOption(false);
+                                break;
+                        
+                        case SPECCYTC2068:
+                                RomBox->Text = "ts2068.rom";
+                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
+                                ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,    "Timex");
+                                HiResBox->ItemIndex     = FindEntry(HiResBox,     "Timex");
+                                ColourBox->ItemIndex    = FindEntry(ColourBox,    "Timex");
+                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Timex");
+                                break;
+
+                        case SPECCYTS2068:
+                                RomBox->Text = "ts2068.rom";
+                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
+                                ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,    "Timex");
+                                HiResBox->ItemIndex     = FindEntry(HiResBox,     "Timex");
+                                ColourBox->ItemIndex    = FindEntry(ColourBox,    "Timex");
+                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Timex");
+                                NTSC->Checked = true;
+                                break;
+                                
+                        case SPECCY128:
+                                RomBox->Text = "spectrum128.rom";
+                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                break;
+                                
+                        case SPECCYPLUS2:
+                                RomBox->Text = "spectrum+2.rom";
+                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                break;
+                                
+                        case SPECCYPLUS2A:
+                                RomBox->Text = "spectrum+3.version4-1.rom";
+                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                break;
+                                
+                        case SPECCYPLUS3:
+                                RomBox->Text = "spectrum+3.version4-1.rom";
+                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                break;
+                }
+                break;             
+        }
 
         SoundCardBoxChange(NULL);
         ChrGenBoxChange(NULL);
@@ -4380,31 +4490,8 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         SpeechBoxChange(NULL);
         JoystickBoxChange(NULL);
         RomCartridgeBoxChange(NULL);
-
-        uSource->Checked = false;
-        KMouse->Checked = false;
-        Multiface->Checked = false;
-        ZXPrinter->Checked = false;
-        SpecDrum->Checked = false;
-        TS2050->Checked = false;
-        ZXpand->Checked = false;
-        Spectrum128Keypad->Checked = false;
-
-        FDCBox->ItemIndex = 0;
-        IDEBox->ItemIndex = 0;
-
         FDCBoxChange(NULL);
         IDEBoxChange(NULL);
-
-        ProtectROM->Checked = true;
-        EnableLowRAM->Checked = false;
-        M1Not->Checked = false;
-        ImprovedWait->Checked = false;
-        FloatingPointHardwareFix->Checked = false;
-        Issue2->Checked = false;
-        NTSC->Checked = false;
-
-        RomBox->ItemIndex = 0;
         RomBoxChange(NULL);
 
         if (RamPackBox->Visible)
@@ -4480,56 +4567,34 @@ void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
 
 void THW::UpdateApplyButton()
 {
-        AnsiString machineName;  //#### save this on each click
+        bool settingsChanged = (NewMachineName != Hwform.MachineName);
 
-        if (ZX80Btn->Down)          machineName = "ZX80";
-        else if (Spec16Btn->Down)   machineName = "Spec16";
-        else if (Spec48Btn->Down)   machineName = "Spec48";
-        else if (SpecPlusBtn->Down) machineName = "SpecPlus";
-        else if (Spec128Btn->Down)  machineName = "Spec128";
-        else if (SpecP2Btn->Down)   machineName = "SpecP2";
-        else if (SpecP2aBtn->Down)  machineName = "SpecP2A";
-        else if (SpecP3Btn->Down)   machineName = "SpecP3";
-        else if (TS1000Btn->Down)   machineName = "TS1000";
-        else if (TS1500Btn->Down)   machineName = "TS1500";
-        else if (TC2048Btn->Down)   machineName = "TC2048";
-        else if (TC2068Btn->Down)   machineName = "TC2068";
-        else if (TS2068Btn->Down)   machineName = "TS2068";
-        else if (LambdaBtn->Down)   machineName = "Lambda";
-        else if (R470Btn->Down)     machineName = "R470";
-        else if (TK85Btn->Down)     machineName = "TK85";
-        else if (ZX97LEBtn->Down)   machineName = "ZX97LE";
-        else if (AceBtn->Down)      machineName = "ACE";
-        else                        machineName = "ZX81";
+        settingsChanged |= (RamPackBox->Text                       != Hwform.RamPackBoxText);
+        settingsChanged |= (SoundCardBox->Text                     != Hwform.SoundCardBoxText);
+        settingsChanged |= (ChrGenBox->Text                        != Hwform.ChrGenBoxText);
+        settingsChanged |= (HiResBox->Text                         != Hwform.HiResBoxText);
+        settingsChanged |= (ColourBox->Text                        != Hwform.ColourBoxText);
+        settingsChanged |= (SpeechBox->Text                        != Hwform.SpeechBoxText);
+        settingsChanged |= (RomCartridgeBox->Text                  != Hwform.RomCartridgeBoxText);
+        settingsChanged |= (ZXC1ConfigurationBox->Text             != Hwform.ZXC1ConfigurationBoxText);
+        settingsChanged |= (JoystickBox->Text                      != Hwform.JoystickBoxText);
+        settingsChanged |= (DriveAType->Text                       != Hwform.DriveATypeText);
+        settingsChanged |= (DriveBType->Text                       != Hwform.DriveBTypeText);
+        settingsChanged |= (ZXCFRAM->Text                          != Hwform.ZXCFRAMText);
+        settingsChanged |= (IDEBox->Text                           != Hwform.IDEBoxText);
+        settingsChanged |= (FDCBox->Text                           != Hwform.FDCBoxText);
 
-        bool settingsChanged = (machineName != Hwform.MachineName);
+        settingsChanged |= (RomCartridgeFileBox->Text              != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (TS1510RomCartridgeFileBox->Text        != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (TC2068RomCartridgeFileBox->Text        != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (TS2068RomCartridgeFileBox->Text        != Hwform.RomCartridgeFileBoxText);
 
-        settingsChanged |= (RamPackBox->Text           != Hwform.RamPackBoxText);
-        settingsChanged |= (SoundCardBox->Text         != Hwform.SoundCardBoxText);
-        settingsChanged |= (ChrGenBox->Text            != Hwform.ChrGenBoxText);
-        settingsChanged |= (HiResBox->Text             != Hwform.HiResBoxText);
-        settingsChanged |= (ColourBox->Text            != Hwform.ColourBoxText);
-        settingsChanged |= (SpeechBox->Text            != Hwform.SpeechBoxText);
-        settingsChanged |= (RomCartridgeBox->Text      != Hwform.RomCartridgeBoxText);
-        settingsChanged |= (ZXC1ConfigurationBox->Text != Hwform.ZXC1ConfigurationBoxText);
-        settingsChanged |= (JoystickBox->Text          != Hwform.JoystickBoxText);
-        settingsChanged |= (DriveAType->Text           != Hwform.DriveATypeText);
-        settingsChanged |= (DriveBType->Text           != Hwform.DriveBTypeText);
-        settingsChanged |= (ZXCFRAM->Text              != Hwform.ZXCFRAMText);
-        settingsChanged |= (IDEBox->Text               != Hwform.IDEBoxText);
-        settingsChanged |= (FDCBox->Text               != Hwform.FDCBoxText);
-
-        settingsChanged |= (RomCartridgeFileBox->Text         != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (SinclairRomCartridgeFileBox->Text != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (TS1510RomCartridgeFileBox->Text   != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (TC2068RomCartridgeFileBox->Text   != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (TS2068RomCartridgeFileBox->Text   != Hwform.RomCartridgeFileBoxText);
-
-        settingsChanged |= (programmableJoystickLeft  != Hwform.ProgrammableJoystickLeft);
-        settingsChanged |= (programmableJoystickRight != Hwform.ProgrammableJoystickRight);
-        settingsChanged |= (programmableJoystickUp    != Hwform.ProgrammableJoystickUp);
-        settingsChanged |= (programmableJoystickDown  != Hwform.ProgrammableJoystickDown);
-        settingsChanged |= (programmableJoystickFire  != Hwform.ProgrammableJoystickFire);
+        settingsChanged |= (programmableJoystickLeft               != Hwform.ProgrammableJoystickLeft);
+        settingsChanged |= (programmableJoystickRight              != Hwform.ProgrammableJoystickRight);
+        settingsChanged |= (programmableJoystickUp                 != Hwform.ProgrammableJoystickUp);
+        settingsChanged |= (programmableJoystickDown               != Hwform.ProgrammableJoystickDown);
+        settingsChanged |= (programmableJoystickFire               != Hwform.ProgrammableJoystickFire);
 
         settingsChanged |= (SpecDrum->Checked                      != Hwform.SpecDrumChecked);
         settingsChanged |= (ProtectROM->Checked                    != Hwform.ProtectROMChecked);
@@ -4547,14 +4612,6 @@ void THW::UpdateApplyButton()
         settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
         settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
 
-        settingsChanged |= (Hwform.HD0 != (ATA_GetHDF(0) ? ATA_GetHDF(0) : "NULL"));
-        settingsChanged |= (Hwform.HD1 != (ATA_GetHDF(1) ? ATA_GetHDF(1) : "NULL"));
-
-        for (int i = 0; i < 8; i++)
-        {
-                settingsChanged |= (Hwform.MDV[i] != (IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "NULL"));
-        }
-
         ResetRequired = ResetRequired | settingsChanged;
 
         // Allow the following to be changed without forcing a reset
@@ -4562,6 +4619,8 @@ void THW::UpdateApplyButton()
 
         Apply->Enabled = settingsChanged;
 }
+//---------------------------------------------------------------------------
+
 void __fastcall THW::ProtectROMClick(TObject *Sender)
 {
         UpdateApplyButton();

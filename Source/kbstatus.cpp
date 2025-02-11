@@ -47,6 +47,7 @@
 
 int PCShift=1;
 unsigned int PCALT=0;
+AnsiString keypadMultiplyKey = "#";
 
 struct kb
 {
@@ -741,6 +742,8 @@ void AdjustLocalKeyboard()
                                 dest=PCFindKey(VK_OEM_3,true);
                                 KeyMap[dest].Addr1 = tempAddr1;
                                 KeyMap[dest].Data1 = tempData1;
+
+                                keypadMultiplyKey = "\\";
                         }
                         break;
 
@@ -748,6 +751,11 @@ void AdjustLocalKeyboard()
                         break;
                 }
         }
+}
+
+AnsiString GetKeypadMultiplyKey()
+{
+         return keypadMultiplyKey;
 }
 
 void DetermineKeyMatrixPosition(int machine, KeyInfo& keyInfo)

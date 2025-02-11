@@ -221,7 +221,6 @@ __published:	// IDE-managed Components
         void __fastcall NTSCClick(TObject *Sender);
         void __fastcall EnableLowRAMClick(TObject *Sender);
         void __fastcall M1NotClick(TObject *Sender);
-        void __fastcall LambdaColourClick(TObject *Sender);
         void __fastcall SoundCardBoxChange(TObject *Sender);
         void __fastcall ChrGenBoxChange(TObject *Sender);
         void __fastcall HiResBoxChange(TObject *Sender);
@@ -231,7 +230,6 @@ __published:	// IDE-managed Components
         void __fastcall MultifaceClick(TObject *Sender);
         void __fastcall IDEBoxChange(TObject *Sender);
         void __fastcall FDCBoxChange(TObject *Sender);
-        void __fastcall uSpeechClick(TObject *Sender);
         void __fastcall ZXpandClick(TObject *Sender);
         void __fastcall BrowseRomCartridgeClick(TObject *Sender);
         void __fastcall RomCartridgeBoxChange(TObject *Sender);

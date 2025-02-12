@@ -72,7 +72,6 @@ struct HWFormValues
         AnsiString ZXCFRAMText;
         bool ZXpandChecked;
         bool SpecDrumChecked;
-        bool Spectrum128KeypadChecked;
         bool ProtectROMChecked;
         bool NTSCChecked;
         bool EnableLowRAMChecked;
@@ -193,7 +192,6 @@ __published:	// IDE-managed Components
         TLabel *JoystickFireBoxLabel;
         TEdit *JoystickFireBox;
         TButton *DefaultsButton;
-        TCheckBox *Spectrum128Keypad;
         TButton *Apply;
         TButton *RestoreButton;
         void __fastcall OKClick(TObject *Sender);
@@ -261,7 +259,6 @@ __published:	// IDE-managed Components
           char &Key);
         void __fastcall JoystickBoxKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
-        void __fastcall Spectrum128KeypadClick(TObject *Sender);
         void __fastcall ApplyClick(TObject *Sender);
         void __fastcall KMouseClick(TObject *Sender);
         void __fastcall SpecDrumClick(TObject *Sender);
@@ -304,7 +301,6 @@ private:	// User declarations
         bool ValidCharacter(TEdit* textBox, char newKey);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
         int FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue = 0);
-        void UpdateJoystickOptions();
         void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
         void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
@@ -338,7 +334,7 @@ private:	// User declarations
         void ConfigureHiRes();
         void ConfigureSound();
         void ConfigureSpeech();
-        void ConfigureSpectrumIDE();
+        void ConfigureIDE();
         void ConfigureFDC();
         void ConfigureMachineSettings();
         AnsiString DetermineRomBase();

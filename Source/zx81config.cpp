@@ -93,7 +93,7 @@ void load_config(void)
         emulator.frameskip=0;
         machine.aytype=0;
         machine.speech=0;
-        machine.joystick=0;
+        machine.joystickInterfaceType=0;
         zx81.vsyncsound=0;
         emulator.beepersound=0;
         machine.ts2050=0;

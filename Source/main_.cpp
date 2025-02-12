@@ -1162,6 +1162,12 @@ void TForm1::LoadSettings(TIniFile *ini)
 
         SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+        ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
+        ConnectJoystick1->Checked = ini->ReadBool("MAIN", "ConnectJoystick1", ConnectJoystick1->Checked);
+        ConnectJoystick2->Checked = ini->ReadBool("MAIN", "ConnectJoystick2", ConnectJoystick2->Checked);
+        EnableJoystick1AutoFire->Checked = ini->ReadBool("MAIN", "EnableJoystick1AutoFire", EnableJoystick1AutoFire->Checked);
+        EnableJoystick2AutoFire->Checked = ini->ReadBool("MAIN", "EnableJoystick2AutoFire", EnableJoystick2AutoFire->Checked);
+        ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
 
         HorizontalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
         VerticalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
@@ -1187,9 +1193,17 @@ void TForm1::LoadSettings(TIniFile *ini)
         if (Large1->Checked) { emulator.bordersize=BORDERLARGE; Large1Click(NULL); }
         if (FullImage1->Checked) { emulator.bordersize=BORDERFULL; FullImage1Click(NULL); }
 
-        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked ? 1:0);
-        emulator.TZXin = (CFGBYTE)(InTZXManager->Checked ? 1:0);
-        emulator.TZXout = (CFGBYTE)(OutTZXManager->Checked ? 1:0);
+        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked ? 1 : 0);
+        emulator.TZXin = (CFGBYTE)(InTZXManager->Checked ? 1 : 0);
+        emulator.TZXout = (CFGBYTE)(OutTZXManager->Checked ? 1 : 0);
+
+        machine.joystick1Connected       = (CFGBYTE)(ConnectJoystick1->Checked ? 1 : 0);
+        machine.joystick2Connected       = (CFGBYTE)(ConnectJoystick2->Checked ? 1 : 0);
+        machine.joystick1AutoFireEnabled = (CFGBYTE)(EnableJoystick1AutoFire->Checked ? 1 : 0);
+        machine.joystick2AutoFireEnabled = (CFGBYTE)(EnableJoystick2AutoFire->Checked ? 1 : 0);
+        spectrum.spectrum128Keypad       = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
+        spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked ? 1 : 0);
+        zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked ? 1 : 0);
 
         AccurateInit(true);
 
@@ -1227,8 +1241,6 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN","N4001",N4001->Checked);
         ini->WriteBool("MAIN","UserDefined",UserDefined1->Checked);
 
-        //ini->WriteBool("MAIN","Fast1",Fast1->Checked);
-        //ini->WriteBool("MAIN","Accurate1",Accurate1->Checked);
         ini->WriteBool("MAIN","InverseVideo",InverseVideo->Checked);
         ini->WriteBool("MAIN","DisplayArt",DisplayArt->Checked);
         ini->WriteBool("MAIN","StatusBar",StatusBar2->Checked);
@@ -1258,11 +1270,16 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "SoundOutput", SoundOutput1->Checked);
         ini->WriteBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
-        ini->WriteString("MAIN","LoadFile",OpenTape1->FileName);
-        ini->WriteInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
+        ini->WriteString("MAIN", "LoadFile",OpenTape1->FileName);
+        ini->WriteInteger("MAIN", "LoadFileFilter", OpenTape1->FilterIndex);
 
         ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
         ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+        ini->WriteBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
+        ini->WriteBool("MAIN", "ConnectJoystick1", ConnectJoystick1->Checked);
+        ini->WriteBool("MAIN", "ConnectJoystick2", ConnectJoystick2->Checked);
+        ini->WriteBool("MAIN", "EnableJoystick1AutoFire", EnableJoystick1AutoFire->Checked);
+        ini->WriteBool("MAIN", "EnableJoystick2AutoFire", EnableJoystick2AutoFire->Checked);
 
         ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
         ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
@@ -2792,8 +2809,7 @@ void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
            
 void __fastcall TForm1::EnableJoystick1AutoFireClick(TObject *Sender)
 {
-        EnableJoystick1AutoFire->Checked = !EnableJoystick1AutoFire->Checked;
-
+        EnableJoystick1AutoFire->Checked = !EnableJoystick1AutoFire->Checked; 
         machine.joystick1AutoFireEnabled = EnableJoystick1AutoFire->Checked;
 }
 //---------------------------------------------------------------------------
@@ -2801,7 +2817,6 @@ void __fastcall TForm1::EnableJoystick1AutoFireClick(TObject *Sender)
 void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
 {
         EnableJoystick2AutoFire->Checked = !EnableJoystick2AutoFire->Checked;
-
         machine.joystick2AutoFireEnabled = EnableJoystick2AutoFire->Checked;
 }
 //---------------------------------------------------------------------------
@@ -2810,6 +2825,27 @@ void __fastcall TForm1::ZXCFUploadJumperOpenedClick(TObject *Sender)
 {
         ZXCFUploadJumperOpened->Checked = !ZXCFUploadJumperOpened->Checked;
         spectrum.UploadJumperZXCF = ZXCFUploadJumperOpened->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectSpectrum128KeypadClick(TObject *Sender)
+{
+        ConnectSpectrum128Keypad->Checked = !ConnectSpectrum128Keypad->Checked;
+        spectrum.spectrum128Keypad = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectJoystick1Click(TObject *Sender)
+{
+        ConnectJoystick1->Checked = !ConnectJoystick1->Checked;
+        machine.joystick1Connected = ConnectJoystick1->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
+{
+        ConnectJoystick2->Checked = !ConnectJoystick2->Checked;
+        machine.joystick2Connected = ConnectJoystick2->Checked;
 }
 //---------------------------------------------------------------------------
 

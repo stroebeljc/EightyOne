@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 129
-  Top = 123
+  Left = 276
+  Top = 120
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1549,7 +1549,7 @@ object HW: THW
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 24
+        TabOrder = 23
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
@@ -1567,7 +1567,7 @@ object HW: THW
         Width = 80
         Height = 20
         Caption = 'Configure'
-        TabOrder = 25
+        TabOrder = 24
         OnClick = TS2050ConfigClick
       end
       object ZXPrinter: TCheckBox
@@ -1585,7 +1585,7 @@ object HW: THW
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 26
+        TabOrder = 25
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
@@ -1633,7 +1633,7 @@ object HW: THW
         Width = 80
         Height = 20
         Caption = 'SD Card'
-        TabOrder = 28
+        TabOrder = 27
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
@@ -1700,7 +1700,7 @@ object HW: THW
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 27
+        TabOrder = 26
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
@@ -1832,21 +1832,6 @@ object HW: THW
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
-      end
-      object Spectrum128Keypad: TCheckBox
-        Left = 184
-        Top = 112
-        Width = 129
-        Height = 17
-        Hint = 
-          'The keypad is operated by holding down the right Control key whi' +
-          'lst pressing the following keys: 1 2 3 4 5 6 7 8 9 0 . / - = [ ]' +
-          ' # {RETURN}'
-        Caption = 'Spectrum 128 Keypad'
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 23
-        OnClick = Spectrum128KeypadClick
       end
     end
     object FloppyDrives: TTabSheet
@@ -2102,7 +2087,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

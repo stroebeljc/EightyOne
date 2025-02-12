@@ -9,12 +9,11 @@
 #define JOYSTICK_KEMPSTON       1
 #define JOYSTICK_FULLER         2
 #define JOYSTICK_CURSOR         3
-#define JOYSTICK_SINCLAIR1      4
-#define JOYSTICK_SINCLAIR2      5
-#define JOYSTICK_ZXPAND         6
-#define JOYSTICK_PROGRAMMABLE   7
-#define JOYSTICK_BOLDFIELD      8
-#define JOYSTICK_TIMEX          9
+#define JOYSTICK_INTERFACE2     4
+#define JOYSTICK_ZXPAND         5
+#define JOYSTICK_PROGRAMMABLE   6
+#define JOYSTICK_BOLDFIELD      7
+#define JOYSTICK_TIMEX          8
 
 extern KeyInfo JoystickLeft;
 extern KeyInfo JoystickRight;

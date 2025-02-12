@@ -195,6 +195,7 @@ __published:	// IDE-managed Components
         TButton *DefaultsButton;
         TCheckBox *Spectrum128Keypad;
         TButton *Apply;
+        TButton *RestoreButton;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -272,6 +273,7 @@ __published:	// IDE-managed Components
         void __fastcall ProtectROMClick(TObject *Sender);
         void __fastcall Issue2Click(TObject *Sender);
         void __fastcall ZXCFRAMChange(TObject *Sender);
+        void __fastcall RestoreButtonClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

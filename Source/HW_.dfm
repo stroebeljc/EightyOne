@@ -1299,7 +1299,7 @@ object HW: THW
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
-    TabOrder = 4
+    TabOrder = 5
     OnClick = OKClick
   end
   object Cancel: TButton
@@ -1309,7 +1309,7 @@ object HW: THW
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
-    TabOrder = 5
+    TabOrder = 6
     OnClick = CancelClick
   end
   object RamPackBox: TComboBox
@@ -2119,15 +2119,25 @@ object HW: THW
     OnClick = DefaultsButtonClick
   end
   object Apply: TButton
-    Left = 340
+    Left = 339
     Top = 363
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Apply'
     Enabled = False
-    TabOrder = 6
+    TabOrder = 7
     OnClick = ApplyClick
+  end
+  object RestoreButton: TButton
+    Left = 84
+    Top = 363
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = 'Restore'
+    TabOrder = 4
+    OnClick = RestoreButtonClick
   end
   object RomSelect: TOpenDialog
     DefaultExt = '.rom'

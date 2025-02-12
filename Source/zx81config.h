@@ -226,8 +226,8 @@ typedef struct
         int protectb0;
         int protectb115;
         int saveram;
-        unsigned char bankmem[16*16384];
 } ZX97;
+extern unsigned char zx97bankmem[16*16384];
 
 typedef struct
 {

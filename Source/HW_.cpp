@@ -266,7 +266,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
         PCKbInit();
         Form1->ConnectSpectrum128Keypad->Hint = StringReplace(Form1->ConnectSpectrum128Keypad->Hint, "#", GetKeypadMultiplyKey(), TReplaceFlags() << rfReplaceAll);
         Kb->UpdateCursors();
-        ZX97Dialog->UpdateRequired();
 
         if (ResetRequired && !disableReset)
         {
@@ -293,6 +292,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ReInitialiseSound();
 
         SaveToInternalSettings(); // save copy to keep user choices
+        ZX97Dialog->UpdateMachine(Hwform.ZX97Form);
 
         UpdateApplyButton();
 }
@@ -366,6 +366,7 @@ void THW::LoadFromInternalSettings()
         ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
+        ZX97Dialog->UpdateFormSettings(Hwform.ZX97Form);
 
         //---- APPLY THE SETTINGS ----
 
@@ -449,6 +450,7 @@ void THW::SaveToInternalSettings()
         Hwform.ZXCFUploadJumperOpenedChecked   = Form1->ZXCFUploadJumperOpened->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
+        ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
 }
 
 void THW::Configure8K16KRam()
@@ -3389,6 +3391,7 @@ void __fastcall THW::FormShow(TObject *Sender)
 {
         LoadFromInternalSettings();  // restore form settings from copy
         ResetRequired = false;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 void __fastcall THW::TS2050ConfigClick(TObject *Sender)
@@ -3501,6 +3504,16 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ImprovedWait",             Hwform.ImprovedWaitChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Issue2EarBehaviour",       Hwform.Issue2Checked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "FloatingPointHardwareFix", Hwform.FloatingPointHardwareFixChecked);
+
+        //---- ZX97 DIALOG BOX ----
+
+        AccessIniFileInteger(ini, accessType, "ZX97", "SaveRAM",    Hwform.ZX97Form.saveram);
+        AccessIniFileInteger(ini, accessType, "ZX97", "08k",        Hwform.ZX97Form.protect08);
+        AccessIniFileInteger(ini, accessType, "ZX97", "abk",        Hwform.ZX97Form.protectab);
+        AccessIniFileInteger(ini, accessType, "ZX97", "b0",         Hwform.ZX97Form.protectb0);
+        AccessIniFileInteger(ini, accessType, "ZX97", "b115",       Hwform.ZX97Form.protectb115);
+        AccessIniFileInteger(ini, accessType, "ZX97", "SwapRAMROM", Hwform.ZX97Form.bankswitch);
+
 }
 
 void THW::WriteNVMemory(BYTE* memory, int size, int count, char* fileName)
@@ -3982,9 +3995,11 @@ void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 
 void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
-        ZX97Dialog->ShowModal();
+        if (ZX97Dialog->ShowModal()==mrOk)
+        {
         ResetRequired = true;
         UpdateApplyButton();
+}
 }
 //---------------------------------------------------------------------------
 
@@ -4571,9 +4586,12 @@ void THW::UpdateApplyButton()
         settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
         settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
 
-        ResetRequired = ResetRequired | settingsChanged;
+        ResetRequired |= settingsChanged;
 
-        Apply->Enabled = settingsChanged;
+        // Allow the following to be changed without forcing a reset
+        settingsChanged |= (Spectrum128Keypad->Checked != Hwform.Spectrum128KeypadChecked);
+
+        Apply->Enabled = settingsChanged | ResetRequired;
 }
 //---------------------------------------------------------------------------
 

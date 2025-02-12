@@ -306,7 +306,7 @@ void zx81_initialise()
         if (emulator.machine==MACHINEZX97LE)
         {
                 for(i=0;i<8191;i++) memory[i+0xa000]=memory[i+0x2000];
-                for(i=0;i<16384;i++) zx97.bankmem[i]=memory[i+0x4000];
+                for(i=0;i<16384;i++) zx97bankmem[i]=memory[i+0x4000];
                 zx81.ROMTOP=8191;
         }
 
@@ -533,7 +533,7 @@ void zx81_WriteByte(int Address, int Data)
                         if (zx97.protectb0 && ((d8255_read(D8255PRTB)&15)==0)) return;
                         if (zx97.protectb115 && ((d8255_read(D8255PRTB)&15)>0)) return;
 
-                        zx97.bankmem[(Address&16383) +  16384*(d8255_read(D8255PRTB)&15)]=(unsigned char)Data;
+                        zx97bankmem[(Address&16383) +  16384*(d8255_read(D8255PRTB)&15)]=(unsigned char)Data;
                         return;
                 }
 
@@ -706,7 +706,7 @@ BYTE zx81_ReadByte(int Address)
 
                 if (Address>=49152)
                 {
-                        data=(BYTE)(zx97.bankmem[(Address&16383) + (d8255_read(D8255PRTB)&15)*16384]);
+                        data=(BYTE)(zx97bankmem[(Address&16383) + (d8255_read(D8255PRTB)&15)*16384]);
                         noise = (noise<<8) | data;
                         return data;
                 }

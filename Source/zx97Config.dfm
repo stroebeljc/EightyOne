@@ -14,7 +14,6 @@ object ZX97Dialog: TZX97Dialog
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -81,6 +80,7 @@ object ZX97Dialog: TZX97Dialog
     Caption = 'OK'
     ModalResult = 1
     TabOrder = 6
+    OnClick = OKClick
   end
   object SwapRAMROM: TCheckBox
     Left = 216

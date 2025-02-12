@@ -87,6 +87,7 @@ struct HWFormValues
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
         bool uSourceChecked;
+        ZX97 ZX97Form;
 };
 
 class THW : public TForm

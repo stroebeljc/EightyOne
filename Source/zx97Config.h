@@ -45,8 +45,8 @@ __published:	// IDE-managed Components
         TButton *OK;
         TCheckBox *SwapRAMROM;
         TButton *Cancel;
-        void __fastcall FormShow(TObject *Sender);
-        void __fastcall CancelClick(TObject *Sender);
+    void __fastcall OKClick(TObject *Sender);
+    void __fastcall CancelClick(TObject *Sender);
 private:	// User declarations
         void SaveToInternalSettings();
         void LoadFromInternalSettings();
@@ -56,7 +56,9 @@ public:		// User declarations
         __fastcall TZX97Dialog(TComponent* Owner);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
-        void UpdateRequired(void);
+        void UpdateMachine(ZX97& settings);
+        void RetrieveFormSettings(ZX97& settings);
+        void UpdateFormSettings(ZX97& settings);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TZX97Dialog *ZX97Dialog;

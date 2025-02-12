@@ -307,7 +307,7 @@ void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
                 return;
         }
 
-        if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
+        if ((Key==VK_SHIFT) && emulator.UseRShift) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyDown(Key);
@@ -317,7 +317,7 @@ void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
 void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
+        if ((Key==VK_SHIFT) && emulator.UseRShift) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyUp(Key);
@@ -925,7 +925,9 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
 {
         extern void RecalcWinSize(void);
         if (Key == ' ') rzx_close();
-        if (Key == VK_ESCAPE)
+
+        // CTRL + [ acts generates the same key code as ESC so on respond if it really was ESC
+        if (Key == VK_ESCAPE && ((GetAsyncKeyState(VK_RCONTROL) & 0x8000) == 0x0000))
         {
                 FullScreen = !FullScreen;
 

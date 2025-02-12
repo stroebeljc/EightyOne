@@ -1298,7 +1298,6 @@ void THW::ConfigureKeypad()
         if (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128)
         {
                 spectrum.spectrum128Keypad = (CFGBYTE)(Spectrum128Keypad->Checked ? 1 : 0);
-                Kb->AllowRightShiftAsSymbolShift(!Spectrum128Keypad->Checked);
         }
 }
 
@@ -4519,11 +4518,6 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
 
 void __fastcall THW::Spectrum128KeypadClick(TObject *Sender)
 {
-        if (Spectrum128Keypad->Checked && emulator.UseRShift)
-        {
-                Application->MessageBox("The Right Shift key is used to operate the Spectrum 128 Keypad. It is currerntly mapped as the Symbol Shift key and so the mapping will be changed to use the Control key for the Symbol Shift key.", "Spectrum 128 Keypad Configuration", MB_OK | MB_ICONINFORMATION);
-        }
-
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------

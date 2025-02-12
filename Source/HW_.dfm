@@ -1839,9 +1839,9 @@ object HW: THW
         Width = 129
         Height = 17
         Hint = 
-          'The keypad is operated by holding down the right shift key whils' +
-          't pressing the following keys: 0-9, -, +, /, # for *, [ for (, a' +
-          'nd ] for )'
+          'The keypad is operated by holding down the right Control key whi' +
+          'lst pressing the following keys: 1 2 3 4 5 6 7 8 9 0 . / - = [ ]' +
+          ' # {RETURN}'
         Caption = 'Spectrum 128 Keypad'
         ParentShowHint = False
         ShowHint = True

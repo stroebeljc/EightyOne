@@ -229,7 +229,7 @@ int CKeypad::FetchRowKeys()
 {
         int keyData;
 
-        if ((GetAsyncKeyState(VK_RSHIFT) & 0x8000) == 0x8000)
+        if ((GetAsyncKeyState(VK_RCONTROL) & 0x8000) == 0x8000)
         {
                 keyData = FetchRowKeys_Keyboard();
         }

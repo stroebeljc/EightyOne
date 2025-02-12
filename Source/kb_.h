@@ -53,7 +53,6 @@ public:		// User declarations
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void UpdateCursors();
-        void AllowRightShiftAsSymbolShift(bool allow);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TKb *Kb;

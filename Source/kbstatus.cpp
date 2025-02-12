@@ -649,7 +649,7 @@ void PCKeySetCursor(char left, char down, char up, char right, int shift)
 
 void PCKeyDown(WORD key)
 {
-        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RSHIFT) & 0x8000))
+        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RCONTROL) & 0x8000))
         {
                 return;
         }

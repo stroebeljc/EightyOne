@@ -149,18 +149,7 @@ void TKb::UpdateCursors()
 
 void __fastcall TKb::FormShow(TObject *Sender)
 {
-        if (emulator.machine==MACHINESPECTRUM)
-        {
-                CtrlKeyMapsToLabel->Visible=false;
-                RadioButton1->Visible=false;
-                RadioButton2->Visible=false;
-                if (spectrum.spectrum128Keypad)
-                {
-                        UseRightShiftCheckBox->Checked = false;
-                }
-                UseRightShiftCheckBox->Enabled = !spectrum.spectrum128Keypad;
-        }
-        else if (emulator.machine==MACHINEACE)
+        if (emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE)
         {
                 CtrlKeyMapsToLabel->Visible=false;
                 RadioButton1->Visible=false;
@@ -175,19 +164,4 @@ void __fastcall TKb::FormShow(TObject *Sender)
                 UseRightShiftCheckBox->Visible=false;
         }
 }
-//---------------------------------------------------------------------------
 
-void TKb::AllowRightShiftAsSymbolShift(bool allow)
-{
-        if (!allow && UseRightShiftCheckBox->Checked)
-        {
-                UseRightShiftCheckBox->Checked = false;
-                UseRightShiftCheckBox->Enabled = false;
-                OKClick(NULL);
-        }
-        else if (allow && !UseRightShiftCheckBox->Enabled)
-        {
-                UseRightShiftCheckBox->Enabled = true;
-                OKClick(NULL);
-        }
-}

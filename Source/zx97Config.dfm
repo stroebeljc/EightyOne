@@ -1,6 +1,6 @@
 object ZX97Dialog: TZX97Dialog
-  Left = 327
-  Top = 211
+  Left = 131
+  Top = 101
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'ZX97 Configuration'

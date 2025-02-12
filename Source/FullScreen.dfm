@@ -1,6 +1,6 @@
 object FSSettings: TFSSettings
-  Left = 484
-  Top = 165
+  Left = 189
+  Top = 81
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Display Settings'

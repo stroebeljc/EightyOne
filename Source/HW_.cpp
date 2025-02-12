@@ -40,6 +40,9 @@
 #include "zx97config.h"
 #include "SoundForm.h"
 
+#include <set>
+extern std::set<int> dirtyBird;
+
 extern "C" BYTE ZX1541Mem[];
 
 extern void HWSetMachine(int machine, int speccy);
@@ -55,6 +58,8 @@ static AnsiString programmableJoystickRight;
 static AnsiString programmableJoystickUp;
 static AnsiString programmableJoystickDown;
 static AnsiString programmableJoystickFire;
+
+extern char* zxpandSDCardFolderRoot;
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -170,8 +175,6 @@ void THW::SetUpRomCartridges()
         sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum System Test",      if2RomsFolder));
 }
 
-#include <set>
-extern std::set<int> dirtyBird;
 void zx81_writebyteProxy(int address, int data)
 {
         zx81_writebyte(address, data);
@@ -296,25 +299,25 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
 void THW::LoadFromInternalSettings()
 {
-        if (Hwform.MachineName == "ZX80")          ZX80BtnClick(NULL);
-        else if (Hwform.MachineName == "Spec16")   Spec16BtnClick(NULL);
-        else if (Hwform.MachineName == "Spec48")   Spec48BtnClick(NULL);
-        else if (Hwform.MachineName == "SpecPlus") SpecPlusBtnClick(NULL);
-        else if (Hwform.MachineName == "Spec128")  Spec128BtnClick(NULL);
-        else if (Hwform.MachineName == "SpecP2")   SpecP2BtnClick(NULL);
-        else if (Hwform.MachineName == "SpecP2A")  SpecP2aBtnClick(NULL);
-        else if (Hwform.MachineName == "SpecP3")   SpecP3BtnClick(NULL);
-        else if (Hwform.MachineName == "TS1000")   TS1000BtnClick(NULL);
-        else if (Hwform.MachineName == "TS1500")   TS1500BtnClick(NULL);
-        else if (Hwform.MachineName == "TC2048")   TC2048BtnClick(NULL);
-        else if (Hwform.MachineName == "TC2068")   TC2068BtnClick(NULL);
-        else if (Hwform.MachineName == "TS2068")   TS2068BtnClick(NULL);
-        else if (Hwform.MachineName == "Lambda")   LambdaBtnClick(NULL);
-        else if (Hwform.MachineName == "R470")     R470BtnClick(NULL);
-        else if (Hwform.MachineName == "TK85")     TK85BtnClick(NULL);
-        else if (Hwform.MachineName == "ZX97LE")   ZX97LEBtnClick(NULL);
-        else if (Hwform.MachineName == "ACE")      AceBtnClick(NULL);
-        else                                       ZX81BtnClick(NULL);
+        if (Hwform.MachineName == "ZX80")               ZX80BtnClick(NULL);
+        else if (Hwform.MachineName == "16K Spectrum")  Spec16BtnClick(NULL);
+        else if (Hwform.MachineName == "48K Spectrum")  Spec48BtnClick(NULL);
+        else if (Hwform.MachineName == "48K Spectrum+") SpecPlusBtnClick(NULL);
+        else if (Hwform.MachineName == "Spectrum 128")  Spec128BtnClick(NULL);
+        else if (Hwform.MachineName == "Spectrum +2")   SpecP2BtnClick(NULL);
+        else if (Hwform.MachineName == "Spectrum +2A")  SpecP2aBtnClick(NULL);
+        else if (Hwform.MachineName == "Spectrum +3")   SpecP3BtnClick(NULL);
+        else if (Hwform.MachineName == "TS1000")        TS1000BtnClick(NULL);
+        else if (Hwform.MachineName == "TS1500")        TS1500BtnClick(NULL);
+        else if (Hwform.MachineName == "TC2048")        TC2048BtnClick(NULL);
+        else if (Hwform.MachineName == "TC2068")        TC2068BtnClick(NULL);
+        else if (Hwform.MachineName == "TS2068")        TS2068BtnClick(NULL);
+        else if (Hwform.MachineName == "Lambda 8300")   LambdaBtnClick(NULL);
+        else if (Hwform.MachineName == "Ringo R-470")   R470BtnClick(NULL);
+        else if (Hwform.MachineName == "TK85")          TK85BtnClick(NULL);
+        else if (Hwform.MachineName == "ZX97 Lite")     ZX97LEBtnClick(NULL);
+        else if (Hwform.MachineName == "Jupiter Ace")   AceBtnClick(NULL);
+        else                                            ZX81BtnClick(NULL);
 
         if (Hwform.ZXpandChecked && JoystickBox->Items->Strings[JoystickBox->Items->Count - 1] != "ZXpand")
         {
@@ -407,6 +410,7 @@ void THW::SaveToInternalSettings()
 {
         Hwform.MachineName                     = NewMachineName;
 
+        Hwform.RomBoxText                      = RomBox->Text;
         Hwform.RamPackBoxText                  = RamPackBox->Text;
         Hwform.SoundCardBoxText                = SoundCardBox->Text;
         Hwform.ChrGenBoxText                   = ChrGenBox->Text;
@@ -3603,6 +3607,8 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         SetZX80Icon();
         SetSpectrum128Icon();
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3625,8 +3631,7 @@ void THW::EnableRomCartridgeOption(bool enable)
         SinclairRomCartridgeFileBox->Text = "";
 
         UpdateRomCartridgeControls(NewMachine, NewSpec);
-}
-
+}                        
 //---------------------------------------------------------------------------
 
 void __fastcall THW::RamPackBoxChange(TObject *Sender)
@@ -3652,8 +3657,7 @@ void __fastcall THW::EnableLowRAMClick(TObject *Sender)
 void __fastcall THW::M1NotClick(TObject *Sender)
 {
         UpdateApplyButton();
-}
-
+}               
 //---------------------------------------------------------------------------
 
 void __fastcall THW::SoundCardBoxChange(TObject *Sender)
@@ -3666,7 +3670,6 @@ void __fastcall THW::ChrGenBoxChange(TObject *Sender)
 {
         UpdateApplyButton();
 }
-
 //---------------------------------------------------------------------------
 
 void __fastcall THW::HiResBoxChange(TObject *Sender)
@@ -3711,7 +3714,6 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 {
         ZXCFLabel->Visible = false;
         ZXCFRAM->Visible = false;
-        M1Not->Enabled = true;
         Form1->divIDEJumperEClosed->Enabled = false;
         Form1->ZXCFUploadJumperOpened->Enabled = false;
 
@@ -3930,6 +3932,7 @@ void __fastcall THW::RomCartridgeBoxChange(TObject *Sender)
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
+
 void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
 {
         if (SinclairRomCartridgeFileBox->Visible)
@@ -3938,6 +3941,7 @@ void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+
 void __fastcall THW::TC2068RomCartridgeFileBoxChange(TObject *Sender)
 {
         if (TC2068RomCartridgeFileBox->Visible)
@@ -3946,6 +3950,7 @@ void __fastcall THW::TC2068RomCartridgeFileBoxChange(TObject *Sender)
         }  
 }
 //---------------------------------------------------------------------------
+
 void __fastcall THW::TS2068RomCartridgeFileBoxChange(TObject *Sender)
 {
         if (TC2068RomCartridgeFileBox->Visible)
@@ -3954,13 +3959,15 @@ void __fastcall THW::TS2068RomCartridgeFileBoxChange(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
+
 void __fastcall THW::TS1510RomCartridgeFileBoxChange(TObject *Sender)
 {
         if (TS1510RomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = TS1510RomCartridgeFileBox->Text;
         }
-}//---------------------------------------------------------------------------
+}
+//---------------------------------------------------------------------------
 
 void __fastcall THW::ColourBoxChange(TObject *Sender)
 {
@@ -3997,8 +4004,6 @@ void __fastcall THW::FloatingPointHardwareFixClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
                 
-extern char* zxpandSDCardFolderRoot;
-
 void __fastcall THW::ButtonZXpandSDCardClick(TObject *Sender)
 {
         AnsiString root(zxpandSDCardFolderRoot);
@@ -4365,6 +4370,17 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
 
         EnableRomCartridgeOption(true);
 
+        SoundCardBoxChange(NULL);
+        ChrGenBoxChange(NULL);
+        HiResBoxChange(NULL);
+        ColourBoxChange(NULL);
+        SpeechBoxChange(NULL);
+        JoystickBoxChange(NULL);
+        RomCartridgeBoxChange(NULL);
+        FDCBoxChange(NULL);
+        IDEBoxChange(NULL);
+        RomBoxChange(NULL);
+
         switch (NewMachine)
         {
         case MACHINEZX80:
@@ -4398,7 +4414,7 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                 EnableLowRAM->Checked = true;
                 M1Not->Checked = true;
                 break;
-                
+
         case MACHINER470:
                 RomBox->Text = "ringo470.rom";
                 NTSC->Checked = true;
@@ -4483,17 +4499,6 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                 break;             
         }
 
-        SoundCardBoxChange(NULL);
-        ChrGenBoxChange(NULL);
-        HiResBoxChange(NULL);
-        ColourBoxChange(NULL);
-        SpeechBoxChange(NULL);
-        JoystickBoxChange(NULL);
-        RomCartridgeBoxChange(NULL);
-        FDCBoxChange(NULL);
-        IDEBoxChange(NULL);
-        RomBoxChange(NULL);
-
         if (RamPackBox->Visible)
         {
                 RamPackBox->ItemIndex = 0;
@@ -4569,6 +4574,7 @@ void THW::UpdateApplyButton()
 {
         bool settingsChanged = (NewMachineName != Hwform.MachineName);
 
+        settingsChanged |= (RomBox->Text                           != Hwform.RomBoxText);
         settingsChanged |= (RamPackBox->Text                       != Hwform.RamPackBoxText);
         settingsChanged |= (SoundCardBox->Text                     != Hwform.SoundCardBoxText);
         settingsChanged |= (ChrGenBox->Text                        != Hwform.ChrGenBoxText);
@@ -4624,7 +4630,6 @@ void THW::UpdateApplyButton()
 void __fastcall THW::ProtectROMClick(TObject *Sender)
 {
         UpdateApplyButton();
-        
 }
 //---------------------------------------------------------------------------
 

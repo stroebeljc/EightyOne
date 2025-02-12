@@ -1,10 +1,10 @@
 object P3Drive: TP3Drive
-  Left = 206
-  Top = 148
+  Left = 84
+  Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Drives'
-  ClientHeight = 585
+  ClientHeight = 402
   ClientWidth = 374
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object P3Drive: TP3Drive
   TextHeight = 13
   object OK: TButton
     Left = 292
-    Top = 553
+    Top = 370
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]

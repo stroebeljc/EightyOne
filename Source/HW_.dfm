@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 197
-  Top = 278
+  Left = 129
+  Top = 123
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -37,7 +37,7 @@ object HW: THW
     Top = 8
     Width = 412
     Height = 93
-    ActivePage = Timex
+    ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet

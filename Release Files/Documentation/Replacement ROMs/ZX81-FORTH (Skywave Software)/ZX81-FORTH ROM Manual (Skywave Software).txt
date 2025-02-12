@@ -156,14 +156,12 @@ ready converted computer. Those with the ready converted unit should skip this
 section and go to section 2.2 Initial power up.
 
 Take the cover off the computer. There are five screws in the bottom of the case.
-(Three are under the pads; the pads are glued on and are easily removed.) The
-case is shown in figure 2.1.
+(Three are under the pads; the pads are glued on and are easily removed.)
 
 After removing the screws, the two halves of the case are easily separated.
 Opening the case will reveal the underside of the printed circuit board. Remove
-the top two screws in this board as is shown in figure 2.2. Next, flip the
-circuit board over making sure that the ribbon cable to the keyboard does not
-pull out.
+the top two screws in this board. Next, flip the circuit board over making sure
+that the ribbon cable to the keyboard does not pull out.
 
 At this point you should be looking at the various integrated circuits on the
 board. Identify the BASIC ROM chip. You can find a picture of this circuit board
@@ -190,10 +188,6 @@ removed from the holes in the cover. At this point ZX81-FORTH will be operationa
 (note that no BASIC will be available in this configuration.)
 
 
-####
-
-
-
 2.2  Initial Power-up
 
 After completing section 2.1, or having purchased a ready converted computer, the
@@ -216,20 +210,45 @@ Here are some possible reasons why your screen did not come up properly:
   system will not display the video information. It is best to remove the RAM
   Pack (if you have a 2k system) and power-up again.
 
-####
-
-  Screen upon power-up or COLD restart.
-                 Figure 2.5
+    +--------------------------------+
+    | ZX81-FORTH BY DAVID HUSBAND    |
+    | COPYRIGHT (C) 1983             |
+    |                                |
+    | #                              |
+    |                                |
+    |                                |
+    |                                |
+    |                                |
+    |                                |
+    |                                |
+    |                                |
+    |                                |
+    +--------------------------------+
+    Screen upon power-up or COLD restart.
+                 Figure 2.5          
 
 There are two sets of screens in ZX81-FORTH, the first one we have seen. The
 second one is a split screen. To display the split screen, hold down the SHIFT
 and EDIT keys simultaneously. Now the screen should appear as shown in
 Figure 2.6.
 
-####
-
-EDITOR SCREEN
-Fig 2.6
+    +--------------------------------+
+    | #                              |
+    |                                |
+    | This is the editor part of the |
+    | screen.It is referred to as ED |
+    | in the software.               |
+    |                                |
+    | ############################## |
+    |                                |
+    | This is the run-time part of   |
+    | the screen. It is referred to  |
+    | as CO or console in the        |
+    | software                       |
+    |                                |
+    +--------------------------------+
+             EDITOR SCREEN
+                Fig 2.6
 
 You can toggle between the two parts of the screen by using the SHIFT/EDIT keys.
 

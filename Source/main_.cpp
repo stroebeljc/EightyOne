@@ -806,7 +806,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 {
                         Filename=CommandLine[i];
 
-                        char escKey = 27;
+                        char escKey = VK_ESCAPE;
                         if (Filename.UpperCase()=="FULLSCREEN") FormKeyPress(NULL, escKey);
 
                         Ext = FileNameGetExt(Filename);
@@ -923,10 +923,9 @@ void __fastcall TForm1::WavLoadBtnClick(TObject *Sender)
 
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
 {
-
         extern void RecalcWinSize(void);
-        if (Key==' ') rzx_close();
-        if (Key==27)
+        if (Key == ' ') rzx_close();
+        if (Key == VK_ESCAPE)
         {
                 FullScreen = !FullScreen;
 
@@ -1106,7 +1105,6 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 {
         InverseVideo->Checked = !InverseVideo->Checked;
@@ -1117,7 +1115,7 @@ void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 
 void __fastcall TForm1::FormDeactivate(TObject *Sender)
 {
-        char escKey = 27;
+        char escKey = VK_ESCAPE;
         if (FullScreen) FormKeyPress(NULL, escKey);
 }
 //---------------------------------------------------------------------------

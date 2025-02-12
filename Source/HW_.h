@@ -49,6 +49,7 @@ public:
 struct HWFormValues
 {
         AnsiString MachineName;
+        AnsiString RomBoxText;
         AnsiString RamPackBoxText;
         AnsiString SoundCardBoxText;
         AnsiString ChrGenBoxText;

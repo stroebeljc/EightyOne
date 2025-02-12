@@ -1,6 +1,6 @@
 object SerialConfig: TSerialConfig
-  Left = 426
-  Top = 117
+  Left = 168
+  Top = 59
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'TS2050 Configuration'

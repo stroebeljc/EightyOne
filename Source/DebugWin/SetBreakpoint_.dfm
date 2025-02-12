@@ -1,6 +1,6 @@
 object SetBreakpoint: TSetBreakpoint
-  Left = 269
-  Top = 208
+  Left = 108
+  Top = 101
   BorderStyle = bsToolWindow
   Caption = 'Configure Breakpoint'
   ClientHeight = 90

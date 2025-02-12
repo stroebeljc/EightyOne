@@ -41,22 +41,22 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
 //---------------------------------------------------------------------------
 void TP3Drive::LoadSettings(TIniFile *ini)
 {
-        Top = ini->ReadInteger("P3DRIVE", "Top", Top);
-        Left = ini->ReadInteger("P3DRIVE", "Left", Left);
-        OpenDialogFloppyDiskImage->FileName = ini->ReadString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
+        Top = ini->ReadInteger("DRIVES", "Top", Top);
+        Left = ini->ReadInteger("DRIVES", "Left", Left);
+        OpenDialogFloppyDiskImage->FileName = ini->ReadString("DRIVES", "LastFile", OpenDialogFloppyDiskImage->FileName);
 
-        ATA_LoadHDF(0, AnsiString(ini->ReadString("P3DRIVE", "HD0", "")).c_str());
-        ATA_LoadHDF(1, AnsiString(ini->ReadString("P3DRIVE", "HD1", "")).c_str());
-        ATA_SetReadOnly(0, ini->ReadBool("P3DRIVE", "HD0RO", FALSE));
-        ATA_SetReadOnly(1, ini->ReadBool("P3DRIVE", "HD1RO", FALSE));
+        ATA_LoadHDF(0, AnsiString(ini->ReadString("DRIVES", "HD0", "")).c_str());
+        ATA_LoadHDF(1, AnsiString(ini->ReadString("DRIVES", "HD1", "")).c_str());
+        ATA_SetReadOnly(0, ini->ReadBool("DRIVES", "HD0RO", FALSE));
+        ATA_SetReadOnly(1, ini->ReadBool("DRIVES", "HD1RO", FALSE));
 
-        DriveAText->Text = ini->ReadString("P3DRIVE", "DriveA", "< Empty >");
-        DriveBText->Text = ini->ReadString("P3DRIVE", "DriveB", "< Empty >");
+        DriveAText->Text = ini->ReadString("DRIVES", "DriveA", "< Empty >");
+        DriveBText->Text = ini->ReadString("DRIVES", "DriveB", "< Empty >");
 
-        IF1->MDVNoDrives = ini->ReadInteger("P3DRIVE", "MDVNoDrives", 0);
+        IF1->MDVNoDrives = ini->ReadInteger("DRIVES", "MDVNoDrives", 0);
         for (int i = 0; i < 8; i++)
         {
-                IF1->MDVSetFileName(i, AnsiString(ini->ReadString("P3DRIVE", "MDV" + AnsiString(i), "")).c_str());
+                IF1->MDVSetFileName(i, AnsiString(ini->ReadString("DRIVES", "MDV" + AnsiString(i), "")).c_str());
         }
 
         if (Form1->DiskDrives1->Checked) Show();
@@ -65,22 +65,22 @@ void TP3Drive::LoadSettings(TIniFile *ini)
 
 void TP3Drive::SaveSettings(TIniFile *ini)
 {
-        ini->WriteInteger("P3DRIVE", "Top", Top);
-        ini->WriteInteger("P3DRIVE", "Left", Left);
-        ini->WriteString("P3DRIVE", "LastFile", OpenDialogFloppyDiskImage->FileName);
+        ini->WriteInteger("DRIVES", "Top", Top);
+        ini->WriteInteger("DRIVES", "Left", Left);
+        ini->WriteString("DRIVES", "LastFile", OpenDialogFloppyDiskImage->FileName);
 
-        ini->WriteString("P3DRIVE", "HD0", ATA_GetHDF(0) ? ATA_GetHDF(0) : "");
-        ini->WriteString("P3DRIVE", "HD1", ATA_GetHDF(1) ? ATA_GetHDF(1) : "");
-        ini->WriteBool("P3DRIVE", "HD0RO", ATA_GetReadOnly(0));
-        ini->WriteBool("P3DRIVE", "HD1RO", ATA_GetReadOnly(1));
+        ini->WriteString("DRIVES", "HD0", ATA_GetHDF(0) ? ATA_GetHDF(0) : "");
+        ini->WriteString("DRIVES", "HD1", ATA_GetHDF(1) ? ATA_GetHDF(1) : "");
+        ini->WriteBool("DRIVES", "HD0RO", ATA_GetReadOnly(0));
+        ini->WriteBool("DRIVES", "HD1RO", ATA_GetReadOnly(1));
 
-        ini->WriteString("P3DRIVE", "DriveA", DriveAText->Text);
-        ini->WriteString("P3DRIVE", "DriveB", DriveBText->Text);
+        ini->WriteString("DRIVES", "DriveA", DriveAText->Text);
+        ini->WriteString("DRIVES", "DriveB", DriveBText->Text);
 
-        ini->WriteInteger("P3DRIVE", "MDVNoDrives", IF1->MDVNoDrives);
+        ini->WriteInteger("DRIVES", "MDVNoDrives", IF1->MDVNoDrives);
         for (int i = 0; i < 8; i++)
         {
-                ini->WriteString("P3DRIVE", "MDV" + AnsiString(i),
+                ini->WriteString("DRIVES", "MDV" + AnsiString(i),
                         IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "");
         }   
 }

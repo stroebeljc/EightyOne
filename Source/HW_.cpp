@@ -3427,8 +3427,6 @@ void __fastcall THW::FormShow(TObject *Sender)
 void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 {
         SerialConfig->ShowModal();
-        ResetRequired = true;
-        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 

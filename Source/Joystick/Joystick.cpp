@@ -145,11 +145,14 @@ static BYTE ReadJoystick(bool readFireButton)
                 if ((joyInfo1.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp1.Data;
-        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown1.Data;
-        if (GetKeyState(VK_NUMPAD4) & 0x8000) result &= JoystickLeft1.Data;
-        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight1.Data;
-        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire1.Data;
+        if ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0000)
+        {
+                if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp1.Data;
+                if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown1.Data;
+                if (GetKeyState(VK_NUMPAD4) & 0x8000) result &= JoystickLeft1.Data;
+                if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight1.Data;
+                if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire1.Data;
+        }
 
         return result;
 }

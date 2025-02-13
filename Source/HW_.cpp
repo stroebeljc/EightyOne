@@ -3398,8 +3398,6 @@ void __fastcall THW::FormShow(TObject *Sender)
 void __fastcall THW::TS2050ConfigClick(TObject *Sender)
 {
         SerialConfig->ShowModal();
-        ResetRequired = true;
-        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -3681,8 +3679,6 @@ void __fastcall THW::DriveBTypeChange(TObject *Sender)
 void __fastcall THW::IF1ConfigClick(TObject *Sender)
 {
         IF1->ShowModal();
-        ResetRequired = true;
-        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -4251,7 +4247,7 @@ void __fastcall THW::JoystickBoxKeyDown(TObject *Sender, WORD &Key,
         if (Key == VK_SHIFT)
         {
                 bool supportRightShift = (NewMachine == MACHINESPECTRUM || NewMachine == MACHINEACE);
-                bool rightShiftPressed = (GetKeyState(VK_RSHIFT) & 0x8000) ? true : false;
+                bool rightShiftPressed = IsKeyPressed(VK_RSHIFT);
                 key = (supportRightShift && emulator.UseRShift && rightShiftPressed) ? '.' : '^';
                 if (NewKey(textBox, key))
                 {

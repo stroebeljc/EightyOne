@@ -542,7 +542,7 @@ int CSound::AYReadTimex(int reg, int joysticks = 0)
                 {
                         if ((joysticks & 0x01) && machine.joystick1Connected)
                         {
-                                data &= (byte)(ReadJoystick() & 0x8F);
+                                data &= (byte)(ReadJoystick1() & 0x8F);
                         }
                         if ((joysticks & 0x02) && machine.joystick2Connected)
                         {
@@ -553,7 +553,7 @@ int CSound::AYReadTimex(int reg, int joysticks = 0)
                 {
                         if ((joysticks & 0x01) && machine.joystick1Connected)
                         {
-                                data = (byte)(ReadJoystick() & 0x8F);
+                                data = (byte)(ReadJoystick1() & 0x8F);
                         }
                         if ((joysticks & 0x02) && machine.joystick2Connected)
                         {

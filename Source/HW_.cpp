@@ -104,11 +104,11 @@ void HWSetMachine(int machine, int speccy)
 __fastcall THW::THW(TComponent* Owner)
         : TForm(Owner)
 {
-        programmableJoystickLeft  = JoystickLeft.Character;
-        programmableJoystickRight = JoystickRight.Character;
-        programmableJoystickUp    = JoystickUp.Character;
-        programmableJoystickDown  = JoystickDown.Character;
-        programmableJoystickFire  = JoystickFire.Character;
+        programmableJoystickLeft  = JoystickLeft1.Character;
+        programmableJoystickRight = JoystickRight1.Character;
+        programmableJoystickUp    = JoystickUp1.Character;
+        programmableJoystickDown  = JoystickDown1.Character;
+        programmableJoystickFire  = JoystickFire1.Character;
 
         RomCartridgeCapacity = 0;
         RamPackHeight = RamPackBox->Height;
@@ -330,9 +330,9 @@ void THW::LoadFromInternalSettings()
         HiResBox->ItemIndex               = FindEntry(HiResBox,             Hwform.HiResBoxText);
         ColourBox->ItemIndex              = FindEntry(ColourBox,            Hwform.ColourBoxText);
         SpeechBox->ItemIndex              = FindEntry(SpeechBox,            Hwform.SpeechBoxText);
+        JoystickBox->ItemIndex            = FindEntry(JoystickBox,          Hwform.JoystickBoxText);
         RomCartridgeBox->ItemIndex        = FindEntry(RomCartridgeBox,      Hwform.RomCartridgeBoxText);
         ZXC1ConfigurationBox->ItemIndex   = FindEntry(ZXC1ConfigurationBox, Hwform.ZXC1ConfigurationBoxText);
-        JoystickBox->ItemIndex            = FindEntry(JoystickBox,          Hwform.JoystickBoxText);
         DriveAType->ItemIndex             = FindEntry(DriveAType,           Hwform.DriveATypeText);
         DriveBType->ItemIndex             = FindEntry(DriveBType,           Hwform.DriveBTypeText);
         ZXCFRAM->ItemIndex                = FindEntry(ZXCFRAM,              Hwform.ZXCFRAMText);
@@ -1292,18 +1292,22 @@ void THW::ConfigureHiRes()
 
 void THW::ConfigureKeypad()
 {
+        UpdateKeypadUI();
+        spectrum.spectrum128Keypad = Form1->ConnectSpectrum128Keypad->Checked;
+}
+
+void THW::UpdateKeypadUI()
+{
         Form1->ConnectSpectrum128Keypad->Visible = (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128);
 
         bool machineChanged = (NewMachine != emulator.machine);
         if (machineChanged)
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
-                spectrum.spectrum128Keypad = 0;
-        }    
+        }
         else if (!Form1->ConnectSpectrum128Keypad->Visible)
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
-                spectrum.spectrum128Keypad = 0;
         }
 }
 
@@ -1485,43 +1489,43 @@ void THW::ConfigureJoystick()
         switch (machine.joystickInterfaceType)
         {
         case JOYSTICK_KEMPSTON:
-                JoystickUp.Data    = 0xF7;
-                JoystickDown.Data  = 0xFB;
-                JoystickLeft.Data  = 0xFD;
-                JoystickRight.Data = 0xFE;
-                JoystickFire.Data  = 0xEF;
+                JoystickUp1.Data    = 0xF7;
+                JoystickDown1.Data  = 0xFB;
+                JoystickLeft1.Data  = 0xFD;
+                JoystickRight1.Data = 0xFE;
+                JoystickFire1.Data  = 0xEF;
                 break;
 
         case JOYSTICK_FULLER:
-                JoystickUp.Data    = 0xFE;
-                JoystickDown.Data  = 0xFD;
-                JoystickLeft.Data  = 0xFB;
-                JoystickRight.Data = 0xF7;
-                JoystickFire.Data  = 0x7F;
+                JoystickUp1.Data    = 0xFE;
+                JoystickDown1.Data  = 0xFD;
+                JoystickLeft1.Data  = 0xFB;
+                JoystickRight1.Data = 0xF7;
+                JoystickFire1.Data  = 0x7F;
                 break;
 
         case JOYSTICK_ZXPAND:
-                JoystickUp.Data    = 0x7F;
-                JoystickDown.Data  = 0xBF;
-                JoystickLeft.Data  = 0xDF;
-                JoystickRight.Data = 0xEF;
-                JoystickFire.Data  = 0xF7;
+                JoystickUp1.Data    = 0x7F;
+                JoystickDown1.Data  = 0xBF;
+                JoystickLeft1.Data  = 0xDF;
+                JoystickRight1.Data = 0xEF;
+                JoystickFire1.Data  = 0xF7;
                 break;
 
         case JOYSTICK_BOLDFIELD:
-                JoystickUp.Data    = 0xFE;
-                JoystickDown.Data  = 0xFD;
-                JoystickLeft.Data  = 0xF7;
-                JoystickRight.Data = 0xFB;
-                JoystickFire.Data  = 0xDF;
+                JoystickUp1.Data    = 0xFE;
+                JoystickDown1.Data  = 0xFD;
+                JoystickLeft1.Data  = 0xF7;
+                JoystickRight1.Data = 0xFB;
+                JoystickFire1.Data  = 0xDF;
                 break;
 
         case JOYSTICK_TIMEX:
-                JoystickUp.Data    = 0xFE;
-                JoystickDown.Data  = 0xFD;
-                JoystickLeft.Data  = 0xFB;
-                JoystickRight.Data = 0xF7;
-                JoystickFire.Data  = 0x7F;
+                JoystickUp1.Data    = 0xFE;
+                JoystickDown1.Data  = 0xFD;
+                JoystickLeft1.Data  = 0xFB;
+                JoystickRight1.Data = 0xF7;
+                JoystickFire1.Data  = 0x7F;
 
                 JoystickUp2.Data    = 0xFE;
                 JoystickDown2.Data  = 0xFD;
@@ -1531,11 +1535,11 @@ void THW::ConfigureJoystick()
                 break;
 
         case JOYSTICK_INTERFACE2:
-                JoystickUp.Data    = 0xFD;
-                JoystickDown.Data  = 0xFB;
-                JoystickLeft.Data  = 0xEF;
-                JoystickRight.Data = 0xF7;
-                JoystickFire.Data  = 0xFE;
+                JoystickUp1.Data    = 0xFD;
+                JoystickDown1.Data  = 0xFB;
+                JoystickLeft1.Data  = 0xEF;
+                JoystickRight1.Data = 0xF7;
+                JoystickFire1.Data  = 0xFE;
 
                 JoystickUp2.Data    = 0xF7;
                 JoystickDown2.Data  = 0xFB;
@@ -1545,14 +1549,24 @@ void THW::ConfigureJoystick()
                 break;
 
         default:
-                SetCharacter(JoystickLeftBox,  JoystickLeft);
-                SetCharacter(JoystickRightBox, JoystickRight);
-                SetCharacter(JoystickUpBox,    JoystickUp);
-                SetCharacter(JoystickDownBox,  JoystickDown);
-                SetCharacter(JoystickFireBox,  JoystickFire);
+                SetCharacter(JoystickLeftBox,  JoystickLeft1);
+                SetCharacter(JoystickRightBox, JoystickRight1);
+                SetCharacter(JoystickUpBox,    JoystickUp1);
+                SetCharacter(JoystickDownBox,  JoystickDown1);
+                SetCharacter(JoystickFireBox,  JoystickFire1);
                 break;
         }
 
+        void UpdateJoystickUI();
+
+        if (machine.joystickInterfaceType != JOYSTICK_NONE)
+        {
+                InitialiseJoysticks();
+        }
+}
+
+void THW::UpdateJoystickUI()
+{
         bool joystickInterfaceSelected = (machine.joystickInterfaceType != JOYSTICK_NONE);
         bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
 
@@ -1562,24 +1576,8 @@ void THW::ConfigureJoystick()
         Form1->EnableJoystick1AutoFire->Visible = joystickInterfaceSelected;
         Form1->EnableJoystick2AutoFire->Visible = twinJoystickInterfaceSelected;
 
-        bool machineChanged = (NewMachine != emulator.machine);
-        bool joystickInterfaceTypeChanged = (JoystickBox->Text != Hwform.JoystickBoxText);
-        if (machineChanged || joystickInterfaceTypeChanged)
-        {
-                Form1->ConnectJoystick1->Checked = joystickInterfaceSelected;
-                Form1->ConnectJoystick2->Checked = twinJoystickInterfaceSelected;
-
-                machine.joystick1Connected = joystickInterfaceSelected;
-                machine.joystick2Connected = twinJoystickInterfaceSelected;
-
-                Form1->EnableJoystick1AutoFire->Checked = false;
-                Form1->EnableJoystick2AutoFire->Checked = false;
-        }
-
         if (joystickInterfaceSelected)
         {
-                InitialiseJoysticks();
-
                 if (!twinJoystickInterfaceSelected)
                 {
                         Form1->EnableJoystick2AutoFire->Checked = false;
@@ -1592,6 +1590,9 @@ void THW::ConfigureJoystick()
                         Form1->ConnectJoystick1->Caption = "Connect Joystick 1";
                 }
         }
+
+        Form1->EnableJoystick1AutoFire->Enabled = Form1->ConnectJoystick1->Checked;
+        Form1->EnableJoystick2AutoFire->Enabled = Form1->ConnectJoystick2->Checked;
 }
 
 void THW::ConfigureIDE()
@@ -4139,11 +4140,22 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
                 }
                 else if (joystickInterfaceType == "ZX Interface 2" || joystickInterfaceType == "Sinclair")
                 {
-                        joystickUpText    = "9";
-                        joystickDownText  = "8";
-                        joystickLeftText  = "6";
-                        joystickRightText = "7";
-                        joystickFireText  = "0";
+                        if (Form1->ConnectJoystick1->Checked)
+                        {
+                                joystickUpText    = "9";
+                                joystickDownText  = "8";
+                                joystickLeftText  = "6";
+                                joystickRightText = "7";
+                                joystickFireText  = "0";
+                        }
+                        else
+                        {
+                                joystickUpText    = "4";
+                                joystickDownText  = "3";
+                                joystickLeftText  = "1";
+                                joystickRightText = "2";
+                                joystickFireText  = "5";
+                        }
                 }
 
                 JoystickUpBox->Text    = joystickUpText;
@@ -4167,7 +4179,27 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
 
         UpdateApplyButton();
 }
+//---------------------------------------------------------------------------
 
+void THW::UpdateSinclairJoystickKeys()
+{
+        if (Form1->ConnectJoystick1->Checked || !Form1->ConnectJoystick2->Checked)
+        {
+                JoystickUpBox->Text    = "9";
+                JoystickDownBox->Text  = "8";
+                JoystickLeftBox->Text  = "6";
+                JoystickRightBox->Text = "7";
+                JoystickFireBox->Text  = "0";
+        }
+        else
+        {
+                JoystickUpBox->Text    = "4";
+                JoystickDownBox->Text  = "3";
+                JoystickLeftBox->Text  = "1";
+                JoystickRightBox->Text = "2";
+                JoystickFireBox->Text  = "5";
+        }
+}
 //---------------------------------------------------------------------------
 
 bool THW::ValidCharacter(TEdit* textBox, char newKey)
@@ -4535,12 +4567,10 @@ void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
 
 void THW::UpdateApplyButton()
 {
-        bool settingsChanged = (NewMachineName != Hwform.MachineName);
+        UpdateKeypadUI();
+        UpdateJoystickUI();
 
-        if (settingsChanged)
-        {
-                Form1->ConnectSpectrum128Keypad->Visible = (NewMachineName == "Spectrum 128" || NewMachineName == "Spectrum +2" || NewMachineName == "Spectrum +2A" || NewMachineName == "Spectrum +3");
-        }
+        bool settingsChanged = (NewMachineName != Hwform.MachineName);
 
         settingsChanged |= (RomBox->Text                           != Hwform.RomBoxText);
         settingsChanged |= (RamPackBox->Text                       != Hwform.RamPackBoxText);
@@ -4587,9 +4617,6 @@ void THW::UpdateApplyButton()
         settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
 
         ResetRequired |= settingsChanged;
-
-        // Allow the following to be changed without forcing a reset
-        settingsChanged |= (Spectrum128Keypad->Checked != Hwform.Spectrum128KeypadChecked);
 
         Apply->Enabled = settingsChanged | ResetRequired;
 }

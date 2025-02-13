@@ -304,11 +304,11 @@ BYTE ReadInputPort(int Address, int *tstates)
                 
                 if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE)
                 {
-                        if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
-                        if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
-                        if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
-                        if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
-                        if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                        if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                        if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                        if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                        if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                        if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
                 }
 
                 return data;
@@ -318,7 +318,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                 return (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
 
         if (machine.joystick1Connected && (Address & 0x0001) == 0x0001)
-                return (BYTE)~ReadJoystick();
+                return (BYTE)~ReadJoystick1();
 
         switch(Address&255)
         {

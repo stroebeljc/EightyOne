@@ -2,11 +2,11 @@
 #include "Joystick.h"
 #include "zx81config.h"
 
-KeyInfo JoystickLeft  = {'O'};
-KeyInfo JoystickRight = {'P'};
-KeyInfo JoystickUp    = {'Q'};
-KeyInfo JoystickDown  = {'A'};
-KeyInfo JoystickFire  = {'M'};
+KeyInfo JoystickLeft1  = {'O'};
+KeyInfo JoystickRight1 = {'P'};
+KeyInfo JoystickUp1    = {'Q'};
+KeyInfo JoystickDown1  = {'A'};
+KeyInfo JoystickFire1  = {'M'};
 
 KeyInfo JoystickLeft2;
 KeyInfo JoystickRight2;
@@ -14,15 +14,15 @@ KeyInfo JoystickUp2;
 KeyInfo JoystickDown2;
 KeyInfo JoystickFire2;
 
-static DWORD xPosMinTrip;
-static DWORD xPosMaxTrip;
-static DWORD yPosMinTrip;
-static DWORD yPosMaxTrip;
-static DWORD zPosMinTrip;
-static DWORD zPosMaxTrip;
-static DWORD rPosMinTrip;
-static DWORD rPosMaxTrip;
-static JOYINFOEX joyInfo;
+static DWORD xPosMinTrip1;
+static DWORD xPosMaxTrip1;
+static DWORD yPosMinTrip1;
+static DWORD yPosMaxTrip1;
+static DWORD zPosMinTrip1;
+static DWORD zPosMaxTrip1;
+static DWORD rPosMinTrip1;
+static DWORD rPosMaxTrip1;
+static JOYINFOEX joyInfo1;
 
 static DWORD xPosMinTrip2;
 static DWORD xPosMaxTrip2;
@@ -53,9 +53,9 @@ int NumberOfJoysticks()
                 return 2;
         }
 
-        joyInfo.dwFlags = JOY_RETURNBUTTONS;
+        joyInfo1.dwFlags = JOY_RETURNBUTTONS;
 
-        if (joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
                 return 1;
         }
@@ -65,7 +65,7 @@ int NumberOfJoysticks()
 
 void InitialiseJoysticks()
 {
-        JOYCAPS caps;
+        JOYCAPS caps1;
         JOYCAPS caps2;
         DWORD xTripOffset;
         DWORD yTripOffset;
@@ -73,27 +73,27 @@ void InitialiseJoysticks()
         DWORD rTripOffset;
 
         joystick1Present = false;
-        joystick1Present = false;
+        joystick2Present = false;
 
-        if (joyGetDevCaps(JOYSTICKID1, &caps, sizeof(JOYCAPS)) == JOYERR_NOERROR)
+        if (joyGetDevCaps(JOYSTICKID1, &caps1, sizeof(JOYCAPS)) == JOYERR_NOERROR)
         {
                 joystick1Present = true;
 
-                xTripOffset = (caps.wXmax - caps.wXmin) / 4;
-                xPosMinTrip = caps.wXmin + xTripOffset;
-                xPosMaxTrip = caps.wXmax - xTripOffset;
+                xTripOffset = (caps1.wXmax - caps1.wXmin) / 4;
+                xPosMinTrip1 = caps1.wXmin + xTripOffset;
+                xPosMaxTrip1 = caps1.wXmax - xTripOffset;
 
-                yTripOffset = (caps.wYmax - caps.wYmin) / 4;
-                yPosMinTrip = caps.wYmin + yTripOffset;
-                yPosMaxTrip = caps.wYmax - yTripOffset;
+                yTripOffset = (caps1.wYmax - caps1.wYmin) / 4;
+                yPosMinTrip1 = caps1.wYmin + yTripOffset;
+                yPosMaxTrip1 = caps1.wYmax - yTripOffset;
 
-                zTripOffset = (caps.wZmax - caps.wZmin) / 4;
-                zPosMinTrip = caps.wZmin + zTripOffset;
-                zPosMaxTrip = caps.wZmax - zTripOffset;
+                zTripOffset = (caps1.wZmax - caps1.wZmin) / 4;
+                zPosMinTrip1 = caps1.wZmin + zTripOffset;
+                zPosMaxTrip1 = caps1.wZmax - zTripOffset;
 
-                rTripOffset = (caps.wRmax - caps.wRmin) / 4;
-                rPosMinTrip = caps.wRmin + rTripOffset;
-                rPosMaxTrip = caps.wRmax - rTripOffset;
+                rTripOffset = (caps1.wRmax - caps1.wRmin) / 4;
+                rPosMinTrip1 = caps1.wRmin + rTripOffset;
+                rPosMaxTrip1 = caps1.wRmax - rTripOffset;
         }
 
         if (joyGetDevCaps(JOYSTICKID2, &caps2, sizeof(JOYCAPS)) == JOYERR_NOERROR)
@@ -117,41 +117,47 @@ void InitialiseJoysticks()
                 rPosMaxTrip2 = caps2.wRmax - rTripOffset;
         }
 
-        joyInfo.dwSize = sizeof(joyInfo);
+        joyInfo1.dwSize = sizeof(joyInfo1);
         joyInfo2.dwSize = sizeof(joyInfo2);
 
         joystick1AutoFireReadCount = 0;
         joystick2AutoFireReadCount = JoystickReadsOn; //Ensure the two reads do not collide to allow reading from BASIC
-}
+}               
 
-BYTE ReadJoystick()
+static BYTE ReadJoystick(bool readFireButton)
 {
         BYTE result = 0xFF;
 
-        bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
+        joyInfo1.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR;
 
-        joyInfo.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR;
-
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if (joyInfo.dwRpos <= rPosMinTrip) result &= JoystickUp.Data;
-                if (joyInfo.dwRpos >= rPosMaxTrip) result &= JoystickDown.Data;
-                if (joyInfo.dwZpos <= zPosMinTrip) result &= JoystickLeft.Data;
-                if (joyInfo.dwZpos >= zPosMaxTrip) result &= JoystickRight.Data;
+                if (joyInfo1.dwRpos <= rPosMinTrip1) result &= JoystickUp1.Data;
+                if (joyInfo1.dwRpos >= rPosMaxTrip1) result &= JoystickDown1.Data;
+                if (joyInfo1.dwZpos <= zPosMinTrip1) result &= JoystickLeft1.Data;
+                if (joyInfo1.dwZpos >= zPosMaxTrip1) result &= JoystickRight1.Data;
 
-                if (joyInfo.dwYpos <= yPosMinTrip) result &= JoystickUp.Data;
-                if (joyInfo.dwYpos >= yPosMaxTrip) result &= JoystickDown.Data;
-                if (joyInfo.dwXpos <= xPosMinTrip) result &= JoystickLeft.Data;
-                if (joyInfo.dwXpos >= xPosMaxTrip) result &= JoystickRight.Data;
+                if (joyInfo1.dwYpos <= yPosMinTrip1) result &= JoystickUp1.Data;
+                if (joyInfo1.dwYpos >= yPosMaxTrip1) result &= JoystickDown1.Data;
+                if (joyInfo1.dwXpos <= xPosMinTrip1) result &= JoystickLeft1.Data;
+                if (joyInfo1.dwXpos >= xPosMaxTrip1) result &= JoystickRight1.Data;
 
-                if ((joyInfo.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire.Data;
+                if ((joyInfo1.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp.Data;
-        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown.Data;
-        if (GetKeyState(VK_NUMPAD4) & 0x8000) result &= JoystickLeft.Data;
-        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight.Data;
-        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire.Data;
+        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp1.Data;
+        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown1.Data;
+        if (GetKeyState(VK_NUMPAD4) & 0x8000) result &= JoystickLeft1.Data;
+        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight1.Data;
+        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire1.Data;
+
+        return result;
+}
+
+BYTE ReadJoystick1()
+{
+        bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
+        BYTE result = ReadJoystick(readFireButton);
 
         joystick1AutoFireReadCount++;
         if (joystick1AutoFireReadCount == JoystickTotalReads) joystick1AutoFireReadCount = 0;
@@ -163,23 +169,31 @@ BYTE ReadJoystick2()
 {
         BYTE result = 0xFF;
 
-        bool readFireButton = (machine.joystick2AutoFireEnabled && (joystick2AutoFireReadCount < JoystickReadsOn));
-
-        joyInfo2.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR;
-
-        if (joystick2Present && joyGetPosEx(JOYSTICKID2, &joyInfo2) == JOYERR_NOERROR)
+        if (machine.joystick1Connected || joystick2Present)
         {
-                if (joyInfo2.dwRpos <= rPosMinTrip) result &= JoystickUp2.Data;
-                if (joyInfo2.dwRpos >= rPosMaxTrip) result &= JoystickDown2.Data;
-                if (joyInfo2.dwZpos <= zPosMinTrip) result &= JoystickLeft2.Data;
-                if (joyInfo2.dwZpos >= zPosMaxTrip) result &= JoystickRight2.Data;
+                bool readFireButton = (machine.joystick2AutoFireEnabled && (joystick2AutoFireReadCount < JoystickReadsOn));
 
-                if (joyInfo2.dwYpos <= yPosMinTrip) result &= JoystickUp2.Data;
-                if (joyInfo2.dwYpos >= yPosMaxTrip) result &= JoystickDown2.Data;
-                if (joyInfo2.dwXpos <= xPosMinTrip) result &= JoystickLeft2.Data;
-                if (joyInfo2.dwXpos >= xPosMaxTrip) result &= JoystickRight2.Data;
+                joyInfo2.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR;
 
-                if ((joyInfo2.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire2.Data;
+                if (joystick2Present && joyGetPosEx(JOYSTICKID2, &joyInfo2) == JOYERR_NOERROR)
+                {
+                        if (joyInfo2.dwRpos <= rPosMinTrip2) result &= JoystickUp2.Data;
+                        if (joyInfo2.dwRpos >= rPosMaxTrip2) result &= JoystickDown2.Data;
+                        if (joyInfo2.dwZpos <= zPosMinTrip2) result &= JoystickLeft2.Data;
+                        if (joyInfo2.dwZpos >= zPosMaxTrip2) result &= JoystickRight2.Data;
+
+                        if (joyInfo2.dwYpos <= yPosMinTrip2) result &= JoystickUp2.Data;
+                        if (joyInfo2.dwYpos >= yPosMaxTrip2) result &= JoystickDown2.Data;
+                        if (joyInfo2.dwXpos <= xPosMinTrip2) result &= JoystickLeft2.Data;
+                        if (joyInfo2.dwXpos >= xPosMaxTrip2) result &= JoystickRight2.Data;
+
+                        if ((joyInfo2.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire2.Data;
+                }
+        }
+        else
+        {
+                bool readFireButton = (machine.joystick2AutoFireEnabled && (joystick2AutoFireReadCount < JoystickReadsOn));
+                result = ReadJoystick(readFireButton);
         }
 
         joystick2AutoFireReadCount++;
@@ -188,88 +202,88 @@ BYTE ReadJoystick2()
         return result;
 }
 
-BYTE ReadJoystick_Left()
+BYTE ReadJoystick1_Left()
 {
         BYTE result = 0xFF;
 
-        joyInfo.dwFlags = JOY_RETURNX | JOY_RETURNZ;
+        joyInfo1.dwFlags = JOY_RETURNX | JOY_RETURNZ;
 
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if (joyInfo.dwZpos <= zPosMinTrip) result &= JoystickUp.Data;
-                if (joyInfo.dwXpos <= xPosMinTrip) result &= JoystickLeft.Data;
+                if (joyInfo1.dwZpos <= zPosMinTrip1) result &= JoystickUp1.Data;
+                if (joyInfo1.dwXpos <= xPosMinTrip1) result &= JoystickLeft1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD4) & 0x8000) result &= JoystickLeft.Data;
+        if (GetKeyState(VK_NUMPAD4) & 0x8000) result &= JoystickLeft1.Data;
 
         return result;
 }
 
-BYTE ReadJoystick_Right()
+BYTE ReadJoystick1_Right()
 {
         BYTE result = 0xFF;
 
-        joyInfo.dwFlags = JOY_RETURNX | JOY_RETURNZ;
+        joyInfo1.dwFlags = JOY_RETURNX | JOY_RETURNZ;
 
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if (joyInfo.dwZpos >= zPosMaxTrip) result &= JoystickRight.Data;
-                if (joyInfo.dwXpos >= xPosMaxTrip) result &= JoystickRight.Data;
+                if (joyInfo1.dwZpos >= zPosMaxTrip1) result &= JoystickRight1.Data;
+                if (joyInfo1.dwXpos >= xPosMaxTrip1) result &= JoystickRight1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight.Data;
+        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight1.Data;
 
         return result;
 }
 
-BYTE ReadJoystick_Up()
+BYTE ReadJoystick1_Up()
 {
         BYTE result = 0xFF;
 
-        joyInfo.dwFlags = JOY_RETURNY | JOY_RETURNR;
+        joyInfo1.dwFlags = JOY_RETURNY | JOY_RETURNR;
 
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if (joyInfo.dwRpos <= rPosMinTrip) result &= JoystickUp.Data;
-                if (joyInfo.dwYpos <= yPosMinTrip) result &= JoystickUp.Data;
+                if (joyInfo1.dwRpos <= rPosMinTrip1) result &= JoystickUp1.Data;
+                if (joyInfo1.dwYpos <= yPosMinTrip1) result &= JoystickUp1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp.Data;
+        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp1.Data;
 
         return result;
 }
 
-BYTE ReadJoystick_Down()
+BYTE ReadJoystick1_Down()
 {
         BYTE result = 0xFF;
 
-        joyInfo.dwFlags = JOY_RETURNY | JOY_RETURNR;
+        joyInfo1.dwFlags = JOY_RETURNY | JOY_RETURNR;
 
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if (joyInfo.dwRpos >= rPosMaxTrip) result &= JoystickDown.Data;
-                if (joyInfo.dwYpos >= yPosMaxTrip) result &= JoystickDown.Data;
+                if (joyInfo1.dwRpos >= rPosMaxTrip1) result &= JoystickDown1.Data;
+                if (joyInfo1.dwYpos >= yPosMaxTrip1) result &= JoystickDown1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown.Data;
+        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown1.Data;
 
         return result;
 }
 
-BYTE ReadJoystick_Fire()
+BYTE ReadJoystick1_Fire()
 {
         BYTE result = 0xFF;
 
         bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
 
-        joyInfo.dwFlags = JOY_RETURNBUTTONS;
+        joyInfo1.dwFlags = JOY_RETURNBUTTONS;
 
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if ((joyInfo.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire.Data;
+                if ((joyInfo1.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
         }
 
-        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire.Data;
+        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire1.Data;
 
         joystick1AutoFireReadCount++;
         if (joystick1AutoFireReadCount == JoystickTotalReads) joystick1AutoFireReadCount = 0;
@@ -277,31 +291,31 @@ BYTE ReadJoystick_Fire()
         return result;
 }
 
-BYTE ReadJoystick_RightUpDownFire()
+BYTE ReadJoystick1_RightUpDownFire()
 {
         BYTE result = 0xFF;
 
         bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
 
-        joyInfo.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNR | JOY_RETURNZ;
+        joyInfo1.dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNR | JOY_RETURNZ;
 
-        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo) == JOYERR_NOERROR)
+        if (joystick1Present && joyGetPosEx(JOYSTICKID1, &joyInfo1) == JOYERR_NOERROR)
         {
-                if (joyInfo.dwRpos <= rPosMinTrip) result &= JoystickUp.Data;
-                if (joyInfo.dwRpos >= rPosMaxTrip) result &= JoystickDown.Data;
-                if (joyInfo.dwZpos >= zPosMaxTrip) result &= JoystickRight.Data;
+                if (joyInfo1.dwRpos <= rPosMinTrip1) result &= JoystickUp1.Data;
+                if (joyInfo1.dwRpos >= rPosMaxTrip1) result &= JoystickDown1.Data;
+                if (joyInfo1.dwZpos >= zPosMaxTrip1) result &= JoystickRight1.Data;
 
-                if (joyInfo.dwYpos <= yPosMinTrip) result &= JoystickUp.Data;
-                if (joyInfo.dwYpos >= yPosMaxTrip) result &= JoystickDown.Data;
-                if (joyInfo.dwXpos >= xPosMaxTrip) result &= JoystickRight.Data;
+                if (joyInfo1.dwYpos <= yPosMinTrip1) result &= JoystickUp1.Data;
+                if (joyInfo1.dwYpos >= yPosMaxTrip1) result &= JoystickDown1.Data;
+                if (joyInfo1.dwXpos >= xPosMaxTrip1) result &= JoystickRight1.Data;
 
-                if ((joyInfo.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire.Data;
+                if ((joyInfo1.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
         }
 
-        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp.Data;
-        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown.Data;
-        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight.Data;
-        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire.Data;
+        if (GetKeyState(VK_NUMPAD8) & 0x8000) result &= JoystickUp1.Data;
+        if (GetKeyState(VK_NUMPAD2) & 0x8000) result &= JoystickDown1.Data;
+        if (GetKeyState(VK_NUMPAD6) & 0x8000) result &= JoystickRight1.Data;
+        if ((GetKeyState(VK_NUMPAD0) & 0x8000) || readFireButton) result &= JoystickFire1.Data;
 
         joystick1AutoFireReadCount++;
         if (joystick1AutoFireReadCount == JoystickTotalReads) joystick1AutoFireReadCount = 0;

@@ -2832,6 +2832,7 @@ void __fastcall TForm1::ConnectSpectrum128KeypadClick(TObject *Sender)
 {
         ConnectSpectrum128Keypad->Checked = !ConnectSpectrum128Keypad->Checked;
         spectrum.spectrum128Keypad = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
+        Keyboard->KbChange();
 }
 //---------------------------------------------------------------------------
 
@@ -2839,6 +2840,8 @@ void __fastcall TForm1::ConnectJoystick1Click(TObject *Sender)
 {
         ConnectJoystick1->Checked = !ConnectJoystick1->Checked;
         machine.joystick1Connected = ConnectJoystick1->Checked;
+        EnableJoystick1AutoFire->Enabled = ConnectJoystick1->Checked;
+        HW->UpdateSinclairJoystickKeys();
 }
 //---------------------------------------------------------------------------
 
@@ -2846,6 +2849,8 @@ void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
 {
         ConnectJoystick2->Checked = !ConnectJoystick2->Checked;
         machine.joystick2Connected = ConnectJoystick2->Checked;
+        EnableJoystick2AutoFire->Enabled = ConnectJoystick2->Checked;
+        HW->UpdateSinclairJoystickKeys();
 }
 //---------------------------------------------------------------------------
 

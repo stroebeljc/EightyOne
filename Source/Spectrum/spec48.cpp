@@ -1390,7 +1390,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x1f:
-                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick();
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick1();
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
                 if (spectrum.floppytype==FLOPPYDISCIPLE) return (BYTE)(PrinterBusy()<<6);
                 break;
@@ -1437,7 +1437,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x7f:
-                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_FULLER) return ReadJoystick();
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_FULLER) return ReadJoystick1();
                 if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
                 if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
@@ -1652,21 +1652,21 @@ BYTE ReadPort(int Address, int *tstates)
                         {
                                 if (machine.joystickInterfaceType == JOYSTICK_INTERFACE2)
                                 {
-                                        if (machine.joystick1Connected && !(Address & 0x1000)) data &= ReadJoystick();
+                                        if (machine.joystick1Connected && !(Address & 0x1000)) data &= ReadJoystick1();
                                         if (machine.joystick2Connected && !(Address & 0x0800)) data &= ReadJoystick2();
                                 }
                                 else if (machine.joystickInterfaceType == JOYSTICK_CURSOR && machine.joystick1Connected)
                                 {
-                                        if (!(Address & 0x0800)) data &= ReadJoystick_Left();
-                                        if (!(Address & 0x1000)) data &= ReadJoystick_RightUpDownFire();
+                                        if (!(Address & 0x0800)) data &= ReadJoystick1_Left();
+                                        if (!(Address & 0x1000)) data &= ReadJoystick1_RightUpDownFire();
                                 }
                                 else if (machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE && machine.joystick1Connected)
                                 {
-                                        if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
-                                        if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
-                                        if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
-                                        if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
-                                        if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                                        if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                                        if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                                        if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                                        if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                                        if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
                                 }
                         }
                         

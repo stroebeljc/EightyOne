@@ -15,11 +15,11 @@
 #define JOYSTICK_BOLDFIELD      7
 #define JOYSTICK_TIMEX          8
 
-extern KeyInfo JoystickLeft;
-extern KeyInfo JoystickRight;
-extern KeyInfo JoystickUp;
-extern KeyInfo JoystickDown;
-extern KeyInfo JoystickFire;
+extern KeyInfo JoystickLeft1;
+extern KeyInfo JoystickRight1;
+extern KeyInfo JoystickUp1;
+extern KeyInfo JoystickDown1;
+extern KeyInfo JoystickFire1;
 
 extern KeyInfo JoystickLeft2;
 extern KeyInfo JoystickRight2;
@@ -29,13 +29,13 @@ extern KeyInfo JoystickFire2;
 
 extern int NumberOfJoysticks();
 extern void InitialiseJoysticks();
-extern BYTE ReadJoystick();
+extern BYTE ReadJoystick1();
 extern BYTE ReadJoystick2();
-extern BYTE ReadJoystick_Left();
-extern BYTE ReadJoystick_Right();
-extern BYTE ReadJoystick_Up();
-extern BYTE ReadJoystick_Down();
-extern BYTE ReadJoystick_Fire();
-extern BYTE ReadJoystick_RightUpDownFire();
+extern BYTE ReadJoystick1_Left();
+extern BYTE ReadJoystick1_Right();
+extern BYTE ReadJoystick1_Up();
+extern BYTE ReadJoystick1_Down();
+extern BYTE ReadJoystick1_Fire();
+extern BYTE ReadJoystick1_RightUpDownFire();
 
 #endif

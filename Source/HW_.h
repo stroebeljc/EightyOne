@@ -310,6 +310,8 @@ private:	// User declarations
         bool IdeRom();
         bool Plus3IdeRom();
         void UpdateApplyButton();
+        void UpdateKeypadUI();
+        void UpdateJoystickUI();
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -359,6 +361,7 @@ public:		// User declarations
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
         void SetZXpandState(bool checked, bool enabled);
+        void UpdateSinclairJoystickKeys();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THW *HW;

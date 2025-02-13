@@ -473,7 +473,7 @@ void CSound::AYWrite128(int reg, int val, int frametstates)
 
         AYWrite(reg, val, frametstates);
 
-        if (reg == 14)
+        if (reg == 14) // && ((AYRegisterStore[7] & 0x40) == 0x40))
         {
                 Midi.WriteBit(val);
 
@@ -540,22 +540,22 @@ int CSound::AYReadTimex(int reg, int joysticks = 0)
         {
                 if ((AYRegisterStore[7] & 0x40) == 0x40) //Output
                 {
-                        if (joysticks & 0x01)
+                        if ((joysticks & 0x01) && machine.joystick1Connected)
                         {
-                                data &= (byte)(ReadJoystick() & 0x8F);
+                                data &= (byte)(ReadJoystick1() & 0x8F);
                         }
-                        if (joysticks & 0x02)
+                        if ((joysticks & 0x02) && machine.joystick2Connected)
                         {
                                 data &= (byte)(ReadJoystick2() & 0x8F);
                         }
                 }
                 else //Input
                 {
-                        if (joysticks & 0x01)
+                        if ((joysticks & 0x01) && machine.joystick1Connected)
                         {
-                                data = (byte)(ReadJoystick() & 0x8F);
+                                data = (byte)(ReadJoystick1() & 0x8F);
                         }
-                        if (joysticks & 0x02)
+                        if ((joysticks & 0x02) && machine.joystick2Connected)
                         {
                                 data = (byte)(ReadJoystick2() & 0x8F);
                         }

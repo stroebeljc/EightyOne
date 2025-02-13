@@ -1308,28 +1308,20 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 data = (BYTE)~data;
 
-                if (machine.joystick != JOYSTICK_NONE)
+                if (machine.joystickInterfaceType != JOYSTICK_NONE && machine.joystick1Connected)
                 {
-                        if (machine.joystick == JOYSTICK_SINCLAIR1)
+                        if (machine.joystickInterfaceType == JOYSTICK_CURSOR)
                         {
-                                if (!(Address & 0x1000)) data &= ReadJoystick();
+                                if (!(Address & 0x0800)) data &= ReadJoystick1_Left();
+                                if (!(Address & 0x1000)) data &= ReadJoystick1_RightUpDownFire();
                         }
-                        else if (machine.joystick == JOYSTICK_SINCLAIR2)
+                        else if (machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE)
                         {
-                                if (!(Address & 0x0800)) data &= ReadJoystick();
-                        }
-                        else if (machine.joystick == JOYSTICK_CURSOR)
-                        {
-                                if (!(Address & 0x0800)) data &= ReadJoystick_Left();
-                                if (!(Address & 0x1000)) data &= ReadJoystick_RightUpDownFire();
-                        }
-                        else if (machine.joystick == JOYSTICK_PROGRAMMABLE)
-                        {
-                                if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
-                                if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
-                                if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
-                                if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
-                                if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                                if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                                if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                                if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                                if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                                if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
                         }
                 }
 
@@ -1363,7 +1355,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         return 0;
 
                 case 0x1f:
-                        if (machine.joystick == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick();
+                        if (machine.joystickInterfaceType == JOYSTICK_KEMPSTON && machine.joystick1Connected) return (BYTE)~ReadJoystick1();
                         break;
 
                 case 0x3f:

@@ -229,7 +229,7 @@ int CKeypad::FetchRowKeys()
 {
         int keyData;
 
-        if ((GetAsyncKeyState(VK_RCONTROL) & 0x8000) == 0x8000)
+        if (GetAsyncKeyState(VK_RCONTROL) < 0)
         {
                 keyData = FetchRowKeys_Keyboard();
         }
@@ -249,36 +249,36 @@ inline int CKeypad::FetchRowKeys_Keyboard()
         {
         default:
         case 0: // Row 5
-                if (GetAsyncKeyState('0') & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_OEM_PERIOD) & 0x8000) keyData |= 0x02;
+                if (GetAsyncKeyState('0') < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_OEM_PERIOD) < 0) keyData |= 0x02;
                 break;
 
         case 1: // Row 4
-                if (GetAsyncKeyState('1') & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState('2') & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState('3') & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_RETURN) & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState('1') < 0) keyData |= 0x08;
+                if (GetAsyncKeyState('2') < 0) keyData |= 0x04;
+                if (GetAsyncKeyState('3') < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_RETURN) < 0) keyData |= 0x01;
                 break;
 
         case 2: // Row 1
-                if (GetAsyncKeyState(VK_OEM_2) & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_OEM_7) & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState(VK_OEM_4) & 0x8000)  keyData |= 0x02;
-                if (GetAsyncKeyState(VK_OEM_6) & 0x8000)  keyData |= 0x01;
+                if (GetAsyncKeyState(VK_OEM_2) < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_OEM_7) < 0) keyData |= 0x04;
+                if (GetAsyncKeyState(VK_OEM_4) < 0)  keyData |= 0x02;
+                if (GetAsyncKeyState(VK_OEM_6) < 0)  keyData |= 0x01;
                 break;
 
         case 3: // Row 2
-                if (GetAsyncKeyState('7') & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState('8') & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState('9') & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_OEM_MINUS) & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState('7') < 0) keyData |= 0x08;
+                if (GetAsyncKeyState('8') < 0) keyData |= 0x04;
+                if (GetAsyncKeyState('9') < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_OEM_MINUS) < 0) keyData |= 0x01;
                 break;
 
         case 4: // Row 3
-                if (GetAsyncKeyState('4') & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState('5') & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState('6') & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_OEM_PLUS) & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState('4') < 0) keyData |= 0x08;
+                if (GetAsyncKeyState('5') < 0) keyData |= 0x04;
+                if (GetAsyncKeyState('6') < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_OEM_PLUS) < 0) keyData |= 0x01;
                 break;
         }
 
@@ -293,36 +293,36 @@ inline int CKeypad::FetchRowKeys_NumericPad()
         {
         default:
         case 0: // Row 5
-                if (GetAsyncKeyState(VK_NUMPAD0) & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_DECIMAL) & 0x8000) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_NUMPAD0) < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_DECIMAL) < 0) keyData |= 0x02;
                 break;
 
         case 1: // Row 4
-                if (GetAsyncKeyState(VK_NUMPAD1) & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_NUMPAD2) & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState(VK_NUMPAD3) & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_RETURN)  & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState(VK_NUMPAD1) < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_NUMPAD2) < 0) keyData |= 0x04;
+                if (GetAsyncKeyState(VK_NUMPAD3) < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_RETURN)  < 0) keyData |= 0x01;
                 break;
 
         case 2: // Row 1
-                if (GetAsyncKeyState(VK_DIVIDE)   & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_MULTIPLY) & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState(VK_NUMLOCK)  & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_LAUNCH_APP1) & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState(VK_DIVIDE)   < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_MULTIPLY) < 0) keyData |= 0x04;
+                if (GetAsyncKeyState(VK_NUMLOCK)  < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_LAUNCH_APP1) < 0) keyData |= 0x01;
                 break;
 
         case 3: // Row 2
-                if (GetAsyncKeyState(VK_NUMPAD7)  & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_NUMPAD8)  & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState(VK_NUMPAD9)  & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_SUBTRACT) & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState(VK_NUMPAD7)  < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_NUMPAD8)  < 0) keyData |= 0x04;
+                if (GetAsyncKeyState(VK_NUMPAD9)  < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_SUBTRACT) < 0) keyData |= 0x01;
                 break;
 
         case 4: // Row 3
-                if (GetAsyncKeyState(VK_NUMPAD4) & 0x8000) keyData |= 0x08;
-                if (GetAsyncKeyState(VK_NUMPAD5) & 0x8000) keyData |= 0x04;
-                if (GetAsyncKeyState(VK_NUMPAD6) & 0x8000) keyData |= 0x02;
-                if (GetAsyncKeyState(VK_ADD)     & 0x8000) keyData |= 0x01;
+                if (GetAsyncKeyState(VK_NUMPAD4) < 0) keyData |= 0x08;
+                if (GetAsyncKeyState(VK_NUMPAD5) < 0) keyData |= 0x04;
+                if (GetAsyncKeyState(VK_NUMPAD6) < 0) keyData |= 0x02;
+                if (GetAsyncKeyState(VK_ADD)     < 0) keyData |= 0x01;
                 break;
         }
 

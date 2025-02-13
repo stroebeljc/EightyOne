@@ -666,14 +666,14 @@ void PCKeySetCursor(char left, char down, char up, char right, int shift)
 
 void PCKeyDown(WORD key)
 {
-        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RCONTROL) & 0x8000))
+        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RCONTROL) < 0))
         {
                 return;
         }
 
         int i = 0;
         if (key == VK_SHIFT) PCShift = 2;
-        PCALT=(GetKeyState(VK_MENU) & 0x8000);
+        PCALT=(GetKeyState(VK_MENU) < 0);
 
         if (PCALT) return;
 
@@ -696,7 +696,7 @@ void PCKeyDown(WORD key)
 
 void PCKeyUp(WORD key)
 {
-        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RSHIFT) & 0x8000))
+        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RSHIFT) < 0))
         {
                 return;
         }

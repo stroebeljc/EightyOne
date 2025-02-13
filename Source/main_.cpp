@@ -926,7 +926,7 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
         extern void RecalcWinSize(void);
         if (Key == ' ') rzx_close();
 
-        // CTRL + [ acts generates the same key code as ESC so on respond if it really was ESC
+        // CTRL + [ generates the same key code as ESC and so an additional check is made to see if the right control key is being pressed
         if (Key == VK_ESCAPE && !IsAsyncKeyPressed(VK_RCONTROL))
         {
                 FullScreen = !FullScreen;

@@ -3679,8 +3679,6 @@ void __fastcall THW::DriveBTypeChange(TObject *Sender)
 void __fastcall THW::IF1ConfigClick(TObject *Sender)
 {
         IF1->ShowModal();
-        ResetRequired = true;
-        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 

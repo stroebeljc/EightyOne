@@ -4249,7 +4249,7 @@ void __fastcall THW::JoystickBoxKeyDown(TObject *Sender, WORD &Key,
         if (Key == VK_SHIFT)
         {
                 bool supportRightShift = (NewMachine == MACHINESPECTRUM || NewMachine == MACHINEACE);
-                bool rightShiftPressed = (GetKeyState(VK_RSHIFT) < 0) ? true : false;
+                bool rightShiftPressed = IsKeyPressed(VK_RSHIFT);
                 key = (supportRightShift && emulator.UseRShift && rightShiftPressed) ? '.' : '^';
                 if (NewKey(textBox, key))
                 {

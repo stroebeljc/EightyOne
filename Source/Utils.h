@@ -28,6 +28,9 @@
 #include <IniFiles.hpp>
 #include "zx81config.h"
 
+#define IsAsyncKeyPressed(key) (GetAsyncKeyState(key)<0)
+#define IsKeyPressed(key) (GetKeyState(key)<0)
+
 enum IniFileAccessType
 {
         Read,

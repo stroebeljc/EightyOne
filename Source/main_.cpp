@@ -301,7 +301,7 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if (GetKeyState(VK_ESCAPE) < 0)
+        if (IsKeyPressed(VK_ESCAPE))
         {
                 Key = NULL;
                 return;
@@ -927,7 +927,7 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
         if (Key == ' ') rzx_close();
 
         // CTRL + [ acts generates the same key code as ESC so on respond if it really was ESC
-        if (Key == VK_ESCAPE && (GetAsyncKeyState(VK_RCONTROL) >= 0))
+        if (Key == VK_ESCAPE && !IsAsyncKeyPressed(VK_RCONTROL))
         {
                 FullScreen = !FullScreen;
 
@@ -2319,8 +2319,8 @@ void __fastcall TForm1::RunFrame()
 
         if (emulator.UseRShift)
         {
-                bool L=((GetAsyncKeyState(VK_LSHIFT)&32768)!=0);
-                bool R=((GetAsyncKeyState(VK_RSHIFT)&32768)!=0);
+                bool L=IsAsyncKeyPressed(VK_LSHIFT);
+                bool R=IsAsyncKeyPressed(VK_RSHIFT);
                 TShiftState z;
 
                 if (R != RShift)

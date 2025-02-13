@@ -25,6 +25,7 @@
 #pragma hdrstop
 
 #include <stdio.h>
+#include "utils.h"
 #include "kbstatus.h"
 #include "zx81.h"
 #include "zx81config.h"
@@ -666,14 +667,14 @@ void PCKeySetCursor(char left, char down, char up, char right, int shift)
 
 void PCKeyDown(WORD key)
 {
-        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RCONTROL) < 0))
+        if (spectrum.spectrum128Keypad && IsKeyPressed(VK_RCONTROL))
         {
                 return;
         }
 
         int i = 0;
         if (key == VK_SHIFT) PCShift = 2;
-        PCALT=(GetKeyState(VK_MENU) < 0);
+        PCALT=IsKeyPressed(VK_MENU);
 
         if (PCALT) return;
 
@@ -696,7 +697,7 @@ void PCKeyDown(WORD key)
 
 void PCKeyUp(WORD key)
 {
-        if (spectrum.spectrum128Keypad && (GetKeyState(VK_RSHIFT) < 0))
+        if (spectrum.spectrum128Keypad && IsKeyPressed(VK_RSHIFT))
         {
                 return;
         }

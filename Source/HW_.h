@@ -309,6 +309,7 @@ private:	// User declarations
         bool NewKey(TEdit* textBox, char key);
         void LoadRomBox();
         void UpdateApplyButton();
+        void SelectDefaultRom();
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();

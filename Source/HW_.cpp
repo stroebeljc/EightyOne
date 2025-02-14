@@ -3607,9 +3607,16 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 Form1->SimpleIdeRomEnabled->Checked = true;
                 Form1->SimpleIdeRomEnabled->Enabled = true;
         }
-
-
+                  
         LoadRomBox();
+
+        if (RomBox->Text.SubString(1, 5) == "IDEs\\")
+        {
+                if (FindEntry(RomBox, RomBox->Text, -1) == -1)
+                {
+                        SelectDefaultRom();
+                }
+        }
 
         DisplayTotalRam();
 
@@ -4272,34 +4279,30 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         IDEBoxChange(NULL);
         RomBoxChange(NULL);
 
+        SelectDefaultRom();
+
         switch (NewMachine)
         {
         case MACHINEZX80:
-                RomBox->Text = "zx80.rom";
                 break;
 
         case MACHINEZX81:
-                RomBox->Text = "zx81.edition3.rom";
                 break;
-                
+
         case MACHINEACE:
-                RomBox->Text = "jupiterace.rom";
                 EnableRomCartridgeOption(false);
                 break;
-                
+
         case MACHINETS1500:
-                RomBox->Text = "ts1500.rom";
                 NTSC->Checked = true;
                 break;
-                
+
         case MACHINELAMBDA:
-                RomBox->Text = "lambda8300.rom";
                 NTSC->Checked = true;
                 EnableRomCartridgeOption(false);
                 break;
-                
+
         case MACHINEZX97LE:
-                RomBox->Text = "zx97.rom";
                 ChrGenBox->ItemIndex = FindEntry(ChrGenBox, "CHR$128");
                 HiResBox->ItemIndex  = FindEntry(HiResBox,  "WRX");
                 EnableLowRAM->Checked = true;
@@ -4307,19 +4310,16 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                 break;
 
         case MACHINER470:
-                RomBox->Text = "ringo470.rom";
                 NTSC->Checked = true;
                 EnableRomCartridgeOption(false);
                 break;
                 
         case MACHINETK85:
-                RomBox->Text = "tk85.rom";
                 NTSC->Checked = true;
                 EnableRomCartridgeOption(false);
                 break;
-                
+
         case MACHINETS1000:
-                RomBox->Text = "zx81.edition3.rom";
                 NTSC->Checked = true;
                 break;
 
@@ -4327,29 +4327,24 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                 switch (NewSpec)
                 {
                         case SPECCY16:
-                                RomBox->Text = "spectrum48.rom";
                                 Issue2->Checked = true;
                                 break;
 
                         case SPECCY48:
-                                RomBox->Text = "spectrum48.rom";
                                 break;
 
                         case SPECCYPLUS:
-                                RomBox->Text = "spectrum48.rom";
                                 break;
-                                
+
                         case SPECCYTC2048:
-                                RomBox->Text = "tc2048.rom";
                                 ChrGenBox->ItemIndex   = FindEntry(ChrGenBox,   "Timex");
                                 HiResBox->ItemIndex    = FindEntry(HiResBox,    "Timex");
                                 ColourBox->ItemIndex   = FindEntry(ColourBox,   "Timex");
                                 JoystickBox->ItemIndex = FindEntry(JoystickBox, "Kempston");
                                 EnableRomCartridgeOption(false);
                                 break;
-                        
+
                         case SPECCYTC2068:
-                                RomBox->Text = "ts2068.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
                                 ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,    "Timex");
                                 HiResBox->ItemIndex     = FindEntry(HiResBox,     "Timex");
@@ -4358,39 +4353,33 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                                 break;
 
                         case SPECCYTS2068:
-                                RomBox->Text = "ts2068.rom";
-                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
-                                ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,    "Timex");
-                                HiResBox->ItemIndex     = FindEntry(HiResBox,     "Timex");
-                                ColourBox->ItemIndex    = FindEntry(ColourBox,    "Timex");
-                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Timex");
+                                ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,   "Timex");
+                                HiResBox->ItemIndex     = FindEntry(HiResBox,    "Timex");
+                                ColourBox->ItemIndex    = FindEntry(ColourBox,   "Timex");
+                                JoystickBox->ItemIndex  = FindEntry(JoystickBox, "Timex");
                                 NTSC->Checked = true;
                                 break;
-                                
+
                         case SPECCY128:
-                                RomBox->Text = "spectrum128.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
                                 break;
-                                
+
                         case SPECCYPLUS2:
-                                RomBox->Text = "spectrum+2.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
                                 JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
                                 break;
-                                
+
                         case SPECCYPLUS2A:
-                                RomBox->Text = "spectrum+3.version4-1.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
                                 JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
                                 break;
 
                         case SPECCYPLUS3:
-                                RomBox->Text = "spectrum+3.version4-1.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
                                 JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
                                 break;
                 }
-                break;             
+                break;
         }
 
         if (RamPackBox->Visible)
@@ -4408,6 +4397,83 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         }
 
         UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void THW::SelectDefaultRom()
+{
+        switch (NewMachine)
+        {
+        case MACHINEZX80:
+                RomBox->Text = "zx80.rom";
+                break;
+
+        case MACHINEZX81:
+                RomBox->Text = "zx81.edition3.rom";
+                break;
+                
+        case MACHINEACE:
+                RomBox->Text = "jupiterace.rom";
+                break;
+
+        case MACHINETS1500:
+                RomBox->Text = "ts1500.rom";
+                break;
+
+        case MACHINELAMBDA:
+                RomBox->Text = "lambda8300.rom";
+                break;
+
+        case MACHINEZX97LE:
+                RomBox->Text = "zx97.rom";
+                break;
+
+        case MACHINER470:
+                RomBox->Text = "ringo470.rom";
+                break;
+
+        case MACHINETK85:
+                RomBox->Text = "tk85.rom";
+                break;
+
+        case MACHINETS1000:
+                RomBox->Text = "zx81.edition3.rom";
+                break;
+
+        case MACHINESPECTRUM:
+                switch (NewSpec)
+                {
+                        case SPECCY16:
+                        case SPECCY48:
+                        case SPECCYPLUS:
+                                RomBox->Text = "spectrum48.rom";
+                                break;
+
+                        case SPECCYTC2048:
+                                RomBox->Text = "tc2048.rom";
+                                break;
+
+                        case SPECCYTC2068:
+                                RomBox->Text = "ts2068.rom";
+                        case SPECCYTS2068:
+                                RomBox->Text = "ts2068.rom";
+                                break;
+
+                        case SPECCY128:
+                                RomBox->Text = "spectrum128.rom";
+                                break;
+
+                        case SPECCYPLUS2:
+                                RomBox->Text = "spectrum+2.rom";
+                                break;
+
+                        case SPECCYPLUS2A:
+                        case SPECCYPLUS3:
+                                RomBox->Text = "spectrum+3.version4-1.rom";
+                                break;
+                }
+                break;             
+        }
 }
 //---------------------------------------------------------------------------
 

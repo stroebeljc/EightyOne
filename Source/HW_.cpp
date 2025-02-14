@@ -1301,7 +1301,7 @@ void THW::ConfigureKeypad()
                 Form1->ConnectSpectrum128Keypad->Checked = false;
         }
 
-        spectrum.spectrum128Keypad = Form1->ConnectSpectrum128Keypad->Checked ? 1 : 0;
+        spectrum.spectrum128Keypad = (CFGBYTE)(Form1->ConnectSpectrum128Keypad->Checked ? 1 : 0);
 }
 
 void THW::ConfigureSound()

@@ -455,8 +455,8 @@ void THW::SaveToInternalSettings()
 
 void THW::Configure8K16KRam()
 {
-        bool visible8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
-        Form1->WriteProtect8KRAM->Enabled = visible8K16KProtectOption;
+        bool enable8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
+        Form1->WriteProtect8KRAM->Enabled = enable8K16KProtectOption;
         if (!Form1->WriteProtect8KRAM->Enabled)
         {
                 Form1->WriteProtect8KRAM->Checked = false;
@@ -1588,13 +1588,22 @@ void THW::ConfigureJoystick()
 
 void THW::ConfigureIDE()
 {
-        Form1->divIDEJumperEClosed->Enabled    = (IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R Gal)"));
+        Form1->divIDEJumperEClosed->Enabled    = (IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R Gal)") || IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R\" Gal)"));
         Form1->ZXCFUploadJumperOpened->Enabled = (IDEBox->ItemIndex == FindEntry(IDEBox, "ZXCF"));
+
+        if (!Form1->divIDEJumperEClosed->Enabled)
+        {
+                Form1->divIDEJumperEClosed->Checked = false;
+        }
+        if (!Form1->ZXCFUploadJumperOpened->Enabled)
+        {
+                Form1->ZXCFUploadJumperOpened->Checked = false;
+        }
 
         spectrum.HDType = HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")                spectrum.HDType = HDZXCF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)")   { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = false; }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)") { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = true; }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)") { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = true; }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")    spectrum.HDType = HDPLUS3E;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")               spectrum.HDType = HDACECF;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")       spectrum.HDType = HDPITERSCF;
@@ -1604,7 +1613,7 @@ void THW::ConfigureIDE()
         spectrum.divIDEJumperEClosed = Form1->divIDEJumperEClosed->Checked;
         spectrum.UploadJumperZXCF = Form1->ZXCFUploadJumperOpened->Checked;
 
-        switch(ZXCFRAM->ItemIndex)
+        switch (ZXCFRAM->ItemIndex)
         {
         case 0: spectrum.ZXCFRAMSize = 128/16; break;
         case 1: spectrum.ZXCFRAMSize = 512/16; break;
@@ -2390,7 +2399,7 @@ void THW::SetupForSpectrum(void)
         IDEBox->Items->Add("None");
         IDEBox->Items->Add("Simple +3e 8-Bit");
         IDEBox->Items->Add("divIDE 57 (R Gal)");
-        IDEBox->Items->Add("divIDE 57 (R'' Gal)");
+        IDEBox->Items->Add("divIDE 57 (R\" Gal)");
         IDEBox->Items->Add("ZXCF");
         IDEBox->Items->Add("Simple IDE CF");
         IDEBox->Items->Add("Simple IDE 8-Bit");
@@ -2728,7 +2737,7 @@ bool THW::Plus3IdeRom()
                 return true;
         }
         else if ((IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)") ||
-                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)"))
+                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)"))
         {
                 RomBox->Items->Add(ideRomsFolder + AnsiString("diven3ee.rom"));
                 RomBox->ItemIndex = 0;
@@ -3697,14 +3706,16 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
-                Form1->ZXCFUploadJumperOpened->Checked = (NewSpec == SPECCYPLUS2A || NewSpec == SPECCYPLUS3);;
+                // For Spectrm+2A/+3, use +3e ROM over ResiDOS
+                Form1->ZXCFUploadJumperOpened->Checked = (NewSpec == SPECCYPLUS2A || NewSpec == SPECCYPLUS3);
                 Form1->ZXCFUploadJumperOpened->Enabled = true;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
         }
         else if ((IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)") ||
-                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R'' Gal)"))
+                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)"))
         {
+                // For Spectrm+2A/+3, use +3e ROM over divIDE OS
                 Form1->divIDEJumperEClosed->Checked = (NewSpec != SPECCYPLUS2A && NewSpec != SPECCYPLUS3);
                 Form1->divIDEJumperEClosed->Enabled = true;
         }

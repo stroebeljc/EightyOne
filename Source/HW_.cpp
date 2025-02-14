@@ -925,7 +925,7 @@ void THW::ConfigureBasicLister()
 
 void THW::ConfigureColour()
 {
-        bool prevChromaColourSwitchOn = (machine.colour == COLOURCHROMA);
+        bool prevChromaColourSwitchOn  = (machine.colour == COLOURCHROMA);
         bool prevSpectraColourSwitchOn = (machine.colour == COLOURSPECTRA);
 
         switch(NewMachine)
@@ -1250,20 +1250,25 @@ void THW::ConfigureCharacterGenerator()
         if (ChrGenBox->Text == "Lambda")
         {
                 zx81.chrgen = CHRGENLAMBDA;
+                zx81.extfont = 1;
         }
         else
         {
                 zx81.chrgen = (CFGBYTE)ChrGenBox->ItemIndex;
+                zx81.extfont = 0;
         }
+        
         Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
 
-        zx81.extfont = 0;
         if ((zx81.chrgen == CHRGENDK) || (zx81.chrgen == CHRGENCHR128))
+        {
                 zx81.maxireg = 0x3F;
+        }
         else
+        {
                 zx81.maxireg = 0x1F;
-        if (ChrGenBox->Text == "Lambda") zx81.extfont = 1;
+        }
 }
 
 void THW::ConfigureHiRes()
@@ -1290,17 +1295,10 @@ void THW::ConfigureKeypad()
 {
         Form1->ConnectSpectrum128Keypad->Enabled = (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128);
 
-        bool machineChanged = (NewMachine != emulator.machine);
-        if (machineChanged)
+        if (!Form1->ConnectSpectrum128Keypad->Enabled)
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
         }
-        else if (!Form1->ConnectSpectrum128Keypad->Enabled)
-        {
-                Form1->ConnectSpectrum128Keypad->Checked = false;
-        }
-
-        spectrum.spectrum128Keypad = (CFGBYTE)(Form1->ConnectSpectrum128Keypad->Checked ? 1 : 0);
 }
 
 void THW::ConfigureSound()
@@ -1549,24 +1547,11 @@ void THW::ConfigureJoystick()
                 break;
         }
 
-        void UpdateJoystickUI();
-
-        if (machine.joystickInterfaceType != JOYSTICK_NONE)
-        {
-                InitialiseJoysticks();
-        }
-}
-
-void THW::UpdateJoystickUI()
-{
         bool joystickInterfaceSelected = (machine.joystickInterfaceType != JOYSTICK_NONE);
         bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
 
         Form1->ConnectJoystick1->Enabled = joystickInterfaceSelected;
         Form1->ConnectJoystick2->Enabled = twinJoystickInterfaceSelected;
-
-        Form1->EnableJoystick1AutoFire->Enabled = joystickInterfaceSelected;
-        Form1->EnableJoystick2AutoFire->Enabled = twinJoystickInterfaceSelected;
 
         if (joystickInterfaceSelected)
         {
@@ -1582,9 +1567,22 @@ void THW::UpdateJoystickUI()
                         Form1->ConnectJoystick1->Caption = "Connect Joystick 1";
                 }
         }
+        else
+        {
+                Form1->ConnectJoystick1->Checked = false;
+                Form1->ConnectJoystick2->Checked = false;
+
+                Form1->EnableJoystick1AutoFire->Checked = false;
+                Form1->EnableJoystick2AutoFire->Checked = false;
+        }
 
         Form1->EnableJoystick1AutoFire->Enabled = Form1->ConnectJoystick1->Checked;
         Form1->EnableJoystick2AutoFire->Enabled = Form1->ConnectJoystick2->Checked;
+
+        if (machine.joystickInterfaceType != JOYSTICK_NONE)
+        {
+                InitialiseJoysticks();
+        }
 }
 
 void THW::ConfigureIDE()
@@ -3986,9 +3984,9 @@ void __fastcall THW::ButtonAdvancedMoreClick(TObject *Sender)
 {
         if (ZX97Dialog->ShowModal()==mrOk)
         {
-        ResetRequired = true;
-        UpdateApplyButton();
-}
+                ResetRequired = true;
+                UpdateApplyButton();
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -4087,7 +4085,6 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
-
 
 void __fastcall THW::CancelClick(TObject *Sender)
 {
@@ -4558,8 +4555,6 @@ void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
 
 void THW::UpdateApplyButton()
 {
-        UpdateJoystickUI();
-
         bool settingsChanged = (NewMachineName != Hwform.MachineName);
 
         settingsChanged |= (RomBox->Text                           != Hwform.RomBoxText);

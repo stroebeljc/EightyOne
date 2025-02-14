@@ -2860,7 +2860,7 @@ void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::FullScreen1Click(TObject *Sender)
+void __fastcall TForm1::ZoomFullScreenClick(TObject *Sender)
 {
         char escKey = VK_ESCAPE;
         FormKeyPress(Sender, escKey);

@@ -185,7 +185,7 @@ __published:	// IDE-managed Components
         TMenuItem *N17;
         TMenuItem *ConnectJoystick1;
         TMenuItem *ConnectJoystick2;
-        TMenuItem *FullScreen1;
+        TMenuItem *ZoomFullScreen;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -304,7 +304,7 @@ __published:	// IDE-managed Components
         void __fastcall ConnectSpectrum128KeypadClick(TObject *Sender);
         void __fastcall ConnectJoystick1Click(TObject *Sender);
         void __fastcall ConnectJoystick2Click(TObject *Sender);
-        void __fastcall FullScreen1Click(TObject *Sender);
+        void __fastcall ZoomFullScreenClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

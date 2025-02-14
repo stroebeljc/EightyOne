@@ -49,12 +49,12 @@ const char* exampleZX81ProgramsFolder     = "Examples\\ZX81 Programs\\";
 const char* exampleSpectrumProgramsFolder = "Examples\\Spectrum Programs\\";
 
 const char* romsFolder                    = "ROMs\\";
-const char* fdcRomsFolder                 = "ROMs\\FDCs\\";
-const char* ideRomsFolder                 = "ROMs\\IDEs\\";
-const char* interfaceRomsFolder           = "ROMs\\Interfaces\\";
-const char* graphicRomsFolder             = "ROMs\\Graphics\\";
-const char* replacementRomsFolder         = "ROMs\\Replacement ROMs\\";
-const char* speechRomsFolder              = "ROMs\\Speech\\";
+const char* fdcRomsFolder                 = "FDCs\\";
+const char* ideRomsFolder                 = "IDEs\\";
+const char* interfaceRomsFolder           = "Interfaces\\";
+const char* graphicRomsFolder             = "Graphics\\";
+const char* replacementRomsFolder         = "Replacement ROMs\\";
+const char* speechRomsFolder              = "Speech\\";
 
 const char* romCartridgeFolder            = "ROM Cartridges\\";
 const char* if2RomsFolder                 = "ROM Cartridges\\ZX Interface 2\\";

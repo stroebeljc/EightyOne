@@ -1,7 +1,7 @@
-===========================
-TS2050 Modem for the TS2068
+==============================================
+TS2050 Modem for the TS1000, TS1500 and TS2068
 Timex Computer Corp
-===========================
+==============================================
 
 MODEL 2050 TELECOMMUNICATIONS MODEM
 Auto Answer/Auto Dial

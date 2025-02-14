@@ -1257,7 +1257,6 @@ void THW::ConfigureCharacterGenerator()
         }
         Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
-        //Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         zx81.extfont = 0;
         if ((zx81.chrgen == CHRGENDK) || (zx81.chrgen == CHRGENCHR128))
@@ -1270,10 +1269,7 @@ void THW::ConfigureCharacterGenerator()
 void THW::ConfigureHiRes()
 {
         Form1->ResetMemotechHRG->Enabled = false;
-        //Form1->ResetMemotechHRG->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
-
         Form1->ResetQuicksilvaHiRes->Enabled = false;
-        //Form1->ResetQuicksilvaHiRes->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         switch(HiResBox->ItemIndex)
         {
@@ -1292,12 +1288,6 @@ void THW::ConfigureHiRes()
 
 void THW::ConfigureKeypad()
 {
-        UpdateKeypadUI();
-        spectrum.spectrum128Keypad = Form1->ConnectSpectrum128Keypad->Checked;
-}
-
-void THW::UpdateKeypadUI()
-{
         Form1->ConnectSpectrum128Keypad->Enabled = (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128);
 
         bool machineChanged = (NewMachine != emulator.machine);
@@ -1305,10 +1295,12 @@ void THW::UpdateKeypadUI()
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
         }
-        else if (!Form1->ConnectSpectrum128Keypad->Visible)
+        else if (!Form1->ConnectSpectrum128Keypad->Enabled)
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
         }
+
+        spectrum.spectrum128Keypad = Form1->ConnectSpectrum128Keypad->Checked ? 1 : 0;
 }
 
 void THW::ConfigureSound()
@@ -2156,7 +2148,7 @@ void THW::SetupForZX81(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
-        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Enabled = false;
 
         RomCartridgeBox->Items->Clear();
         RomCartridgeBox->Items->Add("None");
@@ -2345,7 +2337,7 @@ void THW::SetupForSpectrum(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = true;
 
-        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Enabled = false;
 
         RamPackLbl->Enabled = false; RamPackBox->Enabled = false;
         RamPackBox->ItemIndex = -1;
@@ -2829,7 +2821,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         Spec128Btn->Down = true;
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         NewMachineName = Spec128Btn->Caption;
         LoadRomBox();
@@ -2912,7 +2904,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SpecP2Btn->Down = true;
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
 
@@ -2941,7 +2933,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
 
@@ -2966,7 +2958,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
 
@@ -4563,7 +4555,6 @@ void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
 
 void THW::UpdateApplyButton()
 {
-        UpdateKeypadUI();
         UpdateJoystickUI();
 
         bool settingsChanged = (NewMachineName != Hwform.MachineName);

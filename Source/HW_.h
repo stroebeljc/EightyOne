@@ -310,7 +310,6 @@ private:	// User declarations
         bool IdeRom();
         bool Plus3IdeRom();
         void UpdateApplyButton();
-        void UpdateKeypadUI();
         void UpdateJoystickUI();
 
         void ConfigureRzxSupport();

@@ -1167,7 +1167,6 @@ void TForm1::LoadSettings(TIniFile *ini)
         ConnectJoystick2->Checked         = ini->ReadBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
         EnableJoystick1AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         EnableJoystick2AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
-        ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
 
         HorizontalSyncPulse->Checked                         = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
         VerticalSyncPulse->Checked                           = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);

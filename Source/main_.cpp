@@ -1124,177 +1124,176 @@ void __fastcall TForm1::FormDeactivate(TObject *Sender)
 
 void TForm1::LoadSettings(TIniFile *ini)
 {
-        if (ini->ReadBool("MAIN","InverseVideo",InverseVideo->Checked)) InverseVideoClick(NULL);
+        if (ini->ReadBool("MAIN", "InverseVideo", InverseVideo->Checked)) InverseVideoClick(NULL);
 
         emulator.checkInstallationPathLength = ini->ReadBool("MAIN", "CheckInstallationPathLength", 1);
 
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
-        Display1->Checked = ini->ReadBool("MAIN", "Display1", Display1->Checked);
-        Speed1->Checked = ini->ReadBool("MAIN", "Speed1", Speed1->Checked);
-        Sound1->Checked = ini->ReadBool("MAIN", "Sound1", Sound1->Checked);
+        Display1->Checked  = ini->ReadBool("MAIN", "Display1",  Display1->Checked);
+        Speed1->Checked    = ini->ReadBool("MAIN", "Speed1",    Speed1->Checked);
+        Sound1->Checked    = ini->ReadBool("MAIN", "Sound1",    Sound1->Checked);
 
         DisplayArt->Checked=ini->ReadBool("MAIN","DisplayArt",DisplayArt->Checked);
 
-        DebugWin->Checked = ini->ReadBool("MAIN", "DebugWin", DebugWin->Checked);
-        ViewPrinter->Checked = ini->ReadBool("MAIN", "ViewPrinter", ViewPrinter->Checked);
-        WavLoadBtn->Checked = ini->ReadBool("MAIN", "WavLoadBtn", WavLoadBtn->Checked);
-        KeyboardMap1->Checked = ini->ReadBool("MAIN", "KeyMap", KeyboardMap1->Checked);
-        TZXMan->Checked = ini->ReadBool("MAIN", "TZXManager", TZXMan->Checked);
-        DiskDrives1->Checked=ini->ReadBool("MAIN", "DiskDrives", DiskDrives1->Checked);
-        SoundOutput1->Checked = ini->ReadBool("MAIN", "SoundOutput", SoundOutput1->Checked);
+        DebugWin->Checked          = ini->ReadBool("MAIN", "DebugWin",     DebugWin->Checked);
+        ViewPrinter->Checked       = ini->ReadBool("MAIN", "ViewPrinter",  ViewPrinter->Checked);
+        WavLoadBtn->Checked        = ini->ReadBool("MAIN", "WavLoadBtn",   WavLoadBtn->Checked);
+        KeyboardMap1->Checked      = ini->ReadBool("MAIN", "KeyMap",       KeyboardMap1->Checked);
+        TZXMan->Checked            = ini->ReadBool("MAIN", "TZXManager",   TZXMan->Checked);
+        DiskDrives1->Checked       = ini->ReadBool("MAIN", "DiskDrives",   DiskDrives1->Checked);
+        SoundOutput1->Checked      = ini->ReadBool("MAIN", "SoundOutput",  SoundOutput1->Checked);
         BasicListerOption->Checked = ini->ReadBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
-        InWaveLoader->Checked = ini->ReadBool("MAIN", "InWave", InWaveLoader->Checked);
-        InTZXManager->Checked = ini->ReadBool("MAIN", "InTZX", InTZXManager->Checked);
-        OutWaveLoader->Checked = ini->ReadBool("MAIN", "OutWave", OutWaveLoader->Checked);
-        OutTZXManager->Checked = ini->ReadBool("MAIN", "OutTZX", OutTZXManager->Checked);
-        OutAudioOut->Checked = ini->ReadBool("MAIN", "OutAudio", OutAudioOut->Checked);
+        InWaveLoader->Checked  = ini->ReadBool("MAIN", "InWave",   InWaveLoader->Checked);
+        InTZXManager->Checked  = ini->ReadBool("MAIN", "InTZX",    InTZXManager->Checked);
+        OutWaveLoader->Checked = ini->ReadBool("MAIN", "OutWave",  OutWaveLoader->Checked);
+        OutTZXManager->Checked = ini->ReadBool("MAIN", "OutTZX",   OutTZXManager->Checked);
+        OutAudioOut->Checked   = ini->ReadBool("MAIN", "OutAudio", OutAudioOut->Checked);
 
-        None1->Checked = ini->ReadBool("MAIN", "BorderNone", None1->Checked);
-        Small1->Checked = ini->ReadBool("MAIN", "BorderSmall", Small1->Checked);
-        Normal1->Checked = ini->ReadBool("MAIN", "BorderNormal", Normal1->Checked);
-        Large1->Checked = ini->ReadBool("MAIN", "BorderLarge", Large1->Checked);
-        FullImage1->Checked = ini->ReadBool("MAIN", "BorderFull", FullImage1->Checked);
-        StatusBar2->Checked = ini->ReadBool("MAIN", "StatusBar", StatusBar2->Checked);
+        None1->Checked      = ini->ReadBool("MAIN", "BorderNone",   None1->Checked);
+        Small1->Checked     = ini->ReadBool("MAIN", "BorderSmall",  Small1->Checked);
+        Normal1->Checked    = ini->ReadBool("MAIN", "BorderNormal", Normal1->Checked);
+        Large1->Checked     = ini->ReadBool("MAIN", "BorderLarge",  Large1->Checked);
+        FullImage1->Checked = ini->ReadBool("MAIN", "BorderFull",   FullImage1->Checked);
+        StatusBar2->Checked = ini->ReadBool("MAIN", "StatusBar",    StatusBar2->Checked);
 
-        OpenTape1->FileName=ini->ReadString("MAIN","LoadFile",OpenTape1->FileName);
-        OpenTape1->FilterIndex=ini->ReadInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
+        OpenTape1->FileName    = ini->ReadString( "MAIN", "LoadFile",       OpenTape1->FileName);
+        OpenTape1->FilterIndex = ini->ReadInteger("MAIN", "LoadFileFilter", OpenTape1->FilterIndex);
 
-        SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
-        ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+        SpectraColourEnable->Checked      = ini->ReadBool("MAIN", "SpectraColourEnable",      SpectraColourEnable->Checked);
+        ChromaColourEnable->Checked       = ini->ReadBool("MAIN", "ChromaColourEnable",       ChromaColourEnable->Checked);
         ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
-        ConnectJoystick1->Checked = ini->ReadBool("MAIN", "ConnectJoystick1", ConnectJoystick1->Checked);
-        ConnectJoystick2->Checked = ini->ReadBool("MAIN", "ConnectJoystick2", ConnectJoystick2->Checked);
-        EnableJoystick1AutoFire->Checked = ini->ReadBool("MAIN", "EnableJoystick1AutoFire", EnableJoystick1AutoFire->Checked);
-        EnableJoystick2AutoFire->Checked = ini->ReadBool("MAIN", "EnableJoystick2AutoFire", EnableJoystick2AutoFire->Checked);
-        ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
+        ConnectJoystick1->Checked         = ini->ReadBool("MAIN", "ConnectJoystick1",         ConnectJoystick1->Checked);
+        ConnectJoystick2->Checked         = ini->ReadBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
+        EnableJoystick1AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
+        EnableJoystick2AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
 
-        HorizontalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
-        VerticalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
-        RomDisplayDriver->Checked = ini->ReadBool("MAIN", "ColouriseRomDisplayDriver", RomDisplayDriver->Checked);
-        BackPorch->Checked = ini->ReadBool("MAIN", "ColouriseBackPorch", BackPorch->Checked);
-        NonMaskableInterruptResponse->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponse", NonMaskableInterruptResponse->Checked);
-        NonMaskableInterruptResponseWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates", NonMaskableInterruptResponseWaitStates->Checked);
-        NonMaskableInterruptServiceRoutine->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine", NonMaskableInterruptServiceRoutine->Checked);
+        HorizontalSyncPulse->Checked                         = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
+        VerticalSyncPulse->Checked                           = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);
+        RomDisplayDriver->Checked                            = ini->ReadBool("MAIN", "ColouriseRomDisplayDriver",                            RomDisplayDriver->Checked);
+        BackPorch->Checked                                   = ini->ReadBool("MAIN", "ColouriseBackPorch",                                   BackPorch->Checked);
+        NonMaskableInterruptResponse->Checked                = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponse",                NonMaskableInterruptResponse->Checked);
+        NonMaskableInterruptResponseWaitStates->Checked      = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates",      NonMaskableInterruptResponseWaitStates->Checked);
+        NonMaskableInterruptServiceRoutine->Checked          = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine",          NonMaskableInterruptServiceRoutine->Checked);
         NonMaskableInterruptServiceRoutineRecursion->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutineRecursion", NonMaskableInterruptServiceRoutineRecursion->Checked);
-        MaskableInterruptResponse->Checked = ini->ReadBool("MAIN", "ColouriseMaskableInterruptResponse", MaskableInterruptResponse->Checked);
-        MaskableInterruptServiceRoutine->Checked = ini->ReadBool("MAIN", "ColouriseMaskableInterruptServiceRoutine", MaskableInterruptServiceRoutine->Checked);
-        InstructionStraddlingNMI->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
-        InstructionStraddlingNMIWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
-        Z80Halted->Checked = ini->ReadBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
-        UserProgramInstructionStartPositions->Checked = ini->ReadBool("MAIN", "ColouriseUserProgramInstructionStartPositions", UserProgramInstructionStartPositions->Checked);
+        MaskableInterruptResponse->Checked                   = ini->ReadBool("MAIN", "ColouriseMaskableInterruptResponse",                   MaskableInterruptResponse->Checked);
+        MaskableInterruptServiceRoutine->Checked             = ini->ReadBool("MAIN", "ColouriseMaskableInterruptServiceRoutine",             MaskableInterruptServiceRoutine->Checked);
+        InstructionStraddlingNMI->Checked                    = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMI",                    InstructionStraddlingNMI->Checked);
+        InstructionStraddlingNMIWaitStates->Checked          = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates",          InstructionStraddlingNMIWaitStates->Checked);
+        Z80Halted->Checked                                   = ini->ReadBool("MAIN", "ColouriseZ80Halted",                                   Z80Halted->Checked);
+        UserProgramInstructionStartPositions->Checked        = ini->ReadBool("MAIN", "ColouriseUserProgramInstructionStartPositions",        UserProgramInstructionStartPositions->Checked);
 
         UpdateEmulatorAnnotationSettings();
         UpdateAnnotationImages();
 
-        if (None1->Checked) { emulator.bordersize=BORDERNONE; None1Click(NULL); }
-        if (Small1->Checked) { emulator.bordersize=BORDERSMALL; Small1Click(NULL); }
-        if (Normal1->Checked) { emulator.bordersize=BORDERNORMAL; Normal1Click(NULL); }
-        if (Large1->Checked) { emulator.bordersize=BORDERLARGE; Large1Click(NULL); }
-        if (FullImage1->Checked) { emulator.bordersize=BORDERFULL; FullImage1Click(NULL); }
+        if (None1->Checked)      { emulator.bordersize=BORDERNONE;   None1Click(NULL); }
+        if (Small1->Checked)     { emulator.bordersize=BORDERSMALL;  Small1Click(NULL); }
+        if (Normal1->Checked)    { emulator.bordersize=BORDERNORMAL; Normal1Click(NULL); }
+        if (Large1->Checked)     { emulator.bordersize=BORDERLARGE;  Large1Click(NULL); }
+        if (FullImage1->Checked) { emulator.bordersize=BORDERFULL;   FullImage1Click(NULL); }
 
-        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked ? 1 : 0);
-        emulator.TZXin = (CFGBYTE)(InTZXManager->Checked ? 1 : 0);
-        emulator.TZXout = (CFGBYTE)(OutTZXManager->Checked ? 1 : 0);
+        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked   ? 1 : 0);
+        emulator.TZXin    = (CFGBYTE)(InTZXManager->Checked  ? 1 : 0);
+        emulator.TZXout   = (CFGBYTE)(OutTZXManager->Checked ? 1 : 0);
 
-        machine.joystick1Connected       = (CFGBYTE)(ConnectJoystick1->Checked ? 1 : 0);
-        machine.joystick2Connected       = (CFGBYTE)(ConnectJoystick2->Checked ? 1 : 0);
-        machine.joystick1AutoFireEnabled = (CFGBYTE)(EnableJoystick1AutoFire->Checked ? 1 : 0);
-        machine.joystick2AutoFireEnabled = (CFGBYTE)(EnableJoystick2AutoFire->Checked ? 1 : 0);
+        machine.joystick1Connected       = (CFGBYTE)(ConnectJoystick1->Checked         ? 1 : 0);
+        machine.joystick2Connected       = (CFGBYTE)(ConnectJoystick2->Checked         ? 1 : 0);
+        machine.joystick1AutoFireEnabled = (CFGBYTE)(EnableJoystick1AutoFire->Checked  ? 1 : 0);
+        machine.joystick2AutoFireEnabled = (CFGBYTE)(EnableJoystick2AutoFire->Checked  ? 1 : 0);
         spectrum.spectrum128Keypad       = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
-        spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked ? 1 : 0);
-        zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked ? 1 : 0);
+        spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked      ? 1 : 0);
+        zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked       ? 1 : 0);
 
         AccurateInit(true);
 
-        if (ini->ReadBool("MAIN","N1001",N1001->Checked)) N1001Click(NULL);
-        if (ini->ReadBool("MAIN","N2001",N2001->Checked)) N2001Click(NULL);
-        if (ini->ReadBool("MAIN","N4001",N4001->Checked)) N4001Click(NULL);
-        if (ini->ReadBool("MAIN","UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
+        if (ini->ReadBool("MAIN", "N1001",N1001->Checked)) N1001Click(NULL);
+        if (ini->ReadBool("MAIN", "N2001",N2001->Checked)) N2001Click(NULL);
+        if (ini->ReadBool("MAIN", "N4001",N4001->Checked)) N4001Click(NULL);
+        if (ini->ReadBool("MAIN", "UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
         if (!StatusBar2->Checked) StatusBar2Click(NULL);
 
         Top = ini->ReadInteger("MAIN","Top",0);
         Left = ini->ReadInteger("MAIN","Left",0);
 
         // The start up height and width are transferred to the real height and width on the first timer event.
-        StartUpHeight = ini->ReadInteger("MAIN","Height",0);
-        StartUpWidth = ini->ReadInteger("MAIN","Width",0);
+        StartUpHeight = ini->ReadInteger("MAIN", "Height", 0);
+        StartUpWidth  = ini->ReadInteger("MAIN", "Width",  0);
 
         // Always default to the 100% to begin with, before changing to real dimensions upon the next timer event
         ClientHeight = BaseHeight + (StatusBar1->Visible ? StatusBar1->Height : 0);
-        ClientWidth = BaseWidth;
+        ClientWidth  = BaseWidth;
 }
 
 void TForm1::SaveSettings(TIniFile *ini)
 {
-        ini->WriteInteger("MAIN","Top",Top);
-        ini->WriteInteger("MAIN","Left",Left);
-        ini->WriteInteger("MAIN","Height",ClientHeight);
-        ini->WriteInteger("MAIN","Width",ClientWidth);
+        ini->WriteInteger("MAIN", "Top",    Top);
+        ini->WriteInteger("MAIN", "Left",   Left);
+        ini->WriteInteger("MAIN", "Height", ClientHeight);
+        ini->WriteInteger("MAIN", "Width",  ClientWidth);
 
-        ini->WriteBool("MAIN", "ShowSplash", ShowSplash);
-        ini->WriteInteger("MAIN","RenderMode", RenderMode);
-        ini->WriteInteger("MAIN","CheckInstallationPathLength", emulator.checkInstallationPathLength);
+        ini->WriteBool(   "MAIN", "ShowSplash", ShowSplash);
+        ini->WriteInteger("MAIN", "RenderMode", RenderMode);
+        ini->WriteInteger("MAIN", "CheckInstallationPathLength", emulator.checkInstallationPathLength);
 
-        ini->WriteBool("MAIN","N1001",N1001->Checked);
-        ini->WriteBool("MAIN","N2001",N2001->Checked);
-        ini->WriteBool("MAIN","N4001",N4001->Checked);
-        ini->WriteBool("MAIN","UserDefined",UserDefined1->Checked);
+        ini->WriteBool("MAIN", "N1001",       N1001->Checked);
+        ini->WriteBool("MAIN", "N2001",       N2001->Checked);
+        ini->WriteBool("MAIN", "N4001",       N4001->Checked);
+        ini->WriteBool("MAIN", "UserDefined", UserDefined1->Checked);
 
-        ini->WriteBool("MAIN","InverseVideo",InverseVideo->Checked);
-        ini->WriteBool("MAIN","DisplayArt",DisplayArt->Checked);
-        ini->WriteBool("MAIN","StatusBar",StatusBar2->Checked);
+        ini->WriteBool("MAIN", "InverseVideo", InverseVideo->Checked);
+        ini->WriteBool("MAIN", "DisplayArt",   DisplayArt->Checked);
+        ini->WriteBool("MAIN", "StatusBar",    StatusBar2->Checked);
 
         ini->WriteBool("MAIN", "Keyboard1", Keyboard1->Checked);
-        ini->WriteBool("MAIN", "Display1", Display1->Checked);
-        ini->WriteBool("MAIN", "Speed1", Speed1->Checked);
-        ini->WriteBool("MAIN", "InWave", InWaveLoader->Checked);
-        ini->WriteBool("MAIN", "InTZX", InTZXManager->Checked);
-        ini->WriteBool("MAIN", "OutWave", OutWaveLoader->Checked);
-        ini->WriteBool("MAIN", "OutTZX", OutTZXManager->Checked);
-        ini->WriteBool("MAIN", "OutAudio", OutAudioOut->Checked);
-        ini->WriteBool("MAIN", "Sound1", Sound1->Checked);
+        ini->WriteBool("MAIN", "Display1",  Display1->Checked);
+        ini->WriteBool("MAIN", "Speed1",    Speed1->Checked);
+        ini->WriteBool("MAIN", "InWave",    InWaveLoader->Checked);
+        ini->WriteBool("MAIN", "InTZX",     InTZXManager->Checked);
+        ini->WriteBool("MAIN", "OutWave",   OutWaveLoader->Checked);
+        ini->WriteBool("MAIN", "OutTZX",    OutTZXManager->Checked);
+        ini->WriteBool("MAIN", "OutAudio",  OutAudioOut->Checked);
+        ini->WriteBool("MAIN", "Sound1",    Sound1->Checked);
 
-        ini->WriteBool("MAIN", "BorderNone", None1->Checked);
-        ini->WriteBool("MAIN", "BorderSmall", Small1->Checked);
+        ini->WriteBool("MAIN", "BorderNone",   None1->Checked);
+        ini->WriteBool("MAIN", "BorderSmall",  Small1->Checked);
         ini->WriteBool("MAIN", "BorderNormal", Normal1->Checked);
-        ini->WriteBool("MAIN", "BorderLarge", Large1->Checked);
-        ini->WriteBool("MAIN", "BorderFull", FullImage1->Checked);
+        ini->WriteBool("MAIN", "BorderLarge",  Large1->Checked);
+        ini->WriteBool("MAIN", "BorderFull",   FullImage1->Checked);
 
-        ini->WriteBool("MAIN", "DebugWin", DebugWin->Checked);
-        ini->WriteBool("MAIN", "ViewPrinter", ViewPrinter->Checked);
-        ini->WriteBool("MAIN", "WavLoadBtn", WavLoadBtn->Checked);
-        ini->WriteBool("MAIN", "KeyMap", KeyboardMap1->Checked);
-        ini->WriteBool("MAIN", "TZXManager", TZXMan->Checked);
-        ini->WriteBool("MAIN", "DiskDrives", DiskDrives1->Checked);
-        ini->WriteBool("MAIN", "SoundOutput", SoundOutput1->Checked);
+        ini->WriteBool("MAIN", "DebugWin",     DebugWin->Checked);
+        ini->WriteBool("MAIN", "ViewPrinter",  ViewPrinter->Checked);
+        ini->WriteBool("MAIN", "WavLoadBtn",   WavLoadBtn->Checked);
+        ini->WriteBool("MAIN", "KeyMap",       KeyboardMap1->Checked);
+        ini->WriteBool("MAIN", "TZXManager",   TZXMan->Checked);
+        ini->WriteBool("MAIN", "DiskDrives",   DiskDrives1->Checked);
+        ini->WriteBool("MAIN", "SoundOutput",  SoundOutput1->Checked);
         ini->WriteBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
-        ini->WriteString("MAIN", "LoadFile",OpenTape1->FileName);
+        ini->WriteString("MAIN", "LoadFile",        OpenTape1->FileName);
         ini->WriteInteger("MAIN", "LoadFileFilter", OpenTape1->FilterIndex);
 
-        ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
-        ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+        ini->WriteBool("MAIN", "SpectraColourEnable",      SpectraColourEnable->Checked);
+        ini->WriteBool("MAIN", "ChromaColourEnable",       ChromaColourEnable->Checked);
         ini->WriteBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
-        ini->WriteBool("MAIN", "ConnectJoystick1", ConnectJoystick1->Checked);
-        ini->WriteBool("MAIN", "ConnectJoystick2", ConnectJoystick2->Checked);
-        ini->WriteBool("MAIN", "EnableJoystick1AutoFire", EnableJoystick1AutoFire->Checked);
-        ini->WriteBool("MAIN", "EnableJoystick2AutoFire", EnableJoystick2AutoFire->Checked);
+        ini->WriteBool("MAIN", "ConnectJoystick1",         ConnectJoystick1->Checked);
+        ini->WriteBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
+        ini->WriteBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
+        ini->WriteBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
 
-        ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
-        ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
-        ini->WriteBool("MAIN", "ColouriseRomDisplayDriver", RomDisplayDriver->Checked);
-        ini->WriteBool("MAIN", "ColouriseBackPorch", BackPorch->Checked);
-        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponse", NonMaskableInterruptResponse->Checked);
-        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates", NonMaskableInterruptResponseWaitStates->Checked);
-        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine", NonMaskableInterruptServiceRoutine->Checked);
+        ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
+        ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);
+        ini->WriteBool("MAIN", "ColouriseRomDisplayDriver",                            RomDisplayDriver->Checked);
+        ini->WriteBool("MAIN", "ColouriseBackPorch",                                   BackPorch->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponse",                NonMaskableInterruptResponse->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates",      NonMaskableInterruptResponseWaitStates->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine",          NonMaskableInterruptServiceRoutine->Checked);
         ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutineRecursion", NonMaskableInterruptServiceRoutineRecursion->Checked);
-        ini->WriteBool("MAIN", "ColouriseMaskableInterruptResponse", MaskableInterruptResponse->Checked);
-        ini->WriteBool("MAIN", "ColouriseMaskableInterruptServiceRoutine", MaskableInterruptServiceRoutine->Checked);
-        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
-        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
-        ini->WriteBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
-        ini->WriteBool("MAIN", "ColouriseUserProgramInstructionStartPositions", UserProgramInstructionStartPositions->Checked);
+        ini->WriteBool("MAIN", "ColouriseMaskableInterruptResponse",                   MaskableInterruptResponse->Checked);
+        ini->WriteBool("MAIN", "ColouriseMaskableInterruptServiceRoutine",             MaskableInterruptServiceRoutine->Checked);
+        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMI",                    InstructionStraddlingNMI->Checked);
+        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates",          InstructionStraddlingNMIWaitStates->Checked);
+        ini->WriteBool("MAIN", "ColouriseZ80Halted",                                   Z80Halted->Checked);
+        ini->WriteBool("MAIN", "ColouriseUserProgramInstructionStartPositions",        UserProgramInstructionStartPositions->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);
@@ -1334,12 +1333,6 @@ void __fastcall TForm1::Sound1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::DBG1Click(TObject *Sender)
-{
-        DBG1->Checked=!DBG1->Checked;
-        HW->Show();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TForm1::HelpTopics2Click(TObject *Sender)
 {
@@ -1853,6 +1846,9 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 
         struct stat buffer;
         AnsiString webPath = Path + ClickedItem->Caption + ".web";
+        AnsiString pdfPath = Path + ClickedItem->Caption + ".pdf";
+        AnsiString refPath = Path + ClickedItem->Caption + ".ref";
+
         if (stat(webPath.c_str(), &buffer) == 0)
         {
                 FILE* filePointer = fopen(webPath.c_str(), "r");
@@ -1867,18 +1863,27 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
                         }
                 }
         }
-        else
+        else if (stat(pdfPath.c_str(), &buffer) == 0)
         {
-                AnsiString pdfPath = Path + ClickedItem->Caption + ".pdf";
-                if (stat(pdfPath.c_str(), &buffer) == 0)
+                Path += ClickedItem->Caption + ".pdf";
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
+        else if (stat(refPath.c_str(), &buffer) == 0)
+        {
+                char refText[256];
+                FILE* f = fopen(refPath.c_str(), "rb");
+                if (f)
                 {
-                        Path += ClickedItem->Caption + ".pdf";
-                }
-                else
-                {
-                        Path += ClickedItem->Caption + ".txt";
+                        fgets(refText, sizeof(refText), f);
+                        fclose(f);
                 }
 
+                Path += refText;
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
+        else
+        {
+                Path += ClickedItem->Caption + ".txt";
                 ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
         }
 }
@@ -2851,6 +2856,13 @@ void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
         machine.joystick2Connected = ConnectJoystick2->Checked;
         EnableJoystick2AutoFire->Enabled = ConnectJoystick2->Checked;
         HW->UpdateSinclairJoystickKeys();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ZoomFullScreenClick(TObject *Sender)
+{
+        char escKey = VK_ESCAPE;
+        FormKeyPress(Sender, escKey);
 }
 //---------------------------------------------------------------------------
 

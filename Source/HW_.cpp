@@ -456,8 +456,8 @@ void THW::SaveToInternalSettings()
 void THW::Configure8K16KRam()
 {
         bool visible8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
-        Form1->WriteProtect8KRAM->Visible = visible8K16KProtectOption;
-        if (!Form1->WriteProtect8KRAM->Visible)
+        Form1->WriteProtect8KRAM->Enabled = visible8K16KProtectOption;
+        if (!Form1->WriteProtect8KRAM->Enabled)
         {
                 Form1->WriteProtect8KRAM->Checked = false;
         }
@@ -974,7 +974,7 @@ void THW::ConfigureChroma(bool prevChromaColourSwitchOn)
                 InitialiseChroma();
         }
         Form1->ChromaColourEnable->Checked = zx81.chromaColourSwitchOn;
-        Form1->ChromaColourEnable->Visible = zx81.chromaColourSwitchOn;
+        Form1->ChromaColourEnable->Enabled = zx81.chromaColourSwitchOn;
 }
 
 void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
@@ -985,7 +985,7 @@ void THW::ConfigureSpectra(bool prevSpectraColourSwitchOn)
                 InitialiseSpectra();
         }
         Form1->SpectraColourEnable->Checked = spectrum.spectraColourSwitchOn;
-        Form1->SpectraColourEnable->Visible = spectrum.spectraColourSwitchOn;
+        Form1->SpectraColourEnable->Enabled = spectrum.spectraColourSwitchOn;
 }
 
 void THW::ConfigureRomCartridge()
@@ -1258,7 +1258,6 @@ void THW::ConfigureCharacterGenerator()
         }
         Form1->QSChrEnable->Checked = zx81.enableQSchrgen;
         Form1->QSChrEnable->Enabled = (zx81.chrgen == CHRGENQS);
-        Form1->QSChrEnable->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         zx81.extfont = 0;
         if ((zx81.chrgen == CHRGENDK) || (zx81.chrgen == CHRGENCHR128))
@@ -1271,10 +1270,7 @@ void THW::ConfigureCharacterGenerator()
 void THW::ConfigureHiRes()
 {
         Form1->ResetMemotechHRG->Enabled = false;
-        Form1->ResetMemotechHRG->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
-
         Form1->ResetQuicksilvaHiRes->Enabled = false;
-        Form1->ResetQuicksilvaHiRes->Visible = (NewMachine != MACHINEACE) && (NewMachine != MACHINESPECTRUM);
 
         switch(HiResBox->ItemIndex)
         {
@@ -1293,23 +1289,19 @@ void THW::ConfigureHiRes()
 
 void THW::ConfigureKeypad()
 {
-        UpdateKeypadUI();
-        spectrum.spectrum128Keypad = Form1->ConnectSpectrum128Keypad->Checked;
-}
-
-void THW::UpdateKeypadUI()
-{
-        Form1->ConnectSpectrum128Keypad->Visible = (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128);
+        Form1->ConnectSpectrum128Keypad->Enabled = (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCY128);
 
         bool machineChanged = (NewMachine != emulator.machine);
         if (machineChanged)
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
         }
-        else if (!Form1->ConnectSpectrum128Keypad->Visible)
+        else if (!Form1->ConnectSpectrum128Keypad->Enabled)
         {
                 Form1->ConnectSpectrum128Keypad->Checked = false;
         }
+
+        spectrum.spectrum128Keypad = Form1->ConnectSpectrum128Keypad->Checked ? 1 : 0;
 }
 
 void THW::ConfigureSound()
@@ -1376,7 +1368,7 @@ void THW::ConfigureSound()
 
 void THW::ConfigureSpeech()
 {
-        Form1->ResetSpeech->Visible = (SpeechBox->ItemIndex != 0);
+        Form1->ResetSpeech->Enabled = (SpeechBox->ItemIndex != 0);
 
         if (NewMachine == MACHINESPECTRUM)
         {
@@ -1571,11 +1563,11 @@ void THW::UpdateJoystickUI()
         bool joystickInterfaceSelected = (machine.joystickInterfaceType != JOYSTICK_NONE);
         bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
 
-        Form1->ConnectJoystick1->Visible = joystickInterfaceSelected;
-        Form1->ConnectJoystick2->Visible = twinJoystickInterfaceSelected;
+        Form1->ConnectJoystick1->Enabled = joystickInterfaceSelected;
+        Form1->ConnectJoystick2->Enabled = twinJoystickInterfaceSelected;
 
-        Form1->EnableJoystick1AutoFire->Visible = joystickInterfaceSelected;
-        Form1->EnableJoystick2AutoFire->Visible = twinJoystickInterfaceSelected;
+        Form1->EnableJoystick1AutoFire->Enabled = joystickInterfaceSelected;
+        Form1->EnableJoystick2AutoFire->Enabled = twinJoystickInterfaceSelected;
 
         if (joystickInterfaceSelected)
         {
@@ -1598,8 +1590,8 @@ void THW::UpdateJoystickUI()
 
 void THW::ConfigureIDE()
 {
-        Form1->divIDEJumperEClosed->Visible    = (IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R Gal)"));
-        Form1->ZXCFUploadJumperOpened->Visible = (IDEBox->ItemIndex == FindEntry(IDEBox, "ZXCF"));
+        Form1->divIDEJumperEClosed->Enabled    = (IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R Gal)"));
+        Form1->ZXCFUploadJumperOpened->Enabled = (IDEBox->ItemIndex == FindEntry(IDEBox, "ZXCF"));
 
         spectrum.HDType = HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")                spectrum.HDType = HDZXCF;
@@ -2156,7 +2148,7 @@ void THW::SetupForZX81(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
-        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Enabled = false;
 
         RomCartridgeBox->Items->Clear();
         RomCartridgeBox->Items->Add("None");
@@ -2345,7 +2337,7 @@ void THW::SetupForSpectrum(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = true;
 
-        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Enabled = false;
 
         RamPackLbl->Enabled = false; RamPackBox->Enabled = false;
         RamPackBox->ItemIndex = -1;
@@ -2829,7 +2821,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         Spec128Btn->Down = true;
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         NewMachineName = Spec128Btn->Caption;
         LoadRomBox();
@@ -2912,7 +2904,7 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SpecP2Btn->Down = true;
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
 
@@ -2941,7 +2933,7 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
 
@@ -2966,7 +2958,7 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         Multiface->Caption = "Multiface 3";
 
         SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
 
@@ -4563,7 +4555,6 @@ void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
 
 void THW::UpdateApplyButton()
 {
-        UpdateKeypadUI();
         UpdateJoystickUI();
 
         bool settingsChanged = (NewMachineName != Hwform.MachineName);

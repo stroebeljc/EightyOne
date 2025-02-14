@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 13/02/2025 (by Paul Farrow and John Stroebel)
+Version 1.41 - 14/02/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:
   - If a hardware generated ZX81 HSync pulse is output part way through a scanline then it is no
     longer interpreted as starting a new scanline.
@@ -67,6 +67,7 @@ Version 1.41 - 13/02/2025 (by Paul Farrow and John Stroebel)
   - Support Spectrum floppy drive write protection.
   - Implemented the correct auto-boot operation of the Beta Disk interface depending on the
     Spectrum model.
+  - Added option under the View->Zoom menu to select full screen mode.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.
@@ -104,6 +105,9 @@ Version 1.41 - 13/02/2025 (by Paul Farrow and John Stroebel)
     Simple IDE 16-Bit and Simple IDE CF interfaces.
   - Enabled support for writing and formatting floppy disks on Spectrum+3 disk drives.
   - Added support for the Spectrum 128 Keypad.
+  - Added an option in the Keyboard dialog to specify whether the keyboard's numeric keypad (when
+    Num Lock is on) replicates the normal number and symbol keys or is used to simulate joystick
+    input.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

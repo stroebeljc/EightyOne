@@ -680,16 +680,27 @@ void PCKeyDown(WORD key)
 
         while (KeyMap[i].WinKey)
         {
-                if ((KeyMap[i].WinKey == key) && ((KeyMap[i].Shift==PCShift) || (KeyMap[i].Shift==0)))
+                if ((KeyMap[i].WinKey == key) && ((KeyMap[i].Shift == PCShift) || (KeyMap[i].Shift == 0)))
                 {
-                        if (key>=VK_OEM_1 && key<=VK_OEM_7 && emulator.machine==MACHINESPECTRUM)
-                                ZXKeyboard[kbA8] &= ~kbD0;
+                        bool numpadKey = (key >= VK_NUMPAD0 && key <= VK_DIVIDE);
+                        bool numLockOn = ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
 
-                        ZXKeyboard[KeyMap[i].Addr1] |= KeyMap[i].Data1;
-                        if (KeyMap[i].Addr2!=255)
-                                ZXKeyboard[KeyMap[i].Addr2] |= KeyMap[i].Data2;
-                                
-                        return;
+                        if (!numpadKey || !emulator.UseNumericPadForJoystick || !numLockOn)
+                        {
+                                if (key >= VK_OEM_1 && key <= VK_OEM_7 && emulator.machine == MACHINESPECTRUM)
+                                {
+                                        ZXKeyboard[kbA8] &= ~kbD0;
+                                }
+
+                                ZXKeyboard[KeyMap[i].Addr1] |= KeyMap[i].Data1;
+
+                                if (KeyMap[i].Addr2 != 255)
+                                {
+                                        ZXKeyboard[KeyMap[i].Addr2] |= KeyMap[i].Data2;
+                                }
+
+                                return;
+                        }
                 }
                 i++;
         }
@@ -702,21 +713,30 @@ void PCKeyUp(WORD key)
                 return;
         }
 
-        int i=0;
+        int i = 0;
 
-        if (key==VK_SHIFT) PCShift=1;
+        if (key == VK_SHIFT) PCShift=1;
 
         while (KeyMap[i].WinKey)
         {
                 if (KeyMap[i].WinKey == key)
                 {
-                        ZXKeyboard[KeyMap[i].Addr1] &= (BYTE)(~KeyMap[i].Data1);
-                        if (KeyMap[i].Addr2!=255)
-                                ZXKeyboard[KeyMap[i].Addr2] &= (BYTE)(~KeyMap[i].Data2);
+                        bool numpadKey = (key >= VK_NUMPAD0 && key <= VK_DIVIDE);
+                        bool numLockOn = ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
+
+                        if (!numpadKey || !emulator.UseNumericPadForJoystick || !numLockOn)
+                        {
+                                ZXKeyboard[KeyMap[i].Addr1] &= (BYTE)(~KeyMap[i].Data1);
+                                if (KeyMap[i].Addr2 != 255)
+                                {
+                                        ZXKeyboard[KeyMap[i].Addr2] &= (BYTE)(~KeyMap[i].Data2);
+                                }
+                        }
                 }
                 i++;
         }
-        if (PCShift==2) ZXKeyboard[kbA8] |= kbD0;
+
+        if (PCShift == 2) ZXKeyboard[kbA8] |= kbD0;
 }
 
 void PCAllKeysUp()

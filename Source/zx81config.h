@@ -303,9 +303,10 @@ typedef struct
         int frameskip;
         int speedup;
         int romcrc;
-        int UseRShift;
         int stop;
-        
+        CFGBYTE UseRShift;
+        CFGBYTE UseNumericPadForJoystick;
+
         CFGBYTE TZXin;
         CFGBYTE TZXout;
         CFGBYTE audioout;

@@ -44,6 +44,7 @@ __published:	// IDE-managed Components
         TRadioButton *RadioButton2;
         TLabel *CtrlKeyMapsToLabel;
         TCheckBox *UseRightShiftCheckBox;
+        TCheckBox *UseNumericPadForJoystickCheckBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CursorModeChange(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);

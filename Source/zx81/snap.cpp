@@ -1106,19 +1106,14 @@ int do_memory_load(char *file, int address, int length, int secondBank)
 
 int memory_device_rom_load(char *filename, int address, int length)
 {
-        char file[256];
-
-        strcpy(file, emulator.cwd);
-        strcat(file, filename);
-
-        return do_memory_load(file, address, length, 0);
+        return memory_load(filename, address, length, 0);
 }
 
 int memory_load(char *filename, int address, int length, int secondBank)
 {
         char file[256];
 
-        if (strchr(filename, '\\') || strchr(filename, '/'))
+        if (FileExists(filename))
         {
                 strcpy(file, filename);
         }

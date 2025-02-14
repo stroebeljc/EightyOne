@@ -4478,16 +4478,19 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                         case SPECCYPLUS2:
                                 RomBox->Text = "spectrum+2.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
                                 break;
                                 
                         case SPECCYPLUS2A:
                                 RomBox->Text = "spectrum+3.version4-1.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
                                 break;
-                                
+
                         case SPECCYPLUS3:
                                 RomBox->Text = "spectrum+3.version4-1.rom";
                                 SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
                                 break;
                 }
                 break;             

@@ -146,8 +146,7 @@ static BYTE ReadJoystick(bool readFireButton)
                 if ((joyInfo1.dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
         }
 
-
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0000)
+        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;

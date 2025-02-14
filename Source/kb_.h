@@ -48,8 +48,6 @@ __published:	// IDE-managed Components
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CursorModeChange(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
-        void __fastcall UseNumericPadForJoystickCheckBoxClick(
-          TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TKb(TComponent* Owner);

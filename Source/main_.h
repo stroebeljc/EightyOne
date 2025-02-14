@@ -80,7 +80,6 @@ __published:	// IDE-managed Components
         TMenuItem *PauseZX81;
         TMenuItem *InverseVideo;
         TMenuItem *DisplayArt;
-        TMenuItem *DBG1;
         TMenuItem *Tape2;
         TMenuItem *Source1;
         TMenuItem *Destination1;
@@ -186,6 +185,7 @@ __published:	// IDE-managed Components
         TMenuItem *N17;
         TMenuItem *ConnectJoystick1;
         TMenuItem *ConnectJoystick2;
+        TMenuItem *FullScreen1;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -219,7 +219,6 @@ __published:	// IDE-managed Components
         void __fastcall FormDeactivate(TObject *Sender);
         void __fastcall DisplayArtClick(TObject *Sender);
         void __fastcall Sound1Click(TObject *Sender);
-        void __fastcall DBG1Click(TObject *Sender);
         void __fastcall HelpTopics2Click(TObject *Sender);
         void __fastcall InWaveLoaderClick(TObject *Sender);
         void __fastcall OutWaveLoaderClick(TObject *Sender);
@@ -305,6 +304,7 @@ __published:	// IDE-managed Components
         void __fastcall ConnectSpectrum128KeypadClick(TObject *Sender);
         void __fastcall ConnectJoystick1Click(TObject *Sender);
         void __fastcall ConnectJoystick2Click(TObject *Sender);
+        void __fastcall FullScreen1Click(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

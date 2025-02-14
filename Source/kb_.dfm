@@ -54,7 +54,7 @@ object Kb: TKb
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 7
+    TabOrder = 9
     OnClick = OKClick
   end
   object CustomUp: TEdit
@@ -102,7 +102,7 @@ object Kb: TKb
     Caption = 'Function'
     Checked = True
     ParentBiDiMode = False
-    TabOrder = 8
+    TabOrder = 6
     TabStop = True
   end
   object RadioButton2: TRadioButton
@@ -111,7 +111,7 @@ object Kb: TKb
     Width = 73
     Height = 17
     Caption = '0 (Zero)'
-    TabOrder = 6
+    TabOrder = 7
   end
   object UseRightShiftCheckBox: TCheckBox
     Left = 8
@@ -127,7 +127,8 @@ object Kb: TKb
     Width = 313
     Height = 17
     Caption = 'Use numeric keypad for joystick input (when Num Lock is on)'
-    TabOrder = 9
-    OnClick = UseNumericPadForJoystickCheckBoxClick
+    Checked = True
+    State = cbChecked
+    TabOrder = 8
   end
 end

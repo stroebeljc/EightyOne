@@ -1334,12 +1334,6 @@ void __fastcall TForm1::Sound1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::DBG1Click(TObject *Sender)
-{
-        DBG1->Checked=!DBG1->Checked;
-        HW->Show();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TForm1::HelpTopics2Click(TObject *Sender)
 {
@@ -1853,6 +1847,9 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 
         struct stat buffer;
         AnsiString webPath = Path + ClickedItem->Caption + ".web";
+        AnsiString pdfPath = Path + ClickedItem->Caption + ".pdf";
+        AnsiString refPath = Path + ClickedItem->Caption + ".ref";
+
         if (stat(webPath.c_str(), &buffer) == 0)
         {
                 FILE* filePointer = fopen(webPath.c_str(), "r");
@@ -1867,18 +1864,27 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
                         }
                 }
         }
-        else
+        else if (stat(pdfPath.c_str(), &buffer) == 0)
         {
-                AnsiString pdfPath = Path + ClickedItem->Caption + ".pdf";
-                if (stat(pdfPath.c_str(), &buffer) == 0)
+                Path += ClickedItem->Caption + ".pdf";
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
+        else if (stat(refPath.c_str(), &buffer) == 0)
+        {
+                char refText[256];
+                FILE* f = fopen(refPath.c_str(), "rb");
+                if (f)
                 {
-                        Path += ClickedItem->Caption + ".pdf";
-                }
-                else
-                {
-                        Path += ClickedItem->Caption + ".txt";
+                        fgets(refText, sizeof(refText), f);
+                        fclose(f);
                 }
 
+                Path += refText;
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
+        else
+        {
+                Path += ClickedItem->Caption + ".txt";
                 ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
         }
 }
@@ -2851,6 +2857,13 @@ void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
         machine.joystick2Connected = ConnectJoystick2->Checked;
         EnableJoystick2AutoFire->Enabled = ConnectJoystick2->Checked;
         HW->UpdateSinclairJoystickKeys();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FullScreen1Click(TObject *Sender)
+{
+        char escKey = VK_ESCAPE;
+        FormKeyPress(Sender, escKey);
 }
 //---------------------------------------------------------------------------
 

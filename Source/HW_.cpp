@@ -832,18 +832,19 @@ bool THW::ConfigureIdeRom()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
         {
                 strcpy(emulator.ROMSIMPLE3E, machine.CurRom);
+                return true;
         }
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
         {
                 strcpy(emulator.ROMSIMPLECF, machine.CurRom);
                 return true;
         }
-        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")
         {
                 strcpy(emulator.ROMSIMPLE8BIT, machine.CurRom);
                 return true;
         }
-        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")
         {
                 strcpy(emulator.ROMSIMPLE16BIT, machine.CurRom);
                 return true;
@@ -1761,12 +1762,11 @@ AnsiString THW::DetermineRomBase()
 {
         AnsiString romBase = emulator.cwd;
         romBase += romsFolder;
+        AnsiString rom = romBase + machine.CurRom;
 
-        AnsiString rom = machine.CurRom;
-
-        if (!FileExists(rom))
+        if (FileExists(machine.CurRom))
         {
-                rom = romBase + machine.CurRom;
+            rom = machine.CurRom;
         }
         if (!FileExists(rom))
         {

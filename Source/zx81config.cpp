@@ -153,15 +153,6 @@ void load_config(void)
 
         LoadMachineRoms();
 
-        AnsiString simplePlus3Rom = ideRomsFolder + AnsiString("sm8en3ee.rom");
-        strcpy(emulator.ROMSIMPLE3E, simplePlus3Rom.c_str());
-        AnsiString zxcflbaRom = ideRomsFolder + AnsiString("zxcflba.rom");
-        strcpy(emulator.ROMSIMPLECF, zxcflbaRom.c_str());
-        AnsiString zx8blbsRom = ideRomsFolder + AnsiString("zx8blbs.rom");
-        strcpy(emulator.ROMSIMPLE8BIT, zx8blbsRom.c_str());
-        AnsiString zxidelbsRom = ideRomsFolder + AnsiString("zxidelbs.rom");
-        strcpy(emulator.ROMSIMPLE16BIT, zxidelbsRom.c_str());
-
         AnsiString plusdRom = fdcRomsFolder + AnsiString("plusd.rom");
         strcpy(emulator.ROMPLUSD, plusdRom.c_str());
         AnsiString discipleRom = fdcRomsFolder + AnsiString("disciple.rom");
@@ -224,7 +215,8 @@ void load_config(void)
         spectrum.kmouse=0;
         spectrum.HDType=HDNONE;
         spectrum.divIDEJumperEClosed=0;
-        spectrum.UploadJumperZXCF=0;
+        spectrum.zxcfUploadJumperClosed=192;
+        spectrum.simpleIdeRomEnabled=0;
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;

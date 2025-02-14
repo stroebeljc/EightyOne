@@ -47,7 +47,7 @@
 
 extern void HWSetMachine(int machine, int speccy);
 
-extern BYTE SpecMem[(128+64)*1024];  //enough memory for 64k ROM + 128k RAM
+extern BYTE SpectrumMem[(128+64)*1024];  //enough memory for 64k ROM + 128k RAM
 extern BYTE TimexMem[(64+64)*1024];  // Timex has two more blocks of 64k each
 extern BYTE TimexWritable[16];
 
@@ -101,7 +101,7 @@ int LoadDock(char *Filename)
         {
                 if (bank==0) ptr=TimexMem;  // Dock chunk
                 else if (bank==254) ptr=TimexMem+65536;  //ExROM chunk
-                else if (bank==255) ptr=SpecMem;  // Home chunk
+                else if (bank==255) ptr=SpectrumMem;  // Home chunk
 
                 if (ptr == NULL) return 0;
                 
@@ -353,8 +353,8 @@ void spec_load_z80(char *fname)
         
         for(i=0; i<16384; i++)
         {
-                SpectraMem[i] = SpecMem[(9<<14) + i]; // Page 5
-                SpectraMem[0x4000 + i] = SpecMem[(page<<14) + i]; // Page 5 or 7
+                SpectraMem[i] = SpectrumMem[(9<<14) + i]; // Page 5
+                SpectraMem[0x4000 + i] = SpectrumMem[(page<<14) + i]; // Page 5 or 7
         }
 
         if (z80version == 3)
@@ -484,8 +484,8 @@ void spec_load_sna(char *fname)
         
         for(i=0; i<16384; i++)
         {
-                SpectraMem[i] = SpecMem[(9<<14) + i];
-                SpectraMem[0x4000 + i] = SpecMem[(page<<14) + i]; // Page 5 or 7
+                SpectraMem[i] = SpectrumMem[(9<<14) + i];
+                SpectraMem[0x4000 + i] = SpectrumMem[(page<<14) + i]; // Page 5 or 7
         }
 
         free(buf);

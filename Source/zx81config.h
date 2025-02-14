@@ -145,13 +145,13 @@
 #define DRIVE35INCHDS   3
 
 #define HDNONE          0
-#define HDPLUS3E        1
+#define HDSIMPLE3E      1
 #define HDDIVIDE        2
 #define HDZXCF          3
 #define HDACECF         4
-#define HDPITERSCF      5
-#define HDPITERS8B      6
-#define HDPITERS16B     7
+#define HDSIMPLECF      5
+#define HDSIMPLE8BIT    6
+#define HDSIMPLE16BIT   7
 
 #define MFNONE          0
 #define MF128           1
@@ -205,7 +205,8 @@ typedef struct
         int drivebusy;
         int HDType;
         int divIDEJumperEClosed;
-        int UploadJumperZXCF;
+        int zxcfUploadJumperClosed;
+        int simpleIdeRomEnabled;
         int ZXCFRAMSize;
         int MFActive;
         int MFLockout;

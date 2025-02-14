@@ -236,7 +236,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         delete ini;
 
-        //machine.fps=20;
         Timer2->Interval=1000;
 
         LEDGreenOn = new Graphics::TBitmap;
@@ -2826,10 +2825,10 @@ void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::ZXCFUploadJumperOpenedClick(TObject *Sender)
+void __fastcall TForm1::ZXCFUploadJumperClosedClick(TObject *Sender)
 {
-        ZXCFUploadJumperOpened->Checked = !ZXCFUploadJumperOpened->Checked;
-        spectrum.UploadJumperZXCF = ZXCFUploadJumperOpened->Checked;
+        ZXCFUploadJumperClosed->Checked = !ZXCFUploadJumperClosed->Checked;
+        spectrum.zxcfUploadJumperClosed = ZXCFUploadJumperClosed->Checked;
 }
 //---------------------------------------------------------------------------
 
@@ -2863,6 +2862,13 @@ void __fastcall TForm1::ZoomFullScreenClick(TObject *Sender)
 {
         char escKey = VK_ESCAPE;
         FormKeyPress(Sender, escKey);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SimpleIdeRomEnabledClick(TObject *Sender)
+{
+        SimpleIdeRomEnabled->Checked = !SimpleIdeRomEnabled->Checked;
+        spectrum.simpleIdeRomEnabled = SimpleIdeRomEnabled->Checked;
 }
 //---------------------------------------------------------------------------
 

@@ -81,7 +81,8 @@ struct HWFormValues
         bool Issue2Checked;
         bool KMouseChecked;
         bool DivIDEJumperEClosedChecked;
-        bool ZXCFUploadJumperOpenedChecked;
+        bool ZXCFUploadJumperClosedChecked;
+        bool SimpleIdeRomEnabledChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
         bool FloatingPointHardwareFixChecked;
@@ -307,8 +308,6 @@ private:	// User declarations
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         bool NewKey(TEdit* textBox, char key);
         void LoadRomBox();
-        bool IdeRom();
-        bool Plus3IdeRom();
         void UpdateApplyButton();
 
         void ConfigureRzxSupport();
@@ -344,8 +343,8 @@ private:	// User declarations
         void SetUpRomCartridges();
         void Configure8K16KRam();
         void ConfigureJoystick();
-        bool ConfigureIdeRom();
         void ConfigureKeypad();
+        void AddPlus3eIdeRoms();
         
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

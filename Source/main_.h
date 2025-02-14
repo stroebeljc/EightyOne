@@ -179,13 +179,15 @@ __published:	// IDE-managed Components
         TMenuItem *N15;
         TMenuItem *EnableJoystick1AutoFire;
         TMenuItem *EnableJoystick2AutoFire;
-        TMenuItem *ZXCFUploadJumperOpened;
+        TMenuItem *ZXCFUploadJumperClosed;
         TMenuItem *ConnectSpectrum128Keypad;
         TMenuItem *N16;
         TMenuItem *N17;
         TMenuItem *ConnectJoystick1;
         TMenuItem *ConnectJoystick2;
         TMenuItem *ZoomFullScreen;
+        TMenuItem *SimpleIdeRomEnabled;
+        TMenuItem *N18;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -300,11 +302,12 @@ __published:	// IDE-managed Components
         void __fastcall ResetSpeechClick(TObject *Sender);
         void __fastcall EnableJoystick1AutoFireClick(TObject *Sender);
         void __fastcall EnableJoystick2AutoFireClick(TObject *Sender);
-        void __fastcall ZXCFUploadJumperOpenedClick(TObject *Sender);
+        void __fastcall ZXCFUploadJumperClosedClick(TObject *Sender);
         void __fastcall ConnectSpectrum128KeypadClick(TObject *Sender);
         void __fastcall ConnectJoystick1Click(TObject *Sender);
         void __fastcall ConnectJoystick2Click(TObject *Sender);
         void __fastcall ZoomFullScreenClick(TObject *Sender);
+        void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

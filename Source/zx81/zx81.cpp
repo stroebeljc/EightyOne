@@ -339,7 +339,7 @@ void zx81_initialise()
                 memory[12301]=0;
         }
 
-        if (spectrum.HDType==HDPITERSCF)
+        if (spectrum.HDType==HDSIMPLECF)
         {
                 ATA_Reset();
                 ATA_SetMode(ATA_MODE_16BIT);
@@ -1174,7 +1174,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 return;
         }
 
-        if ((spectrum.HDType==HDPITERSCF) && ((Address&0x3b)==0x2b))
+        if ((spectrum.HDType==HDSIMPLECF) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
         // Note that the Parrot only decodes A7, A5, and A4.
@@ -1329,7 +1329,7 @@ BYTE ReadInputPort(int Address, int *tstates)
         }
         else
         {
-                if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
+                if ((spectrum.HDType==HDSIMPLECF || spectrum.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                         return (BYTE)(ATA_ReadRegister(((Address>>2)&1) | ((Address>>5)&6)));
 
                 // Note that the Parrot only decodes A7, A5, and A4.

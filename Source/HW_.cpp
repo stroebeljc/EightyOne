@@ -4633,6 +4633,8 @@ void __fastcall THW::ZXCFRAMChange(TObject *Sender)
 void __fastcall THW::RestoreButtonClick(TObject *Sender)
 {
         LoadFromInternalSettings();  // restore form settings from copy
+        ResetRequired = false;
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 

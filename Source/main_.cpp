@@ -1619,7 +1619,7 @@ void __fastcall TForm1::StatusBar2Click(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm1::IFace1Click(TObject *Sender)
+void __fastcall TForm1::Interface1PortsClick(TObject *Sender)
 {
         IF1->ShowModal();
 }

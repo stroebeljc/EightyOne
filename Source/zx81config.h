@@ -360,8 +360,8 @@ typedef struct
         char ROMSIMPLE16BIT[256];
         char ROMPLUSD[256];
         char ROMDISCIPLE[256];
-        char ROMOPUSD[256];
-        char ROMBETADISC[256];
+        char ROMDISCOVERY[256];
+        char ROMBETADISK[256];
         char ROMUSPEECH[256];
         char ROMUSOURCE[256];
         char ROMMWCFIDE[256];
@@ -373,8 +373,7 @@ typedef struct
         char ROMQUICKSILVAHIRES[256];
         char ROMMULTIFACE128[256];
         char ROMMULTIFACE3[256];
-        char ROMINTERFACE1ED1[256];
-        char ROMINTERFACE1ED2[256];
+        char ROMINTERFACE1[256];
 
         char cwd[256];
         char temppath[256];

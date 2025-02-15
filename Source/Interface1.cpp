@@ -602,8 +602,6 @@ __fastcall TIF1::TIF1(TComponent* Owner)
         if (access("nocomport",0)) EnumeratePorts(ComPortList->Items,"COM");
         if (access("nocomport",0)) EnumeratePorts(ComPortList->Items,"LPT");
         ComPortList->ItemIndex=0;
-        NoMicroDrives->ItemIndex=0;
-        RomEdition->ItemIndex=1;
         BaudRate->ItemIndex=0;
         DataBits->ItemIndex=3;
         StopBits->ItemIndex=0;
@@ -629,11 +627,6 @@ void TIF1::HardReset()
 
 void __fastcall TIF1::OKClick(TObject *Sender)
 {
-        IF1RomEdition=RomEdition->ItemIndex;
-        if (romEditionChanged) machine.initialise();
-
-        MDVNoDrives=NoMicroDrives->ItemIndex;
-
         if (InFile) { fclose(InFile); InFile=NULL; }
         if (OutFile) { fclose(OutFile); OutFile=NULL; }
         if (ComPort->Connected) ComPort->Close();
@@ -751,8 +744,7 @@ void __fastcall TIF1::InputFileBrowseClick(TObject *Sender)
                 InputFileEdit->Text = OpenDialog->FileName;
 }
 //---------------------------------------------------------------------------
-
-
+                          
 void __fastcall TIF1::OutputFileButtonClick(TObject *Sender)
 {
         if (SaveDialog->Execute())
@@ -797,9 +789,6 @@ void TIF1::SaveSettings(TIniFile *ini)
 
         ini->WriteString("INTERFACE1","TCPAddr", TCPAddress->Text);
         ini->WriteString("INTERFACE1","TCPPort", TCPPort->Text);
-
-        ini->WriteInteger("INTERFACE1","Microdrives",NoMicroDrives->ItemIndex);
-        ini->WriteInteger("INTERFACE1","RomEdition",RomEdition->ItemIndex);
 }
 //---------------------------------------------------------------------------
 
@@ -820,9 +809,6 @@ void TIF1::LoadSettings(TIniFile *ini)
         TCPAddress->Text=ini->ReadString("INTERFACE1","TCPAddr", TCPAddress->Text);
         TCPPort->Text=ini->ReadString("INTERFACE1","TCPPort", TCPPort->Text);
 
-        NoMicroDrives->ItemIndex=ini->ReadInteger("INTERFACE1","Microdrives",NoMicroDrives->ItemIndex);
-        RomEdition->ItemIndex=ini->ReadInteger("INTERFACE1","RomEdition",RomEdition->ItemIndex);
-
         OpenDialog->FileName=InputFileEdit->Text;
         SaveDialog->FileName=OutputFileEdit->Text;
 
@@ -833,22 +819,10 @@ void TIF1::LoadSettings(TIniFile *ini)
 
 void __fastcall TIF1::FormDestroy(TObject *Sender)
 {
-        int i;
-
-        for(i=0;i<NoMicroDrives->ItemIndex;i++)
+        for (int i = 0; i < MDVNoDrives; i++)
+        {
                 MDVSetFileName(i, NULL);
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TIF1::RomEditionChange(TObject *Sender)
-{
-        romEditionChanged = true;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TIF1::FormShow(TObject *Sender)
-{
-        romEditionChanged = false;
+        }
 }
 //---------------------------------------------------------------------------
 

@@ -1167,6 +1167,10 @@ void TForm1::LoadSettings(TIniFile *ini)
         EnableJoystick1AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         EnableJoystick2AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
 
+        divIDEJumperEClosed->Checked    = ini->ReadBool("MAIN", "divIDEJumperEClosed",    divIDEJumperEClosed->Checked);
+        ZXCFUploadJumperClosed->Checked = ini->ReadBool("MAIN", "ZXCFUploadJumperClosed", ZXCFUploadJumperClosed->Checked);
+        SimpleIdeRomEnabled->Checked    = ini->ReadBool("MAIN", "SimpleIdeRomEnabled",    SimpleIdeRomEnabled->Checked);
+
         HorizontalSyncPulse->Checked                         = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
         VerticalSyncPulse->Checked                           = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);
         RomDisplayDriver->Checked                            = ini->ReadBool("MAIN", "ColouriseRomDisplayDriver",                            RomDisplayDriver->Checked);
@@ -1278,6 +1282,10 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
         ini->WriteBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         ini->WriteBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
+
+        ini->WriteBool("MAIN", "divIDEJumperEClosed",    divIDEJumperEClosed->Checked);
+        ini->WriteBool("MAIN", "ZXCFUploadJumperClosed", ZXCFUploadJumperClosed->Checked);
+        ini->WriteBool("MAIN", "SimpleIdeRomEnabled",    SimpleIdeRomEnabled->Checked);
 
         ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
         ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);

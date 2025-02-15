@@ -155,9 +155,9 @@ void load_config(void)
 
         AnsiString plusdRom = AnsiString("+d.g+dos.v1-a.rom");
         strcpy(emulator.ROMPLUSD, plusdRom.c_str());
-        AnsiString discipleRom = AnsiString("discovery.v2-22.rom");
+        AnsiString discipleRom = AnsiString("disciple.gdos.v3.rom");
         strcpy(emulator.ROMDISCIPLE, discipleRom.c_str());
-        AnsiString opusdiscoveryRom = AnsiString("disciple.gdos.v3.rom");
+        AnsiString opusdiscoveryRom = AnsiString("discovery.v2-22.rom");
         strcpy(emulator.ROMDISCOVERY, opusdiscoveryRom.c_str());
         AnsiString trdosRom = AnsiString("beta128.trdos.v5-03.rom");
         strcpy(emulator.ROMBETADISK, trdosRom.c_str());

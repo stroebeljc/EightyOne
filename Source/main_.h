@@ -106,7 +106,7 @@ __published:	// IDE-managed Components
         TMenuItem *Small1;
         TStatusBar *StatusBar1;
         TMenuItem *StatusBar2;
-        TMenuItem *IFace1;
+        TMenuItem *Interface1Ports;
         TOpenDialog *OpenDock;
         TMenuItem *DockSpacer;
         TMenuItem *N6;
@@ -242,7 +242,7 @@ __published:	// IDE-managed Components
         void __fastcall None1Click(TObject *Sender);
         void __fastcall StatusBar2Click(TObject *Sender);
         void __fastcall CloseTape1Click(TObject *Sender);
-        void __fastcall IFace1Click(TObject *Sender);
+        void __fastcall Interface1PortsClick(TObject *Sender);
         void __fastcall SaveSnapDialogTypeChange(TObject *Sender);
         void __fastcall DiskDrives1Click(TObject *Sender);
         void __fastcall StatusBar1DrawPanel(TStatusBar *StatusBar,

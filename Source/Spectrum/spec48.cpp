@@ -420,31 +420,20 @@ void spec48_initialise()
         }
         else if (spectrum.floppytype==FLOPPYOPUSD)
         {
-                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMOPUSD);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMDISCOVERY);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
         else if (spectrum.floppytype==FLOPPYBETA)
         {
-                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMBETADISC);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMBETADISK);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
         else if (spectrum.floppytype==FLOPPYIF1)
         {
-                AnsiString romPath;
-
-                if (IF1->RomEdition->Text == "Edition 2")
-                {
-                        romPath = emulator.ROMINTERFACE1ED2;
-                }
-                else
-                {
-                        romPath = emulator.ROMINTERFACE1ED1;
-                }
-
-                romlen=memory_device_rom_load(romPath.c_str(),0,65536);
-
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMINTERFACE1);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(SpectrumMem+32768,memory,romlen);
                 if (romlen<=8192) memcpy(SpectrumMem+32768+8192,memory,romlen);
 

@@ -72,6 +72,7 @@ struct HWFormValues
         AnsiString DriveATypeText;
         AnsiString DriveBTypeText;
         AnsiString ZXCFRAMText;
+        AnsiString NoMicrodrivesComboBoxText;
         bool ZXpandChecked;
         bool SpecDrumChecked;
         bool ProtectROMChecked;
@@ -187,9 +188,9 @@ __published:	// IDE-managed Components
         TGroupBox *GroupBox1;
         TLabel *LabelFDC;
         TComboBox *FDCBox;
-        TLabel *LabelA;
+        TLabel *DriveATypeLabel;
         TComboBox *DriveAType;
-        TLabel *LabelB;
+        TLabel *DriveBTypeLabel;
         TComboBox *DriveBType;
         TComboBox *FDCRomBox;
         TLabel *FDCRomBoxLabel;
@@ -200,9 +201,11 @@ __published:	// IDE-managed Components
         TComboBox *ZXCFRAM;
         TComboBox *IDERomBox;
         TLabel *IDERomBoxLabel;
-        TButton *IF1Config;
+        TButton *Interface1Configure;
         TButton *FDCRomBoxBrowse;
         TButton *IDERomBoxBrowse;
+        TLabel *NoMicrodrivesLabel;
+        TComboBox *NoMicrodrivesComboBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -235,7 +238,7 @@ __published:	// IDE-managed Components
         void __fastcall HiResBoxChange(TObject *Sender);
         void __fastcall DriveATypeChange(TObject *Sender);
         void __fastcall DriveBTypeChange(TObject *Sender);
-        void __fastcall IF1ConfigClick(TObject *Sender);
+        void __fastcall Interface1ConfigureClick(TObject *Sender);
         void __fastcall MultifaceClick(TObject *Sender);
         void __fastcall IDEBoxChange(TObject *Sender);
         void __fastcall FDCBoxChange(TObject *Sender);
@@ -284,6 +287,7 @@ __published:	// IDE-managed Components
         void __fastcall IDERomBoxBrowseClick(TObject *Sender);
         void __fastcall FDCRomBoxChange(TObject *Sender);
         void __fastcall IDERomBoxChange(TObject *Sender);
+        void __fastcall NoMicrodrivesComboBoxChange(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

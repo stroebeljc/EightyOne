@@ -1566,7 +1566,7 @@ object HW: THW
         Top = 34
         Width = 80
         Height = 20
-        Caption = 'Configure'
+        Caption = 'Configure...'
         TabOrder = 24
         OnClick = TS2050ConfigClick
       end
@@ -1632,7 +1632,7 @@ object HW: THW
         Top = 92
         Width = 80
         Height = 20
-        Caption = 'SD Card'
+        Caption = 'SD Card...'
         TabOrder = 27
         OnClick = ButtonZXpandSDCardClick
       end
@@ -1837,124 +1837,193 @@ object HW: THW
     object FloppyDrives: TTabSheet
       Caption = 'Drives'
       ImageIndex = 1
-      object LabelA: TLabel
-        Left = 207
-        Top = 20
-        Width = 10
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'A:'
-      end
-      object LabelB: TLabel
-        Left = 207
-        Top = 44
-        Width = 10
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'B:'
-      end
-      object LabelFDC: TLabel
-        Left = 24
-        Top = 20
-        Width = 24
-        Height = 13
-        Caption = 'FDC:'
-      end
-      object LabelIDE: TLabel
-        Left = 28
-        Top = 72
-        Width = 21
-        Height = 13
-        Caption = 'IDE:'
-      end
-      object ZXCFLabel: TLabel
-        Left = 184
-        Top = 72
-        Width = 34
-        Height = 13
-        Caption = 'SRAM:'
-      end
-      object DriveAType: TComboBox
-        Left = 224
-        Top = 16
-        Width = 153
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 2
-        OnChange = DriveATypeChange
-        Items.Strings = (
-          'None'
-          '3" Single-Sided (180K)'
-          '3" Double-Sided (360K)'
-          '3.5" Double-Sided (720K)'
-          '5.25" Double-Sided (720K)')
-      end
-      object DriveBType: TComboBox
-        Left = 224
-        Top = 40
-        Width = 153
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 3
-        OnChange = DriveBTypeChange
-        Items.Strings = (
-          'None'
-          '3" Single-Sided (180K)'
-          '3" Double-Sided (360K)'
-          '3.5" Double-Sided (720K)'
-          '5.25" Double-Sided (720K)')
-      end
-      object FDCBox: TComboBox
-        Left = 56
-        Top = 16
-        Width = 113
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
+      object GroupBox1: TGroupBox
+        Left = 4
+        Top = 4
+        Width = 393
+        Height = 85
+        Caption = 'Floppy Drives'
         TabOrder = 0
-        OnChange = FDCBoxChange
-        Items.Strings = (
-          'None'
-          '+3'
-          'MGT Disciple'
-          'MGT Plus D')
+        object LabelFDC: TLabel
+          Left = 8
+          Top = 28
+          Width = 27
+          Height = 13
+          Caption = 'Type:'
+        end
+        object LabelA: TLabel
+          Left = 175
+          Top = 28
+          Width = 10
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'A:'
+        end
+        object LabelB: TLabel
+          Left = 175
+          Top = 56
+          Width = 10
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'B:'
+        end
+        object FDCRomBoxLabel: TLabel
+          Left = 160
+          Top = 28
+          Width = 28
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'ROM:'
+        end
+        object FDCBox: TComboBox
+          Left = 40
+          Top = 24
+          Width = 113
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 0
+          OnChange = FDCBoxChange
+          Items.Strings = (
+            'None'
+            '+3'
+            'MGT Disciple'
+            'MGT Plus D')
+        end
+        object DriveAType: TComboBox
+          Left = 192
+          Top = 24
+          Width = 161
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 3
+          OnChange = DriveATypeChange
+          Items.Strings = (
+            'None'
+            '3" Single-Sided (180K)'
+            '3" Double-Sided (360K)'
+            '3.5" Double-Sided (720K)'
+            '5.25" Double-Sided (720K)')
+        end
+        object DriveBType: TComboBox
+          Left = 192
+          Top = 52
+          Width = 161
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 4
+          OnChange = DriveBTypeChange
+          Items.Strings = (
+            'None'
+            '3" Single-Sided (180K)'
+            '3" Double-Sided (360K)'
+            '3.5" Double-Sided (720K)'
+            '5.25" Double-Sided (720K)')
+        end
+        object FDCRomBox: TComboBox
+          Left = 192
+          Top = 24
+          Width = 171
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 1
+          OnChange = FDCRomBoxChange
+        end
+        object IF1Config: TButton
+          Left = 192
+          Top = 24
+          Width = 81
+          Height = 20
+          Caption = 'Configure...'
+          TabOrder = 5
+          OnClick = IF1ConfigClick
+        end
+        object FDCRomBoxBrowse: TButton
+          Left = 364
+          Top = 24
+          Width = 19
+          Height = 21
+          Caption = '...'
+          TabOrder = 2
+          OnClick = FDCRomBoxBrowseClick
+        end
       end
-      object IF1Config: TButton
-        Left = 224
-        Top = 16
-        Width = 81
-        Height = 20
-        Caption = 'Configure'
+      object GroupBox2: TGroupBox
+        Left = 4
+        Top = 96
+        Width = 393
+        Height = 85
+        Caption = 'IDE Drives'
         TabOrder = 1
-        OnClick = IF1ConfigClick
-      end
-      object IDEBox: TComboBox
-        Left = 56
-        Top = 68
-        Width = 113
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 4
-        OnChange = IDEBoxChange
-        Items.Strings = (
-          'Simple +3e 8-Bit')
-      end
-      object ZXCFRAM: TComboBox
-        Left = 224
-        Top = 68
-        Width = 81
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 5
-        OnChange = ZXCFRAMChange
-        Items.Strings = (
-          '128K'
-          '512K'
-          '1024K')
+        object LabelIDE: TLabel
+          Left = 8
+          Top = 28
+          Width = 27
+          Height = 13
+          Caption = 'Type:'
+        end
+        object ZXCFLabel: TLabel
+          Left = 161
+          Top = 28
+          Width = 27
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'RAM:'
+        end
+        object IDERomBoxLabel: TLabel
+          Left = 160
+          Top = 28
+          Width = 28
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'ROM:'
+        end
+        object IDEBox: TComboBox
+          Left = 40
+          Top = 24
+          Width = 113
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 0
+          OnChange = IDEBoxChange
+          Items.Strings = (
+            'Simple +3e 8-Bit')
+        end
+        object ZXCFRAM: TComboBox
+          Left = 192
+          Top = 24
+          Width = 81
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 1
+          OnChange = ZXCFRAMChange
+          Items.Strings = (
+            '128K'
+            '512K'
+            '1024K')
+        end
+        object IDERomBox: TComboBox
+          Left = 192
+          Top = 24
+          Width = 171
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 2
+          OnChange = IDERomBoxChange
+        end
+        object IDERomBoxBrowse: TButton
+          Left = 364
+          Top = 24
+          Width = 19
+          Height = 21
+          Caption = '...'
+          TabOrder = 3
+          OnClick = IDERomBoxBrowseClick
+        end
       end
     end
     object AdvSettings: TTabSheet

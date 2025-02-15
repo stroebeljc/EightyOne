@@ -153,22 +153,30 @@ void load_config(void)
 
         LoadMachineRoms();
 
-        AnsiString plusdRom = fdcRomsFolder + AnsiString("plusd.rom");
+        AnsiString plusdRom = AnsiString("plusd.rom");
         strcpy(emulator.ROMPLUSD, plusdRom.c_str());
-        AnsiString discipleRom = fdcRomsFolder + AnsiString("disciple.rom");
+        AnsiString discipleRom = AnsiString("disciple.rom");
         strcpy(emulator.ROMDISCIPLE, discipleRom.c_str());
-        AnsiString opusdiscoveryRom = fdcRomsFolder + AnsiString("opusdiscovery.rom");
+        AnsiString opusdiscoveryRom = AnsiString("opusdiscovery.rom");
         strcpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
-        AnsiString trdosRom = fdcRomsFolder + AnsiString("trdos.rom");
+        AnsiString trdosRom = AnsiString("trdos.rom");
         strcpy(emulator.ROMBETADISC, trdosRom.c_str());
-        AnsiString mwcfideRom = ideRomsFolder + AnsiString("mwcfide.rom");
-        strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
-        AnsiString larken81Rom = fdcRomsFolder + AnsiString("larken81.rom");
+        AnsiString larken81Rom = AnsiString("larken81.rom");
         strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());
-        AnsiString interface1Ed1Rom = fdcRomsFolder + AnsiString("interface1.edition1.rom");
+
+        AnsiString interface1Ed1Rom = AnsiString("interface1.edition1.rom");
         strcpy(emulator.ROMINTERFACE1ED1, interface1Ed1Rom.c_str());
         AnsiString interface1Ed2Rom = fdcRomsFolder + AnsiString("interface1.edition2.rom");
         strcpy(emulator.ROMINTERFACE1ED2, interface1Ed2Rom.c_str());
+
+        AnsiString simpleIde8BitRom = AnsiString("zx8blbs.rom");
+        strcpy(emulator.ROMSIMPLE8BIT, simpleIde8BitRom.c_str());
+        AnsiString simpleIde16BitRom = AnsiString("zxidelbs.rom");
+        strcpy(emulator.ROMSIMPLE16BIT, simpleIde16BitRom.c_str());
+        AnsiString simpleIdeCFRom = AnsiString("zxcflba.rom");
+        strcpy(emulator.ROMSIMPLECF, simpleIdeCFRom.c_str());
+        AnsiString mwcfideRom = AnsiString("mwcfide.rom");
+        strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
 
         AnsiString uSpeechRom = interfaceRomsFolder + AnsiString("uspeech.rom");
         strcpy(emulator.ROMUSPEECH, uSpeechRom.c_str());
@@ -256,3 +264,16 @@ void LoadMachineRoms()
 
         strcpy(emulator.ROM97LE, "zx97.rom");
 }
+
+AnsiString PrependFolder(AnsiString folder, char* romFile)
+{
+        AnsiString path = romFile;
+
+        if (path.Pos("\\") == 0)
+        {
+                path = folder + path;
+        }
+
+        return path;
+}
+

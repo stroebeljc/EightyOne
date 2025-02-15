@@ -241,7 +241,10 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureKeypad();
 
         ConfigureIDE();
+        ConfigureIDERom();
         ConfigureFDC();
+        ConfigureFDCRom();
+        
         ConfigureModem();
         ConfigurePrinterCentronicsPort();
         ConfigureRzxSupport();
@@ -338,6 +341,8 @@ void THW::LoadFromInternalSettings()
         ZXCFRAM->ItemIndex                = FindEntry(ZXCFRAM,              Hwform.ZXCFRAMText);
         IDEBox->ItemIndex                 = FindEntry(IDEBox,               Hwform.IDEBoxText);
         FDCBox->ItemIndex                 = FindEntry(FDCBox,               Hwform.FDCBoxText);
+        IDERomBox->ItemIndex              = FindEntry(IDERomBox,            Hwform.IDERomBoxText);
+        FDCRomBox->ItemIndex              = FindEntry(FDCRomBox,            Hwform.FDCRomBoxText);
 
         RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
         SinclairRomCartridgeFileBox->Text = Hwform.RomCartridgeFileBoxText;
@@ -424,6 +429,8 @@ void THW::SaveToInternalSettings()
         Hwform.ZXC1ConfigurationBoxText        = ZXC1ConfigurationBox->Text;
         Hwform.FDCBoxText                      = FDCBox->Text;
         Hwform.IDEBoxText                      = IDEBox->Text;
+        Hwform.FDCRomBoxText                   = FDCRomBox->Text;
+        Hwform.IDERomBoxText                   = IDERomBox->Text;
 
         Hwform.ProgrammableJoystickLeft        = programmableJoystickLeft;
         Hwform.ProgrammableJoystickRight       = programmableJoystickRight;
@@ -1731,7 +1738,7 @@ AnsiString THW::DetermineRomBase()
         if (!FileExists(rom))
         {
                 ShowMessage("ROM file for this system not found. Go to:\n\n"
-                "Options > Hardware > Advanced Settings > ROM File.");
+                            "Options > Hardware > Advanced Settings > ROM File.");
         }
 
         return romBase;
@@ -1972,11 +1979,15 @@ void THW::SetupForZX81(void)
         FDCBox->Items->Add("ZX1541");
         FDCBox->Items->Add("Larken");
         FDCBox->ItemIndex = 0;
+        FDCRomBox->ItemIndex = 0;
 
         for (i = 0; i < FDCBox->Items->Count; i++)
                 if (FDCBox->Items->Strings[i] == OldFloppy) FDCBox->ItemIndex = i;
 
+        LabelFDC->Enabled = true;
         FDCBox->Enabled = true;
+        FDCBoxChange(NULL);
+
         DriveAType->Enabled = false;
         DriveBType->Enabled = false;
 
@@ -2043,8 +2054,9 @@ void THW::SetupForZX81(void)
         IDEBox->Items->Add("MWCFIde");
         IDEBox->ItemIndex = 0;
         IDEBox->Enabled = true;
+        IDERomBox->ItemIndex = 0;
         LabelIDE->Enabled = true;
-        LabelFDC->Enabled = true;
+
         for (i = 0; i < IDEBox->Items->Count; i++)
         {
                 if (IDEBox->Items->Strings[i] == OldIDE) IDEBox->ItemIndex = i;
@@ -2217,6 +2229,9 @@ void THW::SetupForSpectrum(void)
                 }
         }
 
+        FDCRomBox->ItemIndex = 0;
+        LabelFDC->Enabled = true;
+
         FDCBox->Enabled = true;
         FDCBoxChange(NULL);
 
@@ -2359,8 +2374,8 @@ void THW::SetupForSpectrum(void)
         IDEBox->Items->Add("Simple IDE 16-Bit");
         IDEBox->ItemIndex = 0;
         IDEBox->Enabled = true;
+        IDERomBox->ItemIndex = 0;
         LabelIDE->Enabled = true;
-        LabelFDC->Enabled = true;
 
         for (i = 0; i < IDEBox->Items->Count; i++)
                 if (IDEBox->Items->Strings[i] == OldIDE) IDEBox->ItemIndex = i;
@@ -2463,6 +2478,95 @@ void THW::DisplayTotalRam()
         }
         AnsiString ramSize = totalRam;
         LabelTotalRAM->Caption = "Total RAM: " + ramSize + "K";
+}
+//---------------------------------------------------------------------------
+
+void THW::LoadFdcRomBox()
+{
+        FDCRomBox->Clear();
+        FDCRomBox->Visible = true;
+        FDCRomBoxLabel->Visible = true;
+        FDCRomBoxBrowse->Visible = true;
+
+        if (FDCBox->Text == "Beta Disk")
+        {
+                FDCRomBox->Items->Add("trdos.rom");
+                FDCRomBox->Text = emulator.ROMBETADISC;
+        }
+        else if (FDCBox->Text == "Opus Discovery")
+        {
+                FDCRomBox->Items->Add("opusdiscovery.rom");
+                FDCRomBox->Text = emulator.ROMOPUSD;
+        }
+        else if (FDCBox->Text == "DISCiPLE")
+        {
+                FDCRomBox->Items->Add("disciple.rom");
+                FDCRomBox->Text = emulator.ROMDISCIPLE;
+        }
+        else if (FDCBox->Text == "Plus D")
+        {
+                FDCRomBox->Items->Add("plusd.rom");
+                FDCRomBox->Text = emulator.ROMPLUSD;
+        }
+        else if (FDCBox->Text == "Larken")
+        {
+                FDCRomBox->Items->Add("larken81.rom");
+                FDCRomBox->Text = emulator.ROMLARKEN81;
+        }
+        else
+        {
+                FDCRomBox->Text = "";
+                FDCRomBox->Visible = false;
+                FDCRomBoxLabel->Visible = false;
+                FDCRomBoxBrowse->Visible = false;
+        }
+
+        FDCRomBox->SelStart = FDCRomBox->Text.Length() - 1;
+        FDCRomBox->SelLength = 0;
+
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void THW::LoadIdeRomBox()
+{
+        IDERomBox->Clear();
+        IDERomBox->Visible = true;
+        IDERomBoxLabel->Visible = true;
+        IDERomBoxBrowse->Visible = true;
+
+        if (IDEBox->Text == "Simple IDE 8-Bit")
+        {
+                IDERomBox->Items->Add("zx8blbs.rom");
+                IDERomBox->Text = emulator.ROMSIMPLE8BIT;
+        }
+        else if (IDEBox->Text == "Simple IDE 16-Bit")
+        {
+                IDERomBox->Items->Add("zxidelbs.rom");
+                IDERomBox->Text = emulator.ROMSIMPLE16BIT;
+        }
+        else if (IDEBox->Text == "Simple IDE CF")
+        {
+                IDERomBox->Items->Add("zxcflba.rom");
+                IDERomBox->Text = emulator.ROMSIMPLECF;
+        }
+        else if (IDEBox->Text == "MWCFIde")
+        {
+                IDERomBox->Items->Add("mwcfide.rom");
+                IDERomBox->Text = emulator.ROMMWCFIDE;
+        }
+        else
+        {
+                IDERomBox->Text = "";
+                IDERomBox->Visible = false;
+                IDERomBoxLabel->Visible = false;
+                IDERomBoxBrowse->Visible = false;
+        }
+
+        IDEBox->SelStart = IDEBox->Text.Length() - 1;
+        IDEBox->SelLength = 0;
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -2832,6 +2936,12 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
 
         IDEBoxChange(NULL);
 
+        while(FDCBox->Items->Count > 2) FDCBox->Items->Delete(FDCBox->Items->Count - 1);
+        FDCBox->Items->Strings[1] = "+3";
+        FDCBox->ItemIndex = 0;
+
+        FDCBoxChange(NULL);
+
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -3071,10 +3181,14 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         FDCBox->Items->Add("None");
         FDCBox->ItemIndex = 0;
         FDCBox->Enabled = false;
+        LabelFDC->Enabled = false;
         IDEBox->Items->Clear();
         IDEBox->Items->Add("None");
         IDEBox->ItemIndex = 0;
         IDEBox->Enabled = false;
+        LabelIDE->Enabled = false;
+        IDERomBox->ItemIndex = 0;
+        FDCRomBox->ItemIndex = 0;
         RamPackBox->Items->Add("96K");
         EnableRomCartridgeOption(false);
         SetZXpandState(false, false);
@@ -3368,7 +3482,10 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "IDEType",    Hwform.IDEBoxText);
         AccessIniFileString(ini, accessType, "HARDWARE", "ZXCFRAM",    Hwform.ZXCFRAMText);
 
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE3E",    emulator.ROMSIMPLE3E);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMBETADISC",    emulator.ROMBETADISC);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMOPUSD",       emulator.ROMOPUSD);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMDISCIPLE",    emulator.ROMDISCIPLE);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMPLUSD",       emulator.ROMPLUSD);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLECF",    emulator.ROMSIMPLECF);
@@ -3432,16 +3549,27 @@ void THW::ReadNVMemory(BYTE* memory, int size, int count, char* fileName)
 
 void __fastcall THW::BrowseROMClick(TObject *Sender)
 {
+        if (BrowseROMFile(romsFolder, RomBox))
+        {
+                SetZX80Icon();
+                SetSpectrum128Icon();
+
+                UpdateApplyButton();
+        }
+}
+
+bool THW::BrowseROMFile(AnsiString folder, TComboBox* romBox)
+{
         AnsiString Path;
         char cPath[512];
 
         Path = emulator.cwd;
-        Path += romsFolder;
+        Path += folder;
 
         RomSelect->Title = "Select ROM File";
         RomSelect->Filter = "ROM Files (*.rom;*.bin)|*.rom;*.bin";
         RomSelect->InitialDir = Path;
-        RomSelect->FileName = RomBox->Text;
+        RomSelect->FileName = romBox->Text;
         if (RomSelect->FileName.Length() == 0 || *(RomSelect->FileName.AnsiLastChar()) == '\\')
         {
                 RomSelect->FileName = "";
@@ -3449,29 +3577,26 @@ void __fastcall THW::BrowseROMClick(TObject *Sender)
 
         if (!RomSelect->Execute())
         {
-                return;
+                return false;
         }
-        
+
         AnsiString selectedRomPath = FileNameGetPath(RomSelect->FileName);
 
         strcpy(cPath, Path.c_str());
         if (Path == selectedRomPath)
         {
                 Path = RomSelect->FileName;
-                Path = RemovePath(Path);
         }
         else
         {
-            Path = RomSelect->FileName;
+                Path = RomSelect->FileName;
         }
 
-        RomBox->Text = Path;
-        RomBox->SelStart = 0;
+        romBox->Text = Path;
+        romBox->SelStart = romBox->Text.Length() - 1;
+        romBox->SelLength = 0;
 
-        SetZX80Icon();
-        SetSpectrum128Icon();
-
-        UpdateApplyButton();
+        return true;
 }
 //---------------------------------------------------------------------------
 
@@ -3607,10 +3732,11 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
                 Form1->SimpleIdeRomEnabled->Checked = true;
                 Form1->SimpleIdeRomEnabled->Enabled = true;
         }
-                  
+
+        LoadIdeRomBox();
         LoadRomBox();
 
-        if (RomBox->Text.SubString(1, 5) == "IDEs\\")
+        if (RomBox->Text.Pos("\\") == 0)
         {
                 if (FindEntry(RomBox, RomBox->Text, -1) == -1)
                 {
@@ -3661,6 +3787,8 @@ void __fastcall THW::FDCBoxChange(TObject *Sender)
                 IF1Config->Visible = false;
                 Form1->IFace1->Enabled = false;
         }
+
+        LoadFdcRomBox();
         
         UpdateApplyButton();
 }
@@ -3854,10 +3982,12 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
 {
         if (ZX80Btn->Down)
         {
-                bool zx81Ed1ROM = RomBox->Text == "zx81.edition1.rom";
+                bool zx81Ed1ROM = (RomBox->Text == "zx81.edition1.rom");
                 FloatingPointHardwareFix->Enabled = zx81Ed1ROM;
                 if (!zx81Ed1ROM)
+                {
                         FloatingPointHardwareFix->Checked = false;
+                }
         }
 
         UpdateApplyButton();
@@ -4538,6 +4668,8 @@ void THW::UpdateApplyButton()
         settingsChanged |= (ZXCFRAM->Text                          != Hwform.ZXCFRAMText);
         settingsChanged |= (IDEBox->Text                           != Hwform.IDEBoxText);
         settingsChanged |= (FDCBox->Text                           != Hwform.FDCBoxText);
+        settingsChanged |= (IDERomBox->Text                        != Hwform.IDERomBoxText);
+        settingsChanged |= (FDCRomBox->Text                        != Hwform.FDCRomBoxText);
 
         settingsChanged |= (RomCartridgeFileBox->Text              != Hwform.RomCartridgeFileBoxText);
         settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.RomCartridgeFileBoxText);
@@ -4597,6 +4729,88 @@ void __fastcall THW::RestoreButtonClick(TObject *Sender)
         LoadFromInternalSettings();  // restore form settings from copy
         ResetRequired = false;
         UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::FDCRomBoxBrowseClick(TObject *Sender)
+{
+        AnsiString folder = romsFolder;
+        folder += fdcRomsFolder;
+
+        if (BrowseROMFile(folder, FDCRomBox))
+        {
+                UpdateApplyButton();
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::IDERomBoxBrowseClick(TObject *Sender)
+{
+        AnsiString folder = romsFolder;
+        folder += ideRomsFolder;
+
+        if (BrowseROMFile(folder, IDERomBox))
+        {
+                UpdateApplyButton();
+        }
+}
+//---------------------------------------------------------------------------
+
+void THW::ConfigureIDERom()
+{
+        if (IDEBox->Text == "Simple IDE 8-Bit")
+        {
+                strcpy(emulator.ROMSIMPLE8BIT, IDERomBox->Text.c_str());
+        }
+        else if (IDEBox->Text == "Simple IDE 16-Bit")
+        {
+                strcpy(emulator.ROMSIMPLE16BIT, IDERomBox->Text.c_str());
+        }
+        else if (IDEBox->Text == "Simple IDE CF")
+        {
+                strcpy(emulator.ROMSIMPLECF, IDERomBox->Text.c_str());
+        }
+        else if (IDEBox->Text == "MWCFIde")
+        {
+                strcpy(emulator.ROMMWCFIDE, IDERomBox->Text.c_str());
+        }
+}
+//---------------------------------------------------------------------------
+
+void THW::ConfigureFDCRom()
+{
+        if (FDCBox->Text == "Beta Disk")
+        {
+                strcpy(emulator.ROMBETADISC, FDCRomBox->Text.c_str());
+        }
+        else if (FDCBox->Text == "Opus Discovery")
+        {
+                strcpy(emulator.ROMOPUSD, FDCRomBox->Text.c_str());
+        }
+        else if (FDCBox->Text == "DISCiPLE")
+        {
+                strcpy(emulator.ROMDISCIPLE, FDCRomBox->Text.c_str());
+        }
+        else if (FDCBox->Text == "Plus D")
+        {
+                strcpy(emulator.ROMPLUSD, FDCRomBox->Text.c_str());
+        }
+        else if (FDCBox->Text == "Larken")
+        {
+                strcpy(emulator.ROMLARKEN81, FDCRomBox->Text.c_str());
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::FDCRomBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();        
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::IDERomBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();        
 }
 //---------------------------------------------------------------------------
 

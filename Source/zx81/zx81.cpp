@@ -88,6 +88,8 @@ extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
+extern AnsiString PrependFolder(AnsiString folder, char* romFile);
+
 static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0xFF;
 
@@ -326,7 +328,9 @@ void zx81_initialise()
 
         if (spectrum.floppytype==FLOPPYLARKEN81)
         {
-                memory_device_rom_load(emulator.ROMLARKEN81, 14336, 2048);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMLARKEN81);
+                memory_device_rom_load(romFile.c_str(), 14336, 2048);
+
                 memory[0x38DC] = 0x2B;
                 memory[0x38DD] = 0x0F;
                 memory[0x38DE] = 0xC9;
@@ -343,7 +347,9 @@ void zx81_initialise()
         {
                 ATA_Reset();
                 ATA_SetMode(ATA_MODE_16BIT);
-                memory_device_rom_load(emulator.ROMMWCFIDE, 32768, 32768);
+
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMMWCFIDE);
+                memory_device_rom_load(romFile.c_str(), 32768, 32768);
         }
 
         ZX1541PORT=0;

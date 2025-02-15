@@ -163,6 +163,8 @@ extern wd1770_drive PlusDDrives[], *PlusDCur;
 int USEFDC765DLL;
 extern "C" void LoadFDC765DLL(void);
 
+extern void spec_load_z80(char *fname);
+
 BYTE ContendArray[80000];
 
 RZX_EMULINFO  RZXemulinfo =
@@ -175,13 +177,13 @@ RZX_EMULINFO  RZXemulinfo =
 
 int RZXError;
 
+extern AnsiString PrependFolder(AnsiString folder, char* romFile);
+
 void spec48_LoadRZX(char *FileName)
 {
         rzx_playback(FileName);
         RZXCounter=0;
 }
-
-extern void spec_load_z80(char *fname);
 
 rzx_u32 RZXcallback(int Msg, void *data)
 {
@@ -387,43 +389,45 @@ void spec48_initialise()
 
         if (spectrum.HDType == HDSIMPLECF)
         {
-                romlen=memory_device_rom_load(emulator.ROMSIMPLECF,0,16384);
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLECF);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(simpleIDEMem, memory, romlen);
         }
         else if (spectrum.HDType == HDSIMPLE8BIT)
         {
-                romlen=memory_device_rom_load(emulator.ROMSIMPLE8BIT,0,16384);
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLE8BIT);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(simpleIDEMem, memory, romlen);
         }
         else if (spectrum.HDType == HDSIMPLE16BIT)
         {
-                romlen=memory_device_rom_load(emulator.ROMSIMPLE16BIT,0,16384);
-                memcpy(simpleIDEMem, memory, romlen);
-        }
-        else if (spectrum.HDType == HDSIMPLE3E)
-        {
-                romlen=memory_device_rom_load(emulator.ROMSIMPLE3E,0,16384);
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLE16BIT);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(simpleIDEMem, memory, romlen);
         }
 
         if (spectrum.floppytype==FLOPPYDISCIPLE)
         {
-                romlen=memory_device_rom_load(emulator.ROMDISCIPLE,0,16384);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMDISCIPLE);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
         else if (spectrum.floppytype==FLOPPYPLUSD)
         {
-                romlen=memory_device_rom_load(emulator.ROMPLUSD,0,16384);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMPLUSD);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
         else if (spectrum.floppytype==FLOPPYOPUSD)
         {
-                romlen=memory_device_rom_load(emulator.ROMOPUSD,0,16384);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMOPUSD);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
         else if (spectrum.floppytype==FLOPPYBETA)
         {
-                romlen=memory_device_rom_load(emulator.ROMBETADISC,0,16384);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMBETADISC);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
         else if (spectrum.floppytype==FLOPPYIF1)

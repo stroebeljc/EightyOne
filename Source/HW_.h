@@ -67,6 +67,8 @@ struct HWFormValues
         AnsiString ProgrammableJoystickFire;
         AnsiString FDCBoxText;
         AnsiString IDEBoxText;
+        AnsiString FDCRomBoxText;
+        AnsiString IDERomBoxText;
         AnsiString DriveATypeText;
         AnsiString DriveBTypeText;
         AnsiString ZXCFRAMText;
@@ -125,10 +127,6 @@ __published:	// IDE-managed Components
         TPageControl *Advanced;
         TTabSheet *Interfaces;
         TTabSheet *FloppyDrives;
-        TLabel *LabelA;
-        TLabel *LabelB;
-        TComboBox *DriveAType;
-        TComboBox *DriveBType;
         TLabel *SoundCardLbl;
         TComboBox *SoundCardBox;
         TLabel *ChrGenLbl;
@@ -147,13 +145,6 @@ __published:	// IDE-managed Components
         TCheckBox *EnableLowRAM;
         TCheckBox *M1Not;
         TCheckBox *Issue2;
-        TLabel *LabelFDC;
-        TComboBox *FDCBox;
-        TButton *IF1Config;
-        TComboBox *IDEBox;
-        TComboBox *ZXCFRAM;
-        TLabel *LabelIDE;
-        TLabel *ZXCFLabel;
         TCheckBox *ZXPrinter;
         TCheckBox *ZXpand;
         TComboBox *ColourBox;
@@ -196,6 +187,25 @@ __published:	// IDE-managed Components
         TButton *DefaultsButton;
         TButton *Apply;
         TButton *RestoreButton;
+        TGroupBox *GroupBox1;
+        TLabel *LabelFDC;
+        TComboBox *FDCBox;
+        TLabel *LabelA;
+        TComboBox *DriveAType;
+        TLabel *LabelB;
+        TComboBox *DriveBType;
+        TComboBox *FDCRomBox;
+        TLabel *FDCRomBoxLabel;
+        TGroupBox *GroupBox2;
+        TLabel *LabelIDE;
+        TComboBox *IDEBox;
+        TLabel *ZXCFLabel;
+        TComboBox *ZXCFRAM;
+        TComboBox *IDERomBox;
+        TLabel *IDERomBoxLabel;
+        TButton *IF1Config;
+        TButton *FDCRomBoxBrowse;
+        TButton *IDERomBoxBrowse;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -273,6 +283,10 @@ __published:	// IDE-managed Components
         void __fastcall Issue2Click(TObject *Sender);
         void __fastcall ZXCFRAMChange(TObject *Sender);
         void __fastcall RestoreButtonClick(TObject *Sender);
+        void __fastcall FDCRomBoxBrowseClick(TObject *Sender);
+        void __fastcall IDERomBoxBrowseClick(TObject *Sender);
+        void __fastcall FDCRomBoxChange(TObject *Sender);
+        void __fastcall IDERomBoxChange(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -310,6 +324,9 @@ private:	// User declarations
         void LoadRomBox();
         void UpdateApplyButton();
         void SelectDefaultRom();
+        void LoadFdcRomBox();
+        void LoadIdeRomBox();
+        bool BrowseROMFile(AnsiString folder, TComboBox* romBox);
 
         void ConfigureRzxSupport();
         void ReInitialiseSound();
@@ -346,7 +363,9 @@ private:	// User declarations
         void ConfigureJoystick();
         void ConfigureKeypad();
         void AddPlus3eIdeRoms();
-        
+        void ConfigureIDERom();
+        void ConfigureFDCRom();
+
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;
         vector<RomCartridgeEntry> tc2068RomCartridges;

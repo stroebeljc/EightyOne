@@ -351,7 +351,6 @@ typedef struct
         char ROMSPP2[256];
         char ROMSPP2A[256];
         char ROMSPP3[256];
-        char ROMSIMPLE3E[256];
         char ROMTC2048[256];
         char ROMTC2068[256];
         char ROMTS2068[256];
@@ -437,7 +436,6 @@ extern const char* replacementRomsFolder;
 extern const char* speechRomsFolder;
 
 extern void load_config();
-extern void LoadMachineRoms();
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))

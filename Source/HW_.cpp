@@ -2587,6 +2587,33 @@ void THW::LoadIdeRomBox()
         IDEBox->SelStart = IDEBox->Text.Length() - 1;
         IDEBox->SelLength = 0;
 
+        bool plus3eSupported = (NewMachine == MACHINESPECTRUM && NewSpec >= SPECCYPLUS2A);
+
+        if (plus3eSupported)
+        {
+                if (IDEBox->Items->Strings[IDEBox->ItemIndex] != "None")
+                {
+                        Plus3eNoticeLabel->Visible = true;
+
+                        Plus3eNoticeLabel->Caption = "The +3e ROM is supported by this IDE device. Browse for the appropriate ROM from the Advanced Settings tab.";
+
+                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF" ||
+                            IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)" ||
+                            IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)")
+                        {
+                                Plus3eNoticeLabel->Caption = Plus3eNoticeLabel->Caption + " Disable the on-board ROM using the jumper.";
+                        }
+                }
+                else
+                {
+                        Plus3eNoticeLabel->Visible = false;
+                }
+        }
+        else
+        {
+                Plus3eNoticeLabel->Visible = false;
+        }
+
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -2688,7 +2715,6 @@ void THW::LoadRomBox()
                         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
                         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
                         RomBox->Items->Add("spectrum48.arabic.version2.rom");
-                        AddPlus3eIdeRoms();
                         RomBox->Text = emulator.ROMSPP2A;
                         break;
 
@@ -2698,10 +2724,9 @@ void THW::LoadRomBox()
                         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
                         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
                         RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
-                        AddPlus3eIdeRoms();
                         RomBox->Text = emulator.ROMSPP3;
                         break;
-                
+
                 case SPECCYTC2048:
                         RomBox->Items->Add("tc2048.rom");
                         RomBox->Text = emulator.ROMTC2048;
@@ -2724,36 +2749,7 @@ void THW::LoadRomBox()
 
         RomBoxChange(NULL);
 }
-//---------------------------------------------------------------------------
 
-void THW::AddPlus3eIdeRoms()
-{
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")
-        {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("sm8en3ee.rom"));
-        }
-        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
-        {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("zxcen3ee.rom"));
-        }
-        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")
-        {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("pcfen3ee.rom"));
-        }
-        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")
-        {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("pe8en3ee.rom"));
-        }
-        else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")
-        {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("p16en3ee.rom"));
-        }
-        else if ((IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)") ||
-                 (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)"))
-        {
-                RomBox->Items->Add(ideRomsFolder + AnsiString("diven3ee.rom"));
-        }
-}
 //---------------------------------------------------------------------------
 
 void __fastcall THW::ZX80BtnClick(TObject *Sender)

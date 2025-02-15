@@ -1335,7 +1335,7 @@ object HW: THW
     Top = 140
     Width = 412
     Height = 217
-    ActivePage = FloppyDrives
+    ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -2006,6 +2006,17 @@ object HW: THW
           Height = 13
           Alignment = taRightJustify
           Caption = 'ROM:'
+        end
+        object Plus3eNoticeLabel: TLabel
+          Left = 8
+          Top = 52
+          Width = 375
+          Height = 26
+          Caption = 
+            'The +3e ROM is supported by this IDE device. Browse for the appr' +
+            'opriate ROM from the Advanced Settings tab. Disable the on-board' +
+            ' ROM using the jumper.'
+          WordWrap = True
         end
         object IDEBox: TComboBox
           Left = 40

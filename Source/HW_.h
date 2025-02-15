@@ -209,6 +209,7 @@ __published:	// IDE-managed Components
         TButton *IDERomBoxBrowse;
         TLabel *NoMicrodrivesLabel;
         TComboBox *NoMicrodrivesComboBox;
+        TLabel *Plus3eNoticeLabel;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -366,7 +367,6 @@ private:	// User declarations
         void Configure8K16KRam();
         void ConfigureJoystick();
         void ConfigureKeypad();
-        void AddPlus3eIdeRoms();
         void ConfigureIDERom();
         void ConfigureFDCRom();
 

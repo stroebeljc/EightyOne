@@ -4565,7 +4565,6 @@ void THW::SelectDefaultRom()
                                 break;
 
                         case SPECCYTC2068:
-                                RomBox->Text = "ts2068.rom";
                         case SPECCYTS2068:
                                 RomBox->Text = "ts2068.rom";
                                 break;

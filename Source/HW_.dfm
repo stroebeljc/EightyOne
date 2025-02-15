@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 276
-  Top = 120
+  Left = 212
+  Top = 122
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -1335,7 +1335,7 @@ object HW: THW
     Top = 140
     Width = 412
     Height = 217
-    ActivePage = Interfaces
+    ActivePage = FloppyDrives
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
@@ -1851,7 +1851,7 @@ object HW: THW
           Height = 13
           Caption = 'Type:'
         end
-        object LabelA: TLabel
+        object DriveATypeLabel: TLabel
           Left = 175
           Top = 28
           Width = 10
@@ -1859,7 +1859,7 @@ object HW: THW
           Alignment = taRightJustify
           Caption = 'A:'
         end
-        object LabelB: TLabel
+        object DriveBTypeLabel: TLabel
           Left = 175
           Top = 56
           Width = 10
@@ -1874,6 +1874,13 @@ object HW: THW
           Height = 13
           Alignment = taRightJustify
           Caption = 'ROM:'
+        end
+        object NoMicrodrivesLabel: TLabel
+          Left = 252
+          Top = 56
+          Width = 57
+          Height = 13
+          Caption = 'Microdrives:'
         end
         object FDCBox: TComboBox
           Left = 40
@@ -1931,14 +1938,14 @@ object HW: THW
           TabOrder = 1
           OnChange = FDCRomBoxChange
         end
-        object IF1Config: TButton
-          Left = 192
-          Top = 24
-          Width = 81
+        object Interface1Configure: TButton
+          Left = 40
+          Top = 52
+          Width = 113
           Height = 20
-          Caption = 'Configure...'
+          Caption = 'Configure RS232...'
           TabOrder = 5
-          OnClick = IF1ConfigClick
+          OnClick = Interface1ConfigureClick
         end
         object FDCRomBoxBrowse: TButton
           Left = 364
@@ -1948,6 +1955,26 @@ object HW: THW
           Caption = '...'
           TabOrder = 2
           OnClick = FDCRomBoxBrowseClick
+        end
+        object NoMicrodrivesComboBox: TComboBox
+          Left = 314
+          Top = 52
+          Width = 47
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 6
+          Text = 'NoMicrodrivesComboBox'
+          OnChange = NoMicrodrivesComboBoxChange
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8')
         end
       end
       object GroupBox2: TGroupBox

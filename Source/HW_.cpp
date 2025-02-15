@@ -72,27 +72,28 @@ void HWSetMachine(int machine, int speccy)
 {
         switch(machine)
         {
-        case MACHINEZX80:   HW->ZX80BtnClick(NULL); break;
-        case MACHINEZX81:   HW->ZX81BtnClick(NULL); break;
-        case MACHINEACE:    HW->AceBtnClick(NULL); break;
+        case MACHINEZX80:   HW->ZX80BtnClick(NULL);   break;
+        case MACHINEZX81:   HW->ZX81BtnClick(NULL);   break;
+        case MACHINEACE:    HW->AceBtnClick(NULL);    break;
         case MACHINETS1500: HW->TS1500BtnClick(NULL); break;
         case MACHINETS1000: HW->TS1000BtnClick(NULL); break;
-        case MACHINER470:   HW->R470BtnClick(NULL); break;
-        case MACHINETK85:   HW->TK85BtnClick(NULL); break;
+        case MACHINER470:   HW->R470BtnClick(NULL);   break;
+        case MACHINETK85:   HW->TK85BtnClick(NULL);   break;
         case MACHINELAMBDA: HW->LambdaBtnClick(NULL); break;
         case MACHINEZX97LE: HW->ZX97LEBtnClick(NULL); break;
         case MACHINESPECTRUM:
                 switch(speccy)
                 {
-                case SPECCY16:     HW->Spec16BtnClick(NULL); break;
-                case SPECCY48:     HW->Spec48BtnClick(NULL); break;
+                case SPECCY16:     HW->Spec16BtnClick(NULL);   break;
+                case SPECCY48:     HW->Spec48BtnClick(NULL);   break;
                 case SPECCYPLUS:   HW->SpecPlusBtnClick(NULL); break;
-                case SPECCYTC2048: HW->TC2048BtnClick(NULL); break;
-                case SPECCYTC2068: HW->TC2068BtnClick(NULL); break;
-                case SPECCYTS2068: HW->TS2068BtnClick(NULL); break;
-                case SPECCY128:    HW->Spec128BtnClick(NULL); break;
-                case SPECCYPLUS2:  HW->SpecP2BtnClick(NULL); break;
-                case SPECCYPLUS2A: HW->SpecP2aBtnClick(NULL); break;
+                case SPECCYTC2048: HW->TC2048BtnClick(NULL);   break;
+                case SPECCYTC2068: HW->TC2068BtnClick(NULL);   break;
+                case SPECCYTS2068: HW->TS2068BtnClick(NULL);   break;
+                case SPECCY128:    HW->Spec128BtnClick(NULL);  break;
+                case SPECCYPLUS2:  HW->SpecP2BtnClick(NULL);   break;
+                case SPECCYPLUS2A: HW->SpecP2aBtnClick(NULL);  break;
+                case SPECCYPLUS3:  HW->SpecP3BtnClick(NULL);   break;
                 }
                 break;
         }
@@ -110,13 +111,14 @@ __fastcall THW::THW(TComponent* Owner)
         programmableJoystickDown  = JoystickDown1.Character;
         programmableJoystickFire  = JoystickFire1.Character;
 
-        RomCartridgeCapacity = 0;
-        RamPackHeight = RamPackBox->Height;
-        Machine->ActivePage = Sinclair;
-        Advanced->ActivePage = Interfaces;
+        NoMicrodrivesComboBox->ItemIndex = 0;
+        RomCartridgeCapacity  = 0;
+        RamPackHeight         = RamPackBox->Height;
+        Machine->ActivePage   = Sinclair;
+        Advanced->ActivePage  = Interfaces;
         DriveAType->ItemIndex = FindEntry(DriveAType, "3\" Single-Sided (180K)");
         DriveBType->ItemIndex = FindEntry(DriveBType, "None");
-        ZXCFRAM->ItemIndex = FindEntry(ZXCFRAM, "1024K");
+        ZXCFRAM->ItemIndex    = FindEntry(ZXCFRAM,    "1024K");
         ZX81BtnClick(NULL);
 
         SaveToInternalSettings(); // save in case there is no INI file
@@ -327,22 +329,23 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
-        RamPackBox->ItemIndex             = FindEntry(RamPackBox,           Hwform.RamPackBoxText);
-        SoundCardBox->ItemIndex           = FindEntry(SoundCardBox,         Hwform.SoundCardBoxText);
-        ChrGenBox->ItemIndex              = FindEntry(ChrGenBox,            Hwform.ChrGenBoxText);
-        HiResBox->ItemIndex               = FindEntry(HiResBox,             Hwform.HiResBoxText);
-        ColourBox->ItemIndex              = FindEntry(ColourBox,            Hwform.ColourBoxText);
-        SpeechBox->ItemIndex              = FindEntry(SpeechBox,            Hwform.SpeechBoxText);
-        JoystickBox->ItemIndex            = FindEntry(JoystickBox,          Hwform.JoystickBoxText);
-        RomCartridgeBox->ItemIndex        = FindEntry(RomCartridgeBox,      Hwform.RomCartridgeBoxText);
-        ZXC1ConfigurationBox->ItemIndex   = FindEntry(ZXC1ConfigurationBox, Hwform.ZXC1ConfigurationBoxText);
-        DriveAType->ItemIndex             = FindEntry(DriveAType,           Hwform.DriveATypeText);
-        DriveBType->ItemIndex             = FindEntry(DriveBType,           Hwform.DriveBTypeText);
-        ZXCFRAM->ItemIndex                = FindEntry(ZXCFRAM,              Hwform.ZXCFRAMText);
-        IDEBox->ItemIndex                 = FindEntry(IDEBox,               Hwform.IDEBoxText);
-        FDCBox->ItemIndex                 = FindEntry(FDCBox,               Hwform.FDCBoxText);
-        IDERomBox->ItemIndex              = FindEntry(IDERomBox,            Hwform.IDERomBoxText);
-        FDCRomBox->ItemIndex              = FindEntry(FDCRomBox,            Hwform.FDCRomBoxText);
+        RamPackBox->ItemIndex            = FindEntry(RamPackBox,            Hwform.RamPackBoxText);
+        SoundCardBox->ItemIndex          = FindEntry(SoundCardBox,          Hwform.SoundCardBoxText);
+        ChrGenBox->ItemIndex             = FindEntry(ChrGenBox,             Hwform.ChrGenBoxText);
+        HiResBox->ItemIndex              = FindEntry(HiResBox,              Hwform.HiResBoxText);
+        ColourBox->ItemIndex             = FindEntry(ColourBox,             Hwform.ColourBoxText);
+        SpeechBox->ItemIndex             = FindEntry(SpeechBox,             Hwform.SpeechBoxText);
+        JoystickBox->ItemIndex           = FindEntry(JoystickBox,           Hwform.JoystickBoxText);
+        RomCartridgeBox->ItemIndex       = FindEntry(RomCartridgeBox,       Hwform.RomCartridgeBoxText);
+        ZXC1ConfigurationBox->ItemIndex  = FindEntry(ZXC1ConfigurationBox,  Hwform.ZXC1ConfigurationBoxText);
+        DriveAType->ItemIndex            = FindEntry(DriveAType,            Hwform.DriveATypeText);
+        DriveBType->ItemIndex            = FindEntry(DriveBType,            Hwform.DriveBTypeText);
+        ZXCFRAM->ItemIndex               = FindEntry(ZXCFRAM,               Hwform.ZXCFRAMText);
+        IDEBox->ItemIndex                = FindEntry(IDEBox,                Hwform.IDEBoxText);
+        FDCBox->ItemIndex                = FindEntry(FDCBox,                Hwform.FDCBoxText);
+        IDERomBox->ItemIndex             = FindEntry(IDERomBox,             Hwform.IDERomBoxText);
+        FDCRomBox->ItemIndex             = FindEntry(FDCRomBox,             Hwform.FDCRomBoxText);
+        NoMicrodrivesComboBox->ItemIndex = FindEntry(NoMicrodrivesComboBox, Hwform.NoMicrodrivesComboBoxText);
 
         RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
         SinclairRomCartridgeFileBox->Text = Hwform.RomCartridgeFileBoxText;
@@ -369,6 +372,7 @@ void THW::LoadFromInternalSettings()
         ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
+
         ZX97Dialog->UpdateFormSettings(Hwform.ZX97Form);
 
         //---- APPLY THE SETTINGS ----
@@ -428,6 +432,7 @@ void THW::SaveToInternalSettings()
         Hwform.IDEBoxText                      = IDEBox->Text;
         Hwform.FDCRomBoxText                   = FDCRomBox->Text;
         Hwform.IDERomBoxText                   = IDERomBox->Text;
+        Hwform.NoMicrodrivesComboBoxText       = NoMicrodrivesComboBox->Text;
 
         Hwform.ProgrammableJoystickLeft        = programmableJoystickLeft;
         Hwform.ProgrammableJoystickRight       = programmableJoystickRight;
@@ -453,6 +458,7 @@ void THW::SaveToInternalSettings()
         Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
+        
         ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
 }
 
@@ -1537,7 +1543,7 @@ void THW::ConfigureIDE()
 {
         Form1->divIDEJumperEClosed->Enabled    = (IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R Gal)") || IDEBox->ItemIndex == FindEntry(IDEBox, "divIDE 57 (R\" Gal)"));
         Form1->ZXCFUploadJumperClosed->Enabled = (IDEBox->ItemIndex == FindEntry(IDEBox, "ZXCF"));
-        Form1->SimpleIdeRomEnabled->Enabled     = (IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 8-Bit") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 16-Bit") ||
+        Form1->SimpleIdeRomEnabled->Enabled    = (IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 8-Bit") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 16-Bit") ||
                                                   IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE CF") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple +3 8-Bit"));
 
         spectrum.HDType = HDNONE;
@@ -1550,14 +1556,15 @@ void THW::ConfigureIDE()
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")    spectrum.HDType = HDSIMPLE8BIT;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")   spectrum.HDType = HDSIMPLE16BIT;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")             spectrum.HDType = HDSIMPLECF;
+
         spectrum.divIDEJumperEClosed    = Form1->divIDEJumperEClosed->Checked;
         spectrum.zxcfUploadJumperClosed = Form1->ZXCFUploadJumperClosed->Checked;
         spectrum.simpleIdeRomEnabled    = Form1->SimpleIdeRomEnabled->Checked;
 
         switch (ZXCFRAM->ItemIndex)
         {
-        case 0: spectrum.ZXCFRAMSize = 128/16; break;
-        case 1: spectrum.ZXCFRAMSize = 512/16; break;
+        case 0: spectrum.ZXCFRAMSize = 128/16;  break;
+        case 1: spectrum.ZXCFRAMSize = 512/16;  break;
         case 2: spectrum.ZXCFRAMSize = 1024/16; break;
         }
 }
@@ -1566,10 +1573,10 @@ void THW::ConfigureFDC()
 {
         spectrum.floppytype = FLOPPYNONE;
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "DISCiPLE")       spectrum.floppytype = FLOPPYDISCIPLE;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Plus D")         spectrum.floppytype = FLOPPYPLUSD;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+D")             spectrum.floppytype = FLOPPYPLUSD;
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")             spectrum.floppytype = FLOPPYPLUS3;
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Opus Discovery") spectrum.floppytype = FLOPPYOPUSD;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Beta Disk")      spectrum.floppytype = FLOPPYBETA;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Beta Disk 128")  spectrum.floppytype = FLOPPYBETA;
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1") spectrum.floppytype = FLOPPYIF1;
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX1541")         spectrum.floppytype = FLOPPYZX1541;
         if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Larken")         spectrum.floppytype = FLOPPYLARKEN81;
@@ -1591,6 +1598,9 @@ void THW::ConfigureFDC()
         case 3: spectrum.drivebtype = DRIVE35INCHDS; break;
         case 4: spectrum.drivebtype = DRIVE35INCHDS; break;
         }
+
+        IF1->MDVNoDrives = NoMicrodrivesComboBox->Text.ToInt();
+        Form1->Interface1Ports->Enabled = (spectrum.floppytype == FLOPPYIF1);
 
         Form1->DiskDrives1->Enabled = true;
         P3Drive->FormShow(NULL);
@@ -1969,9 +1979,6 @@ void THW::SetupForZX81(void)
         FDCBox->Enabled = true;
         FDCBoxChange(NULL);
 
-        DriveAType->Enabled = false;
-        DriveBType->Enabled = false;
-
         if (RamPackBox->Items->Strings[RamPackBox->Items->Count - 1] == "96K")
                 RamPackBox->Items->Delete(RamPackBox->Items->Count-1);
 
@@ -2194,10 +2201,10 @@ void THW::SetupForSpectrum(void)
         FDCBox->Items->Add("ZX Interface 1");
         if (NewSpec != SPECCYTC2068 && NewSpec != SPECCYTS2068)
         {
-                FDCBox->Items->Add("Beta Disk");
+                FDCBox->Items->Add("Beta Disk 128");
                 FDCBox->Items->Add("Opus Discovery");
                 FDCBox->Items->Add("DISCiPLE");
-                FDCBox->Items->Add("Plus D");
+                FDCBox->Items->Add("+D");
         }
 
         FDCBox->ItemIndex = 0;
@@ -2390,14 +2397,15 @@ void THW::SetupForSpectrum(void)
         const bool zx81 = false;
         MidiForm->SetComputer(zx81);
 }
-
 //---------------------------------------------------------------------------
+
 void THW::ConfigureDefaultRamSettings()
 {
         machine.baseRamSize = baseRamSize;
         machine.ramPackSupplementsInternalRam = ramPackSupplementsInternalRam;
         machine.defaultRamPackIndex = defaultRamPackIndex;
 }
+//---------------------------------------------------------------------------
 
 void THW::RefreshDefaultRamSettings()
 {
@@ -2448,6 +2456,7 @@ void THW::RefreshDefaultRamSettings()
                 break;
         }
 }
+//---------------------------------------------------------------------------
 
 void THW::DisplayTotalRam()
 {
@@ -2469,24 +2478,36 @@ void THW::LoadFdcRomBox()
         FDCRomBoxLabel->Visible = true;
         FDCRomBoxBrowse->Visible = true;
 
-        if (FDCBox->Text == "Beta Disk")
+        if (FDCBox->Text == "ZX Interface 1")
         {
-                FDCRomBox->Items->Add("trdos.rom");
-                FDCRomBox->Text = emulator.ROMBETADISC;
+                FDCRomBox->Items->Add("interface1.edition1.rom");
+                FDCRomBox->Items->Add("interface1.edition2.rom");
+                FDCRomBox->Text = emulator.ROMINTERFACE1;
+        }
+        else if (FDCBox->Text == "Beta Disk 128")
+        {
+                FDCRomBox->Items->Add("beta128.trdos.v5-01.rom");
+                FDCRomBox->Items->Add("beta128.trdos.v5-02.rom");
+                FDCRomBox->Items->Add("beta128.trdos.v5-03.rom");
+                FDCRomBox->Text = emulator.ROMBETADISK;
         }
         else if (FDCBox->Text == "Opus Discovery")
         {
-                FDCRomBox->Items->Add("opusdiscovery.rom");
-                FDCRomBox->Text = emulator.ROMOPUSD;
+                FDCRomBox->Items->Add("discovery.v2-1.rom");
+                FDCRomBox->Items->Add("discovery.v2-2.rom");
+                FDCRomBox->Items->Add("discovery.v2-22.rom");
+                FDCRomBox->Text = emulator.ROMDISCOVERY;
         }
         else if (FDCBox->Text == "DISCiPLE")
         {
-                FDCRomBox->Items->Add("disciple.rom");
+                FDCRomBox->Items->Add("disciple.gdos.v2b.rom");
+                FDCRomBox->Items->Add("disciple.gdos.v3.rom");
                 FDCRomBox->Text = emulator.ROMDISCIPLE;
         }
-        else if (FDCBox->Text == "Plus D")
+        else if (FDCBox->Text == "+D")
         {
-                FDCRomBox->Items->Add("plusd.rom");
+                FDCRomBox->Items->Add("+d.g+dos.v1-0.rom");
+                FDCRomBox->Items->Add("+d.g+dos.v1-a.rom");
                 FDCRomBox->Text = emulator.ROMPLUSD;
         }
         else if (FDCBox->Text == "Larken")
@@ -3463,8 +3484,9 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "IDEType",    Hwform.IDEBoxText);
         AccessIniFileString(ini, accessType, "HARDWARE", "ZXCFRAM",    Hwform.ZXCFRAMText);
 
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMBETADISC",    emulator.ROMBETADISC);
-        AccessIniFileString(ini, accessType, "HARDWARE", "ROMOPUSD",       emulator.ROMOPUSD);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMINTERFACE1",  emulator.ROMINTERFACE1);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMBETADISK128", emulator.ROMBETADISK);
+        AccessIniFileString(ini, accessType, "HARDWARE", "ROMDISCOVERY",   emulator.ROMDISCOVERY);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMDISCIPLE",    emulator.ROMDISCIPLE);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMPLUSD",       emulator.ROMPLUSD);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE8BIT",  emulator.ROMSIMPLE8BIT);
@@ -3661,7 +3683,7 @@ void __fastcall THW::DriveBTypeChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall THW::IF1ConfigClick(TObject *Sender)
+void __fastcall THW::Interface1ConfigureClick(TObject *Sender)
 {
         IF1->ShowModal();
 }
@@ -3731,35 +3753,20 @@ void __fastcall THW::FDCBoxChange(TObject *Sender)
                 EnableLowRAM->Checked = true;
         }
 
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")
-        {
-                DriveAType->Enabled = true;
-                DriveBType->Enabled = true;
-                DriveAType->Visible = true;
-                DriveBType->Visible = true;
-                LabelA->Visible = true;
-                LabelB->Visible = true;
-        }
-        else
-        {
-                DriveAType->Enabled = false;
-                DriveBType->Enabled = false;
-                DriveAType->Visible = false;
-                DriveBType->Visible = false;
-                LabelA->Visible = false;
-                LabelB->Visible = false;
-        }
+        bool SpectrumPlus3Drive = (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3");
+        DriveAType->Visible      = SpectrumPlus3Drive;
+        DriveBType->Visible      = SpectrumPlus3Drive;
+        DriveATypeLabel->Visible = SpectrumPlus3Drive;
+        DriveBTypeLabel->Visible = SpectrumPlus3Drive;
 
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1")
+        bool interface1Drive = (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1");
+        Interface1Configure->Visible    = interface1Drive;
+        NoMicrodrivesLabel->Visible     = interface1Drive;
+        NoMicrodrivesComboBox->Visible  = interface1Drive;
+
+        if (interface1Drive)
         {
-                IF1Config->Visible = true;
-                IF1Config->Enabled = true;
-                Form1->IFace1->Enabled = true;
-        }
-        else
-        {
-                IF1Config->Visible = false;
-                Form1->IFace1->Enabled = false;
+                NoMicrodrivesComboBox->ItemIndex = IF1->MDVNoDrives;
         }
 
         LoadFdcRomBox();
@@ -4644,6 +4651,7 @@ void THW::UpdateApplyButton()
         settingsChanged |= (FDCBox->Text                           != Hwform.FDCBoxText);
         settingsChanged |= (IDERomBox->Text                        != Hwform.IDERomBoxText);
         settingsChanged |= (FDCRomBox->Text                        != Hwform.FDCRomBoxText);
+        settingsChanged |= (NoMicrodrivesComboBox->Text            != Hwform.NoMicrodrivesComboBoxText);
 
         settingsChanged |= (RomCartridgeFileBox->Text              != Hwform.RomCartridgeFileBoxText);
         settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.RomCartridgeFileBoxText);
@@ -4750,19 +4758,19 @@ void THW::ConfigureIDERom()
 
 void THW::ConfigureFDCRom()
 {
-        if (FDCBox->Text == "Beta Disk")
+        if (FDCBox->Text == "Beta Disk 128")
         {
-                strcpy(emulator.ROMBETADISC, FDCRomBox->Text.c_str());
+                strcpy(emulator.ROMBETADISK, FDCRomBox->Text.c_str());
         }
         else if (FDCBox->Text == "Opus Discovery")
         {
-                strcpy(emulator.ROMOPUSD, FDCRomBox->Text.c_str());
+                strcpy(emulator.ROMDISCOVERY, FDCRomBox->Text.c_str());
         }
         else if (FDCBox->Text == "DISCiPLE")
         {
                 strcpy(emulator.ROMDISCIPLE, FDCRomBox->Text.c_str());
         }
-        else if (FDCBox->Text == "Plus D")
+        else if (FDCBox->Text == "+D")
         {
                 strcpy(emulator.ROMPLUSD, FDCRomBox->Text.c_str());
         }
@@ -4781,7 +4789,13 @@ void __fastcall THW::FDCRomBoxChange(TObject *Sender)
 
 void __fastcall THW::IDERomBoxChange(TObject *Sender)
 {
-        UpdateApplyButton();        
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::NoMicrodrivesComboBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 

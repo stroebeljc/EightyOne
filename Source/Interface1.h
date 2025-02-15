@@ -51,10 +51,6 @@ __published:	// IDE-managed Components
         TEdit *OutputFileEdit;
         TButton *OutputFileButton;
         TButton *OK;
-        TGroupBox *GroupROM;
-        TGroupBox *GroupDrives;
-        TLabel *Label4;
-        TComboBox *NoMicroDrives;
         TPanel *PortPanel;
         TLabel *Label5;
         TComboBox *BaudRate;
@@ -73,8 +69,6 @@ __published:	// IDE-managed Components
         TClientSocket *ClientSocket;
         TOpenDialog *OpenDialog;
         TSaveDialog *SaveDialog;
-        TLabel *Label11;
-        TComboBox *RomEdition;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ComPortListChange(TObject *Sender);
         void __fastcall InputFileBrowseClick(TObject *Sender);
@@ -85,8 +79,6 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
           int &ErrorCode);
         void __fastcall FormDestroy(TObject *Sender);
-        void __fastcall RomEditionChange(TObject *Sender);
-        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
         int RS232Port;
         FILE *InFile, *OutFile;
@@ -107,7 +99,6 @@ private:	// User declarations
 
 public:		// User declarations
         int MDVNoDrives;
-        int IF1RomEdition;
         int SerialOut, SerialIn, SerialTimeOut, SerialCount;
         bool CTS;
         __fastcall TIF1(TComponent* Owner);

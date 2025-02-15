@@ -153,21 +153,19 @@ void load_config(void)
 
         LoadMachineRoms();
 
-        AnsiString plusdRom = AnsiString("plusd.rom");
+        AnsiString plusdRom = AnsiString("+d.g+dos.v1-a.rom");
         strcpy(emulator.ROMPLUSD, plusdRom.c_str());
-        AnsiString discipleRom = AnsiString("disciple.rom");
+        AnsiString discipleRom = AnsiString("discovery.v2-22.rom");
         strcpy(emulator.ROMDISCIPLE, discipleRom.c_str());
-        AnsiString opusdiscoveryRom = AnsiString("opusdiscovery.rom");
-        strcpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
-        AnsiString trdosRom = AnsiString("trdos.rom");
-        strcpy(emulator.ROMBETADISC, trdosRom.c_str());
+        AnsiString opusdiscoveryRom = AnsiString("disciple.gdos.v3.rom");
+        strcpy(emulator.ROMDISCOVERY, opusdiscoveryRom.c_str());
+        AnsiString trdosRom = AnsiString("beta128.trdos.v5-03.rom");
+        strcpy(emulator.ROMBETADISK, trdosRom.c_str());
         AnsiString larken81Rom = AnsiString("larken81.rom");
         strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());
 
-        AnsiString interface1Ed1Rom = AnsiString("interface1.edition1.rom");
-        strcpy(emulator.ROMINTERFACE1ED1, interface1Ed1Rom.c_str());
-        AnsiString interface1Ed2Rom = fdcRomsFolder + AnsiString("interface1.edition2.rom");
-        strcpy(emulator.ROMINTERFACE1ED2, interface1Ed2Rom.c_str());
+        AnsiString interface1Ed1Rom = AnsiString("interface1.edition2.rom");
+        strcpy(emulator.ROMINTERFACE1, interface1Ed1Rom.c_str());
 
         AnsiString simpleIde8BitRom = AnsiString("zx8blbs.rom");
         strcpy(emulator.ROMSIMPLE8BIT, simpleIde8BitRom.c_str());

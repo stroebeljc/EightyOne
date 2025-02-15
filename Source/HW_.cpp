@@ -329,7 +329,7 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
-        RamPackBox->ItemIndex            = FindEntry(RamPackBox,            Hwform.RamPackBoxText);
+        RamPackBox->ItemIndex            = FindEntry(RamPackBox,              Hwform.RamPackBoxText);
         SoundCardBox->ItemIndex          = SelectEntry(SoundCardBox,          Hwform.SoundCardBoxText);
         ChrGenBox->ItemIndex             = SelectEntry(ChrGenBox,             Hwform.ChrGenBoxText);
         HiResBox->ItemIndex              = SelectEntry(HiResBox,              Hwform.HiResBoxText);

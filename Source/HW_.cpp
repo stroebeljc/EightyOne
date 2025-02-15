@@ -365,9 +365,6 @@ void THW::LoadFromInternalSettings()
         TS2050->Checked                        = Hwform.TS2050Checked;
         Issue2->Checked                        = Hwform.Issue2Checked;
         KMouse->Checked                        = Hwform.KMouseChecked;
-        Form1->divIDEJumperEClosed->Checked    = Hwform.DivIDEJumperEClosedChecked;
-        Form1->ZXCFUploadJumperClosed->Checked = Hwform.ZXCFUploadJumperClosedChecked;
-        Form1->SimpleIdeRomEnabled->Checked     = Hwform.SimpleIdeRomEnabledChecked;
         Multiface->Checked                     = Hwform.MultifaceChecked;
         ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
@@ -454,9 +451,6 @@ void THW::SaveToInternalSettings()
         Hwform.KMouseChecked                   = KMouse->Checked;
         Hwform.MultifaceChecked                = Multiface->Checked;
         Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
-        Hwform.DivIDEJumperEClosedChecked      = Form1->divIDEJumperEClosed->Checked;
-        Hwform.ZXCFUploadJumperClosedChecked   = Form1->ZXCFUploadJumperClosed->Checked;
-        Hwform.SimpleIdeRomEnabledChecked      = Form1->SimpleIdeRomEnabled->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
         ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
@@ -1545,19 +1539,6 @@ void THW::ConfigureIDE()
         Form1->ZXCFUploadJumperClosed->Enabled = (IDEBox->ItemIndex == FindEntry(IDEBox, "ZXCF"));
         Form1->SimpleIdeRomEnabled->Enabled     = (IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 8-Bit") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 16-Bit") ||
                                                   IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE CF") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple +3 8-Bit"));
-
-        if (!Form1->divIDEJumperEClosed->Enabled)
-        {
-                Form1->divIDEJumperEClosed->Checked = false;
-        }
-        if (!Form1->ZXCFUploadJumperClosed->Enabled)
-        {
-                Form1->ZXCFUploadJumperClosed->Checked = false;
-        }
-        if (!Form1->SimpleIdeRomEnabled->Enabled)
-        {
-                Form1->SimpleIdeRomEnabled->Checked = false;
-        }
 
         spectrum.HDType = HDNONE;
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")                spectrum.HDType = HDZXCF;
@@ -3490,10 +3471,6 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLE16BIT", emulator.ROMSIMPLE16BIT);
         AccessIniFileString(ini, accessType, "HARDWARE", "ROMSIMPLECF",    emulator.ROMSIMPLECF);
 
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "divIDEJumperE",    Hwform.DivIDEJumperEClosedChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXCFJumper",       Hwform.ZXCFUploadJumperClosedChecked);
-        AccessIniFileBoolean(ini, accessType, "HARDWARE", "SimpleIDEEnabled", Hwform.SimpleIdeRomEnabledChecked);
-
         //---- ADVANCED TAB ----
 
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ProtectRom",               Hwform.ProtectROMChecked);
@@ -3715,7 +3692,6 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
-                Form1->ZXCFUploadJumperClosed->Checked = true;
                 Form1->ZXCFUploadJumperClosed->Enabled = true;
                 ZXCFLabel->Visible = true;
                 ZXCFRAM->Visible = true;
@@ -3723,13 +3699,11 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         else if ((IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)") ||
                  (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)"))
         {
-                Form1->divIDEJumperEClosed->Checked = true;
                 Form1->divIDEJumperEClosed->Enabled = true;
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit" || IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit" ||
                  IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF" || IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3 8-Bit")
         {
-                Form1->SimpleIdeRomEnabled->Checked = true;
                 Form1->SimpleIdeRomEnabled->Enabled = true;
         }
 
@@ -4692,9 +4666,6 @@ void THW::UpdateApplyButton()
         settingsChanged |= (TS2050->Checked                        != Hwform.TS2050Checked);
         settingsChanged |= (Issue2->Checked                        != Hwform.Issue2Checked);
         settingsChanged |= (KMouse->Checked                        != Hwform.KMouseChecked);
-        settingsChanged |= (Form1->divIDEJumperEClosed->Checked    != Hwform.DivIDEJumperEClosedChecked);
-        settingsChanged |= (Form1->ZXCFUploadJumperClosed->Checked != Hwform.ZXCFUploadJumperClosedChecked);
-        settingsChanged |= (Form1->SimpleIdeRomEnabled->Checked    != Hwform.SimpleIdeRomEnabledChecked);
         settingsChanged |= (Multiface->Checked                     != Hwform.MultifaceChecked);
         settingsChanged |= (ZXPrinter->Checked                     != Hwform.ZXPrinterChecked);
         settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);

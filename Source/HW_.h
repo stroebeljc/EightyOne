@@ -82,9 +82,6 @@ struct HWFormValues
         bool TS2050Checked;
         bool Issue2Checked;
         bool KMouseChecked;
-        bool DivIDEJumperEClosedChecked;
-        bool ZXCFUploadJumperClosedChecked;
-        bool SimpleIdeRomEnabledChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
         bool FloatingPointHardwareFixChecked;
@@ -316,7 +313,7 @@ private:	// User declarations
         int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
         bool ValidCharacter(TEdit* textBox, char newKey);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
-        int FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue = 0);
+        int FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue = -1);
         void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
         void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);

@@ -2593,16 +2593,8 @@ void THW::LoadIdeRomBox()
         {
                 if (IDEBox->Items->Strings[IDEBox->ItemIndex] != "None")
                 {
+                        Plus3eNoticeLabel->Caption = "The +3e ROM is supported by this IDE device. Browse for the appropriate ROM from the Advanced Settings tab. Disable the on-board ROM using the jumper.";
                         Plus3eNoticeLabel->Visible = true;
-
-                        Plus3eNoticeLabel->Caption = "The +3e ROM is supported by this IDE device. Browse for the appropriate ROM from the Advanced Settings tab.";
-
-                        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF" ||
-                            IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)" ||
-                            IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)")
-                        {
-                                Plus3eNoticeLabel->Caption = Plus3eNoticeLabel->Caption + " Disable the on-board ROM using the jumper.";
-                        }
                 }
                 else
                 {

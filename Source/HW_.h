@@ -318,7 +318,8 @@ private:	// User declarations
         int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
         bool ValidCharacter(TEdit* textBox, char newKey);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
-        int FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue = -1);
+        int SelectEntry(TComboBox* comboBox, AnsiString text);
+        int FindEntry(TComboBox* comboBox, AnsiString text);
         void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
         void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);

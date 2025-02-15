@@ -116,9 +116,9 @@ __fastcall THW::THW(TComponent* Owner)
         RamPackHeight         = RamPackBox->Height;
         Machine->ActivePage   = Sinclair;
         Advanced->ActivePage  = Interfaces;
-        DriveAType->ItemIndex = FindEntry(DriveAType, "3\" Single-Sided (180K)");
-        DriveBType->ItemIndex = FindEntry(DriveBType, "None");
-        ZXCFRAM->ItemIndex    = FindEntry(ZXCFRAM,    "1024K");
+        DriveAType->ItemIndex = SelectEntry(DriveAType, "3\" Single-Sided (180K)");
+        DriveBType->ItemIndex = SelectEntry(DriveBType, "None");
+        ZXCFRAM->ItemIndex    = SelectEntry(ZXCFRAM,    "1024K");
         ZX81BtnClick(NULL);
 
         SaveToInternalSettings(); // save in case there is no INI file
@@ -329,23 +329,23 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
-        RamPackBox->ItemIndex            = FindEntry(RamPackBox,            Hwform.RamPackBoxText);
-        SoundCardBox->ItemIndex          = FindEntry(SoundCardBox,          Hwform.SoundCardBoxText);
-        ChrGenBox->ItemIndex             = FindEntry(ChrGenBox,             Hwform.ChrGenBoxText);
-        HiResBox->ItemIndex              = FindEntry(HiResBox,              Hwform.HiResBoxText);
-        ColourBox->ItemIndex             = FindEntry(ColourBox,             Hwform.ColourBoxText);
-        SpeechBox->ItemIndex             = FindEntry(SpeechBox,             Hwform.SpeechBoxText);
-        JoystickBox->ItemIndex           = FindEntry(JoystickBox,           Hwform.JoystickBoxText);
-        RomCartridgeBox->ItemIndex       = FindEntry(RomCartridgeBox,       Hwform.RomCartridgeBoxText);
-        ZXC1ConfigurationBox->ItemIndex  = FindEntry(ZXC1ConfigurationBox,  Hwform.ZXC1ConfigurationBoxText);
-        DriveAType->ItemIndex            = FindEntry(DriveAType,            Hwform.DriveATypeText);
-        DriveBType->ItemIndex            = FindEntry(DriveBType,            Hwform.DriveBTypeText);
-        ZXCFRAM->ItemIndex               = FindEntry(ZXCFRAM,               Hwform.ZXCFRAMText);
-        IDEBox->ItemIndex                = FindEntry(IDEBox,                Hwform.IDEBoxText);
-        FDCBox->ItemIndex                = FindEntry(FDCBox,                Hwform.FDCBoxText);
-        IDERomBox->ItemIndex             = FindEntry(IDERomBox,             Hwform.IDERomBoxText);
-        FDCRomBox->ItemIndex             = FindEntry(FDCRomBox,             Hwform.FDCRomBoxText);
-        NoMicrodrivesComboBox->ItemIndex = FindEntry(NoMicrodrivesComboBox, Hwform.NoMicrodrivesComboBoxText);
+        RamPackBox->ItemIndex            = SelectEntry(RamPackBox,            Hwform.RamPackBoxText);
+        SoundCardBox->ItemIndex          = SelectEntry(SoundCardBox,          Hwform.SoundCardBoxText);
+        ChrGenBox->ItemIndex             = SelectEntry(ChrGenBox,             Hwform.ChrGenBoxText);
+        HiResBox->ItemIndex              = SelectEntry(HiResBox,              Hwform.HiResBoxText);
+        ColourBox->ItemIndex             = SelectEntry(ColourBox,             Hwform.ColourBoxText);
+        SpeechBox->ItemIndex             = SelectEntry(SpeechBox,             Hwform.SpeechBoxText);
+        JoystickBox->ItemIndex           = SelectEntry(JoystickBox,           Hwform.JoystickBoxText);
+        RomCartridgeBox->ItemIndex       = SelectEntry(RomCartridgeBox,       Hwform.RomCartridgeBoxText);
+        ZXC1ConfigurationBox->ItemIndex  = SelectEntry(ZXC1ConfigurationBox,  Hwform.ZXC1ConfigurationBoxText);
+        DriveAType->ItemIndex            = SelectEntry(DriveAType,            Hwform.DriveATypeText);
+        DriveBType->ItemIndex            = SelectEntry(DriveBType,            Hwform.DriveBTypeText);
+        ZXCFRAM->ItemIndex               = SelectEntry(ZXCFRAM,               Hwform.ZXCFRAMText);
+        IDEBox->ItemIndex                = SelectEntry(IDEBox,                Hwform.IDEBoxText);
+        FDCBox->ItemIndex                = SelectEntry(FDCBox,                Hwform.FDCBoxText);
+        IDERomBox->ItemIndex             = SelectEntry(IDERomBox,             Hwform.IDERomBoxText);
+        FDCRomBox->ItemIndex             = SelectEntry(FDCRomBox,             Hwform.FDCRomBoxText);
+        NoMicrodrivesComboBox->ItemIndex = SelectEntry(NoMicrodrivesComboBox, Hwform.NoMicrodrivesComboBoxText);
 
         RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
         SinclairRomCartridgeFileBox->Text = Hwform.RomCartridgeFileBoxText;
@@ -2804,7 +2804,7 @@ void __fastcall THW::Spec128BtnClick(TObject *Sender)
         SetupForSpectrum();
         Spec128Btn->Down = true;
 
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
         Form1->ConnectSpectrum128Keypad->Enabled = true;
 
         NewMachineName = Spec128Btn->Caption;
@@ -2887,10 +2887,10 @@ void __fastcall THW::SpecP2BtnClick(TObject *Sender)
         SetupForSpectrum();
         SpecP2Btn->Down = true;
 
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
         Form1->ConnectSpectrum128Keypad->Enabled = true;
 
-        JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
+        JoystickBox->ItemIndex = SelectEntry(JoystickBox, "Sinclair");
 
         NewMachineName = SpecP2Btn->Caption;
         LoadRomBox();
@@ -2916,10 +2916,10 @@ void __fastcall THW::SpecP2aBtnClick(TObject *Sender)
         SpecP2aBtn->Down = true;
         Multiface->Caption = "Multiface 3";
 
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
         Form1->ConnectSpectrum128Keypad->Enabled = true;
 
-        JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
+        JoystickBox->ItemIndex = SelectEntry(JoystickBox, "Sinclair");
 
         NewMachineName = SpecP2aBtn->Caption;
         LoadRomBox();
@@ -2947,10 +2947,10 @@ void __fastcall THW::SpecP3BtnClick(TObject *Sender)
         SpecP3Btn->Down = true;
         Multiface->Caption = "Multiface 3";
 
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+        SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
         Form1->ConnectSpectrum128Keypad->Enabled = true;
 
-        JoystickBox->ItemIndex = FindEntry(JoystickBox, "Sinclair");
+        JoystickBox->ItemIndex = SelectEntry(JoystickBox, "Sinclair");
 
         NewMachineName = SpecP3Btn->Caption;
         LoadRomBox();
@@ -3214,7 +3214,7 @@ void __fastcall THW::TC2048BtnClick(TObject *Sender)
         ColourBox->Enabled = false;
         ColourLabel->Caption = "Color:";
         ColourLabel->Enabled = false;
-        JoystickBox->ItemIndex = FindEntry(JoystickBox, "Kempston");
+        JoystickBox->ItemIndex = SelectEntry(JoystickBox, "Kempston");
 
         int index = FindEntry(IDEBox, "Simple +3e 8-Bit");
         if (IDEBox->ItemIndex == index) IDEBox->ItemIndex = 0;
@@ -3243,7 +3243,7 @@ void __fastcall THW::TC2068BtnClick(TObject *Sender)
         uSource->Checked = false;
         uSource->Enabled = false;
 
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
+        SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Timex");
         SoundCardBox->Enabled = false;
         SoundCardLbl->Enabled = false;
 
@@ -3291,7 +3291,7 @@ void __fastcall THW::TS2068BtnClick(TObject *Sender)
         uSource->Checked = false;
         uSource->Enabled = false;
         
-        SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");;
+        SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Timex");;
         SoundCardBox->Enabled = false;
         SoundCardLbl->Enabled = false;
 
@@ -3335,9 +3335,9 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         ZX97LEBtn->Down = true;
         NewMachineName = ZX97LEBtn->Caption;
         LoadRomBox();
-        ChrGenBox->ItemIndex = FindEntry(ChrGenBox, "CHR$128");
+        ChrGenBox->ItemIndex = SelectEntry(ChrGenBox, "CHR$128");
         ChrGenBox->Enabled = false;
-        HiResBox->ItemIndex = FindEntry(HiResBox, "WRX");
+        HiResBox->ItemIndex = SelectEntry(HiResBox, "WRX");
         HiResBox->Enabled = false;
         EnableLowRAM->Checked = true;
         EnableLowRAM->Enabled = false;
@@ -3693,12 +3693,12 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
         if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")
         {
-                RamPackBox->ItemIndex = FindEntry(RamPackBox, "32K");
+                RamPackBox->ItemIndex = SelectEntry(RamPackBox, "32K");
                 M1Not->Checked = true;
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")
         {
-                RamPackBox->ItemIndex = FindEntry(RamPackBox, "96K");
+                RamPackBox->ItemIndex = SelectEntry(RamPackBox, "96K");
         }
         else if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")
         {
@@ -3722,7 +3722,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
 
         if (RomBox->Text.Pos("\\") == 0)
         {
-                if (FindEntry(RomBox, RomBox->Text, -1) == -1)
+                if (FindEntry(RomBox, RomBox->Text) == -1)
                 {
                         SelectDefaultRom();
                 }
@@ -3773,10 +3773,10 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
                 {
                         JoystickBox->Items->Add("ZXpand");
 
-                        int zxpandHiResIndex = FindEntry(HiResBox, "WRX");
-                        int zxpandRamPackIndex = FindEntry(RamPackBox, "32K");
-                        int zxpandSoundCardIndex = FindEntry(SoundCardBox, "ZON X");
-                        int zxpandJoystickIndex = FindEntry(JoystickBox, "ZXpand");
+                        int zxpandHiResIndex = SelectEntry(HiResBox, "WRX");
+                        int zxpandRamPackIndex = SelectEntry(RamPackBox, "32K");
+                        int zxpandSoundCardIndex = SelectEntry(SoundCardBox, "ZON X");
+                        int zxpandJoystickIndex = SelectEntry(JoystickBox, "ZXpand");
 
                         bool allFacilitiesSelected = (HiResBox->ItemIndex == zxpandHiResIndex) &&
                                                      (RamPackBox->ItemIndex == zxpandRamPackIndex) &&
@@ -3813,7 +3813,19 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-int THW::FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue)
+int THW::SelectEntry(TComboBox* comboBox, AnsiString text)
+{
+        int index = FindEntry(comboBox, text);
+        if (index == -1)
+        {
+                index = 0;
+        }
+
+        return index;
+}
+//---------------------------------------------------------------------------
+
+int THW::FindEntry(TComboBox* comboBox, AnsiString text)
 {
         for (int i = 0; i < comboBox->Items->Count; i++)
         {
@@ -3823,7 +3835,7 @@ int THW::FindEntry(TComboBox* comboBox, AnsiString text, int notFoundValue)
                 }
         }
 
-        return notFoundValue;
+        return -1;
 }
 //---------------------------------------------------------------------------
 
@@ -4340,9 +4352,9 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         IDEBox->ItemIndex          = 0;
         RomBox->ItemIndex          = 0;
 
-        DriveAType->ItemIndex = FindEntry(DriveAType, "3\" Single-Sided (180K)");
-        DriveBType->ItemIndex = FindEntry(DriveBType, "None");
-        ZXCFRAM->ItemIndex    = FindEntry(ZXCFRAM,    "1024K");
+        DriveAType->ItemIndex = SelectEntry(DriveAType, "3\" Single-Sided (180K)");
+        DriveBType->ItemIndex = SelectEntry(DriveBType, "None");
+        ZXCFRAM->ItemIndex    = SelectEntry(ZXCFRAM,    "1024K");
         
         uSource->Checked                  = false;
         KMouse->Checked                   = false;
@@ -4402,8 +4414,8 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                 break;
 
         case MACHINEZX97LE:
-                ChrGenBox->ItemIndex = FindEntry(ChrGenBox, "CHR$128");
-                HiResBox->ItemIndex  = FindEntry(HiResBox,  "WRX");
+                ChrGenBox->ItemIndex = SelectEntry(ChrGenBox, "CHR$128");
+                HiResBox->ItemIndex  = SelectEntry(HiResBox,  "WRX");
                 EnableLowRAM->Checked = true;
                 M1Not->Checked = true;
                 break;
@@ -4436,46 +4448,46 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
                                 break;
 
                         case SPECCYTC2048:
-                                ChrGenBox->ItemIndex   = FindEntry(ChrGenBox,   "Timex");
-                                HiResBox->ItemIndex    = FindEntry(HiResBox,    "Timex");
-                                ColourBox->ItemIndex   = FindEntry(ColourBox,   "Timex");
-                                JoystickBox->ItemIndex = FindEntry(JoystickBox, "Kempston");
+                                ChrGenBox->ItemIndex   = SelectEntry(ChrGenBox,   "Timex");
+                                HiResBox->ItemIndex    = SelectEntry(HiResBox,    "Timex");
+                                ColourBox->ItemIndex   = SelectEntry(ColourBox,   "Timex");
+                                JoystickBox->ItemIndex = SelectEntry(JoystickBox, "Kempston");
                                 EnableRomCartridgeOption(false);
                                 break;
 
                         case SPECCYTC2068:
-                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Timex");
-                                ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,    "Timex");
-                                HiResBox->ItemIndex     = FindEntry(HiResBox,     "Timex");
-                                ColourBox->ItemIndex    = FindEntry(ColourBox,    "Timex");
-                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Timex");
+                                SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Timex");
+                                ChrGenBox->ItemIndex    = SelectEntry(ChrGenBox,    "Timex");
+                                HiResBox->ItemIndex     = SelectEntry(HiResBox,     "Timex");
+                                ColourBox->ItemIndex    = SelectEntry(ColourBox,    "Timex");
+                                JoystickBox->ItemIndex  = SelectEntry(JoystickBox,  "Timex");
                                 break;
 
                         case SPECCYTS2068:
-                                ChrGenBox->ItemIndex    = FindEntry(ChrGenBox,   "Timex");
-                                HiResBox->ItemIndex     = FindEntry(HiResBox,    "Timex");
-                                ColourBox->ItemIndex    = FindEntry(ColourBox,   "Timex");
-                                JoystickBox->ItemIndex  = FindEntry(JoystickBox, "Timex");
+                                ChrGenBox->ItemIndex    = SelectEntry(ChrGenBox,   "Timex");
+                                HiResBox->ItemIndex     = SelectEntry(HiResBox,    "Timex");
+                                ColourBox->ItemIndex    = SelectEntry(ColourBox,   "Timex");
+                                JoystickBox->ItemIndex  = SelectEntry(JoystickBox, "Timex");
                                 NTSC->Checked = true;
                                 break;
 
                         case SPECCY128:
-                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
+                                SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
                                 break;
 
                         case SPECCYPLUS2:
-                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
+                                SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
+                                JoystickBox->ItemIndex  = SelectEntry(JoystickBox,  "Sinclair");
                                 break;
 
                         case SPECCYPLUS2A:
-                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
+                                SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
+                                JoystickBox->ItemIndex  = SelectEntry(JoystickBox,  "Sinclair");
                                 break;
 
                         case SPECCYPLUS3:
-                                SoundCardBox->ItemIndex = FindEntry(SoundCardBox, "Sinclair 128K");
-                                JoystickBox->ItemIndex  = FindEntry(JoystickBox,  "Sinclair");
+                                SoundCardBox->ItemIndex = SelectEntry(SoundCardBox, "Sinclair 128K");
+                                JoystickBox->ItemIndex  = SelectEntry(JoystickBox,  "Sinclair");
                                 break;
                 }
                 break;

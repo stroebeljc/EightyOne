@@ -123,7 +123,6 @@ __published:	// IDE-managed Components
         TMenuItem *ResetMemotechHRG;
         TMenuItem *SaveScreenshot1;
         TSaveDialog *SaveScrDialog;
-        TMenuItem *PrinterPort1;
         TThemeManager *ThemeManager1;
         TMenuItem *Midi1;
         TMenuItem *RZX1;
@@ -188,6 +187,7 @@ __published:	// IDE-managed Components
         TMenuItem *ZoomFullScreen;
         TMenuItem *SimpleIdeRomEnabled;
         TMenuItem *N18;
+        TMenuItem *PrinterPort;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -256,7 +256,7 @@ __published:	// IDE-managed Components
         void __fastcall ConfigItem1Click(TObject *Sender);
         void __fastcall ResetMemotechHRGClick(TObject *Sender);
         void __fastcall SaveScreenshot1Click(TObject *Sender);
-        void __fastcall PrinterPort1Click(TObject *Sender);
+        void __fastcall PrinterPortClick(TObject *Sender);
         void __fastcall Midi1Click(TObject *Sender);
         void __fastcall Play1Click(TObject *Sender);
         void __fastcall QSChrEnableClick(TObject *Sender);

@@ -2148,7 +2148,7 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
 }
 
 //---------------------------------------------------------------------------
-void __fastcall TForm1::PrinterPort1Click(TObject *Sender)
+void __fastcall TForm1::PrinterPortClick(TObject *Sender)
 {
         ParallelPort->ShowModal();
 }

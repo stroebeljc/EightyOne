@@ -93,7 +93,6 @@ private:	// User declarations
         bool MDVGap, MDVSync;
         int MDVGetNextBlock(int Drive, bool Header);
         int MDVPos(int Drive, int Offset);
-        bool romEditionChanged;
         unsigned char* FindNextDataBlock(int Drive);
         unsigned char* FindSector(int Drive);
 

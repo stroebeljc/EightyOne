@@ -532,22 +532,22 @@ void THW::ConfigurePrinterCentronicsPort()
                 || spectrum.model == SPECCYPLUS2A
                 || spectrum.model == SPECCYPLUS3)
         {
-                Form1->PrinterPort1->Enabled = true;
+                Form1->PrinterPort->Enabled = true;
                 if (spectrum.floppytype == FLOPPYOPUSD)
-                        Form1->PrinterPort1->Caption = "Opus Printer Port";
+                        Form1->PrinterPort->Caption = "Opus Printer Port";
                 if (spectrum.floppytype == FLOPPYDISCIPLE)
-                        Form1->PrinterPort1->Caption = "DISCiPLE Printer Port";
+                        Form1->PrinterPort->Caption = "DISCiPLE Printer Port";
                 if (spectrum.floppytype == FLOPPYPLUSD)
-                        Form1->PrinterPort1->Caption = "Plus D Printer Port";
+                        Form1->PrinterPort->Caption = "Plus D Printer Port";
                 if (spectrum.model == SPECCYPLUS2A)
-                        Form1->PrinterPort1->Caption = "+2A/+3 Printer Port";
+                        Form1->PrinterPort->Caption = "+2A/+3 Printer Port";
                 if (spectrum.model == SPECCYPLUS3)
-                        Form1->PrinterPort1->Caption = "+2A/+3 Printer Port";
+                        Form1->PrinterPort->Caption = "+2A/+3 Printer Port";
         }
         else
         {
-                Form1->PrinterPort1->Enabled = false;
-                Form1->PrinterPort1->Caption = "Centronics Printer Port";
+                Form1->PrinterPort->Enabled = false;
+                Form1->PrinterPort->Caption = "Centronics Printer Port";
         }
 }
 

@@ -196,6 +196,10 @@ void load_config(void)
         AnsiString QuicksilvaHiResRom = graphicRomsFolder + AnsiString("quicksilvahires.rom");
         strcpy(emulator.ROMQUICKSILVAHIRES, QuicksilvaHiResRom.c_str());
 
+        AnsiString speechRomsPath = AnsiString(emulator.cwd) + AnsiString(romsFolder)
+                + AnsiString(speechRomsFolder);
+        strcpy(emulator.ROMSPEECHPATH, speechRomsPath.c_str());
+
         strcpy(emulator.machinename, "EightyOne");
         *(emulator.romcartridgefilepath) = '\0';
 

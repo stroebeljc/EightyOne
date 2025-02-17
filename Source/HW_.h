@@ -60,6 +60,10 @@ struct HWFormValues
         AnsiString RomCartridgeBoxText;
         AnsiString ZXC1ConfigurationBoxText;
         AnsiString RomCartridgeFileBoxText;
+        AnsiString SinclairRomCartridgeFileBoxText;
+        AnsiString TS1510RomCartridgeFileBoxText;
+        AnsiString TC2068RomCartridgeFileBoxText;
+        AnsiString TS2068RomCartridgeFileBoxText;
         AnsiString ProgrammableJoystickLeft;
         AnsiString ProgrammableJoystickRight;
         AnsiString ProgrammableJoystickUp;

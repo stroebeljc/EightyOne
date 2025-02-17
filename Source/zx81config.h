@@ -375,6 +375,7 @@ typedef struct
         char ROMMULTIFACE128[256];
         char ROMMULTIFACE3[256];
         char ROMINTERFACE1[256];
+        char ROMSPEECHPATH[256];
 
         char cwd[256];
         char temppath[256];

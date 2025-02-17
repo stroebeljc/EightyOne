@@ -348,10 +348,10 @@ void THW::LoadFromInternalSettings()
         NoMicrodrivesComboBox->ItemIndex = SelectEntry(NoMicrodrivesComboBox, Hwform.NoMicrodrivesComboBoxText);
 
         RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
-        SinclairRomCartridgeFileBox->Text = Hwform.RomCartridgeFileBoxText;
-        TS1510RomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
-        TC2068RomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
-        TS2068RomCartridgeFileBox->Text   = Hwform.RomCartridgeFileBoxText;
+        SinclairRomCartridgeFileBox->Text = Hwform.SinclairRomCartridgeFileBoxText;
+        TS1510RomCartridgeFileBox->Text   = Hwform.TS1510RomCartridgeFileBoxText;
+        TC2068RomCartridgeFileBox->Text   = Hwform.TC2068RomCartridgeFileBoxText;
+        TS2068RomCartridgeFileBox->Text   = Hwform.TS2068RomCartridgeFileBoxText;
 
         programmableJoystickLeft          = Hwform.ProgrammableJoystickLeft;
         programmableJoystickRight         = Hwform.ProgrammableJoystickRight;
@@ -427,6 +427,10 @@ void THW::SaveToInternalSettings()
         Hwform.JoystickBoxText                 = JoystickBox->Text;
         Hwform.RomCartridgeBoxText             = RomCartridgeBox->Text;
         Hwform.RomCartridgeFileBoxText         = RomCartridgeFileBox->Text;
+        Hwform.SinclairRomCartridgeFileBoxText = SinclairRomCartridgeFileBox->Text;
+        Hwform.TS1510RomCartridgeFileBoxText   = TS1510RomCartridgeFileBox->Text;
+        Hwform.TC2068RomCartridgeFileBoxText   = TC2068RomCartridgeFileBox->Text;
+        Hwform.TS2068RomCartridgeFileBoxText   = TS2068RomCartridgeFileBox->Text;
         Hwform.ZXC1ConfigurationBoxText        = ZXC1ConfigurationBox->Text;
         Hwform.FDCBoxText                      = FDCBox->Text;
         Hwform.IDEBoxText                      = IDEBox->Text;
@@ -3453,6 +3457,10 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileString(ini, accessType, "HARDWARE", "Dock",               emulator.ROMDock);
         AccessIniFileString(ini, accessType, "HARDWARE", "ZXC1Configuration",  Hwform.ZXC1ConfigurationBoxText);
         AccessIniFileString(ini, accessType, "HARDWARE", "RomCartridgeFile",   Hwform.RomCartridgeFileBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE", "SinclairRomCartridgeFile", Hwform.SinclairRomCartridgeFileBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE", "TS1510RomCartridgeFile",   Hwform.TS1510RomCartridgeFileBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE", "TC2068RomCartridgeFile",   Hwform.TC2068RomCartridgeFileBoxText);
+        AccessIniFileString(ini, accessType, "HARDWARE", "TS2068RomCartridgeFile",   Hwform.TS2068RomCartridgeFileBoxText);
         AccessIniFileString(ini, accessType, "HARDWARE", "JoystickLeft",       Hwform.ProgrammableJoystickLeft);
         AccessIniFileString(ini, accessType, "HARDWARE", "JoystickRight",      Hwform.ProgrammableJoystickRight);
         AccessIniFileString(ini, accessType, "HARDWARE", "JoystickUp",         Hwform.ProgrammableJoystickUp);
@@ -3925,6 +3933,7 @@ void __fastcall THW::SinclairRomCartridgeFileBoxChange(TObject *Sender)
         if (SinclairRomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = SinclairRomCartridgeFileBox->Text;
+                UpdateApplyButton();
         }
 }
 //---------------------------------------------------------------------------
@@ -3934,15 +3943,17 @@ void __fastcall THW::TC2068RomCartridgeFileBoxChange(TObject *Sender)
         if (TC2068RomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = TC2068RomCartridgeFileBox->Text;
-        }  
+                UpdateApplyButton();
+        }
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::TS2068RomCartridgeFileBoxChange(TObject *Sender)
 {
-        if (TC2068RomCartridgeFileBox->Visible)
+        if (TS2068RomCartridgeFileBox->Visible)
         {
-                RomCartridgeFileBox->Text = TC2068RomCartridgeFileBox->Text;
+                RomCartridgeFileBox->Text = TS2068RomCartridgeFileBox->Text;
+                UpdateApplyButton();
         }
 }
 //---------------------------------------------------------------------------
@@ -3952,6 +3963,7 @@ void __fastcall THW::TS1510RomCartridgeFileBoxChange(TObject *Sender)
         if (TS1510RomCartridgeFileBox->Visible)
         {
                 RomCartridgeFileBox->Text = TS1510RomCartridgeFileBox->Text;
+                UpdateApplyButton();
         }
 }
 //---------------------------------------------------------------------------
@@ -4656,10 +4668,10 @@ void THW::UpdateApplyButton()
         settingsChanged |= (NoMicrodrivesComboBox->Text            != Hwform.NoMicrodrivesComboBoxText);
 
         settingsChanged |= (RomCartridgeFileBox->Text              != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (TS1510RomCartridgeFileBox->Text        != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (TC2068RomCartridgeFileBox->Text        != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (TS2068RomCartridgeFileBox->Text        != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.SinclairRomCartridgeFileBoxText);
+        settingsChanged |= (TS1510RomCartridgeFileBox->Text        != Hwform.TS1510RomCartridgeFileBoxText);
+        settingsChanged |= (TC2068RomCartridgeFileBox->Text        != Hwform.TC2068RomCartridgeFileBoxText);
+        settingsChanged |= (TS2068RomCartridgeFileBox->Text        != Hwform.TS2068RomCartridgeFileBoxText);
 
         settingsChanged |= (programmableJoystickLeft               != Hwform.ProgrammableJoystickLeft);
         settingsChanged |= (programmableJoystickRight              != Hwform.ProgrammableJoystickRight);
@@ -4708,6 +4720,7 @@ void __fastcall THW::ZXCFRAMChange(TObject *Sender)
 void __fastcall THW::RestoreButtonClick(TObject *Sender)
 {
         LoadFromInternalSettings();  // restore form settings from copy
+        UpdateRomCartridgeControls(NewMachine, NewSpec);
         ResetRequired = false;
         UpdateApplyButton();
 }

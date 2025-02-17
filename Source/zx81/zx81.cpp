@@ -70,6 +70,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length);
 
 void add_blank(SCANLINE *line, int clockCount, BYTE colour);
 
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 extern AnsiString getMachineRoot(AnsiString fullRomName);
 
 extern void LogOutAccess(int address, BYTE data);
@@ -224,6 +225,32 @@ extern long noise;
 
 extern int font_load(const char*, char*,int);
 
+AnsiString AdjustPathIfReplacementRom(char* curRom)
+{
+        AnsiString romPath = emulator.cwd;
+        romPath += romsFolder;
+        romPath += curRom;
+
+        AnsiString rom = curRom;
+
+        if (!FileExists(romPath))
+        {
+                rom = replacementRomsFolder;
+                rom += curRom;
+
+                romPath = emulator.cwd;
+                romPath += romsFolder;
+                romPath += rom;
+
+                if (!FileExists(romPath))
+                {
+                        rom = curRom;
+                }
+        }
+
+        return rom;
+}
+
 BYTE get_i_reg(void)
 {
         return(z80.i);
@@ -289,7 +316,8 @@ void zx81_initialise()
                         romname = overlayName;
                 }
         }
-        romlen=memory_load(romname.c_str(), 0, 65536);
+        AnsiString romPath = AdjustPathIfReplacementRom(romname.c_str());
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
         if (zx81.extfont) font_load("lambda8300characterset.bin",(char*)font,512);

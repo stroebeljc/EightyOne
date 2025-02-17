@@ -1748,12 +1748,14 @@ AnsiString THW::DetermineRomBase()
 
         if (FileExists(machine.CurRom))
         {
-            rom = machine.CurRom;
+                rom = machine.CurRom;
         }
         if (!FileExists(rom))
         {
-                ShowMessage("ROM file for this system not found. Go to:\n\n"
-                            "Options > Hardware > Advanced Settings > ROM File.");
+                romBase = emulator.cwd;
+                romBase += romsFolder;
+                romBase += replacementRomsFolder;
+                rom = romBase + machine.CurRom;
         }
 
         return romBase;

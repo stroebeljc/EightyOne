@@ -52,6 +52,8 @@ extern "C"
 
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
+
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
 extern void ResetLastIOAccesses();
@@ -92,7 +94,8 @@ void ace_initialise()
 
         for(i=0;i<65536;i++) memory[i]=(BYTE)random(255);
 
-        romlen=memory_load(machine.CurRom, 0, 65536);
+        AnsiString romPath = AdjustPathIfReplacementRom(machine.CurRom);
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
         zx81.ROMTOP=romlen-1;
 

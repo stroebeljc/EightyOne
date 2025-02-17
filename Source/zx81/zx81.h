@@ -48,5 +48,6 @@ extern BOOL IsAnnotatableROM();
 extern void CreateZXpand();
 extern BOOL memotechResetPressed;
 extern BOOL insertWaitsWhileSP0256Busy;
+extern char* AdjustPathIfReplacementRom(char* curRom);
 
 #endif

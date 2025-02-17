@@ -346,6 +346,32 @@ void spec48_reset(void)
         InitialiseJoysticks();
 }
 
+AnsiString AdjustRomPath(char* curRom)
+{
+        AnsiString romPath = emulator.cwd;
+        romPath += romsFolder;
+        romPath += curRom;
+
+        AnsiString rom = curRom;
+
+        if (!FileExists(romPath))
+        {
+                rom = replacementRomsFolder;
+                rom += curRom;
+
+                romPath = emulator.cwd;
+                romPath += romsFolder;
+                romPath += rom;
+
+                if (!FileExists(romPath))
+                {
+                        rom = curRom;
+                }
+        }
+
+        return rom;
+}
+
 void spec48_initialise()
 {
         int j, romlen, pos, delay;
@@ -452,7 +478,8 @@ void spec48_initialise()
                 memcpy(uSourceMem, memory, romlen);
         }
 
-        romlen=memory_load(machine.CurRom, 0, 65536);
+        AnsiString romPath = AdjustRomPath(machine.CurRom);
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
         if ((spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2 || spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 16384)

@@ -1,8 +1,14 @@
+=================================
+PC8300 "Timex" ROM for the PC8300
+Silicon Mountain Computers
+=================================
+
+
                                               Silicon Mtn. Computers
                                               C-12, Mtn. Stn. Group Box
                                               Nelson, BC VI L 2J3
 
-                               PCS8300 ROM, V1.3 ADDENDA
+                               PC8300 ROM, V1.3 ADDENDA
 
 Thanks to the efforts of my "testing staff" at the Vancouver Sinclair User Group, who kindly
 reviewed and provided constructive criticism on the 1.2 version of the PC8300 "Timex" ROM, I did

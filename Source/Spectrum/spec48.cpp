@@ -151,6 +151,8 @@ bool romPlus3;
 
 BOOL insertWaitsWhileSP0256Busy;
 
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
+
 extern unsigned short RZXCounter;
 extern RZX_INFO rzx;
 
@@ -346,32 +348,6 @@ void spec48_reset(void)
         InitialiseJoysticks();
 }
 
-AnsiString AdjustRomPath(char* curRom)
-{
-        AnsiString romPath = emulator.cwd;
-        romPath += romsFolder;
-        romPath += curRom;
-
-        AnsiString rom = curRom;
-
-        if (!FileExists(romPath))
-        {
-                rom = replacementRomsFolder;
-                rom += curRom;
-
-                romPath = emulator.cwd;
-                romPath += romsFolder;
-                romPath += rom;
-
-                if (!FileExists(romPath))
-                {
-                        rom = curRom;
-                }
-        }
-
-        return rom;
-}
-
 void spec48_initialise()
 {
         int j, romlen, pos, delay;
@@ -478,7 +454,7 @@ void spec48_initialise()
                 memcpy(uSourceMem, memory, romlen);
         }
 
-        AnsiString romPath = AdjustRomPath(machine.CurRom);
+        AnsiString romPath = AdjustPathIfReplacementRom(machine.CurRom);
         romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 

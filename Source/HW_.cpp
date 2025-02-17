@@ -318,7 +318,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         UpdateApplyButton();
 }
-
+                             
 void THW::LoadFromInternalSettings()
 {
         if (Hwform.MachineName == "ZX80")               ZX80BtnClick(NULL);
@@ -3788,22 +3788,7 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         }
 
         LoadIdeRomBox();
-        if (IDERomBox->Visible && IDERomBox->Text.Pos("\\") == 0)
-        {
-                if (FindEntry(IDERomBox, IDERomBox->Text) == -1)
-                {
-                        IDERomBox->ItemIndex = 0;
-                }
-        }
-
         LoadRomBox();
-        if (RomBox->Text.Pos("\\") == 0)
-        {
-                if (FindEntry(RomBox, RomBox->Text) == -1)
-                {
-                        SelectDefaultRom();
-                }
-        }
 
         DisplayTotalRam();
 
@@ -3835,14 +3820,7 @@ void __fastcall THW::FDCBoxChange(TObject *Sender)
         }
 
         LoadFdcRomBox();
-        if (FDCRomBox->Visible && FDCRomBox->Text.Pos("\\") == 0)
-        {
-                if (FindEntry(FDCRomBox, FDCRomBox->Text) == -1)
-                {
-                        FDCRomBox->ItemIndex = 0;
-                }
-        }
-        
+
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------

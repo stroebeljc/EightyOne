@@ -346,6 +346,7 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
+        RomBox->ItemIndex                = FindEntry(RomBox,                  Hwform.RomBoxText);
         RamPackBox->ItemIndex            = FindEntry(RamPackBox,              Hwform.RamPackBoxText);
         SoundCardBox->ItemIndex          = SelectEntry(SoundCardBox,          Hwform.SoundCardBoxText);
         ChrGenBox->ItemIndex             = SelectEntry(ChrGenBox,             Hwform.ChrGenBoxText);
@@ -1746,16 +1747,11 @@ AnsiString THW::DetermineRomBase()
         romBase += romsFolder;
         AnsiString rom = romBase + machine.CurRom;
 
-        if (FileExists(machine.CurRom))
-        {
-                rom = machine.CurRom;
-        }
-        if (!FileExists(rom))
+        if (!FileExists(machine.CurRom) && !FileExists(rom))
         {
                 romBase = emulator.cwd;
                 romBase += romsFolder;
                 romBase += replacementRomsFolder;
-                rom = romBase + machine.CurRom;
         }
 
         return romBase;
@@ -3788,7 +3784,6 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         }
 
         LoadIdeRomBox();
-        LoadRomBox();
 
         DisplayTotalRam();
 
@@ -4747,6 +4742,7 @@ void THW::UpdateApplyButton()
         ResetRequired |= settingsChanged;
 
         Apply->Enabled = settingsChanged | ResetRequired;
+        RestoreButton->Enabled = Apply->Enabled;
 }
 //---------------------------------------------------------------------------
 

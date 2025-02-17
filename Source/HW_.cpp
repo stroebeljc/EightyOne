@@ -168,7 +168,7 @@ void THW::SetUpRomCartridges()
         ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 AROS",               ts2068RomsFolder));
         ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 EXROM",              ts2068RomsFolder));
         ts2068RomCartridges.push_back(RomCartridgeEntry("Spectrum Emulator",                   ts2068RomsFolder));
-        ts2068RomCartridges.push_back(RomCartridgeEntry("Zebra OS64 v1.72",                    ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Zebra OS-64 v1.72",                   ts2068RomsFolder));
 
         sinclairRomCartridges.push_back(RomCartridgeEntry("G9R Space Raiders",         if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G10R Chess",                if2RomsFolder));

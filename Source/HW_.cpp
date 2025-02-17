@@ -164,6 +164,12 @@ void THW::SetUpRomCartridges()
         ts2068RomCartridges.push_back(RomCartridgeEntry("74004 Casino 1",          ts2068RomsFolder));
         ts2068RomCartridges.push_back(RomCartridgeEntry("74005 Crazybugs",         ts2068RomsFolder));
 
+        ts2068RomCartridges.push_back(RomCartridgeEntry("2068 Programmer's Cartridge Toolkit", ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 AROS",          ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 EXROM",         ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Spectrum Emulator",              ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Zebra OS64 v1.72",               ts2068RomsFolder));
+
         sinclairRomCartridges.push_back(RomCartridgeEntry("G9R Space Raiders",         if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G10R Chess",                if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G12R Planetoids",           if2RomsFolder));
@@ -175,6 +181,17 @@ void THW::SetUpRomCartridges()
         sinclairRomCartridges.push_back(RomCartridgeEntry("G29R Tranz Am",             if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G30R Cookie",               if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum System Test",      if2RomsFolder));
+
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Gyruss",                 if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Loco Motion",            if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #1", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Montezuma's Revenge #2", if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Popeye",                 if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Q-Bert",                 if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Return Of The Jedi",     if2RomsFolder));
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Star Wars",              if2RomsFolder));
+
+        sinclairRomCartridges.push_back(RomCartridgeEntry("Spectrum+2 Test Program", spectrumPlus2RomsFolder));
 }
 
 void zx81_writebyteProxy(int address, int data)

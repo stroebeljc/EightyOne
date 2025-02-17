@@ -165,10 +165,10 @@ void THW::SetUpRomCartridges()
         ts2068RomCartridges.push_back(RomCartridgeEntry("74005 Crazybugs",         ts2068RomsFolder));
 
         ts2068RomCartridges.push_back(RomCartridgeEntry("2068 Programmer's Cartridge Toolkit", ts2068RomsFolder));
-        ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 AROS",          ts2068RomsFolder));
-        ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 EXROM",         ts2068RomsFolder));
-        ts2068RomCartridges.push_back(RomCartridgeEntry("Spectrum Emulator",              ts2068RomsFolder));
-        ts2068RomCartridges.push_back(RomCartridgeEntry("Zebra OS64 v1.72",               ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 AROS",               ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Hot-Z 2068 v2.51 EXROM",              ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Spectrum Emulator",                   ts2068RomsFolder));
+        ts2068RomCartridges.push_back(RomCartridgeEntry("Zebra OS64 v1.72",                    ts2068RomsFolder));
 
         sinclairRomCartridges.push_back(RomCartridgeEntry("G9R Space Raiders",         if2RomsFolder));
         sinclairRomCartridges.push_back(RomCartridgeEntry("G10R Chess",                if2RomsFolder));
@@ -2598,7 +2598,10 @@ void THW::LoadIdeRomBox()
         {
                 if (IDEBox->Items->Strings[IDEBox->ItemIndex] != "None")
                 {
-                        Plus3eNoticeLabel->Caption = "The +3e ROM is supported by this IDE device. Browse for the appropriate ROM from the Advanced Settings tab. Disable the on-board ROM using the jumper.";
+                        AnsiString required = (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit") ? "required" : "supported";
+                        AnsiString disableJumper = (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit") ? "" : " Disable the on-board ROM using the jumper.";
+
+                        Plus3eNoticeLabel->Caption = "The +3e ROM is " + required + " by this IDE device. Select an appropriate ROM from the Advanced Settings tab." + disableJumper;
                         Plus3eNoticeLabel->Visible = true;
                 }
                 else
@@ -2631,22 +2634,33 @@ void THW::LoadRomBox()
                 RomBox->Items->Add("zx81.edition1.rom");
                 RomBox->Items->Add("zx81.edition2.rom");
                 RomBox->Items->Add("zx81.edition3.rom");
+                RomBox->Items->Add("tree-forth.rom");
+                RomBox->Items->Add("zx81-forth.rom");
+                RomBox->Items->Add("zx.asxmic.e04.rom");
+                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROM81;
                 break;
 
         case MACHINETS1000:
                 RomBox->Items->Add("zx81.edition3.rom");
+                RomBox->Items->Add("tree-forth.rom");
+                RomBox->Items->Add("zx.asxmic.e04.rom");
+                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROMTS1000;
                 break;
 
         case MACHINETS1500:
                 RomBox->Items->Add("ts1500.rom");
+                RomBox->Items->Add("tree-forth.rom");
+                RomBox->Items->Add("zx.asxmic.e04.rom");
+                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROMTS1500;
                 break;
                 
         case MACHINELAMBDA:
                 RomBox->Items->Add("lambda8300.rom");
                 RomBox->Items->Add("lambda8300colour.rom");
+                RomBox->Items->Add("pc8300timex.rom");
                 RomBox->Text = emulator.ROMLAMBDA;
                 break;
 
@@ -2712,6 +2726,18 @@ void THW::LoadRomBox()
                         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
                         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
                         RomBox->Items->Add("spectrum48.arabic.version2.rom");
+                        RomBox->Items->Add("+3e.divide.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.divide.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simple+3.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simple+3.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simple8bit.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simple8bit.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simple16bit.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simple16bit.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simplecf.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simplecf.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.zxcf.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.zxcf.v1-43.spanish.rom");
                         RomBox->Text = emulator.ROMSPP2A;
                         break;
 
@@ -2721,6 +2747,18 @@ void THW::LoadRomBox()
                         RomBox->Items->Add("spectrum+3.version4-0.spanish.rom");
                         RomBox->Items->Add("spectrum+3.version4-1.spanish.rom");
                         RomBox->Items->Add("spectrum+3.arabic3-a.english4-0.rom");
+                        RomBox->Items->Add("+3e.divide.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.divide.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simple+3.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simple+3.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simple8bit.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simple8bit.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simple16bit.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simple16bit.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.simplecf.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.simplecf.v1-43.spanish.rom");
+                        RomBox->Items->Add("+3e.zxcf.v1-43.english.rom");
+                        RomBox->Items->Add("+3e.zxcf.v1-43.spanish.rom");
                         RomBox->Text = emulator.ROMSPP3;
                         break;
 
@@ -3020,6 +3058,8 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         RefreshDefaultRamSettings();
         SetupForZX81();
         SetZXpandState(false,true);
+        M1Not->Enabled = false;
+        M1Not->Checked = true;
         TS1500Btn->Down = true;
         NewMachineName = TS1500Btn->Caption;
         FloatingPointHardwareFix->Checked = false;
@@ -3746,8 +3786,15 @@ void __fastcall THW::IDEBoxChange(TObject *Sender)
         }
 
         LoadIdeRomBox();
-        LoadRomBox();
+        if (IDERomBox->Visible && IDERomBox->Text.Pos("\\") == 0)
+        {
+                if (FindEntry(IDERomBox, IDERomBox->Text) == -1)
+                {
+                        IDERomBox->ItemIndex = 0;
+                }
+        }
 
+        LoadRomBox();
         if (RomBox->Text.Pos("\\") == 0)
         {
                 if (FindEntry(RomBox, RomBox->Text) == -1)
@@ -3786,6 +3833,13 @@ void __fastcall THW::FDCBoxChange(TObject *Sender)
         }
 
         LoadFdcRomBox();
+        if (FDCRomBox->Visible && FDCRomBox->Text.Pos("\\") == 0)
+        {
+                if (FindEntry(FDCRomBox, FDCRomBox->Text) == -1)
+                {
+                        FDCRomBox->ItemIndex = 0;
+                }
+        }
         
         UpdateApplyButton();
 }

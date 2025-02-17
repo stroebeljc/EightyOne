@@ -15,7 +15,12 @@ However, these prototype versions of the games survive.
 - Return Of The Jedi - Death Star Battle
 - Star Wars - The Arcade Game
 
-However, two of the games were subsequently released on cassette:
+All games require 48K of RAM.
+
+Note: Amazon Systems, who was developing the games for Parker Brothers, owns the
+copyright for Loco Motion.
+
+Two of the games were subsequently released on cassette:
 
 - Montezuma's Revenge (renamed as Panama Joe) [cassette code 4038]
 - Return Of The Jedi - Death Star Battle      [cassette code 4039]

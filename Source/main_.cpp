@@ -215,9 +215,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         ATA_Init();
         load_config();
         PCKbInit();
-        AnsiString speechRomsPath = AnsiString(emulator.cwd)
-                + AnsiString(romsFolder) + AnsiString(speechRomsFolder);
-        Digitalker.Init(speechRomsPath.c_str());
+        Digitalker.Init(emulator.ROMSPEECHPATH);
 
         Application->OnDeactivate=FormDeactivate;
 

@@ -473,13 +473,13 @@ void CSound::AYWrite128(int reg, int val, int frametstates)
 
         AYWrite(reg, val, frametstates);
 
-        if ((reg == 14) && ((AYRegisterStore[7] & 0x40) == 0x40))
+        if ((AYRegisterStore[7] & 0x40) == 0x40)
         {
-                Midi.WriteBit(val);
+                Midi.WriteBit(AYRegisterStore[14]);
 
                 if (spectrum.spectrum128Keypad)
                 {
-                        Keypad.Write(val);
+                        Keypad.Write(AYRegisterStore[14]);
                 }
 
                 // This should also handle writing RS232 data (unless handled elsewhere already???)

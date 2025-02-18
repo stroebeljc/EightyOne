@@ -311,8 +311,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         if (Dbg->Visible) Dbg->UpdateVals();
 
-        ReInitialiseSound();
-
         SaveToInternalSettings(); // save copy to keep user choices
         ZX97Dialog->UpdateMachine(Hwform.ZX97Form);
 

@@ -527,7 +527,20 @@ After you are finished go to the execution screen (type SHIFT/EDIT).
 
 Such a screen might look like this:
 
-####
+    +----------------------------------+
+    | THIS SCREEN WILL BE AN EXAMPLE   |
+    | SHOWING HOW ONE MIGHT STORE      |
+    | INFORMATION ON TO THE TAPE. NOTE |
+    | THAT THIS SCREEN DOES NOT HAVE   |
+    | TO BE A PROGRAM. A SCREEN IS     |
+    | 512 BYTES OF INFORMATION. YOU    |
+    | CAN STORE ANY SECTION OF MEMORY  |
+    | BY MOVING IT TO THE VIDEO RAM OF |
+    | THE EDITOR SCREEN ( WHICH STARTS |
+    | AT FD00 HEX)                     |
+    | ################################ |
+    | 10 STORE (ENTER)                 |
+    +----------------------------------+
 
 Remember that there is actually a five second leader on most cassette tapes which
 cannot be taped over. Therefore, advance the tape at least ten seconds before
@@ -2645,7 +2658,7 @@ FA80H ¦------------------¦          FCC0H ¦-----------------¦
       ¦        V         ¦                ¦ System Editor   ¦
       ¦                  ¦   PAD          ¦   Stack         ¦
       ¦                  ¦    ¦     FBC0H ¦-----------------¦
-      ¦                  ¦                ¦                 ¦
+      ¦                  ¦    v           ¦                 ¦
       ¦                  ¦                ¦ Keyboard Input  ¦
       ¦                  ¦                ¦      Buffer     ¦
       ¦                  ¦          FB80H ¦-----------------¦

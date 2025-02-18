@@ -6,7 +6,7 @@ Amstrad
 Spectrum +2 Test Software
 
 The Spectrum +2 test software comes on a rom board. This should be plugged into
-the Expansion 1/O slot of the +2. The +2 should also have a loopback cable plugged
+the Expansion I/O slot of the +2. The +2 should also have a loopback cable plugged
 into the KEYPAD and RS232 sockets, two joysticks plugged in, and monitor, TV and
 audio amp connected.
 

@@ -49,7 +49,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
         // Now search the text for a * or a , indicating the start of an extension
         // eg *.TZX or .t81
 
-        while(*Orig!='\0' && *Orig!=')')
+        while(*Orig!='\0')
         {
                 if (Orig[0]=='*' && Orig[1]=='.')
                 {
@@ -57,7 +57,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
                         // when we reach a | ; or the EOL.
 
                         Orig++;
-                        while(*Orig!='|' && *Orig!=';' && *Orig!='\0' && *Orig!=')') *(Dest++) = *(Orig++);
+                        while(*Orig!='|' && *Orig!=';' && *Orig!='\0') *(Dest++) = *(Orig++);
                         *(Dest++)='\0';
                 }
                 else    Orig++;

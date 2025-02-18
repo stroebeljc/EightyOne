@@ -776,7 +776,6 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         if (Form1->Handle != OldhWnd)
         {
                 OldhWnd=Form1->Handle;
-                Sound.ReInitialise(OldhWnd, 0,0,0,0);
 
                 RenderEnd();
                 RenderInit();

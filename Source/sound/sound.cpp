@@ -473,7 +473,7 @@ void CSound::AYWrite128(int reg, int val, int frametstates)
 
         AYWrite(reg, val, frametstates);
 
-        if (reg == 14) // && ((AYRegisterStore[7] & 0x40) == 0x40))
+        if ((reg == 14) && ((AYRegisterStore[7] & 0x40) == 0x40))
         {
                 Midi.WriteBit(val);
 

@@ -51,12 +51,16 @@ void TP3Drive::LoadSettings(TIniFile *ini)
         ATA_SetReadOnly(1, ini->ReadBool("DRIVES", "HD1RO", FALSE));
 
         DriveAText->Text = ini->ReadString("DRIVES", "DriveA", "< Empty >");
+        if ((DriveAText->Text != "< Empty >") && !FileExists(DriveAText->Text))
+                DriveAText->Text = "< Empty >";
         DriveBText->Text = ini->ReadString("DRIVES", "DriveB", "< Empty >");
+        if ((DriveBText->Text != "< Empty >") && !FileExists(DriveBText->Text))
+                DriveBText->Text = "< Empty >";
 
         IF1->MDVNoDrives = ini->ReadInteger("DRIVES", "MDVNoDrives", 0);
         for (int i = 0; i < 8; i++)
         {
-                IF1->MDVSetFileName(i, AnsiString(ini->ReadString("DRIVES", "MDV" + AnsiString(i), "")).c_str());
+                IF1->MDVSetFileName(i, AnsiString(ini->ReadString("DRIVES", "MDV" + AnsiString(i), "< Empty >")).c_str());
         }
 
         if (Form1->DiskDrives1->Checked) Show();
@@ -81,7 +85,7 @@ void TP3Drive::SaveSettings(TIniFile *ini)
         for (int i = 0; i < 8; i++)
         {
                 ini->WriteString("DRIVES", "MDV" + AnsiString(i),
-                        IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "");
+                        IF1->MDVGetFileName(i) ? IF1->MDVGetFileName(i) : "< Empty >");
         }   
 }
 //---------------------------------------------------------------------------

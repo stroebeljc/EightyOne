@@ -1166,7 +1166,9 @@ void TForm1::LoadSettings(TIniFile *ini)
         ConnectJoystick2->Checked         = ini->ReadBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
         EnableJoystick1AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         EnableJoystick2AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
-        SwapJoysticks->Checked            = ini->ReadBool("MAIN", "SwapJoysticks",            SwapJoysticks->Checked);
+
+        machine.joystick1Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick1Controller", -1);
+        machine.joystick2Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick2Controller", -1);
 
         divIDEJumperEClosed->Checked    = ini->ReadBool("MAIN", "divIDEJumperEClosed",    divIDEJumperEClosed->Checked);
         ZXCFUploadJumperClosed->Checked = ini->ReadBool("MAIN", "ZXCFUploadJumperClosed", ZXCFUploadJumperClosed->Checked);
@@ -1200,14 +1202,14 @@ void TForm1::LoadSettings(TIniFile *ini)
         emulator.TZXin    = (CFGBYTE)(InTZXManager->Checked  ? 1 : 0);
         emulator.TZXout   = (CFGBYTE)(OutTZXManager->Checked ? 1 : 0);
 
+        spectrum.spectrum128Keypad       = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
+        spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked      ? 1 : 0);
+        zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked       ? 1 : 0);
+
         machine.joystick1Connected       = (CFGBYTE)(ConnectJoystick1->Checked         ? 1 : 0);
         machine.joystick2Connected       = (CFGBYTE)(ConnectJoystick2->Checked         ? 1 : 0);
         machine.joystick1AutoFireEnabled = (CFGBYTE)(EnableJoystick1AutoFire->Checked  ? 1 : 0);
         machine.joystick2AutoFireEnabled = (CFGBYTE)(EnableJoystick2AutoFire->Checked  ? 1 : 0);
-        machine.joysticksSwapped         = (CFGBYTE)(SwapJoysticks->Checked            ? 1 : 0);
-        spectrum.spectrum128Keypad       = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
-        spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked      ? 1 : 0);
-        zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked       ? 1 : 0);
 
         AccurateInit(true);
 
@@ -1217,8 +1219,8 @@ void TForm1::LoadSettings(TIniFile *ini)
         if (ini->ReadBool("MAIN", "UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
         if (!StatusBar2->Checked) StatusBar2Click(NULL);
 
-        Top = ini->ReadInteger("MAIN","Top",0);
-        Left = ini->ReadInteger("MAIN","Left",0);
+        Top  = ini->ReadInteger("MAIN", "Top",  0);
+        Left = ini->ReadInteger("MAIN", "Left", 0);
 
         // The start up height and width are transferred to the real height and width on the first timer event.
         StartUpHeight = ini->ReadInteger("MAIN", "Height", 0);
@@ -1284,7 +1286,9 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
         ini->WriteBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         ini->WriteBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
-        ini->WriteBool("MAIN", "SwapJoysticks",            SwapJoysticks->Checked);
+
+        ini->WriteInteger("MAIN", "Joystick1Controller", machine.joystick1Controller);
+        ini->WriteInteger("MAIN", "Joystick2Controller", machine.joystick2Controller);
 
         ini->WriteBool("MAIN", "divIDEJumperEClosed",    divIDEJumperEClosed->Checked);
         ini->WriteBool("MAIN", "ZXCFUploadJumperClosed", ZXCFUploadJumperClosed->Checked);
@@ -2883,11 +2887,97 @@ void __fastcall TForm1::SimpleIdeRomEnabledClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SwapJoysticksClick(TObject *Sender)
+void TForm1::BuildMenuJoystickSelection()
 {
-        SwapJoysticks->Checked = !SwapJoysticks->Checked;
-        machine.joysticksSwapped = SwapJoysticks->Checked;
-        InitialiseJoysticks();
-}
-//---------------------------------------------------------------------------
+        if (machine.joystick1Controller >= 0 && !controllerPresent[machine.joystick1Controller])
+        {
+                machine.joystick1Controller = -1;
+        }
 
+        if (machine.joystick2Controller >= 0 && !controllerPresent[machine.joystick2Controller])
+        {
+                machine.joystick2Controller = -1;
+        }
+
+        SelectJoystick1->Clear();
+        SelectJoystick2->Clear();
+
+        for (int i = -1; i < 16; i++)
+        {
+                TMenuItem* selectJoystick1SubMenuEntry = new TMenuItem(SelectJoystick1);
+                TMenuItem* selectJoystick2SubMenuEntry = new TMenuItem(SelectJoystick2);
+
+                AnsiString menuEntryCaption;
+                if (i >= 0)
+                {
+                        menuEntryCaption = "Game Controller " + IntToStr(i + 1);
+                }
+                else
+                {
+                        menuEntryCaption = "None";
+                }
+                
+                SelectJoystick1->Add(selectJoystick1SubMenuEntry);
+                selectJoystick1SubMenuEntry->Caption = menuEntryCaption.c_str();
+                selectJoystick1SubMenuEntry->Tag = i;
+                selectJoystick1SubMenuEntry->Visible = (i== -1) || controllerPresent[i];
+                selectJoystick1SubMenuEntry->OnClick = SelectJoystick1Click;
+
+                SelectJoystick2->Add(selectJoystick2SubMenuEntry);
+                selectJoystick2SubMenuEntry->Caption = menuEntryCaption.c_str();
+                selectJoystick2SubMenuEntry->Tag = i;
+                selectJoystick2SubMenuEntry->Visible = (i== -1) || controllerPresent[i];
+                selectJoystick2SubMenuEntry->OnClick = SelectJoystick2Click;
+
+                if (machine.joystick1Controller == i)
+                {
+                        selectJoystick1SubMenuEntry->Checked = true;
+                        if (i >= 0) selectJoystick2SubMenuEntry->Enabled = false;
+                }
+                
+                if (machine.joystick2Controller == i)
+                {
+                        selectJoystick2SubMenuEntry->Checked = true;
+                        if (i >= 0) selectJoystick1SubMenuEntry->Enabled = false;
+                }
+        }
+
+        bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
+        bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
+
+        SelectJoystick1->Enabled = joystickInterfaceSelected;
+        SelectJoystick2->Enabled = twinJoystickInterfaceSelected;
+
+        SetJoystick1Controller(machine.joystick1Controller);
+        SetJoystick2Controller(machine.joystick2Controller);
+
+        bool joystick1Available = (joystickInterfaceSelected  && (machine.joystick1Controller >= 0 || emulator.UseNumericPadForJoystick));
+        ConnectJoystick1->Enabled = joystick1Available;
+        EnableJoystick1AutoFire->Enabled = joystick1Available;
+
+        bool joystick2Available = (twinJoystickInterfaceSelected && (machine.joystick2Controller >= 0));
+        ConnectJoystick2->Enabled = joystick2Available;
+        EnableJoystick2AutoFire->Enabled = joystick2Available;
+}
+
+void __fastcall TForm1::SelectJoystick1Click(TObject *Sender)
+{
+        TMenuItem* menuItem = (TMenuItem*)Sender;
+
+        if (menuItem->Tag == -1 || (menuItem->Tag != machine.joystick1Controller && menuItem->Tag != machine.joystick2Controller))
+        {
+                machine.joystick1Controller = (CFGBYTE)menuItem->Tag;
+                BuildMenuJoystickSelection();
+        }
+}
+
+void __fastcall TForm1::SelectJoystick2Click(TObject *Sender)
+{
+        TMenuItem* menuItem = (TMenuItem*)Sender;
+
+        if (menuItem->Tag == -1 || (menuItem->Tag != machine.joystick2Controller && menuItem->Tag != machine.joystick1Controller))
+        {
+                machine.joystick2Controller = (CFGBYTE)menuItem->Tag;
+                BuildMenuJoystickSelection();
+        }
+}

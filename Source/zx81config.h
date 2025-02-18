@@ -287,7 +287,8 @@ typedef struct
         CFGBYTE joystick2AutoFireEnabled;
         CFGBYTE joystick1Connected;
         CFGBYTE joystick2Connected;
-        CFGBYTE joysticksSwapped;
+        CFGBYTE joystick1Controller;
+        CFGBYTE joystick2Controller;
 
         // Specific machine options
         CFGBYTE ace96k;

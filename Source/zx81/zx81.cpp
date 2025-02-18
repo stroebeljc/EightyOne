@@ -49,6 +49,7 @@
 #include "floppy.h"
 #include "Digitalkdrv.h"
 #include "Joystick.h"
+#include "main_.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -263,6 +264,7 @@ void zx81_reset()
         DisableChroma();
 
         InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void zx81_initialise()

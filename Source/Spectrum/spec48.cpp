@@ -52,6 +52,7 @@
 #include "BasicLister\BasicLister_.h"
 #include "Digitalkdrv.h"
 #include "Joystick.h"
+#include "main_.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
@@ -346,6 +347,7 @@ void spec48_reset(void)
         DisableSpectra();
 
         InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void spec48_initialise()

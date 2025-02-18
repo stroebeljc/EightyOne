@@ -1523,45 +1523,12 @@ void THW::ConfigureJoystick()
                 break;
         }
 
-        bool joystickInterfaceSelected = (machine.joystickInterfaceType != JOYSTICK_NONE);
-        bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
-
-        Form1->ConnectJoystick1->Enabled = joystickInterfaceSelected;
-        Form1->ConnectJoystick2->Enabled = twinJoystickInterfaceSelected;
-
-        if (joystickInterfaceSelected)
-        {
-                if (!twinJoystickInterfaceSelected)
-                {
-                        Form1->EnableJoystick2AutoFire->Checked = false;
-                        Form1->EnableJoystick1AutoFire->Caption = "Enable Joystick Auto-Fire";
-                        Form1->ConnectJoystick1->Caption = "Connect Joystick";
-                }
-                else
-                {
-                        Form1->EnableJoystick1AutoFire->Caption = "Enable Joystick 1 Auto-Fire";
-                        Form1->ConnectJoystick1->Caption = "Connect Joystick 1";
-                }
-        }
-        else
-        {
-                Form1->ConnectJoystick1->Checked = false;
-                Form1->ConnectJoystick2->Checked = false;
-
-                Form1->EnableJoystick1AutoFire->Checked = false;
-                Form1->EnableJoystick2AutoFire->Checked = false;
-
-                Form1->SwapJoysticks->Checked = false;
-        }
-
-        Form1->EnableJoystick1AutoFire->Enabled = Form1->ConnectJoystick1->Checked;
-        Form1->EnableJoystick2AutoFire->Enabled = Form1->ConnectJoystick2->Checked;
-        Form1->SwapJoysticks->Enabled = Form1->ConnectJoystick1->Enabled || Form1->ConnectJoystick2->Enabled;
-
         if (machine.joystickInterfaceType != JOYSTICK_NONE)
         {
                 InitialiseJoysticks();
         }
+
+        Form1->BuildMenuJoystickSelection();
 }
 
 void THW::ConfigureIDE()

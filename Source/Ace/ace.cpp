@@ -39,6 +39,7 @@
 #include "LiveMemoryWindow_.h"
 #include "sp0256drv.h"
 #include "Joystick.h"
+#include "main_.h"
 
 #define BASE 0
 #define HBLANKCOLOUR (BASE+0*16)
@@ -120,6 +121,7 @@ void ace_reset()
 {
         z80_reset();
         InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void ace_writebyte(int Address, int Data)

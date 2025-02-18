@@ -122,6 +122,8 @@ void load_config(void)
         machine.fps=50;
         spectrum.intposition=0;
         machine.zxprinter=1;
+        machine.joystick1Controller = -1;
+        machine.joystick2Controller = -1;
 
         emulator.ColouriseHorizontalSyncPulse = false;
         emulator.ColouriseVerticalSyncPulse = false;

@@ -15,6 +15,8 @@
 #define JOYSTICK_BOLDFIELD      7
 #define JOYSTICK_TIMEX          8
 
+extern bool controllerPresent[16];
+
 extern KeyInfo JoystickLeft1;
 extern KeyInfo JoystickRight1;
 extern KeyInfo JoystickUp1;
@@ -37,5 +39,7 @@ extern BYTE ReadJoystick1_Up();
 extern BYTE ReadJoystick1_Down();
 extern BYTE ReadJoystick1_Fire();
 extern BYTE ReadJoystick1_RightUpDownFire();
+extern void SetJoystick1Controller(int controllerIndex);
+extern void SetJoystick2Controller(int controllerIndex);
 
 #endif

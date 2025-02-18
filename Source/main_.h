@@ -181,14 +181,16 @@ __published:	// IDE-managed Components
         TMenuItem *ZXCFUploadJumperClosed;
         TMenuItem *ConnectSpectrum128Keypad;
         TMenuItem *N16;
-        TMenuItem *N17;
         TMenuItem *ConnectJoystick1;
         TMenuItem *ConnectJoystick2;
         TMenuItem *ZoomFullScreen;
         TMenuItem *SimpleIdeRomEnabled;
         TMenuItem *N18;
         TMenuItem *PrinterPort;
-        TMenuItem *SwapJoysticks;
+        TMenuItem *SelectJoystick1;
+        TMenuItem *SelectJoystick2;
+        TMenuItem *N20;
+        TMenuItem *N21;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -309,7 +311,6 @@ __published:	// IDE-managed Components
         void __fastcall ConnectJoystick2Click(TObject *Sender);
         void __fastcall ZoomFullScreenClick(TObject *Sender);
         void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
-        void __fastcall SwapJoysticksClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -331,6 +332,8 @@ private:	// User declarations
         void UpdateAnnotationImage(TMenuItem* item);
         void UpdateEmulatorAnnotationSettings();
         void LoadIniFile(AnsiString FileName);
+        void __fastcall SelectJoystick1Click(TObject *Sender);
+        void __fastcall SelectJoystick2Click(TObject *Sender);
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
@@ -350,6 +353,7 @@ public:		// User declarations
         void __fastcall RunFrame();
         int RunFrameEnable;
         void EnableAnnotationOptions();
+        void BuildMenuJoystickSelection();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

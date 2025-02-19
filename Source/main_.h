@@ -60,7 +60,7 @@ __published:	// IDE-managed Components
         TMenuItem *Options1;
         TMenuItem *Keyboard1;
         TMenuItem *Sound1;
-        TMenuItem *Display1;
+        TMenuItem *Hardware1;
         TMenuItem *Speed1;
         TMenuItem *Help1;
         TMenuItem *HelpTopics2;
@@ -203,7 +203,7 @@ __published:	// IDE-managed Components
         void __fastcall N4001Click(TObject *Sender);
         void __fastcall UserDefined1Click(TObject *Sender);
         void __fastcall Speed1Click(TObject *Sender);
-        void __fastcall Display1Click(TObject *Sender);
+        void __fastcall Hardware1Click(TObject *Sender);
         void __fastcall Keyboard1Click(TObject *Sender);
         void __fastcall KeyboardMap1Click(TObject *Sender);
         void __fastcall AboutEightyOne1Click(TObject *Sender);

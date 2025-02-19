@@ -98,8 +98,12 @@ void TZX97Dialog::LoadSettings(TIniFile *ini)
 
 void TZX97Dialog::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
 {
-        AccessIniFileInteger(ini, accessType, "ZX97", "Top",   Top);
-        AccessIniFileInteger(ini, accessType, "ZX97", "Left",  Left);
+        int temp=Top;
+        AccessIniFileInteger(ini, accessType, "ZX97", "Top",   temp);
+        Top=temp;
+        temp=Left;
+        AccessIniFileInteger(ini, accessType, "ZX97", "Left",  temp);
+        Left=temp;
 }
 
 //---------------------------------------------------------------------------

@@ -3442,8 +3442,12 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
 {
         //---- MACHINE ----
 
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top",  Top);
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", Left);
+        int temp=Top;
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top",  temp);
+        Top=temp;
+        temp=Left;
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", temp);
+        Left=temp;
 
         AccessIniFileString(ini, accessType, "HARDWARE", "MachineName", Hwform.MachineName);
 

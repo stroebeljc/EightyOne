@@ -36,6 +36,11 @@ static int joystick2Id;
 static int joystick1AutoFireReadCount;
 static int joystick2AutoFireReadCount;
 
+inline bool NumLockOn()
+{
+        return ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
+}
+
 void SetJoystick1Controller(int controllerIndex)
 {
         joystick1Id = controllerIndex;
@@ -92,10 +97,10 @@ BYTE ReadJoystick1()
 {
         BYTE result = 0xFF;
 
+        bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
+
         if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
-                bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
-
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR;
 
                 if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
@@ -114,13 +119,13 @@ BYTE ReadJoystick1()
                 }
         }
         
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;
                 if (IsKeyPressed(VK_NUMPAD4)) result &= JoystickLeft1.Data;
                 if (IsKeyPressed(VK_NUMPAD6)) result &= JoystickRight1.Data;
-                if (IsKeyPressed(VK_NUMPAD0)) result &= JoystickFire1.Data;
+                if (IsKeyPressed(VK_NUMPAD0) || readFireButton) result &= JoystickFire1.Data;
         }
 
         joystick1AutoFireReadCount++;
@@ -133,10 +138,10 @@ BYTE ReadJoystick2()
 {
         BYTE result = 0xFF;
 
+        bool readFireButton = (machine.joystick2AutoFireEnabled && (joystick2AutoFireReadCount < JoystickReadsOn));
+
         if (joystick2Id >= 0 && controllerPresent[joystick2Id])
         {
-                bool readFireButton = (machine.joystick2AutoFireEnabled && (joystick2AutoFireReadCount < JoystickReadsOn));
-
                 JoyInfo[joystick2Id].dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR;
 
                 if (controllerPresent[joystick2Id] && joyGetPosEx(joystick2Id, &JoyInfo[joystick2Id]) == JOYERR_NOERROR)
@@ -153,10 +158,19 @@ BYTE ReadJoystick2()
 
                         if ((JoyInfo[joystick2Id].dwButtons & 0x03FF) || readFireButton) result &= JoystickFire2.Data;
                 }
-
-                joystick2AutoFireReadCount++;
-                if (joystick2AutoFireReadCount == JoystickTotalReads) joystick2AutoFireReadCount = 0;
         }
+
+        if (!machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        {
+                if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp2.Data;
+                if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown2.Data;
+                if (IsKeyPressed(VK_NUMPAD4)) result &= JoystickLeft2.Data;
+                if (IsKeyPressed(VK_NUMPAD6)) result &= JoystickRight2.Data;
+                if (IsKeyPressed(VK_NUMPAD0) || readFireButton) result &= JoystickFire2.Data;
+        }
+
+        joystick2AutoFireReadCount++;
+        if (joystick2AutoFireReadCount == JoystickTotalReads) joystick2AutoFireReadCount = 0;
 
         return result;
 }
@@ -176,11 +190,11 @@ BYTE ReadJoystick1_Left()
                 }
         }
 
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD4)) result &= JoystickLeft1.Data;
         }
-        
+
         return result;
 }
 
@@ -199,7 +213,7 @@ BYTE ReadJoystick1_Right()
                 }
         }
 
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD6)) result &= JoystickRight1.Data;
         }
@@ -222,7 +236,7 @@ BYTE ReadJoystick1_Up()
                 }
         }
 
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
         }
@@ -245,7 +259,7 @@ BYTE ReadJoystick1_Down()
                 }
         }
 
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;
         }
@@ -268,8 +282,8 @@ BYTE ReadJoystick1_Fire()
                         if ((JoyInfo[joystick1Id].dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
                 }
         }
-        
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD0) || readFireButton) result &= JoystickFire1.Data;
         }
@@ -303,8 +317,8 @@ BYTE ReadJoystick1_RightUpDownFire()
                         if ((JoyInfo[joystick1Id].dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
                 }
         }
-        
-        if (emulator.UseNumericPadForJoystick && (GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001)
+
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;

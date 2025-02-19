@@ -216,6 +216,7 @@ void __fastcall THW::OKClick(TObject *Sender)
 {
         const bool disableResetStatus = false;
         UpdateHardwareSettings(disableResetStatus);
+        Form1->Hardware1->Checked=false;
         Close();
 }
 
@@ -273,9 +274,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
         spectrum.kmouse = KMouse->Checked;
 
         zx81.improvedWait = ImprovedWait->Checked;
-        zx81.shadowROM = !EnableLowRAM->Checked && zx81.truehires != HIRESG007;
-        zx81.RAM816k = EnableLowRAM->Checked;
-        zx81.RAM816kWriteProtected = Form1->WriteProtect8KRAM->Checked;
         zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
 
         Form1->InWaveLoader->Enabled = true;
@@ -486,9 +484,15 @@ void THW::Configure8K16KRam()
 {
         bool enable8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
         Form1->WriteProtect8KRAM->Enabled = enable8K16KProtectOption;
+        zx81.shadowROM = !EnableLowRAM->Checked && zx81.truehires != HIRESG007;
+        zx81.RAM816k = EnableLowRAM->Checked;
         if (!Form1->WriteProtect8KRAM->Enabled)
         {
-                Form1->WriteProtect8KRAM->Checked = false;
+                zx81.RAM816kWriteProtected = 0;
+        }
+        else
+        {
+                zx81.RAM816kWriteProtected = (CFGBYTE)(Form1->WriteProtect8KRAM->Checked ? 1 : 0);
         }
 }
 
@@ -496,17 +500,6 @@ void THW::ConfigureRzxSupport()
 {
         Form1->RZX1->Enabled = false;
         if (emulator.machine == MACHINESPECTRUM) Form1->RZX1->Enabled = true;
-}
-
-void THW::ReInitialiseSound()
-{
-        int r = Sound.ReInitialise(NULL, machine.fps, 0, 0, 0);
-        if (r)
-        {
-                AnsiString err = "EightyOne is unable to run. DirectSound creation failed, reporting error " + DirectSoundError(r);
-                MessageBox(NULL, err.c_str(), "Error", 0);
-                Application->Terminate();
-        }
 }
 
 void THW::ResetDebugger()
@@ -631,7 +624,7 @@ void THW::ConfigureRamTop()
 
 void THW::InitialiseSound(bool machineChanged)
 {
-        Sound.InitDevices();
+        if (Sound.ReInitialise(NULL, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
 
         if (machineChanged)
         {
@@ -3436,6 +3429,8 @@ void THW::LoadSettings(TIniFile* ini)
         ReadNVMemory(divIDEMem, 1,  8192,  "divide.nv");
         ReadNVMemory(ZXCFMem,   64, 16384, "zxcf.nv");
         ReadNVMemory(ZX1541Mem, 1,  8192,  "zx1541.nv");
+
+        if (Form1->Hardware1->Checked) Show();
 }
 //---------------------------------------------------------------------------
 
@@ -4136,6 +4131,7 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 
 void __fastcall THW::CancelClick(TObject *Sender)
 {
+        Form1->Hardware1->Checked=false;
         Close();
 }
 //---------------------------------------------------------------------------

@@ -458,10 +458,11 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Display1Click(TObject *Sender)
+void __fastcall TForm1::Hardware1Click(TObject *Sender)
 {
         PCAllKeysUp();
         HW->Show();
+        Hardware1->Checked=true;
 }
 //---------------------------------------------------------------------------
 
@@ -1127,7 +1128,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         emulator.checkInstallationPathLength = ini->ReadBool("MAIN", "CheckInstallationPathLength", 1);
 
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
-        Display1->Checked  = ini->ReadBool("MAIN", "Display1",  Display1->Checked);
+        Hardware1->Checked = ini->ReadBool("MAIN", "Hardware1", Hardware1->Checked);
         Speed1->Checked    = ini->ReadBool("MAIN", "Speed1",    Speed1->Checked);
         Sound1->Checked    = ini->ReadBool("MAIN", "Sound1",    Sound1->Checked);
 
@@ -1251,7 +1252,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "StatusBar",    StatusBar2->Checked);
 
         ini->WriteBool("MAIN", "Keyboard1", Keyboard1->Checked);
-        ini->WriteBool("MAIN", "Display1",  Display1->Checked);
+        ini->WriteBool("MAIN", "Hardware1", Hardware1->Checked);
         ini->WriteBool("MAIN", "Speed1",    Speed1->Checked);
         ini->WriteBool("MAIN", "InWave",    InWaveLoader->Checked);
         ini->WriteBool("MAIN", "InTZX",     InTZXManager->Checked);

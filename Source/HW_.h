@@ -336,7 +336,6 @@ private:	// User declarations
         bool BrowseROMFile(AnsiString folder, TComboBox* romBox);
 
         void ConfigureRzxSupport();
-        void ReInitialiseSound();
         void ResetDebugger();
         void ConfigureDisplayArtifacts();
         void ConfigureM1Not();

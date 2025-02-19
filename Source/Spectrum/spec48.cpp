@@ -255,7 +255,7 @@ static void divIDEPage(void)
         {
                 divIDEPage0=0;                                // $0000-$1FFF = EEPROM bank
                 divIDEPage1=1+(divIDEPort&3);                 // $2000-$3FFF = RAM banks 0-3 (values 1-4)
-                divIDEPage0WP=spectrum.divIDEJumperEClosed;   // $0000-$1FFF write protected if jumper E option ticked
+                divIDEPage0WP=machine.divIDEJumperEClosed;    // $0000-$1FFF write protected if jumper E option ticked
                 divIDEPage1WP=0;                              // $2000-$3FFF is unprotected
         }
         // Else if memory has been paged in automatically
@@ -313,9 +313,9 @@ void spec48_reset(void)
         uSourcePaged=0;
 
         ZXCFPort=128;
-        if (spectrum.HDType==HDZXCF)
+        if (machine.HDType==HDZXCF)
         {
-                if (spectrum.zxcfUploadJumperClosed) ZXCFPort=0;
+                if (machine.zxcfUploadJumperClosed) ZXCFPort=0;
                 else ZXCFPort=192;
         }
 
@@ -325,7 +325,7 @@ void spec48_reset(void)
         PlusDPaged=PlusDMemSwap=0;
         PlusDCur= &PlusDDrives[0];
         PlusDCur->side=0;
-        if (spectrum.floppytype==FLOPPYBETA && (spectrum.model == SPECCY16 || spectrum.model == SPECCY48 || spectrum.model == SPECCYPLUS))
+        if (machine.floppytype==FLOPPYBETA && (spectrum.model == SPECCY16 || spectrum.model == SPECCY48 || spectrum.model == SPECCYPLUS))
         {
                 PlusDPaged=1;
         }
@@ -336,12 +336,12 @@ void spec48_reset(void)
         z80_reset();
         floppy_init();
         ATA_Reset();
-        if (spectrum.HDType==HDSIMPLE3E) ATA_SetMode(ATA_MODE_8BIT);
-        if (spectrum.HDType==HDDIVIDE) ATA_SetMode(ATA_MODE_16BIT);
-        if (spectrum.HDType==HDZXCF) ATA_SetMode(ATA_MODE_16BIT);
-        if (spectrum.HDType==HDSIMPLECF) ATA_SetMode(ATA_MODE_16BIT);
-        if (spectrum.HDType==HDSIMPLE16BIT) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
-        if (spectrum.HDType==HDSIMPLE8BIT) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDSIMPLE3E) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDDIVIDE) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDZXCF) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDSIMPLECF) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDSIMPLE16BIT) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
+        if (machine.HDType==HDSIMPLE8BIT) ATA_SetMode(ATA_MODE_8BIT);
         mouse.buttons=255;
 
         ResetRomCartridge();
@@ -356,7 +356,7 @@ void spec48_initialise()
         int j, romlen, pos, delay;
         unsigned int i;
 
-        spectrum.drivebusy = -1;
+        machine.drivebusy = -1;
 
         insertWaitsWhileSP0256Busy = false;
 
@@ -392,50 +392,50 @@ void spec48_initialise()
         for(i=0;i<sizeof(TimexWritable);i++)
                 TimexWritable[i]=0;
 
-        if (spectrum.HDType == HDSIMPLECF)
+        if (machine.HDType == HDSIMPLECF)
         {
                 AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLECF);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(simpleIDEMem, memory, romlen);
         }
-        else if (spectrum.HDType == HDSIMPLE8BIT)
+        else if (machine.HDType == HDSIMPLE8BIT)
         {
                 AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLE8BIT);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(simpleIDEMem, memory, romlen);
         }
-        else if (spectrum.HDType == HDSIMPLE16BIT)
+        else if (machine.HDType == HDSIMPLE16BIT)
         {
                 AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLE16BIT);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(simpleIDEMem, memory, romlen);
         }
 
-        if (spectrum.floppytype==FLOPPYDISCIPLE)
+        if (machine.floppytype==FLOPPYDISCIPLE)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMDISCIPLE);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
-        else if (spectrum.floppytype==FLOPPYPLUSD)
+        else if (machine.floppytype==FLOPPYPLUSD)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMPLUSD);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
-        else if (spectrum.floppytype==FLOPPYOPUSD)
+        else if (machine.floppytype==FLOPPYOPUSD)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMDISCOVERY);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
-        else if (spectrum.floppytype==FLOPPYBETA)
+        else if (machine.floppytype==FLOPPYBETA)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMBETADISK);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
                 memcpy(FloppyMem, memory, romlen);
         }
-        else if (spectrum.floppytype==FLOPPYIF1)
+        else if (machine.floppytype==FLOPPYIF1)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMINTERFACE1);
                 romlen=memory_device_rom_load(romFile.c_str(),0,16384);
@@ -495,12 +495,12 @@ void spec48_initialise()
         SPECTopBorder = (machine.NTSC) ? 32:56;
         SPECLeftBorder = 1+37*2;
 
-        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.intposition;
+        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.interruptPosition;
         if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
 
         for(i=0;i<80000;i++) ContendArray[i]=0;
 
-        pos=spectrum.intposition-1;
+        pos=spectrum.interruptPosition-1;
 
         for(i=0;i<192;i++)
         {
@@ -674,11 +674,11 @@ void spec48_WriteByte(int Address, int Data)
                 if (PlusDPaged)
                 {
                         Address ^= PlusDMemSwap;
-                        if (spectrum.floppytype == FLOPPYBETA) return;
+                        if (machine.floppytype == FLOPPYBETA) return;
                         if (Address<8192) return;
                         FloppyMem[Address]=(BYTE)Data;
 
-                        if (spectrum.floppytype==FLOPPYOPUSD)
+                        if (machine.floppytype==FLOPPYOPUSD)
                         {
                                 if (Address>=14336) ;           // Undefined on Opus
                                 else if (Address>=12288)
@@ -705,7 +705,7 @@ void spec48_WriteByte(int Address, int Data)
                 if (!(ZXCFPort&128))
                 {
                         if (!(ZXCFPort&64)) return;
-                        ZXCFMem[(((ZXCFPort&63)&(spectrum.ZXCFRAMSize-1))<<14)+Address]=(BYTE)Data;
+                        ZXCFMem[(((ZXCFPort&63)&(machine.ZXCFRAMSize-1))<<14)+Address]=(BYTE)Data;
                         return;
                 }
 
@@ -724,7 +724,7 @@ void spec48_WriteByte(int Address, int Data)
                         return;
                 }
 
-                if (spectrum.simpleIdeRomEnabled && (spectrum.HDType == HDSIMPLECF || spectrum.HDType == HDSIMPLE8BIT || spectrum.HDType == HDSIMPLE16BIT || spectrum.HDType == HDSIMPLE3E))
+                if (machine.simpleIdeRomEnabled && (machine.HDType == HDSIMPLECF || machine.HDType == HDSIMPLE8BIT || machine.HDType == HDSIMPLE16BIT || machine.HDType == HDSIMPLE3E))
                 {
                         return;
                 }
@@ -806,7 +806,7 @@ BYTE spec48_ReadByte(int Address)
                         Address ^= PlusDMemSwap;
                         data=FloppyMem[Address];
 
-                        if (spectrum.floppytype==FLOPPYOPUSD)
+                        if (machine.floppytype==FLOPPYOPUSD)
                         {
                                 if (Address>=14336) data=255;   // Undefined on Opus
                                 else if (Address>=12288)        // 6821 PIA
@@ -834,7 +834,7 @@ BYTE spec48_ReadByte(int Address)
 
                 if (!(ZXCFPort&128))
                 {
-                        data=ZXCFMem[(((ZXCFPort&63)&(spectrum.ZXCFRAMSize-1))<<14)+Address];
+                        data=ZXCFMem[(((ZXCFPort&63)&(machine.ZXCFRAMSize-1))<<14)+Address];
                         noise = (noise<<8) | data;
                         return data;
                 }
@@ -847,7 +847,7 @@ BYTE spec48_ReadByte(int Address)
                         return data;
                 }
 
-                if (spectrum.simpleIdeRomEnabled && (spectrum.HDType == HDSIMPLECF || spectrum.HDType == HDSIMPLE8BIT || spectrum.HDType == HDSIMPLE16BIT || spectrum.HDType == HDSIMPLE3E))
+                if (machine.simpleIdeRomEnabled && (machine.HDType == HDSIMPLECF || machine.HDType == HDSIMPLE8BIT || machine.HDType == HDSIMPLE16BIT || machine.HDType == HDSIMPLE3E))
                 {
                         data = simpleIDEMem[Address];
                         noise = (noise<<8) | data;
@@ -939,7 +939,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
 {
         LogOutAccess(Address, (BYTE)Data);
 
-        if (spectrum.HDType == HDDIVIDE)
+        if (machine.HDType == HDDIVIDE)
         {
                 if ((Address & 0xA3) == 0xA3)
                 {
@@ -974,7 +974,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                         if (Data&64) divIDEMapRam=1;
                                         divIDEPage();
 
-                                        bool allRamModeAvailable = spectrum.divIDEAllRamSupported && !spectrum.divIDEJumperEClosed;
+                                        bool allRamModeAvailable = machine.divIDEAllRamSupported && !machine.divIDEJumperEClosed;
 
                                         if (allRamModeAvailable && (Data == 0x42 || (divIDEAllRamModeInvoked && (Data & 0x82) == 0x02)))
                                         {
@@ -991,10 +991,10 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 }
         }
 
-        if ((spectrum.HDType==HDSIMPLECF || spectrum.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
-        if ((spectrum.HDType==HDSIMPLE16BIT) && ((Address&0xe9)==0x69))
+        if ((machine.HDType==HDSIMPLE16BIT) && ((Address&0xe9)==0x69))
                 ATA_WriteRegister(((Address>>4)&1) | (Address&6), Data);
 
         if (spectrum.specdrum && ((Address & 0x20) == 0x00))
@@ -1037,12 +1037,12 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0x1b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_cmdreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_cmdreg((BYTE)Data);
                 break;
 
         case 0x1f:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
                 if (machine.speech == SPEECH_TYPE_SWEETTALKER)
                 {
                         sp0256_AL2.Write((BYTE)Data);
@@ -1054,15 +1054,15 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (spectrum.MFVersion==MF128) MFLockout=1;
                 if (machine.aytype==AY_TYPE_FULLER) SelectAYReg=Data&15;
                 if (machine.aytype==AY_TYPE_DKTRONICS) SelectAYReg=Data&15;
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_trackreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_trackreg((BYTE)Data);
         case 0x5b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_trackreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_trackreg((BYTE)Data);
                 break;
 
         case 0x5f:
                 if (machine.aytype==AY_TYPE_FULLER) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 if (machine.aytype==AY_TYPE_DKTRONICS) Sound.AYWrite(SelectAYReg, Data, frametstates);
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg((BYTE)Data);
                 break;
 
         case 0x73:
@@ -1073,16 +1073,16 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0x7b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0x2000;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0x2000;
                 break;
 
         case 0x7f:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_datareg((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_datareg((BYTE)Data);
                 if (machine.speech == SPEECH_TYPE_DKTRONICS) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x9b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_secreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_secreg((BYTE)Data);
                 break;
 
         case 0x9f:
@@ -1090,11 +1090,11 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xbb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDPaged=0;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDPaged=0;
                 break;
 
         case 0xbf:
-                if (spectrum.HDType==HDZXCF)
+                if (machine.HDType==HDZXCF)
                 {
                         int a=(Address>>8)&255;
 
@@ -1142,7 +1142,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_datareg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_datareg((BYTE)Data);
                 break;
 
         case 0xdf:
@@ -1165,20 +1165,20 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xe3:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_cmdreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_cmdreg((BYTE)Data);
                 break;
 
         case 0xe7:
-                if (spectrum.floppytype==FLOPPYPLUSD) PlusDPaged=0;
-                if (spectrum.floppytype==FLOPPYIF1) IF1PortE7Write(Data,tstates);
+                if (machine.floppytype==FLOPPYPLUSD) PlusDPaged=0;
+                if (machine.floppytype==FLOPPYIF1) IF1PortE7Write(Data,tstates);
                 break;
 
         case 0xeb:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_trackreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_trackreg((BYTE)Data);
                 break;
 
         case 0xef:
-                if (spectrum.HDType==HDSIMPLE3E)
+                if (machine.HDType==HDSIMPLE3E)
                 {
                         int Addr=0;
                         if (Address&256) Addr |=1;
@@ -1187,12 +1187,12 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
                         ATA_WriteRegister(Addr,Data);
                 }
-                if (spectrum.floppytype==FLOPPYIF1) IF1PortEFWrite(Data);
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_set_motor((BYTE)Data);
+                if (machine.floppytype==FLOPPYIF1) IF1PortEFWrite(Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_set_motor((BYTE)Data);
                 break;
 
         case 0xf3:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_secreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_secreg((BYTE)Data);
                 break;
 
         case 0xf4:
@@ -1212,13 +1212,13 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xf7:
-                if (spectrum.floppytype==FLOPPYIF1) IF1PortF7Write(Data);
-                if (spectrum.floppytype==FLOPPYPLUSD) PrinterWriteData((unsigned char)Data);
+                if (machine.floppytype==FLOPPYIF1) IF1PortF7Write(Data);
+                if (machine.floppytype==FLOPPYPLUSD) PrinterWriteData((unsigned char)Data);
                 break;
 
         case 0xfb:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_datareg((BYTE)Data);
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PrinterWriteData((unsigned char)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_datareg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) PrinterWriteData((unsigned char)Data);
                 if (machine.zxprinter) ZXPrinterWritePort((unsigned char)Data);
                 break;
         case 0xfd:
@@ -1257,7 +1257,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 case 0x1f:
                         if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
-                                spectrum.drivebusy = (Data&8) ? 1:0;
+                                machine.drivebusy = (Data&8) ? 1:0;
                                 floppy_set_motor((BYTE)Data);
                                 PrinterSetStrobe((unsigned char)(Data&16));
 
@@ -1304,7 +1304,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xff:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_set_motor((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_set_motor((BYTE)Data);
 
                 if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                 {
@@ -1405,25 +1405,25 @@ BYTE ReadPort(int Address, int *tstates)
                 //rzx_close();
         }
 
-        if (spectrum.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
+        if (machine.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
                 return (BYTE)ATA_ReadRegister((Address>>2)&7);
 
-        if ((spectrum.HDType==HDSIMPLECF || spectrum.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                 return (BYTE)ATA_ReadRegister(((Address>>2)&1) | ((Address>>5)&6));
 
-        if ((spectrum.HDType==HDSIMPLE16BIT) && ((Address&0xe9)==0x69))
+        if ((machine.HDType==HDSIMPLE16BIT) && ((Address&0xe9)==0x69))
                 return (BYTE)ATA_ReadRegister(((Address>>4)&1) | (Address&6));
 
         switch(Address&255)
         {
         case 0x1b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_statusreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_statusreg());
                 break;
 
         case 0x1f:
                 if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick1();
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return (BYTE)(PrinterBusy()<<6);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return (BYTE)(PrinterBusy()<<6);
                 break;
 
         case 0x3f:
@@ -1444,15 +1444,15 @@ BYTE ReadPort(int Address, int *tstates)
                 default:
                         break;
                 }
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_trackreg());
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_trackreg());
                 break;
 
         case 0x5b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_trackreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_trackreg());
                 break;
 
         case 0x5f:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_secreg());
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_secreg());
                 break;
 
         case 0x73:
@@ -1464,21 +1464,21 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x7b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0;
                 break;
 
         case 0x7f:
                 if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_FULLER) return ReadJoystick1();
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
                 if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
 
         case 0x9b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_secreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_secreg());
                 break;
 
         case 0xbb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDPaged=1;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDPaged=1;
                 break;
 
         case 0xbf:
@@ -1503,7 +1503,7 @@ BYTE ReadPort(int Address, int *tstates)
                         }
                 }
 
-                if (spectrum.HDType==HDZXCF)
+                if (machine.HDType==HDZXCF)
                 {
                         int a=(Address>>8)&255;
 
@@ -1528,7 +1528,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xdb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_datareg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_datareg());
                 break;
 
         case 0xdf:
@@ -1556,21 +1556,21 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xe3:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_statusreg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_statusreg());
                 break;
 
         case 0xe7:
-                if (spectrum.floppytype==FLOPPYIF1) return (BYTE)IF1PortE7Read(tstates);
-                if (spectrum.floppytype==FLOPPYPLUSD) PlusDPaged=1;
+                if (machine.floppytype==FLOPPYIF1) return (BYTE)IF1PortE7Read(tstates);
+                if (machine.floppytype==FLOPPYPLUSD) PlusDPaged=1;
                 break;
 
         case 0xeb:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_trackreg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_trackreg());
                 break;
 
         case 0xef:
-                if (spectrum.floppytype==FLOPPYIF1) return (BYTE)IF1PortEFRead();
-                if (spectrum.HDType==HDSIMPLE3E)
+                if (machine.floppytype==FLOPPYIF1) return (BYTE)IF1PortEFRead();
+                if (machine.HDType==HDSIMPLE3E)
                 {
                         int Addr=0;
                         if (Address&256) Addr |=1;
@@ -1582,7 +1582,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf3:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_secreg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_secreg());
                 break;
 
         case 0xf4:
@@ -1606,13 +1606,13 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf7:
-                if (spectrum.floppytype==FLOPPYIF1) return (BYTE)IF1PortF7Read();
-                if (spectrum.floppytype==FLOPPYPLUSD)
+                if (machine.floppytype==FLOPPYIF1) return (BYTE)IF1PortF7Read();
+                if (machine.floppytype==FLOPPYPLUSD)
                         return (BYTE)(PrinterBusy()<<7);
                 break;
 
         case 0xfb:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_datareg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_datareg());
                 if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));
                 break;
 
@@ -1654,7 +1654,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xff:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged)
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged)
                         return(floppy_get_state());
                 if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                         return (BYTE)TIMEXByte;
@@ -1721,9 +1721,9 @@ void spec48_nmi(void)
                 MFActive=1;
                 MFLockout=0;
         }
-        else if (spectrum.floppytype==FLOPPYDISCIPLE
-                || spectrum.floppytype==FLOPPYPLUSD
-                || spectrum.floppytype==FLOPPYBETA)
+        else if (machine.floppytype==FLOPPYDISCIPLE
+                || machine.floppytype==FLOPPYPLUSD
+                || machine.floppytype==FLOPPYBETA)
         {
                 PlusDPaged=1;
         }
@@ -1789,9 +1789,9 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!(TIMEXPage&1)
                         && (ZXCFPort&128)
-                        && spectrum.HDType!=HDSIMPLECF
-                        && spectrum.HDType!=HDSIMPLE8BIT
-                        && spectrum.HDType!=HDSIMPLE16BIT
+                        && machine.HDType!=HDSIMPLECF
+                        && machine.HDType!=HDSIMPLE8BIT
+                        && machine.HDType!=HDSIMPLE16BIT
                         && (    (SPECBlk[0]==0 && spectrum.model<SPECCYTC2068)
                              || (SPECBlk[0]==1 && spectrum.model>SPECCYTS2068 && spectrum.model<SPECCYPLUS2A)
                              || (SPECBlk[0]==3 && spectrum.model>SPECCYPLUS2) ))
@@ -1806,15 +1806,15 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 }
                         }
 
-                        if (spectrum.floppytype==FLOPPYDISCIPLE
+                        if (machine.floppytype==FLOPPYDISCIPLE
                                 && (LastPC==0x0008 || LastPC==0x0066 || LastPC==0x28E))
                                         PlusDPaged=1;
 
-                        if (spectrum.floppytype==FLOPPYPLUSD
+                        if (machine.floppytype==FLOPPYPLUSD
                                 && (LastPC==0x0008 || LastPC==0x003A || LastPC==0x0066))
                                         PlusDPaged=1;
 
-                        if (spectrum.floppytype==FLOPPYBETA)
+                        if (machine.floppytype==FLOPPYBETA)
                         {
                                 if (LastPC>=0x3D00 && LastPC<=0x3dff) PlusDPaged=1;
                                 if (LastPC>=0x4000) PlusDPaged=0;
@@ -1853,8 +1853,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 {
                         Keypad.ClockTick(ts);
                 }
-                if (spectrum.floppytype==FLOPPYIF1) IF1ClockTick(ts);
-                else if (spectrum.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
+                if (machine.floppytype==FLOPPYIF1) IF1ClockTick(ts);
+                else if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 
                 if (LastPC==0x0) WavStop();
 
@@ -1867,22 +1867,22 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 }
                 if (!WavPlaying()) SPECFlashLoading=0;
 
-                if (spectrum.floppytype==FLOPPYIF1) 
+                if (machine.floppytype==FLOPPYIF1) 
                 {
                         if ((LastPC==0x0008 || LastPC==0x1708)) SPECBlk[0]=2;
                         if (LastPC==0x0700)
                                 SPECBlk[0]=(SPECLast7ffd>>4)&1;
                 }
 
-                if (spectrum.floppytype==FLOPPYOPUSD)
+                if (machine.floppytype==FLOPPYOPUSD)
                 {
                         if (LastPC==0x0008 || LastPC==0x0048 || LastPC==0x1708) PlusDPaged=1;
                         if (LastPC==0x1748) PlusDPaged=0;
                 }
 
-                if (spectrum.HDType==HDDIVIDE)
+                if (machine.HDType==HDDIVIDE)
                 {
-                        if (spectrum.divIDEJumperEClosed)
+                        if (machine.divIDEJumperEClosed)
                         {
                                 if (divIDEAllRamMode)
                                 {

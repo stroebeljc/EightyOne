@@ -158,7 +158,7 @@ void TIF1::ClockTick(int ts)
                 }
         }
 
-        spectrum.drivebusy = (MDVCurDrive == -1) ? -1 : (WriteEnable ? 1 : 0);
+        machine.drivebusy = (MDVCurDrive == -1) ? -1 : (WriteEnable ? 1 : 0);
 
         // Microdrive Timer Loop
         if (MDVCurDrive!=-1)   // Ensure motor is running

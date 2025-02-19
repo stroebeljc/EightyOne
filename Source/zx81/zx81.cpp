@@ -356,7 +356,7 @@ void zx81_initialise()
                 memory_device_rom_load(emulator.ROMG007,10240,2048);
         }
 
-        if (spectrum.floppytype==FLOPPYLARKEN81)
+        if (machine.floppytype==FLOPPYLARKEN81)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMLARKEN81);
                 memory_device_rom_load(romFile.c_str(), 14336, 2048);
@@ -373,7 +373,7 @@ void zx81_initialise()
                 memory[12301]=0;
         }
 
-        if (spectrum.HDType==HDSIMPLECF)
+        if (machine.HDType==HDSIMPLECF)
         {
                 ATA_Reset();
                 ATA_SetMode(ATA_MODE_16BIT);
@@ -594,7 +594,7 @@ void zx81_WriteByte(int Address, int Data)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (spectrum.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -751,7 +751,7 @@ BYTE zx81_ReadByte(int Address)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (spectrum.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -1210,7 +1210,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 return;
         }
 
-        if ((spectrum.HDType==HDSIMPLECF) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
         // Note that the Parrot only decodes A7, A5, and A4.
@@ -1258,7 +1258,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xbf:
-                if (spectrum.floppytype==FLOPPYZX1541)
+                if (machine.floppytype==FLOPPYZX1541)
                 {
                         ZX1541PORT=(BYTE)Data;
 
@@ -1365,7 +1365,7 @@ BYTE ReadInputPort(int Address, int *tstates)
         }
         else
         {
-                if ((spectrum.HDType==HDSIMPLECF || spectrum.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
+                if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                         return (BYTE)(ATA_ReadRegister(((Address>>2)&1) | ((Address>>5)&6)));
 
                 // Note that the Parrot only decodes A7, A5, and A4.
@@ -1399,15 +1399,15 @@ BYTE ReadInputPort(int Address, int *tstates)
                         break;
 
                 case 0x41:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0xfe);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0xfe);
                         break;
 
                 case 0x43:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0x1e);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0x1e);
                         break;
 
                 case 0x45:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0x26);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0x26);
                         break;
 
                 case 0x5f:
@@ -1421,7 +1421,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (machine.ts2050) return(d8251readCTRL());
 
                 case 0xbf:
-                        if (spectrum.floppytype==FLOPPYZX1541)
+                        if (machine.floppytype==FLOPPYZX1541)
                         {
                                 int a = ZX1541PORT & 3;
 
@@ -1813,7 +1813,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (spectrum.floppytype == FLOPPYZX1541)
+                if (machine.floppytype == FLOPPYZX1541)
                 {
                         IECClockTick(ts);
                 }
@@ -2358,7 +2358,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (spectrum.floppytype == FLOPPYZX1541)
+                if (machine.floppytype == FLOPPYZX1541)
                 {
                         IECClockTick(ts);
                 }

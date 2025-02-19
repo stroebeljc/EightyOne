@@ -132,7 +132,7 @@ void __fastcall TP3Drive::OKClick(TObject *Sender)
 
 void TP3Drive::ConfigureOpenFloppyDiskImageDialog()
 {
-        switch (spectrum.floppytype)
+        switch (machine.floppytype)
         {
         case FLOPPYIF1:
                 OpenDialogFloppyDiskImage->DefaultExt = ".mdr";
@@ -220,7 +220,7 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         DriveAText->SelStart = DriveAText->Text.Length() - 1;
         DriveAText->SelLength = 0;
 
-        OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
+        OpenFloppyDriveImage(0, machine.driveaimg, DriveAText, readonly);
 }
 //---------------------------------------------------------------------------
 
@@ -247,7 +247,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
         DriveBText->SelStart = DriveBText->Text.Length() - 1;
         DriveBText->SelLength = 0;
 
-        OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
+        OpenFloppyDriveImage(1, machine.drivebimg, DriveBText, readonly);
 }
 //---------------------------------------------------------------------------
 
@@ -255,7 +255,7 @@ void TP3Drive::OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driv
 {
         strcpy(driveimg, driveText->Text.c_str());
 
-        if (spectrum.floppytype!=FLOPPYPLUS3 && access(driveimg, F_OK) && !readonly)
+        if (machine.floppytype!=FLOPPYPLUS3 && access(driveimg, F_OK) && !readonly)
         {
                 FILE *f;
                 if ((f = fopen(driveimg, "w")) != NULL)
@@ -270,13 +270,13 @@ void TP3Drive::OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driv
 
 void __fastcall TP3Drive::DriveAEjectBtnClick(TObject *Sender)
 {
-        FloppyDiskEject(0, DriveAText, spectrum.driveaimg);
+        FloppyDiskEject(0, DriveAText, machine.driveaimg);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TP3Drive::DriveBEjectBtnClick(TObject *Sender)
 {
-        FloppyDiskEject(1, DriveBText, spectrum.drivebimg);
+        FloppyDiskEject(1, DriveBText, machine.drivebimg);
 }
 //---------------------------------------------------------------------------
 
@@ -322,16 +322,16 @@ void __fastcall TP3Drive::FormShow(TObject *Sender)
 
 void TP3Drive::ConfigureFloppyDriveGroup()
 {
-        if (strlen(spectrum.driveaimg)) DriveAText->Text = spectrum.driveaimg;
-        if (strlen(spectrum.drivebimg)) DriveBText->Text = spectrum.drivebimg;
+        if (strlen(machine.driveaimg)) DriveAText->Text = machine.driveaimg;
+        if (strlen(machine.drivebimg)) DriveBText->Text = machine.drivebimg;
 
         DriveAText->SelStart = DriveAText->Text.Length() - 1;
         DriveAText->SelLength = 0;
         DriveBText->SelStart = DriveBText->Text.Length() - 1;
         DriveBText->SelLength = 0;
 
-        bool plus3NoDriveA = (spectrum.floppytype == FLOPPYPLUS3 && spectrum.driveatype == DRIVENONE);
-        bool plus3NoDriveB = (spectrum.floppytype == FLOPPYPLUS3 && spectrum.drivebtype == DRIVENONE);
+        bool plus3NoDriveA = (machine.floppytype == FLOPPYPLUS3 && machine.driveatype == DRIVENONE);
+        bool plus3NoDriveB = (machine.floppytype == FLOPPYPLUS3 && machine.drivebtype == DRIVENONE);
 
         DriveALabel->Enabled    = !plus3NoDriveA;
         DriveAFSBtn->Enabled    = !plus3NoDriveA;
@@ -343,7 +343,7 @@ void TP3Drive::ConfigureFloppyDriveGroup()
         DriveBNewBtn->Enabled   = !plus3NoDriveB;
         DriveBEjectBtn->Enabled = !plus3NoDriveB;
 
-        FloppyDriveGroup->Visible = (spectrum.floppytype != FLOPPYNONE && spectrum.floppytype != FLOPPYIF1);
+        FloppyDriveGroup->Visible = (machine.floppytype != FLOPPYNONE && machine.floppytype != FLOPPYIF1);
 }
 //---------------------------------------------------------------------------
 
@@ -352,7 +352,7 @@ void TP3Drive::ConfigureHardDriveGroup()
         ConfigureHardDrive(0, HD0Label, HD0Text, HD0List, HD0ReadOnly, HD0FSBtn, HD0NewBtn, HD0EjectBtn);
         ConfigureHardDrive(1, HD1Label, HD1Text, HD1List, HD1ReadOnly, HD1FSBtn, HD1NewBtn, HD1EjectBtn);
 
-        HardDriveGroup->Visible = (spectrum.HDType != HDNONE);
+        HardDriveGroup->Visible = (machine.HDType != HDNONE);
 }
 //---------------------------------------------------------------------------
 
@@ -413,7 +413,7 @@ void TP3Drive::ConfigureMicrodriveGroup()
         ConfigureMicrodrive(MDV6Label, MDV6Text, MDV6FSBtn, MDV6NewBtn, MDV6EjectBtn);
         ConfigureMicrodrive(MDV7Label, MDV7Text, MDV7FSBtn, MDV7NewBtn, MDV7EjectBtn);
 
-        MicrodriveGroup->Visible = (spectrum.floppytype == FLOPPYIF1 && IF1->MDVNoDrives > 0);
+        MicrodriveGroup->Visible = (machine.floppytype == FLOPPYIF1 && IF1->MDVNoDrives > 0);
         MicrodriveGroup->Height  = MDV0Text->Top + ((MDV1Text->Top - MDV0Text->Top) * IF1->MDVNoDrives) + 8;
 }
 //---------------------------------------------------------------------------
@@ -820,7 +820,7 @@ void __fastcall TP3Drive::DriveANewBtnClick(TObject *Sender)
                 DriveAText->SelLength = 0;
 
                 int readonly = 0;
-                OpenFloppyDriveImage(0, spectrum.driveaimg, DriveAText, readonly);
+                OpenFloppyDriveImage(0, machine.driveaimg, DriveAText, readonly);
         }
 }
 //---------------------------------------------------------------------------
@@ -836,7 +836,7 @@ void __fastcall TP3Drive::DriveBNewBtnClick(TObject *Sender)
                 DriveBText->SelLength = 0;
 
                 int readonly = 0;
-                OpenFloppyDriveImage(1, spectrum.drivebimg, DriveBText, readonly);
+                OpenFloppyDriveImage(1, machine.drivebimg, DriveBText, readonly);
         }
 }
 //---------------------------------------------------------------------------
@@ -845,7 +845,7 @@ bool TP3Drive::NewFloppyDisk(AnsiString& filePath)
 {
         bool success;
 
-        switch (spectrum.floppytype)
+        switch (machine.floppytype)
         {
         case FLOPPYPLUS3:
                 success = CreateFloppyDiskImage("Create New +3 Floppy Disk", "DSK Disk Images (*.dsk)|*.dsk", ".dsk", filePath);

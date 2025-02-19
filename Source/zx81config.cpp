@@ -120,7 +120,7 @@ void load_config(void)
         machine.tperscanline=207;
         machine.tperframe=312*207;
         machine.fps=50;
-        spectrum.intposition=0;
+        spectrum.interruptPosition=0;
         machine.zxprinter=1;
         machine.joystick1Controller = -1;
         machine.joystick2Controller = -1;
@@ -218,18 +218,19 @@ void load_config(void)
         tv.Interlaced=0;
         tv.DisableAdvanced=0;
 
-        spectrum.usource=0;
         spectrum.kbissue=SPECKBISS3;
-        spectrum.driveatype=DRIVE3INCHSS;
-        spectrum.drivebtype=DRIVE3INCHSS;
-        spectrum.driveaimg[0]='\0';
-        spectrum.drivebimg[0]='\0';
-        spectrum.drivebusy=-1;
+        machine.driveatype=DRIVE3INCHSS;
+        machine.drivebtype=DRIVE3INCHSS;
+        machine.driveaimg[0]='\0';
+        machine.drivebimg[0]='\0';
+        machine.drivebusy=-1;
+        machine.HDType=HDNONE;
+        machine.divIDEJumperEClosed=0;
+        machine.zxcfUploadJumperClosed=192;
+        machine.simpleIdeRomEnabled=0;
+
+        spectrum.usource=0;
         spectrum.kmouse=0;
-        spectrum.HDType=HDNONE;
-        spectrum.divIDEJumperEClosed=0;
-        spectrum.zxcfUploadJumperClosed=192;
-        spectrum.simpleIdeRomEnabled=0;
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;

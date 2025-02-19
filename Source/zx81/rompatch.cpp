@@ -225,7 +225,7 @@ void InitPatches(int machineType)
                 patches[0x0203c9] = ZX80ZX81LambdaStopTape;
         }
 
-        if (spectrum.floppytype == FLOPPYLARKEN81)
+        if (machine.floppytype == FLOPPYLARKEN81)
         {
                 patches[0x38DEc9] = LarkenLoadTrack;
                 patches[0x3A10c9] = LarkenSaveTrack;

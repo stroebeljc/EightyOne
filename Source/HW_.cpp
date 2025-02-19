@@ -299,7 +299,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         Form1->EnableAnnotationOptions();
 
-        spectrum.drivebusy = -1;
+        machine.drivebusy = -1;
 
         InitPatches(NewMachine);
 
@@ -539,18 +539,18 @@ void THW::ConfigureModem()
 
 void THW::ConfigurePrinterCentronicsPort()
 {
-        if (spectrum.floppytype == FLOPPYOPUSD
-                || spectrum.floppytype == FLOPPYPLUSD
-                || spectrum.floppytype == FLOPPYDISCIPLE
+        if (machine.floppytype == FLOPPYOPUSD
+                || machine.floppytype == FLOPPYPLUSD
+                || machine.floppytype == FLOPPYDISCIPLE
                 || spectrum.model == SPECCYPLUS2A
                 || spectrum.model == SPECCYPLUS3)
         {
                 Form1->PrinterPort->Enabled = true;
-                if (spectrum.floppytype == FLOPPYOPUSD)
+                if (machine.floppytype == FLOPPYOPUSD)
                         Form1->PrinterPort->Caption = "Opus Printer Port";
-                if (spectrum.floppytype == FLOPPYDISCIPLE)
+                if (machine.floppytype == FLOPPYDISCIPLE)
                         Form1->PrinterPort->Caption = "DISCiPLE Printer Port";
-                if (spectrum.floppytype == FLOPPYPLUSD)
+                if (machine.floppytype == FLOPPYPLUSD)
                         Form1->PrinterPort->Caption = "Plus D Printer Port";
                 if (spectrum.model == SPECCYPLUS2A)
                         Form1->PrinterPort->Caption = "+2A/+3 Printer Port";
@@ -1533,61 +1533,61 @@ void THW::ConfigureIDE()
         Form1->SimpleIdeRomEnabled->Enabled    = (IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 8-Bit") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE 16-Bit") ||
                                                   IDEBox->ItemIndex == FindEntry(IDEBox, "Simple IDE CF") || IDEBox->ItemIndex == FindEntry(IDEBox, "Simple +3 8-Bit"));
 
-        spectrum.HDType = HDNONE;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")                spectrum.HDType = HDZXCF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)")   { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = false; }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)") { spectrum.HDType = HDDIVIDE; spectrum.divIDEAllRamSupported = true; }
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")    spectrum.HDType = HDSIMPLE3E;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")               spectrum.HDType = HDACECF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")       spectrum.HDType = HDSIMPLECF;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")    spectrum.HDType = HDSIMPLE8BIT;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")   spectrum.HDType = HDSIMPLE16BIT;
-        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")             spectrum.HDType = HDSIMPLECF;
+        machine.HDType = HDNONE;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "ZXCF")                machine.HDType = HDZXCF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R Gal)")   { machine.HDType = HDDIVIDE; machine.divIDEAllRamSupported = false; }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "divIDE 57 (R\" Gal)") { machine.HDType = HDDIVIDE; machine.divIDEAllRamSupported = true; }
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple +3e 8-Bit")    machine.HDType = HDSIMPLE3E;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "AceCF")               machine.HDType = HDACECF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE CF")       machine.HDType = HDSIMPLECF;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 8-Bit")    machine.HDType = HDSIMPLE8BIT;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "Simple IDE 16-Bit")   machine.HDType = HDSIMPLE16BIT;
+        if (IDEBox->Items->Strings[IDEBox->ItemIndex] == "MWCFIde")             machine.HDType = HDSIMPLECF;
 
-        spectrum.divIDEJumperEClosed    = Form1->divIDEJumperEClosed->Checked;
-        spectrum.zxcfUploadJumperClosed = Form1->ZXCFUploadJumperClosed->Checked;
-        spectrum.simpleIdeRomEnabled    = Form1->SimpleIdeRomEnabled->Checked;
+        machine.divIDEJumperEClosed    = Form1->divIDEJumperEClosed->Checked;
+        machine.zxcfUploadJumperClosed = Form1->ZXCFUploadJumperClosed->Checked;
+        machine.simpleIdeRomEnabled    = Form1->SimpleIdeRomEnabled->Checked;
 
         switch (ZXCFRAM->ItemIndex)
         {
-        case 0: spectrum.ZXCFRAMSize = 128/16;  break;
-        case 1: spectrum.ZXCFRAMSize = 512/16;  break;
-        case 2: spectrum.ZXCFRAMSize = 1024/16; break;
+        case 0: machine.ZXCFRAMSize = 128/16;  break;
+        case 1: machine.ZXCFRAMSize = 512/16;  break;
+        case 2: machine.ZXCFRAMSize = 1024/16; break;
         }
 }
 
 void THW::ConfigureFDC()
 {
-        spectrum.floppytype = FLOPPYNONE;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "DISCiPLE")       spectrum.floppytype = FLOPPYDISCIPLE;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+D")             spectrum.floppytype = FLOPPYPLUSD;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")             spectrum.floppytype = FLOPPYPLUS3;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Opus Discovery") spectrum.floppytype = FLOPPYOPUSD;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Beta Disk 128")  spectrum.floppytype = FLOPPYBETA;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1") spectrum.floppytype = FLOPPYIF1;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX1541")         spectrum.floppytype = FLOPPYZX1541;
-        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Larken")         spectrum.floppytype = FLOPPYLARKEN81;
+        machine.floppytype = FLOPPYNONE;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "DISCiPLE")       machine.floppytype = FLOPPYDISCIPLE;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+D")             machine.floppytype = FLOPPYPLUSD;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "+3")             machine.floppytype = FLOPPYPLUS3;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Opus Discovery") machine.floppytype = FLOPPYOPUSD;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Beta Disk 128")  machine.floppytype = FLOPPYBETA;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX Interface 1") machine.floppytype = FLOPPYIF1;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "ZX1541")         machine.floppytype = FLOPPYZX1541;
+        if (FDCBox->Items->Strings[FDCBox->ItemIndex] == "Larken")         machine.floppytype = FLOPPYLARKEN81;
 
         switch(DriveAType->ItemIndex)
         {
-        case 0: spectrum.driveatype = DRIVENONE; break;
-        case 1: spectrum.driveatype = DRIVE3INCHSS; break;
-        case 2: spectrum.driveatype = DRIVE3INCHDS; break;
-        case 3: spectrum.driveatype = DRIVE35INCHDS; break;
-        case 4: spectrum.driveatype = DRIVE35INCHDS; break;
+        case 0: machine.driveatype = DRIVENONE; break;
+        case 1: machine.driveatype = DRIVE3INCHSS; break;
+        case 2: machine.driveatype = DRIVE3INCHDS; break;
+        case 3: machine.driveatype = DRIVE35INCHDS; break;
+        case 4: machine.driveatype = DRIVE35INCHDS; break;
         }
 
         switch(DriveBType->ItemIndex)
         {
-        case 0: spectrum.drivebtype = DRIVENONE; break;
-        case 1: spectrum.drivebtype = DRIVE3INCHSS; break;
-        case 2: spectrum.drivebtype = DRIVE3INCHDS; break;
-        case 3: spectrum.drivebtype = DRIVE35INCHDS; break;
-        case 4: spectrum.drivebtype = DRIVE35INCHDS; break;
+        case 0: machine.drivebtype = DRIVENONE; break;
+        case 1: machine.drivebtype = DRIVE3INCHSS; break;
+        case 2: machine.drivebtype = DRIVE3INCHDS; break;
+        case 3: machine.drivebtype = DRIVE35INCHDS; break;
+        case 4: machine.drivebtype = DRIVE35INCHDS; break;
         }
 
         IF1->MDVNoDrives = NoMicrodrivesComboBox->Text.ToInt();
-        Form1->Interface1Ports->Enabled = (spectrum.floppytype == FLOPPYIF1);
+        Form1->Interface1Ports->Enabled = (machine.floppytype == FLOPPYIF1);
 
         Form1->DiskDrives1->Enabled = true;
         P3Drive->FormShow(NULL);
@@ -1650,7 +1650,7 @@ void THW::ConfigureMachineSettings()
                 {
                         machine.clockspeed = 3500000;
                         machine.tperscanline = 224;
-                        spectrum.intposition = 14336;
+                        spectrum.interruptPosition = 14336;
                         machine.scanlines = 312;
                         machine.fps = 50;
                         machine.tperframe = machine.tperscanline * machine.scanlines;
@@ -1659,7 +1659,7 @@ void THW::ConfigureMachineSettings()
                 {
                         machine.clockspeed = 3528000;
                         machine.tperscanline = 226;
-                        spectrum.intposition = 13560;
+                        spectrum.interruptPosition = 13560;
                         machine.scanlines = 312;
                         machine.fps = 50;
                         machine.tperframe = machine.tperscanline * machine.scanlines;
@@ -1668,7 +1668,7 @@ void THW::ConfigureMachineSettings()
                 {
                         machine.clockspeed = 3528000;
                         machine.tperscanline = 226;
-                        spectrum.intposition = 10848;
+                        spectrum.interruptPosition = 10848;
                         machine.scanlines = 262;
                         machine.fps = 60;
                         machine.tperframe = machine.tperscanline * machine.scanlines;
@@ -1677,7 +1677,7 @@ void THW::ConfigureMachineSettings()
                 {
                         machine.clockspeed = 3546900;
                         machine.tperscanline = 228;
-                        spectrum.intposition = 14336-228+32;
+                        spectrum.interruptPosition = 14336-228+32;
                         machine.scanlines = 311;
                         machine.fps = 50;
                         machine.tperframe = machine.tperscanline * machine.scanlines;

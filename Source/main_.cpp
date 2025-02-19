@@ -1698,15 +1698,15 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
                 R=Rect;
                 StatusBar->Canvas->Brush->Color = clBtnFace;
                 StatusBar->Canvas->FillRect(R);
-                if (spectrum.drivebusy!=-1)
+                if (machine.drivebusy!=-1)
                 {
-                        if (spectrum.floppytype == FLOPPYIF1)
+                        if (machine.floppytype == FLOPPYIF1)
                         {
-                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
+                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, machine.drivebusy ? LEDRedOn:LEDRedOff );
                         }
                         else
                         {
-                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, machine.drivebusy ? LEDGreenOn:LEDGreenOff );
                         }
                 }
         }
@@ -2366,11 +2366,11 @@ void __fastcall TForm1::RunFrame()
         }
         if (AutoLoadCount) DoAutoLoad();
 
-        if (spectrum.drivebusy != Drive)
+        if (machine.drivebusy != Drive)
         {
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
-                Drive=spectrum.drivebusy;
+                Drive=machine.drivebusy;
         }
 
         if (spectrum.kmouse)
@@ -2775,7 +2775,7 @@ void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
 void __fastcall TForm1::divIDEJumperEClosedClick(TObject *Sender)
 {
         divIDEJumperEClosed->Checked = !divIDEJumperEClosed->Checked;
-        spectrum.divIDEJumperEClosed = divIDEJumperEClosed->Checked;
+        machine.divIDEJumperEClosed = divIDEJumperEClosed->Checked;
 }
 //---------------------------------------------------------------------------
 
@@ -2843,7 +2843,7 @@ void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
 void __fastcall TForm1::ZXCFUploadJumperClosedClick(TObject *Sender)
 {
         ZXCFUploadJumperClosed->Checked = !ZXCFUploadJumperClosed->Checked;
-        spectrum.zxcfUploadJumperClosed = ZXCFUploadJumperClosed->Checked;
+        machine.zxcfUploadJumperClosed = ZXCFUploadJumperClosed->Checked;
 }
 //---------------------------------------------------------------------------
 
@@ -2897,7 +2897,7 @@ void __fastcall TForm1::ZoomFullScreenClick(TObject *Sender)
 void __fastcall TForm1::SimpleIdeRomEnabledClick(TObject *Sender)
 {
         SimpleIdeRomEnabled->Checked = !SimpleIdeRomEnabled->Checked;
-        spectrum.simpleIdeRomEnabled = SimpleIdeRomEnabled->Checked;
+        machine.simpleIdeRomEnabled = SimpleIdeRomEnabled->Checked;
 }
 //---------------------------------------------------------------------------
 

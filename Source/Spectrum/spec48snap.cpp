@@ -520,7 +520,7 @@ void spec_load_z80(char *fname)
         if (spectrum.model >= SPECCY128) SPECLast7ffd = buf[35];
         else if (timexModel) TIMEXPage = buf[35];
 
-        if (spectrum.floppytype == FLOPPYIF1)
+        if (machine.floppytype == FLOPPYIF1)
         {
                 if (buf[36] == 0xFF) SPECBlk[0] = 2; // Interface 1 ROM paged in
         }
@@ -955,8 +955,8 @@ void spec_save_z80(char *fname)
         case SPECCYPLUS2A: mode=13;  flags=0;   break;
         case SPECCYPLUS3:  mode=7;   flags=0;   break;
         }                                            
-        if (spectrum.floppytype == FLOPPYIF1) mode++;
-        else if (spectrum.floppytype == FLOPPYDISCIPLE || spectrum.floppytype == FLOPPYPLUSD)
+        if (machine.floppytype == FLOPPYIF1) mode++;
+        else if (machine.floppytype == FLOPPYDISCIPLE || machine.floppytype == FLOPPYPLUSD)
         {
                 if (mode == 0) mode = 3;
                 else if (mode == 4) mode = 6;
@@ -970,7 +970,7 @@ void spec_save_z80(char *fname)
         else fputc(0, f);
 
         if (timexModel) fputc(TIMEXByte, f);                     // Timex mode - last OUT to 0xFF
-        else if (spectrum.floppytype == FLOPPYIF1)
+        else if (machine.floppytype == FLOPPYIF1)
         {
                 int if1PagedIn = (SPECBlk[0] == 2) ? 0xFF : 0x00;
                 fputc(if1PagedIn, f);                            // Interface 1 ROM paged in
@@ -1008,8 +1008,8 @@ void spec_save_z80(char *fname)
         fputc(ConvertCharacter(JoystickUp1.Character),    f); fputc(0, f);
         fputc(ConvertCharacter(JoystickFire1.Character),  f); fputc(0, f);
 
-        if (spectrum.floppytype == FLOPPYDISCIPLE)   fputc(0, f);   // Disciple + Epson
-        else if (spectrum.floppytype == FLOPPYPLUSD) fputc(16, f);  // +D
+        if (machine.floppytype == FLOPPYDISCIPLE)   fputc(0, f);   // Disciple + Epson
+        else if (machine.floppytype == FLOPPYPLUSD) fputc(16, f);  // +D
         else                                         fputc(0, f);   // None
 
         fputc(0, f); // Disciple inhibit button out

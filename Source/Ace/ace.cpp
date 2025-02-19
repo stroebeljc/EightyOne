@@ -114,7 +114,7 @@ void ace_initialise()
         d8251reset();
         z80_reset();
         ATA_Reset();
-        if (spectrum.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
 }
 
 void ace_reset()
@@ -219,7 +219,7 @@ void ace_writeport(int Address, int Data, int *tstates)
 
         static int beeper=0;
 
-        if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
+        if ((machine.HDType==HDACECF) && ((Address&128) == 0))
         {
                 ATA_WriteRegister((Address>>8)&0x07,Data);
                 return;
@@ -319,7 +319,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                 return data;
         }
 
-        if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
+        if ((machine.HDType==HDACECF) && ((Address&128) == 0))
                 return (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
 
         if (machine.joystick1Connected && (Address & 0x0001) == 0x0001)

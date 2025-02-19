@@ -197,26 +197,14 @@ typedef struct
         int usource;
         int kbissue;
         int kmouse;
-        int floppytype;
-        int driveatype;
-        int drivebtype;
-        char driveaimg[256];
-        char drivebimg[256];
-        int drivebusy;
-        int HDType;
-        int divIDEJumperEClosed;
-        int zxcfUploadJumperClosed;
-        int simpleIdeRomEnabled;
-        int ZXCFRAMSize;
         int MFActive;
         int MFLockout;
         int MFVersion;
-        int divIDEAllRamSupported;
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
         CFGBYTE specdrum;
         CFGBYTE spectrum128Keypad;
-        int intposition;
+        int interruptPosition;
 } SPECTRUM;
 
 typedef struct
@@ -264,6 +252,19 @@ typedef struct
         void (*exit)(void);
 
         void* cset;
+
+        int floppytype;
+        int driveatype;
+        int drivebtype;
+        char driveaimg[256];
+        char drivebimg[256];
+        int drivebusy;
+        int HDType;
+        int divIDEJumperEClosed;
+        int zxcfUploadJumperClosed;
+        int simpleIdeRomEnabled;
+        int ZXCFRAMSize;
+        int divIDEAllRamSupported;
 
         int ramPackSupplementsInternalRam;
         int baseRamSize;

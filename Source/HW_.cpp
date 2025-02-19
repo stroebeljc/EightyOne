@@ -287,7 +287,11 @@ void THW::UpdateHardwareSettings(bool disableReset)
         Form1->ConnectSpectrum128Keypad->Hint = StringReplace(Form1->ConnectSpectrum128Keypad->Hint, "#", GetKeypadMultiplyKey(), TReplaceFlags() << rfReplaceAll);
         Kb->UpdateCursors();
 
-        if (ResetRequired && !disableReset)
+        if (disableReset)
+        {
+                ResetRequired = false;
+        }
+        else if (ResetRequired)
         {
                 machine.initialise();
                 ResetRequired = false;

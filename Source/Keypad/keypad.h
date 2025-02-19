@@ -39,7 +39,7 @@ private:
         int row;
         int keypadSocketOut;
         int keypadSocketIn;
-        int stateTimeoutTCyles;
+        int stateTimeoutTCycles;
         int bitsToSend;
         int keyRowBits[5];
         int keyBitsToSend;

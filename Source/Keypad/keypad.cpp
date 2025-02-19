@@ -34,14 +34,14 @@ CKeypad::CKeypad()
         Reset();
 }
 
-int stateTimeoutTCylesLast;
+int stateTimeoutTCyclesLast;
 
 void CKeypad::Reset()
 {
         state = AwaitingPollRequest;
         substate = AwaitingReadBitSync;
         keypadSocketIn = KeypadSocketInLineLevelHigh;
-        stateTimeoutTCyles = 0;
+        stateTimeoutTCycles = 0;
 
         for (int i = 0; i < 5; i++)
         {
@@ -51,49 +51,33 @@ void CKeypad::Reset()
 
 void CKeypad::Write(int registerByte)
 {
+        if (keypadSocketOut == (registerByte & 0x01))
+        {
+                return;
+        }
+
         keypadSocketOut = (registerByte & 0x01);
 
         switch (state)
         {
         case AwaitingPollRequest:
-                if (keypadSocketOut == KeypadSocketOutLineLevelLow)
-                {
-                        keypadSocketIn = KeypadSocketInLineLevelLow;
-                        state = AwaitingPollRequestEnd;
-                        stateTimeoutTCyles = 5000;
-                }
-                else
-                {
-                        Reset();
-                }
+                keypadSocketIn = KeypadSocketInLineLevelLow;
+                state = AwaitingPollRequestEnd;
+                stateTimeoutTCycles = 5000;
                 break;
 
         case AwaitingPollRequestEnd:
-                if (keypadSocketOut == KeypadSocketOutLineLevelHigh)
-                {
-                        keypadSocketIn = KeypadSocketInLineLevelHigh;
-                        state = AwaitingScanRequest;
-                        stateTimeoutTCyles = 5000;
-                }
-                else
-                {
-                        Reset();
-                }
+                keypadSocketIn = KeypadSocketInLineLevelHigh;
+                state = AwaitingScanRequest;
+                stateTimeoutTCycles = 5000;
                 break;
 
         case AwaitingScanRequest:
-                if (keypadSocketOut == KeypadSocketOutLineLevelLow)
-                {
-                        state = AwaitingReadKeypadID;
-                        substate = AwaitingReadBitSync;
-                        stateTimeoutTCyles = 5500;
-                        keyBitsToSend = 0x4;
-                        bitsToSend = 4;
-                }
-                else
-                {
-                        Reset();
-                }
+                state = AwaitingReadKeypadID;
+                substate = AwaitingReadBitSync;
+                stateTimeoutTCycles = 5500;
+                keyBitsToSend = 0x4;
+                bitsToSend = 4;
                 break;
 
         case AwaitingReadKeypadID:
@@ -115,107 +99,79 @@ void CKeypad::HandleRowRead()
         switch (substate)
         {
         case AwaitingReadBitSync:
-                if (keypadSocketOut == KeypadSocketOutLineLevelHigh)
-                {
-                        keypadSocketIn = KeypadSocketInLineLevelLow;
-                        stateTimeoutTCyles = 19000;
-                        substate = AwaitingReadBitSyncEnd;
+                keypadSocketIn = KeypadSocketInLineLevelLow;
+                stateTimeoutTCycles = 19000;
+                substate = AwaitingReadBitSyncEnd;
 
-                        if (state == AwaitingReadRowFlag)
+                if (state == AwaitingReadRowFlag)
+                {
+                        int keyBits = FetchRowKeys();
+
+                        if (keyBits != keyRowBits[row])
                         {
-                                int keyBits = FetchRowKeys();
-
-                                if (keyBits != keyRowBits[row])
-                                {
-                                        keyRowBits[row] = keyBits;
-                                        keyBitsToSend = (keyRowBits[row] << 1) | 1;
-                                        bitsToSend = 5;
-                                }
-                                else
-                                {
-                                        keyBitsToSend = 0;
-                                        bitsToSend = 1;
-                                }
+                                keyRowBits[row] = keyBits;
+                                keyBitsToSend = (keyRowBits[row] << 1) | 1;
+                                bitsToSend = 5;
                         }
-                }
-                else
-                {
-                        Reset();
+                        else
+                        {
+                                keyBitsToSend = 0;
+                                bitsToSend = 1;
+                        }
                 }
                 break;
 
         case AwaitingReadBitSyncEnd:
-                if (keypadSocketOut == KeypadSocketOutLineLevelLow)
-                {
-                        keypadSocketIn = (keyBitsToSend & 0x01) ? KeypadSocketInLineLevelHigh: KeypadSocketInLineLevelLow;
-                        keyBitsToSend >>= 1;
+                keypadSocketIn = (keyBitsToSend & 0x01) ? KeypadSocketInLineLevelHigh: KeypadSocketInLineLevelLow;
+                keyBitsToSend >>= 1;
 
-                        substate = AwaitingReadBit;
-                        stateTimeoutTCyles = 1500;
-                }
-                else
-                {
-                        Reset();
-                }
+                substate = AwaitingReadBit;
+                stateTimeoutTCycles = 1500;
                 break;
 
         case AwaitingReadBit:
-                if (keypadSocketOut == KeypadSocketOutLineLevelHigh)
-                {
-                        keypadSocketIn = KeypadSocketInLineLevelHigh;
-                        substate = AwaitingReadBitEnd;
-                        stateTimeoutTCyles = 1500;
-                }
-                else
-                {
-                        Reset();
-                }
+                keypadSocketIn = KeypadSocketInLineLevelHigh;
+                substate = AwaitingReadBitEnd;
+                stateTimeoutTCycles = 1500;
                 break;
 
         case AwaitingReadBitEnd:
-                if (keypadSocketOut == KeypadSocketOutLineLevelLow)
-                {
-                        bitsToSend--;
-                        
-                        if (bitsToSend > 0)
-                        {
-                                if (state == AwaitingReadRowFlag)
-                                {
-                                        state = AwaitingReadRowBits;
-                                }
+                bitsToSend--;
 
-                                substate = AwaitingReadBitSync;
-                                stateTimeoutTCyles = 2000;
-                        }
-                        else
+                if (bitsToSend > 0)
+                {
+                        if (state == AwaitingReadRowFlag)
                         {
-                                if (state == AwaitingReadKeypadID)
-                                {
-                                        state = AwaitingReadRowFlag;
-                                        substate = AwaitingReadBitSync;
-                                        stateTimeoutTCyles = 2000;
-                                        row = 0;
-                                }
-                                else
-                                {
-                                        row++;
-                                        if (row == 5)
-                                        {
-                                                row = 0;
-                                                stateTimeoutTCyles = 0;
-                                        }
-                                        else
-                                        {
-                                                stateTimeoutTCyles = 5000;
-                                        }
-                                        state = AwaitingReadRowFlag;
-                                        substate = AwaitingReadBitSync;
-                                }
-                        }  
+                                state = AwaitingReadRowBits;
+                        }
+
+                        substate = AwaitingReadBitSync;
+                        stateTimeoutTCycles = 2000;
                 }
                 else
                 {
-                        Reset();
+                        if (state == AwaitingReadKeypadID)
+                        {
+                                state = AwaitingReadRowFlag;
+                                substate = AwaitingReadBitSync;
+                                stateTimeoutTCycles = 2000;
+                                row = 0;
+                        }
+                        else
+                        {
+                                row++;
+                                if (row == 5)
+                                {
+                                        row = 0;
+                                        stateTimeoutTCycles = 0;
+                                }
+                                else
+                                {
+                                        stateTimeoutTCycles = 5000;
+                                }
+                                state = AwaitingReadRowFlag;
+                                substate = AwaitingReadBitSync;
+                        }
                 }
                 break;
         }
@@ -264,8 +220,8 @@ inline int CKeypad::FetchRowKeys_Keyboard()
         case 2: // Row 1
                 if (IsAsyncKeyPressed(VK_OEM_2)) keyData |= 0x08;
                 if (IsAsyncKeyPressed(VK_OEM_7)) keyData |= 0x04;
-                if (IsAsyncKeyPressed(VK_OEM_4))  keyData |= 0x02;
-                if (IsAsyncKeyPressed(VK_OEM_6))  keyData |= 0x01;
+                if (IsAsyncKeyPressed(VK_OEM_4)) keyData |= 0x02;
+                if (IsAsyncKeyPressed(VK_OEM_6)) keyData |= 0x01;
                 break;
 
         case 3: // Row 2
@@ -332,11 +288,11 @@ inline int CKeypad::FetchRowKeys_NumericPad()
 */
 void CKeypad::ClockTick(int ts)
 {
-        if (stateTimeoutTCyles > 0)
+        if (stateTimeoutTCycles > 0)
         {
-                stateTimeoutTCyles -= ts;
+                stateTimeoutTCycles -= ts;
                 
-                if (stateTimeoutTCyles <= 0)
+                if (stateTimeoutTCycles <= 0)
                 {
                         Reset();
                 }

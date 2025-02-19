@@ -3788,7 +3788,7 @@ void __fastcall THW::ZXpandClick(TObject *Sender)
 {
         SetZXpandState(ZXpand->Checked,true);
 
-        if (HW->Visible)
+        if (HW->Visible && HW->Enabled)
         {
                 if (ZXpand->Checked)
                 {

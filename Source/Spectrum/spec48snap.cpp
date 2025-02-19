@@ -452,6 +452,17 @@ void spec_load_z80(char *fname)
                         {
                                 ptr=z80expandSpectra(ptr, 0x4000, 16384);
                         }
+                        else if (page <= 2)
+                        {
+                                if (len==0xffff)
+                                {
+                                        ptr+=16384;
+                                }
+                                else
+                                {
+                                        ptr=z80SkipBlock(ptr, 16384);  // Skip over the 48/128/IF1/Disciple/+D ROMs (in theory it should be loaded to support custom ROMs)
+                                }
+                        }
                         else if (page == 11)
                         {
                                 if (len==0xffff)
@@ -460,7 +471,7 @@ void spec_load_z80(char *fname)
                                 }
                                 else
                                 {
-                                        ptr=z80SkipBlock(ptr, 16384);  // In theory, should this load the Multiface ROM 
+                                        ptr=z80SkipBlock(ptr, 16384);  // Skip over the multiface ROM (in theory it should be loaded to support a custom ROM)
                                 }
 
                                 HW->Multiface->Checked = true;

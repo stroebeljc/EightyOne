@@ -334,6 +334,7 @@ private:	// User declarations
         void LoadIniFile(AnsiString FileName);
         void __fastcall SelectJoystick1Click(TObject *Sender);
         void __fastcall SelectJoystick2Click(TObject *Sender);
+        void UpdateJoystickMenuOptions();
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);

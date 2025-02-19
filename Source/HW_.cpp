@@ -4826,7 +4826,7 @@ void THW::UpdateApplyButton()
 
         ResetRequired |= settingsChanged;
 
-        Apply->Enabled = settingsChanged | ResetRequired;
+        Apply->Enabled = ResetRequired;
         RestoreButton->Enabled = Apply->Enabled;
 }
 //---------------------------------------------------------------------------

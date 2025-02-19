@@ -273,9 +273,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
         spectrum.kmouse = KMouse->Checked;
 
         zx81.improvedWait = ImprovedWait->Checked;
-        zx81.shadowROM = !EnableLowRAM->Checked && zx81.truehires != HIRESG007;
-        zx81.RAM816k = EnableLowRAM->Checked;
-        zx81.RAM816kWriteProtected = Form1->WriteProtect8KRAM->Checked;
         zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
 
         Form1->InWaveLoader->Enabled = true;
@@ -486,9 +483,15 @@ void THW::Configure8K16KRam()
 {
         bool enable8K16KProtectOption = EnableLowRAM->Checked && (emulator.machine != MACHINESPECTRUM && emulator.machine != MACHINER470 && emulator.machine != MACHINEACE && emulator.machine != MACHINEZX97LE);
         Form1->WriteProtect8KRAM->Enabled = enable8K16KProtectOption;
+        zx81.shadowROM = !EnableLowRAM->Checked && zx81.truehires != HIRESG007;
+        zx81.RAM816k = EnableLowRAM->Checked;
         if (!Form1->WriteProtect8KRAM->Enabled)
         {
-                Form1->WriteProtect8KRAM->Checked = false;
+                zx81.RAM816kWriteProtected = 0;
+        }
+        else
+        {
+                zx81.RAM816kWriteProtected = Form1->WriteProtect8KRAM->Checked ? 1 : 0;
         }
 }
 

@@ -4659,62 +4659,6 @@ void __fastcall THW::JoystickFireBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void THW::UpdateApplyButton()
-{
-        bool settingsChanged = (NewMachineName != Hwform.MachineName);
-
-        settingsChanged |= (RomBox->Text                           != Hwform.RomBoxText);
-        settingsChanged |= (RamPackBox->Text                       != Hwform.RamPackBoxText);
-        settingsChanged |= (SoundCardBox->Text                     != Hwform.SoundCardBoxText);
-        settingsChanged |= (ChrGenBox->Text                        != Hwform.ChrGenBoxText);
-        settingsChanged |= (HiResBox->Text                         != Hwform.HiResBoxText);
-        settingsChanged |= (ColourBox->Text                        != Hwform.ColourBoxText);
-        settingsChanged |= (SpeechBox->Text                        != Hwform.SpeechBoxText);
-        settingsChanged |= (RomCartridgeBox->Text                  != Hwform.RomCartridgeBoxText);
-        settingsChanged |= (ZXC1ConfigurationBox->Text             != Hwform.ZXC1ConfigurationBoxText);
-        settingsChanged |= (JoystickBox->Text                      != Hwform.JoystickBoxText);
-        settingsChanged |= (DriveAType->Text                       != Hwform.DriveATypeText);
-        settingsChanged |= (DriveBType->Text                       != Hwform.DriveBTypeText);
-        settingsChanged |= (ZXCFRAM->Text                          != Hwform.ZXCFRAMText);
-        settingsChanged |= (IDEBox->Text                           != Hwform.IDEBoxText);
-        settingsChanged |= (FDCBox->Text                           != Hwform.FDCBoxText);
-        settingsChanged |= (IDERomBox->Text                        != Hwform.IDERomBoxText);
-        settingsChanged |= (FDCRomBox->Text                        != Hwform.FDCRomBoxText);
-        settingsChanged |= (NoMicrodrivesComboBox->Text            != Hwform.NoMicrodrivesComboBoxText);
-
-        settingsChanged |= (RomCartridgeFileBox->Text              != Hwform.RomCartridgeFileBoxText);
-        settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.SinclairRomCartridgeFileBoxText);
-        settingsChanged |= (TS1510RomCartridgeFileBox->Text        != Hwform.TS1510RomCartridgeFileBoxText);
-        settingsChanged |= (TC2068RomCartridgeFileBox->Text        != Hwform.TC2068RomCartridgeFileBoxText);
-        settingsChanged |= (TS2068RomCartridgeFileBox->Text        != Hwform.TS2068RomCartridgeFileBoxText);
-
-        settingsChanged |= (programmableJoystickLeft               != Hwform.ProgrammableJoystickLeft);
-        settingsChanged |= (programmableJoystickRight              != Hwform.ProgrammableJoystickRight);
-        settingsChanged |= (programmableJoystickUp                 != Hwform.ProgrammableJoystickUp);
-        settingsChanged |= (programmableJoystickDown               != Hwform.ProgrammableJoystickDown);
-        settingsChanged |= (programmableJoystickFire               != Hwform.ProgrammableJoystickFire);
-
-        settingsChanged |= (SpecDrum->Checked                      != Hwform.SpecDrumChecked);
-        settingsChanged |= (ProtectROM->Checked                    != Hwform.ProtectROMChecked);
-        settingsChanged |= (NTSC->Checked                          != Hwform.NTSCChecked);
-        settingsChanged |= (EnableLowRAM->Checked                  != Hwform.EnableLowRAMChecked);
-        settingsChanged |= (M1Not->Checked                         != Hwform.M1NotChecked);
-        settingsChanged |= (ImprovedWait->Checked                  != Hwform.ImprovedWaitChecked);
-        settingsChanged |= (TS2050->Checked                        != Hwform.TS2050Checked);
-        settingsChanged |= (Issue2->Checked                        != Hwform.Issue2Checked);
-        settingsChanged |= (KMouse->Checked                        != Hwform.KMouseChecked);
-        settingsChanged |= (Multiface->Checked                     != Hwform.MultifaceChecked);
-        settingsChanged |= (ZXPrinter->Checked                     != Hwform.ZXPrinterChecked);
-        settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
-        settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
-
-        ResetRequired |= settingsChanged;
-
-        Apply->Enabled = settingsChanged | ResetRequired;
-        RestoreButton->Enabled = Apply->Enabled;
-}
-//---------------------------------------------------------------------------
-
 void __fastcall THW::ProtectROMClick(TObject *Sender)
 {
         UpdateApplyButton();
@@ -4827,6 +4771,63 @@ void __fastcall THW::IDERomBoxChange(TObject *Sender)
 void __fastcall THW::NoMicrodrivesComboBoxChange(TObject *Sender)
 {
         UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void THW::UpdateApplyButton()
+{
+        bool settingsChanged = (NewMachineName != Hwform.MachineName);
+
+        settingsChanged |= (RomBox->Text                           != Hwform.RomBoxText);
+        settingsChanged |= (RamPackBox->Text                       != Hwform.RamPackBoxText);
+        settingsChanged |= (SoundCardBox->Text                     != Hwform.SoundCardBoxText);
+        settingsChanged |= (ChrGenBox->Text                        != Hwform.ChrGenBoxText);
+        settingsChanged |= (HiResBox->Text                         != Hwform.HiResBoxText);
+        settingsChanged |= (ColourBox->Text                        != Hwform.ColourBoxText);
+        settingsChanged |= (SpeechBox->Text                        != Hwform.SpeechBoxText);
+        settingsChanged |= (RomCartridgeBox->Text                  != Hwform.RomCartridgeBoxText);
+        settingsChanged |= (ZXC1ConfigurationBox->Text             != Hwform.ZXC1ConfigurationBoxText);
+        settingsChanged |= (JoystickBox->Text                      != Hwform.JoystickBoxText);
+        settingsChanged |= (DriveAType->Text                       != Hwform.DriveATypeText);
+        settingsChanged |= (DriveBType->Text                       != Hwform.DriveBTypeText);
+        settingsChanged |= (ZXCFRAM->Text                          != Hwform.ZXCFRAMText);
+        settingsChanged |= (IDEBox->Text                           != Hwform.IDEBoxText);
+        settingsChanged |= (FDCBox->Text                           != Hwform.FDCBoxText);
+        settingsChanged |= (IDERomBox->Text                        != Hwform.IDERomBoxText);
+        settingsChanged |= (FDCRomBox->Text                        != Hwform.FDCRomBoxText);
+        settingsChanged |= (NoMicrodrivesComboBox->Text            != Hwform.NoMicrodrivesComboBoxText);
+
+        settingsChanged |= (RomCartridgeFileBox->Text              != Hwform.RomCartridgeFileBoxText);
+        settingsChanged |= (SinclairRomCartridgeFileBox->Text      != Hwform.SinclairRomCartridgeFileBoxText);
+        settingsChanged |= (TS1510RomCartridgeFileBox->Text        != Hwform.TS1510RomCartridgeFileBoxText);
+        settingsChanged |= (TC2068RomCartridgeFileBox->Text        != Hwform.TC2068RomCartridgeFileBoxText);
+        settingsChanged |= (TS2068RomCartridgeFileBox->Text        != Hwform.TS2068RomCartridgeFileBoxText);
+
+        settingsChanged |= (programmableJoystickLeft               != Hwform.ProgrammableJoystickLeft);
+        settingsChanged |= (programmableJoystickRight              != Hwform.ProgrammableJoystickRight);
+        settingsChanged |= (programmableJoystickUp                 != Hwform.ProgrammableJoystickUp);
+        settingsChanged |= (programmableJoystickDown               != Hwform.ProgrammableJoystickDown);
+        settingsChanged |= (programmableJoystickFire               != Hwform.ProgrammableJoystickFire);
+
+        settingsChanged |= (SpecDrum->Checked                      != Hwform.SpecDrumChecked);
+        settingsChanged |= (ProtectROM->Checked                    != Hwform.ProtectROMChecked);
+        settingsChanged |= (NTSC->Checked                          != Hwform.NTSCChecked);
+        settingsChanged |= (EnableLowRAM->Checked                  != Hwform.EnableLowRAMChecked);
+        settingsChanged |= (M1Not->Checked                         != Hwform.M1NotChecked);
+        settingsChanged |= (ImprovedWait->Checked                  != Hwform.ImprovedWaitChecked);
+        settingsChanged |= (TS2050->Checked                        != Hwform.TS2050Checked);
+        settingsChanged |= (Issue2->Checked                        != Hwform.Issue2Checked);
+        settingsChanged |= (KMouse->Checked                        != Hwform.KMouseChecked);
+        settingsChanged |= (Multiface->Checked                     != Hwform.MultifaceChecked);
+        settingsChanged |= (ZXPrinter->Checked                     != Hwform.ZXPrinterChecked);
+        settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
+        settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
+        settingsChanged |= (ZXpand->Checked                        != Hwform.ZXpandChecked);
+
+        ResetRequired |= settingsChanged;
+
+        Apply->Enabled = settingsChanged | ResetRequired;
+        RestoreButton->Enabled = Apply->Enabled;
 }
 //---------------------------------------------------------------------------
 

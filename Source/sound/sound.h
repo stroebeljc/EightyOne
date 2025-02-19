@@ -113,6 +113,7 @@ public:
 
         int VolumeLevel[6];
         bool ACBMix;
+        unsigned char AYRegisterStore[16];
 
 private:
         CDSnd DXSound;
@@ -160,7 +161,6 @@ private:
 	// we have 16 so we can fake an 8910 if needed
 
         unsigned char AYRegisters[16];
-        unsigned char AYRegisterStore[16];
         struct AYChangeTag AYChange[AY_CHANGE_MAX];
         int AYChangeCount;
 

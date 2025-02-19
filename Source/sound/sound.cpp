@@ -238,8 +238,7 @@ void CSound::AYInit(void)
 
 
 void CSound::AYOverlay(void)
-{
-
+{       
         static int rng=1;
         static int noise_toggle=1;
         static int env_level=0;
@@ -271,7 +270,6 @@ void CSound::AYOverlay(void)
                 // (Though, due to tstate-changing games in z80.c, we can
                 // rarely `lose' one this way - hence "f==.." bit below
                 // to catch any that slip through.)
-
 
                 while(changes_left && (f>=change_ptr->ofs || f==FrameSize-1))
                 {
@@ -312,8 +310,7 @@ void CSound::AYOverlay(void)
                                 EnvHeld=EnvAlternating=0;
                                 env_level=0;
                                 break;
-                        }
-
+                        }    
                 }
 
                 // the tone level if no enveloping is being used
@@ -482,7 +479,7 @@ void CSound::AYWrite128(int reg, int val, int frametstates)
                         Keypad.Write(AYRegisterStore[14]);
                 }
 
-                // This should also handle writing RS232 data (unless handled elsewhere already???)
+                // This should also handle writing RS232 data
         }
 }
 

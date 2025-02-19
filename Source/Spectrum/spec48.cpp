@@ -133,7 +133,7 @@ int SPECMICState, SPECTopBorder, SPECLeftBorder, SPECBorder=7, FloatingBus;
 int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
 int SPECKb, SPECNextBorder=7;
 int SPECVSync=0;
-BYTE SPECLast7ffd, SPECLast1ffd;
+BYTE SPECLast7ffd, SPECLast1ffd, SPECLastfffd;
 extern void ZXPrinterReset();
 extern void ZXPrinterWritePort(unsigned char Data);
 extern unsigned char ZXPrinterReadPort(void);
@@ -294,6 +294,7 @@ void spec48_reset(void)
         SPECVideoBank=5+4;
         SPECLast7ffd=0;
         SPECLast1ffd=0;
+        SPECLastfffd=0;
 
         if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068) SPECBankEnable=0;
         else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
@@ -1283,19 +1284,20 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                 }
                         }
                         break;
-                case 0xff:
-                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
-                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
-                        {
-                                SelectAYReg=Data;
-                        }
-                        break;
-
                 case 0xbf:
                         if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
                             ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
                         {
                                 Sound.AYWrite128(SelectAYReg, Data, frametstates);
+                        }
+                        break;
+
+                case 0xff:
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
+                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
+                        {
+                                SPECLastfffd=(BYTE)Data;
+                                SelectAYReg=Data;
                         }
                         break;
                 }

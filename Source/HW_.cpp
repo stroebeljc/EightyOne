@@ -1271,7 +1271,11 @@ void THW::ConfigureKeypad()
 
         if (!Form1->ConnectSpectrum128Keypad->Enabled)
         {
-                Form1->ConnectSpectrum128Keypad->Checked = false;
+                spectrum.spectrum128Keypad = 0;
+        }
+        else
+        {
+                spectrum.spectrum128Keypad = (CFGBYTE)(Form1->ConnectSpectrum128Keypad->Checked ? 1 : 0);
         }
 }
 

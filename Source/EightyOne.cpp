@@ -136,7 +136,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
         {
                 Application->Initialize();
                 Application->Title = "EightyOne";
-                 Application->CreateForm(__classid(TKeypad128), &Keypad128);
                  #include "splashImpl.cpp"
 
                 Application->ProcessMessages();

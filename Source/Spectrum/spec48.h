@@ -22,7 +22,7 @@
 #ifndef spec48_h
 #define spec48_h
 
-#include "z80\config.h"
+#include "configuration.h"
 
 #define RAMRead(Bank, Address) (SpectrumMem[(Bank<<14) | ((Address)&16383)])
 #define RAMWrite(Bank, Address, Data) ((SpectrumMem[(Bank<<14) | ((Address)&16383)])=Data)

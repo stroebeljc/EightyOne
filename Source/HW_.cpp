@@ -3540,7 +3540,7 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
 
 }
 
-void THW::WriteNVMemory(BYTE* memory, int size, int count, char* fileName)
+void THW::WriteNVMemory(BYTE* memory, int size, int count, const char* fileName)
 {
         char FilePath[256];
 
@@ -3556,7 +3556,7 @@ void THW::WriteNVMemory(BYTE* memory, int size, int count, char* fileName)
         }
 }
 
-void THW::ReadNVMemory(BYTE* memory, int size, int count, char* fileName)
+void THW::ReadNVMemory(BYTE* memory, int size, int count, const char* fileName)
 {
         char FilePath[256];
 

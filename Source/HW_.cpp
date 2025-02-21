@@ -287,7 +287,11 @@ void THW::UpdateHardwareSettings(bool disableReset)
         Form1->ConnectSpectrum128Keypad->Hint = StringReplace(Form1->ConnectSpectrum128Keypad->Hint, "#", GetKeypadMultiplyKey(), TReplaceFlags() << rfReplaceAll);
         Kb->UpdateCursors();
 
-        if (ResetRequired && !disableReset)
+        if (disableReset)
+        {
+                ResetRequired = false;
+        }
+        else if (ResetRequired)
         {
                 machine.initialise();
                 ResetRequired = false;
@@ -3477,8 +3481,12 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
 {
         //---- MACHINE ----
 
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top",  Top);
-        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", Left);
+        int temp=Top;
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Top",  temp);
+        Top=temp;
+        temp=Left;
+        AccessIniFileInteger(ini, accessType, "HARDWARE", "Left", temp);
+        Left=temp;
 
         AccessIniFileString(ini, accessType, "HARDWARE", "MachineName", Hwform.MachineName);
 
@@ -4861,7 +4869,7 @@ void THW::UpdateApplyButton()
 
         ResetRequired |= settingsChanged;
 
-        Apply->Enabled = settingsChanged | ResetRequired;
+        Apply->Enabled = ResetRequired;
         RestoreButton->Enabled = Apply->Enabled;
 }
 //---------------------------------------------------------------------------

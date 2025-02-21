@@ -323,8 +323,8 @@ private:	// User declarations
         bool ValidCharacter(TEdit* textBox, char newKey);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
         int FindEntry(TComboBox* comboBox, AnsiString text);
-        void WriteNVMemory(BYTE* memory, int size, int count, char* fileName);
-        void ReadNVMemory(BYTE* memory, int size, int count, char* fileName);
+        void WriteNVMemory(BYTE* memory, int size, int count, const char* fileName);
+        void ReadNVMemory(BYTE* memory, int size, int count, const char* fileName);
         void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
         bool NewKey(TEdit* textBox, char key);
         void LoadRomBox();

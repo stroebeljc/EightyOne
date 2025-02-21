@@ -22,7 +22,7 @@
 #ifndef ace_h
 #define ace_h
 
-#include "z80\config.h"
+#include "configuration.h"
 
 extern BYTE memory[];
 extern BYTE acecolour[];

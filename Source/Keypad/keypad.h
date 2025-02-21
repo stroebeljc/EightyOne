@@ -29,10 +29,10 @@ public:
         void Reset();
 
 private:
-        static const int CKeypad::KeypadSocketOutLineLevelLow;
-        static const int CKeypad::KeypadSocketOutLineLevelHigh;
-        static const int CKeypad::KeypadSocketInLineLevelLow;
-        static const int CKeypad::KeypadSocketInLineLevelHigh;
+        static const int KeypadSocketOutLineLevelLow;
+        static const int KeypadSocketOutLineLevelHigh;
+        static const int KeypadSocketInLineLevelLow;
+        static const int KeypadSocketInLineLevelHigh;
 
         State state;
         Substate substate;

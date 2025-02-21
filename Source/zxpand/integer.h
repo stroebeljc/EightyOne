@@ -4,7 +4,7 @@
 
 #ifndef _INTEGER
 
-#if 0
+#if 1
 #include <windows.h>
 #else
 

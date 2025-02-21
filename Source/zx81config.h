@@ -23,8 +23,9 @@
 #ifndef ZX81CONFIG_H
 #define ZX81CONFIG_H
 
+#include "configuration.h"
+
 #define CFGBYTE char
-#define BYTE unsigned char
 
 #define EMUID           0x85
 

@@ -212,6 +212,7 @@ void load_snap_joystick(FILE *f)
                 if (tok[0] == '[')
                 {
                         ProcessTag(tok, f);
+                        Form1->BuildMenuJoystickSelection();
                         return;
                 }
 
@@ -249,6 +250,20 @@ void load_snap_joystick(FILE *f)
                 {
                         tok = get_token(f);
                         HW->JoystickFireBox->Text = tok;
+                }
+                else if (!strcmp(tok,"CONTROLLER1"))
+                {
+                        machine.joystick1Controller = (CFGBYTE)hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"CONNECTED1"))
+                {
+                        machine.joystick1Connected = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->ConnectJoystick1->Checked = machine.joystick1Connected;
+                }
+                else if (!strcmp(tok,"AUTOFIRE1"))
+                {
+                        machine.joystick1AutoFireEnabled = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->EnableJoystick1AutoFire->Checked = machine.joystick1AutoFireEnabled;
                 }
         }
 }
@@ -959,12 +974,15 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"TYPE %s\n", HW->HiResBox->Text.c_str());
 
 	fprintf(f,"\n[JOYSTICK]\n");
-	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->JoystickBox->Text).c_str());
+	fprintf(f,"TYPE %s\n",  ReplaceSpaces(HW->JoystickBox->Text).c_str());
 	fprintf(f,"LEFT %s\n",  ReplaceSpaces(HW->JoystickLeftBox->Text).c_str());
 	fprintf(f,"RIGHT %s\n", ReplaceSpaces(HW->JoystickRightBox->Text).c_str());
 	fprintf(f,"UP %s\n",    ReplaceSpaces(HW->JoystickUpBox->Text).c_str());
 	fprintf(f,"DOWN %s\n",  ReplaceSpaces(HW->JoystickDownBox->Text).c_str());
 	fprintf(f,"FIRE %s\n",  ReplaceSpaces(HW->JoystickFireBox->Text).c_str());
+        fprintf(f,"CONTROLLER1 %02X\n", machine.joystick1Controller);
+       	fprintf(f,"CONNECTED1 %02X\n",  machine.joystick1Connected);
+       	fprintf(f,"AUTOFIRE1 %02X\n",   machine.joystick1AutoFireEnabled);
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
         AnsiString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);

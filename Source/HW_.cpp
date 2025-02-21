@@ -2085,6 +2085,10 @@ void THW::SetupForZX81(void)
         JoystickLeftBoxLabel->Enabled  = false;
         JoystickRightBoxLabel->Enabled = false;
         JoystickFireBoxLabel->Enabled  = false;
+        Form1->ConnectJoystick2->Checked = false;
+        Form1->EnableJoystick2AutoFire->Checked = false;
+
+        Form1->ConnectSpectrum128Keypad->Checked = false;
         
         uSource->Enabled = false;
         uSource->Checked = false;

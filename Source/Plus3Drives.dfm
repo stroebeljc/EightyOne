@@ -1,10 +1,10 @@
 object P3Drive: TP3Drive
-  Left = 191
-  Top = 169
+  Left = 84
+  Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Drives'
-  ClientHeight = 585
+  ClientHeight = 402
   ClientWidth = 374
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,11 +17,11 @@ object P3Drive: TP3Drive
   OnShow = FormShow
   DesignSize = (
     374
-    585)
+    402)
   TextHeight = 13
   object OK: TButton
     Left = 292
-    Top = 553
+    Top = 370
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -468,7 +468,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 1
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV0EjectBtn: TButton
       Left = 308
@@ -477,7 +477,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 3
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV1EjectBtn: TButton
       Left = 308
@@ -486,7 +486,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 7
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV1FSBtn: TButton
       Left = 244
@@ -495,7 +495,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 5
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV1Text: TEdit
       Left = 56
@@ -536,7 +536,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 13
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV2FSBtn: TButton
       Left = 244
@@ -545,7 +545,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 9
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV2EjectBtn: TButton
       Left = 308
@@ -554,7 +554,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 11
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV3EjectBtn: TButton
       Left = 308
@@ -563,7 +563,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 15
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV7Text: TEdit
       Left = 56
@@ -616,7 +616,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 17
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV5FSBtn: TButton
       Left = 244
@@ -625,7 +625,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 21
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV6FSBtn: TButton
       Left = 244
@@ -634,7 +634,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 25
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV7FSBtn: TButton
       Left = 244
@@ -643,7 +643,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = '...'
       TabOrder = 29
-      OnClick = MDV0FSBtnClick
+      OnClick = MDVFSBtnClick
     end
     object MDV7EjectBtn: TButton
       Left = 308
@@ -652,7 +652,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 31
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV6EjectBtn: TButton
       Left = 308
@@ -661,7 +661,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 27
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV5EjectBtn: TButton
       Left = 308
@@ -670,7 +670,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 23
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV4EjectBtn: TButton
       Left = 308
@@ -679,7 +679,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'Eject'
       TabOrder = 19
-      OnClick = MDV0EjectBtnClick
+      OnClick = MDVEjectBtnClick
     end
     object MDV0NewBtn: TButton
       Left = 272
@@ -688,7 +688,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 2
-      OnClick = MDV0NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV1NewBtn: TButton
       Left = 272
@@ -697,7 +697,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 6
-      OnClick = MDV1NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV2NewBtn: TButton
       Left = 272
@@ -706,7 +706,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 10
-      OnClick = MDV2NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV3NewBtn: TButton
       Left = 272
@@ -715,7 +715,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 14
-      OnClick = MDV3NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV4NewBtn: TButton
       Left = 272
@@ -724,7 +724,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 18
-      OnClick = MDV4NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV5NewBtn: TButton
       Left = 272
@@ -733,7 +733,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 22
-      OnClick = MDV5NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV6NewBtn: TButton
       Left = 272
@@ -742,7 +742,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 26
-      OnClick = MDV6NewBtnClick
+      OnClick = MDVNewBtnClick
     end
     object MDV7NewBtn: TButton
       Left = 272
@@ -751,7 +751,7 @@ object P3Drive: TP3Drive
       Height = 23
       Caption = 'New'
       TabOrder = 30
-      OnClick = MDV7NewBtnClick
+      OnClick = MDVNewBtnClick
     end
   end
   object OpenDialogFloppyDiskImage: TOpenDialog

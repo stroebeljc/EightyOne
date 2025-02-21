@@ -51,6 +51,7 @@ void load_snap_zx81(FILE *f);
 void load_snap_machine(FILE *f);
 void load_snap_sound(FILE *f);
 void load_snap_speech(FILE *f);
+void load_snap_joystick(FILE *f);
 void load_snap_chrgen(FILE *f);
 void load_snap_hires(FILE *f);
 void load_snap_colour(FILE *f);
@@ -59,7 +60,6 @@ void load_snap_interfaces(FILE *f);
 void load_snap_advanced(FILE* f);
 void load_snap_drives(FILE* f);
 void ProcessTag(char* tok, FILE* f);
-//void InitialiseHardware();
 
 extern void HWSetMachine(int machine, int speccy);
 extern void DebugUpdate();
@@ -204,6 +204,54 @@ void load_snap_speech(FILE *f)
         }
 }
 
+void load_snap_joystick(FILE *f)
+{
+        while(!feof(f))
+        {
+                char* tok=get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                        return;
+                }
+
+                if (!strcmp(tok,"TYPE"))
+                {
+                        if (HW->ZXpand->Checked && HW->JoystickBox->Items->Strings[HW->JoystickBox->Items->Count - 1] != "ZXpand")
+                        {
+                                HW->JoystickBox->Items->Add("ZXpand");
+                        }
+
+                        tok = get_token(f);
+                        SetComboBox(HW->JoystickBox, tok);
+                }
+                else if (!strcmp(tok,"LEFT"))
+                {
+                        tok = get_token(f);
+                        HW->JoystickLeftBox->Text = tok;
+                }
+                else if (!strcmp(tok,"RIGHT"))
+                {
+                        tok = get_token(f);
+                        HW->JoystickRightBox->Text = tok;
+                }
+                else if (!strcmp(tok,"UP"))
+                {
+                        tok = get_token(f);
+                        HW->JoystickUpBox->Text = tok;
+                }
+                else if (!strcmp(tok,"DOWN"))
+                {
+                        tok = get_token(f);
+                        HW->JoystickDownBox->Text = tok;
+                }
+                else if (!strcmp(tok,"FIRE"))
+                {
+                        tok = get_token(f);
+                        HW->JoystickFireBox->Text = tok;
+                }
+        }
+}
 void load_snap_chrgen(FILE *f)
 {
         int Addr, Count, Chr;
@@ -473,22 +521,27 @@ void load_snap_zx81(FILE *f)
 {
         char *tok;
 
+        HW->Enabled = false;
+
         while(!feof(f))
         {
                 tok=get_token(f);
                 if (tok[0] == '[')
                 {
                         ProcessTag(tok, f);
-                        return;
                 }
-
-                if (!strcmp(tok,"NMI")) nmiGeneratorEnabled = hex2dec(get_token(f));
-                else if (!strcmp(tok,"SYNC")) syncOutputWhite = hex2dec(get_token(f));
-                else if (!strcmp(tok,"LINE")) lineCounter = hex2dec(get_token(f));
-                //Backwards compatibility
-                else if (!strcmp(tok,"HSYNC")) syncOutputWhite = hex2dec(get_token(f));
-                else if (!strcmp(tok,"ROW")) lineCounter = hex2dec(get_token(f));
+                else
+                {
+                        if (!strcmp(tok,"NMI")) nmiGeneratorEnabled = hex2dec(get_token(f));
+                        else if (!strcmp(tok,"SYNC")) syncOutputWhite = hex2dec(get_token(f));
+                        else if (!strcmp(tok,"LINE")) lineCounter = hex2dec(get_token(f));
+                        //Backwards compatibility
+                        else if (!strcmp(tok,"HSYNC")) syncOutputWhite = hex2dec(get_token(f));
+                        else if (!strcmp(tok,"ROW")) lineCounter = hex2dec(get_token(f));
+                }
         }
+
+        HW->Enabled = true;
 }
 
 void load_snap_mem(FILE *f)
@@ -594,11 +647,11 @@ void load_snap_drives(FILE* f)
                         return;
                 }
 
-                if (!strcmp(tok,"FDC"))
+                if (!strcmp(tok, "FDC"))
                 {
-                        SetComboBox(HW->FDC, get_token(f));
+                        SetComboBox(HW->FDCBox, get_token(f));
                 }
-                else if (!strcmp(tok,"IDE"))
+                else if (!strcmp(tok, "IDE"))
                 {
                         SetComboBox(HW->IDEBox, get_token(f));
                 }
@@ -614,6 +667,7 @@ void ProcessTag(char* tok, FILE* f)
         else if (!strcmp(tok, "[COLOUR]")) load_snap_colour(f);
         else if (!strcmp(tok, "[SOUND]")) load_snap_sound(f);
         else if (!strcmp(tok, "[SPEECH]")) load_snap_speech(f);
+        else if (!strcmp(tok, "[JOYSTICK]")) load_snap_joystick(f);
         else if (!strcmp(tok, "[CHR$_GENERATOR]")) load_snap_chrgen(f);
         else if (!strcmp(tok, "[HIGH_RESOLUTION]")) load_snap_hires(f);
         else if (!strcmp(tok, "[ROM_CARTRIDGE]")) load_snap_romcartridge(f);
@@ -828,6 +882,14 @@ int save_snap_zx81(char *filename)
 	}
 	fprintf(f, "\n");
 
+	fprintf(f,"\n[INTERFACES]\n");
+	fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
+	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
+
+	fprintf(f,"\n[DRIVES]\n");
+	fprintf(f,"FDC %S\n", HW->FDCBox->Text.c_str());
+	fprintf(f,"IDE %S\n", HW->IDEBox->Text.c_str());
+
 	fprintf(f,"\n[ADVANCED]\n");
 	fprintf(f,"ROM %s\n", ReplaceSpaces(HW->RomBox->Text).c_str());
 	fprintf(f,"PROTECT_ROM %02X\n", machine.protectROM);
@@ -896,6 +958,14 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"\n[HIGH_RESOLUTION]\n");
 	fprintf(f,"TYPE %S\n", HW->HiResBox->Text.c_str());
 
+	fprintf(f,"\n[JOYSTICK]\n");
+	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->JoystickBox->Text).c_str());
+	fprintf(f,"LEFT %s\n",  ReplaceSpaces(HW->JoystickLeftBox->Text).c_str());
+	fprintf(f,"RIGHT %s\n", ReplaceSpaces(HW->JoystickRightBox->Text).c_str());
+	fprintf(f,"UP %s\n",    ReplaceSpaces(HW->JoystickUpBox->Text).c_str());
+	fprintf(f,"DOWN %s\n",  ReplaceSpaces(HW->JoystickDownBox->Text).c_str());
+	fprintf(f,"FIRE %s\n",  ReplaceSpaces(HW->JoystickFireBox->Text).c_str());
+
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
         AnsiString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);
 	fprintf(f,"TYPE %s\n", type.c_str());
@@ -908,14 +978,6 @@ int save_snap_zx81(char *filename)
 		        fprintf(f,"CONFIGURATION %S\n", HW->ZXC1ConfigurationBox->Text.c_str());
 		}
 	}
-
-	fprintf(f,"\n[INTERFACES]\n");
-	fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
-	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
-
-	fprintf(f,"\n[DRIVES]\n");
-	fprintf(f,"FDC %S\n", HW->FDC->Text.c_str());
-	fprintf(f,"IDE %S\n", HW->IDEBox->Text.c_str());
 
         fprintf(f,"\n[EOF]\n");
 	fclose(f);
@@ -1106,19 +1168,14 @@ int do_memory_load(char *file, int address, int length, int secondBank)
 
 int memory_device_rom_load(char *filename, int address, int length)
 {
-        char file[256];
-
-        strcpy(file, emulator.cwd);
-        strcat(file, filename);
-
-        return do_memory_load(file, address, length, 0);
+        return memory_load(filename, address, length, 0);
 }
 
 int memory_load(char *filename, int address, int length, int secondBank)
 {
         char file[256];
 
-        if (strchr(filename, '\\') || strchr(filename, '/'))
+        if (FileExists(filename))
         {
                 strcpy(file, filename);
         }

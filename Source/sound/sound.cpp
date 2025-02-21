@@ -53,6 +53,7 @@
 #include "sp0256drv.h"
 #include "Digitalkdrv.h"
 #include "Joystick.h"
+#include "Keypad.h"
 
 CSound Sound;
 
@@ -149,6 +150,7 @@ void CSound::InitDevices()
         SpecDrumInit();
         sp0256_AL2.Reset();
         Digitalker.Reset();
+        Keypad.Reset();
 }
 
 // Initialise the AY Sound chip
@@ -236,8 +238,7 @@ void CSound::AYInit(void)
 
 
 void CSound::AYOverlay(void)
-{
-
+{       
         static int rng=1;
         static int noise_toggle=1;
         static int env_level=0;
@@ -269,7 +270,6 @@ void CSound::AYOverlay(void)
                 // (Though, due to tstate-changing games in z80.c, we can
                 // rarely `lose' one this way - hence "f==.." bit below
                 // to catch any that slip through.)
-
 
                 while(changes_left && (f>=change_ptr->ofs || f==FrameSize-1))
                 {
@@ -310,8 +310,7 @@ void CSound::AYOverlay(void)
                                 EnvHeld=EnvAlternating=0;
                                 env_level=0;
                                 break;
-                        }
-
+                        }    
                 }
 
                 // the tone level if no enveloping is being used
@@ -467,13 +466,21 @@ void CSound::AYOverlay(void)
 
 void CSound::AYWrite128(int reg, int val, int frametstates)
 {
-        // This should also handle writing RS232 data
-        if ((reg == 14) && ((AYRegisterStore[7] & 0x40) == 0x40))
-        {
-                Midi.WriteBit(val);
-        }
+        reg = reg & 0x0F;
 
         AYWrite(reg, val, frametstates);
+
+        if ((AYRegisterStore[7] & 0x40) == 0x40)
+        {
+                Midi.WriteBit(AYRegisterStore[14]);
+
+                if (spectrum.spectrum128Keypad)
+                {
+                        Keypad.Write(AYRegisterStore[14]);
+                }
+
+                // This should also handle writing RS232 data
+        }
 }
 
 void CSound::AYWriteTimex(int reg, int val, int frametstates)
@@ -486,50 +493,71 @@ void CSound::AYWriteTimex(int reg, int val, int frametstates)
 
 void CSound::AYWrite(int reg, int val, int frametstates)
 {
-        if(reg >= 16) return;
+        reg = reg & 0x0F;
 
-        if ((reg < 14) || (reg == 14 && ((AYRegisterStore[7] & 0x40) == 0x40)) || (reg == 15 && ((AYRegisterStore[7] & 0x80) == 0x80)))
+        AYRegisterStore[reg] = (unsigned char)val;
+
+        if (AYChangeCount < AY_CHANGE_MAX)
         {
-                AYRegisterStore[reg] = (unsigned char)val;
+                AYChange[AYChangeCount].ofs = (unsigned short)(frametstates * m_SamplesPerTState);
+                AYChange[AYChangeCount].reg = (unsigned char)reg;
+                AYChange[AYChangeCount].val = (unsigned char)val;
+                AYChangeCount++;
+        }
+}
 
-                if(AYChangeCount < AY_CHANGE_MAX)
+int CSound::AYRead128(int reg)
+{
+        reg = reg & 0x0F;
+
+        int data = AYRead(reg);
+
+        if (spectrum.spectrum128Keypad && reg == 14)
+        {
+                if ((AYRegisterStore[7] & 0x40) == 0x40) //Output
                 {
-                        AYChange[AYChangeCount].ofs = (unsigned short)(frametstates * m_SamplesPerTState);
-                        AYChange[AYChangeCount].reg = (unsigned char)reg;
-                        AYChange[AYChangeCount].val = (unsigned char)val;
-                        AYChangeCount++;
+                        data &= Keypad.Read();
+                }
+                else //Input
+                {
+                        data = Keypad.Read();
                 }
         }
+
+        return data;
 }
 
 int CSound::AYReadTimex(int reg, int joysticks = 0)
 {
-        if ((reg < 14))
-        {
-                return AYRegisterStore[reg];
-        }
+        reg = reg & 0x0F;
 
-        BYTE data = 0xFF;
+        int data = AYRead(reg);
 
         if (reg == 14)
         {
-                if (joysticks & 0x01)
+                if ((AYRegisterStore[7] & 0x40) == 0x40) //Output
                 {
-                        data &= (byte)(ReadJoystick() & 0x8F);
+                        if ((joysticks & 0x01) && machine.joystick1Connected)
+                        {
+                                data &= (byte)(ReadJoystick1() & 0x8F);
+                        }
+                        if ((joysticks & 0x02) && machine.joystick2Connected)
+                        {
+                                data &= (byte)(ReadJoystick2() & 0x8F);
+                        }
                 }
-                if (joysticks & 0x02)
+                else //Input
                 {
-                        data &= (byte)(ReadJoystick2() & 0x8F);
-                }
+                        if ((joysticks & 0x01) && machine.joystick1Connected)
+                        {
+                                data = (byte)(ReadJoystick1() & 0x8F);
+                        }
+                        if ((joysticks & 0x02) && machine.joystick2Connected)
+                        {
+                                data = (byte)(ReadJoystick2() & 0x8F);
+                        }
 
-                if ((AYRegisterStore[7] & 0x40) == 0x00)
-                {
-                        data |= (BYTE)0x70;
-                }
-                else
-                {
-                        data |= (BYTE)((~AYRegisterStore[7]) & 0x8F);
-                        data |= (BYTE)(AYRegisterStore[7] & 0x70);
+                        data |= 0x70;
                 }
         }
 
@@ -538,12 +566,26 @@ int CSound::AYReadTimex(int reg, int joysticks = 0)
 
 int CSound::AYRead(int reg)
 {
-        if ((reg < 14) || (reg == 14 && ((AYRegisterStore[7] & 0x40) == 0x00)) || (reg == 15 && ((AYRegisterStore[7] & 0x80) == 0x00)))
+        int data = AYRegisterStore[reg & 0x0F];
+
+        switch (reg)
         {
-                return AYRegisterStore[reg];
+        case 1:
+        case 3:
+        case 5:
+        case 13:
+                data &= 0x0F;
+                break;
+
+        case 6:
+        case 8:
+        case 9:
+        case 10:
+                data &= 0x1F;
+                break;
         }
 
-        return 0xFF;
+        return data;
 }
 
 // no need to call this initially, but should be called on reset otherwise.

@@ -31,6 +31,7 @@ using namespace std;
 #include <ImgList.hpp>
 #include <Graphics.hpp>
 #include "Joystick.h"
+#include "Utils.h"
 
 //---------------------------------------------------------------------------
 
@@ -50,29 +51,36 @@ public:
 struct HWFormValues
 {
         AnsiString MachineName;
-        int RamPackBoxItemIndex;
-        int SoundCardBoxItemIndex;
-        int ChrGenBoxItemIndex;
-        int HiResBoxItemIndex;
-        int ColourBoxItemIndex;
-        int SpeechBoxItemIndex;
-        int JoystickBoxItemIndex;
-        int RomCartridgeBoxItemIndex;
+        AnsiString RomBoxText;
+        AnsiString RamPackBoxText;
+        AnsiString SoundCardBoxText;
+        AnsiString ChrGenBoxText;
+        AnsiString HiResBoxText;
+        AnsiString ColourBoxText;
+        AnsiString SpeechBoxText;
+        AnsiString JoystickBoxText;
+        AnsiString RomCartridgeBoxText;
+        AnsiString ZXC1ConfigurationBoxText;
         AnsiString RomCartridgeFileBoxText;
-        int ZXC1ConfigurationBoxItemIndex;
-        AnsiString JoystickLeftBoxText;
-        AnsiString JoystickRightBoxText;
-        AnsiString JoystickUpBoxText;
-        AnsiString JoystickDownBoxText;
-        AnsiString JoystickFireBoxText;
-        int DriveATypeItemIndex;
-        int DriveBTypeItemIndex;
-        int FDCItemIndex;
-        bool AutobootChecked;
+        AnsiString SinclairRomCartridgeFileBoxText;
+        AnsiString TS1510RomCartridgeFileBoxText;
+        AnsiString TC2068RomCartridgeFileBoxText;
+        AnsiString TS2068RomCartridgeFileBoxText;
+        AnsiString ProgrammableJoystickLeft;
+        AnsiString ProgrammableJoystickRight;
+        AnsiString ProgrammableJoystickUp;
+        AnsiString ProgrammableJoystickDown;
+        AnsiString ProgrammableJoystickFire;
+        AnsiString FDCBoxText;
+        AnsiString IDEBoxText;
+        AnsiString FDCRomBoxText;
+        AnsiString IDERomBoxText;
+        AnsiString DriveATypeText;
+        AnsiString DriveBTypeText;
+        AnsiString ZXCFRAMText;
+        AnsiString NoMicrodrivesComboBoxText;
         bool ZXpandChecked;
-        bool ZXpandEnabled;
         bool SpecDrumChecked;
-        bool SpecDrumEnabled;
         bool ProtectROMChecked;
         bool NTSCChecked;
         bool EnableLowRAMChecked;
@@ -81,14 +89,12 @@ struct HWFormValues
         bool TS2050Checked;
         bool Issue2Checked;
         bool KMouseChecked;
-        bool Form1divIDEJumperEClosedChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
-        int ZXCFRAMItemIndex;
-        int IDEBoxItemIndex;
         bool uSourceChecked;
+        ZX97 ZX97Form;
 };
 
 class THW : public TForm
@@ -125,10 +131,6 @@ __published:	// IDE-managed Components
         TPageControl *Advanced;
         TTabSheet *Interfaces;
         TTabSheet *FloppyDrives;
-        TLabel *LabelA;
-        TLabel *LabelB;
-        TComboBox *DriveAType;
-        TComboBox *DriveBType;
         TLabel *SoundCardLbl;
         TComboBox *SoundCardBox;
         TLabel *ChrGenLbl;
@@ -147,15 +149,6 @@ __published:	// IDE-managed Components
         TCheckBox *EnableLowRAM;
         TCheckBox *M1Not;
         TCheckBox *Issue2;
-        TLabel *LabelFDC;
-        TComboBox *FDC;
-        TCheckBox *Autoboot;
-        TButton *IF1Config;
-        TComboBox *IDEBox;
-        TComboBox *ZXCFRAM;
-        TCheckBox *Upload;
-        TLabel *LabelIDE;
-        TLabel *ZXCFLabel;
         TCheckBox *ZXPrinter;
         TCheckBox *ZXpand;
         TComboBox *ColourBox;
@@ -196,6 +189,30 @@ __published:	// IDE-managed Components
         TLabel *JoystickFireBoxLabel;
         TEdit *JoystickFireBox;
         TButton *DefaultsButton;
+        TButton *Apply;
+        TButton *RestoreButton;
+        TGroupBox *GroupBox1;
+        TLabel *LabelFDC;
+        TComboBox *FDCBox;
+        TLabel *DriveATypeLabel;
+        TComboBox *DriveAType;
+        TLabel *DriveBTypeLabel;
+        TComboBox *DriveBType;
+        TComboBox *FDCRomBox;
+        TLabel *FDCRomBoxLabel;
+        TGroupBox *GroupBox2;
+        TLabel *LabelIDE;
+        TComboBox *IDEBox;
+        TLabel *ZXCFLabel;
+        TComboBox *ZXCFRAM;
+        TComboBox *IDERomBox;
+        TLabel *IDERomBoxLabel;
+        TButton *Interface1Configure;
+        TButton *FDCRomBoxBrowse;
+        TButton *IDERomBoxBrowse;
+        TLabel *NoMicrodrivesLabel;
+        TComboBox *NoMicrodrivesComboBox;
+        TLabel *Plus3eNoticeLabel;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -223,17 +240,15 @@ __published:	// IDE-managed Components
         void __fastcall NTSCClick(TObject *Sender);
         void __fastcall EnableLowRAMClick(TObject *Sender);
         void __fastcall M1NotClick(TObject *Sender);
-        void __fastcall LambdaColourClick(TObject *Sender);
         void __fastcall SoundCardBoxChange(TObject *Sender);
         void __fastcall ChrGenBoxChange(TObject *Sender);
         void __fastcall HiResBoxChange(TObject *Sender);
         void __fastcall DriveATypeChange(TObject *Sender);
         void __fastcall DriveBTypeChange(TObject *Sender);
-        void __fastcall IF1ConfigClick(TObject *Sender);
+        void __fastcall Interface1ConfigureClick(TObject *Sender);
         void __fastcall MultifaceClick(TObject *Sender);
         void __fastcall IDEBoxChange(TObject *Sender);
-        void __fastcall FDCChange(TObject *Sender);
-        void __fastcall uSpeechClick(TObject *Sender);
+        void __fastcall FDCBoxChange(TObject *Sender);
         void __fastcall ZXpandClick(TObject *Sender);
         void __fastcall BrowseRomCartridgeClick(TObject *Sender);
         void __fastcall RomCartridgeBoxChange(TObject *Sender);
@@ -253,15 +268,33 @@ __published:	// IDE-managed Components
         void __fastcall TC2068RomCartridgeFileBoxChange(TObject *Sender);
         void __fastcall ZXpandEmulationInfoClick(TObject *Sender);
         void __fastcall SpeechBoxChange(TObject *Sender);
-        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall CancelClick(TObject *Sender);
         void __fastcall JoystickBoxChange(TObject *Sender);
         void __fastcall JoystickBoxMouseUp(TObject *Sender,
           TMouseButton Button, TShiftState Shift, int X, int Y);
+        void __fastcall DefaultsButtonClick(TObject *Sender);
+        void __fastcall JoystickBoxExit(TObject *Sender);
+        void __fastcall JoystickBoxKeyPress(TObject *Sender,
+          char &Key);
         void __fastcall JoystickBoxKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
-        void __fastcall JoystickBoxEnter(TObject *Sender);
-        void __fastcall DefaultsButtonClick(TObject *Sender);
+        void __fastcall ApplyClick(TObject *Sender);
+        void __fastcall KMouseClick(TObject *Sender);
+        void __fastcall SpecDrumClick(TObject *Sender);
+        void __fastcall JoystickLeftBoxChange(TObject *Sender);
+        void __fastcall JoystickRightBoxChange(TObject *Sender);
+        void __fastcall JoystickUpBoxChange(TObject *Sender);
+        void __fastcall JoystickDownBoxChange(TObject *Sender);
+        void __fastcall JoystickFireBoxChange(TObject *Sender);
+        void __fastcall ProtectROMClick(TObject *Sender);
+        void __fastcall Issue2Click(TObject *Sender);
+        void __fastcall ZXCFRAMChange(TObject *Sender);
+        void __fastcall RestoreButtonClick(TObject *Sender);
+        void __fastcall FDCRomBoxBrowseClick(TObject *Sender);
+        void __fastcall IDERomBoxBrowseClick(TObject *Sender);
+        void __fastcall FDCRomBoxChange(TObject *Sender);
+        void __fastcall IDERomBoxChange(TObject *Sender);
+        void __fastcall NoMicrodrivesComboBoxChange(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -269,9 +302,9 @@ private:	// User declarations
         bool ramPackSupplementsInternalRam;
         AnsiString NewMachineName;
         HWFormValues Hwform;
-        
-        void ReloadFromInternalSettings();
-        void SaveInternalSettings();
+
+        void LoadFromInternalSettings();
+        void SaveToInternalSettings();
         void RefreshDefaultRamSettings();
         void SetupForZX81(void);
         void SetupForSpectrum(void);
@@ -289,12 +322,21 @@ private:	// User declarations
         void DisplayTotalRam();
         int UpdateRomCartridgeControls(int machine, int spectrumModel);
         int DetermineRomCartridgeType(AnsiString cartridgeText, int machine, int spectrumModel);
-        bool ValidCharacter(TEdit* textBox);
+        bool ValidCharacter(TEdit* textBox, char newKey);
         void SetCharacter(TEdit* textBox, KeyInfo& keyInfo);
         int FindEntry(TComboBox* comboBox, AnsiString text);
+        void WriteNVMemory(BYTE* memory, int size, int count, const char* fileName);
+        void ReadNVMemory(BYTE* memory, int size, int count, const char* fileName);
+        void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
+        bool NewKey(TEdit* textBox, char key);
+        void LoadRomBox();
+        void UpdateApplyButton();
+        void SelectDefaultRom();
+        void LoadFdcRomBox();
+        void LoadIdeRomBox();
+        bool BrowseROMFile(AnsiString folder, TComboBox* romBox);
 
         void ConfigureRzxSupport();
-        void ReInitialiseSound();
         void ResetDebugger();
         void ConfigureDisplayArtifacts();
         void ConfigureM1Not();
@@ -317,7 +359,7 @@ private:	// User declarations
         void ConfigureHiRes();
         void ConfigureSound();
         void ConfigureSpeech();
-        void ConfigureSpectrumIDE();
+        void ConfigureIDE();
         void ConfigureFDC();
         void ConfigureMachineSettings();
         AnsiString DetermineRomBase();
@@ -326,6 +368,9 @@ private:	// User declarations
         void SetUpRomCartridges();
         void Configure8K16KRam();
         void ConfigureJoystick();
+        void ConfigureKeypad();
+        void ConfigureIDERom();
+        void ConfigureFDCRom();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;
@@ -333,12 +378,14 @@ private:	// User declarations
         vector<RomCartridgeEntry> sinclairRomCartridges;
 
 public:		// User declarations
-        bool ResetRequired;
         __fastcall THW(TComponent* Owner);
+        bool ResetRequired;
         void UpdateHardwareSettings(bool disableReset);
-        void SaveSettings(TIniFile *ini);
-        void LoadSettings(TIniFile *ini);
+        void SaveSettings(TIniFile* ini);
+        void LoadSettings(TIniFile* ini);
         void SetZXpandState(bool checked, bool enabled);
+        void UpdateSinclairJoystickKeys();
+        int SelectEntry(TComboBox* comboBox, AnsiString text);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE THW *HW;

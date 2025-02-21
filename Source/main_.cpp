@@ -127,7 +127,6 @@ char webBuffer[bufferLength];
 
 //---------------------------------------------------------------------------
 
-
 void __fastcall TForm1::WndProc(TMessage &Message)
 {
         switch(Message.Msg)
@@ -219,7 +218,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         ATA_Init();
         load_config();
         PCKbInit();
-        Digitalker.Init(speechRomsFolder);
+        Digitalker.Init(emulator.ROMSPEECHPATH);
 
         Application->OnDeactivate=FormDeactivate;
 
@@ -240,7 +239,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         delete ini;
 
-        //machine.fps=20;
         Timer2->Interval=1000;
 
         LEDGreenOn = new Graphics::TBitmap;
@@ -305,7 +303,13 @@ void __fastcall TForm1::FormResize(TObject *Sender)
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
+        if (IsKeyPressed(VK_ESCAPE))
+        {
+                Key = NULL;
+                return;
+        }
+
+        if ((Key==VK_SHIFT) && emulator.UseRShift) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyDown(Key);
@@ -315,7 +319,7 @@ void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
 void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
-        if ((Key==VK_SHIFT) && (emulator.UseRShift)) return;
+        if ((Key==VK_SHIFT) && emulator.UseRShift) return;
         if (Key==VK_LSHIFT) Key=VK_SHIFT;
         if (Key==VK_RSHIFT) Key=VK_CONTROL;
         PCKeyUp(Key);
@@ -457,10 +461,11 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Display1Click(TObject *Sender)
+void __fastcall TForm1::Hardware1Click(TObject *Sender)
 {
         PCAllKeysUp();
         HW->Show();
+        Hardware1->Checked=true;
 }
 //---------------------------------------------------------------------------
 
@@ -714,8 +719,16 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Dbg->DisableMemoryWindowAutoUpdates();
 
-        char escKey = 27;
+        char escKey = VK_ESCAPE;
         if (FullScreen) FormKeyPress(NULL, escKey);
+        
+        if (!Restart)
+        {
+                ini = new TIniFile(emulator.inipath);
+                SaveSettings(ini);
+                delete ini;
+        }
+
         if (machine.exit) machine.exit();
 
         emulation_stop=true;
@@ -724,16 +737,6 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         PCAllKeysUp();
 
         Sound.End();
-
-        if (!Restart)
-        {
-                ini = new TIniFile(emulator.inipath);
-                SaveSettings(ini);
-                delete ini;
-        }
-
-        P3Drive->DriveAEjectBtnClick(NULL);
-        P3Drive->DriveBEjectBtnClick(NULL);
 
         RenderEnd();
 
@@ -777,7 +780,6 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         if (Form1->Handle != OldhWnd)
         {
                 OldhWnd=Form1->Handle;
-                Sound.ReInitialise(OldhWnd, 0,0,0,0);
 
                 RenderEnd();
                 RenderInit();
@@ -806,7 +808,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 {
                         Filename=CommandLine[i];
 
-                        char escKey = 27;
+                        char escKey = VK_ESCAPE;
                         if (Filename.UpperCase()=="FULLSCREEN") FormKeyPress(NULL, escKey);
 
                         Ext = FileNameGetExt(Filename);
@@ -923,10 +925,11 @@ void __fastcall TForm1::WavLoadBtnClick(TObject *Sender)
 
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
 {
-
         extern void RecalcWinSize(void);
-        if (Key==' ') rzx_close();
-        if (Key==27)
+        if (Key == ' ') rzx_close();
+
+        // CTRL + [ generates the same key code as ESC and so an additional check is made to see if the right control key is being pressed
+        if (Key == VK_ESCAPE && !IsAsyncKeyPressed(VK_RCONTROL))
         {
                 FullScreen = !FullScreen;
 
@@ -1110,7 +1113,6 @@ void __fastcall TForm1::PauseZX81Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
 void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 {
         InverseVideo->Checked = !InverseVideo->Checked;
@@ -1121,167 +1123,198 @@ void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 
 void __fastcall TForm1::FormDeactivate(TObject *Sender)
 {
-        char escKey = 27;
+        char escKey = VK_ESCAPE;
         if (FullScreen) FormKeyPress(NULL, escKey);
 }
 //---------------------------------------------------------------------------
 
 void TForm1::LoadSettings(TIniFile *ini)
 {
-        if (ini->ReadBool("MAIN","InverseVideo",InverseVideo->Checked)) InverseVideoClick(NULL);
+        if (ini->ReadBool("MAIN", "InverseVideo", InverseVideo->Checked)) InverseVideoClick(NULL);
 
         emulator.checkInstallationPathLength = ini->ReadBool("MAIN", "CheckInstallationPathLength", 1);
 
         Keyboard1->Checked = ini->ReadBool("MAIN", "Keyboard1", Keyboard1->Checked);
-        Display1->Checked = ini->ReadBool("MAIN", "Display1", Display1->Checked);
-        Speed1->Checked = ini->ReadBool("MAIN", "Speed1", Speed1->Checked);
-        Sound1->Checked = ini->ReadBool("MAIN", "Sound1", Sound1->Checked);
+        Hardware1->Checked = ini->ReadBool("MAIN", "Hardware1", Hardware1->Checked);
+        Speed1->Checked    = ini->ReadBool("MAIN", "Speed1",    Speed1->Checked);
+        Sound1->Checked    = ini->ReadBool("MAIN", "Sound1",    Sound1->Checked);
 
         DisplayArt->Checked=ini->ReadBool("MAIN","DisplayArt",DisplayArt->Checked);
 
-        DebugWin->Checked = ini->ReadBool("MAIN", "DebugWin", DebugWin->Checked);
-        ViewPrinter->Checked = ini->ReadBool("MAIN", "ViewPrinter", ViewPrinter->Checked);
-        WavLoadBtn->Checked = ini->ReadBool("MAIN", "WavLoadBtn", WavLoadBtn->Checked);
-        KeyboardMap1->Checked = ini->ReadBool("MAIN", "KeyMap", KeyboardMap1->Checked);
-        TZXMan->Checked = ini->ReadBool("MAIN", "TZXManager", TZXMan->Checked);
-        DiskDrives1->Checked=ini->ReadBool("MAIN", "DiskDrives", DiskDrives1->Checked);
-        SoundOutput1->Checked = ini->ReadBool("MAIN", "SoundOutput", SoundOutput1->Checked);
+        DebugWin->Checked          = ini->ReadBool("MAIN", "DebugWin",     DebugWin->Checked);
+        ViewPrinter->Checked       = ini->ReadBool("MAIN", "ViewPrinter",  ViewPrinter->Checked);
+        WavLoadBtn->Checked        = ini->ReadBool("MAIN", "WavLoadBtn",   WavLoadBtn->Checked);
+        KeyboardMap1->Checked      = ini->ReadBool("MAIN", "KeyMap",       KeyboardMap1->Checked);
+        TZXMan->Checked            = ini->ReadBool("MAIN", "TZXManager",   TZXMan->Checked);
+        DiskDrives1->Checked       = ini->ReadBool("MAIN", "DiskDrives",   DiskDrives1->Checked);
+        SoundOutput1->Checked      = ini->ReadBool("MAIN", "SoundOutput",  SoundOutput1->Checked);
         BasicListerOption->Checked = ini->ReadBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
-        InWaveLoader->Checked = ini->ReadBool("MAIN", "InWave", InWaveLoader->Checked);
-        InTZXManager->Checked = ini->ReadBool("MAIN", "InTZX", InTZXManager->Checked);
-        OutWaveLoader->Checked = ini->ReadBool("MAIN", "OutWave", OutWaveLoader->Checked);
-        OutTZXManager->Checked = ini->ReadBool("MAIN", "OutTZX", OutTZXManager->Checked);
-        OutAudioOut->Checked = ini->ReadBool("MAIN", "OutAudio", OutAudioOut->Checked);
+        InWaveLoader->Checked  = ini->ReadBool("MAIN", "InWave",   InWaveLoader->Checked);
+        InTZXManager->Checked  = ini->ReadBool("MAIN", "InTZX",    InTZXManager->Checked);
+        OutWaveLoader->Checked = ini->ReadBool("MAIN", "OutWave",  OutWaveLoader->Checked);
+        OutTZXManager->Checked = ini->ReadBool("MAIN", "OutTZX",   OutTZXManager->Checked);
+        OutAudioOut->Checked   = ini->ReadBool("MAIN", "OutAudio", OutAudioOut->Checked);
 
-        None1->Checked = ini->ReadBool("MAIN", "BorderNone", None1->Checked);
-        Small1->Checked = ini->ReadBool("MAIN", "BorderSmall", Small1->Checked);
-        Normal1->Checked = ini->ReadBool("MAIN", "BorderNormal", Normal1->Checked);
-        Large1->Checked = ini->ReadBool("MAIN", "BorderLarge", Large1->Checked);
-        FullImage1->Checked = ini->ReadBool("MAIN", "BorderFull", FullImage1->Checked);
-        StatusBar2->Checked = ini->ReadBool("MAIN", "StatusBar", StatusBar2->Checked);
+        None1->Checked      = ini->ReadBool("MAIN", "BorderNone",   None1->Checked);
+        Small1->Checked     = ini->ReadBool("MAIN", "BorderSmall",  Small1->Checked);
+        Normal1->Checked    = ini->ReadBool("MAIN", "BorderNormal", Normal1->Checked);
+        Large1->Checked     = ini->ReadBool("MAIN", "BorderLarge",  Large1->Checked);
+        FullImage1->Checked = ini->ReadBool("MAIN", "BorderFull",   FullImage1->Checked);
+        StatusBar2->Checked = ini->ReadBool("MAIN", "StatusBar",    StatusBar2->Checked);
 
-        OpenTape1->FileName=ini->ReadString("MAIN","LoadFile",OpenTape1->FileName);
-        OpenTape1->FilterIndex=ini->ReadInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
+        OpenTape1->FileName    = ini->ReadString( "MAIN", "LoadFile",       OpenTape1->FileName);
+        OpenTape1->FilterIndex = ini->ReadInteger("MAIN", "LoadFileFilter", OpenTape1->FilterIndex);
 
-        SpectraColourEnable->Checked = ini->ReadBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
-        ChromaColourEnable->Checked = ini->ReadBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+        SpectraColourEnable->Checked      = ini->ReadBool("MAIN", "SpectraColourEnable",      SpectraColourEnable->Checked);
+        ChromaColourEnable->Checked       = ini->ReadBool("MAIN", "ChromaColourEnable",       ChromaColourEnable->Checked);
+        ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
+        ConnectJoystick1->Checked         = ini->ReadBool("MAIN", "ConnectJoystick1",         ConnectJoystick1->Checked);
+        ConnectJoystick2->Checked         = ini->ReadBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
+        EnableJoystick1AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
+        EnableJoystick2AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
 
-        HorizontalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
-        VerticalSyncPulse->Checked = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
-        RomDisplayDriver->Checked = ini->ReadBool("MAIN", "ColouriseRomDisplayDriver", RomDisplayDriver->Checked);
-        BackPorch->Checked = ini->ReadBool("MAIN", "ColouriseBackPorch", BackPorch->Checked);
-        NonMaskableInterruptResponse->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponse", NonMaskableInterruptResponse->Checked);
-        NonMaskableInterruptResponseWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates", NonMaskableInterruptResponseWaitStates->Checked);
-        NonMaskableInterruptServiceRoutine->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine", NonMaskableInterruptServiceRoutine->Checked);
+        machine.joystick1Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick1Controller", -1);
+        machine.joystick2Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick2Controller", -1);
+
+        divIDEJumperEClosed->Checked    = ini->ReadBool("MAIN", "divIDEJumperEClosed",    divIDEJumperEClosed->Checked);
+        ZXCFUploadJumperClosed->Checked = ini->ReadBool("MAIN", "ZXCFUploadJumperClosed", ZXCFUploadJumperClosed->Checked);
+        SimpleIdeRomEnabled->Checked    = ini->ReadBool("MAIN", "SimpleIdeRomEnabled",    SimpleIdeRomEnabled->Checked);
+
+        HorizontalSyncPulse->Checked                         = ini->ReadBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
+        VerticalSyncPulse->Checked                           = ini->ReadBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);
+        RomDisplayDriver->Checked                            = ini->ReadBool("MAIN", "ColouriseRomDisplayDriver",                            RomDisplayDriver->Checked);
+        BackPorch->Checked                                   = ini->ReadBool("MAIN", "ColouriseBackPorch",                                   BackPorch->Checked);
+        NonMaskableInterruptResponse->Checked                = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponse",                NonMaskableInterruptResponse->Checked);
+        NonMaskableInterruptResponseWaitStates->Checked      = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates",      NonMaskableInterruptResponseWaitStates->Checked);
+        NonMaskableInterruptServiceRoutine->Checked          = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine",          NonMaskableInterruptServiceRoutine->Checked);
         NonMaskableInterruptServiceRoutineRecursion->Checked = ini->ReadBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutineRecursion", NonMaskableInterruptServiceRoutineRecursion->Checked);
-        MaskableInterruptResponse->Checked = ini->ReadBool("MAIN", "ColouriseMaskableInterruptResponse", MaskableInterruptResponse->Checked);
-        MaskableInterruptServiceRoutine->Checked = ini->ReadBool("MAIN", "ColouriseMaskableInterruptServiceRoutine", MaskableInterruptServiceRoutine->Checked);
-        InstructionStraddlingNMI->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
-        InstructionStraddlingNMIWaitStates->Checked = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
-        Z80Halted->Checked = ini->ReadBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
-        UserProgramInstructionStartPositions->Checked = ini->ReadBool("MAIN", "ColouriseUserProgramInstructionStartPositions", UserProgramInstructionStartPositions->Checked);
+        MaskableInterruptResponse->Checked                   = ini->ReadBool("MAIN", "ColouriseMaskableInterruptResponse",                   MaskableInterruptResponse->Checked);
+        MaskableInterruptServiceRoutine->Checked             = ini->ReadBool("MAIN", "ColouriseMaskableInterruptServiceRoutine",             MaskableInterruptServiceRoutine->Checked);
+        InstructionStraddlingNMI->Checked                    = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMI",                    InstructionStraddlingNMI->Checked);
+        InstructionStraddlingNMIWaitStates->Checked          = ini->ReadBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates",          InstructionStraddlingNMIWaitStates->Checked);
+        Z80Halted->Checked                                   = ini->ReadBool("MAIN", "ColouriseZ80Halted",                                   Z80Halted->Checked);
+        UserProgramInstructionStartPositions->Checked        = ini->ReadBool("MAIN", "ColouriseUserProgramInstructionStartPositions",        UserProgramInstructionStartPositions->Checked);
 
         UpdateEmulatorAnnotationSettings();
         UpdateAnnotationImages();
 
-        if (None1->Checked) { emulator.bordersize=BORDERNONE; None1Click(NULL); }
-        if (Small1->Checked) { emulator.bordersize=BORDERSMALL; Small1Click(NULL); }
-        if (Normal1->Checked) { emulator.bordersize=BORDERNORMAL; Normal1Click(NULL); }
-        if (Large1->Checked) { emulator.bordersize=BORDERLARGE; Large1Click(NULL); }
-        if (FullImage1->Checked) { emulator.bordersize=BORDERFULL; FullImage1Click(NULL); }
+        if (None1->Checked)      { emulator.bordersize=BORDERNONE;   None1Click(NULL); }
+        if (Small1->Checked)     { emulator.bordersize=BORDERSMALL;  Small1Click(NULL); }
+        if (Normal1->Checked)    { emulator.bordersize=BORDERNORMAL; Normal1Click(NULL); }
+        if (Large1->Checked)     { emulator.bordersize=BORDERLARGE;  Large1Click(NULL); }
+        if (FullImage1->Checked) { emulator.bordersize=BORDERFULL;   FullImage1Click(NULL); }
 
-        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked ? 1:0);
-        emulator.TZXin = (CFGBYTE)(InTZXManager->Checked ? 1:0);
-        emulator.TZXout = (CFGBYTE)(OutTZXManager->Checked ? 1:0);
+        emulator.audioout = (CFGBYTE)(OutAudioOut->Checked   ? 1 : 0);
+        emulator.TZXin    = (CFGBYTE)(InTZXManager->Checked  ? 1 : 0);
+        emulator.TZXout   = (CFGBYTE)(OutTZXManager->Checked ? 1 : 0);
+
+        spectrum.spectrum128Keypad       = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
+        spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked      ? 1 : 0);
+        zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked       ? 1 : 0);
+
+        machine.joystick1Connected       = (CFGBYTE)(ConnectJoystick1->Checked         ? 1 : 0);
+        machine.joystick2Connected       = (CFGBYTE)(ConnectJoystick2->Checked         ? 1 : 0);
+        machine.joystick1AutoFireEnabled = (CFGBYTE)(EnableJoystick1AutoFire->Checked  ? 1 : 0);
+        machine.joystick2AutoFireEnabled = (CFGBYTE)(EnableJoystick2AutoFire->Checked  ? 1 : 0);
 
         AccurateInit(true);
 
-        if (ini->ReadBool("MAIN","N1001",N1001->Checked)) N1001Click(NULL);
-        if (ini->ReadBool("MAIN","N2001",N2001->Checked)) N2001Click(NULL);
-        if (ini->ReadBool("MAIN","N4001",N4001->Checked)) N4001Click(NULL);
-        if (ini->ReadBool("MAIN","UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
+        if (ini->ReadBool("MAIN", "N1001",N1001->Checked)) N1001Click(NULL);
+        if (ini->ReadBool("MAIN", "N2001",N2001->Checked)) N2001Click(NULL);
+        if (ini->ReadBool("MAIN", "N4001",N4001->Checked)) N4001Click(NULL);
+        if (ini->ReadBool("MAIN", "UserDefined",UserDefined1->Checked)) UserDefined1Click(NULL);
         if (!StatusBar2->Checked) StatusBar2Click(NULL);
 
-        Top = ini->ReadInteger("MAIN","Top",0);
-        Left = ini->ReadInteger("MAIN","Left",0);
+        Top  = ini->ReadInteger("MAIN", "Top",  0);
+        Left = ini->ReadInteger("MAIN", "Left", 0);
 
         // The start up height and width are transferred to the real height and width on the first timer event.
-        StartUpHeight = ini->ReadInteger("MAIN","Height",0);
-        StartUpWidth = ini->ReadInteger("MAIN","Width",0);
+        StartUpHeight = ini->ReadInteger("MAIN", "Height", 0);
+        StartUpWidth  = ini->ReadInteger("MAIN", "Width",  0);
 
         // Always default to the 100% to begin with, before changing to real dimensions upon the next timer event
         ClientHeight = BaseHeight + (StatusBar1->Visible ? StatusBar1->Height : 0);
-        ClientWidth = BaseWidth;
+        ClientWidth  = BaseWidth;
 }
 
 void TForm1::SaveSettings(TIniFile *ini)
 {
-        ini->WriteInteger("MAIN","Top",Top);
-        ini->WriteInteger("MAIN","Left",Left);
-        ini->WriteInteger("MAIN","Height",ClientHeight);
-        ini->WriteInteger("MAIN","Width",ClientWidth);
+        ini->WriteInteger("MAIN", "Top",    Top);
+        ini->WriteInteger("MAIN", "Left",   Left);
+        ini->WriteInteger("MAIN", "Height", ClientHeight);
+        ini->WriteInteger("MAIN", "Width",  ClientWidth);
 
-        ini->WriteBool("MAIN", "ShowSplash", ShowSplash);
-        ini->WriteInteger("MAIN","RenderMode", RenderMode);
-        ini->WriteInteger("MAIN","CheckInstallationPathLength", emulator.checkInstallationPathLength);
+        ini->WriteBool(   "MAIN", "ShowSplash", ShowSplash);
+        ini->WriteInteger("MAIN", "RenderMode", RenderMode);
+        ini->WriteInteger("MAIN", "CheckInstallationPathLength", emulator.checkInstallationPathLength);
 
-        ini->WriteBool("MAIN","N1001",N1001->Checked);
-        ini->WriteBool("MAIN","N2001",N2001->Checked);
-        ini->WriteBool("MAIN","N4001",N4001->Checked);
-        ini->WriteBool("MAIN","UserDefined",UserDefined1->Checked);
+        ini->WriteBool("MAIN", "N1001",       N1001->Checked);
+        ini->WriteBool("MAIN", "N2001",       N2001->Checked);
+        ini->WriteBool("MAIN", "N4001",       N4001->Checked);
+        ini->WriteBool("MAIN", "UserDefined", UserDefined1->Checked);
 
-        //ini->WriteBool("MAIN","Fast1",Fast1->Checked);
-        //ini->WriteBool("MAIN","Accurate1",Accurate1->Checked);
-        ini->WriteBool("MAIN","InverseVideo",InverseVideo->Checked);
-        ini->WriteBool("MAIN","DisplayArt",DisplayArt->Checked);
-        ini->WriteBool("MAIN","StatusBar",StatusBar2->Checked);
+        ini->WriteBool("MAIN", "InverseVideo", InverseVideo->Checked);
+        ini->WriteBool("MAIN", "DisplayArt",   DisplayArt->Checked);
+        ini->WriteBool("MAIN", "StatusBar",    StatusBar2->Checked);
 
         ini->WriteBool("MAIN", "Keyboard1", Keyboard1->Checked);
-        ini->WriteBool("MAIN", "Display1", Display1->Checked);
-        ini->WriteBool("MAIN", "Speed1", Speed1->Checked);
-        ini->WriteBool("MAIN", "InWave", InWaveLoader->Checked);
-        ini->WriteBool("MAIN", "InTZX", InTZXManager->Checked);
-        ini->WriteBool("MAIN", "OutWave", OutWaveLoader->Checked);
-        ini->WriteBool("MAIN", "OutTZX", OutTZXManager->Checked);
-        ini->WriteBool("MAIN", "OutAudio", OutAudioOut->Checked);
-        ini->WriteBool("MAIN", "Sound1", Sound1->Checked);
+        ini->WriteBool("MAIN", "Hardware1", Hardware1->Checked);
+        ini->WriteBool("MAIN", "Speed1",    Speed1->Checked);
+        ini->WriteBool("MAIN", "InWave",    InWaveLoader->Checked);
+        ini->WriteBool("MAIN", "InTZX",     InTZXManager->Checked);
+        ini->WriteBool("MAIN", "OutWave",   OutWaveLoader->Checked);
+        ini->WriteBool("MAIN", "OutTZX",    OutTZXManager->Checked);
+        ini->WriteBool("MAIN", "OutAudio",  OutAudioOut->Checked);
+        ini->WriteBool("MAIN", "Sound1",    Sound1->Checked);
 
-        ini->WriteBool("MAIN", "BorderNone", None1->Checked);
-        ini->WriteBool("MAIN", "BorderSmall", Small1->Checked);
+        ini->WriteBool("MAIN", "BorderNone",   None1->Checked);
+        ini->WriteBool("MAIN", "BorderSmall",  Small1->Checked);
         ini->WriteBool("MAIN", "BorderNormal", Normal1->Checked);
-        ini->WriteBool("MAIN", "BorderLarge", Large1->Checked);
-        ini->WriteBool("MAIN", "BorderFull", FullImage1->Checked);
+        ini->WriteBool("MAIN", "BorderLarge",  Large1->Checked);
+        ini->WriteBool("MAIN", "BorderFull",   FullImage1->Checked);
 
-        ini->WriteBool("MAIN", "DebugWin", DebugWin->Checked);
-        ini->WriteBool("MAIN", "ViewPrinter", ViewPrinter->Checked);
-        ini->WriteBool("MAIN", "WavLoadBtn", WavLoadBtn->Checked);
-        ini->WriteBool("MAIN", "KeyMap", KeyboardMap1->Checked);
-        ini->WriteBool("MAIN", "TZXManager", TZXMan->Checked);
-        ini->WriteBool("MAIN", "DiskDrives", DiskDrives1->Checked);
-        ini->WriteBool("MAIN", "SoundOutput", SoundOutput1->Checked);
+        ini->WriteBool("MAIN", "DebugWin",     DebugWin->Checked);
+        ini->WriteBool("MAIN", "ViewPrinter",  ViewPrinter->Checked);
+        ini->WriteBool("MAIN", "WavLoadBtn",   WavLoadBtn->Checked);
+        ini->WriteBool("MAIN", "KeyMap",       KeyboardMap1->Checked);
+        ini->WriteBool("MAIN", "TZXManager",   TZXMan->Checked);
+        ini->WriteBool("MAIN", "DiskDrives",   DiskDrives1->Checked);
+        ini->WriteBool("MAIN", "SoundOutput",  SoundOutput1->Checked);
         ini->WriteBool("MAIN", "BasicListing", BasicListerOption->Checked);
 
-        ini->WriteString("MAIN","LoadFile",OpenTape1->FileName);
-        ini->WriteInteger("MAIN","LoadFileFilter", OpenTape1->FilterIndex);
+        ini->WriteString("MAIN", "LoadFile",        OpenTape1->FileName);
+        ini->WriteInteger("MAIN", "LoadFileFilter", OpenTape1->FilterIndex);
 
-        ini->WriteBool("MAIN", "SpectraColourEnable", SpectraColourEnable->Checked);
-        ini->WriteBool("MAIN", "ChromaColourEnable", ChromaColourEnable->Checked);
+        ini->WriteBool("MAIN", "SpectraColourEnable",      SpectraColourEnable->Checked);
+        ini->WriteBool("MAIN", "ChromaColourEnable",       ChromaColourEnable->Checked);
+        ini->WriteBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
+        ini->WriteBool("MAIN", "ConnectJoystick1",         ConnectJoystick1->Checked);
+        ini->WriteBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
+        ini->WriteBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
+        ini->WriteBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
 
-        ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse", HorizontalSyncPulse->Checked);
-        ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse", VerticalSyncPulse->Checked);
-        ini->WriteBool("MAIN", "ColouriseRomDisplayDriver", RomDisplayDriver->Checked);
-        ini->WriteBool("MAIN", "ColouriseBackPorch", BackPorch->Checked);
-        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponse", NonMaskableInterruptResponse->Checked);
-        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates", NonMaskableInterruptResponseWaitStates->Checked);
-        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine", NonMaskableInterruptServiceRoutine->Checked);
+        ini->WriteInteger("MAIN", "Joystick1Controller", machine.joystick1Controller);
+        ini->WriteInteger("MAIN", "Joystick2Controller", machine.joystick2Controller);
+
+        ini->WriteBool("MAIN", "divIDEJumperEClosed",    divIDEJumperEClosed->Checked);
+        ini->WriteBool("MAIN", "ZXCFUploadJumperClosed", ZXCFUploadJumperClosed->Checked);
+        ini->WriteBool("MAIN", "SimpleIdeRomEnabled",    SimpleIdeRomEnabled->Checked);
+
+        ini->WriteBool("MAIN", "ColouriseHorizontalSyncPulse",                         HorizontalSyncPulse->Checked);
+        ini->WriteBool("MAIN", "ColouriseVerticalSyncPulse",                           VerticalSyncPulse->Checked);
+        ini->WriteBool("MAIN", "ColouriseRomDisplayDriver",                            RomDisplayDriver->Checked);
+        ini->WriteBool("MAIN", "ColouriseBackPorch",                                   BackPorch->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponse",                NonMaskableInterruptResponse->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptResponseWaitStates",      NonMaskableInterruptResponseWaitStates->Checked);
+        ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutine",          NonMaskableInterruptServiceRoutine->Checked);
         ini->WriteBool("MAIN", "ColouriseNonMaskableInterruptServiceRoutineRecursion", NonMaskableInterruptServiceRoutineRecursion->Checked);
-        ini->WriteBool("MAIN", "ColouriseMaskableInterruptResponse", MaskableInterruptResponse->Checked);
-        ini->WriteBool("MAIN", "ColouriseMaskableInterruptServiceRoutine", MaskableInterruptServiceRoutine->Checked);
-        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMI", InstructionStraddlingNMI->Checked);
-        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates", InstructionStraddlingNMIWaitStates->Checked);
-        ini->WriteBool("MAIN", "ColouriseZ80Halted", Z80Halted->Checked);
-        ini->WriteBool("MAIN", "ColouriseUserProgramInstructionStartPositions", UserProgramInstructionStartPositions->Checked);
+        ini->WriteBool("MAIN", "ColouriseMaskableInterruptResponse",                   MaskableInterruptResponse->Checked);
+        ini->WriteBool("MAIN", "ColouriseMaskableInterruptServiceRoutine",             MaskableInterruptServiceRoutine->Checked);
+        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMI",                    InstructionStraddlingNMI->Checked);
+        ini->WriteBool("MAIN", "ColouriseInstructionStraddlingNMIWaitStates",          InstructionStraddlingNMIWaitStates->Checked);
+        ini->WriteBool("MAIN", "ColouriseZ80Halted",                                   Z80Halted->Checked);
+        ini->WriteBool("MAIN", "ColouriseUserProgramInstructionStartPositions",        UserProgramInstructionStartPositions->Checked);
 
         Keyboard->SaveSettings(ini);
         Speed->SaveSettings(ini);
@@ -1297,6 +1330,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         FSSettings->SaveSettings(ini);
         P3Drive->SaveSettings(ini);
         SoundOutput->SaveSettings(ini);
+        ZX97Dialog->SaveSettings(ini);
         IF1->SaveSettings(ini);
         ParallelPort->SaveSettings(ini);
         MidiForm->SaveSettings(ini);
@@ -1320,12 +1354,6 @@ void __fastcall TForm1::Sound1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::DBG1Click(TObject *Sender)
-{
-        DBG1->Checked=!DBG1->Checked;
-        HW->Show();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TForm1::HelpTopics2Click(TObject *Sender)
 {
@@ -1497,7 +1525,8 @@ void TForm1::DoAutoLoad(void)
 #define AUTOINC(i)  (340+i*10)
 
         if (emulator.machine==MACHINEACE) return;
-        bool zx80 = (emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom");
+
+        bool zx80 = (emulator.machine == MACHINEZX80) && (emulator.romcrc == CRCZX80);
 
         switch(AutoLoadCount)
         {
@@ -1612,7 +1641,7 @@ void __fastcall TForm1::StatusBar2Click(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm1::IFace1Click(TObject *Sender)
+void __fastcall TForm1::Interface1PortsClick(TObject *Sender)
 {
         IF1->ShowModal();
 }
@@ -1676,15 +1705,15 @@ void __fastcall TForm1::StatusBar1DrawPanel(TStatusBar *StatusBar,
                 R=Rect;
                 StatusBar->Canvas->Brush->Color = clBtnFace;
                 StatusBar->Canvas->FillRect(R);
-                if (spectrum.drivebusy!=-1)
+                if (machine.drivebusy!=-1)
                 {
-                        if (spectrum.floppytype == FLOPPYIF1)
+                        if (machine.floppytype == FLOPPYIF1)
                         {
-                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, spectrum.drivebusy ? LEDRedOn:LEDRedOff );
+                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, machine.drivebusy ? LEDRedOn:LEDRedOff );
                         }
                         else
                         {
-                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, spectrum.drivebusy ? LEDGreenOn:LEDGreenOff );
+                                StatusBar->Canvas->Draw( R.Left+2, R.Top+2, machine.drivebusy ? LEDGreenOn:LEDGreenOff );
                         }
                 }
         }
@@ -1838,6 +1867,9 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
 
         struct stat buffer;
         AnsiString webPath = Path + ClickedItem->Caption + ".web";
+        AnsiString pdfPath = Path + ClickedItem->Caption + ".pdf";
+        AnsiString refPath = Path + ClickedItem->Caption + ".ref";
+
         if (stat(webPath.c_str(), &buffer) == 0)
         {
                 FILE* filePointer = fopen(webPath.c_str(), "r");
@@ -1852,18 +1884,27 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
                         }
                 }
         }
-        else
+        else if (stat(pdfPath.c_str(), &buffer) == 0)
         {
-                AnsiString pdfPath = Path + ClickedItem->Caption + ".pdf";
-                if (stat(pdfPath.c_str(), &buffer) == 0)
+                Path += ClickedItem->Caption + ".pdf";
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
+        else if (stat(refPath.c_str(), &buffer) == 0)
+        {
+                char refText[256];
+                FILE* f = fopen(refPath.c_str(), "rb");
+                if (f)
                 {
-                        Path += ClickedItem->Caption + ".pdf";
-                }
-                else
-                {
-                        Path += ClickedItem->Caption + ".txt";
+                        fgets(refText, sizeof(refText), f);
+                        fclose(f);
                 }
 
+                Path += refText;
+                ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
+        }
+        else
+        {
+                Path += ClickedItem->Caption + ".txt";
                 ShellExecute(NULL, "open", Path.c_str(), NULL, NULL, SW_NORMAL);
         }
 }
@@ -2121,7 +2162,7 @@ void __fastcall TForm1::SaveScreenshot1Click(TObject *Sender)
 }
 
 //---------------------------------------------------------------------------
-void __fastcall TForm1::PrinterPort1Click(TObject *Sender)
+void __fastcall TForm1::PrinterPortClick(TObject *Sender)
 {
         ParallelPort->ShowModal();
 }
@@ -2304,8 +2345,8 @@ void __fastcall TForm1::RunFrame()
 
         if (emulator.UseRShift)
         {
-                bool L=((GetAsyncKeyState(VK_LSHIFT)&32768)!=0);
-                bool R=((GetAsyncKeyState(VK_RSHIFT)&32768)!=0);
+                bool L=IsAsyncKeyPressed(VK_LSHIFT);
+                bool R=IsAsyncKeyPressed(VK_RSHIFT);
                 TShiftState z;
 
                 if (R != RShift)
@@ -2332,11 +2373,11 @@ void __fastcall TForm1::RunFrame()
         }
         if (AutoLoadCount) DoAutoLoad();
 
-        if (spectrum.drivebusy != Drive)
+        if (machine.drivebusy != Drive)
         {
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
-                Drive=spectrum.drivebusy;
+                Drive=machine.drivebusy;
         }
 
         if (spectrum.kmouse)
@@ -2741,7 +2782,7 @@ void __fastcall TForm1::DeleteConfigItem1Click(TObject *Sender)
 void __fastcall TForm1::divIDEJumperEClosedClick(TObject *Sender)
 {
         divIDEJumperEClosed->Checked = !divIDEJumperEClosed->Checked;
-        spectrum.divIDEJumperEClosed = divIDEJumperEClosed->Checked;
+        machine.divIDEJumperEClosed = divIDEJumperEClosed->Checked;
 }
 //---------------------------------------------------------------------------
 
@@ -2794,8 +2835,7 @@ void __fastcall TForm1::ResetSpeechClick(TObject *Sender)
            
 void __fastcall TForm1::EnableJoystick1AutoFireClick(TObject *Sender)
 {
-        EnableJoystick1AutoFire->Checked = !EnableJoystick1AutoFire->Checked;
-
+        EnableJoystick1AutoFire->Checked = !EnableJoystick1AutoFire->Checked; 
         machine.joystick1AutoFireEnabled = EnableJoystick1AutoFire->Checked;
 }
 //---------------------------------------------------------------------------
@@ -2803,8 +2843,169 @@ void __fastcall TForm1::EnableJoystick1AutoFireClick(TObject *Sender)
 void __fastcall TForm1::EnableJoystick2AutoFireClick(TObject *Sender)
 {
         EnableJoystick2AutoFire->Checked = !EnableJoystick2AutoFire->Checked;
-
         machine.joystick2AutoFireEnabled = EnableJoystick2AutoFire->Checked;
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::ZXCFUploadJumperClosedClick(TObject *Sender)
+{
+        ZXCFUploadJumperClosed->Checked = !ZXCFUploadJumperClosed->Checked;
+        machine.zxcfUploadJumperClosed = ZXCFUploadJumperClosed->Checked;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectSpectrum128KeypadClick(TObject *Sender)
+{
+        ConnectSpectrum128Keypad->Checked = !ConnectSpectrum128Keypad->Checked;
+        spectrum.spectrum128Keypad = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
+        Keyboard->KbChange();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectJoystick1Click(TObject *Sender)
+{
+        ConnectJoystick1->Checked = !ConnectJoystick1->Checked;
+        machine.joystick1Connected = ConnectJoystick1->Checked;
+
+        bool joystick2MappedToGameController = (machine.joystick2Controller >= 0);
+        if (!joystick2MappedToGameController)
+        {
+                machine.joystick2Connected = 0;
+        }
+
+        UpdateJoystickMenuOptions();
+        HW->UpdateSinclairJoystickKeys();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
+{
+        ConnectJoystick2->Checked = !ConnectJoystick2->Checked;
+        machine.joystick2Connected = ConnectJoystick2->Checked;
+
+        bool joystick1MappedToGameController = (machine.joystick1Controller >= 0);
+        if (!joystick1MappedToGameController)
+        {
+                machine.joystick1Connected = 0;
+        }
+
+        UpdateJoystickMenuOptions();
+        HW->UpdateSinclairJoystickKeys();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ZoomFullScreenClick(TObject *Sender)
+{
+        char escKey = VK_ESCAPE;
+        FormKeyPress(Sender, escKey);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SimpleIdeRomEnabledClick(TObject *Sender)
+{
+        SimpleIdeRomEnabled->Checked = !SimpleIdeRomEnabled->Checked;
+        machine.simpleIdeRomEnabled = SimpleIdeRomEnabled->Checked;
+}
+//---------------------------------------------------------------------------
+
+void TForm1::BuildMenuJoystickSelection()
+{
+        if (machine.joystick1Controller >= 0 && !controllerPresent[machine.joystick1Controller])
+        {
+                machine.joystick1Controller = -1;
+        }
+
+        if (machine.joystick2Controller >= 0 && !controllerPresent[machine.joystick2Controller])
+        {
+                machine.joystick2Controller = -1;
+        }
+
+        SelectJoystick1->Clear();
+        SelectJoystick2->Clear();
+
+        for (int i = -1; i < 16; i++)
+        {
+                TMenuItem* selectJoystick1SubMenuEntry = new TMenuItem(SelectJoystick1);
+                TMenuItem* selectJoystick2SubMenuEntry = new TMenuItem(SelectJoystick2);
+
+                AnsiString menuEntryCaption;
+                if (i >= 0)
+                {
+                        menuEntryCaption = "Game Controller " + IntToStr(i + 1);
+                }
+                else
+                {
+                        menuEntryCaption = "None";
+                }
+                
+                SelectJoystick1->Add(selectJoystick1SubMenuEntry);
+                selectJoystick1SubMenuEntry->Caption = menuEntryCaption.c_str();
+                selectJoystick1SubMenuEntry->Tag = i;
+                selectJoystick1SubMenuEntry->Visible = (i== -1) || controllerPresent[i];
+                selectJoystick1SubMenuEntry->OnClick = SelectJoystick1Click;
+
+                SelectJoystick2->Add(selectJoystick2SubMenuEntry);
+                selectJoystick2SubMenuEntry->Caption = menuEntryCaption.c_str();
+                selectJoystick2SubMenuEntry->Tag = i;
+                selectJoystick2SubMenuEntry->Visible = (i== -1) || controllerPresent[i];
+                selectJoystick2SubMenuEntry->OnClick = SelectJoystick2Click;
+
+                if (machine.joystick1Controller == i)
+                {
+                        selectJoystick1SubMenuEntry->Checked = true;
+                        if (i >= 0) selectJoystick2SubMenuEntry->Enabled = false;
+                }
+                
+                if (machine.joystick2Controller == i)
+                {
+                        selectJoystick2SubMenuEntry->Checked = true;
+                        if (i >= 0) selectJoystick1SubMenuEntry->Enabled = false;
+                }
+        }
+
+        UpdateJoystickMenuOptions();
+}
+
+void TForm1::UpdateJoystickMenuOptions()
+{
+        bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
+        bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
+
+        SelectJoystick1->Enabled = joystickInterfaceSelected;
+        SelectJoystick2->Enabled = twinJoystickInterfaceSelected;
+
+        SetJoystick1Controller(machine.joystick1Controller);
+        SetJoystick2Controller(machine.joystick2Controller);
+
+        bool joystick1MappedToGameController = (machine.joystick1Controller >= 0);
+        bool joystick1Available = (joystickInterfaceSelected && (joystick1MappedToGameController || (!machine.joystick2Connected && emulator.UseNumericPadForJoystick)));
+        ConnectJoystick1->Enabled = joystick1Available;
+        EnableJoystick1AutoFire->Enabled = machine.joystick1Connected;
+
+        bool joystick2MappedToGameController = (machine.joystick2Controller >= 0);
+        bool joystick2Available = (twinJoystickInterfaceSelected && (joystick2MappedToGameController || (!machine.joystick1Connected && emulator.UseNumericPadForJoystick)));
+        ConnectJoystick2->Enabled = joystick2Available;
+        EnableJoystick2AutoFire->Enabled = machine.joystick2Connected;
+}
+
+void __fastcall TForm1::SelectJoystick1Click(TObject *Sender)
+{
+        TMenuItem* menuItem = (TMenuItem*)Sender;
+
+        if (menuItem->Tag == -1 || (menuItem->Tag != machine.joystick1Controller && menuItem->Tag != machine.joystick2Controller))
+        {
+                machine.joystick1Controller = (CFGBYTE)menuItem->Tag;
+                BuildMenuJoystickSelection();
+        }
+}
+
+void __fastcall TForm1::SelectJoystick2Click(TObject *Sender)
+{
+        TMenuItem* menuItem = (TMenuItem*)Sender;
+
+        if (menuItem->Tag == -1 || (menuItem->Tag != machine.joystick2Controller && menuItem->Tag != machine.joystick1Controller))
+        {
+                machine.joystick2Controller = (CFGBYTE)menuItem->Tag;
+                BuildMenuJoystickSelection();
+        }
+}

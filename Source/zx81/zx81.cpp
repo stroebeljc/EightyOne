@@ -49,6 +49,7 @@
 #include "floppy.h"
 #include "Digitalkdrv.h"
 #include "Joystick.h"
+#include "main_.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -70,6 +71,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length);
 
 void add_blank(SCANLINE *line, int clockCount, BYTE colour);
 
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 extern AnsiString getMachineRoot(AnsiString fullRomName);
 
 extern void LogOutAccess(int address, BYTE data);
@@ -87,6 +89,8 @@ extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
+
+extern AnsiString PrependFolder(AnsiString folder, char* romFile);
 
 static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0xFF;
@@ -222,6 +226,32 @@ extern long noise;
 
 extern int font_load(const char*, char*,int);
 
+AnsiString AdjustPathIfReplacementRom(char* curRom)
+{
+        AnsiString romPath = emulator.cwd;
+        romPath += romsFolder;
+        romPath += curRom;
+
+        AnsiString rom = curRom;
+
+        if (!FileExists(romPath))
+        {
+                rom = replacementRomsFolder;
+                rom += curRom;
+
+                romPath = emulator.cwd;
+                romPath += romsFolder;
+                romPath += rom;
+
+                if (!FileExists(romPath))
+                {
+                        rom = curRom;
+                }
+        }
+
+        return rom;
+}
+
 BYTE get_i_reg(void)
 {
         return(z80.i);
@@ -234,6 +264,7 @@ void zx81_reset()
         DisableChroma();
 
         InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void zx81_initialise()
@@ -287,7 +318,8 @@ void zx81_initialise()
                         romname = overlayName;
                 }
         }
-        romlen=memory_load(romname.c_str(), 0, 65536);
+        AnsiString romPath = AdjustPathIfReplacementRom(romname.c_str());
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
         if (zx81.extfont) font_load("lambda8300characterset.bin",(char*)font,512);
@@ -306,7 +338,7 @@ void zx81_initialise()
         if (emulator.machine==MACHINEZX97LE)
         {
                 for(i=0;i<8191;i++) memory[i+0xa000]=memory[i+0x2000];
-                for(i=0;i<16384;i++) zx97.bankmem[i]=memory[i+0x4000];
+                for(i=0;i<16384;i++) zx97bankmem[i]=memory[i+0x4000];
                 zx81.ROMTOP=8191;
         }
 
@@ -324,9 +356,11 @@ void zx81_initialise()
                 memory_device_rom_load(emulator.ROMG007,10240,2048);
         }
 
-        if (spectrum.floppytype==FLOPPYLARKEN81)
+        if (machine.floppytype==FLOPPYLARKEN81)
         {
-                memory_device_rom_load(emulator.ROMLARKEN81, 14336, 2048);
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMLARKEN81);
+                memory_device_rom_load(romFile.c_str(), 14336, 2048);
+
                 memory[0x38DC] = 0x2B;
                 memory[0x38DD] = 0x0F;
                 memory[0x38DE] = 0xC9;
@@ -339,11 +373,13 @@ void zx81_initialise()
                 memory[12301]=0;
         }
 
-        if (spectrum.HDType==HDPITERSCF)
+        if (machine.HDType==HDSIMPLECF)
         {
                 ATA_Reset();
                 ATA_SetMode(ATA_MODE_16BIT);
-                memory_device_rom_load(emulator.ROMMWCFIDE, 32768, 32768);
+
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMMWCFIDE);
+                memory_device_rom_load(romFile.c_str(), 32768, 32768);
         }
 
         ZX1541PORT=0;
@@ -407,9 +443,8 @@ void zx81_initialise()
         videoFlipFlop3Clear = 0;
         prevVideoFlipFlop3Q = 0;
 
-        zx80rom = !strcmp(machine.CurRom, "zx80.rom");
-        zx81rom = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                  !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
+        zx80rom = (emulator.romcrc == CRCZX80);
+        zx81rom = (emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTK85) || (emulator.romcrc == CRCTS1500);
 
         annotatableROM = IsAnnotatableROM();
 }
@@ -443,7 +478,7 @@ BOOL IsAnnotatableROM()
         case MACHINEZX80:
                 if (zx80rom)
                 {
-                        annotatableROM = !strcmp(machine.CurRom, "zx80.rom");
+                        annotatableROM = (emulator.romcrc == CRCZX80);
                         break;
                 }
 
@@ -452,11 +487,11 @@ BOOL IsAnnotatableROM()
         case MACHINETK85:
         case MACHINER470:
         case MACHINETS1500:
-                annotatableROM = zx81rom || !strcmp(machine.CurRom, "ringo470.rom");
+                annotatableROM = zx81rom || (emulator.romcrc == CRCR470);
                 break;
 
         case MACHINELAMBDA:
-                annotatableROM = !strcmp(machine.CurRom, "lambda8300.rom") || !strcmp(machine.CurRom, "lambda8300colour.rom");
+                annotatableROM = (emulator.romcrc == CRCLAMBDA) || (emulator.romcrc == CRCLAMBDACOLOUR);
                 break;
 
         default:
@@ -534,7 +569,7 @@ void zx81_WriteByte(int Address, int Data)
                         if (zx97.protectb0 && ((d8255_read(D8255PRTB)&15)==0)) return;
                         if (zx97.protectb115 && ((d8255_read(D8255PRTB)&15)>0)) return;
 
-                        zx97.bankmem[(Address&16383) +  16384*(d8255_read(D8255PRTB)&15)]=(unsigned char)Data;
+                        zx97bankmem[(Address&16383) +  16384*(d8255_read(D8255PRTB)&15)]=(unsigned char)Data;
                         return;
                 }
 
@@ -559,7 +594,7 @@ void zx81_WriteByte(int Address, int Data)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (spectrum.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -707,7 +742,7 @@ BYTE zx81_ReadByte(int Address)
 
                 if (Address>=49152)
                 {
-                        data=(BYTE)(zx97.bankmem[(Address&16383) + (d8255_read(D8255PRTB)&15)*16384]);
+                        data=(BYTE)(zx97bankmem[(Address&16383) + (d8255_read(D8255PRTB)&15)*16384]);
                         noise = (noise<<8) | data;
                         return data;
                 }
@@ -716,7 +751,7 @@ BYTE zx81_ReadByte(int Address)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (spectrum.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -830,7 +865,7 @@ BYTE zx81_ReadByte(int Address)
                         // Shadow 8-16K RAM at 40-48K
                         data=memory[Address & 0x7FFF];
                 }
-                else if ((emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom") && !zx81.zxpand && (Address & 0x1000))
+                else if ((emulator.machine == MACHINEZX80) && (emulator.romcrc == CRCZX80) && !zx81.zxpand && (Address & 0x1000))
                 {
                         data = idleDataBus;
                 }
@@ -1175,7 +1210,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 return;
         }
 
-        if ((spectrum.HDType==HDPITERSCF) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
         // Note that the Parrot only decodes A7, A5, and A4.
@@ -1223,7 +1258,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xbf:
-                if (spectrum.floppytype==FLOPPYZX1541)
+                if (machine.floppytype==FLOPPYZX1541)
                 {
                         ZX1541PORT=(BYTE)Data;
 
@@ -1309,28 +1344,20 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 data = (BYTE)~data;
 
-                if (machine.joystick != JOYSTICK_NONE)
+                if (machine.joystickInterfaceType != JOYSTICK_NONE && machine.joystick1Connected)
                 {
-                        if (machine.joystick == JOYSTICK_SINCLAIR1)
+                        if (machine.joystickInterfaceType == JOYSTICK_CURSOR)
                         {
-                                if (!(Address & 0x1000)) data &= ReadJoystick();
+                                if (!(Address & 0x0800)) data &= ReadJoystick1_Left();
+                                if (!(Address & 0x1000)) data &= ReadJoystick1_RightUpDownFire();
                         }
-                        else if (machine.joystick == JOYSTICK_SINCLAIR2)
+                        else if (machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE)
                         {
-                                if (!(Address & 0x0800)) data &= ReadJoystick();
-                        }
-                        else if (machine.joystick == JOYSTICK_CURSOR)
-                        {
-                                if (!(Address & 0x0800)) data &= ReadJoystick_Left();
-                                if (!(Address & 0x1000)) data &= ReadJoystick_RightUpDownFire();
-                        }
-                        else if (machine.joystick == JOYSTICK_PROGRAMMABLE)
-                        {
-                                if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
-                                if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
-                                if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
-                                if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
-                                if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                                if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                                if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                                if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                                if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                                if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
                         }
                 }
 
@@ -1338,7 +1365,7 @@ BYTE ReadInputPort(int Address, int *tstates)
         }
         else
         {
-                if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
+                if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                         return (BYTE)(ATA_ReadRegister(((Address>>2)&1) | ((Address>>5)&6)));
 
                 // Note that the Parrot only decodes A7, A5, and A4.
@@ -1364,7 +1391,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         return 0;
 
                 case 0x1f:
-                        if (machine.joystick == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick();
+                        if (machine.joystickInterfaceType == JOYSTICK_KEMPSTON && machine.joystick1Connected) return (BYTE)~ReadJoystick1();
                         break;
 
                 case 0x3f:
@@ -1372,15 +1399,15 @@ BYTE ReadInputPort(int Address, int *tstates)
                         break;
 
                 case 0x41:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0xfe);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0xfe);
                         break;
 
                 case 0x43:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0x1e);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0x1e);
                         break;
 
                 case 0x45:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0x26);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0x26);
                         break;
 
                 case 0x5f:
@@ -1394,7 +1421,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (machine.ts2050) return(d8251readCTRL());
 
                 case 0xbf:
-                        if (spectrum.floppytype==FLOPPYZX1541)
+                        if (machine.floppytype==FLOPPYZX1541)
                         {
                                 int a = ZX1541PORT & 3;
 
@@ -1786,7 +1813,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (spectrum.floppytype == FLOPPYZX1541)
+                if (machine.floppytype == FLOPPYZX1541)
                 {
                         IECClockTick(ts);
                 }
@@ -2331,7 +2358,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (spectrum.floppytype == FLOPPYZX1541)
+                if (machine.floppytype == FLOPPYZX1541)
                 {
                         IECClockTick(ts);
                 }

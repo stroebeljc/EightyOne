@@ -25,6 +25,7 @@
 #pragma hdrstop
 
 #include <stdio.h>
+#include "utils.h"
 #include "kbstatus.h"
 #include "zx81.h"
 #include "zx81config.h"
@@ -47,6 +48,7 @@
 
 int PCShift=1;
 unsigned int PCALT=0;
+AnsiString keypadMultiplyKey = "#";
 
 struct kb
 {
@@ -103,7 +105,7 @@ const struct kb KBZX81[]=
         { 0, '8', kbA12, kbD2, 255, 255 },
         { 0, '9', kbA12, kbD1, 255, 255 },
         { 0, '0', kbA12, kbD0, 255, 255 },
-/*
+
         { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
         { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
         { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
@@ -114,13 +116,13 @@ const struct kb KBZX81[]=
         { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
         { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
         { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
-*/
+
         { 0, VK_MULTIPLY, kbA15, kbD4, kbA8, kbD0 },
         { 0, VK_DIVIDE, kbA8, kbD4, kbA8, kbD0 },
         { 0, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD0 },
         { 0, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
         { 0, VK_DECIMAL, kbA15, kbD1, 255, 255 },
-                 
+
         { 1, VK_OEM_1, kbA8, kbD2, kbA8, kbD0 },
         { 2, VK_OEM_1, kbA8, kbD1, kbA8, kbD0 },
         { 1, VK_OEM_MINUS, kbA14, kbD3, kbA8, kbD0 },
@@ -197,7 +199,7 @@ const struct kb KBZX80[]=
         { 0, '8', kbA12, kbD2, 255, 255 },
         { 0, '9', kbA12, kbD1, 255, 255 },
         { 0, '0', kbA12, kbD0, 255, 255 },
-/*
+
         { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
         { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
         { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
@@ -208,24 +210,24 @@ const struct kb KBZX80[]=
         { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
         { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
         { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
-*/
-        { 0, VK_MULTIPLY, kbA8, kbD4, 255, 255 },
-        { 0, VK_DIVIDE, kbA15, kbD4, 255, 255 },
+
+        { 0, VK_MULTIPLY, kbA13, kbD0, kbA8, kbD0 },
+        { 0, VK_DIVIDE, kbA8, kbD4, kbA8, kbD0 },
+        { 0, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD0 },
+        { 0, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
+        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
 
         { 1, VK_OEM_1, kbA8, kbD2, kbA8, kbD0 },
         { 2, VK_OEM_1, kbA8, kbD1, kbA8, kbD0 },
-        { 1, VK_OEM_MINUS, kbA14, kbD3, kbA8, kbD0 },
-        { 1, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD0 },
+        { 1, VK_OEM_MINUS, kbA14, kbD2, kbA8, kbD0 },
 
         { 1, VK_OEM_PLUS, kbA14, kbD1, kbA8, kbD0 },
         { 2, VK_OEM_PLUS, kbA14, kbD2, kbA8, kbD0 },
-        { 2, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
 
         { 1, VK_OEM_COMMA, kbA15, kbD1, kbA8, kbD0 },
         { 2, VK_OEM_COMMA, kbA15, kbD3, kbA8, kbD0 },
 
         { 1, VK_OEM_PERIOD, kbA15, kbD1, 255, 255 },
-        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
         { 2, VK_OEM_PERIOD, kbA15, kbD2, kbA8, kbD0 },
         { 1, VK_OEM_2, kbA8, kbD4, kbA8, kbD0 },
         { 2, VK_OEM_2, kbA8, kbD3, kbA8, kbD0 },
@@ -292,6 +294,23 @@ const struct kb KBACE[]=
         { 0, '8', kbA12, kbD2, 255, 255 },
         { 0, '9', kbA12, kbD1, 255, 255 },
         { 0, '0', kbA12, kbD0, 255, 255 },
+
+        { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
+        { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
+        { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
+        { 0, VK_NUMPAD4, kbA11, kbD3, 255, 255 },
+        { 0, VK_NUMPAD5, kbA11, kbD4, 255, 255 },
+        { 0, VK_NUMPAD6, kbA12, kbD4, 255, 255 },
+        { 0, VK_NUMPAD7, kbA12, kbD3, 255, 255 },
+        { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
+        { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
+        { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
+
+        { 0, VK_MULTIPLY, kbA15, kbD3, kbA8, kbD1 },
+        { 0, VK_DIVIDE, kbA15, kbD4, kbA8, kbD1 },
+        { 0, VK_SUBTRACT, kbA14, kbD3, kbA8, kbD1 },
+        { 0, VK_ADD, kbA14, kbD2, kbA8, kbD1 },
+        { 1, VK_DECIMAL, kbA15, kbD1, kbA8, kbD1 },
 
         { 1, VK_OEM_1, kbA13, kbD1, kbA8, kbD1 },
         { 2, VK_OEM_1, kbA8, kbD2, kbA8, kbD1 },
@@ -371,7 +390,7 @@ const struct kb KBLAMBDA[]=
         { 0, '8', kbA12, kbD2, 255, 255 },
         { 0, '9', kbA12, kbD1, 255, 255 },
         { 0, '0', kbA12, kbD0, 255, 255 },
-/*
+
         { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
         { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
         { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
@@ -382,24 +401,24 @@ const struct kb KBLAMBDA[]=
         { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
         { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
         { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
-*/
-        { 0, VK_MULTIPLY, kbA8, kbD4, 255, 255 },
-        { 0, VK_DIVIDE, kbA15, kbD4, 255, 255 },
+
+        { 0, VK_MULTIPLY, kbA14, kbD3, kbA8, kbD0 },
+        { 0, VK_DIVIDE, kbA14, kbD4, kbA8, kbD0 },
+        { 0, VK_SUBTRACT, kbA14, kbD2, kbA8, kbD0 },
+        { 0, VK_ADD, kbA14, kbD1, kbA8, kbD0 },
+        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
 
         { 1, VK_OEM_1, kbA12, kbD4, kbA8, kbD0 },
         //{ 2, VK_OEM_1, kbA8, kbD1, kbA8, kbD0 }, // No : on the lambda
         { 1, VK_OEM_MINUS, kbA14, kbD2, kbA8, kbD0 },
-        { 1, VK_SUBTRACT, kbA14, kbD2, kbA8, kbD0 },
 
         { 1, VK_OEM_PLUS, kbA12, kbD0, kbA8, kbD0 },
         { 2, VK_OEM_PLUS, kbA14, kbD1, kbA8, kbD0 },
-        { 2, VK_ADD, kbA14, kbD2, kbA8, kbD0 },
 
         { 1, VK_OEM_COMMA, kbA12, kbD3, kbA8, kbD0 },
         { 2, VK_OEM_COMMA, kbA13, kbD1, kbA8, kbD0 },
 
         { 1, VK_OEM_PERIOD, kbA15, kbD1, 255, 255 },
-        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
         { 2, VK_OEM_PERIOD, kbA13, kbD0, kbA8, kbD0 },
         { 1, VK_OEM_2, kbA14, kbD4, kbA8, kbD0 },
 
@@ -466,7 +485,7 @@ const struct kb KBSPEC[]=
         { 0, '8', kbA12, kbD2, 255, 255 },
         { 0, '9', kbA12, kbD1, 255, 255 },
         { 0, '0', kbA12, kbD0, 255, 255 },
-/*
+
         { 0, VK_NUMPAD1, kbA11, kbD0, 255, 255 },
         { 0, VK_NUMPAD2, kbA11, kbD1, 255, 255 },
         { 0, VK_NUMPAD3, kbA11, kbD2, 255, 255 },
@@ -477,26 +496,26 @@ const struct kb KBSPEC[]=
         { 0, VK_NUMPAD8, kbA12, kbD2, 255, 255 },
         { 0, VK_NUMPAD9, kbA12, kbD1, 255, 255 },
         { 0, VK_NUMPAD0, kbA12, kbD0, 255, 255 },
-*/
-        { 0, VK_MULTIPLY, kbA8, kbD4, 255, 255 },
-        { 0, VK_DIVIDE, kbA15, kbD4, 255, 255 },
+
+        { 0, VK_MULTIPLY, kbA15, kbD4, kbA15, kbD1 },
+        { 0, VK_DIVIDE, kbA8, kbD4, kbA15, kbD1 },
+        { 0, VK_SUBTRACT, kbA14, kbD3, kbA15, kbD1 },
+        { 0, VK_ADD, kbA14, kbD2, kbA15, kbD1 },
+        { 1, VK_DECIMAL, kbA15, kbD2, kbA15, kbD1 },
 
         { 1, VK_OEM_1, kbA13, kbD1, kbA15, kbD1 },
         { 2, VK_OEM_1, kbA8, kbD1, kbA15, kbD1 },
         { 1, VK_OEM_MINUS, kbA14, kbD3, kbA15, kbD1 },
         { 2, VK_OEM_MINUS, kbA12, kbD0, kbA15, kbD1 },
-        { 1, VK_SUBTRACT, kbA14, kbD3, kbA15, kbD1 },
 
         { 1, VK_OEM_PLUS, kbA14, kbD1, kbA15, kbD1 },
         { 2, VK_OEM_PLUS, kbA14, kbD2, kbA15, kbD1 },
-        { 2, VK_ADD, kbA14, kbD2, kbA15, kbD1 },
 
         { 1, VK_OEM_COMMA, kbA15, kbD3, kbA15, kbD1 },
         { 2, VK_OEM_COMMA, kbA10, kbD3, kbA15, kbD1 },
 
         { 1, VK_OEM_PERIOD, kbA15, kbD2, kbA15, kbD1 },
         { 2, VK_OEM_PERIOD, kbA10, kbD4, kbA15, kbD1 },
-        { 1, VK_DECIMAL, kbA15, kbD1, 255, 255 },
         { 1, VK_OEM_2, kbA8, kbD4, kbA15, kbD1 },
         { 2, VK_OEM_2, kbA8, kbD3, kbA15, kbD1 },
         { 1, VK_OEM_3, kbA12, kbD3, kbA15, kbD1 },
@@ -648,23 +667,40 @@ void PCKeySetCursor(char left, char down, char up, char right, int shift)
 
 void PCKeyDown(WORD key)
 {
-        int i=0;
-        if (key==VK_SHIFT) PCShift=2;
-        PCALT=(GetKeyState(VK_MENU)&128);
+        if (spectrum.spectrum128Keypad && IsKeyPressed(VK_RCONTROL))
+        {
+                return;
+        }
+
+        int i = 0;
+        if (key == VK_SHIFT) PCShift = 2;
+        PCALT=IsKeyPressed(VK_MENU);
 
         if (PCALT) return;
+
         while (KeyMap[i].WinKey)
         {
-                if ((KeyMap[i].WinKey == key) &&
-                        ((KeyMap[i].Shift==PCShift) || (KeyMap[i].Shift==0)))
+                if ((KeyMap[i].WinKey == key) && ((KeyMap[i].Shift == PCShift) || (KeyMap[i].Shift == 0)))
                 {
-                        if (key>=VK_OEM_1 && key<=VK_OEM_7 && emulator.machine==MACHINESPECTRUM)
-                                ZXKeyboard[kbA8] &= ~kbD0;
+                        bool numpadKey = (key >= VK_NUMPAD0 && key <= VK_DIVIDE);
+                        bool numLockOn = ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
 
-                        ZXKeyboard[KeyMap[i].Addr1] |= KeyMap[i].Data1;
-                        if (KeyMap[i].Addr2!=255)
-                                ZXKeyboard[KeyMap[i].Addr2] |= KeyMap[i].Data2;
-                        return;
+                        if (!numpadKey || !emulator.UseNumericPadForJoystick || !numLockOn)
+                        {
+                                if (key >= VK_OEM_1 && key <= VK_OEM_7 && emulator.machine == MACHINESPECTRUM)
+                                {
+                                        ZXKeyboard[kbA8] &= ~kbD0;
+                                }
+
+                                ZXKeyboard[KeyMap[i].Addr1] |= KeyMap[i].Data1;
+
+                                if (KeyMap[i].Addr2 != 255)
+                                {
+                                        ZXKeyboard[KeyMap[i].Addr2] |= KeyMap[i].Data2;
+                                }
+
+                                return;
+                        }
                 }
                 i++;
         }
@@ -672,24 +708,35 @@ void PCKeyDown(WORD key)
 
 void PCKeyUp(WORD key)
 {
-        int i=0;
+        if (spectrum.spectrum128Keypad && IsKeyPressed(VK_RSHIFT))
+        {
+                return;
+        }
 
-        if (key==VK_SHIFT) PCShift=1;
+        int i = 0;
+
+        if (key == VK_SHIFT) PCShift=1;
 
         while (KeyMap[i].WinKey)
         {
-                if (KeyMap[i].WinKey == key) /* &&
-                        ((KeyMap[i].Shift==PCShift) || (KeyMap[i].Shift==0))) */
+                if (KeyMap[i].WinKey == key)
                 {
-                        ZXKeyboard[KeyMap[i].Addr1] &= (BYTE)(~KeyMap[i].Data1);
-                        if (KeyMap[i].Addr2!=255)
-                                ZXKeyboard[KeyMap[i].Addr2] &= (BYTE)(~KeyMap[i].Data2);
+                        bool numpadKey = (key >= VK_NUMPAD0 && key <= VK_DIVIDE);
+                        bool numLockOn = ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
 
-                        //if (PCShift==2) ZXKeyboard[kbA8] |= kbD0;
+                        if (!numpadKey || !emulator.UseNumericPadForJoystick || !numLockOn)
+                        {
+                                ZXKeyboard[KeyMap[i].Addr1] &= (BYTE)(~KeyMap[i].Data1);
+                                if (KeyMap[i].Addr2 != 255)
+                                {
+                                        ZXKeyboard[KeyMap[i].Addr2] &= (BYTE)(~KeyMap[i].Data2);
+                                }
+                        }
                 }
                 i++;
         }
-        if (PCShift==2) ZXKeyboard[kbA8] |= kbD0;
+
+        if (PCShift == 2) ZXKeyboard[kbA8] |= kbD0;
 }
 
 void PCAllKeysUp()
@@ -733,6 +780,8 @@ void AdjustLocalKeyboard()
                                 dest=PCFindKey(VK_OEM_3,true);
                                 KeyMap[dest].Addr1 = tempAddr1;
                                 KeyMap[dest].Data1 = tempData1;
+
+                                keypadMultiplyKey = "\\";
                         }
                         break;
 
@@ -740,6 +789,11 @@ void AdjustLocalKeyboard()
                         break;
                 }
         }
+}
+
+AnsiString GetKeypadMultiplyKey()
+{
+         return keypadMultiplyKey;
 }
 
 void DetermineKeyMatrixPosition(int machine, KeyInfo& keyInfo)

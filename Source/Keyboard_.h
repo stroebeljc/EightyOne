@@ -78,6 +78,7 @@ public:		// User declarations
         void KbChange(void);
 
         static const int FunctionsOffset = 20;
+        static const int KeypadOffset = 20;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TKeyboard *Keyboard;

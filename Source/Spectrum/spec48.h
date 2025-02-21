@@ -22,12 +22,12 @@
 #ifndef spec48_h
 #define spec48_h
 
-#include "z80\config.h"
+#include "configuration.h"
 
-#define RAMRead(Bank, Address) (SpecMem[(Bank<<14) | ((Address)&16383)])
-#define RAMWrite(Bank, Address, Data) ((SpecMem[(Bank<<14) | ((Address)&16383)])=Data)
+#define RAMRead(Bank, Address) (SpectrumMem[(Bank<<14) | ((Address)&16383)])
+#define RAMWrite(Bank, Address, Data) ((SpectrumMem[(Bank<<14) | ((Address)&16383)])=Data)
 
-extern BYTE SpecMem[];  //enough memory for 64k ROM + 128k RAM
+extern BYTE SpectrumMem[];  //enough memory for 64k ROM + 128k RAM
 extern BYTE TimexMem[];  // Timex has two more blocks of 64k each
 extern BYTE SpectraMem[]; // Spectra has two banks of 16K RAM
 extern BYTE SPECLast7ffd;

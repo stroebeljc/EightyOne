@@ -1,9 +1,0 @@
-Spectrum Emulator (Zebra Systems, 1985)
-
-Spectrum emulator cartridge in DOCK bank. This is not auto-boot software. To run it, enter command OUT 244,3.
-The computer will reset in Spectrum mode. To return back into native Timex mode, use hardware reset button.
-
-------------------------------
-
-Details available here:
-https://www.timexsinclair.com/product/spectrum-emulator-cartridge/

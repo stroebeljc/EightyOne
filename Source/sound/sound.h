@@ -104,6 +104,7 @@ public:
         void AYWrite128(int reg, int val, int frametstates);
         void AYWriteTimex(int reg, int val, int frametstates);
         int AYRead(int reg);
+        int AYRead128(int reg);
         int AYReadTimex(int reg, int joysticks);
         void AYReset(void);
         void SpecDrumWrite(BYTE data, int frametstates);
@@ -112,6 +113,7 @@ public:
 
         int VolumeLevel[6];
         bool ACBMix;
+        unsigned char AYRegisterStore[16];
 
 private:
         CDSnd DXSound;
@@ -159,7 +161,6 @@ private:
 	// we have 16 so we can fake an 8910 if needed
 
         unsigned char AYRegisters[16];
-        unsigned char AYRegisterStore[16];
         struct AYChangeTag AYChange[AY_CHANGE_MAX];
         int AYChangeCount;
 

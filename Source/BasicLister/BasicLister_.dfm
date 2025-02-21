@@ -47,12 +47,14 @@ object BasicLister: TBasicLister
     0000000000007777777700000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000FFFF0000}
+  OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
   OnMouseDown = FormMouseDown
   OnMouseWheel = FormMouseWheel
   OnPaint = FormPaint
   OnShow = FormShow
+  PixelsPerInch = 96
   TextHeight = 13
   object ScrollBar: TScrollBar
     Left = 256
@@ -77,6 +79,7 @@ object BasicLister: TBasicLister
       item
         Width = 136
       end>
+    SimplePanel = False
     SizeGrip = False
   end
   object ToolBar: TToolBar

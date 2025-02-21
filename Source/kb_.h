@@ -33,7 +33,7 @@
 class TKb : public TForm
 {
 __published:	// IDE-managed Components
-        TLabel *Label1;
+        TLabel *CursorKeysLabel;
         TComboBox *CursorMode;
         TButton *OK;
         TEdit *CustomUp;
@@ -42,8 +42,9 @@ __published:	// IDE-managed Components
         TEdit *CustomRight;
         TRadioButton *RadioButton1;
         TRadioButton *RadioButton2;
-        TLabel *Label2;
-        TCheckBox *CheckBox1;
+        TLabel *CtrlKeyMapsToLabel;
+        TCheckBox *UseRightShiftCheckBox;
+        TCheckBox *UseNumericPadForJoystickCheckBox;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CursorModeChange(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);

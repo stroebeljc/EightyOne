@@ -1,20 +1,20 @@
 object KeyboardFunctions: TKeyboardFunctions
   Left = 742
   Top = 135
+  VertScrollBar.Visible = False
   AutoSize = True
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Functions'
   ClientHeight = 54
   ClientWidth = 130
-  Color = clBtnFace
+  Color = clBlack
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  Scaled = False
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnKeyUp = FormKeyUp

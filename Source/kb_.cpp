@@ -74,11 +74,15 @@ void __fastcall TKb::OKClick(TObject *Sender)
         if (RadioButton1->Checked) PCKeySetCTRL(0);
         if (RadioButton2->Checked) PCKeySetCTRL('0');
 
-        if (CheckBox1->Checked && (emulator.machine==MACHINESPECTRUM
+        if (UseRightShiftCheckBox->Checked && (emulator.machine==MACHINESPECTRUM
                                     || emulator.machine==MACHINEACE)) emulator.UseRShift=true;
         else emulator.UseRShift=false;
 
+        emulator.UseNumericPadForJoystick = (CFGBYTE)(UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
+
+        Form1->BuildMenuJoystickSelection();
         Form1->Keyboard1->Checked=false;
+        
         Close();
 }
 //---------------------------------------------------------------------------
@@ -102,18 +106,21 @@ void __fastcall TKb::CursorModeChange(TObject *Sender)
 //---------------------------------------------------------------------------
 void TKb::LoadSettings(TIniFile *ini)
 {
-        Top = ini->ReadInteger("KB","Top",Top);
-        Left = ini->ReadInteger("KB","Left",Left);
+        Top  = ini->ReadInteger("KB", "Top",  Top);
+        Left = ini->ReadInteger("KB", "Left", Left);
 
-        CustomLeft->Text = ini->ReadString("KB","CustomLeft", CustomLeft->Text);
-        CustomDown->Text = ini->ReadString("KB","CustomDown", CustomDown->Text);
-        CustomUp->Text = ini->ReadString("KB","CustomUp", CustomUp->Text);
-        CustomRight->Text = ini->ReadString("KB","CustomRight", CustomRight->Text);
+        CustomLeft->Text  = ini->ReadString("KB", "CustomLeft",  CustomLeft->Text);
+        CustomDown->Text  = ini->ReadString("KB", "CustomDown",  CustomDown->Text);
+        CustomUp->Text    = ini->ReadString("KB", "CustomUp",    CustomUp->Text);
+        CustomRight->Text = ini->ReadString("KB", "CustomRight", CustomRight->Text);
 
-        RadioButton1->Checked = ini->ReadBool("KB","CTRLFunc", RadioButton1->Checked);
-        RadioButton2->Checked = ini->ReadBool("KB","CTRL0", RadioButton2->Checked);
-        CheckBox1->Checked = ini->ReadBool("KB","RIGHTSHIFT", CheckBox1->Checked);
-        CursorMode->ItemIndex = ini->ReadInteger("KB","CursorMode", CursorMode->ItemIndex);
+        RadioButton1->Checked          = ini->ReadBool(   "KB", "CTRLFunc",   RadioButton1->Checked);
+        RadioButton2->Checked          = ini->ReadBool(   "KB", "CTRL0",      RadioButton2->Checked);
+        UseRightShiftCheckBox->Checked = ini->ReadBool(   "KB", "RIGHTSHIFT", UseRightShiftCheckBox->Checked);
+        CursorMode->ItemIndex          = ini->ReadInteger("KB","CursorMode",  CursorMode->ItemIndex);
+
+        UseRightShiftCheckBox->Checked            = ini->ReadBool("KB", "UseRShift",                UseRightShiftCheckBox->Checked);
+        UseNumericPadForJoystickCheckBox->Checked = ini->ReadBool("KB", "UseNumericPadForJoystick", UseNumericPadForJoystickCheckBox->Checked);
 
         CursorModeChange(NULL);
         OKClick(NULL);
@@ -121,18 +128,21 @@ void TKb::LoadSettings(TIniFile *ini)
 
 void TKb::SaveSettings(TIniFile *ini)
 {
-        ini->WriteInteger("KB","Top",Top);
-        ini->WriteInteger("KB","Left",Left);
+        ini->WriteInteger("KB", "Top",  Top);
+        ini->WriteInteger("KB", "Left", Left);
 
-        ini->WriteInteger("KB","CursorMode", CursorMode->ItemIndex);
-        ini->WriteString("KB","CustomLeft", CustomLeft->Text);
-        ini->WriteString("KB","CustomDown", CustomDown->Text);
-        ini->WriteString("KB","CustomUp", CustomUp->Text);
-        ini->WriteString("KB","CustomRight", CustomRight->Text);
+        ini->WriteInteger("KB", "CursorMode",  CursorMode->ItemIndex);
+        ini->WriteString("KB",  "CustomLeft",  CustomLeft->Text);
+        ini->WriteString("KB",  "CustomDown",  CustomDown->Text);
+        ini->WriteString("KB",  "CustomUp",    CustomUp->Text);
+        ini->WriteString("KB",  "CustomRight", CustomRight->Text);
 
-        ini->WriteBool("KB","CTRLFunc", RadioButton1->Checked);
-        ini->WriteBool("KB","CTRL0", RadioButton2->Checked);
-        ini->WriteBool("KB","RIGHTSHIFT", CheckBox1->Checked);
+        ini->WriteBool("KB", "CTRLFunc",   RadioButton1->Checked);
+        ini->WriteBool("KB", "CTRL0",      RadioButton2->Checked);
+        ini->WriteBool("KB", "RIGHTSHIFT", UseRightShiftCheckBox->Checked);
+
+        ini->WriteBool("KB", "UseRShift",                UseRightShiftCheckBox->Checked);
+        ini->WriteBool("KB", "UseNumericPadForJoystick", UseNumericPadForJoystickCheckBox->Checked);
 }
 
 void TKb::UpdateCursors()
@@ -149,21 +159,20 @@ void TKb::UpdateCursors()
 
 void __fastcall TKb::FormShow(TObject *Sender)
 {
-        if (emulator.machine==MACHINESPECTRUM
-                || emulator.machine==MACHINEACE)
+        if (emulator.machine==MACHINESPECTRUM || emulator.machine==MACHINEACE)
         {
-                Label2->Visible=false;
+                CtrlKeyMapsToLabel->Visible=false;
                 RadioButton1->Visible=false;
                 RadioButton2->Visible=false;
-                CheckBox1->Visible=true;
+                UseRightShiftCheckBox->Visible=true;
         }
         else
         {
-                Label2->Visible=true;
+                CtrlKeyMapsToLabel->Visible=true;
                 RadioButton1->Visible=true;
                 RadioButton2->Visible=true;
-                CheckBox1->Visible=false;
+                UseRightShiftCheckBox->Visible=false;
         }
 }
-//---------------------------------------------------------------------------
+
 

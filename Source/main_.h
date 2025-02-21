@@ -60,7 +60,7 @@ __published:	// IDE-managed Components
         TMenuItem *Options1;
         TMenuItem *Keyboard1;
         TMenuItem *Sound1;
-        TMenuItem *Display1;
+        TMenuItem *Hardware1;
         TMenuItem *Speed1;
         TMenuItem *Help1;
         TMenuItem *HelpTopics2;
@@ -80,7 +80,6 @@ __published:	// IDE-managed Components
         TMenuItem *PauseZX81;
         TMenuItem *InverseVideo;
         TMenuItem *DisplayArt;
-        TMenuItem *DBG1;
         TMenuItem *Tape2;
         TMenuItem *Source1;
         TMenuItem *Destination1;
@@ -107,7 +106,7 @@ __published:	// IDE-managed Components
         TMenuItem *Small1;
         TStatusBar *StatusBar1;
         TMenuItem *StatusBar2;
-        TMenuItem *IFace1;
+        TMenuItem *Interface1Ports;
         TOpenDialog *OpenDock;
         TMenuItem *DockSpacer;
         TMenuItem *N6;
@@ -124,7 +123,6 @@ __published:	// IDE-managed Components
         TMenuItem *ResetMemotechHRG;
         TMenuItem *SaveScreenshot1;
         TSaveDialog *SaveScrDialog;
-        TMenuItem *PrinterPort1;
         TMenuItem *Midi1;
         TMenuItem *RZX1;
         TMenuItem *N8;
@@ -179,6 +177,19 @@ __published:	// IDE-managed Components
         TMenuItem *N15;
         TMenuItem *EnableJoystick1AutoFire;
         TMenuItem *EnableJoystick2AutoFire;
+        TMenuItem *ZXCFUploadJumperClosed;
+        TMenuItem *ConnectSpectrum128Keypad;
+        TMenuItem *N16;
+        TMenuItem *ConnectJoystick1;
+        TMenuItem *ConnectJoystick2;
+        TMenuItem *ZoomFullScreen;
+        TMenuItem *SimpleIdeRomEnabled;
+        TMenuItem *N18;
+        TMenuItem *PrinterPort;
+        TMenuItem *SelectJoystick1;
+        TMenuItem *SelectJoystick2;
+        TMenuItem *N20;
+        TMenuItem *N21;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -191,7 +202,7 @@ __published:	// IDE-managed Components
         void __fastcall N4001Click(TObject *Sender);
         void __fastcall UserDefined1Click(TObject *Sender);
         void __fastcall Speed1Click(TObject *Sender);
-        void __fastcall Display1Click(TObject *Sender);
+        void __fastcall Hardware1Click(TObject *Sender);
         void __fastcall Keyboard1Click(TObject *Sender);
         void __fastcall KeyboardMap1Click(TObject *Sender);
         void __fastcall AboutEightyOne1Click(TObject *Sender);
@@ -212,7 +223,6 @@ __published:	// IDE-managed Components
         void __fastcall FormDeactivate(TObject *Sender);
         void __fastcall DisplayArtClick(TObject *Sender);
         void __fastcall Sound1Click(TObject *Sender);
-        void __fastcall DBG1Click(TObject *Sender);
         void __fastcall HelpTopics2Click(TObject *Sender);
         void __fastcall InWaveLoaderClick(TObject *Sender);
         void __fastcall OutWaveLoaderClick(TObject *Sender);
@@ -234,7 +244,7 @@ __published:	// IDE-managed Components
         void __fastcall None1Click(TObject *Sender);
         void __fastcall StatusBar2Click(TObject *Sender);
         void __fastcall CloseTape1Click(TObject *Sender);
-        void __fastcall IFace1Click(TObject *Sender);
+        void __fastcall Interface1PortsClick(TObject *Sender);
         void __fastcall SaveSnapDialogTypeChange(TObject *Sender);
         void __fastcall DiskDrives1Click(TObject *Sender);
         void __fastcall StatusBar1DrawPanel(TStatusBar *StatusBar,
@@ -248,7 +258,7 @@ __published:	// IDE-managed Components
         void __fastcall ConfigItem1Click(TObject *Sender);
         void __fastcall ResetMemotechHRGClick(TObject *Sender);
         void __fastcall SaveScreenshot1Click(TObject *Sender);
-        void __fastcall PrinterPort1Click(TObject *Sender);
+        void __fastcall PrinterPortClick(TObject *Sender);
         void __fastcall Midi1Click(TObject *Sender);
         void __fastcall Play1Click(TObject *Sender);
         void __fastcall QSChrEnableClick(TObject *Sender);
@@ -294,6 +304,12 @@ __published:	// IDE-managed Components
         void __fastcall ResetSpeechClick(TObject *Sender);
         void __fastcall EnableJoystick1AutoFireClick(TObject *Sender);
         void __fastcall EnableJoystick2AutoFireClick(TObject *Sender);
+        void __fastcall ZXCFUploadJumperClosedClick(TObject *Sender);
+        void __fastcall ConnectSpectrum128KeypadClick(TObject *Sender);
+        void __fastcall ConnectJoystick1Click(TObject *Sender);
+        void __fastcall ConnectJoystick2Click(TObject *Sender);
+        void __fastcall ZoomFullScreenClick(TObject *Sender);
+        void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -315,6 +331,9 @@ private:	// User declarations
         void UpdateAnnotationImage(TMenuItem* item);
         void UpdateEmulatorAnnotationSettings();
         void LoadIniFile(AnsiString FileName);
+        void __fastcall SelectJoystick1Click(TObject *Sender);
+        void __fastcall SelectJoystick2Click(TObject *Sender);
+        void UpdateJoystickMenuOptions();
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
@@ -334,6 +353,7 @@ public:		// User declarations
         void __fastcall RunFrame();
         int RunFrameEnable;
         void EnableAnnotationOptions();
+        void BuildMenuJoystickSelection();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

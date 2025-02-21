@@ -1523,6 +1523,42 @@ void THW::ConfigureJoystick()
                 InitialiseJoysticks();
         }
 
+        if (JoystickBox->Text != Hwform.JoystickBoxText)
+        {
+                CFGBYTE defaultController = 0;
+
+                bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
+                bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
+
+                if (joystickInterfaceSelected && controllerPresent[0])
+                {
+                        machine.joystick1Controller = defaultController;
+                        machine.joystick1Connected = 1;
+                        machine.joystick1AutoFireEnabled = 0;
+
+                        defaultController++;
+                }
+                else
+                {
+                        machine.joystick1Controller = -1;
+                        machine.joystick1Connected = 0;
+                        machine.joystick1AutoFireEnabled = 0;
+                }
+
+                if (twinJoystickInterfaceSelected && controllerPresent[1])
+                {
+                        machine.joystick2Controller = defaultController;
+                        machine.joystick2Connected = 1;
+                        machine.joystick2AutoFireEnabled = 0;
+                }
+                else
+                {
+                        machine.joystick2Controller = -1;
+                        machine.joystick2Connected = 0;
+                        machine.joystick2AutoFireEnabled = 0;
+                }
+        }
+
         Form1->BuildMenuJoystickSelection();
 }
 
@@ -2088,14 +2124,13 @@ void THW::SetupForZX81(void)
         Form1->ConnectJoystick2->Checked = false;
         Form1->EnableJoystick2AutoFire->Checked = false;
 
-        Form1->ConnectSpectrum128Keypad->Checked = false;
-        
         uSource->Enabled = false;
         uSource->Checked = false;
 
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
+        Form1->ConnectSpectrum128Keypad->Checked = false;
         Form1->ConnectSpectrum128Keypad->Enabled = false;
 
         RomCartridgeBox->Items->Clear();

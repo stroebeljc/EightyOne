@@ -80,7 +80,6 @@ void __fastcall TKb::OKClick(TObject *Sender)
 
         emulator.UseNumericPadForJoystick = (CFGBYTE)(UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
 
-        Form1->BuildMenuJoystickSelection();
         Form1->Keyboard1->Checked=false;
         
         Close();
@@ -174,5 +173,27 @@ void __fastcall TKb::FormShow(TObject *Sender)
                 UseRightShiftCheckBox->Visible=false;
         }
 }
+//---------------------------------------------------------------------------
 
+void __fastcall TKb::UseNumericPadForJoystickCheckBoxClick(TObject *Sender)
+{
+        emulator.UseNumericPadForJoystick = (CFGBYTE)(UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
+
+        if (!emulator.UseNumericPadForJoystick)
+        {
+                if (machine.joystick1Controller == -1)
+                {
+                        machine.joystick1Connected = 0;
+                        machine.joystick1AutoFireEnabled = 0;
+                }
+                if (machine.joystick2Controller == -1)
+                {
+                        machine.joystick2Connected = 0;
+                        machine.joystick2AutoFireEnabled = 0;
+                }
+        }
+
+        Form1->BuildMenuJoystickSelection();
+}
+//---------------------------------------------------------------------------
 

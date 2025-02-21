@@ -2973,12 +2973,16 @@ void TForm1::UpdateJoystickMenuOptions()
         bool joystick1MappedToGameController = (machine.joystick1Controller >= 0);
         bool joystick1Available = (joystickInterfaceSelected && (joystick1MappedToGameController || (!machine.joystick2Connected && emulator.UseNumericPadForJoystick)));
         ConnectJoystick1->Enabled = joystick1Available;
+        ConnectJoystick1->Checked = machine.joystick1Connected;
         EnableJoystick1AutoFire->Enabled = machine.joystick1Connected;
+        EnableJoystick1AutoFire->Checked = machine.joystick1AutoFireEnabled;
 
         bool joystick2MappedToGameController = (machine.joystick2Controller >= 0);
         bool joystick2Available = (twinJoystickInterfaceSelected && (joystick2MappedToGameController || (!machine.joystick1Connected && emulator.UseNumericPadForJoystick)));
         ConnectJoystick2->Enabled = joystick2Available;
+        ConnectJoystick2->Checked = machine.joystick2Connected;
         EnableJoystick2AutoFire->Enabled = machine.joystick2Connected;
+        EnableJoystick2AutoFire->Checked = machine.joystick2AutoFireEnabled;
 }
 
 void __fastcall TForm1::SelectJoystick1Click(TObject *Sender)
@@ -3002,3 +3006,4 @@ void __fastcall TForm1::SelectJoystick2Click(TObject *Sender)
                 BuildMenuJoystickSelection();
         }
 }
+

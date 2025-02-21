@@ -130,5 +130,6 @@ object Kb: TKb
     Checked = True
     State = cbChecked
     TabOrder = 8
+    OnClick = UseNumericPadForJoystickCheckBoxClick
   end
 end

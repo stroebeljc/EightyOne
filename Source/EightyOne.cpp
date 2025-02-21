@@ -23,30 +23,30 @@
 
 #include <vcl4.h>
 #pragma hdrstop
+USEFORM("tzx\tzxEditGeneral.cpp", EditGeneralForm);
 USEFORM("tzx\tzxEditHWInfo.cpp", EditHWInfoForm);
 USEFORM("tzx\tzxEditPause.cpp", EditPauseForm);
-USEFORM("tzx\tzxEditText.cpp", EditTextForm);
-USEFORM("tzx\tzxEditGeneral.cpp", EditGeneralForm);
-USEFORM("tzx\tzxEditArchive.cpp", EditArchiveInfo);
 USEFORM("tzx\tzxEditData.cpp", EditDataForm);
-USEFORM("tzx\TZXMan.cpp", TZX);
 USEFORM("SymBrowse.cpp", SymbolBrowser);
+USEFORM("tzx\tzxEditArchive.cpp", EditArchiveInfo);
+USEFORM("tzx\tzxEditText.cpp", EditTextForm);
 USEFORM("sound\SoundOP.cpp", SoundOutput);
 USEFORM("Speed_.cpp", Speed);
 USEFORM("SplashScreen.cpp", Splash);
+USEFORM("tzx\TZXMan.cpp", TZX);
 USEFORM("zx97Config.cpp", ZX97Dialog);
 USEFORM("zxprinter\zxprinter.cpp", ZXPrinter);
 USEFORM("wavtape\wavload_.cpp", WavLoad);
 USEFORM("ZipFile_.cpp", ZipFile);
+USEFORM("sound\SoundForm.cpp", MidiForm);
+USEFORM("DebugWin\ProfilePlot_.cpp", ProfilePlot);
 USEFORM("DebugWin\Profiler.cpp", Profiler);
 USEFORM("DebugWin\ProfSampEdit.cpp", ProfileSampleEdit);
-USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
-USEFORM("DebugWin\ProfilePlot_.cpp", ProfilePlot);
+USEFORM("DebugWin\Hist.cpp", HistoryBox);
 USEFORM("DebugWin\Debug.cpp", Dbg);
 USEFORM("DebugWin\EditValue_.cpp", EditValue);
-USEFORM("DebugWin\Hist.cpp", HistoryBox);
 USEFORM("FullScreen.cpp", FSSettings);
-USEFORM("HW_.cpp", HW);
+USEFORM("DebugWin\SearchSequence_.cpp", SearchSequence);
 USEFORM("DebugWin\SetBreakpoint_.cpp", SetBreakpoint);
 USEFORM("About_.cpp", About);
 USEFORM("BasicLoader\BasicLoaderOptions_.cpp", LoadBasicListingOptionsForm);
@@ -54,19 +54,20 @@ USEFORM("BasicLister\BasicListingFormatInfo_.cpp", BasicListingFormatInfoForm);
 USEFORM("Artifacts_.cpp", Artifacts);
 USEFORM("BasicLister\BasicListerOptions_.cpp", SaveBasicListingOptionsForm);
 USEFORM("BasicLister\BasicLister_.cpp", BasicLister);
-USEFORM("Parallel.cpp", ParallelPort);
-USEFORM("Plus3Drives.cpp", P3Drive);
+USEFORM("HW_.cpp", HW);
 USEFORM("MemSave_.cpp", MemSave);
+USEFORM("Parallel.cpp", ParallelPort);
+USEFORM("memoryWindow.cpp", MemoryWindow);
+USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
 USEFORM("main_.cpp", Form1);
 USEFORM("MakeHDF.cpp", CreateHDF);
-USEFORM("memoryWindow.cpp", MemoryWindow);
-USEFORM("sound\SoundForm.cpp", MidiForm);
 USEFORM("SerialPort.cpp", SerialConfig);
-USEFORM("LiveMemoryWindow_.cpp", LiveMemoryWindow);
+USEFORM("Plus3Drives.cpp", P3Drive);
 USEFORM("kb_.cpp", Kb);
 USEFORM("KeyboardFunctions_.cpp", KeyboardFunctions);
 USEFORM("Interface1.cpp", IF1);
 USEFORM("Keyboard_.cpp", Keyboard);
+USEFORM("Keypad_.cpp", Keypad128);
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"
@@ -135,7 +136,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
         {
                 Application->Initialize();
                 Application->Title = "EightyOne";
-                #include "splashImpl.cpp"
+                 Application->CreateForm(__classid(TKeypad128), &Keypad128);
+                 #include "splashImpl.cpp"
 
                 Application->ProcessMessages();
                 delete spl;

@@ -1,6 +1,6 @@
 object SearchSequence: TSearchSequence
-  Left = 163
-  Top = 140
+  Left = 68
+  Top = 70
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'Find'

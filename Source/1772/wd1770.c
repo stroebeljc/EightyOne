@@ -43,7 +43,7 @@ void wd1770_reset(wd1770_drive *d)
     d->index_pulse=d->index_interrupt=0;
 
     d->rates[0]=d->rates[1]=d->rates[2]=d->rates[3]=0;
-    d->spin_cycles=d->track=d->side=d->direction=0;
+    d->spin_cycles=d->track=d->side=d->direction=d->density=0;
     d->state=wd1770_state_none;
     d->status_type=wd1770_status_type1;
 
@@ -157,7 +157,6 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
         d->status_register &= ~WD1770_SR_BUSY;
         d->status_register &= ~WD1770_SR_WRPROT;
         d->status_register &= ~WD1770_SR_CRCERR;
-        d->status_register &= ~WD1770_SR_IDX_DRQ;
         d->state = wd1770_state_none;
         d->status_type = wd1770_status_type1;
         d->status_register &= ~WD1770_SR_LOST;
@@ -257,6 +256,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
         }
         else
         {
+            wd1770_set_datarq( d );
             d->status_register |= WD1770_SR_BUSY;
             d->status_register &= ~( WD1770_SR_WRPROT | WD1770_SR_RNF | WD1770_SR_CRCERR | WD1770_SR_LOST );
             d->status_type = wd1770_status_type2;
@@ -266,12 +266,14 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             d->data_offset = 0;
             d->data_multisector = multisector;
         }
+
+        d->status_type = wd1770_status_type2;
     }
     else if( ( b & 0xf0 ) != 0xd0 )
     {           /* Type III */
         //int delay = b & 0x04;
 
-        switch( b & 0xf0 )
+        switch( b & 0xf1 )
         {
         case 0xe0:                                          /* Read Track */
             fprintf( stderr, "read track not yet implemented\n" );
@@ -289,6 +291,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             }
 
             d->state = wd1770_state_writetrack;
+            wd1770_set_datarq( d );
             d->status_register |= WD1770_SR_BUSY;
             d->status_register &= ~( WD1770_SR_WRPROT | WD1770_SR_RNF | WD1770_SR_CRCERR | WD1770_SR_LOST );
             d->data_track = d->track;
@@ -298,6 +301,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             d->data_multisector = 1;
             d->data_track_state = 0;
             d->data_track_leader_count = 0;
+            d->status_type = wd1770_status_type3;
             break;
 
         case 0xc0:                                          /* Read Address */
@@ -311,7 +315,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             d->data_multisector = 0;
             d->readid_buffer[0]=d->track;
             d->readid_buffer[1]=d->side;
-            d->readid_buffer[2]=random(d->disk.numsectors)+1;
+            d->readid_buffer[2]=d->sector_register;
             switch(d->disk.sectorsize)
             {
             case 128: d->readid_buffer[3]=0; break;
@@ -322,10 +326,14 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             }
             d->readid_buffer[4]=255;
             d->readid_buffer[5]=255;
+            d->status_type = wd1770_status_type3;
+            break;
+
+        default:
+            d->state = wd1770_state_none;
             break;
         }
 
-        d->status_type = wd1770_status_type2;
     }
 }
 
@@ -458,27 +466,60 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
         return;
     }
 
+    if( d->disk.fd == -1
+        || d->data_sector >= d->disk.numsectors
+        || d->data_track >= d->disk.numtracks
+        || d->data_side >= 2 )
+    {
+            d->status_register |= WD1770_SR_RNF;
+            d->status_register &= ~WD1770_SR_BUSY;
+            d->status_type = wd1770_status_type2;
+            d->state = wd1770_state_none;
+            wd1770_set_cmdint( d );
+            wd1770_reset_datarq( d );
+            return;
+     }
+
     if (d->state == wd1770_state_writetrack)
     {
-        // MFM Double Density 
         if (d->data_track_state==0)
         {
-            if (d->data_track_leader_count<PREAMBLE_COUNT
-                && b==PREAMBLE_VALUE)
-                d->data_track_leader_count++;
-            else if (d->data_track_leader_count>=PREAMBLE_COUNT
-                && d->data_track_leader_count<(PREAMBLE_COUNT+SYNC_COUNT)
-                && b==SYNC_VALUE)
-                d->data_track_leader_count++;
-            else if (d->data_track_leader_count>=(PREAMBLE_COUNT+SYNC_COUNT)
-                && d->data_track_leader_count<(PREAMBLE_COUNT+SYNC_COUNT+PRE_ADDRESS_COUNT)
-                && b==PRE_ADDRESS)
-                d->data_track_leader_count++;
-            else if (d->data_track_leader_count == (PREAMBLE_COUNT+SYNC_COUNT+PRE_ADDRESS_COUNT)
-                && b==ADDRESS_MARK)
-                d->data_track_state++;
+            // MFM Double Density
+            if (d->density==0)
+            {
+                if (d->data_track_leader_count<DD_PREAMBLE_COUNT
+                    && b==DD_PREAMBLE_VALUE)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count>=DD_PREAMBLE_COUNT
+                    && d->data_track_leader_count<(DD_PREAMBLE_COUNT+DD_SYNC_COUNT)
+                    && b==DD_SYNC_VALUE)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count>=(DD_PREAMBLE_COUNT+DD_SYNC_COUNT)
+                    && d->data_track_leader_count<(DD_PREAMBLE_COUNT+DD_SYNC_COUNT+DD_PRE_ADDRESS_COUNT)
+                    && b==DD_PRE_ADDRESS)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count == (DD_PREAMBLE_COUNT+DD_SYNC_COUNT+DD_PRE_ADDRESS_COUNT)
+                    && b==DD_ADDRESS_MARK)
+                    d->data_track_state++;
+                else
+                    d->data_track_leader_count=0;
+            }
             else
-                d->data_track_leader_count=0;
+            {
+                // FM Single Density
+                if (d->data_track_leader_count<SD_PREAMBLE_COUNT
+                    && (b==SD_PREAMBLE_VALUE1 || b==SD_PREAMBLE_VALUE2))
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count>=SD_PREAMBLE_COUNT
+                    && d->data_track_leader_count<(SD_PREAMBLE_COUNT+SD_SYNC_COUNT)
+                    && b==SD_SYNC_VALUE)
+                    d->data_track_leader_count++;
+                else if (d->data_track_leader_count == (SD_PREAMBLE_COUNT+SD_SYNC_COUNT)
+                    && b==SD_ADDRESS_MARK)
+                    d->data_track_state++;
+                else
+                    d->data_track_leader_count=0;
+            }
             return;
         }
         else if (d->data_track_state++ > d->disk.sectorsize)

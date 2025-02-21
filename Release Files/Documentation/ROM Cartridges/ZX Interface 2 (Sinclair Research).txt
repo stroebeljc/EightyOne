@@ -1,6 +1,0 @@
-=============================================
-ZX Interface 2 Cartridges for the ZX Spectrum
-Sinclair Research Ltd
-=============================================
-
-ZX Interface 2 ROM cartridges contain a non-pageable 16K ROM which appears at $0000-$3FFF.

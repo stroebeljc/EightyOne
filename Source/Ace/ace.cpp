@@ -39,6 +39,7 @@
 #include "LiveMemoryWindow_.h"
 #include "sp0256drv.h"
 #include "Joystick.h"
+#include "main_.h"
 
 #define BASE 0
 #define HBLANKCOLOUR (BASE+0*16)
@@ -51,6 +52,8 @@ extern "C"
 }
 
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
+
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
@@ -92,7 +95,8 @@ void ace_initialise()
 
         for(i=0;i<65536;i++) memory[i]=(BYTE)random(255);
 
-        romlen=memory_load(machine.CurRom, 0, 65536);
+        AnsiString romPath = AdjustPathIfReplacementRom(machine.CurRom);
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
         zx81.ROMTOP=romlen-1;
 
@@ -110,13 +114,14 @@ void ace_initialise()
         d8251reset();
         z80_reset();
         ATA_Reset();
-        if (spectrum.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
 }
 
 void ace_reset()
 {
         z80_reset();
         InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void ace_writebyte(int Address, int Data)
@@ -214,7 +219,7 @@ void ace_writeport(int Address, int Data, int *tstates)
 
         static int beeper=0;
 
-        if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
+        if ((machine.HDType==HDACECF) && ((Address&128) == 0))
         {
                 ATA_WriteRegister((Address>>8)&0x07,Data);
                 return;
@@ -302,23 +307,23 @@ BYTE ReadInputPort(int Address, int *tstates)
 
                 data = (BYTE)~data;
                 
-                if (machine.joystick == JOYSTICK_PROGRAMMABLE)
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE)
                 {
-                        if (!(Address & JoystickLeft.AddressMask))  data &= ReadJoystick_Left();
-                        if (!(Address & JoystickRight.AddressMask)) data &= ReadJoystick_Right();
-                        if (!(Address & JoystickUp.AddressMask))    data &= ReadJoystick_Up();
-                        if (!(Address & JoystickDown.AddressMask))  data &= ReadJoystick_Down();
-                        if (!(Address & JoystickFire.AddressMask))  data &= ReadJoystick_Fire();
+                        if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                        if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                        if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                        if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                        if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
                 }
 
                 return data;
         }
 
-        if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
+        if ((machine.HDType==HDACECF) && ((Address&128) == 0))
                 return (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
 
-        if ((Address & 0x0001) == 0x0001)
-                return (BYTE)~ReadJoystick();
+        if (machine.joystick1Connected && (Address & 0x0001) == 0x0001)
+                return (BYTE)~ReadJoystick1();
 
         switch(Address&255)
         {

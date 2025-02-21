@@ -9,18 +9,19 @@
 #define JOYSTICK_KEMPSTON       1
 #define JOYSTICK_FULLER         2
 #define JOYSTICK_CURSOR         3
-#define JOYSTICK_SINCLAIR1      4
-#define JOYSTICK_SINCLAIR2      5
-#define JOYSTICK_ZXPAND         6
-#define JOYSTICK_PROGRAMMABLE   7
-#define JOYSTICK_BOLDFIELD      8
-#define JOYSTICK_TIMEX          9
+#define JOYSTICK_INTERFACE2     4
+#define JOYSTICK_ZXPAND         5
+#define JOYSTICK_PROGRAMMABLE   6
+#define JOYSTICK_BOLDFIELD      7
+#define JOYSTICK_TIMEX          8
 
-extern KeyInfo JoystickLeft;
-extern KeyInfo JoystickRight;
-extern KeyInfo JoystickUp;
-extern KeyInfo JoystickDown;
-extern KeyInfo JoystickFire;
+extern bool controllerPresent[16];
+
+extern KeyInfo JoystickLeft1;
+extern KeyInfo JoystickRight1;
+extern KeyInfo JoystickUp1;
+extern KeyInfo JoystickDown1;
+extern KeyInfo JoystickFire1;
 
 extern KeyInfo JoystickLeft2;
 extern KeyInfo JoystickRight2;
@@ -28,14 +29,17 @@ extern KeyInfo JoystickUp2;
 extern KeyInfo JoystickDown2;
 extern KeyInfo JoystickFire2;
 
+extern int NumberOfJoysticks();
 extern void InitialiseJoysticks();
-extern BYTE ReadJoystick();
+extern BYTE ReadJoystick1();
 extern BYTE ReadJoystick2();
-extern BYTE ReadJoystick_Left();
-extern BYTE ReadJoystick_Right();
-extern BYTE ReadJoystick_Up();
-extern BYTE ReadJoystick_Down();
-extern BYTE ReadJoystick_Fire();
-extern BYTE ReadJoystick_RightUpDownFire();
+extern BYTE ReadJoystick1_Left();
+extern BYTE ReadJoystick1_Right();
+extern BYTE ReadJoystick1_Up();
+extern BYTE ReadJoystick1_Down();
+extern BYTE ReadJoystick1_Fire();
+extern BYTE ReadJoystick1_RightUpDownFire();
+extern void SetJoystick1Controller(int controllerIndex);
+extern void SetJoystick2Controller(int controllerIndex);
 
 #endif

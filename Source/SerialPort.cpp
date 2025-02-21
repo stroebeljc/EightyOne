@@ -35,15 +35,11 @@
 TSerialConfig *SerialConfig;
 
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 BYTE d8251readDATA(void) { return(SerialConfig->ReadDATA()); }
 BYTE d8251readCTRL(void) { return(SerialConfig->ReadCTRL()); }
 void d8251writeDATA(BYTE data) {SerialConfig->WriteDATA(data); }
 void d8251writeCTRL(BYTE data) { SerialConfig->WriteCTRL(data); }
 void d8251reset(void) { SerialConfig->Reset(); }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 BYTE TSerialConfig::ReadDATA()
 {
@@ -209,8 +205,6 @@ void TSerialConfig::Reset(void)
         }
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 void __fastcall TSerialConfig::ComPort1Error(TObject *Sender,
       TComErrors Errors)
 {
@@ -332,7 +326,6 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
         if (Sender) Close();
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
 void TSerialConfig::LoadSettings(TIniFile *ini)
 {
@@ -370,7 +363,6 @@ void TSerialConfig::SaveSettings(TIniFile *ini)
                 File=NULL;
         }
 }
-
 
 void __fastcall TSerialConfig::ComPortListChange(TObject *Sender)
 {
@@ -411,4 +403,6 @@ void __fastcall TSerialConfig::ClientSocketError(TObject *Sender,
         ErrorCode=0;
 }
 //---------------------------------------------------------------------------
+
+
 

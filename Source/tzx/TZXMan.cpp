@@ -229,7 +229,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINESPECTRUM))
                 {
                         bool spec128 = (emulator.machine==MACHINESPECTRUM && spectrum.model>=SPECCY128);
-                        bool if1 = (spectrum.floppytype == FLOPPYIF1);
+                        bool if1 = (machine.floppytype == FLOPPYIF1);
                         loader = new specBasicLoader(spec128, if1);
                 }
 

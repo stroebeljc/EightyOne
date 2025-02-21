@@ -23,8 +23,9 @@
 #ifndef ZX81CONFIG_H
 #define ZX81CONFIG_H
 
+#include "configuration.h"
+
 #define CFGBYTE char
-#define BYTE unsigned char
 
 #define EMUID           0x85
 
@@ -107,8 +108,10 @@
 #define CRCZX80		   0x3a68
 #define CRCZX97LE	   0x68bb
 #define CRCZX81_ED1	   0x29E8
-#define CRCZX81_ED2_3	   0x2914
-#define CRCLAMBDA	   0x4d3c
+#define CRCZX81_ED2	   0xc847
+#define CRCZX81_ED3	   0x2914
+#define CRCLAMBDA	   0x5e48
+#define CRCLAMBDACOLOUR    0x4d3c
 #define CRCR470            0x5413
 #define CRCSP48            0xace0
 #define CRCARABIC48V1      0x236a
@@ -143,13 +146,13 @@
 #define DRIVE35INCHDS   3
 
 #define HDNONE          0
-#define HDPLUS3E        1
+#define HDSIMPLE3E      1
 #define HDDIVIDE        2
 #define HDZXCF          3
 #define HDACECF         4
-#define HDPITERSCF      5
-#define HDPITERS8B      6
-#define HDPITERS16B     7
+#define HDSIMPLECF      5
+#define HDSIMPLE8BIT    6
+#define HDSIMPLE16BIT   7
 
 #define MFNONE          0
 #define MF128           1
@@ -195,22 +198,14 @@ typedef struct
         int usource;
         int kbissue;
         int kmouse;
-        int floppytype, autoboot;
-        int driveatype, drivebtype;
-        char driveaimg[256], drivebimg[256];
-        int drivebusy;
-        int HDType;
-        int divIDEJumperEClosed;
-        int UploadJumperZXCF;
-        int ZXCFRAMSize;
         int MFActive;
         int MFLockout;
         int MFVersion;
-        int divIDEAllRamSupported;
         CFGBYTE spectraMode;
         CFGBYTE spectraColourSwitchOn;
         CFGBYTE specdrum;
-        int intposition;
+        CFGBYTE spectrum128Keypad;
+        int interruptPosition;
 } SPECTRUM;
 
 typedef struct
@@ -221,8 +216,8 @@ typedef struct
         int protectb0;
         int protectb115;
         int saveram;
-        unsigned char bankmem[16*16384];
 } ZX97;
+extern unsigned char zx97bankmem[16*16384];
 
 typedef struct
 {
@@ -259,6 +254,19 @@ typedef struct
 
         void* cset;
 
+        int floppytype;
+        int driveatype;
+        int drivebtype;
+        char driveaimg[256];
+        char drivebimg[256];
+        int drivebusy;
+        int HDType;
+        int divIDEJumperEClosed;
+        int zxcfUploadJumperClosed;
+        int simpleIdeRomEnabled;
+        int ZXCFRAMSize;
+        int divIDEAllRamSupported;
+
         int ramPackSupplementsInternalRam;
         int baseRamSize;
         int defaultRamPackIndex;
@@ -274,11 +282,15 @@ typedef struct
         CFGBYTE zxprinter;
         CFGBYTE aytype;
         CFGBYTE speech;
-        CFGBYTE joystick;
         CFGBYTE ts2050;
         CFGBYTE colour;
+        CFGBYTE joystickInterfaceType;
         CFGBYTE joystick1AutoFireEnabled;
         CFGBYTE joystick2AutoFireEnabled;
+        CFGBYTE joystick1Connected;
+        CFGBYTE joystick2Connected;
+        CFGBYTE joystick1Controller;
+        CFGBYTE joystick2Controller;
 
         // Specific machine options
         CFGBYTE ace96k;
@@ -296,9 +308,10 @@ typedef struct
         int frameskip;
         int speedup;
         int romcrc;
-        int UseRShift;
         int stop;
-        
+        CFGBYTE UseRShift;
+        CFGBYTE UseNumericPadForJoystick;
+
         CFGBYTE TZXin;
         CFGBYTE TZXout;
         CFGBYTE audioout;
@@ -342,18 +355,17 @@ typedef struct
         char ROMSPP2[256];
         char ROMSPP2A[256];
         char ROMSPP3[256];
-        char ROMSPP3E[256];
         char ROMTC2048[256];
         char ROMTC2068[256];
         char ROMTS2068[256];
         char ROMDock[256];
-        char ROMZXCF[256];
-        char ROMZX8BIT[256];
-        char ROMZX16BIT[256];
+        char ROMSIMPLECF[256];
+        char ROMSIMPLE8BIT[256];
+        char ROMSIMPLE16BIT[256];
         char ROMPLUSD[256];
         char ROMDISCIPLE[256];
-        char ROMOPUSD[256];
-        char ROMBETADISC[256];
+        char ROMDISCOVERY[256];
+        char ROMBETADISK[256];
         char ROMUSPEECH[256];
         char ROMUSOURCE[256];
         char ROMMWCFIDE[256];
@@ -365,8 +377,8 @@ typedef struct
         char ROMQUICKSILVAHIRES[256];
         char ROMMULTIFACE128[256];
         char ROMMULTIFACE3[256];
-        char ROMINTERFACE1ED1[256];
-        char ROMINTERFACE1ED2[256];
+        char ROMINTERFACE1[256];
+        char ROMSPEECHPATH[256];
 
         char cwd[256];
         char temppath[256];
@@ -424,11 +436,11 @@ extern const char* if2RomsFolder;
 extern const char* ts1510RomsFolder;
 extern const char* ts2068RomsFolder;
 extern const char* tc2068RomsFolder;
+extern const char* spectrumPlus2RomsFolder;
 extern const char* replacementRomsFolder;
 extern const char* speechRomsFolder;
 
 extern void load_config();
-extern void LoadMachineRoms();
 
 #define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))

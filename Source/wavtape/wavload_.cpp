@@ -692,7 +692,7 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
 
         Silence = (TapePos - StartTapePos) * TStatesSample;
 
-        bool zx81File = (emulator.machine != MACHINEZX80 || (emulator.machine == MACHINEZX80 && (LowerCase(machine.CurRom) != "zx80.rom")));
+        bool zx81File = (emulator.machine != MACHINEZX80 || (emulator.machine == MACHINEZX80 && (emulator.romcrc != CRCZX80)));
 
         while (byte!=-1 && DataCount!=E_LINE)
         {

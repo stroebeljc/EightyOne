@@ -27,6 +27,7 @@
 
 #include "Keyboard_.h"
 #include "KeyboardFunctions_.h"
+#include "Keypad_.h"
 #include "main_.h"
 #include "zx81config.h"
 //---------------------------------------------------------------------------
@@ -48,8 +49,12 @@ __fastcall TKeyboard::TKeyboard(TComponent* Owner)
 void __fastcall TKeyboard::FormClose(TObject *Sender, TCloseAction &Action)
 {
         Form1->KeyboardMap1->Checked=false;
+
         KeyboardFunctions->Visible = false;
         KeyboardFunctions->EnableTimer(false);
+
+        Keypad128->Visible = false;
+        Keypad128->EnableTimer(false);
 }
 //---------------------------------------------------------------------------
 
@@ -117,7 +122,10 @@ void TKeyboard::KbChange(void)
 
         KeyboardFunctions->Visible=false;
         KeyboardFunctions->EnableTimer(false);
- 
+
+        Keypad128->Visible=false;
+        Keypad128->EnableTimer(false);
+
         if (Form1->KeyboardMap1->Checked) Show();
 
         switch(emulator.romcrc)
@@ -157,7 +165,8 @@ void TKeyboard::KbChange(void)
                 break;
 
         case CRCZX81_ED1:
-        case CRCZX81_ED2_3:
+        case CRCZX81_ED2:
+        case CRCZX81_ED3:
                 if (emulator.machine == MACHINETS1000)
                         if (zx81.zxpand)
                                 Keyboard->ts1000zxpandkb->Visible=true;
@@ -218,11 +227,23 @@ void TKeyboard::KbChange(void)
                         {
                         case SPECCY128:
                                 if (emulator.romcrc == CRCARABIC48V1 || emulator.romcrc == CRCARABIC48V2 || emulator.romcrc == CRCARABIC48V31)
+                                {
                                         Keyboard->spec128kbArabic->Visible=true;
+                                }
                                 else if (emulator.romcrc == CRCSPANISH128)
+                                {
                                         Keyboard->spec128kbSpanish->Visible=true;
+                                        Keypad128->SelectSpanishLayout();
+                                        Keypad128->Visible = Keyboard->Visible && spectrum.spectrum128Keypad;
+                                        Keypad128->EnableTimer(Keypad128->Visible);
+                                }
                                 else
+                                {
                                         Keyboard->spec128kb->Visible=true;
+                                        Keypad128->SelectUKLayout();
+                                        Keypad128->Visible = Keyboard->Visible && spectrum.spectrum128Keypad;
+                                        Keypad128->EnableTimer(Keypad128->Visible);
+                                }
                                 break;
                         case SPECCYTC2048:
                                 Keyboard->tc2048kb->Visible=true;
@@ -258,11 +279,23 @@ void TKeyboard::KbChange(void)
                                 break;
                         case SPECCYPLUS2:
                                 if (emulator.romcrc == CRCARABIC48V1 || emulator.romcrc == CRCARABIC48V2 || emulator.romcrc == CRCARABIC48V31)
+                                {
                                         Keyboard->specPlus2kbArabic->Visible=true;
+                                }
                                 else if (emulator.romcrc == CRCSPANISHPLUS2)
+                                {
                                         Keyboard->specPlus2kbSpanish->Visible=true;
+                                        Keypad128->SelectSpanishLayout();
+                                        Keypad128->Visible = Keyboard->Visible && spectrum.spectrum128Keypad;
+                                        Keypad128->EnableTimer(Keypad128->Visible);
+                                }
                                 else
+                                {
                                         Keyboard->specPlus2kb->Visible=true;
+                                        Keypad128->SelectUKLayout();
+                                        Keypad128->Visible = Keyboard->Visible && spectrum.spectrum128Keypad;
+                                        Keypad128->EnableTimer(Keypad128->Visible);
+                                }
                                 break;
                         case SPECCYPLUS2A:
                         case SPECCYPLUS3:
@@ -286,6 +319,9 @@ void TKeyboard::KbChange(void)
 
         KeyboardFunctions->Left = Keyboard->Left + Keyboard->Width + Keyboard->FunctionsOffset;
         KeyboardFunctions->Top = Keyboard->Top;
+
+        Keypad128->Left = Keyboard->Left + Keyboard->Width + Keyboard->KeypadOffset;
+        Keypad128->Top = Keyboard->Top;
 }
 
 void SetKeyboardSize(TImage* image, bool large)
@@ -337,5 +373,7 @@ void __fastcall TKeyboard::KeyboardDblClick(TObject *Sender)
         SetKeyboardSize(specPlus3kbArabic, large);
 
         SetKeyboardSize(KeyboardFunctions->zx80IntegralFunctions, large);
+        SetKeyboardSize(Keypad128->KeypadUk, large);
+        SetKeyboardSize(Keypad128->KeypadSpanish, large);
 }
 

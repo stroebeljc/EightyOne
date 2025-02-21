@@ -275,6 +275,7 @@ AnsiString RemoveExt(AnsiString Fname)
                 || Ext==".bas" || Ext==".BAS"
                 || Ext==".web" || Ext==".WEB"
                 || Ext==".pdf" || Ext==".PDF"
+                || Ext==".ref" || Ext==".REF"
                 ) && pos>1)
                 Fname = Fname.SubString(1,pos-1);
 
@@ -365,4 +366,53 @@ int EnumeratePorts(TStrings *List, AnsiString Type)
 }
 
 //---------------------------------------------------------------------------
+
+void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteInteger(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadInteger(section, entryName, entryValue);
+        }
+}
+
+void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteBool(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadBool(section, entryName, entryValue);
+        }
+}
+
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadString(section, entryName, entryValue);
+        }
+}
+
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryValue);
+        }
+        else
+        {
+                AnsiString value = ini->ReadString(section, entryName, entryValue);
+                strcpy(entryValue, value.c_str());
+        }
+}
 

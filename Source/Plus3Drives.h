@@ -111,8 +111,8 @@ __published:	// IDE-managed Components
         void __fastcall HD1FSBtnClick(TObject *Sender);
         void __fastcall HD0EjectBtnClick(TObject *Sender);
         void __fastcall HD1EjectBtnClick(TObject *Sender);
-        void __fastcall MDV0EjectBtnClick(TObject *Sender);
-        void __fastcall MDV0FSBtnClick(TObject *Sender);
+        void __fastcall MDVEjectBtnClick(TObject *Sender);
+        void __fastcall MDVFSBtnClick(TObject *Sender);
         void __fastcall RedetectDrivesClick(TObject *Sender);
         void __fastcall HD0ListChange(TObject *Sender);
         void __fastcall HD1ListChange(TObject *Sender);
@@ -122,30 +122,36 @@ __published:	// IDE-managed Components
         void __fastcall HD1ReadOnlyClick(TObject *Sender);
         void __fastcall DriveANewBtnClick(TObject *Sender);
         void __fastcall DriveBNewBtnClick(TObject *Sender);
-        void __fastcall MDV0NewBtnClick(TObject *Sender);
-        void __fastcall MDV1NewBtnClick(TObject *Sender);
-        void __fastcall MDV2NewBtnClick(TObject *Sender);
-        void __fastcall MDV3NewBtnClick(TObject *Sender);
-        void __fastcall MDV4NewBtnClick(TObject *Sender);
-        void __fastcall MDV5NewBtnClick(TObject *Sender);
-        void __fastcall MDV6NewBtnClick(TObject *Sender);
-        void __fastcall MDV7NewBtnClick(TObject *Sender);
+        void __fastcall MDVNewBtnClick(TObject *Sender);
         void __fastcall HD0NewBtnClick(TObject *Sender);
         void __fastcall HD1NewBtnClick(TObject *Sender);
 
 private:	// User declarations
-        int FloppyTop, HDTop, MicroTop;
         int GetMDVNo(TObject *Sender);
-        TObject *GetTextBox(int Drive);
+        TEdit* GetMDVTextBox(int Drive);
         void BuildHDList(TComboBox *List);
         AnsiString DragFileName;
         void ConfigureOpenFloppyDiskImageDialog();
-        void ConfigureFloppyDiskGroup();
-        void ConfigureHardDiskGroup();
+
+        void ConfigureFloppyDriveGroup();
+        void ConfigureHardDriveGroup();
         void ConfigureMicrodriveGroup();
-        bool NewFloppyDisk(AnsiString& filePath);
+
+        void ConfigureMicrodrive(TLabel* MDVLabel, TEdit* MDVText, TButton* MDVFSBtn, TButton* MDVNewBtn, TButton* MDVEjectBtn);
         bool CreateMicrodriveCartridge(AnsiString& filePath);
-        bool CreateFloppyDisk(AnsiString title, AnsiString filter, AnsiString defaultExt, AnsiString& filePath);
+
+        bool NewFloppyDisk(AnsiString& filePath);
+        bool CreateFloppyDiskImage(AnsiString title, AnsiString filter, AnsiString defaultExt, AnsiString& filePath);
+        void OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driveText, int readonly);
+        void FloppyDiskEject(int driveNumber, TEdit* DriveText, char* driveimg);
+
+        void NewHardDiskImage(int driveNumber, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList);
+        void CreateHardDiskImage(int driveNumber, AnsiString Filename, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList);
+        AnsiString SelectHardDiskImage(int driveNumber);
+        void SetHardDriveParameterVisibility(int driveNumber, bool visible);
+        void SetHardDriveParameters(int driveNumber, int c, int h, int s);
+        void ConfigureHardDrive(int driveNumber, TLabel* HDLabel, TEdit* HDText, TComboBox* HDList, TCheckBox* HDReadOnly, TButton* HDFSBtn, TButton* HDNewBtn, TButton* HDEjectBtn);
+        void HardDiskEject(int driveNumber, TEdit* HDText, TComboBox* HDList);
 
 public:		// User declarations
         __fastcall TP3Drive(TComponent* Owner);

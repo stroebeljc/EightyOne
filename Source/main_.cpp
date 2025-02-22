@@ -460,9 +460,18 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 
 void __fastcall TForm1::Hardware1Click(TObject *Sender)
 {
-        PCAllKeysUp();
-        HW->Show();
-        Hardware1->Checked=true;
+        if (!Hardware1->Checked)
+        {
+                PCAllKeysUp();
+                HW->Show();
+                Hardware1->Checked=true;
+        }
+        else if (!HW->Apply->Enabled)
+        {
+                HW->Close();
+                Hardware1->Checked=false;
+        }
+        else ShowMessage("Changes pending on Hardware Dialog");
 }
 //---------------------------------------------------------------------------
 

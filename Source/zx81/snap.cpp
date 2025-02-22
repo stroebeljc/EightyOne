@@ -37,6 +37,7 @@
 #include "HW_.h"
 #include "main_.h"
 #include "Artifacts_.h"
+#include "SoundForm.h"
 
 extern int lineCounter;
 extern int MemotechMode;
@@ -181,6 +182,16 @@ void load_snap_sound(FILE *f)
                 {
                         tok = get_token(f);
                         SetComboBox(HW->SoundCardBox, tok);
+                }
+                else if (!strcmp(tok,"VIDEO_SOUND"))
+                {
+                        zx81.vsyncsound = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->Sound1->Checked = zx81.vsyncsound;
+                }
+                else if (!strcmp(tok,"EXCLUDE_HSYNCS"))
+                {
+                        zx81.beeperExcludeHSyncs = (CFGBYTE)hex2dec(get_token(f));
+                        MidiForm->BeeperExcludeHSyncs->Checked = zx81.beeperExcludeHSyncs;
                 }
         }
 }
@@ -933,6 +944,8 @@ int save_snap_zx81(char *filename)
 
 	fprintf(f,"\n[SOUND]\n");
 	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->SoundCardBox->Text).c_str());
+        fprintf(f,"VIDEO_SOUND %02X\n", zx81.vsyncsound);
+        fprintf(f,"EXCLUDE_HSYNCS %02X\n", zx81.beeperExcludeHSyncs);
 
 	fprintf(f,"\n[SPEECH]\n");
 	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->SpeechBox->Text).c_str());

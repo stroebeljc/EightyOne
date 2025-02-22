@@ -1,6 +1,6 @@
 object MidiForm: TMidiForm
-  Left = 822
-  Top = 516
+  Left = 141
+  Top = 415
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'

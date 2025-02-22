@@ -17,8 +17,7 @@ private:
         int MidiByte;
         unsigned char MidiBuffer[1024];
         int MidiBufferLen;
-        void *outHandle;
-
+        void *outHandle;     
 };
 
 extern CMidi Midi;

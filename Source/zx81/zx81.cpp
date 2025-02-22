@@ -447,6 +447,8 @@ void zx81_initialise()
         zx81rom = (emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTK85) || (emulator.romcrc == CRCTS1500);
 
         annotatableROM = IsAnnotatableROM();
+
+        zx81_reset();
 }
 
 void CreateZXpand()

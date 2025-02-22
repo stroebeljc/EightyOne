@@ -564,6 +564,8 @@ void spec48_initialise()
                         spectrumPlus3AddLineAddress = 0x0DD8;
                 }
         }
+
+        spec48_reset();
 }
 
 void SPECLoadCheck(void)

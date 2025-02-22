@@ -115,6 +115,8 @@ void ace_initialise()
         z80_reset();
         ATA_Reset();
         if (machine.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
+
+        ace_reset();
 }
 
 void ace_reset()

@@ -216,7 +216,6 @@ void __fastcall THW::OKClick(TObject *Sender)
 {
         const bool disableResetStatus = false;
         UpdateHardwareSettings(disableResetStatus);
-        Form1->Hardware1->Checked=false;
         Close();
 }
 
@@ -4178,7 +4177,6 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 
 void __fastcall THW::CancelClick(TObject *Sender)
 {
-        Form1->Hardware1->Checked=false;
         Close();
 }
 //---------------------------------------------------------------------------
@@ -4871,6 +4869,12 @@ void THW::UpdateApplyButton()
 
         Apply->Enabled = ResetRequired;
         RestoreButton->Enabled = Apply->Enabled;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
+{
+        Form1->Hardware1->Checked=false;
 }
 //---------------------------------------------------------------------------
 

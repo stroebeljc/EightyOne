@@ -418,6 +418,9 @@ void zx81_initialise()
         scanlineCounter = 0;
         vsyncFound = false;
 
+        zx81.beeperExcludeHSyncs = false;
+        Form1->Sound1->Checked = false;
+        
         if (lambdaSelected)
         {
                 ink=colourWhite; paper=border=colourBlack;

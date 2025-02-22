@@ -293,6 +293,7 @@ __published:	// IDE-managed Components
         void __fastcall FDCRomBoxChange(TObject *Sender);
         void __fastcall IDERomBoxChange(TObject *Sender);
         void __fastcall NoMicrodrivesComboBoxChange(TObject *Sender);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

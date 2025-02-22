@@ -84,13 +84,6 @@ extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
- 
-void ace_reset()
-{
-        z80_reset();
-        InitialiseJoysticks();
-        Form1->BuildMenuJoystickSelection();
-}
 
 void ace_initialise()
 {
@@ -122,8 +115,13 @@ void ace_initialise()
         z80_reset();
         ATA_Reset();
         if (machine.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
+}
 
-        ace_reset();
+void ace_reset()
+{
+        z80_reset();
+        InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void ace_writebyte(int Address, int Data)

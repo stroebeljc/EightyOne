@@ -257,16 +257,6 @@ BYTE get_i_reg(void)
         return(z80.i);
 }
 
-void zx81_reset()
-{
-        QuicksilvaHiResMode=0;
-        ResetRomCartridge();
-        DisableChroma();
-
-        InitialiseJoysticks();
-        Form1->BuildMenuJoystickSelection();
-}
-
 void zx81_initialise()
 {
         int i, romlen;
@@ -447,8 +437,16 @@ void zx81_initialise()
         zx81rom = (emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTK85) || (emulator.romcrc == CRCTS1500);
 
         annotatableROM = IsAnnotatableROM();
+}
 
-        zx81_reset();
+void zx81_reset()
+{
+        QuicksilvaHiResMode=0;
+        ResetRomCartridge();
+        DisableChroma();
+
+        InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void CreateZXpand()

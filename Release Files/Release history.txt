@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 22/02/2025 (by Paul Farrow and John Stroebel)
+Version 1.41 - 23/02/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:
   - If a hardware generated ZX81 HSync pulse is output part way through a scanline then it is no
     longer interpreted as starting a new scanline.
@@ -123,6 +123,7 @@ Version 1.41 - 22/02/2025 (by Paul Farrow and John Stroebel)
   - Added the ability to select via the UI an alternative ROM for the Beta Disk, Opus Discovery,
     DISCiPLE and +D FDC interfaces.
   - Enhanced .Z80 snapshot to support more hardware options.
+  - Add emulation of the Memotech Z80 Assembler and Memocalc interfaces.
 
 Version 1.40 - 07/02/2024 (by Paul Farrow)
 * Bug fixes:

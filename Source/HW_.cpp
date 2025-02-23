@@ -2823,6 +2823,11 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         ImprovedWait->Enabled = false;
         ImprovedWait->Checked = false;
 
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3087,6 +3092,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         LoadRomBox();
         ColourLabel->Caption = "Color:";
         NTSC->Checked = true;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3126,6 +3132,12 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3153,6 +3165,12 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Enabled = true;
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3178,6 +3196,12 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Enabled = true;
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3450,6 +3474,12 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
                 LabelTotalRAM->Visible = false;
         }
         ButtonAdvancedMore->Visible = true;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();

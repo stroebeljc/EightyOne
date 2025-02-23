@@ -67,15 +67,15 @@ New RAMTOP:               32368
 
 To lower RAMTOP by 400:
 
-POKE 16388, 112
-POKE 16389, 126
+POKE 16388,112
+POKE 16389,126
 NEW
 
 To calculate RAMTOP precisely, you should multiply the contents of 16389 by
 256 and add the contents of 16388.
 
 
-How do I begin creating SOURCE Z80 CODE7
+How do I begin creating SOURCE Z80 CODE?
 
 The ADD and EDIT options allow you to create a source code program in a
 character array. THIS ARRAY MUST LIE AT THE START OF THE VARIABLES AREA.

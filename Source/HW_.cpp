@@ -258,17 +258,17 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureM1Not();
         ConfigureDisplayArtifacts();
         ConfigureKeypad();
+        ConfigureTools();
 
         ConfigureIDE();
         ConfigureIDERom();
         ConfigureFDC();
         ConfigureFDCRom();
-        
+
         ConfigureModem();
         ConfigurePrinterCentronicsPort();
         ConfigureRzxSupport();
 
-        spectrum.usource = uSource->Checked;
         spectrum.kbissue = Issue2->Checked;
         spectrum.kmouse = KMouse->Checked;
 
@@ -389,6 +389,8 @@ void THW::LoadFromInternalSettings()
         ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
+        Z80Assembler->Checked                  = Hwform.Z80AssemblerChecked;
+        Memocalc->Checked                      = Hwform.MemocalcChecked;                 
 
         ZX97Dialog->UpdateFormSettings(Hwform.ZX97Form);
 
@@ -479,8 +481,17 @@ void THW::SaveToInternalSettings()
         Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
-        
+        Hwform.Z80AssemblerChecked             = Z80Assembler->Checked;
+        Hwform.MemocalcChecked                 = Memocalc->Checked;
+
         ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
+}
+
+void THW::ConfigureTools()
+{
+        spectrum.usource = uSource->Checked;
+        zx81.z80Assembler = Z80Assembler->Checked;
+        zx81.memocalc = Memocalc->Checked;
 }
 
 void THW::Configure8K16KRam()
@@ -2133,6 +2144,9 @@ void THW::SetupForZX81(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
+        Z80Assembler->Enabled = !Memocalc->Checked;
+        Memocalc->Enabled = !Z80Assembler->Checked;
+
         Form1->ConnectSpectrum128Keypad->Checked = false;
         Form1->ConnectSpectrum128Keypad->Enabled = false;
 
@@ -2200,6 +2214,11 @@ void THW::SetupForSpectrum(void)
 
         FloatingPointHardwareFix->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
 
         machine.plus3arabicPagedOut = 0;
 
@@ -3249,6 +3268,11 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         SetZXpandState(false, false);
         IDEBoxChange(NULL);
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
 
         UpdateApplyButton();
 }
@@ -4815,6 +4839,20 @@ void __fastcall THW::NoMicrodrivesComboBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall THW::Z80AssemblerClick(TObject *Sender)
+{
+        Memocalc->Enabled = !Z80Assembler->Checked;
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::MemocalcClick(TObject *Sender)
+{
+        Z80Assembler->Enabled = !Memocalc->Checked;
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
 void THW::UpdateApplyButton()
 {
         bool settingsChanged = (NewMachineName != Hwform.MachineName);
@@ -4864,6 +4902,8 @@ void THW::UpdateApplyButton()
         settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
         settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
         settingsChanged |= (ZXpand->Checked                        != Hwform.ZXpandChecked);
+        settingsChanged |= (Z80Assembler->Checked                  != Hwform.Z80AssemblerChecked);
+        settingsChanged |= (Memocalc->Checked                      != Hwform.MemocalcChecked);
 
         ResetRequired |= settingsChanged;
 

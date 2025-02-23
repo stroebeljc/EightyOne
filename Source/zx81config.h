@@ -188,6 +188,8 @@ typedef struct
         CFGBYTE chromaMode;
         CFGBYTE chromaColourSwitchOn;
         CFGBYTE FloatingPointHardwareFix;
+        CFGBYTE z80Assembler;
+        CFGBYTE memocalc;
 } ZX81;
 
 typedef struct
@@ -379,6 +381,8 @@ typedef struct
         char ROMMULTIFACE3[256];
         char ROMINTERFACE1[256];
         char ROMSPEECHPATH[256];
+        char ROMASSEMBLER[256];
+        char ROMMEMOCALC[256];
 
         char cwd[256];
         char temppath[256];

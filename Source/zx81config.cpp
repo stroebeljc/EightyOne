@@ -55,6 +55,7 @@ const char* interfaceRomsFolder           = "Interfaces\\";
 const char* graphicRomsFolder             = "Graphics\\";
 const char* replacementRomsFolder         = "Replacement ROMs\\";
 const char* speechRomsFolder              = "Speech\\";
+const char* toolsRomsFolder               = "Tools\\";
 
 const char* romCartridgeFolder            = "ROM Cartridges\\";
 const char* if2RomsFolder                 = "ROM Cartridges\\ZX Interface 2\\";
@@ -198,6 +199,10 @@ void load_config(void)
         strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
         AnsiString QuicksilvaHiResRom = graphicRomsFolder + AnsiString("quicksilvahires.rom");
         strcpy(emulator.ROMQUICKSILVAHIRES, QuicksilvaHiResRom.c_str());
+        AnsiString z80Assembler = toolsRomsFolder + AnsiString("z80assembler.rom");
+        strcpy(emulator.ROMASSEMBLER, z80Assembler.c_str());
+        AnsiString memocalc = toolsRomsFolder + AnsiString("memocalc.rom");
+        strcpy(emulator.ROMMEMOCALC, memocalc.c_str());
 
         AnsiString speechRomsPath = AnsiString(emulator.cwd) + AnsiString(romsFolder)
                 + AnsiString(speechRomsFolder);

@@ -89,6 +89,8 @@ struct HWFormValues
         bool KMouseChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
+        bool Z80AssemblerChecked;
+        bool MemocalcChecked;
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
         bool uSourceChecked;
@@ -211,6 +213,8 @@ __published:	// IDE-managed Components
         TLabel *NoMicrodrivesLabel;
         TComboBox *NoMicrodrivesComboBox;
         TLabel *Plus3eNoticeLabel;
+        TCheckBox *Z80Assembler;
+        TCheckBox *Memocalc;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -294,6 +298,8 @@ __published:	// IDE-managed Components
         void __fastcall IDERomBoxChange(TObject *Sender);
         void __fastcall NoMicrodrivesComboBoxChange(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+        void __fastcall Z80AssemblerClick(TObject *Sender);
+        void __fastcall MemocalcClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -370,6 +376,7 @@ private:	// User declarations
         void ConfigureKeypad();
         void ConfigureIDERom();
         void ConfigureFDCRom();
+        void ConfigureTools();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

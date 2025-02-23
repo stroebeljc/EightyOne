@@ -346,6 +346,16 @@ void zx81_initialise()
                 memory_device_rom_load(emulator.ROMG007,10240,2048);
         }
 
+        if (zx81.z80Assembler)
+        {
+                memory_device_rom_load(emulator.ROMASSEMBLER, 12288, 4096);
+        }
+
+        if (zx81.memocalc)
+        {
+                memory_device_rom_load(emulator.ROMMEMOCALC, 12288, 4096);
+        }
+
         if (machine.floppytype==FLOPPYLARKEN81)
         {
                 AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMLARKEN81);
@@ -635,6 +645,15 @@ void zx81_WriteByte(int Address, int Data)
                 return;
         }
 
+        if (zx81.z80Assembler && Address >= 0x3000 && Address < 0x4000)
+        {
+                return;
+        }
+        else if (zx81.memocalc && Address >= 0x3000 && Address < 0x4000)
+        {
+                return;
+        }                     
+
         if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
         {
                 QuicksilvaHiResMode = 0;
@@ -795,6 +814,14 @@ BYTE zx81_ReadByte(int Address)
         else if (zx81.zxpand && (emulator.machine==MACHINEZX81 || emulator.machine==MACHINETS1000 || emulator.machine==MACHINETS1500 || emulator.machine==MACHINEZX80) && video && Address>=0x1E00 && Address<0x2000)
         {
                 // CR  zxpand enables the ROM for character access
+                data=memory[Address];
+        }
+        else if (zx81.z80Assembler && Address >= 0x3000 && Address < 0x4000)
+        {
+                data=memory[Address];
+        }
+        else if (zx81.memocalc && Address >= 0x3000 && Address < 0x4000)
+        {
                 data=memory[Address];
         }
         else if ((zx81.chrgen == CHRGENQS) && !chromaSelected && (Address >= 0x8400) && (Address < 0x8800))

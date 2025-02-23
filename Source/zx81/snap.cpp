@@ -414,6 +414,14 @@ void load_snap_interfaces(FILE *f)
                 {
                         HW->ZXPrinter->Checked = hex2dec(get_token(f));
                 }
+                else if (!strcmp(tok,"ASSEMBLER"))
+                {
+                        HW->Z80Assembler->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"MEMOCALC"))
+                {
+                        HW->Memocalc->Checked = hex2dec(get_token(f));
+                }
         }
 }
 
@@ -929,6 +937,8 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"\n[INTERFACES]\n");
 	fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
 	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
+	fprintf(f,"ASSEMBLER %02X\n", zx81.z80Assembler);
+	fprintf(f,"MEMOCALC %02X\n", zx81.memocalc);
 
 	fprintf(f,"\n[DRIVES]\n");
 	fprintf(f,"FDC %s\n", HW->FDCBox->Text.c_str());

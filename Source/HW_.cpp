@@ -4496,6 +4496,8 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         FloatingPointHardwareFix->Checked = false;
         Issue2->Checked                   = false;
         NTSC->Checked                     = false;
+        Z80Assembler->Checked             = false;
+        Memocalc->Checked                 = false;
         ProtectROM->Checked               = true;
 
         programmableJoystickLeft  = "O";

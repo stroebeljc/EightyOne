@@ -243,10 +243,10 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureRamTop();
         ConfigureDefaultRamSettings();
         DetermineRamSizeLabel(NewMachineName);
+        ConfigureRom();
         ConfigureColour();
         Configure8K16KRam();
         ConfigureBasicLister();
-        ConfigureRom();
         ConfigureMultifaceRom();
         ConfigureZXpand();
         ConfigureRomCartridge();
@@ -258,7 +258,7 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureM1Not();
         ConfigureDisplayArtifacts();
         ConfigureKeypad();
-        ConfigureTools();
+        ConfigureInterfaces();
 
         ConfigureIDE();
         ConfigureIDERom();
@@ -270,7 +270,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureRzxSupport();
 
         spectrum.kbissue = Issue2->Checked;
-        spectrum.kmouse = KMouse->Checked;
 
         zx81.improvedWait = ImprovedWait->Checked;
         zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
@@ -487,11 +486,12 @@ void THW::SaveToInternalSettings()
         ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
 }
 
-void THW::ConfigureTools()
+void THW::ConfigureInterfaces()
 {
         spectrum.usource = uSource->Checked;
         zx81.z80Assembler = Z80Assembler->Checked;
         zx81.memocalc = Memocalc->Checked;
+        spectrum.kmouse = KMouse->Checked;
 }
 
 void THW::Configure8K16KRam()
@@ -2648,6 +2648,8 @@ void THW::LoadRomBox()
         case MACHINEZX80:
                 RomBox->Items->Add("zx80.rom");
                 RomBox->Items->Add("zx81.edition1.rom");
+                RomBox->Items->Add("zx.aszmic.e04.rom");
+                RomBox->Items->Add("zx.aszmic.e07.rom");
                 RomBox->Text = emulator.ROM80;
                 break;
 
@@ -2657,24 +2659,20 @@ void THW::LoadRomBox()
                 RomBox->Items->Add("zx81.edition3.rom");
                 RomBox->Items->Add("tree-forth.rom");
                 RomBox->Items->Add("zx81-forth.rom");
-                RomBox->Items->Add("zx.asxmic.e04.rom");
-                RomBox->Items->Add("zx.asxmic.e07.rom");
+                RomBox->Items->Add("zx.aszmic.e04.rom");
+                RomBox->Items->Add("zx.aszmic.e07.rom");
                 RomBox->Text = emulator.ROM81;
                 break;
 
         case MACHINETS1000:
                 RomBox->Items->Add("zx81.edition3.rom");
                 RomBox->Items->Add("tree-forth.rom");
-                RomBox->Items->Add("zx.asxmic.e04.rom");
-                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROMTS1000;
                 break;
 
         case MACHINETS1500:
                 RomBox->Items->Add("ts1500.rom");
                 RomBox->Items->Add("tree-forth.rom");
-                RomBox->Items->Add("zx.asxmic.e04.rom");
-                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROMTS1500;
                 break;
                 
@@ -4095,6 +4093,17 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
                 if (!zx81Ed1ROM)
                 {
                         FloatingPointHardwareFix->Checked = false;
+                }
+        }
+        else if (ZX81Btn->Down)
+        {
+                if (RomBox->Text == "tree-forth.rom")
+                {
+                        NTSC->Checked = true;
+                }
+                else if (RomBox->Text == "zx81-forth.rom" || RomBox->Text == "zx.aszmic.e04.rom.rom" || RomBox->Text == "zx.aszmic.e07.rom.rom")
+                {
+                        NTSC->Checked = false;
                 }
         }
 

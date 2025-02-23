@@ -376,7 +376,7 @@ private:	// User declarations
         void ConfigureKeypad();
         void ConfigureIDERom();
         void ConfigureFDCRom();
-        void ConfigureTools();
+        void ConfigureInterfaces();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

@@ -3593,6 +3593,8 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "KempstonMouse",     Hwform.KMouseChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Multiface",         Hwform.MultifaceChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXPrinter",         Hwform.ZXPrinterChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Z80Assembler",      Hwform.Z80AssemblerChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Memocalc",          Hwform.MemocalcChecked);
 
         //---- DRIVES TAB ----
 

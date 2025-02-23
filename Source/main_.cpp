@@ -1816,32 +1816,17 @@ void TForm1::BuildConfigMenu()
 //---------------------------------------------------------------------------
 void TForm1::BuildDocumentationMenu()
 {
-        vector<AnsiString> folders;
-        vector<AnsiString>::iterator iter;
-
         AnsiString path = emulator.cwd;
         path += documentationFolder;
 
-        FetchFolderList(&folders, path);
-
-        for (iter = folders.begin(); iter != folders.end(); iter++)
-        {
-                TMenuItem* CategorySubMenu = new TMenuItem(DocumentationMenuEntry);
-                DocumentationMenuEntry->Add(CategorySubMenu);
-                CategorySubMenu->Caption = (*iter).c_str();
-
-                AnsiString CategoryFolder = path;
-                CategoryFolder += (*iter).c_str();
-                CategoryFolder += "\\";
-
-                AddDocumentationFiles(CategorySubMenu, CategoryFolder);
-        }
+        AddDocumentationFiles(DocumentationMenuEntry, path);
 }
 //---------------------------------------------------------------------------
-void TForm1::AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path)
+void TForm1::AddDocumentationFiles(TMenuItem* CategoryMenu, AnsiString path)
 {
         vector<AnsiString> files;
         vector<AnsiString>::iterator iter;
+        int folderIndex = 0;
 
         FetchFolderList(&files, path);
 
@@ -1850,10 +1835,25 @@ void TForm1::AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path)
                 AnsiString FileName = (*iter).c_str();
                 AnsiString Title = RemoveExt(FileName);
 
-                TMenuItem* InstructionEntry = new TMenuItem(CategorySubMenu);
-                CategorySubMenu->Add(InstructionEntry);
-                InstructionEntry->Caption = Title;
-                InstructionEntry->OnClick = InstructionMenuItemClick;
+                if (Title == FileName)
+                {
+                        TMenuItem* CategorySubMenu = new TMenuItem(CategoryMenu);
+                        CategoryMenu->Insert(folderIndex, CategorySubMenu);
+                        CategorySubMenu->Caption = (*iter).c_str();
+                        folderIndex++;
+
+                        AnsiString SubCategoryPath = path;
+                        SubCategoryPath += (*iter).c_str();
+                        SubCategoryPath += "\\";
+                        AddDocumentationFiles(CategorySubMenu, SubCategoryPath);
+                }
+                else
+                {
+                        TMenuItem* InstructionEntry = new TMenuItem(CategoryMenu);
+                        CategoryMenu->Add(InstructionEntry);
+                        InstructionEntry->Caption = Title;
+                        InstructionEntry->OnClick = InstructionMenuItemClick;
+                }
         }
 }
 //---------------------------------------------------------------------------
@@ -1862,10 +1862,17 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
         TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
         TMenuItem* ParentItem = ClickedItem->Parent;
 
+        AnsiString subPath;
+
+        while (!ParentItem->Tag)
+        {
+                subPath = ParentItem->Caption + "\\" + subPath;
+                ParentItem = ParentItem->Parent;
+        }
+
         AnsiString Path = emulator.cwd;
         Path += documentationFolder;
-        Path += ParentItem->Caption;
-        Path += "\\";
+        Path += subPath;
 
         struct stat buffer;
         AnsiString webPath = Path + ClickedItem->Caption + ".web";

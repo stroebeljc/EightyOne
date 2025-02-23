@@ -2648,8 +2648,6 @@ void THW::LoadRomBox()
         case MACHINEZX80:
                 RomBox->Items->Add("zx80.rom");
                 RomBox->Items->Add("zx81.edition1.rom");
-                RomBox->Items->Add("zx.aszmic.e04.rom");
-                RomBox->Items->Add("zx.aszmic.e07.rom");
                 RomBox->Text = emulator.ROM80;
                 break;
 

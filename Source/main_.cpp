@@ -2943,7 +2943,7 @@ void TForm1::BuildMenuJoystickSelection()
                 {
                         menuEntryCaption = "None";
                 }
-                
+
                 SelectJoystick1->Add(selectJoystick1SubMenuEntry);
                 selectJoystick1SubMenuEntry->Caption = menuEntryCaption.c_str();
                 selectJoystick1SubMenuEntry->Tag = i;

@@ -35,6 +35,7 @@
 #include "main_.h"
 #include "Artifacts_.h"
 #include "SoundForm.h"
+#include "kb_.h"
 
 extern int lineCounter;
 extern int MemotechMode;
@@ -234,44 +235,54 @@ void load_snap_joystick(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->JoystickBox, tok);
                 }
-                else if (!strcmp(tok,"LEFT"))
+                else if (!strcmp(tok,"PROGRAMMABLE_LEFT"))
                 {
                         tok = get_token(f);
                         HW->JoystickLeftBox->Text = tok;
                 }
-                else if (!strcmp(tok,"RIGHT"))
+                else if (!strcmp(tok,"PROGRAMMABLE_RIGHT"))
                 {
                         tok = get_token(f);
                         HW->JoystickRightBox->Text = tok;
                 }
-                else if (!strcmp(tok,"UP"))
+                else if (!strcmp(tok,"PROGRAMMABLE_UP"))
                 {
                         tok = get_token(f);
                         HW->JoystickUpBox->Text = tok;
                 }
-                else if (!strcmp(tok,"DOWN"))
+                else if (!strcmp(tok,"PROGRAMMABLE_DOWN"))
                 {
                         tok = get_token(f);
                         HW->JoystickDownBox->Text = tok;
                 }
-                else if (!strcmp(tok,"FIRE"))
+                else if (!strcmp(tok,"PROGRAMMABLE_FIRE"))
                 {
                         tok = get_token(f);
                         HW->JoystickFireBox->Text = tok;
                 }
-                else if (!strcmp(tok,"CONTROLLER1"))
+                else if (!strcmp(tok,"CONTROLLER"))
                 {
                         machine.joystick1Controller = (CFGBYTE)hex2dec(get_token(f));
                 }
-                else if (!strcmp(tok,"CONNECTED1"))
+                else if (!strcmp(tok,"CONNECTED"))
                 {
                         machine.joystick1Connected = (CFGBYTE)hex2dec(get_token(f));
                         Form1->ConnectJoystick1->Checked = machine.joystick1Connected;
                 }
-                else if (!strcmp(tok,"AUTOFIRE1"))
+                else if (!strcmp(tok,"AUTOFIRE"))
                 {
                         machine.joystick1AutoFireEnabled = (CFGBYTE)hex2dec(get_token(f));
                         Form1->EnableJoystick1AutoFire->Checked = machine.joystick1AutoFireEnabled;
+                }
+                else if (!strcmp(tok,"NUMERICPAD_ENABLED"))
+                {
+                        bool useNumericPadForJoystick = hex2dec(get_token(f)) ? true : false;
+                        Kb->UseNumericPadForJoystickCheckBox->Checked = useNumericPadForJoystick;
+                }
+                else if (!strcmp(tok,"NUMERICPAD_JOYSTICK1"))
+                {
+                        emulator.UseNumericPadForJoystick1 = (CFGBYTE)hex2dec(get_token(f));
+                        Kb->UseNumericPadForJoystick1->Checked = emulator.UseNumericPadForJoystick1;
                 }
         }
 }
@@ -1013,14 +1024,16 @@ int save_snap_zx81(char *filename)
 
 	fprintf(f,"\n[JOYSTICK]\n");
 	fprintf(f,"TYPE %s\n",  ReplaceSpaces(HW->JoystickBox->Text).c_str());
-	fprintf(f,"LEFT %s\n",  ReplaceSpaces(HW->JoystickLeftBox->Text).c_str());
-	fprintf(f,"RIGHT %s\n", ReplaceSpaces(HW->JoystickRightBox->Text).c_str());
-	fprintf(f,"UP %s\n",    ReplaceSpaces(HW->JoystickUpBox->Text).c_str());
-	fprintf(f,"DOWN %s\n",  ReplaceSpaces(HW->JoystickDownBox->Text).c_str());
-	fprintf(f,"FIRE %s\n",  ReplaceSpaces(HW->JoystickFireBox->Text).c_str());
-        fprintf(f,"CONTROLLER1 %02X\n", machine.joystick1Controller);
-       	fprintf(f,"CONNECTED1 %02X\n",  machine.joystick1Connected);
-       	fprintf(f,"AUTOFIRE1 %02X\n",   machine.joystick1AutoFireEnabled);
+        fprintf(f,"CONTROLLER %02X\n", machine.joystick1Controller);
+       	fprintf(f,"CONNECTED %02X\n",  machine.joystick1Connected);
+       	fprintf(f,"AUTOFIRE %02X\n",   machine.joystick1AutoFireEnabled);
+       	fprintf(f,"NUMERICPAD_ENABLED %02X\n",   Kb->UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
+       	fprintf(f,"NUMERICPAD_JOYSTICK1 %02X\n", Kb->UseNumericPadForJoystick1->Checked ? 1 : 0);
+	fprintf(f,"PROGRAMMABLE_LEFT %s\n",  ReplaceSpaces(HW->JoystickLeftBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_RIGHT %s\n", ReplaceSpaces(HW->JoystickRightBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_UP %s\n",    ReplaceSpaces(HW->JoystickUpBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_DOWN %s\n",  ReplaceSpaces(HW->JoystickDownBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_FIRE %s\n",  ReplaceSpaces(HW->JoystickFireBox->Text).c_str());
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
         AnsiString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);

@@ -125,7 +125,7 @@ object Kb: TKb
     Top = 80
     Width = 313
     Height = 17
-    Caption = 'Use numeric keypad for joystick input (when Num Lock is on)'
+    Caption = 'Use numeric keypad for joystick input (when Num Lock is on):'
     Checked = True
     State = cbChecked
     TabOrder = 8

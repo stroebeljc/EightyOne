@@ -132,9 +132,9 @@ object Kb: TKb
     OnClick = UseNumericPadForJoystickCheckBoxClick
   end
   object UseNumericPadForJoystick1: TRadioButton
-    Left = 8
+    Left = 24
     Top = 104
-    Width = 113
+    Width = 81
     Height = 17
     Caption = 'Joystick 1'
     Checked = True
@@ -143,9 +143,9 @@ object Kb: TKb
     OnClick = UseNumericPadForJoystick1Click
   end
   object UseNumericPadForJoystick2: TRadioButton
-    Left = 88
+    Left = 112
     Top = 104
-    Width = 113
+    Width = 81
     Height = 17
     Caption = 'Joystick 2'
     TabOrder = 10

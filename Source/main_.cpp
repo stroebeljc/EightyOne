@@ -2977,21 +2977,18 @@ void TForm1::UpdateJoystickMenuOptions()
         bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
         bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
 
-        SelectJoystick1->Enabled = joystickInterfaceSelected;
-        SelectJoystick2->Enabled = twinJoystickInterfaceSelected;
-
         SetJoystick1Controller(machine.joystick1Controller);
         SetJoystick2Controller(machine.joystick2Controller);
 
         bool joystick1MappedToGameController = (machine.joystick1Controller >= 0);
-        bool joystick1Available = (joystickInterfaceSelected && (joystick1MappedToGameController || (!machine.joystick2Connected && emulator.UseNumericPadForJoystick)));
+        bool joystick1Available = (joystickInterfaceSelected && (joystick1MappedToGameController || emulator.UseNumericPadForJoystick1 != 0));
         ConnectJoystick1->Enabled = joystick1Available;
         ConnectJoystick1->Checked = machine.joystick1Connected;
         EnableJoystick1AutoFire->Enabled = machine.joystick1Connected;
         EnableJoystick1AutoFire->Checked = machine.joystick1AutoFireEnabled;
 
         bool joystick2MappedToGameController = (machine.joystick2Controller >= 0);
-        bool joystick2Available = (twinJoystickInterfaceSelected && (joystick2MappedToGameController || (!machine.joystick1Connected && emulator.UseNumericPadForJoystick)));
+        bool joystick2Available = (twinJoystickInterfaceSelected && (joystick2MappedToGameController || emulator.UseNumericPadForJoystick2 != 0));
         ConnectJoystick2->Enabled = joystick2Available;
         ConnectJoystick2->Checked = machine.joystick2Connected;
         EnableJoystick2AutoFire->Enabled = machine.joystick2Connected;

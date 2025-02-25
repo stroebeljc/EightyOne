@@ -42,12 +42,18 @@ __published:	// IDE-managed Components
         TLabel *CtrlKeyMapsToLabel;
         TCheckBox *UseRightShiftCheckBox;
         TCheckBox *UseNumericPadForJoystickCheckBox;
+        TRadioButton *UseNumericPadForJoystick1;
+        TRadioButton *UseNumericPadForJoystick2;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CursorModeChange(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall UseNumericPadForJoystickCheckBoxClick(
           TObject *Sender);
+        void __fastcall UseNumericPadForJoystick1Click(TObject *Sender);
+        void __fastcall UseNumericPadForJoystick2Click(TObject *Sender);
 private:	// User declarations
+        void UpdateJoystickSettings();
+
 public:		// User declarations
         __fastcall TKb(TComponent* Owner);
         void LoadSettings(TIniFile *ini);

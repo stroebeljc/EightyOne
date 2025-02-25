@@ -1560,7 +1560,7 @@ void THW::ConfigureJoystick()
                 bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
                 bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
 
-                if (joystickInterfaceSelected && (controllerPresent[0] || emulator.UseNumericPadForJoystick != 0))
+                if (joystickInterfaceSelected && (controllerPresent[0] || emulator.UseNumericPadForJoystick1 != 0))
                 {
                         machine.joystick1Controller = defaultController;
                         machine.joystick1Connected = 1;
@@ -1575,7 +1575,7 @@ void THW::ConfigureJoystick()
                         machine.joystick1AutoFireEnabled = 0;
                 }
 
-                if (twinJoystickInterfaceSelected && controllerPresent[1])
+                if (twinJoystickInterfaceSelected && (controllerPresent[1] || emulator.UseNumericPadForJoystick2 != 0))
                 {
                         machine.joystick2Controller = defaultController;
                         machine.joystick2Connected = 1;

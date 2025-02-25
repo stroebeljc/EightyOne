@@ -25,6 +25,8 @@
 #include "kbstatus.h"
 #include "zx81config.h"
 #include "main_.h"
+#include "joystick.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -75,7 +77,8 @@ void __fastcall TKb::OKClick(TObject *Sender)
                                     || emulator.machine==MACHINEACE)) emulator.UseRShift=true;
         else emulator.UseRShift=false;
 
-        emulator.UseNumericPadForJoystick = (CFGBYTE)(UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
+        emulator.UseNumericPadForJoystick1 = (CFGBYTE)((UseNumericPadForJoystickCheckBox->Checked && UseNumericPadForJoystick1->Checked) ? 1 : 0);
+        emulator.UseNumericPadForJoystick2 = (CFGBYTE)((UseNumericPadForJoystickCheckBox->Checked && UseNumericPadForJoystick2->Checked) ? 1 : 0);
 
         Form1->Keyboard1->Checked=false;
         
@@ -113,11 +116,14 @@ void TKb::LoadSettings(TIniFile *ini)
         RadioButton1->Checked          = ini->ReadBool(   "KB", "CTRLFunc",   RadioButton1->Checked);
         RadioButton2->Checked          = ini->ReadBool(   "KB", "CTRL0",      RadioButton2->Checked);
         UseRightShiftCheckBox->Checked = ini->ReadBool(   "KB", "RIGHTSHIFT", UseRightShiftCheckBox->Checked);
-        CursorMode->ItemIndex          = ini->ReadInteger("KB","CursorMode",  CursorMode->ItemIndex);
+        CursorMode->ItemIndex          = ini->ReadInteger("KB", "CursorMode", CursorMode->ItemIndex);
 
         UseRightShiftCheckBox->Checked            = ini->ReadBool("KB", "UseRShift",                UseRightShiftCheckBox->Checked);
         UseNumericPadForJoystickCheckBox->Checked = ini->ReadBool("KB", "UseNumericPadForJoystick", UseNumericPadForJoystickCheckBox->Checked);
+        UseNumericPadForJoystick1->Checked        = ini->ReadBool("KB", "UseNumericPadForJoystick1", UseNumericPadForJoystick1->Checked);
+        UseNumericPadForJoystick2->Checked        = ini->ReadBool("KB", "UseNumericPadForJoystick2", UseNumericPadForJoystick2->Checked);
 
+        UpdateJoystickSettings();
         CursorModeChange(NULL);
         OKClick(NULL);
 }
@@ -139,6 +145,8 @@ void TKb::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("KB", "UseRShift",                UseRightShiftCheckBox->Checked);
         ini->WriteBool("KB", "UseNumericPadForJoystick", UseNumericPadForJoystickCheckBox->Checked);
+        ini->WriteBool("KB", "UseNumericPadForJoystick1", UseNumericPadForJoystick1->Checked);
+        ini->WriteBool("KB", "UseNumericPadForJoystick2", UseNumericPadForJoystick2->Checked);
 }
 
 void TKb::UpdateCursors()
@@ -174,20 +182,57 @@ void __fastcall TKb::FormShow(TObject *Sender)
 
 void __fastcall TKb::UseNumericPadForJoystickCheckBoxClick(TObject *Sender)
 {
-        emulator.UseNumericPadForJoystick = (CFGBYTE)(UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
+        UpdateJoystickSettings();
+}              
+//---------------------------------------------------------------------------
 
-        if (!emulator.UseNumericPadForJoystick)
+void __fastcall TKb::UseNumericPadForJoystick1Click(TObject *Sender)
+{
+        UpdateJoystickSettings();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TKb::UseNumericPadForJoystick2Click(TObject *Sender)
+{
+        UpdateJoystickSettings();
+}
+//---------------------------------------------------------------------------
+
+void TKb::UpdateJoystickSettings()
+{
+        emulator.UseNumericPadForJoystick1 = (CFGBYTE)((UseNumericPadForJoystickCheckBox->Checked && UseNumericPadForJoystick1->Checked) ? 1 : 0);
+        emulator.UseNumericPadForJoystick2 = (CFGBYTE)((UseNumericPadForJoystickCheckBox->Checked && UseNumericPadForJoystick2->Checked) ? 1 : 0);
+
+        UseNumericPadForJoystick1->Enabled = UseNumericPadForJoystickCheckBox->Checked;
+        UseNumericPadForJoystick2->Enabled = UseNumericPadForJoystickCheckBox->Checked;
+
+        bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
+        bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
+
+        if (emulator.UseNumericPadForJoystick1 == 0)
         {
                 if (machine.joystick1Controller == -1)
                 {
                         machine.joystick1Connected = 0;
                         machine.joystick1AutoFireEnabled = 0;
                 }
+        }
+        else
+        {
+                machine.joystick1Connected = joystickInterfaceSelected;
+        }
+
+        if (emulator.UseNumericPadForJoystick2 == 0)
+        {
                 if (machine.joystick2Controller == -1)
                 {
                         machine.joystick2Connected = 0;
                         machine.joystick2AutoFireEnabled = 0;
                 }
+        }
+        else
+        {
+                machine.joystick2Connected = twinJoystickInterfaceSelected;
         }
 
         Form1->BuildMenuJoystickSelection();

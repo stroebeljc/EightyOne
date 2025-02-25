@@ -309,7 +309,8 @@ typedef struct
         int romcrc;
         int stop;
         CFGBYTE UseRShift;
-        CFGBYTE UseNumericPadForJoystick;
+        CFGBYTE UseNumericPadForJoystick1;
+        CFGBYTE UseNumericPadForJoystick2;
 
         CFGBYTE TZXin;
         CFGBYTE TZXout;

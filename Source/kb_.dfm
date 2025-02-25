@@ -55,7 +55,7 @@ object Kb: TKb
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 9
+    TabOrder = 11
     OnClick = OKClick
   end
   object CustomUp: TEdit
@@ -101,10 +101,8 @@ object Kb: TKb
     Height = 17
     BiDiMode = bdLeftToRight
     Caption = 'Function'
-    Checked = True
     ParentBiDiMode = False
     TabOrder = 6
-    TabStop = True
   end
   object RadioButton2: TRadioButton
     Left = 192
@@ -132,5 +130,26 @@ object Kb: TKb
     State = cbChecked
     TabOrder = 8
     OnClick = UseNumericPadForJoystickCheckBoxClick
+  end
+  object UseNumericPadForJoystick1: TRadioButton
+    Left = 8
+    Top = 104
+    Width = 113
+    Height = 17
+    Caption = 'Joystick 1'
+    Checked = True
+    TabOrder = 9
+    TabStop = True
+    OnClick = UseNumericPadForJoystick1Click
+  end
+  object UseNumericPadForJoystick2: TRadioButton
+    Left = 88
+    Top = 104
+    Width = 113
+    Height = 17
+    Caption = 'Joystick 2'
+    TabOrder = 10
+    TabStop = True
+    OnClick = UseNumericPadForJoystick2Click
   end
 end

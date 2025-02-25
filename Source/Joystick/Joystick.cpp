@@ -137,7 +137,7 @@ BYTE ReadJoystick1()
                 }
         }
         
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;
@@ -178,7 +178,7 @@ BYTE ReadJoystick2()
                 }
         }
 
-        if (!machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick2Connected && emulator.UseNumericPadForJoystick2 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp2.Data;
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown2.Data;
@@ -208,7 +208,7 @@ BYTE ReadJoystick1_Left()
                 }
         }
 
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD4)) result &= JoystickLeft1.Data;
         }
@@ -231,7 +231,7 @@ BYTE ReadJoystick1_Right()
                 }
         }
 
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD6)) result &= JoystickRight1.Data;
         }
@@ -254,7 +254,7 @@ BYTE ReadJoystick1_Up()
                 }
         }
 
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
         }
@@ -277,7 +277,7 @@ BYTE ReadJoystick1_Down()
                 }
         }
 
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;
         }
@@ -301,7 +301,7 @@ BYTE ReadJoystick1_Fire()
                 }
         }
 
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD0) || readFireButton) result &= JoystickFire1.Data;
         }
@@ -336,7 +336,7 @@ BYTE ReadJoystick1_RightUpDownFire()
                 }
         }
 
-        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick && NumLockOn())
+        if (machine.joystick1Connected && emulator.UseNumericPadForJoystick1 && NumLockOn())
         {
                 if (IsKeyPressed(VK_NUMPAD8)) result &= JoystickUp1.Data;
                 if (IsKeyPressed(VK_NUMPAD2)) result &= JoystickDown1.Data;

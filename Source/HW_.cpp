@@ -4293,22 +4293,7 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
                 }
                 else if (joystickInterfaceType == "ZX Interface 2" || joystickInterfaceType == "Sinclair")
                 {
-                        if (Form1->ConnectJoystick1->Checked)
-                        {
-                                joystickUpText    = "9";
-                                joystickDownText  = "8";
-                                joystickLeftText  = "6";
-                                joystickRightText = "7";
-                                joystickFireText  = "0";
-                        }
-                        else
-                        {
-                                joystickUpText    = "4";
-                                joystickDownText  = "3";
-                                joystickLeftText  = "1";
-                                joystickRightText = "2";
-                                joystickFireText  = "5";
-                        }
+                        UpdateSinclairJoystickKeys();
                 }
 
                 JoystickUpBox->Text    = joystickUpText;

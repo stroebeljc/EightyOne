@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.41 - 24/02/2025 (by Paul Farrow and John Stroebel)
+Version 1.41 - 25/02/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:
   - If a hardware generated ZX81 HSync pulse is output part way through a scanline then it is no
     longer interpreted as starting a new scanline.
@@ -78,6 +78,8 @@ Version 1.41 - 24/02/2025 (by Paul Farrow and John Stroebel)
     Spectrum+2A and Spectrum+3.
   - Added the ASZMIC and FORTH ROMs to the Hardware dialog ROM dropdown list on the Advanced tab
     for the ZX81, TS1000 and TS1500.
+  - All dialogs windows are now set to be top most so that they always appear in front of the
+    main window.
 * Enhancements:
   - Separated and updated the documentation for CHR$128 mode and the ARX true high resolution
     display mechanism.

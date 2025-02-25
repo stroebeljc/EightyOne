@@ -2977,6 +2977,9 @@ void TForm1::UpdateJoystickMenuOptions()
         bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
         bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
 
+        SelectJoystick1->Enabled = joystickInterfaceSelected;
+        SelectJoystick2->Enabled = twinJoystickInterfaceSelected;
+
         SetJoystick1Controller(machine.joystick1Controller);
         SetJoystick2Controller(machine.joystick2Controller);
 

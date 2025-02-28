@@ -405,7 +405,8 @@ void THW::LoadFromInternalSettings()
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
         Z80Assembler->Checked                  = Hwform.Z80AssemblerChecked;
-        Memocalc->Checked                      = Hwform.MemocalcChecked;                 
+        Memocalc->Checked                      = Hwform.MemocalcChecked;
+        Memotext->Checked                      = Hwform.MemotextChecked;
 
         ZX97Dialog->UpdateFormSettings(Hwform.ZX97Form);
 
@@ -498,6 +499,7 @@ void THW::SaveToInternalSettings()
         Hwform.uSourceChecked                  = uSource->Checked;
         Hwform.Z80AssemblerChecked             = Z80Assembler->Checked;
         Hwform.MemocalcChecked                 = Memocalc->Checked;
+        Hwform.MemotextChecked                 = Memotext->Checked;
 
         ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
 }
@@ -505,9 +507,28 @@ void THW::SaveToInternalSettings()
 void THW::ConfigureInterfaces()
 {
         spectrum.usource = uSource->Checked;
+        spectrum.kmouse  = KMouse->Checked;
+
         zx81.z80Assembler = Z80Assembler->Checked;
-        zx81.memocalc = Memocalc->Checked;
-        spectrum.kmouse = KMouse->Checked;
+        zx81.memocalc     = Memocalc->Checked;
+        zx81.memotext     = Memotext->Checked;
+
+        if (Hwform.Z80AssemblerChecked != Z80Assembler->Checked)
+        {
+                zx81.z80AssemblerOn = Z80Assembler->Checked;
+        }
+
+        if (Hwform.MemocalcChecked != Memocalc->Checked)
+        {
+                zx81.memocalcOn = Memocalc->Checked;
+        }
+        
+        if (Hwform.MemotextChecked != Memotext->Checked)
+        {
+                zx81.memotextOn = Memotext->Checked;
+        }
+
+        Form1->BuildMemotechInterfaceSelection();
 }
 
 void THW::Configure8K16KRam()
@@ -2160,8 +2181,9 @@ void THW::SetupForZX81(void)
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
-        Z80Assembler->Enabled = !Memocalc->Checked;
-        Memocalc->Enabled = !Z80Assembler->Checked;
+        Z80Assembler->Enabled = Z80Assembler->Checked || (!Memocalc->Checked && !Memotext->Checked);
+        Memocalc->Enabled     = Memocalc->Checked || (!Z80Assembler->Checked && !Memotext->Checked);
+        Memotext->Enabled     = Memotext->Checked || (!Z80Assembler->Checked && !Memocalc->Checked);
 
         Form1->ConnectSpectrum128Keypad->Checked = false;
         Form1->ConnectSpectrum128Keypad->Enabled = false;
@@ -2235,6 +2257,8 @@ void THW::SetupForSpectrum(void)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         machine.plus3arabicPagedOut = 0;
 
@@ -2839,6 +2863,8 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         IDEBoxChange(NULL);
 
@@ -3149,6 +3175,8 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         IDEBoxChange(NULL);
 
@@ -3182,6 +3210,8 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         IDEBoxChange(NULL);
 
@@ -3213,6 +3243,8 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         IDEBoxChange(NULL);
 
@@ -3309,6 +3341,8 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         UpdateApplyButton();
 }
@@ -3491,6 +3525,8 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
         Z80Assembler->Enabled = false;
         Memocalc->Checked = false;
         Memocalc->Enabled = false;
+        Memotext->Checked = false;
+        Memotext->Enabled = false;
 
         IDEBoxChange(NULL);
 
@@ -3607,6 +3643,7 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXPrinter",         Hwform.ZXPrinterChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Z80Assembler",      Hwform.Z80AssemblerChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Memocalc",          Hwform.MemocalcChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Memotext",          Hwform.MemotextChecked);
 
         //---- DRIVES TAB ----
 
@@ -4506,6 +4543,7 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         NTSC->Checked                     = false;
         Z80Assembler->Checked             = false;
         Memocalc->Checked                 = false;
+        Memotext->Checked                 = false;
         ProtectROM->Checked               = true;
 
         programmableJoystickLeft  = "O";
@@ -4883,14 +4921,48 @@ void __fastcall THW::NoMicrodrivesComboBoxChange(TObject *Sender)
 
 void __fastcall THW::Z80AssemblerClick(TObject *Sender)
 {
-        Memocalc->Enabled = !Z80Assembler->Checked;
+        if (Z80Assembler->Checked)
+        {
+                Memocalc->Checked = false;
+                Memotext->Checked = false;
+        }
+
+        Z80Assembler->Enabled = (!Memotext->Checked     && !Memocalc->Checked);
+        Memocalc->Enabled     = (!Z80Assembler->Checked && !Memotext->Checked);
+        Memotext->Enabled     = (!Z80Assembler->Checked && !Memocalc->Checked);
+
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall THW::MemocalcClick(TObject *Sender)
 {
-        Z80Assembler->Enabled = !Memocalc->Checked;
+        if (Memocalc->Checked)
+        {
+                Memotext->Checked = false;
+                Z80Assembler->Checked = false;
+        }
+
+        Z80Assembler->Enabled = (!Memotext->Checked     && !Memocalc->Checked);
+        Memocalc->Enabled     = (!Z80Assembler->Checked && !Memotext->Checked);
+        Memotext->Enabled     = (!Z80Assembler->Checked && !Memocalc->Checked);
+
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::MemotextClick(TObject *Sender)
+{
+        if (Memotext->Checked)
+        {
+                Memocalc->Checked = false;
+                Z80Assembler->Checked = false;
+        }
+
+        Z80Assembler->Enabled = (!Memotext->Checked     && !Memocalc->Checked);
+        Memocalc->Enabled     = (!Z80Assembler->Checked && !Memotext->Checked);
+        Memotext->Enabled     = (!Z80Assembler->Checked && !Memocalc->Checked);
+
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -4946,6 +5018,7 @@ void THW::UpdateApplyButton()
         settingsChanged |= (ZXpand->Checked                        != Hwform.ZXpandChecked);
         settingsChanged |= (Z80Assembler->Checked                  != Hwform.Z80AssemblerChecked);
         settingsChanged |= (Memocalc->Checked                      != Hwform.MemocalcChecked);
+        settingsChanged |= (Memotext->Checked                      != Hwform.MemotextChecked);
 
         ResetRequired |= settingsChanged;
 

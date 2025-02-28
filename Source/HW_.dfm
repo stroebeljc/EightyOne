@@ -1702,7 +1702,7 @@ object HW: THW
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 29
+        TabOrder = 30
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
@@ -1852,6 +1852,16 @@ object HW: THW
         Caption = 'Memocalc'
         TabOrder = 28
         OnClick = MemocalcClick
+      end
+      object Memotext: TCheckBox
+        Left = 304
+        Top = 114
+        Width = 97
+        Height = 17
+        Caption = 'Memotext'
+        TabOrder = 29
+        Visible = False
+        OnClick = MemotextClick
       end
     end
     object FloppyDrives: TTabSheet

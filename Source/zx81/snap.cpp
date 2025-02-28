@@ -411,6 +411,7 @@ void load_snap_interfaces(FILE *f)
                 if (tok[0] == '[')
                 {
                         ProcessTag(tok, f);
+                        Form1->BuildMemotechInterfaceSelection();
                         return;
                 }
 
@@ -429,6 +430,22 @@ void load_snap_interfaces(FILE *f)
                 else if (!strcmp(tok,"MEMOCALC"))
                 {
                         HW->Memocalc->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"MEMOTEXT"))
+                {
+                        HW->Memotext->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"ASSEMBLER_ON"))
+                {
+                        zx81.z80AssemblerOn = (CFGBYTE)hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"MEMOCALC_ON"))
+                {
+                        zx81.memocalcOn = (CFGBYTE)hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"MEMOTEXT_ON"))
+                {
+                        zx81.memotextOn = (CFGBYTE)hex2dec(get_token(f));
                 }
         }
 }
@@ -947,6 +964,10 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
 	fprintf(f,"ASSEMBLER %02X\n", zx81.z80Assembler);
 	fprintf(f,"MEMOCALC %02X\n", zx81.memocalc);
+	fprintf(f,"MEMOTEXT %02X\n", zx81.memotext);
+	fprintf(f,"ASSEMBLER_ON %02X\n", zx81.z80AssemblerOn);
+	fprintf(f,"MEMOCALC_ON %02X\n", zx81.memocalcOn);
+	fprintf(f,"MEMOTEXT_ON %02X\n", zx81.memotextOn);
 
 	fprintf(f,"\n[DRIVES]\n");
 	fprintf(f,"FDC %s\n", HW->FDCBox->Text.c_str());

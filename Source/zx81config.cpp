@@ -112,6 +112,13 @@ void load_config(void)
         zx81.chromaMode=0x0F;
         zx81.chromaColourSwitchOn = 0;
         zx81.FloatingPointHardwareFix = 0;
+        zx81.z80Assembler = 0;
+        zx81.memocalc = 0;
+        zx81.memotext = 0;
+        zx81.z80AssemblerOn = 0;
+        zx81.memocalcOn = 0;
+        zx81.memotextOn = 0;
+
         machine.NTSC=0;
         machine.clockspeed=3250000;
         machine.tperscanline=207;
@@ -199,6 +206,8 @@ void load_config(void)
         strcpy(emulator.ROMASSEMBLER, z80Assembler.c_str());
         AnsiString memocalc = interfaceRomsFolder + AnsiString("memocalc.rom");
         strcpy(emulator.ROMMEMOCALC, memocalc.c_str());
+        AnsiString memotext = interfaceRomsFolder + AnsiString("memotext.rom");
+        strcpy(emulator.ROMMEMOTEXT, memotext.c_str());
 
         AnsiString speechRomsPath = AnsiString(emulator.cwd) + AnsiString(romsFolder)
                 + AnsiString(speechRomsFolder);

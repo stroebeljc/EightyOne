@@ -346,11 +346,14 @@ void zx81_initialise()
         if (zx81.z80Assembler)
         {
                 memory_device_rom_load(emulator.ROMASSEMBLER, 12288, 4096);
-        }
-
-        if (zx81.memocalc)
+        }    
+        else if (zx81.memocalc)
         {
                 memory_device_rom_load(emulator.ROMMEMOCALC, 12288, 4096);
+        }
+        else if (zx81.memotext)
+        {
+                memory_device_rom_load(emulator.ROMMEMOTEXT, 12288, 4096);
         }
 
         if (machine.floppytype==FLOPPYLARKEN81)
@@ -642,16 +645,11 @@ void zx81_WriteByte(int Address, int Data)
                 return;
         }
 
-        if (zx81.z80Assembler && Address >= 0x3000 && Address < 0x4000)
+        if ((zx81.z80Assembler || zx81.memocalc || zx81.memotext) && Address >= 0x3000 && Address < 0x4000)
         {
                 return;
-        }
-        else if (zx81.memocalc && Address >= 0x3000 && Address < 0x4000)
-        {
-                return;
-        }                     
-
-        if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
+        }    
+        else if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
         {
                 QuicksilvaHiResMode = 0;
                 return;
@@ -813,11 +811,7 @@ BYTE zx81_ReadByte(int Address)
                 // CR  zxpand enables the ROM for character access
                 data=memory[Address];
         }
-        else if (zx81.z80Assembler && Address >= 0x3000 && Address < 0x4000)
-        {
-                data=memory[Address];
-        }
-        else if (zx81.memocalc && Address >= 0x3000 && Address < 0x4000)
+        else if ((zx81.z80AssemblerOn || zx81.memocalcOn || zx81.memotextOn) && Address >= 0x3000 && Address < 0x4000)
         {
                 data=memory[Address];
         }
@@ -873,8 +867,18 @@ BYTE zx81_ReadByte(int Address)
                         else
                                 data=memory[Address];
                 }
+                else if (zx81.memocalcOn || zx81.memotextOn)
+                {
+                        if      (Address == 0x0417) data = 0x07;
+                        else if (Address == 0x0418) data = 0x02;
+                        else if (Address == 0x041A) data = 0x00;
+                        else if (Address == 0x041B) data = 0x36;
+                        else data = memory[Address];
+                }
                 else
+                {
                         data=memory[Address];
+                }
         }
         else if ((Address & 0x7FFF) >= 0x4000)
         {

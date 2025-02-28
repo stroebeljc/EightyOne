@@ -160,7 +160,6 @@ __published:	// IDE-managed Components
         TMenuItem *DeleteAll;
         TMenuItem *N12;
         TMenuItem *divIDEJumperEClosed;
-        TMenuItem *N2;
         TMenuItem *CheckForUpdates;
         TMenuItem *WriteProtect8KRAM;
         TMenuItem *ResetToDefaultSettings;
@@ -188,6 +187,11 @@ __published:	// IDE-managed Components
         TMenuItem *SelectJoystick2;
         TMenuItem *N20;
         TMenuItem *N21;
+        TMenuItem *N2;
+        TMenuItem *SwitchOnMemocalc;
+        TMenuItem *SwitchOnMemotext;
+        TMenuItem *N17;
+        TMenuItem *SwitchOnZ80Assembler;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -308,6 +312,9 @@ __published:	// IDE-managed Components
         void __fastcall ConnectJoystick2Click(TObject *Sender);
         void __fastcall ZoomFullScreenClick(TObject *Sender);
         void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
+        void __fastcall SwitchOnMemotextClick(TObject *Sender);
+        void __fastcall SwitchOnMemocalcClick(TObject *Sender);
+        void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -352,6 +359,7 @@ public:		// User declarations
         int RunFrameEnable;
         void EnableAnnotationOptions();
         void BuildMenuJoystickSelection();
+        void BuildMemotechInterfaceSelection();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

@@ -360,7 +360,12 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
-        RomBox->ItemIndex                = FindEntry(RomBox,                  Hwform.RomBoxText);
+        RomBox->ItemIndex = FindEntry(RomBox, Hwform.RomBoxText);
+        if (RomBox->ItemIndex == -1)
+        {
+                RomBox->Text = Hwform.RomBoxText;
+        }
+
         RamPackBox->ItemIndex            = FindEntry(RamPackBox,              Hwform.RamPackBoxText);
         SoundCardBox->ItemIndex          = SelectEntry(SoundCardBox,          Hwform.SoundCardBoxText);
         ChrGenBox->ItemIndex             = SelectEntry(ChrGenBox,             Hwform.ChrGenBoxText);
@@ -375,9 +380,19 @@ void THW::LoadFromInternalSettings()
         ZXCFRAM->ItemIndex               = SelectEntry(ZXCFRAM,               Hwform.ZXCFRAMText);
         IDEBox->ItemIndex                = SelectEntry(IDEBox,                Hwform.IDEBoxText);
         FDCBox->ItemIndex                = SelectEntry(FDCBox,                Hwform.FDCBoxText);
-        IDERomBox->ItemIndex             = SelectEntry(IDERomBox,             Hwform.IDERomBoxText);
-        FDCRomBox->ItemIndex             = SelectEntry(FDCRomBox,             Hwform.FDCRomBoxText);
         NoMicrodrivesComboBox->ItemIndex = SelectEntry(NoMicrodrivesComboBox, Hwform.NoMicrodrivesComboBoxText);
+
+        IDERomBox->ItemIndex = FindEntry(IDERomBox, Hwform.IDERomBoxText);
+        if (IDERomBox->ItemIndex == -1)
+        {
+                IDERomBox->Text = Hwform.IDERomBoxText;
+        }
+
+        FDCRomBox->ItemIndex = FindEntry(FDCRomBox, Hwform.FDCRomBoxText);
+        if (FDCRomBox->ItemIndex == -1)
+        {
+                FDCRomBox->Text = Hwform.FDCRomBoxText;
+        }
 
         RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
         SinclairRomCartridgeFileBox->Text = Hwform.SinclairRomCartridgeFileBoxText;

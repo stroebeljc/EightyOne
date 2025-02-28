@@ -1963,7 +1963,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 1
           OnChange = FDCRomBoxChange
         end
@@ -2079,7 +2079,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 2
           OnChange = IDERomBoxChange
         end
@@ -2224,7 +2224,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end

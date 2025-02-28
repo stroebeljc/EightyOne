@@ -1702,7 +1702,7 @@ object HW: THW
         Height = 21
         DropDownCount = 10
         ItemHeight = 13
-        TabOrder = 30
+        TabOrder = 29
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
@@ -1859,9 +1859,8 @@ object HW: THW
         Width = 97
         Height = 17
         Caption = 'Memotext'
-        TabOrder = 29
+        TabOrder = 30
         Visible = False
-        OnClick = MemotextClick
       end
     end
     object FloppyDrives: TTabSheet
@@ -1964,7 +1963,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = FDCRomBoxChange
         end
@@ -2080,7 +2079,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 2
           OnChange = IDERomBoxChange
         end
@@ -2225,7 +2224,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

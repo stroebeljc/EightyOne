@@ -107,7 +107,7 @@ struct HWFormValues
         bool ZXPrinterChecked;
         bool Z80AssemblerChecked;
         bool MemocalcChecked;
-        bool MemotextChecked;
+//        bool MemotextChecked;
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
         bool uSourceChecked;
@@ -233,6 +233,7 @@ __published:	// IDE-managed Components
         TCheckBox *Z80Assembler;
         TCheckBox *Memocalc;
         TCheckBox *Memotext;
+//        TCheckBox *Memotext;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -318,7 +319,7 @@ __published:	// IDE-managed Components
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall Z80AssemblerClick(TObject *Sender);
         void __fastcall MemocalcClick(TObject *Sender);
-        void __fastcall MemotextClick(TObject *Sender);
+//        void __fastcall MemotextClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;

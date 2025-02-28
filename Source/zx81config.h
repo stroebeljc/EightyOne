@@ -187,10 +187,10 @@ typedef struct
         CFGBYTE FloatingPointHardwareFix;
         CFGBYTE z80Assembler;
         CFGBYTE memocalc;
-        CFGBYTE memotext;
+//        CFGBYTE memotext;
         CFGBYTE z80AssemblerOn;
         CFGBYTE memocalcOn;
-        CFGBYTE memotextOn;
+//        CFGBYTE memotextOn;
 } ZX81;
 
 typedef struct
@@ -385,7 +385,7 @@ typedef struct
         char ROMSPEECHPATH[256];
         char ROMASSEMBLER[256];
         char ROMMEMOCALC[256];
-        char ROMMEMOTEXT[256];
+//        char ROMMEMOTEXT[256];
 
         char cwd[256];
         char temppath[256];

@@ -189,7 +189,7 @@ __published:	// IDE-managed Components
         TMenuItem *N21;
         TMenuItem *N2;
         TMenuItem *SwitchOnMemocalc;
-        TMenuItem *SwitchOnMemotext;
+//        TMenuItem *SwitchOnMemotext;
         TMenuItem *N17;
         TMenuItem *SwitchOnZ80Assembler;
         void __fastcall FormCreate(TObject *Sender);
@@ -312,7 +312,7 @@ __published:	// IDE-managed Components
         void __fastcall ConnectJoystick2Click(TObject *Sender);
         void __fastcall ZoomFullScreenClick(TObject *Sender);
         void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
-        void __fastcall SwitchOnMemotextClick(TObject *Sender);
+//        void __fastcall SwitchOnMemotextClick(TObject *Sender);
         void __fastcall SwitchOnMemocalcClick(TObject *Sender);
         void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
 private:	// User declarations

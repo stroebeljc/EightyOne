@@ -351,10 +351,10 @@ void zx81_initialise()
         {
                 memory_device_rom_load(emulator.ROMMEMOCALC, 12288, 4096);
         }
-        else if (zx81.memotext)
-        {
-                memory_device_rom_load(emulator.ROMMEMOTEXT, 12288, 4096);
-        }
+//        else if (zx81.memotext)
+//        {
+//                memory_device_rom_load(emulator.ROMMEMOTEXT, 12288, 4096);
+//        }
 
         if (machine.floppytype==FLOPPYLARKEN81)
         {
@@ -645,7 +645,8 @@ void zx81_WriteByte(int Address, int Data)
                 return;
         }
 
-        if ((zx81.z80Assembler || zx81.memocalc || zx81.memotext) && Address >= 0x3000 && Address < 0x4000)
+//        if ((zx81.z80Assembler || zx81.memocalc || zx81.memotext) && Address >= 0x3000 && Address < 0x4000)
+        if ((zx81.z80Assembler || zx81.memocalc) && Address >= 0x3000 && Address < 0x4000)
         {
                 return;
         }    
@@ -811,7 +812,8 @@ BYTE zx81_ReadByte(int Address)
                 // CR  zxpand enables the ROM for character access
                 data=memory[Address];
         }
-        else if ((zx81.z80AssemblerOn || zx81.memocalcOn || zx81.memotextOn) && Address >= 0x3000 && Address < 0x4000)
+//        else if ((zx81.z80AssemblerOn || zx81.memocalcOn || zx81.memotextOn) && Address >= 0x3000 && Address < 0x4000)
+        else if ((zx81.z80AssemblerOn || zx81.memocalcOn) && Address >= 0x3000 && Address < 0x4000)
         {
                 data=memory[Address];
         }
@@ -867,7 +869,8 @@ BYTE zx81_ReadByte(int Address)
                         else
                                 data=memory[Address];
                 }
-                else if (zx81.memocalcOn || zx81.memotextOn)
+//                else if (zx81.memocalcOn || zx81.memotextOn)
+                else if (zx81.memocalcOn)
                 {
                         if      (Address == 0x0417) data = 0x07;
                         else if (Address == 0x0418) data = 0x02;

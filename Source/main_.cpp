@@ -1175,7 +1175,7 @@ void TForm1::LoadSettings(TIniFile *ini)
 
         zx81.z80AssemblerOn = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnZ80Assembler", SwitchOnZ80Assembler->Checked)) ? 1 : 0);
         zx81.memocalcOn     = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnMemocalc",     SwitchOnMemocalc->Checked))     ? 1 : 0);
-        zx81.memotextOn     = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnMemotext",     SwitchOnMemotext->Checked))     ? 1 : 0);
+//        zx81.memotextOn     = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnMemotext",     SwitchOnMemotext->Checked))     ? 1 : 0);
         BuildMemotechInterfaceSelection();
 
         machine.joystick1Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick1Controller", -1);
@@ -1299,7 +1299,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
         ini->WriteBool("MAIN", "SwitchOnZ80Assembler",     SwitchOnZ80Assembler->Checked);
         ini->WriteBool("MAIN", "SwitchOnMemocalc",         SwitchOnMemocalc->Checked);
-        ini->WriteBool("MAIN", "SwitchOnMemotext",         SwitchOnMemotext->Checked);
+//        ini->WriteBool("MAIN", "SwitchOnMemotext",         SwitchOnMemotext->Checked);
 
         ini->WriteInteger("MAIN", "Joystick1Controller", machine.joystick1Controller);
         ini->WriteInteger("MAIN", "Joystick2Controller", machine.joystick2Controller);
@@ -2926,11 +2926,11 @@ void TForm1::BuildMemotechInterfaceSelection()
 {
         Form1->SwitchOnZ80Assembler->Enabled = zx81.z80Assembler == 0 ? false : true;
         Form1->SwitchOnMemocalc->Enabled     = zx81.memocalc     == 0 ? false : true;
-        Form1->SwitchOnMemotext->Enabled     = zx81.memotext     == 0 ? false : true;
+//        Form1->SwitchOnMemotext->Enabled     = zx81.memotext     == 0 ? false : true;
 
         Form1->SwitchOnZ80Assembler->Checked = zx81.z80AssemblerOn == 0 ? false : true;
         Form1->SwitchOnMemocalc->Checked     = zx81.memocalcOn     == 0 ? false : true;
-        Form1->SwitchOnMemotext->Checked     = zx81.memotextOn     == 0 ? false : true;
+//        Form1->SwitchOnMemotext->Checked     = zx81.memotextOn     == 0 ? false : true;
 }
 //---------------------------------------------------------------------------
 
@@ -3040,12 +3040,13 @@ void __fastcall TForm1::SelectJoystick2Click(TObject *Sender)
         }
 }
 //---------------------------------------------------------------------------
-
+/*
 void __fastcall TForm1::SwitchOnMemotextClick(TObject *Sender)
 {
         SwitchOnMemotext->Checked = !SwitchOnMemotext->Checked;
         zx81.memotextOn = (CFGBYTE)(SwitchOnMemotext->Checked ?  1 : 0);
 }
+*/
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::SwitchOnMemocalcClick(TObject *Sender)

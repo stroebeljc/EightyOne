@@ -2024,6 +2024,27 @@ void THW::SetupForZX81(void)
         AceBtn->Down = false;
         ZX97LEBtn->Down = false;
 
+        Form1->SelectJoystick2->Visible = false;
+        Form1->ConnectJoystick2->Visible = false;
+        Form1->EnableJoystick2AutoFire->Visible = false;
+        Form1->divIDEJumperEClosed->Visible = false;
+        Form1->ZXCFUploadJumperClosed->Visible = false;
+        Form1->SimpleIdeRomEnabled->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->SpectraColourEnable->Visible = false;
+
+        Form1->ResetMemotechHRG->Visible = true;
+        Form1->ResetQuicksilvaHiRes->Visible = true;
+        Form1->QSChrEnable->Visible = true;
+        Form1->ChromaColourEnable->Visible = true;
+        Form1->SwitchOnMemocalc->Visible = true;
+//        Form1->SwitchOnMemotext->Visible = true;
+        Form1->SwitchOnZ80Assembler->Visible = true;
+        Form1->WriteProtect8KRAM->Visible = true;
+        Form1->ResetSpeech->Visible = true;
+
+        Form1->ConnectSpectrum128Keypad->Checked = false;
+
         FloatingPointHardwareFix->Enabled = false;
         ButtonAdvancedMore->Visible = false;
 
@@ -2185,9 +2206,6 @@ void THW::SetupForZX81(void)
         Memocalc->Enabled     = Memocalc->Checked || (!Z80Assembler->Checked && !Memotext->Checked);
 //        Memotext->Enabled     = Memotext->Checked || (!Z80Assembler->Checked && !Memocalc->Checked);
 
-        Form1->ConnectSpectrum128Keypad->Checked = false;
-        Form1->ConnectSpectrum128Keypad->Enabled = false;
-
         RomCartridgeBox->Items->Clear();
         RomCartridgeBox->Items->Add("None");
 
@@ -2249,6 +2267,25 @@ void THW::SetupForSpectrum(void)
         TK85Btn->Down = false;
         AceBtn->Down = false;
         ZX97LEBtn->Down = false;
+
+        Form1->SelectJoystick2->Visible = true;
+        Form1->ConnectJoystick2->Visible = true;
+        Form1->EnableJoystick2AutoFire->Visible = true;
+        Form1->divIDEJumperEClosed->Visible = true;
+        Form1->ZXCFUploadJumperClosed->Visible = true;
+        Form1->SimpleIdeRomEnabled->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->SpectraColourEnable->Visible = true;
+        Form1->ResetSpeech->Visible = true;
+
+        Form1->ResetMemotechHRG->Visible = false;
+        Form1->ResetQuicksilvaHiRes->Visible = false;
+        Form1->QSChrEnable->Visible = false;
+        Form1->ChromaColourEnable->Visible = false;
+        Form1->SwitchOnMemocalc->Visible = false;
+//        Form1->SwitchOnMemotext->Visible = false;
+        Form1->SwitchOnZ80Assembler->Visible = false;
+        Form1->WriteProtect8KRAM->Visible = false;
 
         FloatingPointHardwareFix->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
@@ -2868,6 +2905,10 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
 
         IDEBoxChange(NULL);
 
+        Form1->SwitchOnMemocalc->Visible = false;
+//        Form1->SwitchOnMemotext->Visible = false;
+        Form1->SwitchOnZ80Assembler->Visible = false;
+
         UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
@@ -3343,6 +3384,26 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         Memocalc->Enabled = false;
 //        Memotext->Checked = false;
 //        Memotext->Enabled = false;
+
+        Form1->SelectJoystick2->Visible = false;
+        Form1->ConnectJoystick2->Visible = false;
+        Form1->EnableJoystick2AutoFire->Visible = false;
+        Form1->divIDEJumperEClosed->Visible = false;
+        Form1->ZXCFUploadJumperClosed->Visible = false;
+        Form1->SimpleIdeRomEnabled->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->SpectraColourEnable->Visible = false;
+        Form1->ResetMemotechHRG->Visible = false;
+        Form1->ResetQuicksilvaHiRes->Visible = false;
+        Form1->QSChrEnable->Visible = false;
+        Form1->ChromaColourEnable->Visible = false;
+        Form1->SwitchOnMemocalc->Visible = false;
+//        Form1->SwitchOnMemotext->Visible = false;
+        Form1->SwitchOnZ80Assembler->Visible = false;
+        Form1->WriteProtect8KRAM->Visible = false;
+        Form1->ResetSpeech->Visible = false;
+
+        Form1->ConnectSpectrum128Keypad->Checked = false;
 
         UpdateApplyButton();
 }

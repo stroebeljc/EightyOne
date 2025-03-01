@@ -1,13 +1,13 @@
 object EditDataForm: TEditDataForm
-  Left = 143
-  Top = 521
-  Width = 632
-  Height = 322
+  Left = 244
+  Top = 208
+  Width = 642
+  Height = 400
   BorderIcons = []
   BorderStyle = bsSizeToolWin
   Caption = 'Edit Data Block'
   Color = clBtnFace
-  Constraints.MaxWidth = 632
+  Constraints.MaxWidth = 642
   Constraints.MinHeight = 322
   Constraints.MinWidth = 632
   Font.Charset = DEFAULT_CHARSET
@@ -86,7 +86,7 @@ object EditDataForm: TEditDataForm
   end
   object Label10: TLabel
     Left = 8
-    Top = 263
+    Top = 334
     Width = 68
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -125,8 +125,8 @@ object EditDataForm: TEditDataForm
     Text = 'Pause'
   end
   object OK: TButton
-    Left = 544
-    Top = 256
+    Left = 542
+    Top = 327
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -139,7 +139,7 @@ object EditDataForm: TEditDataForm
     Left = 8
     Top = 120
     Width = 609
-    Height = 129
+    Height = 193
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -187,7 +187,7 @@ object EditDataForm: TEditDataForm
   end
   object CharSet: TComboBox
     Left = 88
-    Top = 259
+    Top = 330
     Width = 89
     Height = 21
     Style = csDropDownList

@@ -1,6 +1,6 @@
 object EditValue: TEditValue
-  Left = 79
-  Top = 59
+  Left = 241
+  Top = 176
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'Edit Value'
@@ -12,6 +12,7 @@ object EditValue: TEditValue
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnKeyPress = FormKeyPress

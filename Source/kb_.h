@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * kb_.h
- *
  */
 
 //---------------------------------------------------------------------------
@@ -45,10 +42,18 @@ __published:	// IDE-managed Components
         TLabel *CtrlKeyMapsToLabel;
         TCheckBox *UseRightShiftCheckBox;
         TCheckBox *UseNumericPadForJoystickCheckBox;
+        TRadioButton *UseNumericPadForJoystick1;
+        TRadioButton *UseNumericPadForJoystick2;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall CursorModeChange(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
+        void __fastcall UseNumericPadForJoystickCheckBoxClick(
+          TObject *Sender);
+        void __fastcall UseNumericPadForJoystick1Click(TObject *Sender);
+        void __fastcall UseNumericPadForJoystick2Click(TObject *Sender);
 private:	// User declarations
+        void UpdateJoystickSettings();
+
 public:		// User declarations
         __fastcall TKb(TComponent* Owner);
         void LoadSettings(TIniFile *ini);

@@ -1,6 +1,6 @@
 object P3Drive: TP3Drive
-  Left = 84
-  Top = 0
+  Left = 233
+  Top = 134
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsToolWindow
   Caption = 'Drives'
@@ -12,6 +12,8 @@ object P3Drive: TP3Drive
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
+  OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
   OnShow = FormShow

@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * zx81config.c
- *
  */
 
 #include <string.h>
@@ -53,7 +50,7 @@ const char* fdcRomsFolder                 = "FDCs\\";
 const char* ideRomsFolder                 = "IDEs\\";
 const char* interfaceRomsFolder           = "Interfaces\\";
 const char* graphicRomsFolder             = "Graphics\\";
-const char* replacementRomsFolder         = "Replacement ROMs\\";
+const char* replacementRomsFolder         = "Replacement Operating Systems\\";
 const char* speechRomsFolder              = "Speech\\";
 
 const char* romCartridgeFolder            = "ROM Cartridges\\";
@@ -115,6 +112,13 @@ void load_config(void)
         zx81.chromaMode=0x0F;
         zx81.chromaColourSwitchOn = 0;
         zx81.FloatingPointHardwareFix = 0;
+        zx81.z80Assembler = 0;
+        zx81.memocalc = 0;
+//        zx81.memotext = 0;
+        zx81.z80AssemblerOn = 0;
+        zx81.memocalcOn = 0;
+//        zx81.memotextOn = 0;
+
         machine.NTSC=0;
         machine.clockspeed=3250000;
         machine.tperscanline=207;
@@ -198,6 +202,12 @@ void load_config(void)
         strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
         AnsiString QuicksilvaHiResRom = graphicRomsFolder + AnsiString("quicksilvahires.rom");
         strcpy(emulator.ROMQUICKSILVAHIRES, QuicksilvaHiResRom.c_str());
+        AnsiString z80Assembler = interfaceRomsFolder + AnsiString("z80assembler.rom");
+        strcpy(emulator.ROMASSEMBLER, z80Assembler.c_str());
+        AnsiString memocalc = interfaceRomsFolder + AnsiString("memocalc.rom");
+        strcpy(emulator.ROMMEMOCALC, memocalc.c_str());
+//        AnsiString memotext = interfaceRomsFolder + AnsiString("memotext.rom");
+//        strcpy(emulator.ROMMEMOTEXT, memotext.c_str());
 
         AnsiString speechRomsPath = AnsiString(emulator.cwd) + AnsiString(romsFolder)
                 + AnsiString(speechRomsFolder);

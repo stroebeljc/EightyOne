@@ -1,6 +1,6 @@
 object HW: THW
-  Left = 276
-  Top = 124
+  Left = 203
+  Top = 122
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
@@ -12,7 +12,10 @@ object HW: THW
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
+  OldCreateOrder = False
   Scaled = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   DesignSize = (
@@ -1382,7 +1385,7 @@ object HW: THW
       end
       object ZXpandEmulationInfo: TImage
         Left = 382
-        Top = 75
+        Top = 16
         Width = 15
         Height = 15
         AutoSize = True
@@ -1531,58 +1534,58 @@ object HW: THW
       end
       object KMouse: TCheckBox
         Left = 184
-        Top = 36
+        Top = 76
         Width = 105
         Height = 17
         Caption = 'Kempston Mouse'
-        TabOrder = 19
+        TabOrder = 21
         OnClick = KMouseClick
       end
       object TS2050: TCheckBox
-        Left = 304
-        Top = 17
+        Left = 184
+        Top = 15
         Width = 101
         Height = 17
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 23
+        TabOrder = 18
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
         Left = 184
-        Top = 55
+        Top = 95
         Width = 97
         Height = 17
         Caption = 'Multiface 128'
-        TabOrder = 20
+        TabOrder = 22
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 321
-        Top = 34
+        Left = 201
+        Top = 32
         Width = 80
         Height = 20
         Caption = 'Configure...'
-        TabOrder = 24
+        TabOrder = 19
         OnClick = TS2050ConfigClick
       end
       object ZXPrinter: TCheckBox
-        Left = 184
-        Top = 74
+        Left = 304
+        Top = 57
         Width = 97
         Height = 17
         Caption = 'ZX Printer'
-        TabOrder = 21
+        TabOrder = 26
         OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
         Left = 304
-        Top = 74
+        Top = 15
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 25
+        TabOrder = 24
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
@@ -1624,11 +1627,11 @@ object HW: THW
       end
       object ButtonZXpandSDCard: TButton
         Left = 321
-        Top = 92
+        Top = 32
         Width = 80
         Height = 20
         Caption = 'SD Card...'
-        TabOrder = 27
+        TabOrder = 25
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
@@ -1650,11 +1653,11 @@ object HW: THW
       end
       object uSource: TCheckBox
         Left = 184
-        Top = 17
+        Top = 57
         Width = 97
         Height = 17
         Caption = 'Currah '#181'Source'
-        TabOrder = 18
+        TabOrder = 20
         OnClick = uSourceClick
       end
       object RomCartridgeFileBox: TEdit
@@ -1691,7 +1694,7 @@ object HW: THW
         Width = 194
         Height = 21
         DropDownCount = 10
-        TabOrder = 26
+        TabOrder = 29
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
@@ -1718,11 +1721,11 @@ object HW: THW
       end
       object SpecDrum: TCheckBox
         Left = 184
-        Top = 93
+        Top = 114
         Width = 121
         Height = 17
         Caption = 'Cheetah SpecDrum'
-        TabOrder = 22
+        TabOrder = 23
         OnClick = SpecDrumClick
       end
       object JoystickBox: TComboBox
@@ -1820,6 +1823,33 @@ object HW: THW
         OnKeyDown = JoystickBoxKeyDown
         OnKeyPress = JoystickBoxKeyPress
         OnMouseUp = JoystickBoxMouseUp
+      end
+      object Z80Assembler: TCheckBox
+        Left = 304
+        Top = 76
+        Width = 97
+        Height = 17
+        Caption = 'Z80 Assembler'
+        TabOrder = 27
+        OnClick = Z80AssemblerClick
+      end
+      object Memocalc: TCheckBox
+        Left = 304
+        Top = 95
+        Width = 97
+        Height = 17
+        Caption = 'Memocalc'
+        TabOrder = 28
+        OnClick = MemocalcClick
+      end
+      object Memotext: TCheckBox
+        Left = 304
+        Top = 114
+        Width = 97
+        Height = 17
+        Caption = 'Memotext'
+        TabOrder = 30
+        Visible = False
       end
     end
     object FloppyDrives: TTabSheet
@@ -1919,6 +1949,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
+          ItemHeight = 0
           TabOrder = 1
           OnChange = FDCRomBoxChange
         end
@@ -2031,6 +2062,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
+          ItemHeight = 0
           TabOrder = 2
           OnChange = IDERomBoxChange
         end

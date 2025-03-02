@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * spec48.c
- *
  */
 #include <vcl4.h>
 
@@ -66,7 +63,6 @@ extern "C"
 {
         int CRC32Block(BYTE *memory, int romlen);
         void P3DriveMachineHasInitialised(void);
-//        void MidiClockTick(int);
 }
 
 extern void InitialiseSpectra();
@@ -181,108 +177,6 @@ RZX_EMULINFO  RZXemulinfo =
 int RZXError;
 
 extern AnsiString PrependFolder(AnsiString folder, char* romFile);
-
-void spec48_LoadRZX(char *FileName)
-{
-        rzx_playback(FileName);
-        RZXCounter=0;
-}
-
-rzx_u32 RZXcallback(int Msg, void *data)
-{
-        int a;
-        //int b,c,d;
-
-        switch(Msg)
-        {
-        case RZXMSG_CREATOR:
-                break;
-        case RZXMSG_LOADSNAP:
-                spec_load_z80( ((RZX_SNAPINFO *) data)->filename);
-                break;
-        case RZXMSG_IRBNOTIFY:
-                a=((RZX_IRBINFO *) data)->framecount;
-                //b=((RZX_IRBINFO *) data)->tstates;
-                //c=((RZX_IRBINFO *) data)->options;
-                //d=0;
-
-                fts=a;
-                RZXCounter=0;
-                break;
-        default:
-                break;
-        }
-
-        return(0);
-}
-
-extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
-
-void SpecStartUp(void)
-{
-        memset(&PlusDDrives[0], 0, sizeof(wd1770_drive));
-        memset(&PlusDDrives[1], 0, sizeof(wd1770_drive));
-        LoadFDC765DLL();
-
-        int versionNumberMajor;
-        int versionNumberMinor;
-        int versionNumberPart3;
-        int versionNumberPart4;
-        GetVersionNumber(versionNumberMajor, versionNumberMinor, versionNumberPart3, versionNumberPart4);
-
-        RZXemulinfo.ver_major = (rzx_u16)versionNumberMajor;
-        RZXemulinfo.ver_minor = (rzx_u16)versionNumberMinor;
-        RZXError=rzx_init(&RZXemulinfo, RZXcallback);
-}
-
-int SPECShrink(int b)
-{
-        int a=0,i;
-
-        for(i=0;i<8;i++)
-        {
-                //a = (a<<1) | (b&49152)?1:0;
-                a=(a<<1) | (((b&32768)|((b<<1)&32768))>>15);
-                b<<=2;
-        }
-        return(a);
-}
-
-static void divIDEPage(void)
-{
-        // If CONMEM set
-        if (divIDEPaged & 128)
-        {
-                divIDEPage0=0;                                // $0000-$1FFF = EEPROM bank
-                divIDEPage1=1+(divIDEPort&3);                 // $2000-$3FFF = RAM banks 0-3 (values 1-4)
-                divIDEPage0WP=machine.divIDEJumperEClosed;    // $0000-$1FFF write protected if jumper E option ticked
-                divIDEPage1WP=0;                              // $2000-$3FFF is unprotected
-        }
-        // Else if memory has been paged in automatically
-        else if (divIDEPaged & 1)
-        {
-                if (divIDEMapRam)
-                {
-                        divIDEPage0=4;                        // $0000-$1FFF = RAM bank 3
-                        divIDEPage1=1+(divIDEPort&3);         // $2000-$3FFF = RAM banks 0-3 (values 1-4)
-                        divIDEPage0WP=1;                      // $0000-$1FFF write protected
-                        divIDEPage1WP=0;                      // $2000-$3FFF is unprotected
-                        if (divIDEPage1==4) divIDEPage1WP=1;  // $2000-$3FFF write protected if RAM bank 3 selected
-                }
-                else
-                {
-                        divIDEPage0=0;                        // $0000-$1FFF = EEPROM bank
-                        divIDEPage1=1+(divIDEPort&3);         // $2000-$3FFF = RAM banks 0-3 (values 1-4)
-                        divIDEPage0WP=1;                      // $0000-$1FFF write protected
-                        divIDEPage1WP=0;                      // $2000-$3FFF is unprotected
-                }
-        }
-}
-
-void spec48_exit(void)
-{
-        floppy_shutdown();
-}
 
 void spec48_reset(void)
 {
@@ -565,6 +459,108 @@ void spec48_initialise()
                         spectrumPlus3AddLineAddress = 0x0DD8;
                 }
         }
+}
+
+void spec48_LoadRZX(char *FileName)
+{
+        rzx_playback(FileName);
+        RZXCounter=0;
+}
+
+rzx_u32 RZXcallback(int Msg, void *data)
+{
+        int a;
+        //int b,c,d;
+
+        switch(Msg)
+        {
+        case RZXMSG_CREATOR:
+                break;
+        case RZXMSG_LOADSNAP:
+                spec_load_z80( ((RZX_SNAPINFO *) data)->filename);
+                break;
+        case RZXMSG_IRBNOTIFY:
+                a=((RZX_IRBINFO *) data)->framecount;
+                //b=((RZX_IRBINFO *) data)->tstates;
+                //c=((RZX_IRBINFO *) data)->options;
+                //d=0;
+
+                fts=a;
+                RZXCounter=0;
+                break;
+        default:
+                break;
+        }
+
+        return(0);
+}
+
+extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
+
+void SpecStartUp(void)
+{
+        memset(&PlusDDrives[0], 0, sizeof(wd1770_drive));
+        memset(&PlusDDrives[1], 0, sizeof(wd1770_drive));
+        LoadFDC765DLL();
+
+        int versionNumberMajor;
+        int versionNumberMinor;
+        int versionNumberPart3;
+        int versionNumberPart4;
+        GetVersionNumber(versionNumberMajor, versionNumberMinor, versionNumberPart3, versionNumberPart4);
+
+        RZXemulinfo.ver_major = (rzx_u16)versionNumberMajor;
+        RZXemulinfo.ver_minor = (rzx_u16)versionNumberMinor;
+        RZXError=rzx_init(&RZXemulinfo, RZXcallback);
+}
+
+int SPECShrink(int b)
+{
+        int a=0,i;
+
+        for(i=0;i<8;i++)
+        {
+                //a = (a<<1) | (b&49152)?1:0;
+                a=(a<<1) | (((b&32768)|((b<<1)&32768))>>15);
+                b<<=2;
+        }
+        return(a);
+}
+
+static void divIDEPage(void)
+{
+        // If CONMEM set
+        if (divIDEPaged & 128)
+        {
+                divIDEPage0=0;                                // $0000-$1FFF = EEPROM bank
+                divIDEPage1=1+(divIDEPort&3);                 // $2000-$3FFF = RAM banks 0-3 (values 1-4)
+                divIDEPage0WP=machine.divIDEJumperEClosed;    // $0000-$1FFF write protected if jumper E option ticked
+                divIDEPage1WP=0;                              // $2000-$3FFF is unprotected
+        }
+        // Else if memory has been paged in automatically
+        else if (divIDEPaged & 1)
+        {
+                if (divIDEMapRam)
+                {
+                        divIDEPage0=4;                        // $0000-$1FFF = RAM bank 3
+                        divIDEPage1=1+(divIDEPort&3);         // $2000-$3FFF = RAM banks 0-3 (values 1-4)
+                        divIDEPage0WP=1;                      // $0000-$1FFF write protected
+                        divIDEPage1WP=0;                      // $2000-$3FFF is unprotected
+                        if (divIDEPage1==4) divIDEPage1WP=1;  // $2000-$3FFF write protected if RAM bank 3 selected
+                }
+                else
+                {
+                        divIDEPage0=0;                        // $0000-$1FFF = EEPROM bank
+                        divIDEPage1=1+(divIDEPort&3);         // $2000-$3FFF = RAM banks 0-3 (values 1-4)
+                        divIDEPage0WP=1;                      // $0000-$1FFF write protected
+                        divIDEPage1WP=0;                      // $2000-$3FFF is unprotected
+                }
+        }
+}
+
+void spec48_exit(void)
+{
+        floppy_shutdown();
 }
 
 void SPECLoadCheck(void)

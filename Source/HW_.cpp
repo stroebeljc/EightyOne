@@ -1,4 +1,20 @@
-//--------------------------------------------------------------------------
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #include <dir.h>
 #include <dirent.h>
@@ -216,7 +232,6 @@ void __fastcall THW::OKClick(TObject *Sender)
 {
         const bool disableResetStatus = false;
         UpdateHardwareSettings(disableResetStatus);
-        Form1->Hardware1->Checked=false;
         Close();
 }
 
@@ -244,10 +259,10 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureRamTop();
         ConfigureDefaultRamSettings();
         DetermineRamSizeLabel(NewMachineName);
+        ConfigureRom();
         ConfigureColour();
         Configure8K16KRam();
         ConfigureBasicLister();
-        ConfigureRom();
         ConfigureMultifaceRom();
         ConfigureZXpand();
         ConfigureRomCartridge();
@@ -259,19 +274,18 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureM1Not();
         ConfigureDisplayArtifacts();
         ConfigureKeypad();
+        ConfigureInterfaces();
 
         ConfigureIDE();
         ConfigureIDERom();
         ConfigureFDC();
         ConfigureFDCRom();
-        
+
         ConfigureModem();
         ConfigurePrinterCentronicsPort();
         ConfigureRzxSupport();
 
-        spectrum.usource = uSource->Checked;
         spectrum.kbissue = Issue2->Checked;
-        spectrum.kmouse = KMouse->Checked;
 
         zx81.improvedWait = ImprovedWait->Checked;
         zx81.FloatingPointHardwareFix = FloatingPointHardwareFix->Checked;
@@ -346,7 +360,12 @@ void THW::LoadFromInternalSettings()
                 JoystickBox->Items->Add("ZXpand");
         }
 
-        RomBox->ItemIndex                = FindEntry(RomBox,                  Hwform.RomBoxText);
+        RomBox->ItemIndex = FindEntry(RomBox, Hwform.RomBoxText);
+        if (RomBox->ItemIndex == -1)
+        {
+                RomBox->Text = Hwform.RomBoxText;
+        }
+
         RamPackBox->ItemIndex            = FindEntry(RamPackBox,              Hwform.RamPackBoxText);
         SoundCardBox->ItemIndex          = SelectEntry(SoundCardBox,          Hwform.SoundCardBoxText);
         ChrGenBox->ItemIndex             = SelectEntry(ChrGenBox,             Hwform.ChrGenBoxText);
@@ -361,9 +380,19 @@ void THW::LoadFromInternalSettings()
         ZXCFRAM->ItemIndex               = SelectEntry(ZXCFRAM,               Hwform.ZXCFRAMText);
         IDEBox->ItemIndex                = SelectEntry(IDEBox,                Hwform.IDEBoxText);
         FDCBox->ItemIndex                = SelectEntry(FDCBox,                Hwform.FDCBoxText);
-        IDERomBox->ItemIndex             = SelectEntry(IDERomBox,             Hwform.IDERomBoxText);
-        FDCRomBox->ItemIndex             = SelectEntry(FDCRomBox,             Hwform.FDCRomBoxText);
         NoMicrodrivesComboBox->ItemIndex = SelectEntry(NoMicrodrivesComboBox, Hwform.NoMicrodrivesComboBoxText);
+
+        IDERomBox->ItemIndex = FindEntry(IDERomBox, Hwform.IDERomBoxText);
+        if (IDERomBox->ItemIndex == -1)
+        {
+                IDERomBox->Text = Hwform.IDERomBoxText;
+        }
+
+        FDCRomBox->ItemIndex = FindEntry(FDCRomBox, Hwform.FDCRomBoxText);
+        if (FDCRomBox->ItemIndex == -1)
+        {
+                FDCRomBox->Text = Hwform.FDCRomBoxText;
+        }
 
         RomCartridgeFileBox->Text         = Hwform.RomCartridgeFileBoxText;
         SinclairRomCartridgeFileBox->Text = Hwform.SinclairRomCartridgeFileBoxText;
@@ -390,6 +419,9 @@ void THW::LoadFromInternalSettings()
         ZXPrinter->Checked                     = Hwform.ZXPrinterChecked;
         FloatingPointHardwareFix->Checked      = Hwform.FloatingPointHardwareFixChecked;
         uSource->Checked                       = Hwform.uSourceChecked;
+        Z80Assembler->Checked                  = Hwform.Z80AssemblerChecked;
+        Memocalc->Checked                      = Hwform.MemocalcChecked;
+//        Memotext->Checked                      = Hwform.MemotextChecked;
 
         ZX97Dialog->UpdateFormSettings(Hwform.ZX97Form);
 
@@ -480,8 +512,38 @@ void THW::SaveToInternalSettings()
         Hwform.ZXPrinterChecked                = ZXPrinter->Checked;
         Hwform.FloatingPointHardwareFixChecked = FloatingPointHardwareFix->Checked;
         Hwform.uSourceChecked                  = uSource->Checked;
-        
+        Hwform.Z80AssemblerChecked             = Z80Assembler->Checked;
+        Hwform.MemocalcChecked                 = Memocalc->Checked;
+//        Hwform.MemotextChecked                 = Memotext->Checked;
+
         ZX97Dialog->RetrieveFormSettings(Hwform.ZX97Form);
+}
+
+void THW::ConfigureInterfaces()
+{
+        spectrum.usource = uSource->Checked;
+        spectrum.kmouse  = KMouse->Checked;
+
+        zx81.z80Assembler = Z80Assembler->Checked;
+        zx81.memocalc     = Memocalc->Checked;
+//        zx81.memotext     = Memotext->Checked;
+
+        if (Hwform.Z80AssemblerChecked != Z80Assembler->Checked)
+        {
+                zx81.z80AssemblerOn = Z80Assembler->Checked;
+        }
+
+        if (Hwform.MemocalcChecked != Memocalc->Checked)
+        {
+                zx81.memocalcOn = Memocalc->Checked;
+        }
+        
+//        if (Hwform.MemotextChecked != Memotext->Checked)
+//        {
+//                zx81.memotextOn = Memotext->Checked;
+//        }
+
+        Form1->BuildMemotechInterfaceSelection();
 }
 
 void THW::Configure8K16KRam()
@@ -1526,6 +1588,42 @@ void THW::ConfigureJoystick()
                 InitialiseJoysticks();
         }
 
+        if (JoystickBox->Text != Hwform.JoystickBoxText)
+        {
+                CFGBYTE defaultController = 0;
+
+                bool joystickInterfaceSelected     = (machine.joystickInterfaceType != JOYSTICK_NONE);
+                bool twinJoystickInterfaceSelected = (machine.joystickInterfaceType == JOYSTICK_INTERFACE2 || machine.joystickInterfaceType == JOYSTICK_TIMEX);
+
+                if (joystickInterfaceSelected && (controllerPresent[0] || emulator.UseNumericPadForJoystick1 != 0))
+                {
+                        machine.joystick1Controller = defaultController;
+                        machine.joystick1Connected = 1;
+                        machine.joystick1AutoFireEnabled = 0;
+
+                        defaultController++;
+                }
+                else
+                {
+                        machine.joystick1Controller = -1;
+                        machine.joystick1Connected = 0;
+                        machine.joystick1AutoFireEnabled = 0;
+                }
+
+                if (twinJoystickInterfaceSelected && (controllerPresent[1] || emulator.UseNumericPadForJoystick2 != 0))
+                {
+                        machine.joystick2Controller = defaultController;
+                        machine.joystick2Connected = 1;
+                        machine.joystick2AutoFireEnabled = 0;
+                }
+                else
+                {
+                        machine.joystick2Controller = -1;
+                        machine.joystick2Connected = 0;
+                        machine.joystick2AutoFireEnabled = 0;
+                }
+        }
+
         Form1->BuildMenuJoystickSelection();
 }
 
@@ -1940,6 +2038,27 @@ void THW::SetupForZX81(void)
         AceBtn->Down = false;
         ZX97LEBtn->Down = false;
 
+        Form1->SelectJoystick2->Visible = false;
+        Form1->ConnectJoystick2->Visible = false;
+        Form1->EnableJoystick2AutoFire->Visible = false;
+        Form1->divIDEJumperEClosed->Visible = false;
+        Form1->ZXCFUploadJumperClosed->Visible = false;
+        Form1->SimpleIdeRomEnabled->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->SpectraColourEnable->Visible = false;
+
+        Form1->ResetMemotechHRG->Visible = true;
+        Form1->ResetQuicksilvaHiRes->Visible = true;
+        Form1->QSChrEnable->Visible = true;
+        Form1->ChromaColourEnable->Visible = true;
+        Form1->SwitchOnMemocalc->Visible = true;
+//        Form1->SwitchOnMemotext->Visible = true;
+        Form1->SwitchOnZ80Assembler->Visible = true;
+        Form1->WriteProtect8KRAM->Visible = true;
+        Form1->ResetSpeech->Visible = true;
+
+        Form1->ConnectSpectrum128Keypad->Checked = false;
+
         FloatingPointHardwareFix->Enabled = false;
         ButtonAdvancedMore->Visible = false;
 
@@ -2088,14 +2207,18 @@ void THW::SetupForZX81(void)
         JoystickLeftBoxLabel->Enabled  = false;
         JoystickRightBoxLabel->Enabled = false;
         JoystickFireBoxLabel->Enabled  = false;
-        
+        Form1->ConnectJoystick2->Checked = false;
+        Form1->EnableJoystick2AutoFire->Checked = false;
+
         uSource->Enabled = false;
         uSource->Checked = false;
 
         SpecDrum->Checked = false;
         SpecDrum->Enabled = false;
 
-        Form1->ConnectSpectrum128Keypad->Enabled = false;
+        Z80Assembler->Enabled = Z80Assembler->Checked || (!Memocalc->Checked && !Memotext->Checked);
+        Memocalc->Enabled     = Memocalc->Checked || (!Z80Assembler->Checked && !Memotext->Checked);
+//        Memotext->Enabled     = Memotext->Checked || (!Z80Assembler->Checked && !Memocalc->Checked);
 
         RomCartridgeBox->Items->Clear();
         RomCartridgeBox->Items->Add("None");
@@ -2159,8 +2282,34 @@ void THW::SetupForSpectrum(void)
         AceBtn->Down = false;
         ZX97LEBtn->Down = false;
 
+        Form1->SelectJoystick2->Visible = true;
+        Form1->ConnectJoystick2->Visible = true;
+        Form1->EnableJoystick2AutoFire->Visible = true;
+        Form1->divIDEJumperEClosed->Visible = true;
+        Form1->ZXCFUploadJumperClosed->Visible = true;
+        Form1->SimpleIdeRomEnabled->Visible = true;
+        Form1->ConnectSpectrum128Keypad->Visible = true;
+        Form1->SpectraColourEnable->Visible = true;
+        Form1->ResetSpeech->Visible = true;
+
+        Form1->ResetMemotechHRG->Visible = false;
+        Form1->ResetQuicksilvaHiRes->Visible = false;
+        Form1->QSChrEnable->Visible = false;
+        Form1->ChromaColourEnable->Visible = false;
+        Form1->SwitchOnMemocalc->Visible = false;
+//        Form1->SwitchOnMemotext->Visible = false;
+        Form1->SwitchOnZ80Assembler->Visible = false;
+        Form1->WriteProtect8KRAM->Visible = false;
+
         FloatingPointHardwareFix->Enabled = false;
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
 
         machine.plus3arabicPagedOut = 0;
 
@@ -2599,24 +2748,20 @@ void THW::LoadRomBox()
                 RomBox->Items->Add("zx81.edition3.rom");
                 RomBox->Items->Add("tree-forth.rom");
                 RomBox->Items->Add("zx81-forth.rom");
-                RomBox->Items->Add("zx.asxmic.e04.rom");
-                RomBox->Items->Add("zx.asxmic.e07.rom");
+                RomBox->Items->Add("zx.aszmic.e04.rom");
+                RomBox->Items->Add("zx.aszmic.e07.rom");
                 RomBox->Text = emulator.ROM81;
                 break;
 
         case MACHINETS1000:
                 RomBox->Items->Add("zx81.edition3.rom");
                 RomBox->Items->Add("tree-forth.rom");
-                RomBox->Items->Add("zx.asxmic.e04.rom");
-                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROMTS1000;
                 break;
 
         case MACHINETS1500:
                 RomBox->Items->Add("ts1500.rom");
                 RomBox->Items->Add("tree-forth.rom");
-                RomBox->Items->Add("zx.asxmic.e04.rom");
-                RomBox->Items->Add("zx.asxmic.e07.rom");
                 RomBox->Text = emulator.ROMTS1500;
                 break;
                 
@@ -2765,7 +2910,18 @@ void __fastcall THW::ZX80BtnClick(TObject *Sender)
         ImprovedWait->Enabled = false;
         ImprovedWait->Checked = false;
 
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
+
         IDEBoxChange(NULL);
+
+        Form1->SwitchOnMemocalc->Visible = false;
+//        Form1->SwitchOnMemotext->Visible = false;
+        Form1->SwitchOnZ80Assembler->Visible = false;
 
         UpdateApplyButton();
 }
@@ -3029,6 +3185,7 @@ void __fastcall THW::TS1500BtnClick(TObject *Sender)
         LoadRomBox();
         ColourLabel->Caption = "Color:";
         NTSC->Checked = true;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3068,6 +3225,14 @@ void __fastcall THW::LambdaBtnClick(TObject *Sender)
         BrowseRomCartridge->Enabled = false;
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3095,6 +3260,14 @@ void __fastcall THW::R470BtnClick(TObject *Sender)
         ColourBox->Enabled = true;
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3120,6 +3293,14 @@ void __fastcall THW::TK85BtnClick(TObject *Sender)
         ColourBox->Enabled = true;
         EnableRomCartridgeOption(false);
         FloatingPointHardwareFix->Checked = false;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3210,6 +3391,33 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         EnableRomCartridgeOption(false);
         SetZXpandState(false, false);
         IDEBoxChange(NULL);
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
+
+        Form1->SelectJoystick2->Visible = false;
+        Form1->ConnectJoystick2->Visible = false;
+        Form1->EnableJoystick2AutoFire->Visible = false;
+        Form1->divIDEJumperEClosed->Visible = false;
+        Form1->ZXCFUploadJumperClosed->Visible = false;
+        Form1->SimpleIdeRomEnabled->Visible = false;
+        Form1->ConnectSpectrum128Keypad->Visible = false;
+        Form1->SpectraColourEnable->Visible = false;
+        Form1->ResetMemotechHRG->Visible = false;
+        Form1->ResetQuicksilvaHiRes->Visible = false;
+        Form1->QSChrEnable->Visible = false;
+        Form1->ChromaColourEnable->Visible = false;
+        Form1->SwitchOnMemocalc->Visible = false;
+//        Form1->SwitchOnMemotext->Visible = false;
+        Form1->SwitchOnZ80Assembler->Visible = false;
+        Form1->WriteProtect8KRAM->Visible = false;
+        Form1->ResetSpeech->Visible = false;
+
+        Form1->ConnectSpectrum128Keypad->Checked = false;
 
         UpdateApplyButton();
 }
@@ -3387,6 +3595,14 @@ void __fastcall THW::ZX97LEBtnClick(TObject *Sender)
                 LabelTotalRAM->Visible = false;
         }
         ButtonAdvancedMore->Visible = true;
+
+        Z80Assembler->Checked = false;
+        Z80Assembler->Enabled = false;
+        Memocalc->Checked = false;
+        Memocalc->Enabled = false;
+//        Memotext->Checked = false;
+//        Memotext->Enabled = false;
+
         IDEBoxChange(NULL);
 
         UpdateApplyButton();
@@ -3500,6 +3716,9 @@ void THW::AccessIniFile(TIniFile* ini, IniFileAccessType accessType)
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "KempstonMouse",     Hwform.KMouseChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "Multiface",         Hwform.MultifaceChecked);
         AccessIniFileBoolean(ini, accessType, "HARDWARE", "ZXPrinter",         Hwform.ZXPrinterChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Z80Assembler",      Hwform.Z80AssemblerChecked);
+        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Memocalc",          Hwform.MemocalcChecked);
+//        AccessIniFileBoolean(ini, accessType, "HARDWARE", "Memotext",          Hwform.MemotextChecked);
 
         //---- DRIVES TAB ----
 
@@ -4003,6 +4222,17 @@ void __fastcall THW::RomBoxChange(TObject *Sender)
                         FloatingPointHardwareFix->Checked = false;
                 }
         }
+        else if (ZX81Btn->Down)
+        {
+                if (RomBox->Text == "tree-forth.rom")
+                {
+                        NTSC->Checked = true;
+                }
+                else if (RomBox->Text == "zx81-forth.rom" || RomBox->Text == "zx.aszmic.e04.rom.rom" || RomBox->Text == "zx.aszmic.e07.rom.rom")
+                {
+                        NTSC->Checked = false;
+                }
+        }
 
         UpdateApplyButton();
 
@@ -4155,7 +4385,6 @@ void __fastcall THW::SpeechBoxChange(TObject *Sender)
 
 void __fastcall THW::CancelClick(TObject *Sender)
 {
-        Form1->Hardware1->Checked=false;
         Close();
 }
 //---------------------------------------------------------------------------
@@ -4193,22 +4422,7 @@ void __fastcall THW::JoystickBoxChange(TObject *Sender)
                 }
                 else if (joystickInterfaceType == "ZX Interface 2" || joystickInterfaceType == "Sinclair")
                 {
-                        if (Form1->ConnectJoystick1->Checked)
-                        {
-                                joystickUpText    = "9";
-                                joystickDownText  = "8";
-                                joystickLeftText  = "6";
-                                joystickRightText = "7";
-                                joystickFireText  = "0";
-                        }
-                        else
-                        {
-                                joystickUpText    = "4";
-                                joystickDownText  = "3";
-                                joystickLeftText  = "1";
-                                joystickRightText = "2";
-                                joystickFireText  = "5";
-                        }
+                        UpdateSinclairJoystickKeys();
                 }
 
                 JoystickUpBox->Text    = joystickUpText;
@@ -4419,6 +4633,9 @@ void __fastcall THW::DefaultsButtonClick(TObject *Sender)
         FloatingPointHardwareFix->Checked = false;
         Issue2->Checked                   = false;
         NTSC->Checked                     = false;
+        Z80Assembler->Checked             = false;
+        Memocalc->Checked                 = false;
+//        Memotext->Checked                 = false;
         ProtectROM->Checked               = true;
 
         programmableJoystickLeft  = "O";
@@ -4794,6 +5011,56 @@ void __fastcall THW::NoMicrodrivesComboBoxChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall THW::Z80AssemblerClick(TObject *Sender)
+{
+        if (Z80Assembler->Checked)
+        {
+                Memocalc->Checked = false;
+//                Memotext->Checked = false;
+        }
+
+        Z80Assembler->Enabled = (!Memotext->Checked     && !Memocalc->Checked);
+        Memocalc->Enabled     = (!Z80Assembler->Checked && !Memotext->Checked);
+//        Memotext->Enabled     = (!Z80Assembler->Checked && !Memocalc->Checked);
+
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::MemocalcClick(TObject *Sender)
+{
+        if (Memocalc->Checked)
+        {
+//                Memotext->Checked = false;
+                Z80Assembler->Checked = false;
+        }
+
+        Z80Assembler->Enabled = (!Memotext->Checked     && !Memocalc->Checked);
+        Memocalc->Enabled     = (!Z80Assembler->Checked && !Memotext->Checked);
+//        Memotext->Enabled     = (!Z80Assembler->Checked && !Memocalc->Checked);
+
+        UpdateApplyButton();
+}
+//---------------------------------------------------------------------------
+
+/*
+void __fastcall THW::MemotextClick(TObject *Sender)
+{
+        if (Memotext->Checked)
+        {
+                Memocalc->Checked = false;
+                Z80Assembler->Checked = false;
+        }
+
+        Z80Assembler->Enabled = (!Memotext->Checked     && !Memocalc->Checked);
+        Memocalc->Enabled     = (!Z80Assembler->Checked && !Memotext->Checked);
+        Memotext->Enabled     = (!Z80Assembler->Checked && !Memocalc->Checked);
+
+        UpdateApplyButton();
+}
+*/
+//---------------------------------------------------------------------------
+
 void THW::UpdateApplyButton()
 {
         bool settingsChanged = (NewMachineName != Hwform.MachineName);
@@ -4843,11 +5110,20 @@ void THW::UpdateApplyButton()
         settingsChanged |= (FloatingPointHardwareFix->Checked      != Hwform.FloatingPointHardwareFixChecked);
         settingsChanged |= (uSource->Checked                       != Hwform.uSourceChecked);
         settingsChanged |= (ZXpand->Checked                        != Hwform.ZXpandChecked);
+        settingsChanged |= (Z80Assembler->Checked                  != Hwform.Z80AssemblerChecked);
+        settingsChanged |= (Memocalc->Checked                      != Hwform.MemocalcChecked);
+//        settingsChanged |= (Memotext->Checked                      != Hwform.MemotextChecked);
 
         ResetRequired |= settingsChanged;
 
         Apply->Enabled = ResetRequired;
         RestoreButton->Enabled = Apply->Enabled;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
+{
+        Form1->Hardware1->Checked=false;
 }
 //---------------------------------------------------------------------------
 

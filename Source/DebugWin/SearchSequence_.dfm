@@ -1,6 +1,6 @@
 object SearchSequence: TSearchSequence
-  Left = 68
-  Top = 70
+  Left = 302
+  Top = 245
   BorderIcons = [biHelp]
   BorderStyle = bsToolWindow
   Caption = 'Find'
@@ -12,6 +12,7 @@ object SearchSequence: TSearchSequence
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False

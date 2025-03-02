@@ -1,4 +1,5 @@
-/* EightyOne, Windows based Sinclair emulators.
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,11 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * sound.c - sound support, based on the beeper/AY code I
- *           wrote for Fuse.
  */
+ 
+// sound support based on the beeper/AY code I (Mike) wrote for Fuse.
 
 #ifndef _DSND_H
 #define _DSND_H

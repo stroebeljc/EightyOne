@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * snap.c
- *
  */
 
 #include <stdlib.h>
@@ -37,6 +34,8 @@
 #include "HW_.h"
 #include "main_.h"
 #include "Artifacts_.h"
+#include "SoundForm.h"
+#include "kb_.h"
 
 extern int lineCounter;
 extern int MemotechMode;
@@ -182,6 +181,16 @@ void load_snap_sound(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->SoundCardBox, tok);
                 }
+                else if (!strcmp(tok,"VIDEO_SOUND"))
+                {
+                        zx81.vsyncsound = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->Sound1->Checked = zx81.vsyncsound;
+                }
+                else if (!strcmp(tok,"EXCLUDE_HSYNCS"))
+                {
+                        zx81.beeperExcludeHSyncs = (CFGBYTE)hex2dec(get_token(f));
+                        MidiForm->BeeperExcludeHSyncs->Checked = zx81.beeperExcludeHSyncs;
+                }
         }
 }
 
@@ -212,6 +221,7 @@ void load_snap_joystick(FILE *f)
                 if (tok[0] == '[')
                 {
                         ProcessTag(tok, f);
+                        Form1->BuildMenuJoystickSelection();
                         return;
                 }
 
@@ -225,30 +235,54 @@ void load_snap_joystick(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->JoystickBox, tok);
                 }
-                else if (!strcmp(tok,"LEFT"))
+                else if (!strcmp(tok,"PROGRAMMABLE_LEFT"))
                 {
                         tok = get_token(f);
                         HW->JoystickLeftBox->Text = tok;
                 }
-                else if (!strcmp(tok,"RIGHT"))
+                else if (!strcmp(tok,"PROGRAMMABLE_RIGHT"))
                 {
                         tok = get_token(f);
                         HW->JoystickRightBox->Text = tok;
                 }
-                else if (!strcmp(tok,"UP"))
+                else if (!strcmp(tok,"PROGRAMMABLE_UP"))
                 {
                         tok = get_token(f);
                         HW->JoystickUpBox->Text = tok;
                 }
-                else if (!strcmp(tok,"DOWN"))
+                else if (!strcmp(tok,"PROGRAMMABLE_DOWN"))
                 {
                         tok = get_token(f);
                         HW->JoystickDownBox->Text = tok;
                 }
-                else if (!strcmp(tok,"FIRE"))
+                else if (!strcmp(tok,"PROGRAMMABLE_FIRE"))
                 {
                         tok = get_token(f);
                         HW->JoystickFireBox->Text = tok;
+                }
+                else if (!strcmp(tok,"CONTROLLER"))
+                {
+                        machine.joystick1Controller = (CFGBYTE)hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"CONNECTED"))
+                {
+                        machine.joystick1Connected = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->ConnectJoystick1->Checked = machine.joystick1Connected;
+                }
+                else if (!strcmp(tok,"AUTOFIRE"))
+                {
+                        machine.joystick1AutoFireEnabled = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->EnableJoystick1AutoFire->Checked = machine.joystick1AutoFireEnabled;
+                }
+                else if (!strcmp(tok,"NUMERICPAD_ENABLED"))
+                {
+                        bool useNumericPadForJoystick = hex2dec(get_token(f)) ? true : false;
+                        Kb->UseNumericPadForJoystickCheckBox->Checked = useNumericPadForJoystick;
+                }
+                else if (!strcmp(tok,"NUMERICPAD_JOYSTICK1"))
+                {
+                        emulator.UseNumericPadForJoystick1 = (CFGBYTE)hex2dec(get_token(f));
+                        Kb->UseNumericPadForJoystick1->Checked = emulator.UseNumericPadForJoystick1;
                 }
         }
 }
@@ -377,6 +411,7 @@ void load_snap_interfaces(FILE *f)
                 if (tok[0] == '[')
                 {
                         ProcessTag(tok, f);
+                        Form1->BuildMemotechInterfaceSelection();
                         return;
                 }
 
@@ -388,6 +423,30 @@ void load_snap_interfaces(FILE *f)
                 {
                         HW->ZXPrinter->Checked = hex2dec(get_token(f));
                 }
+                else if (!strcmp(tok,"ASSEMBLER"))
+                {
+                        HW->Z80Assembler->Checked = hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"MEMOCALC"))
+                {
+                        HW->Memocalc->Checked = hex2dec(get_token(f));
+                }
+//                else if (!strcmp(tok,"MEMOTEXT"))
+//                {
+//                        HW->Memotext->Checked = hex2dec(get_token(f));
+//                }
+                else if (!strcmp(tok,"ASSEMBLER_ON"))
+                {
+                        zx81.z80AssemblerOn = (CFGBYTE)hex2dec(get_token(f));
+                }
+                else if (!strcmp(tok,"MEMOCALC_ON"))
+                {
+                        zx81.memocalcOn = (CFGBYTE)hex2dec(get_token(f));
+                }
+//                else if (!strcmp(tok,"MEMOTEXT_ON"))
+//                {
+//                        zx81.memotextOn = (CFGBYTE)hex2dec(get_token(f));
+//                }
         }
 }
 
@@ -463,13 +522,13 @@ AnsiString GetMachine()
                         machineName = "ACE";
                         break;
                 case MACHINETS1000:
-                        machineName = "1000";
+                        machineName = "TS1000";
                         break;
                 case MACHINETS1500:
-                        machineName = "1500";
+                        machineName = "TS1500";
                         break;
                 case MACHINELAMBDA:
-                        machineName = "LAMDA";
+                        machineName = "LAMBDA";
                         break;
                 case MACHINEZX97LE:
                         machineName = "ZX97LE";
@@ -490,14 +549,14 @@ AnsiString GetMachine()
 
 void SetMachine(AnsiString machine)
 {
-        if (machine == "ZX80") HWSetMachine(MACHINEZX80, NULL);
-        else if (machine == "ZX81") HWSetMachine(MACHINEZX81, NULL);
-        else if (machine == "1500") HWSetMachine(MACHINETS1500, NULL);
-        else if (machine == "LAMDA") HWSetMachine(MACHINELAMBDA, NULL);
-        else if (machine == "ZX97LE") HWSetMachine(MACHINEZX97LE, NULL);
-        else if (machine == "R470") HWSetMachine(MACHINER470, NULL);
-        else if (machine == "TK85") HWSetMachine(MACHINETK85, NULL);
-        else if (machine == "1000") HWSetMachine(MACHINETS1000, NULL);
+        if (machine == "ZX80")        { emulator.machine = MACHINEZX80;   HWSetMachine(MACHINEZX80,   NULL); }
+        else if (machine == "ZX81")   { emulator.machine = MACHINEZX81;   HWSetMachine(MACHINEZX81,   NULL); }
+        else if (machine == "TS1500") { emulator.machine = MACHINETS1500; HWSetMachine(MACHINETS1500, NULL); }
+        else if (machine == "LAMBDA") { emulator.machine = MACHINELAMBDA; HWSetMachine(MACHINELAMBDA, NULL); }
+        else if (machine == "ZX97LE") { emulator.machine = MACHINEZX97LE; HWSetMachine(MACHINEZX97LE, NULL); }
+        else if (machine == "R470")   { emulator.machine = MACHINER470;   HWSetMachine(MACHINER470,   NULL); }
+        else if (machine == "TK85")   { emulator.machine = MACHINETK85;   HWSetMachine(MACHINETK85,   NULL); }
+        else if (machine == "TS1000") { emulator.machine = MACHINETS1000; HWSetMachine(MACHINETS1000, NULL); }
 }
 
 void load_snap_machine(FILE *f)
@@ -736,50 +795,68 @@ void load_snap_ace(FILE *f)
         z80.r = memory[memptr];
 }
 
-int do_load_snap(char *filename, bool resetHardware)
+int load_ZX81_snapshot(char* filename)
 {
-        char *p;
-        FILE *f;
+        FILE* f=fopen(filename,"rt");
+        if (!f) return(0);
 
-        p=filename+strlen(filename)-4;
+        machine.initialise();
+
+        while(!feof(f))
+        {
+                char* tok = get_token(f);
+                if (tok[0] == '[')
+                {
+                        ProcessTag(tok, f);
+                }
+        }
+
+        fclose(f);
+        return 1;
+}
+
+int load_ACE_snapshot(char* filename)
+{
+        FILE* f=fopen(filename,"rb");
+        if (!f) return 0;
+
+        HWSetMachine(MACHINEACE, NULL);
+
+        load_snap_ace(f);
+        fclose(f);
+
+        return 1;
+}
+
+int do_load_snap(char *filename)
+{
+        char* p=filename+strlen(filename)-4;
 
         if (strcmp(p,".Z81") && strcmp(p,".z81")
                 && strcmp(p,".ace") && strcmp(p,".ACE") ) return(0);
 
         if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
         {
-                f=fopen(filename,"rb");
-                if (!f)
+                if (!load_ACE_snapshot(filename))
                 {
-                        ShowMessage("Snapshot load failed.");
+                        ShowMessage("Load snapshot failed.");
                         return 0;
                 }
-
-                if (resetHardware)
-                {
-                        HWSetMachine(MACHINEACE, NULL);
-                        machine.initialise();
-                }
-                load_snap_ace(f);
         }
         else
         {
-                if (resetHardware) machine.initialise();
-
-                f=fopen(filename,"rt");
-                if (!f) return(0);
-
-                while(!feof(f))
+                // Load twice - the first selects the correct hardware settings, the second ensures they are initialised, e.g. ZXpand
+                if (!load_ZX81_snapshot(filename))
                 {
-                        char* tok = get_token(f);
-                        if (tok[0] == '[')
-                        {
-                                ProcessTag(tok, f);
-                        }
-                 }
+                        ShowMessage("Load snapshot failed.");
+                        return 0;
+                }
+
+                HWSetMachine(emulator.machine, NULL);
+
+                load_ZX81_snapshot(filename);
         }
 
-        fclose(f);
         DebugUpdate();
         return(1);
 }
@@ -787,7 +864,7 @@ int do_load_snap(char *filename, bool resetHardware)
 int load_snap(char *filename)
 {
         // Read in the snapshot into memory and settings (this also resets the computer)
-        int ret = do_load_snap(filename, true);
+        int ret = do_load_snap(filename);
         if (!ret) return ret;
 
         // Re-apply the settings without a reset
@@ -885,6 +962,12 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"\n[INTERFACES]\n");
 	fprintf(f,"ZX_PRINTER %02X\n", machine.zxprinter);
 	fprintf(f,"ZXPAND %02X\n", zx81.zxpand);
+	fprintf(f,"ASSEMBLER %02X\n", zx81.z80Assembler);
+	fprintf(f,"MEMOCALC %02X\n", zx81.memocalc);
+//	fprintf(f,"MEMOTEXT %02X\n", zx81.memotext);
+	fprintf(f,"ASSEMBLER_ON %02X\n", zx81.z80AssemblerOn);
+	fprintf(f,"MEMOCALC_ON %02X\n", zx81.memocalcOn);
+//	fprintf(f,"MEMOTEXT_ON %02X\n", zx81.memotextOn);
 
 	fprintf(f,"\n[DRIVES]\n");
 	fprintf(f,"FDC %S\n", HW->FDCBox->Text.c_str());
@@ -900,6 +983,8 @@ int save_snap_zx81(char *filename)
 
 	fprintf(f,"\n[SOUND]\n");
 	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->SoundCardBox->Text).c_str());
+        fprintf(f,"VIDEO_SOUND %02X\n", zx81.vsyncsound);
+        fprintf(f,"EXCLUDE_HSYNCS %02X\n", zx81.beeperExcludeHSyncs);
 
 	fprintf(f,"\n[SPEECH]\n");
 	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->SpeechBox->Text).c_str());
@@ -959,12 +1044,17 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"TYPE %S\n", HW->HiResBox->Text.c_str());
 
 	fprintf(f,"\n[JOYSTICK]\n");
-	fprintf(f,"TYPE %s\n", ReplaceSpaces(HW->JoystickBox->Text).c_str());
-	fprintf(f,"LEFT %s\n",  ReplaceSpaces(HW->JoystickLeftBox->Text).c_str());
-	fprintf(f,"RIGHT %s\n", ReplaceSpaces(HW->JoystickRightBox->Text).c_str());
-	fprintf(f,"UP %s\n",    ReplaceSpaces(HW->JoystickUpBox->Text).c_str());
-	fprintf(f,"DOWN %s\n",  ReplaceSpaces(HW->JoystickDownBox->Text).c_str());
-	fprintf(f,"FIRE %s\n",  ReplaceSpaces(HW->JoystickFireBox->Text).c_str());
+	fprintf(f,"TYPE %s\n",  ReplaceSpaces(HW->JoystickBox->Text).c_str());
+        fprintf(f,"CONTROLLER %02X\n", machine.joystick1Controller);
+       	fprintf(f,"CONNECTED %02X\n",  machine.joystick1Connected);
+       	fprintf(f,"AUTOFIRE %02X\n",   machine.joystick1AutoFireEnabled);
+       	fprintf(f,"NUMERICPAD_ENABLED %02X\n",   Kb->UseNumericPadForJoystickCheckBox->Checked ? 1 : 0);
+       	fprintf(f,"NUMERICPAD_JOYSTICK1 %02X\n", Kb->UseNumericPadForJoystick1->Checked ? 1 : 0);
+	fprintf(f,"PROGRAMMABLE_LEFT %s\n",  ReplaceSpaces(HW->JoystickLeftBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_RIGHT %s\n", ReplaceSpaces(HW->JoystickRightBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_UP %s\n",    ReplaceSpaces(HW->JoystickUpBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_DOWN %s\n",  ReplaceSpaces(HW->JoystickDownBox->Text).c_str());
+	fprintf(f,"PROGRAMMABLE_FIRE %s\n",  ReplaceSpaces(HW->JoystickFireBox->Text).c_str());
 
 	fprintf(f,"\n[ROM_CARTRIDGE]\n");
         AnsiString type = StringReplace(HW->RomCartridgeBox->Text, " ", "_", TReplaceFlags() << rfReplaceAll);

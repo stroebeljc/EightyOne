@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * main_.h
- *
  */
 
 //---------------------------------------------------------------------------
@@ -162,7 +159,6 @@ __published:	// IDE-managed Components
         TMenuItem *DeleteAll;
         TMenuItem *N12;
         TMenuItem *divIDEJumperEClosed;
-        TMenuItem *N2;
         TMenuItem *CheckForUpdates;
         TMenuItem *WriteProtect8KRAM;
         TMenuItem *ResetToDefaultSettings;
@@ -190,6 +186,11 @@ __published:	// IDE-managed Components
         TMenuItem *SelectJoystick2;
         TMenuItem *N20;
         TMenuItem *N21;
+        TMenuItem *N2;
+        TMenuItem *SwitchOnMemocalc;
+//        TMenuItem *SwitchOnMemotext;
+        TMenuItem *N17;
+        TMenuItem *SwitchOnZ80Assembler;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -310,6 +311,9 @@ __published:	// IDE-managed Components
         void __fastcall ConnectJoystick2Click(TObject *Sender);
         void __fastcall ZoomFullScreenClick(TObject *Sender);
         void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
+//        void __fastcall SwitchOnMemotextClick(TObject *Sender);
+        void __fastcall SwitchOnMemocalcClick(TObject *Sender);
+        void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -354,6 +358,7 @@ public:		// User declarations
         int RunFrameEnable;
         void EnableAnnotationOptions();
         void BuildMenuJoystickSelection();
+        void BuildMemotechInterfaceSelection();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

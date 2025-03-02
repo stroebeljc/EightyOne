@@ -1,4 +1,20 @@
-//---------------------------------------------------------------------------
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifndef HW_H
 #define HW_H
@@ -91,6 +107,9 @@ struct HWFormValues
         bool KMouseChecked;
         bool MultifaceChecked;
         bool ZXPrinterChecked;
+        bool Z80AssemblerChecked;
+        bool MemocalcChecked;
+//        bool MemotextChecked;
         bool FloatingPointHardwareFixChecked;
         bool UploadChecked;
         bool uSourceChecked;
@@ -213,6 +232,10 @@ __published:	// IDE-managed Components
         TLabel *NoMicrodrivesLabel;
         TComboBox *NoMicrodrivesComboBox;
         TLabel *Plus3eNoticeLabel;
+        TCheckBox *Z80Assembler;
+        TCheckBox *Memocalc;
+        TCheckBox *Memotext;
+//        TCheckBox *Memotext;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ZX80BtnClick(TObject *Sender);
         void __fastcall ZX81BtnClick(TObject *Sender);
@@ -295,6 +318,10 @@ __published:	// IDE-managed Components
         void __fastcall FDCRomBoxChange(TObject *Sender);
         void __fastcall IDERomBoxChange(TObject *Sender);
         void __fastcall NoMicrodrivesComboBoxChange(TObject *Sender);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+        void __fastcall Z80AssemblerClick(TObject *Sender);
+        void __fastcall MemocalcClick(TObject *Sender);
+//        void __fastcall MemotextClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;
         int NewMachine, NewSpec;
@@ -371,6 +398,7 @@ private:	// User declarations
         void ConfigureKeypad();
         void ConfigureIDERom();
         void ConfigureFDCRom();
+        void ConfigureInterfaces();
 
         vector<RomCartridgeEntry> ts1510RomCartridges;
         vector<RomCartridgeEntry> ts2068RomCartridges;

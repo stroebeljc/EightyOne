@@ -12,6 +12,7 @@ object FSSettings: TFSSettings
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnClose = FormClose

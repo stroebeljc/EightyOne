@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * main_.cpp
  */
 
  //---------------------------------------------------------------------------
@@ -463,9 +460,18 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 
 void __fastcall TForm1::Hardware1Click(TObject *Sender)
 {
-        PCAllKeysUp();
-        HW->Show();
-        Hardware1->Checked=true;
+        if (!Hardware1->Checked)
+        {
+                PCAllKeysUp();
+                HW->Show();
+                Hardware1->Checked=true;
+        }
+        else if (!HW->Apply->Enabled)
+        {
+                HW->Close();
+                Hardware1->Checked=false;
+        }
+        else ShowMessage("Changes pending on Hardware Dialog");
 }
 //---------------------------------------------------------------------------
 
@@ -1174,6 +1180,11 @@ void TForm1::LoadSettings(TIniFile *ini)
         EnableJoystick1AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         EnableJoystick2AutoFire->Checked  = ini->ReadBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
 
+        zx81.z80AssemblerOn = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnZ80Assembler", SwitchOnZ80Assembler->Checked)) ? 1 : 0);
+        zx81.memocalcOn     = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnMemocalc",     SwitchOnMemocalc->Checked))     ? 1 : 0);
+//        zx81.memotextOn     = (CFGBYTE)((ini->ReadBool("MAIN", "SwitchOnMemotext",     SwitchOnMemotext->Checked))     ? 1 : 0);
+        BuildMemotechInterfaceSelection();
+
         machine.joystick1Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick1Controller", -1);
         machine.joystick2Controller = (CFGBYTE)ini->ReadInteger("MAIN", "Joystick2Controller", -1);
 
@@ -1293,6 +1304,9 @@ void TForm1::SaveSettings(TIniFile *ini)
         ini->WriteBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
         ini->WriteBool("MAIN", "EnableJoystick1AutoFire",  EnableJoystick1AutoFire->Checked);
         ini->WriteBool("MAIN", "EnableJoystick2AutoFire",  EnableJoystick2AutoFire->Checked);
+        ini->WriteBool("MAIN", "SwitchOnZ80Assembler",     SwitchOnZ80Assembler->Checked);
+        ini->WriteBool("MAIN", "SwitchOnMemocalc",         SwitchOnMemocalc->Checked);
+//        ini->WriteBool("MAIN", "SwitchOnMemotext",         SwitchOnMemotext->Checked);
 
         ini->WriteInteger("MAIN", "Joystick1Controller", machine.joystick1Controller);
         ini->WriteInteger("MAIN", "Joystick2Controller", machine.joystick2Controller);
@@ -1814,32 +1828,17 @@ void TForm1::BuildConfigMenu()
 //---------------------------------------------------------------------------
 void TForm1::BuildDocumentationMenu()
 {
-        vector<AnsiString> folders;
-        vector<AnsiString>::iterator iter;
-
         AnsiString path = emulator.cwd;
         path += documentationFolder;
 
-        FetchFolderList(&folders, path);
-
-        for (iter = folders.begin(); iter != folders.end(); iter++)
-        {
-                TMenuItem* CategorySubMenu = new TMenuItem(DocumentationMenuEntry);
-                DocumentationMenuEntry->Add(CategorySubMenu);
-                CategorySubMenu->Caption = (*iter).c_str();
-
-                AnsiString CategoryFolder = path;
-                CategoryFolder += (*iter).c_str();
-                CategoryFolder += "\\";
-
-                AddDocumentationFiles(CategorySubMenu, CategoryFolder);
-        }
+        AddDocumentationFiles(DocumentationMenuEntry, path);
 }
 //---------------------------------------------------------------------------
-void TForm1::AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path)
+void TForm1::AddDocumentationFiles(TMenuItem* CategoryMenu, AnsiString path)
 {
         vector<AnsiString> files;
         vector<AnsiString>::iterator iter;
+        int folderIndex = 0;
 
         FetchFolderList(&files, path);
 
@@ -1848,10 +1847,25 @@ void TForm1::AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path)
                 AnsiString FileName = (*iter).c_str();
                 AnsiString Title = RemoveExt(FileName);
 
-                TMenuItem* InstructionEntry = new TMenuItem(CategorySubMenu);
-                CategorySubMenu->Add(InstructionEntry);
-                InstructionEntry->Caption = Title;
-                InstructionEntry->OnClick = InstructionMenuItemClick;
+                if (Title == FileName)
+                {
+                        TMenuItem* CategorySubMenu = new TMenuItem(CategoryMenu);
+                        CategoryMenu->Insert(folderIndex, CategorySubMenu);
+                        CategorySubMenu->Caption = (*iter).c_str();
+                        folderIndex++;
+
+                        AnsiString SubCategoryPath = path;
+                        SubCategoryPath += (*iter).c_str();
+                        SubCategoryPath += "\\";
+                        AddDocumentationFiles(CategorySubMenu, SubCategoryPath);
+                }
+                else
+                {
+                        TMenuItem* InstructionEntry = new TMenuItem(CategoryMenu);
+                        CategoryMenu->Add(InstructionEntry);
+                        InstructionEntry->Caption = Title;
+                        InstructionEntry->OnClick = InstructionMenuItemClick;
+                }
         }
 }
 //---------------------------------------------------------------------------
@@ -1860,10 +1874,17 @@ void __fastcall TForm1::InstructionMenuItemClick(TObject *Sender)
         TMenuItem* ClickedItem = dynamic_cast<TMenuItem*>(Sender);
         TMenuItem* ParentItem = ClickedItem->Parent;
 
+        AnsiString subPath;
+
+        while (!ParentItem->Tag)
+        {
+                subPath = ParentItem->Caption + "\\" + subPath;
+                ParentItem = ParentItem->Parent;
+        }
+
         AnsiString Path = emulator.cwd;
         Path += documentationFolder;
-        Path += ParentItem->Caption;
-        Path += "\\";
+        Path += subPath;
 
         struct stat buffer;
         AnsiString webPath = Path + ClickedItem->Caption + ".web";
@@ -2908,6 +2929,18 @@ void __fastcall TForm1::SimpleIdeRomEnabledClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TForm1::BuildMemotechInterfaceSelection()
+{
+        Form1->SwitchOnZ80Assembler->Enabled = zx81.z80Assembler == 0 ? false : true;
+        Form1->SwitchOnMemocalc->Enabled     = zx81.memocalc     == 0 ? false : true;
+//        Form1->SwitchOnMemotext->Enabled     = zx81.memotext     == 0 ? false : true;
+
+        Form1->SwitchOnZ80Assembler->Checked = zx81.z80AssemblerOn == 0 ? false : true;
+        Form1->SwitchOnMemocalc->Checked     = zx81.memocalcOn     == 0 ? false : true;
+//        Form1->SwitchOnMemotext->Checked     = zx81.memotextOn     == 0 ? false : true;
+}
+//---------------------------------------------------------------------------
+
 void TForm1::BuildMenuJoystickSelection()
 {
         if (machine.joystick1Controller >= 0 && !controllerPresent[machine.joystick1Controller])
@@ -2937,7 +2970,7 @@ void TForm1::BuildMenuJoystickSelection()
                 {
                         menuEntryCaption = "None";
                 }
-                
+
                 SelectJoystick1->Add(selectJoystick1SubMenuEntry);
                 selectJoystick1SubMenuEntry->Caption = menuEntryCaption.c_str();
                 selectJoystick1SubMenuEntry->Tag = i;
@@ -2978,14 +3011,18 @@ void TForm1::UpdateJoystickMenuOptions()
         SetJoystick2Controller(machine.joystick2Controller);
 
         bool joystick1MappedToGameController = (machine.joystick1Controller >= 0);
-        bool joystick1Available = (joystickInterfaceSelected && (joystick1MappedToGameController || (!machine.joystick2Connected && emulator.UseNumericPadForJoystick)));
+        bool joystick1Available = (joystickInterfaceSelected && (joystick1MappedToGameController || emulator.UseNumericPadForJoystick1 != 0));
         ConnectJoystick1->Enabled = joystick1Available;
+        ConnectJoystick1->Checked = machine.joystick1Connected;
         EnableJoystick1AutoFire->Enabled = machine.joystick1Connected;
+        EnableJoystick1AutoFire->Checked = machine.joystick1AutoFireEnabled;
 
         bool joystick2MappedToGameController = (machine.joystick2Controller >= 0);
-        bool joystick2Available = (twinJoystickInterfaceSelected && (joystick2MappedToGameController || (!machine.joystick1Connected && emulator.UseNumericPadForJoystick)));
+        bool joystick2Available = (twinJoystickInterfaceSelected && (joystick2MappedToGameController || emulator.UseNumericPadForJoystick2 != 0));
         ConnectJoystick2->Enabled = joystick2Available;
+        ConnectJoystick2->Checked = machine.joystick2Connected;
         EnableJoystick2AutoFire->Enabled = machine.joystick2Connected;
+        EnableJoystick2AutoFire->Checked = machine.joystick2AutoFireEnabled;
 }
 
 void __fastcall TForm1::SelectJoystick1Click(TObject *Sender)
@@ -3009,3 +3046,27 @@ void __fastcall TForm1::SelectJoystick2Click(TObject *Sender)
                 BuildMenuJoystickSelection();
         }
 }
+//---------------------------------------------------------------------------
+/*
+void __fastcall TForm1::SwitchOnMemotextClick(TObject *Sender)
+{
+        SwitchOnMemotext->Checked = !SwitchOnMemotext->Checked;
+        zx81.memotextOn = (CFGBYTE)(SwitchOnMemotext->Checked ?  1 : 0);
+}
+*/
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SwitchOnMemocalcClick(TObject *Sender)
+{
+        SwitchOnMemocalc->Checked = !SwitchOnMemocalc->Checked;
+        zx81.memocalcOn = (CFGBYTE)(SwitchOnMemocalc->Checked ?  1 : 0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SwitchOnZ80AssemblerClick(TObject *Sender)
+{
+        SwitchOnZ80Assembler->Checked = !SwitchOnZ80Assembler->Checked;
+        zx81.z80AssemblerOn = (CFGBYTE)(SwitchOnZ80Assembler->Checked ?  1 : 0);
+}
+//---------------------------------------------------------------------------
+

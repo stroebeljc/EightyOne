@@ -1,6 +1,6 @@
 object SerialConfig: TSerialConfig
-  Left = 168
-  Top = 59
+  Left = 253
+  Top = 226
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'TS2050 Configuration'
@@ -12,6 +12,7 @@ object SerialConfig: TSerialConfig
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   PixelsPerInch = 96

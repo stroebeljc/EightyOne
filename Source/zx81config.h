@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * zx81config.h
- *
  */
 
 
@@ -188,6 +185,12 @@ typedef struct
         CFGBYTE chromaMode;
         CFGBYTE chromaColourSwitchOn;
         CFGBYTE FloatingPointHardwareFix;
+        CFGBYTE z80Assembler;
+        CFGBYTE memocalc;
+//        CFGBYTE memotext;
+        CFGBYTE z80AssemblerOn;
+        CFGBYTE memocalcOn;
+//        CFGBYTE memotextOn;
 } ZX81;
 
 typedef struct
@@ -310,7 +313,8 @@ typedef struct
         int romcrc;
         int stop;
         CFGBYTE UseRShift;
-        CFGBYTE UseNumericPadForJoystick;
+        CFGBYTE UseNumericPadForJoystick1;
+        CFGBYTE UseNumericPadForJoystick2;
 
         CFGBYTE TZXin;
         CFGBYTE TZXout;
@@ -379,6 +383,9 @@ typedef struct
         char ROMMULTIFACE3[256];
         char ROMINTERFACE1[256];
         char ROMSPEECHPATH[256];
+        char ROMASSEMBLER[256];
+        char ROMMEMOCALC[256];
+//        char ROMMEMOTEXT[256];
 
         char cwd[256];
         char temppath[256];

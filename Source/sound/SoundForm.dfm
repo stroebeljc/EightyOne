@@ -1,6 +1,6 @@
 object MidiForm: TMidiForm
-  Left = 822
-  Top = 516
+  Left = 223
+  Top = 190
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Sound Settings'
@@ -12,6 +12,7 @@ object MidiForm: TMidiForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnDestroy = FormDestroy

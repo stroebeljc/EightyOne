@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * kbstatus.cpp
  */
 
 //---------------------------------------------------------------------------
@@ -685,7 +682,7 @@ void PCKeyDown(WORD key)
                         bool numpadKey = (key >= VK_NUMPAD0 && key <= VK_DIVIDE);
                         bool numLockOn = ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
 
-                        if (!numpadKey || !emulator.UseNumericPadForJoystick || !numLockOn)
+                        if (!numpadKey || !emulator.UseNumericPadForJoystick1 || !emulator.UseNumericPadForJoystick2 || !numLockOn)
                         {
                                 if (key >= VK_OEM_1 && key <= VK_OEM_7 && emulator.machine == MACHINESPECTRUM)
                                 {
@@ -724,7 +721,7 @@ void PCKeyUp(WORD key)
                         bool numpadKey = (key >= VK_NUMPAD0 && key <= VK_DIVIDE);
                         bool numLockOn = ((GetKeyState(VK_NUMLOCK) & 0x0001) == 0x0001);
 
-                        if (!numpadKey || !emulator.UseNumericPadForJoystick || !numLockOn)
+                        if (!numpadKey || !emulator.UseNumericPadForJoystick1 || !emulator.UseNumericPadForJoystick2 || !numLockOn)
                         {
                                 ZXKeyboard[KeyMap[i].Addr1] &= (BYTE)(~KeyMap[i].Data1);
                                 if (KeyMap[i].Addr2 != 255)

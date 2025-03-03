@@ -151,9 +151,9 @@ set divIDETestFile="%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (No
 call :unzip "%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Non-Removable)\divIDE (Pavel Cimbal)\" %divIDETestFile%
 del /f /q %divIDETestFile% > nul 2>&1
 
-rem ---- Unzip the zxcfTest.hdf zip file
+rem ---- Unzip the ZXCFTest.hdf zip file
 
-echo Inflating example file 'zxcfTest.hdf'...
+echo Inflating example file 'ZXCFTest.hdf'...
 
 set zxcfTestFile="%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Removable)\ZXCF (Sami Vehmaa)\ZXCFTest.zip"
 call :unzip "%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Removable)\ZXCF (Sami Vehmaa)\" %zxcfTestFile%

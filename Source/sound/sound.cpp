@@ -603,7 +603,7 @@ void CSound::SpeechOverlay(void)
         for(int f=0;f<FrameSize;f++)
         {
                 int temp = sp0256_AL2.GetNextSample();
-                temp = (AMPL_SPEECH*temp*VolumeLevel[4])/VOLUME_MAX;
+                temp = (temp*VolumeLevel[4])/VOLUME_MAX;
                 Buffer[f*m_Channels]+=temp;
                 if(m_Channels == 2)
                 {
@@ -647,7 +647,7 @@ void CSound::SpecDrumOverlay(void)
                 }
 
                 // generate sound
-                int level=(AMPL_SPECDRUM*SpecDrumLevel*VolumeLevel[5])/VOLUME_MAX;
+                int level=(SpecDrumLevel*ADJUSTTO16BIT*VolumeLevel[5])/VOLUME_MAX;
 
                 Buffer[f*m_Channels]+=level;
                 if (m_Channels==2)
@@ -663,7 +663,7 @@ void CSound::DigiTalkOverlay(void)
         for(int f=0;f<FrameSize;f++)
         {
                 int level = Digitalker.GetNextSample();
-                level = (AMPL_SPEECH*level*VolumeLevel[4])/VOLUME_MAX;
+                level = (level*VolumeLevel[4])/VOLUME_MAX;
                 Buffer[f*m_Channels] += level;
                 if(m_Channels == 2)
                 {
@@ -718,7 +718,7 @@ void CSound::Frame(bool pause)
         for(f=FillPos;f<FrameSize;f++)
         {
                 BEEPER_OLDVAL_ADJUST;
-                int tempval=(OldVal*256*VolumeLevel[3])/VOLUME_MAX;
+                int tempval=(OldVal*ADJUSTTO16BIT*VolumeLevel[3])/VOLUME_MAX;
                 Buffer[f*m_Channels]=tempval;
 
                 if(m_Channels == 2)
@@ -786,7 +786,7 @@ void CSound::Beeper(int on, int frametstates)
                 for(f=FillPos;f<newpos && f<FrameSize;f++)
                 {
                         BEEPER_OLDVAL_ADJUST;
-                        int tempval=(OldVal*256*VolumeLevel[3])/VOLUME_MAX;
+                        int tempval=(OldVal*ADJUSTTO16BIT*VolumeLevel[3])/VOLUME_MAX;
                         Buffer[f*m_Channels]=tempval;
 
                         if(m_Channels==2)
@@ -806,7 +806,7 @@ void CSound::Beeper(int on, int frametstates)
                                         subval=OldVal;
 
                         // write subsample value
-                        int tempval=(subval*256*VolumeLevel[3])/VOLUME_MAX;
+                        int tempval=(subval*ADJUSTTO16BIT*VolumeLevel[3])/VOLUME_MAX;
                         Buffer[newpos*m_Channels]=tempval;
                         if(m_Channels==2)
                         {

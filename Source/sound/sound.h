@@ -67,8 +67,7 @@
 #define VOLUME_MAX              31
 #define AMPL_BEEPER             31
 #define AMPL_AY_TONE            (31*256) /* three of these */
-#define AMPL_SPECDRUM           256
-#define AMPL_SPEECH             1
+#define ADJUSTTO16BIT           256
 
 // max. number of sub-frame AY port writes allowed;
 // given the number of port writes theoretically possible in a

@@ -33,6 +33,7 @@
 #include <ImgList.hpp>
 #include <IniFiles.hpp>
 #include "ThemeMgr.hpp"
+#include "BuildLineQueue.h"
 
 
 #define RENDERGDI 0
@@ -316,6 +317,14 @@ __published:	// IDE-managed Components
         void __fastcall SwitchOnMemocalcClick(TObject *Sender);
         void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
 private:	// User declarations
+        void ThreadFN(void);
+        static DWORD WINAPI CallThread(LPVOID Param);
+
+        DWORD m_ThreadID;
+        HANDLE m_ThreadHandle;
+
+        HANDLE m_FrameStartEvent, m_FrameReadyEvent;
+        BuildLineQueue m_lineQueue;
         int fps;
         bool startup;
         int StartUpWidth, StartUpHeight;

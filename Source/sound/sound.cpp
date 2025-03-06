@@ -64,7 +64,7 @@ CSound Sound;
 // Each time we're called we store the provided information, and only when everything
 // needed has been provided do we actually do anything.
 
-int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels, HANDLE frameEvent)
 {
         // If a parameter is not NULL, store the data
 
@@ -73,6 +73,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         if (BitsPerSample) m_BitsPerSample=BitsPerSample;
         if (SampleRate) m_SampleRate=SampleRate;
         if (Channels) m_Channels=Channels;
+        if (frameEvent) m_FrameEvent=frameEvent;
 
         // If anything is still missing, return
 
@@ -88,7 +89,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         // Start by initialsing DirectSound
 
-        int r = DXSound.Initialise(m_hWnd, m_FPS, m_BitsPerSample, m_SampleRate, m_Channels);
+        int r = DXSound.Initialise(m_hWnd, m_FPS, m_BitsPerSample, m_SampleRate, m_Channels, m_FrameEvent);
         if (r)
         {
                 return(r);
@@ -125,16 +126,17 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 // Reinitialise gets called if something changes... we lose the window handle,
 // The user changes the sample rate - that kind of thing.
 
-int CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels, HANDLE frameEvent)
 {
         if (!hWnd) hWnd = m_hWnd;
         if (!FPS) FPS = m_FPS;
         if (!BitsPerSample) BitsPerSample = m_BitsPerSample;
         if (!SampleRate) SampleRate = m_SampleRate;
         if (!Channels) Channels = m_Channels;
+        if (!frameEvent) frameEvent = m_FrameEvent;
 
         End();
-        return Initialise(hWnd,FPS,BitsPerSample,SampleRate,Channels);
+        return Initialise(hWnd,FPS,BitsPerSample,SampleRate,Channels,frameEvent);
 }
 
 // End() - free the sound buffer and tell DirectSould it's all over.

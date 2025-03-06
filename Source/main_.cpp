@@ -114,6 +114,8 @@ int AutoLoadCount=0;
 
 SCANLINE *BuildLine, Video;
 
+//HANDLE mainTimer;
+
 static bool iniFileExists = false;
 
 const int bufferLength = 255;
@@ -126,14 +128,42 @@ void __fastcall TForm1::WndProc(TMessage &Message)
         switch(Message.Msg)
         {
         case WM_USER:
-                if (RunFrameEnable)
-                        Form1->RunFrame();
+                while (m_lineQueue.Pop(Video))
+                        AccurateDraw(BuildLine);
                 break;
 
         default:
                 break;
         }
 	TForm::WndProc(Message);
+}
+
+
+// Helper function to get around not being able to
+// use class functions as windows callback directly
+DWORD WINAPI TForm1::CallThread(LPVOID Param)
+{
+        TForm1 *instance = (TForm1 *)Param;
+
+        if(!instance) return -1;
+
+        instance->ThreadFN();
+        return(0);
+}
+
+// Audio thread function - called every frame
+// copy a frame size chunk of audio data from the audio
+// queue into the dx sound portion of buffer that isn't
+// being used
+void TForm1::ThreadFN()
+{
+        while(1)
+        {
+                WaitForSingleObject(m_FrameStartEvent, INFINITE);
+                if (RunFrameEnable)
+                        Form1->RunFrame();
+                ResetEvent(m_FrameStartEvent);
+        }
 }
 
 //---------------------------------------------------------------------------
@@ -145,6 +175,12 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         int i;
 
         RunFrameEnable=false;
+        //mainTimer=CreateWaitableTimer(NULL, FALSE, "FrameTimer");
+        m_FrameStartEvent = CreateEvent(NULL, FALSE, FALSE, "FrameStart");
+        m_FrameReadyEvent = CreateEvent(NULL, FALSE, FALSE, "FrameReady");
+        // Create the Frame Thread
+        m_ThreadHandle = CreateThread(0, 0, &CallThread, this, 0, &m_ThreadID);
+        if(!m_ThreadHandle) return; // Cannot create thread.
 
         strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (emulator.cwd[strlen(emulator.cwd)-1]!='\\')
@@ -252,7 +288,8 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         BuildZX81ExamplesMenu();
         BuildSpectrumExamplesMenu();
 
-        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
+        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0, m_FrameStartEvent)) MessageBox(NULL, "", "Sound Error", 0);
+        m_lineQueue.Initialise(Form1->Handle, m_FrameReadyEvent);
 
         if (emulator.checkInstallationPathLength && strlen(emulator.cwd) >= 180)
         {
@@ -740,6 +777,12 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         PCAllKeysUp();
 
         Sound.End();
+
+        m_lineQueue.End();
+
+        //Kill the frame thread
+        if (m_ThreadHandle) TerminateThread(m_ThreadHandle,0);
+        m_ThreadHandle=NULL;
 
         RenderEnd();
 
@@ -2413,7 +2456,10 @@ void __fastcall TForm1::RunFrame()
         while (j>0 && !emulation_stop)
         {
                 j-= machine.do_scanline(BuildLine);
-                AccurateDraw(BuildLine);
+                //SendMessage( this->Handle, WM_USER, NULL, NULL);
+                m_lineQueue.Push(Video);
+                //SetEvent(m_FrameReadyEvent);
+                //AccurateDraw(BuildLine);
                 //WaitForSingleObject(Mutex,INFINITE);
                 //templine=BuildLine;
                 //BuildLine=DisplayLine;
@@ -2425,6 +2471,8 @@ void __fastcall TForm1::RunFrame()
                 //Sleep(0);
                 //AccurateDraw(DisplayLine);
         }
+
+        SetEvent(m_FrameReadyEvent);
 
         if (!emulation_stop) borrow=j;
 

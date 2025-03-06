@@ -96,8 +96,8 @@ class CSound
 {
 public:
 	void InitDevices(void);
-        int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
-        int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
+        int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels, HANDLE frameEvent);
+        int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels, HANDLE frameEvent);
 
         void End(void);
         void AYWrite(int reg,int val, int frametstates);
@@ -124,6 +124,7 @@ private:
         int m_SampleRate;
         int m_Channels;
         int m_FPS;
+        HANDLE m_FrameEvent;
         double m_SamplesPerTState;
 
         void AYInit(void);

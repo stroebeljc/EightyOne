@@ -690,7 +690,7 @@ void THW::ConfigureRamTop()
 
 void THW::InitialiseSound(bool machineChanged)
 {
-        if (Sound.ReInitialise(NULL, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
+        if (Sound.ReInitialise(NULL, machine.fps, 0, 0, 0, NULL)) MessageBox(NULL, "", "Sound Error", 0);
 
         if (machineChanged)
         {

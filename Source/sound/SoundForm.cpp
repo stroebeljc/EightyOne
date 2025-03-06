@@ -61,7 +61,7 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
         LoadSettings(ini);
         delete ini;
 
-        Sound.ReInitialise(0, 0, 16, 44100, 2);
+        Sound.ReInitialise(0, 0, 16, 44100, 2, NULL);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMidiForm::OKClick(TObject *Sender)

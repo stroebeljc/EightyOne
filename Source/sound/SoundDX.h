@@ -29,7 +29,7 @@ class CDSnd
 {
 public:
         CDSnd();
-	int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
+	int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels, HANDLE frameEvent);
         int Play();
 	int End();
         void Frame(unsigned char *data, unsigned int len);
@@ -43,6 +43,7 @@ private:
         int m_SampleRate;
         int m_Channels;
         int m_FPS;
+        HANDLE m_FrameEvent;
 
         DWORD m_ThreadID;
         HANDLE m_ThreadHandle;

@@ -25,7 +25,7 @@ CDSnd::CDSnd(void)
         m_hWnd=NULL;
 }
 
-int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels, HANDLE frameEvent)
 {
 
         m_BitsPerSample=BitsPerSample;
@@ -33,7 +33,7 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_Channels=Channels;
         m_FPS=FPS;
         m_hWnd=hWnd;
-
+        m_FrameEvent=frameEvent;
 
         // If any essentials haven't been initialised,
         // or the audio thread is already running
@@ -304,17 +304,7 @@ void CDSnd::ThreadFN()
                 ResetEvent(m_pHEvent[0]);
                 ResetEvent(m_pHEvent[1]);
 
-                SetLastError(0);
-                SendMessage( m_hWnd, WM_USER, NULL, NULL);
-                if (GetLastError())
-                {
-                        char buf[256];
-                        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                buf, sizeof(buf), NULL);
-
-                       MessageBox(NULL, buf,"Message Sending Error",2);
-                }
+                if (m_FrameEvent!=NULL) SetEvent(m_FrameEvent);
         }
 }
 

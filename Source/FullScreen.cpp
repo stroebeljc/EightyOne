@@ -47,15 +47,18 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
         AnsiString Text,OldText;
         int w,h,modes; //,c,r;
         int x1,x2;
-        int sizeW,sizeH;
 
         TIniFile *ini;
 
-        sizeW=GetSystemMetrics(SM_CXSCREEN);
-        sizeH=GetSystemMetrics(SM_CYSCREEN);
+        nativeSizeW=GetSystemMetrics(SM_CXSCREEN);
+        nativeSizeH=GetSystemMetrics(SM_CYSCREEN);
+        nativeBpp=GetDeviceCaps(Form1->Canvas->Handle, BITSPIXEL)
+                                * GetDeviceCaps(Form1->Canvas->Handle, PLANES);
 
         i=0;
         memset(&Mode, 0, sizeof(DEVMODE));
+        Text.sprintf("Automatic");
+        ModeList->Items->Add(Text);
         do
         {
                 retval=EnumDisplaySettings(NULL,i, &Mode);
@@ -67,8 +70,8 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
                 //if (r==1) r=60;
                 if (c>8)
                 {
-                        if (sizeW==w && sizeH==h)
-                                Text.sprintf("%d x %d (%d bit)   Default", w,h,c);
+                        if (nativeSizeW==w && nativeSizeH==h)
+                                Text.sprintf("%d x %d (%d bit)   Current", w,h,c);
                         else
                                 Text.sprintf("%d x %d (%d bit)", w,h,c);
 
@@ -85,7 +88,7 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
 
         modes=ModeList->Items->Count;
 
-        for(i=0;i<modes-1;i++)
+        for(i=1;i<modes-1;i++)
                 for(j=i;j<modes;j++)
                 {
                         x1= atoi(ModeList->Items->Strings[i].c_str());
@@ -94,14 +97,7 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
                         if (x2<x1) ModeList->Items->Exchange(i,j);
                 }
 
-        ModeList->ItemIndex=0;
-
-        for(j=0;j<modes;j++)
-                if (ModeList->Items->Strings[j].Pos("Default"))
-                {
-                        ModeList->ItemIndex=j;
-                        break;
-                }
+        ModeList->ItemIndex=0; // Automatic
 
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
@@ -120,13 +116,23 @@ void __fastcall TFSSettings::ModeListChange(TObject *Sender)
 
         Txt = ModeList->Items->Strings[ModeList->ItemIndex];
 
-        FScreen.Width = atoi(Txt.c_str());
-        while (isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
-        while (!isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
-        FScreen.Height = atoi(Txt.c_str());
-        while (isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
-        while (!isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
-        FScreen.Bpp = atoi(Txt.c_str());
+        if (Txt=="Automatic")
+        {
+                FScreen.Width=nativeSizeW;
+                FScreen.Height=nativeSizeH;
+                FScreen.Bpp=nativeBpp;
+        }
+        else
+        {
+                FScreen.Width = atoi(Txt.c_str());
+                while (isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
+                while (!isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
+                FScreen.Height = atoi(Txt.c_str());
+                while (isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
+                while (!isnum(Txt[1])) Txt = Txt.SubString(2,Txt.Length()-1);
+                FScreen.Bpp = atoi(Txt.c_str());
+        }
+
         FScreen.Stretch = Stretch->Checked;
         FScreen.WhiteLetterbox = White->Checked;
 

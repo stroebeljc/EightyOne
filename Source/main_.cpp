@@ -113,6 +113,7 @@ int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 int AutoLoadCount=0;
 
 SCANLINE *BuildLine, Video;
+SCANLINE *DisplayLine, VideoOut;
 
 //HANDLE mainTimer;
 
@@ -128,8 +129,8 @@ void __fastcall TForm1::WndProc(TMessage &Message)
         switch(Message.Msg)
         {
         case WM_USER:
-                while (m_lineQueue.Pop(Video))
-                        AccurateDraw(BuildLine);
+                while (m_lineQueue.Pop(DisplayLine))
+                        AccurateDraw(DisplayLine);
                 break;
 
         default:
@@ -232,6 +233,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         DrivesChanged=false;
 
         BuildLine=&Video;
+        DisplayLine=&VideoOut;
 
         SpecStartUp();
 }
@@ -2457,8 +2459,8 @@ void __fastcall TForm1::RunFrame()
         {
                 j-= machine.do_scanline(BuildLine);
                 //SendMessage( this->Handle, WM_USER, NULL, NULL);
-                m_lineQueue.Push(Video);
-                //SetEvent(m_FrameReadyEvent);
+                m_lineQueue.Push(BuildLine);
+                SetEvent(m_FrameReadyEvent);
                 //AccurateDraw(BuildLine);
                 //WaitForSingleObject(Mutex,INFINITE);
                 //templine=BuildLine;
@@ -2472,7 +2474,7 @@ void __fastcall TForm1::RunFrame()
                 //AccurateDraw(DisplayLine);
         }
 
-        SetEvent(m_FrameReadyEvent);
+        //SetEvent(m_FrameReadyEvent);
 
         if (!emulation_stop) borrow=j;
 

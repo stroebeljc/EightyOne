@@ -47,30 +47,32 @@ void BuildLineQueue::End(void)
         m_ThreadHandle=NULL;
 }
 
-void BuildLineQueue::Push(SCANLINE newLine)
+void BuildLineQueue::Push(SCANLINE *newLine)
 {
+        if (newLine==NULL) return;
         WaitForSingleObject(m_mutex, INFINITE);
-        //if (newLine==NULL) return;
-        memcpy(&m_VideoLines[m_Head], &newLine, sizeof(SCANLINE));
+        memcpy(&m_VideoLines[m_Head], newLine, sizeof(SCANLINE));
         m_Head++;
         if (m_Head>=BUILDLINEQUEUESIZE) m_Head=0;
         //SetEvent(m_FrameReadyEvent);
         ReleaseMutex(m_mutex);
 }
 
-bool BuildLineQueue::Pop(SCANLINE &videoLine)
+bool BuildLineQueue::Pop(SCANLINE *videoLine)
 {
         bool retVal = false;
-        WaitForSingleObject(m_mutex, INFINITE);
-        //if ((videoLine==NULL) || (m_Tail==m_Head)) return false;
-        if (m_Tail!=m_Head)
+        if (videoLine!=NULL)
         {
-                memcpy(&videoLine, &m_VideoLines[m_Tail], sizeof(SCANLINE));
-                m_Tail++;
-                if (m_Tail>=BUILDLINEQUEUESIZE) m_Tail=0;
-                retVal = true;
+                WaitForSingleObject(m_mutex, INFINITE);
+                if (m_Tail!=m_Head)
+                {
+                        memcpy(videoLine, &m_VideoLines[m_Tail], sizeof(SCANLINE));
+                        m_Tail++;
+                        if (m_Tail>=BUILDLINEQUEUESIZE) m_Tail=0;
+                        retVal = true;
+                }
+                ReleaseMutex(m_mutex);
         }
-        ReleaseMutex(m_mutex);
         return retVal;
 }
 

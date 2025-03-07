@@ -24,7 +24,7 @@
 #include <windows.h>
 #include "zx81config.h"
 
-#define BUILDLINEQUEUESIZE      1000
+#define BUILDLINEQUEUESIZE      500
 
 class BuildLineQueue
 {
@@ -33,8 +33,8 @@ public:
 	void Initialise(HWND hWnd, HANDLE frameReadyEvent);
         void End();
 
-        void Push(SCANLINE newLine);
-        bool Pop(SCANLINE &videoLine);
+        void Push(SCANLINE *newLine);
+        bool Pop(SCANLINE *videoLine);
 
 private:
         void ThreadFN(void);

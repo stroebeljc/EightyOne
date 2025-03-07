@@ -47,9 +47,12 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
         AnsiString Text,OldText;
         int w,h,modes; //,c,r;
         int x1,x2;
+        int sizeW,sizeH;
 
         TIniFile *ini;
 
+        sizeW=GetSystemMetrics(SM_CXSCREEN);
+        sizeH=GetSystemMetrics(SM_CYSCREEN);
 
         i=0;
         memset(&Mode, 0, sizeof(DEVMODE));
@@ -64,7 +67,10 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
                 //if (r==1) r=60;
                 if (c>8)
                 {
-                        Text.sprintf("%d x %d (%d bit)", w,h,c);
+                        if (sizeW==w && sizeH==h)
+                                Text.sprintf("%d x %d (%d bit)   Default", w,h,c);
+                        else
+                                Text.sprintf("%d x %d (%d bit)", w,h,c);
 
                         added=false;
                         for(j=0;j<ModeList->Items->Count;j++)
@@ -89,6 +95,13 @@ __fastcall TFSSettings::TFSSettings(TComponent* Owner)
                 }
 
         ModeList->ItemIndex=0;
+
+        for(j=0;j<modes;j++)
+                if (ModeList->Items->Strings[j].Pos("Default"))
+                {
+                        ModeList->ItemIndex=j;
+                        break;
+                }
 
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);

@@ -7,6 +7,10 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 Version 1.42 - 04/03/2025 (by John Stroebel)
 * Bug fixes:
   - Bottom 3 volume levels of AY sound output were being capped to 0.
+* Enhancements:
+  - Added an Automatic selection to Fullscreen display options, which uses the screen
+    resolution detected at application start. Also changed default width setting to
+    Letterbox. This improves the performance of switching to Fullscreen mode.
 
 Version 1.41 - 02/03/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:

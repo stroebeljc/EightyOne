@@ -65,7 +65,9 @@ object FSSettings: TFSSettings
       Width = 97
       Height = 17
       Caption = 'Letterbox'
+      Checked = True
       TabOrder = 2
+      TabStop = True
       OnClick = ModeListChange
     end
     object Stretch: TRadioButton
@@ -74,9 +76,7 @@ object FSSettings: TFSSettings
       Width = 97
       Height = 17
       Caption = 'Stretch Image'
-      Checked = True
       TabOrder = 1
-      TabStop = True
       OnClick = ModeListChange
     end
     object White: TCheckBox

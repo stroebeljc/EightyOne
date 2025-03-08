@@ -4149,6 +4149,8 @@ void __fastcall THW::BrowseRomCartridgeClick(TObject *Sender)
         SinclairRomCartridgeFileBox->Text = RomCartridgeFileBox->Text;
         SinclairRomCartridgeFileBox->SelStart = RomCartridgeFileBox->SelStart;
         SinclairRomCartridgeFileBox->SelLength = RomCartridgeFileBox->SelLength;
+
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 
@@ -5109,6 +5111,12 @@ void THW::UpdateApplyButton()
 void __fastcall THW::FormClose(TObject *Sender, TCloseAction &Action)
 {
         Form1->Hardware1->Checked=false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall THW::RomCartridgeFileBoxChange(TObject *Sender)
+{
+        UpdateApplyButton();
 }
 //---------------------------------------------------------------------------
 

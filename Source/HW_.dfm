@@ -1672,6 +1672,7 @@ object HW: THW
         Height = 21
         Enabled = False
         TabOrder = 16
+        OnChange = RomCartridgeFileBoxChange
       end
       object SinclairRomCartridgeFileBox: TComboBox
         Left = 184
@@ -1963,7 +1964,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = FDCRomBoxChange
         end
@@ -2079,7 +2080,7 @@ object HW: THW
           Top = 24
           Width = 171
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 2
           OnChange = IDERomBoxChange
         end
@@ -2224,7 +2225,7 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         OnChange = RomBoxChange
       end

@@ -252,7 +252,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         BuildZX81ExamplesMenu();
         BuildSpectrumExamplesMenu();
 
-        if (Sound.Initialise(Form1->Handle, machine.fps, 0, 0, 0)) MessageBox(NULL, "", "Sound Error", 0);
+        if (Sound.Initialise(Form1->Handle, machine.fps, 16, 44100, 2)) MessageBox(NULL, "", "Sound Error", 0);
 
         if (emulator.checkInstallationPathLength && strlen(emulator.cwd) >= 180)
         {
@@ -976,7 +976,6 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                                                 retval=0;
                                         }
 
-                                        //r=Mode.dmDisplayFrequency;
                                         i++;
                                 } while(retval);
 
@@ -1008,8 +1007,6 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                         RecalcPalette();
                         RecalcWinSize();
                         Artifacts->TrackBarChange(NULL);
-
-                        //BorderStyle=bsSizeable;
                 }
 
         }

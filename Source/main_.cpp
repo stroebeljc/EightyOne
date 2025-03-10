@@ -946,6 +946,12 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                         SaveWinH=Height;
                         SaveStyle=GetWindowLongPtr(Form1->Handle, GWL_STYLE);
                         SaveExStyle=GetWindowLongPtr(Form1->Handle, GWL_EXSTYLE);
+                        FileMenu1->Visible=false;
+                        View1->Visible=false;
+                        Control1->Visible=false;
+                        Options1->Visible=false;
+                        Tools1->Visible=false;
+                        Help1->Visible=false;
 
                         Screen->Cursor = crNone;
                         RenderInit();
@@ -1002,6 +1008,12 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                         Height=SaveWinH;
                         Left=SaveX;
                         Top=SaveY;
+                        FileMenu1->Visible=true;
+                        View1->Visible=true;
+                        Control1->Visible=true;
+                        Options1->Visible=true;
+                        Tools1->Visible=true;
+                        Help1->Visible=true;
                         SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, SaveExStyle);
                         SetWindowLongPtr(Form1->Handle, GWL_STYLE, SaveStyle);
                         SetWindowPos(Form1->Handle, HWND_NOTOPMOST,

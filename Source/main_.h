@@ -348,8 +348,9 @@ public:		// User declarations
         int BaseHeight;
         bool FullScreen;
         int RenderMode;
-        int SaveX, SaveY, SaveW, SaveH;
+        int SaveX, SaveY, SaveW, SaveH, SaveWinW, SaveWinH;
         int SaveScrW, SaveScrH, SaveScrBpp;
+        LONG_PTR SaveStyle, SaveExStyle;
         void __fastcall AppMessage(TMsg &Msg, bool &Handled);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

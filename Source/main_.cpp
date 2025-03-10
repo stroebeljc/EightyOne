@@ -942,25 +942,28 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                         SaveY=Top;
                         SaveW=ClientWidth;
                         SaveH=ClientHeight;
+                        SaveWinW=Width;
+                        SaveWinH=Height;
+                        SaveStyle=GetWindowLongPtr(Form1->Handle, GWL_STYLE);
+                        SaveExStyle=GetWindowLongPtr(Form1->Handle, GWL_EXSTYLE);
+
                         Screen->Cursor = crNone;
                         RenderInit();
                         RecalcPalette();
                         RecalcWinSize();
                         AccurateInit(true);
                         Artifacts->TrackBarChange(NULL);
+                        SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
+                        SetWindowLongPtr(Form1->Handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
                         if (RenderMode==RENDERGDI)
                         {
                                 DEVMODE Mode;
                                 int i, retval;
 
-                                POINT p={0,0};
-
                                 SaveScrW = GetSystemMetrics(SM_CXSCREEN);
                                 SaveScrH = GetSystemMetrics(SM_CYSCREEN);
                                 SaveScrBpp = GetDeviceCaps(Form1->Canvas->Handle, BITSPIXEL)
                                                 * GetDeviceCaps(Form1->Canvas->Handle, PLANES);
-
-                                p=Form1->ClientToScreen(p);
 
                                 i=0;
                                 memset(&Mode, 0, sizeof(DEVMODE));
@@ -979,12 +982,9 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                                         i++;
                                 } while(retval);
 
-                                SetWindowPos(Form1->Handle, HWND_TOPMOST,
-                                                Left-p.x,Top-p.y,
-                                                GetSystemMetrics(SM_CXSCREEN) + (Width-ClientWidth),
-                                                GetSystemMetrics(SM_CYSCREEN)
-                                                        + (Height-ClientHeight)
-                                                        + StatusBar1->Height, 0x400);
+                                SetWindowPos(Form1->Handle, HWND_TOPMOST, 0, 0, FScreen.Width, FScreen.Height, SWP_SHOWWINDOW);
+                                ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
+                                ShowWindow(Form1->Handle, SW_MAXIMIZE);
                         }
                 }
                 else
@@ -998,12 +998,16 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                         AccurateInit(true);
                         ClientWidth=SaveW;
                         ClientHeight=SaveH;
+                        Width=SaveWinW;
+                        Height=SaveWinH;
                         Left=SaveX;
                         Top=SaveY;
+                        SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, SaveExStyle);
+                        SetWindowLongPtr(Form1->Handle, GWL_STYLE, SaveStyle);
                         SetWindowPos(Form1->Handle, HWND_NOTOPMOST,
                                         Left,Top,
                                         Width,
-                                        Height, NULL);
+                                        Height, SWP_SHOWWINDOW);
                         RecalcPalette();
                         RecalcWinSize();
                         Artifacts->TrackBarChange(NULL);

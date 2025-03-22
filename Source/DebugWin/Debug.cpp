@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * Debug.cpp
  */
 
 //---------------------------------------------------------------------------
@@ -593,6 +590,9 @@ bool TDbg::BPInOutHit(BreakpointType type, int addr, int value, breakpoint* cons
                 case BP_OUTH:
                         addr = addr & 0xFF00;
                         break;
+
+                default:
+                        break;
         }
 
         if (bp->HitRdWrInOut(type, addr, value))
@@ -651,8 +651,11 @@ bool TDbg::BPFlagValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return ((regF & mask) != bp->Value);
+
+                default:
+                        break;
         }
-        
+
         return false;
 }
 
@@ -678,8 +681,11 @@ bool TDbg::BPMemoryValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return (value != bp->Value);
+
+                default:
+                        break;
         }
-        
+
         return false;
 }
 
@@ -705,6 +711,9 @@ bool TDbg::BPRegisterValueHit(breakpoint* const bp)
 
                 case NotEqual:
                         return (value != bp->Value);
+
+                default:
+                        break;
         }
 
         return false;
@@ -1315,6 +1324,8 @@ __fastcall TDbg::TDbg(TComponent* Owner)
         BPList->DefaultColWidth = BPList->Width;
 
         ResetLastIOAccesses();
+
+        MemoryWindowTimer->Interval = 50;
 }
 //---------------------------------------------------------------------------
 
@@ -2315,7 +2326,7 @@ void __fastcall TDbg::AutoUpdateMemoryClick(TObject *Sender)
 
 void __fastcall TDbg::MemoryWindowTimerExpired(TObject *Sender)
 {
-        if (MemoryWindow->Visible)
+        if (MemoryWindow && MemoryWindow->Visible)
         {
                 MemoryWindow->UpdateChanges();
         }
@@ -2329,4 +2340,5 @@ void TDbg::DisableMemoryWindowAutoUpdates()
                 MemoryWindowTimer->Enabled = false;
         }
 }
+
 

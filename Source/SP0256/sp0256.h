@@ -96,10 +96,11 @@ void sp0256_setFifoEnabled( int enabled );
 uint32_t sp0256_getStatus();
 int sp0256_halted();
 void sp0256_sendCommand( uint32_t cmd );
+void sp0256_reset();
 /*
 int sp0256_isNextSample();
 */
-int sp0256_getNextSample();
+int16_t sp0256_getNextSample();
 int sp0256_exec();
 void sp0256_setLabels( int nLabels, const char *labels[] );
 void sp0256_setDebug( int debug );

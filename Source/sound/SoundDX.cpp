@@ -1,4 +1,5 @@
-/* EightyOne, Windows based Sinclair emulators.
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * soundDX.c - DirectSound Output module
  */
 
 #include <dsound.h>
@@ -61,9 +59,8 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_WFE.nChannels = (WORD)m_Channels;
         m_WFE.nSamplesPerSec = m_SampleRate;
         m_WFE.wBitsPerSample = (WORD)m_BitsPerSample;
-        m_WFE.nBlockAlign = m_WFE.nChannels;
-        m_WFE.nAvgBytesPerSec = m_WFE.nChannels *
-                        m_WFE.nSamplesPerSec * m_WFE.wBitsPerSample/8;
+        m_WFE.nBlockAlign = (WORD)(m_WFE.nChannels * m_BitsPerSample / 8);
+        m_WFE.nAvgBytesPerSec = m_WFE.nSamplesPerSec * m_WFE.nBlockAlign;
 
         // Calculate Bufferlengths
         // AudioQueue is 2 Seconds long
@@ -135,7 +132,7 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_QueueStart = 0;
         m_QueueSize = 0;
 
-	memset(m_lpAudioQueue, 0x80, m_QueueLen);
+	memset(m_lpAudioQueue, m_BitsPerSample==8?0x80:0, m_QueueLen);
 
         if (m_lpDSB->Lock(0, m_DXBufLen, &lpvAudio1, &dwBytesAudio1, &lpvAudio2, &dwBytesAudio2, 0))
                 return -1; // Lock DirectSoundBuffer Failed!
@@ -234,7 +231,7 @@ void CDSnd::ThreadFN()
 	
         while(1)
         {
-                int i=WaitForMultipleObjects(2, m_pHEvent, FALSE, -1) - WAIT_OBJECT_0;
+                int i=WaitForMultipleObjects(2, m_pHEvent, FALSE, INFINITE) - WAIT_OBJECT_0;
 
                 switch(i)
                 {

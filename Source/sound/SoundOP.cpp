@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * SoundOP.cpp
  */
 
 //---------------------------------------------------------------------------
@@ -34,7 +31,7 @@
 TSoundOutput *SoundOutput;
 //---------------------------------------------------------------------------
 
-void TSoundOutput::UpdateImage(unsigned char *data, int len)
+void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
 {
         long x;
         static int skip=0;
@@ -51,26 +48,32 @@ void TSoundOutput::UpdateImage(unsigned char *data, int len)
         Img->LineTo(Image1->Width,Image1->Height/2);
 
         Img->Pen->Color = clBlack;
-        Img->MoveTo(0, data[0]/2);
-        for (x=0; x<Image1->Width; x++)
+        for (x=0; x<framesize; x++)
         {
                 //Img->MoveTo(x,64);
-                Img->LineTo(x, data[x]/2);
+                int currval=0;
+                for (int i=0;i<channels;i++)
+                        currval+=(int)data[channels*x+i];
+
+                int position=Image1->Height*((double)currval/channels/32768+1)/2;
+                if (x==0)
+                        Img->MoveTo(0, position);
+                else
+                        Img->LineTo(x*Image1->Width/framesize, position);
         }
 }
 //---------------------------------------------------------------------------
 __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
         : TForm(Owner)
 {
-        Img=Image1->Canvas;
-        rect.Top=0; rect.Left=0;
-        rect.Right=Image1->Width; rect.Bottom=Image1->Height;
-        //ClearImage();
+        Img=this->Canvas;
 
         TIniFile *ini;
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
+
+        FormResize(NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -83,5 +86,28 @@ void __fastcall TSoundOutput::FormClose(TObject *Sender,
 
 void TSoundOutput::LoadSettings(TIniFile *ini)
 {
+        Top = ini->ReadInteger("SOUNDOP","Top",Top);
+        Left = ini->ReadInteger("SOUNDOP","Left",Left);
+        Height = ini->ReadInteger("SOUNDOP","Height",Height);
+        Width = ini->ReadInteger("SOUNDOP","Width",Width);
+
         if (Form1->SoundOutput1->Checked) Show();
 }
+
+void TSoundOutput::SaveSettings(TIniFile *ini)
+{
+        ini->WriteInteger("SOUNDOP","Top",Top);
+        ini->WriteInteger("SOUNDOP","Left",Left);
+        ini->WriteInteger("SOUNDOP","Height",Height);
+        ini->WriteInteger("SOUNDOP","Width",Width);
+}
+
+void __fastcall TSoundOutput::FormResize(TObject *Sender)
+{
+        Image1->Height=this->ClientHeight;
+        Image1->Width=this->ClientWidth;
+        rect.Top=0; rect.Left=0;
+        rect.Right=Image1->Width; rect.Bottom=Image1->Height;
+}
+//---------------------------------------------------------------------------
+

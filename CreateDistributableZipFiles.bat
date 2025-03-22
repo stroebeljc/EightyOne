@@ -139,17 +139,25 @@ rem ---- Unzip the FatTest.vhd zip file
 
 echo Inflating example file 'FatTest.vhd'...
 
-set fatTestFile=%OutputReleaseFolder%\Examples\Drives\FatTest.zip
-call :unzip "%OutputReleaseFolder%\Examples\Drives\" "%fatTestFile%"
-del /f /q "%fatTestFile%" > nul 2>&1
+set fatTestFile="%OutputReleaseFolder%\Examples\ZX81 Programs\Storage (Non-Removable)\MWCFIde (Mike Wynne)\FatTest.zip"
+call :unzip "%OutputReleaseFolder%\Examples\ZX81 Programs\Storage (Non-Removable)\MWCFIde (Mike Wynne)\" %fatTestFile%
+del /f /q %fatTestFile% > nul 2>&1
 
 rem ---- Unzip the divIDETest.hdf zip file
 
 echo Inflating example file 'divIDETest.hdf'...
 
-set divIDETestFile=%OutputReleaseFolder%\Examples\Drives\divIDETest.zip
-call :unzip "%OutputReleaseFolder%\Examples\Drives\" "%divIDETestFile%"
-del /f /q "%divIDETestFile%" > nul 2>&1
+set divIDETestFile="%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Non-Removable)\divIDE (Pavel Cimbal)\divIDETest.zip"
+call :unzip "%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Non-Removable)\divIDE (Pavel Cimbal)\" %divIDETestFile%
+del /f /q %divIDETestFile% > nul 2>&1
+
+rem ---- Unzip the ZXCFTest.hdf zip file
+
+echo Inflating example file 'ZXCFTest.hdf'...
+
+set zxcfTestFile="%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Removable)\ZXCF (Sami Vehmaa)\ZXCFTest.zip"
+call :unzip "%OutputReleaseFolder%\Examples\Spectrum Programs\Storage (Removable)\ZXCF (Sami Vehmaa)\" %zxcfTestFile%
+del /f /q %zxcfTestFile% > nul 2>&1
 
 rem ---- Create the distribution files folder contents
 
@@ -224,7 +232,8 @@ echo CreateObject("Scripting.FileSystemObject").CreateTextFile(ZipFile, True).Wr
 echo Set objShell = CreateObject("Shell.Application") >> %zipScriptFile%
 echo Set source = objShell.NameSpace(InputFolder).Items >> %zipScriptFile%
 echo objShell.NameSpace(ZipFile).CopyHere(source) >> %zipScriptFile%
-echo wScript.Sleep 10000 >> %zipScriptFile%
+echo WScript.Sleep 20000 >> %zipScriptFile%
+echo Set objShell = Nothing >> %zipScriptFile%
 
 CScript //nologo %zipScriptFile% %1 %2 > nul 2>&1
 
@@ -238,6 +247,7 @@ set unzipScriptFile="%OutputFolder%\_unzipIt.vbs"
 echo set objShell = CreateObject("Shell.Application") > %unzipScriptFile%
 echo set FilesInZip=objShell.NameSpace(%2).items >> %unzipScriptFile%
 echo objShell.NameSpace(%1).CopyHere(FilesInZip) >> %unzipScriptFile%
+echo WScript.Sleep 5000 >> %unzipScriptFile%
 echo Set objShell = Nothing >> %unzipScriptFile%
 
 cscript //nologo %unzipScriptFile% > nul 2>&1

@@ -1,4 +1,20 @@
-//---------------------------------------------------------------------------
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #include <vcl4.h>
 #include <io.h>
@@ -11,8 +27,12 @@
 #include "utils.h"
 #include "Plus3Drives.h"
 
-#define MDVTPERBYTE 265  // Tape Speed - No of T states for 1 byte to
-                         // pass the tape head
+#define MDVTPERBYTE 265  // Tape Speed - No of T states for 1 byte to pass the tape head
+
+#define	F_OK	0
+#define	R_OK	4
+#define	W_OK	2
+#define	X_OK	1
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -52,12 +72,16 @@ void TIF1::PortEFWrite(int Data)
                         default:   MDVCurDrive=-1; break;
                         }
 
-                        if (MDVCurDrive>=0)
+                        if (MDVCurDrive >= 0)
                         {
                                 if (!Drives[MDVCurDrive].data) MDVCurDrive=-1;
                                 if (MDVCurDrive>=MDVNoDrives) MDVCurDrive=-1;
                         }
 
+                        if (MDVCurDrive >= 0)
+                        {
+                                Drives[MDVCurDrive].writeProtected = access(Drives[MDVCurDrive].FileName, W_OK);
+                        }
                 }
                 CommsClock=Data&2;
         }
@@ -92,7 +116,7 @@ void TIF1::PortF7Write(int Data)
 
 int TIF1::PortEFRead(void)
 {
-        int Data= 128|64|32;
+        int Data = 128|64|32;
 
         Data |= 8; // DTR
 
@@ -101,7 +125,10 @@ int TIF1::PortEFRead(void)
         if (MDVGap) Data |= 4;  // Gap
         if (MDVSync) Data |= 2; // Sync
 
-        Data |= 1; // Write Protect
+        if (!(Drives[MDVCurDrive].writeProtected))
+        {
+                Data |= 1; // Not write protected
+        }
 
         return(Data);
 }
@@ -147,7 +174,7 @@ void TIF1::ClockTick(int ts)
                 }
         }
 
-        spectrum.drivebusy = (MDVCurDrive == -1) ? -1 : (WriteEnable ? 1 : 0);
+        machine.drivebusy = (MDVCurDrive == -1) ? -1 : (WriteEnable ? 1 : 0);
 
         // Microdrive Timer Loop
         if (MDVCurDrive!=-1)   // Ensure motor is running
@@ -171,7 +198,6 @@ void TIF1::ClockTick(int ts)
                         }
 
                         MDVStream[0] = Drives[MDVCurDrive].data[Drives[MDVCurDrive].position];
-
 
                         // Advance the tape position by 1
                         // wrapping if we're at the end
@@ -357,7 +383,7 @@ int TIF1::MDVGetNextBlock(int Drive, bool header)
                         count=0;
                         for(i=0;i<14;i++)
                         {
-                                byte = Drives[Drive].data[Drive, MDVPos(Drive, i)];
+                                byte = Drives[Drive].data[MDVPos(Drive, i)];
 
                                 count += byte;
                                 if (count&256) count++;
@@ -578,8 +604,8 @@ void TIF1::MDVSetFileName(int Drive, char *FileName)
         }
         else    MDVLoadFile(Drive, FileName);
 }
-
 //---------------------------------------------------------------------------
+
 __fastcall TIF1::TIF1(TComponent* Owner)
         : TForm(Owner)
 {
@@ -592,19 +618,13 @@ __fastcall TIF1::TIF1(TComponent* Owner)
         if (access("nocomport",0)) EnumeratePorts(ComPortList->Items,"COM");
         if (access("nocomport",0)) EnumeratePorts(ComPortList->Items,"LPT");
         ComPortList->ItemIndex=0;
-        NoMicroDrives->ItemIndex=0;
-        RomEdition->ItemIndex=1;
         BaudRate->ItemIndex=0;
         DataBits->ItemIndex=3;
         StopBits->ItemIndex=0;
         Parity->ItemIndex=0;
 
         MDVCurDrive=-1;
-
-        //GroupDrives->Enabled=false;
-        //NoMicroDrives->Enabled=false;
-        //Label4->Enabled=false;
-
+        
         ComPortListChange(NULL);
 
         for(i=0;i<8;i++) Drives[i].FileName[0]='\0';
@@ -615,13 +635,14 @@ __fastcall TIF1::TIF1(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
+void TIF1::HardReset()
+{
+        MDVCurDrive = -1;
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TIF1::OKClick(TObject *Sender)
 {
-        IF1RomEdition=RomEdition->ItemIndex;
-        if (romEditionChanged) machine.initialise();
-
-        MDVNoDrives=NoMicroDrives->ItemIndex;
-
         if (InFile) { fclose(InFile); InFile=NULL; }
         if (OutFile) { fclose(OutFile); OutFile=NULL; }
         if (ComPort->Connected) ComPort->Close();
@@ -739,13 +760,11 @@ void __fastcall TIF1::InputFileBrowseClick(TObject *Sender)
                 InputFileEdit->Text = OpenDialog->FileName;
 }
 //---------------------------------------------------------------------------
-
-
+                          
 void __fastcall TIF1::OutputFileButtonClick(TObject *Sender)
 {
         if (SaveDialog->Execute())
                 OutputFileEdit->Text = SaveDialog->FileName;
-
 }
 //---------------------------------------------------------------------------
 
@@ -769,6 +788,7 @@ void __fastcall TIF1::ClientSocketError(TObject *Sender,
         ErrorCode=0;
 }
 //---------------------------------------------------------------------------
+
 void TIF1::SaveSettings(TIniFile *ini)
 {
         ini->WriteInteger("INTERFACE1","Top",Top);
@@ -785,10 +805,8 @@ void TIF1::SaveSettings(TIniFile *ini)
 
         ini->WriteString("INTERFACE1","TCPAddr", TCPAddress->Text);
         ini->WriteString("INTERFACE1","TCPPort", TCPPort->Text);
-
-        ini->WriteInteger("INTERFACE1","Microdrives",NoMicroDrives->ItemIndex);
-        ini->WriteInteger("INTERFACE1","RomEdition",RomEdition->ItemIndex);
 }
+//---------------------------------------------------------------------------
 
 void TIF1::LoadSettings(TIniFile *ini)
 {
@@ -807,34 +825,20 @@ void TIF1::LoadSettings(TIniFile *ini)
         TCPAddress->Text=ini->ReadString("INTERFACE1","TCPAddr", TCPAddress->Text);
         TCPPort->Text=ini->ReadString("INTERFACE1","TCPPort", TCPPort->Text);
 
-        NoMicroDrives->ItemIndex=ini->ReadInteger("INTERFACE1","Microdrives",NoMicroDrives->ItemIndex);
-        RomEdition->ItemIndex=ini->ReadInteger("INTERFACE1","RomEdition",RomEdition->ItemIndex);
-
         OpenDialog->FileName=InputFileEdit->Text;
         SaveDialog->FileName=OutputFileEdit->Text;
 
         ComPortListChange(NULL);
         OKClick(NULL);
 }
+//---------------------------------------------------------------------------
 
 void __fastcall TIF1::FormDestroy(TObject *Sender)
 {
-        int i;
-
-        for(i=0;i<NoMicroDrives->ItemIndex;i++)
+        for (int i = 0; i < MDVNoDrives; i++)
+        {
                 MDVSetFileName(i, NULL);
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TIF1::RomEditionChange(TObject *Sender)
-{
-        romEditionChanged = true;
-}
-//---------------------------------------------------------------------------
-
-void __fastcall TIF1::FormShow(TObject *Sender)
-{
-        romEditionChanged = false;
+        }
 }
 //---------------------------------------------------------------------------
 

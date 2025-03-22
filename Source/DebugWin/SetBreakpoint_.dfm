@@ -1,6 +1,6 @@
 object SetBreakpoint: TSetBreakpoint
-  Left = 269
-  Top = 208
+  Left = 108
+  Top = 101
   BorderStyle = bsToolWindow
   Caption = 'Configure Breakpoint'
   ClientHeight = 90
@@ -11,6 +11,7 @@ object SetBreakpoint: TSetBreakpoint
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnCreate = FormCreate

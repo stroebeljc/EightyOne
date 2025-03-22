@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * Utils.h
- *
  */
 
 //---------------------------------------------------------------------------
@@ -25,8 +22,29 @@
 #define UtilsH
 //---------------------------------------------------------------------------
 
+#include <IniFiles.hpp>
+#include "zx81config.h"
+
+#define IsAsyncKeyPressed(key) (GetAsyncKeyState(key)<0)
+#define IsKeyPressed(key) (GetKeyState(key)<0)
+
+enum IniFileAccessType
+{
+        Read,
+        Write
+};
+
+
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+int CRC32Block(BYTE *block, int len);
+void ASCIIZX81(BYTE *in, BYTE *Output);
+int ZX81Strlen(BYTE *str);
+
+#ifdef __cplusplus
+}
 #endif
 
 AnsiString FileNameGetPath(AnsiString Fname);
@@ -34,17 +52,14 @@ AnsiString FileNameGetFname(AnsiString Fname);
 AnsiString FileNameGetExt(AnsiString Fname);
 AnsiString ConvertZX81ASCII(BYTE *str);
 void ConvertASCIIZX81(AnsiString Str, BYTE *Output);
-void ASCIIZX81(BYTE *in, BYTE *Output);
-int ZX81Strlen(BYTE *str);
 AnsiString RemoveExt(AnsiString Fname);
 AnsiString GetExt(AnsiString Fname);
 AnsiString RemovePath(AnsiString Str);
-int CRC32Block(BYTE *block, int len);
 int EnumeratePorts(TStrings *List, AnsiString Type);
-
-#ifdef __cplusplus
-}
-#endif
+void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue);
+void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue);
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue);
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue);
 
 #endif
 

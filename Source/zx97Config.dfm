@@ -1,6 +1,6 @@
 object ZX97Dialog: TZX97Dialog
-  Left = 327
-  Top = 211
+  Left = 131
+  Top = 101
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'ZX97 Configuration'
@@ -12,9 +12,9 @@ object ZX97Dialog: TZX97Dialog
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -23,20 +23,6 @@ object ZX97Dialog: TZX97Dialog
     Width = 37
     Height = 13
     Caption = 'Protect:'
-  end
-  object Label2: TLabel
-    Left = 176
-    Top = 36
-    Width = 66
-    Height = 13
-    Caption = 'Printer port to:'
-  end
-  object Label3: TLabel
-    Left = 176
-    Top = 58
-    Width = 45
-    Height = 13
-    Caption = 'Filename:'
   end
   object Protect08: TCheckBox
     Left = 56
@@ -47,7 +33,6 @@ object ZX97Dialog: TZX97Dialog
     Checked = True
     State = cbChecked
     TabOrder = 0
-    OnClick = Protect08Click
   end
   object ProtectAB: TCheckBox
     Left = 56
@@ -56,7 +41,6 @@ object ZX97Dialog: TZX97Dialog
     Height = 17
     Caption = '$A000 - $BFFF'
     TabOrder = 1
-    OnClick = ProtectABClick
   end
   object ProtectB0: TCheckBox
     Left = 56
@@ -67,7 +51,6 @@ object ZX97Dialog: TZX97Dialog
     Checked = True
     State = cbChecked
     TabOrder = 2
-    OnClick = ProtectB0Click
   end
   object ProtectB115: TCheckBox
     Left = 56
@@ -76,7 +59,6 @@ object ZX97Dialog: TZX97Dialog
     Height = 17
     Caption = 'Bank 1-15 (RAM)'
     TabOrder = 3
-    OnClick = ProtectB115Click
   end
   object SaveRAM: TCheckBox
     Left = 176
@@ -89,72 +71,35 @@ object ZX97Dialog: TZX97Dialog
     Checked = True
     ParentBiDiMode = False
     State = cbChecked
-    TabOrder = 5
-  end
-  object PrinterOutput: TComboBox
-    Left = 256
-    Top = 32
-    Width = 73
-    Height = 21
-    Style = csDropDownList
-    DropDownCount = 12
-    Enabled = False
-    ItemHeight = 13
-    TabOrder = 6
-    OnChange = PrinterOutputChange
-    Items.Strings = (
-      'File...'
-      'LPT1:'
-      'LPT2:'
-      'LPT3:'
-      'LPT4:'
-      'COM1:'
-      'COM2:'
-      'COM3:'
-      'COM4:'
-      'COM5:'
-      'COM6:'
-      'COM7:'
-      'COM8:')
-  end
-  object FileName: TEdit
-    Left = 224
-    Top = 56
-    Width = 81
-    Height = 21
-    Enabled = False
-    TabOrder = 7
-  end
-  object FileNameSelector: TButton
-    Left = 304
-    Top = 56
-    Width = 25
-    Height = 21
-    Caption = '...'
-    Enabled = False
-    TabOrder = 8
-    OnClick = FileNameSelectorClick
+    TabOrder = 4
   end
   object OK: TButton
-    Left = 256
+    Left = 173
     Top = 88
     Width = 75
     Height = 25
     Caption = 'OK'
-    TabOrder = 9
+    ModalResult = 1
+    TabOrder = 6
     OnClick = OKClick
   end
   object SwapRAMROM: TCheckBox
-    Left = 56
-    Top = 88
+    Left = 216
+    Top = 24
     Width = 113
     Height = 17
+    Alignment = taLeftJustify
     Caption = 'Swap ROM/RAM'
-    TabOrder = 4
-    OnClick = SwapRAMROMClick
+    TabOrder = 5
   end
-  object SaveDialog1: TSaveDialog
-    Left = 8
-    Top = 24
+  object Cancel: TButton
+    Left = 253
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 7
+    OnClick = CancelClick
   end
 end

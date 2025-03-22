@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * spec48snap.c
- *
  */
 #include <vcl4.h>
 
@@ -44,10 +41,12 @@
 #include "HW_.h"
 #include "main_.h"
 #include "Artifacts_.h"
+#include "sound.h"
 
 extern void HWSetMachine(int machine, int speccy);
 
-extern BYTE SpecMem[(128+64)*1024];  //enough memory for 64k ROM + 128k RAM
+extern BYTE MultifaceMem[16384];
+extern BYTE SpectrumMem[(128+64)*1024];  //enough memory for 64k ROM + 128k RAM
 extern BYTE TimexMem[(64+64)*1024];  // Timex has two more blocks of 64k each
 extern BYTE TimexWritable[16];
 
@@ -61,6 +60,52 @@ extern int SPECVSync;
 extern int fts;
 
 extern BYTE SPECLast1ffd;
+extern BYTE SPECLastfffd;
+extern int MFActive;
+
+char ConvertCharacter(char joystickCharacter)
+{
+        if (joystickCharacter == '^')
+        {
+                return '[';
+        }
+        else if (joystickCharacter == '.')
+        {
+                return ']';
+        }
+        else if (joystickCharacter == '#')
+        {
+                return '/';
+        }
+        else if (joystickCharacter == ' ')
+        {
+                return '\\';
+        }
+
+        return joystickCharacter;
+}
+
+char UnconvertCharacter(char joystickCharacter)
+{
+        if (joystickCharacter == '[')
+        {
+                return '^';
+        }
+        else if (joystickCharacter == ']')
+        {
+                return '.';
+        }
+        else if (joystickCharacter == '/')
+        {
+                return '#';
+        }
+        else if (joystickCharacter == '\\')
+        {
+                return ' ';
+        }
+
+        return joystickCharacter;
+}
 
 int LoadDock(char *Filename)
 {
@@ -101,7 +146,7 @@ int LoadDock(char *Filename)
         {
                 if (bank==0) ptr=TimexMem;  // Dock chunk
                 else if (bank==254) ptr=TimexMem+65536;  //ExROM chunk
-                else if (bank==255) ptr=SpecMem;  // Home chunk
+                else if (bank==255) ptr=SpectrumMem;  // Home chunk
 
                 if (ptr == NULL) return 0;
                 
@@ -143,7 +188,7 @@ unsigned char *z80expandSpectra(unsigned char *in, int OutAddr, int Count)
         return(in);
 }
 
-unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
+unsigned char *z80expand( unsigned char *in, int OutAddr, int Count)
 {
         while(Count)
         {
@@ -172,7 +217,32 @@ unsigned char *z80expand(unsigned char *in, int OutAddr, int Count)
 
         return(in);
 }
-  
+
+unsigned char *z80SkipBlock(unsigned char *in, int Count)
+{
+        while(Count)
+        {
+                if ((in[0]==0xed) && (in[1]==0xed))
+                {
+                        int repeat;
+                        repeat=in[2];
+                        while(repeat)
+                        {
+                                repeat--;
+                                Count--;
+                        }
+                        in+=4;
+                }
+                else
+                {
+                        in++;
+                        Count--;
+                }
+        }
+
+        return(in);
+}
+
 void spec_load_z80(char *fname)
 {
         FILE *f;
@@ -203,6 +273,8 @@ void spec_load_z80(char *fname)
         }
 
         speccy=SPECCY48;
+        bool if1 = false;
+        bool mgt = false;
 
         switch(z80version)
         {
@@ -212,9 +284,9 @@ void spec_load_z80(char *fname)
                 switch(buf[34])
                 {
                 case 0: speccy=SPECCY48; break;
-                case 1: speccy=SPECCY48; break;
+                case 1: speccy=SPECCY48; if1 = true; break;
                 case 3: speccy=SPECCY128; break;
-                case 4: speccy=SPECCY128; break;
+                case 4: speccy=SPECCY128; if1 = true; break;
                 case 7: speccy=SPECCYPLUS2A; break;
                 case 8: speccy=SPECCYPLUS2A; break;
                 case 9: speccy=SPECCY128; break;
@@ -233,11 +305,11 @@ void spec_load_z80(char *fname)
                 switch(buf[34])
                 {
                 case 0: speccy=SPECCY48; break;
-                case 1: speccy=SPECCY48; break;
-                case 3: speccy=SPECCY48; break;
+                case 1: speccy=SPECCY48; if1 = true; break;
+                case 3: speccy=SPECCY48; mgt = true; break;
                 case 4: speccy=SPECCY128; break;
-                case 5: speccy=SPECCY128; break;
-                case 6: speccy=SPECCY128; break;
+                case 5: speccy=SPECCY128; if1 = true; break;
+                case 6: speccy=SPECCY128; mgt = true; break;
                 case 7: speccy=SPECCYPLUS2A; break;
                 case 8: speccy=SPECCYPLUS2A; break;
                 case 9: speccy=SPECCY128; break;
@@ -256,11 +328,69 @@ void spec_load_z80(char *fname)
         {
                 switch(speccy)
                 {
-                case SPECCY48: speccy=SPECCY16; break;
-                case SPECCY128: speccy=SPECCYPLUS2; break;
+                case SPECCY48:    speccy=SPECCY16;     break;
+                case SPECCY128:   speccy=SPECCYPLUS2;  break;
                 case SPECCYPLUS3: speccy=SPECCYPLUS2A; break;
                 }
         }
+        HWSetMachine(MACHINESPECTRUM, speccy);
+
+        if (if1)
+        {
+                HW->FDCBox->ItemIndex = HW->SelectEntry(HW->FDCBox, "ZX Interface 1");
+                IF1->MDVNoDrives = 8;
+                HW->FDCBoxChange(HW->FDCBox);
+        }    
+        else if (mgt)
+        {
+                if (buf[83] <= 1)
+                {
+                        HW->FDCBox->ItemIndex = HW->SelectEntry(HW->FDCBox, "DISCiPLE");
+                        HW->FDCBoxChange(HW->FDCBox);
+                }
+                else if (buf[83] == 16)
+                {
+                        HW->FDCBox->ItemIndex = HW->SelectEntry(HW->FDCBox, "+D");
+                        HW->FDCBoxChange(HW->FDCBox);
+                }
+        }
+
+        if ((buf[37] & 0x44) == 0x44)
+                HW->SoundCardBox->ItemIndex = HW->SelectEntry(HW->SoundCardBox, "Fuller Box");
+        else if ((buf[37] & 0x04) == 0x04)
+                HW->SoundCardBox->ItemIndex = HW->SelectEntry(HW->SoundCardBox, "Sinclair 128K");
+
+        switch ((buf[29] & 0xC0) >> 6)
+        {
+        case 1:
+                HW->JoystickBox->ItemIndex = HW->SelectEntry(HW->JoystickBox, "Kempston");
+                break;
+        case 2:
+        case 3:
+                if (speccy >= SPECCYPLUS2A)
+                        HW->JoystickBox->ItemIndex = HW->SelectEntry(HW->JoystickBox, "Sinclair");
+                else
+                        HW->JoystickBox->ItemIndex = HW->SelectEntry(HW->JoystickBox, "ZX Interface 2");
+                break;
+        default:
+                HW->JoystickBox->ItemIndex = HW->SelectEntry(HW->JoystickBox, "Cursor (Protek)");
+                break;
+        }
+
+        if (z80version == 3)
+        {
+                if ((buf[29] & 0xC0) == 0x80)
+                {
+                        HW->JoystickBox->ItemIndex = HW->SelectEntry(HW->JoystickBox, "Programmable");
+
+                        HW->JoystickLeftBox->Text  = UnconvertCharacter(buf[73]);
+                        HW->JoystickRightBox->Text = UnconvertCharacter(buf[75]);
+                        HW->JoystickDownBox->Text  = UnconvertCharacter(buf[77]);
+                        HW->JoystickUpBox->Text    = UnconvertCharacter(buf[79]);
+                        HW->JoystickFireBox->Text  = UnconvertCharacter(buf[81]);
+                }
+        }
+
         HWSetMachine(MACHINESPECTRUM, speccy);
         machine.initialise();
 
@@ -319,6 +449,31 @@ void spec_load_z80(char *fname)
                         {
                                 ptr=z80expandSpectra(ptr, 0x4000, 16384);
                         }
+                        else if (page <= 2)
+                        {
+                                if (len==0xffff)
+                                {
+                                        ptr+=16384;
+                                }
+                                else
+                                {
+                                        ptr=z80SkipBlock(ptr, 16384);  // Skip over the 48/128/IF1/Disciple/+D ROMs (in theory it should be loaded to support custom ROMs)
+                                }
+                        }
+                        else if (page == 11)
+                        {
+                                if (len==0xffff)
+                                {
+                                        ptr+=16384;
+                                }
+                                else
+                                {
+                                        ptr=z80SkipBlock(ptr, 16384);  // Skip over the multiface ROM (in theory it should be loaded to support a custom ROM)
+                                }
+
+                                HW->Multiface->Checked = true;
+                                spectrum.MFVersion = (speccy > SPECCYPLUS2A) ? MF128 : MFPLUS3;
+                        }
                         else
                         {
                                 if (speccy==SPECCY16 || speccy==SPECCY48 || speccy==SPECCYTC2048 || speccy==SPECCYTS2068 || speccy==SPECCYTC2068)
@@ -328,7 +483,7 @@ void spec_load_z80(char *fname)
                                         case 4: page=2; break;
                                         case 5: page=0; break;
                                         case 8: page=5; break;
-                                        default: page=6; break;
+                                        default: page=6; break; //Dump the unsupport bloack out the way
                                         }
                                 }
                                 else    page -= 3;
@@ -353,12 +508,33 @@ void spec_load_z80(char *fname)
         
         for(i=0; i<16384; i++)
         {
-                SpectraMem[i] = SpecMem[(9<<14) + i]; // Page 5
-                SpectraMem[0x4000 + i] = SpecMem[(page<<14) + i]; // Page 5 or 7
+                SpectraMem[i] = SpectrumMem[(9<<14) + i]; // Page 5
+                SpectraMem[0x4000 + i] = SpectrumMem[(page<<14) + i]; // Page 5 or 7
         }
+
+        bool timexModel = (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068);
+
+        if (spectrum.model >= SPECCY128) SPECLast7ffd = buf[35];
+        else if (timexModel) TIMEXPage = buf[35];
+
+        if (machine.floppytype == FLOPPYIF1)
+        {
+                if (buf[36] == 0xFF) SPECBlk[0] = 2; // Interface 1 ROM paged in
+        }
+        else if (timexModel)
+        {
+                TIMEXByte = buf[36];               // Timex last out to $F4
+        }
+
+        SPECLastfffd = buf[38];
 
         if (z80version == 3)
         {
+                for(i=0; i<16; i++)
+                {
+                        Sound.AYRegisterStore[i] = buf[39 + i]; // AY registers
+                }
+
                 SPECLast1ffd = buf[86];
 
                 bool spectraPresent = (buf[37] & 0x08);
@@ -407,8 +583,6 @@ void spec_load_z80(char *fname)
         fts = (((buf[57]+1)&3)<<16) | fts;
         fts=0;
 
-        //fts=buf[55] | (buf[56]<<8) | (buf[57]<<16);
-
         free(buf);
 }         
 
@@ -440,7 +614,7 @@ void spec_load_sna(char *fname)
         z80.bc_.w=(WORD)(buf[5] + 256*buf[6]);
         z80.af_.w=(WORD)(buf[7] + 256*buf[8]);
 
-        z80.hl.w=(WORD)(buf[9] + 256*buf[10]);
+        z80.hl.w=(WORD)(buf[9]  + 256*buf[10]);
         z80.de.w=(WORD)(buf[11] + 256*buf[12]);
         z80.bc.w=(WORD)(buf[13] + 256*buf[14]);
         z80.iy.w=(WORD)(buf[15] + 256*buf[16]);
@@ -484,8 +658,8 @@ void spec_load_sna(char *fname)
         
         for(i=0; i<16384; i++)
         {
-                SpectraMem[i] = SpecMem[(9<<14) + i];
-                SpectraMem[0x4000 + i] = SpecMem[(page<<14) + i]; // Page 5 or 7
+                SpectraMem[i] = SpectrumMem[(9<<14) + i];
+                SpectraMem[0x4000 + i] = SpectrumMem[(page<<14) + i]; // Page 5 or 7
         }
 
         free(buf);
@@ -506,7 +680,7 @@ void spec_save_sna(char *fname)
                 || spectrum.model==SPECCYPLUS3))
         {
                 z80.sp.w -= (WORD)2;
-                spec48_setbyte(z80.sp.w, z80.pc.b.l);
+                spec48_setbyte(z80.sp.w,   z80.pc.b.l);
                 spec48_setbyte(z80.sp.w+1, z80.pc.b.h);
         }
 
@@ -605,6 +779,51 @@ void z80_save_block(FILE *f, int bank, int z80block)
         fwrite(buf, 1, len, f);
 }
 
+void z80_save_mfblock(FILE *f)
+{
+        int len, run, byte;
+        int lastrun, lastbyte;
+        unsigned char buf[65536];
+        int i;
+
+        i=0;
+        len=0;
+
+        lastbyte=lastrun=-1;
+
+        while(i<16384)
+        {
+                byte=MultifaceMem[i];
+                run=1;
+                while(MultifaceMem[i+run]==byte
+                        && ((i+run)<16384)) run++;
+
+                if ((lastbyte==0xed) && (lastrun==1)) run=1;
+                if ((run>4) || (byte==0xed && run>1))
+                {
+                        if (run>255) run=255;
+                        buf[len++]=0xed;
+                        buf[len++]=0xed;
+                        buf[len++]=(WORD)run;
+                        buf[len++]=(WORD)byte;
+                }
+                else
+                {
+                        buf[len++]=(WORD)byte;
+                        run=1;
+                }
+
+                i+=run;
+                lastbyte=byte;
+                lastrun=run;
+        }
+
+        fputc(len&255,f);
+        fputc((len>>8)&255,f);
+        fputc(11 ,f);
+        fwrite(buf, 1, len, f);
+}
+
 int SpectraRAMRead(int bank, int addr)
 {
         return SpectraMem[bank*16384 + addr];
@@ -668,7 +887,7 @@ void spec_save_z80(char *fname)
         fputc(z80.af.b.l,f);
         fputc(z80.bc.b.l,f); fputc(z80.bc.b.h,f);
         fputc(z80.hl.b.l,f); fputc(z80.hl.b.h,f);
-        fputc(0,f); fputc(0,f);
+        fputc(0,f);          fputc(0,f);
         fputc(z80.sp.b.l,f); fputc(z80.sp.b.h,f);
         fputc(z80.i,f);
         fputc(z80.r,f);
@@ -677,89 +896,138 @@ void spec_save_z80(char *fname)
         if (z80.r7) i |= 1;
         i |= ((SPECBorder & 0x07)<<1);
         fputc(i,f);
-        fputc(z80.de.b.l,f); fputc(z80.de.b.h,f);
+        fputc(z80.de.b.l,f);  fputc(z80.de.b.h,f);
         fputc(z80.bc_.b.l,f); fputc(z80.bc_.b.h,f);
         fputc(z80.de_.b.l,f); fputc(z80.de_.b.h,f);
         fputc(z80.hl_.b.l,f); fputc(z80.hl_.b.h,f);
         fputc(z80.af_.b.h,f);
         fputc(z80.af_.b.l,f);
-        fputc(z80.iy.b.l,f); fputc(z80.iy.b.h,f);
-        fputc(z80.ix.b.l,f); fputc(z80.ix.b.h,f);
+        fputc(z80.iy.b.l,f);  fputc(z80.iy.b.h,f);
+        fputc(z80.ix.b.l,f);  fputc(z80.ix.b.h,f);
         fputc(z80.iff1,f);
         fputc(z80.iff2,f);
 
         i=z80.im;
         if (spectrum.kbissue==SPECKBISS2) i|=4;
-        fputc(i,f);
 
-        // We're going to do a version 2 or 3 .z80 file
-
-        int h2len = (machine.colour == COLOURSPECTRA) ? 58 : 23;
-        fputc(h2len,f); fputc(0,f);
-        fputc(z80.pc.b.l,f); fputc(z80.pc.b.h,f);
-
-        switch(spectrum.model)
+        switch (machine.joystickInterfaceType)
         {
-        case SPECCY16: mode=0; flags=128; break;
-        case SPECCY48: mode=0; flags=0; break;
-        case SPECCYTC2048: mode=14; flags=0; break;
-        case SPECCYTC2068: mode=15; flags=0; break;
-        case SPECCYTS2068: mode=128; flags=0; break;
-        case SPECCY128: mode=3; flags=0; break;
-        case SPECCYPLUS2: mode=12; flags=0; break;
-        case SPECCYPLUS2A: mode=13; flags=0; break;
-        case SPECCYPLUS3: mode=7; flags=0; break;
+        case JOYSTICK_CURSOR:
+                break;
+        case JOYSTICK_KEMPSTON:
+                i |= 0x40;
+                break;
+        case JOYSTICK_INTERFACE2:
+                if (machine.joystick1Connected)
+                {
+                        i |= 0xC0; // Right = Joystick 1
+                }
+                else
+                {
+                        i |= 0x80; // Left = Joystick 2
+                }
+                break;
+        case JOYSTICK_PROGRAMMABLE:
+                i |= 0x80;
+                break;
         }
 
-        if (spectrum.floppytype==FLOPPYIF1) mode++;
+        fputc(i,f);
 
-        fputc(mode,f);
-        if (spectrum.model==SPECCY128
-                || spectrum.model==SPECCYPLUS2
-                || spectrum.model==SPECCYPLUS2A
-                || spectrum.model==SPECCYPLUS3)
-                        fputc(SPECLast7ffd,f);
-        else    fputc(0,f);
+        // We're going to do a version 3 .z80 file
 
-        if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
-                fputc(TIMEXByte,f);
-        else    fputc(0,f);
+        int h2len = (machine.colour == COLOURSPECTRA) ? 58 : 55;
+        fputc(h2len,f); fputc(0,f);               // Additional header length (23 = v2, 55 = v3, 58 = v3 extended)
+        fputc(z80.pc.b.l,f); fputc(z80.pc.b.h,f); // Program counter
+
+        switch (spectrum.model)
+        {
+        case SPECCY16:     mode=0;   flags=128; break;
+        case SPECCY48:     mode=0;   flags=0;   break;
+        case SPECCYTC2048: mode=14;  flags=0;   break;
+        case SPECCYTC2068: mode=15;  flags=0;   break;
+        case SPECCYTS2068: mode=128; flags=0;   break;
+        case SPECCY128:    mode=4;   flags=0;   break;
+        case SPECCYPLUS2:  mode=12;  flags=0;   break;
+        case SPECCYPLUS2A: mode=13;  flags=0;   break;
+        case SPECCYPLUS3:  mode=7;   flags=0;   break;
+        }                                            
+        if (machine.floppytype == FLOPPYIF1) mode++;
+        else if (machine.floppytype == FLOPPYDISCIPLE || machine.floppytype == FLOPPYPLUSD)
+        {
+                if (mode == 0) mode = 3;
+                else if (mode == 4) mode = 6;
+        }
+        fputc(mode,f); // Hardware mode
+
+        bool timexModel = (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068);
+
+        if (spectrum.model >= SPECCY128) fputc(SPECLast7ffd, f); // 128 mode - last OUT to $7FFD
+        else if (timexModel) fputc(TIMEXPage, f);                // Timex mode - last OUT to $F4
+        else fputc(0, f);
+
+        if (timexModel) fputc(TIMEXByte, f);                     // Timex mode - last OUT to 0xFF
+        else if (machine.floppytype == FLOPPYIF1)
+        {
+                int if1PagedIn = (SPECBlk[0] == 2) ? 0xFF : 0x00;
+                fputc(if1PagedIn, f);                            // Interface 1 ROM paged in
+        }
+        else fputc(0, f);                                  
 
         /*
         Bit 0: 1 if R register emulation on
 	Bit 1: 1 if LDIR emulation on
 	Bit 2: AY sound in use, even on 48K machines
-	Bit 3: SPECTRA interface present
+	Bit 3: SPECTRA interface present (custom extension to Z80 format v3)
 	Bit 6: (if bit 2 set) Fuller Audio Box emulation
 	Bit 7: Modify hardware
         */
-        flags |= 1 | 2;
-        if (machine.colour == COLOURSPECTRA) flags |= 8;
+        flags |= 0x01 | 0x02;                                     // R emulation on / LDIR emulation on
+        if (machine.aytype == AY_TYPE_SINCLAIR) flags |= 0x04;    // AY sound
+        else if (machine.aytype == AY_TYPE_FULLER) flags |= 0x44; // Fuller sound box
+        if (machine.colour == COLOURSPECTRA) flags |= 0x08;       // Spectra
         fputc(flags,f);
 
-        fputc(0,f);
-        for(i=0;i<16;i++) fputc(0,f);
+        fputc(SPECLastfffd,f);                               // Last OUT to $FFFD
+        for(i=0;i<16;i++) fputc(Sound.AYRegisterStore[i],f); // AY registers
 
-        // If Spectra is enabled then output a version 3 file
+        for (i=55; i<63; i++) fputc(0, f); // Options not supported
+
+        fputc(JoystickLeft1.AddressMask  >> 8, f); fputc((~JoystickLeft1.Data)  & 0xFF, f); // User defined joystick mapping
+        fputc(JoystickRight1.AddressMask >> 8, f); fputc((~JoystickRight1.Data) & 0xFF, f);
+        fputc(JoystickDown1.AddressMask  >> 8, f); fputc((~JoystickDown1.Data)  & 0xFF, f);
+        fputc(JoystickUp1.AddressMask    >> 8, f); fputc((~JoystickUp1.Data)    & 0xFF, f);
+        fputc(JoystickFire1.AddressMask  >> 8, f); fputc((~JoystickFire1.Data)  & 0xFF, f);
+
+        fputc(ConvertCharacter(JoystickLeft1.Character),  f); fputc(0, f); // User defined joystick ASCII
+        fputc(ConvertCharacter(JoystickRight1.Character), f); fputc(0, f);
+        fputc(ConvertCharacter(JoystickDown1.Character),  f); fputc(0, f);
+        fputc(ConvertCharacter(JoystickUp1.Character),    f); fputc(0, f);
+        fputc(ConvertCharacter(JoystickFire1.Character),  f); fputc(0, f);
+
+        if (machine.floppytype == FLOPPYDISCIPLE)   fputc(0, f);   // Disciple + Epson
+        else if (machine.floppytype == FLOPPYPLUSD) fputc(16, f);  // +D
+        else                                         fputc(0, f);   // None
+
+        fputc(0, f); // Disciple inhibit button out
+        fputc(0, f); // Disciple inhibit flag (ROM pageable)
+
+        fputc(SPECLast1ffd, f);            // Last OUT to $1FFD
+
+        // If Spectra is enabled then output a extended version 3 file
+        
         if (machine.colour == COLOURSPECTRA)
         {
-                for (i=55; i<86; i++)
-                {
-                        fputc(0,f);
-                }
-                
-                fputc(SPECLast1ffd, f);
-
                 /*
-                Spectra extension devised for zxsp emulator.                     
+                Spectra extension devised for zxsp emulator.
                 Bit 0: new colour modes enabled
-		Bit 1: RS232 enabled
-		Bit 2: Joystick enabled
-		Bit 3: IF1 rom hooks enabled
-		Bit 4: rom paged in
-		Bit 5: port 239: Comms out bit
-		Bit 6: port 239: CTS out bit
-		Bit 7: port 247: Data out bit
+                Bit 1: RS232 enabled
+                Bit 2: Joystick enabled
+                Bit 3: IF1 rom hooks enabled
+                Bit 4: rom paged in
+                Bit 5: port 239: Comms out bit
+                Bit 6: port 239: CTS out bit
+                Bit 7: port 247: Data out bit
                 */
 
                 // Only colour mode supported at present
@@ -788,6 +1056,11 @@ void spec_save_z80(char *fname)
         {
                 for(i=0;i<8;i++)
                         z80_save_block(f,i+4, i+3);
+        }
+
+        if (spectrum.MFVersion != MFNONE)
+        {
+                z80_save_mfblock(f);
         }
 
         if (machine.colour == COLOURSPECTRA)

@@ -1,4 +1,20 @@
-//---------------------------------------------------------------------------
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifndef Interface1H
 #define Interface1H
@@ -15,6 +31,7 @@
 #include <stdio.h>
 #if __CODEGEARC__ >= 0x0620
 #include <System.Win.ScktComp.hpp>
+#include <Vcl.Dialogs.hpp>
 #else
 #include <ScktComp.hpp>
 #endif
@@ -38,6 +55,7 @@ typedef struct
         unsigned char *data;
         int length, position;
         bool changed;
+        bool writeProtected;
 } MDVDrive;
 
 class TIF1 : public TForm
@@ -54,10 +72,6 @@ __published:	// IDE-managed Components
         TEdit *OutputFileEdit;
         TButton *OutputFileButton;
         TButton *OK;
-        TGroupBox *GroupROM;
-        TGroupBox *GroupDrives;
-        TLabel *Label4;
-        TComboBox *NoMicroDrives;
         TPanel *PortPanel;
         TLabel *Label5;
         TComboBox *BaudRate;
@@ -76,8 +90,6 @@ __published:	// IDE-managed Components
         TClientSocket *ClientSocket;
         TOpenDialog *OpenDialog;
         TSaveDialog *SaveDialog;
-        TLabel *Label11;
-        TComboBox *RomEdition;
         void __fastcall OKClick(TObject *Sender);
         void __fastcall ComPortListChange(TObject *Sender);
         void __fastcall InputFileBrowseClick(TObject *Sender);
@@ -88,8 +100,6 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
           int &ErrorCode);
         void __fastcall FormDestroy(TObject *Sender);
-        void __fastcall RomEditionChange(TObject *Sender);
-        void __fastcall FormShow(TObject *Sender);
 private:	// User declarations
         int RS232Port;
         FILE *InFile, *OutFile;
@@ -104,13 +114,11 @@ private:	// User declarations
         bool MDVGap, MDVSync;
         int MDVGetNextBlock(int Drive, bool Header);
         int MDVPos(int Drive, int Offset);
-        bool romEditionChanged;
         unsigned char* FindNextDataBlock(int Drive);
         unsigned char* FindSector(int Drive);
 
 public:		// User declarations
         int MDVNoDrives;
-        int IF1RomEdition;
         int SerialOut, SerialIn, SerialTimeOut, SerialCount;
         bool CTS;
         __fastcall TIF1(TComponent* Owner);
@@ -125,6 +133,7 @@ public:		// User declarations
         void SendSerialData(unsigned char Data, int rate);
         void SaveSettings(TIniFile *ini);
         void LoadSettings(TIniFile *ini);
+        void HardReset();
 
         char *MDVGetFileName(int Drive);
         void MDVSetFileName(int Drive, char *FileName);

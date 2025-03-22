@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * ace.c
- *
  */
 #include <vcl4.h>
 
@@ -37,6 +34,9 @@
 #include "tzxman.h"
 #include "ide.h"
 #include "LiveMemoryWindow_.h"
+#include "sp0256drv.h"
+#include "Joystick.h"
+#include "main_.h"
 
 #define BASE 0
 #define HBLANKCOLOUR (BASE+0*16)
@@ -49,6 +49,8 @@ extern "C"
 }
 
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
+
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
@@ -90,7 +92,8 @@ void ace_initialise()
 
         for(i=0;i<65536;i++) memory[i]=(BYTE)random(255);
 
-        romlen=memory_load(machine.CurRom, 0, 65536);
+        AnsiString romPath = AdjustPathIfReplacementRom(machine.CurRom);
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
         zx81.ROMTOP=romlen-1;
 
@@ -108,7 +111,14 @@ void ace_initialise()
         d8251reset();
         z80_reset();
         ATA_Reset();
-        if (spectrum.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDACECF) ATA_SetMode(ATA_MODE_8BIT);
+}
+
+void ace_reset()
+{
+        z80_reset();
+        InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
 }
 
 void ace_writebyte(int Address, int Data)
@@ -126,7 +136,7 @@ void ace_writebyte(int Address, int Data)
         if (machine.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
-                if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data, frametstates);
+                if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg, Data, frametstates);
         }
 
         if (Address<=zx81.ROMTOP && machine.protectROM)
@@ -206,7 +216,7 @@ void ace_writeport(int Address, int Data, int *tstates)
 
         static int beeper=0;
 
-        if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
+        if ((machine.HDType==HDACECF) && ((Address&128) == 0))
         {
                 ATA_WriteRegister((Address>>8)&0x07,Data);
                 return;
@@ -215,13 +225,6 @@ void ace_writeport(int Address, int Data, int *tstates)
         switch(Address&255)
         {
         case 0x01:
-                break;
-        case 0x3f:
-                if (machine.aytype==AY_TYPE_FULLER)
-                        SelectAYReg=Data&15;
-        case 0x5f:
-                if (machine.aytype==AY_TYPE_FULLER)
-                        Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0x73:
@@ -244,11 +247,11 @@ void ace_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE) SelectAYReg=Data;
+                if (machine.aytype==AY_TYPE_ACE_USER) SelectAYReg=Data;
                 break;
 
         case 0xdf:
-                if (machine.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.aytype==AY_TYPE_ACE_USER) Sound.AYWrite(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xfb:
@@ -298,11 +301,26 @@ BYTE ReadInputPort(int Address, int *tstates)
                 {
                         if (! (keyb & (1<<i)) ) data |= ZXKeyboard[i];
                 }
-                return (BYTE)(~data);
+
+                data = (BYTE)~data;
+                
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE)
+                {
+                        if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                        if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                        if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                        if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                        if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
+                }
+
+                return data;
         }
 
-        if ((spectrum.HDType==HDACECF) && ((Address&128) == 0))
+        if ((machine.HDType==HDACECF) && ((Address&128) == 0))
                 return (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
+
+        if (machine.joystick1Connected && (Address & 0x0001) == 0x0001)
+                return (BYTE)~ReadJoystick1();
 
         switch(Address&255)
         {
@@ -313,7 +331,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                 if (machine.ts2050) return(d8251readCTRL());
 
         case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE) return (BYTE)(Sound.AYRead(SelectAYReg));
+                if (machine.aytype==AY_TYPE_ACE_USER) return (BYTE)(Sound.AYRead(SelectAYReg));
 
         case 0xfb:
                 if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));

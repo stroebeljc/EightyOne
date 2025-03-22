@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * main_.h
- *
  */
 
 //---------------------------------------------------------------------------
@@ -58,10 +55,9 @@ __published:	// IDE-managed Components
         TMenuItem *N4001;
         TMenuItem *UserDefined1;
         TMenuItem *Options1;
-        TMenuItem *Joystick1;
         TMenuItem *Keyboard1;
         TMenuItem *Sound1;
-        TMenuItem *Display1;
+        TMenuItem *Hardware1;
         TMenuItem *Speed1;
         TMenuItem *Help1;
         TMenuItem *HelpTopics2;
@@ -78,11 +74,9 @@ __published:	// IDE-managed Components
         TTimer *Timer2;
         TMenuItem *WavLoadBtn;
         TMenuItem *DebugWin;
-        TMenuItem *Tools1;
         TMenuItem *PauseZX81;
         TMenuItem *InverseVideo;
         TMenuItem *DisplayArt;
-        TMenuItem *DBG1;
         TMenuItem *Tape2;
         TMenuItem *Source1;
         TMenuItem *Destination1;
@@ -109,7 +103,7 @@ __published:	// IDE-managed Components
         TMenuItem *Small1;
         TStatusBar *StatusBar1;
         TMenuItem *StatusBar2;
-        TMenuItem *IFace1;
+        TMenuItem *Interface1Ports;
         TOpenDialog *OpenDock;
         TMenuItem *DockSpacer;
         TMenuItem *N6;
@@ -126,7 +120,6 @@ __published:	// IDE-managed Components
         TMenuItem *ResetMemotechHRG;
         TMenuItem *SaveScreenshot1;
         TSaveDialog *SaveScrDialog;
-        TMenuItem *PrinterPort1;
         TMenuItem *Midi1;
         TMenuItem *RZX1;
         TMenuItem *N8;
@@ -166,7 +159,6 @@ __published:	// IDE-managed Components
         TMenuItem *DeleteAll;
         TMenuItem *N12;
         TMenuItem *divIDEJumperEClosed;
-        TMenuItem *N2;
         TMenuItem *CheckForUpdates;
         TMenuItem *WriteProtect8KRAM;
         TMenuItem *ResetToDefaultSettings;
@@ -176,6 +168,29 @@ __published:	// IDE-managed Components
         TMenuItem *ExampleZX81ProgramsMenuEntry;
         TMenuItem *ReleaseHistoryNotes;
         TMenuItem *N14;
+        TMenuItem *ExampleSpectrumProgramsMenuEntry;
+        TMenuItem *ResetSpeech;
+        TMenuItem *N15;
+        TMenuItem *EnableJoystick1AutoFire;
+        TMenuItem *EnableJoystick2AutoFire;
+        TMenuItem *ZXCFUploadJumperClosed;
+        TMenuItem *ConnectSpectrum128Keypad;
+        TMenuItem *N16;
+        TMenuItem *ConnectJoystick1;
+        TMenuItem *ConnectJoystick2;
+        TMenuItem *ZoomFullScreen;
+        TMenuItem *SimpleIdeRomEnabled;
+        TMenuItem *N18;
+        TMenuItem *PrinterPort;
+        TMenuItem *SelectJoystick1;
+        TMenuItem *SelectJoystick2;
+        TMenuItem *N20;
+        TMenuItem *N21;
+        TMenuItem *N2;
+        TMenuItem *SwitchOnMemocalc;
+//        TMenuItem *SwitchOnMemotext;
+        TMenuItem *N17;
+        TMenuItem *SwitchOnZ80Assembler;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -188,7 +203,7 @@ __published:	// IDE-managed Components
         void __fastcall N4001Click(TObject *Sender);
         void __fastcall UserDefined1Click(TObject *Sender);
         void __fastcall Speed1Click(TObject *Sender);
-        void __fastcall Display1Click(TObject *Sender);
+        void __fastcall Hardware1Click(TObject *Sender);
         void __fastcall Keyboard1Click(TObject *Sender);
         void __fastcall KeyboardMap1Click(TObject *Sender);
         void __fastcall AboutEightyOne1Click(TObject *Sender);
@@ -209,7 +224,6 @@ __published:	// IDE-managed Components
         void __fastcall FormDeactivate(TObject *Sender);
         void __fastcall DisplayArtClick(TObject *Sender);
         void __fastcall Sound1Click(TObject *Sender);
-        void __fastcall DBG1Click(TObject *Sender);
         void __fastcall HelpTopics2Click(TObject *Sender);
         void __fastcall InWaveLoaderClick(TObject *Sender);
         void __fastcall OutWaveLoaderClick(TObject *Sender);
@@ -231,7 +245,7 @@ __published:	// IDE-managed Components
         void __fastcall None1Click(TObject *Sender);
         void __fastcall StatusBar2Click(TObject *Sender);
         void __fastcall CloseTape1Click(TObject *Sender);
-        void __fastcall IFace1Click(TObject *Sender);
+        void __fastcall Interface1PortsClick(TObject *Sender);
         void __fastcall SaveSnapDialogTypeChange(TObject *Sender);
         void __fastcall DiskDrives1Click(TObject *Sender);
         void __fastcall StatusBar1DrawPanel(TStatusBar *StatusBar,
@@ -245,7 +259,7 @@ __published:	// IDE-managed Components
         void __fastcall ConfigItem1Click(TObject *Sender);
         void __fastcall ResetMemotechHRGClick(TObject *Sender);
         void __fastcall SaveScreenshot1Click(TObject *Sender);
-        void __fastcall PrinterPort1Click(TObject *Sender);
+        void __fastcall PrinterPortClick(TObject *Sender);
         void __fastcall Midi1Click(TObject *Sender);
         void __fastcall Play1Click(TObject *Sender);
         void __fastcall QSChrEnableClick(TObject *Sender);
@@ -254,7 +268,6 @@ __published:	// IDE-managed Components
         void __fastcall GatherWindows1Click(TObject *Sender);
         void __fastcall EnableSplashScreenClick(TObject *Sender);
         void __fastcall LiveMemoryOverviewClick(TObject *Sender);
-        void __fastcall Tools1Click(TObject *Sender);
         void __fastcall BasicListerOptionClick(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall HorizontalSyncPulseClick(TObject *Sender);
@@ -287,15 +300,31 @@ __published:	// IDE-managed Components
         void __fastcall InstructionMenuItemClick(TObject *Sender);
         void __fastcall ExampleZX81ProgramsMenuEntryClick(TObject *Sender);
         void __fastcall ReleaseHistoryNotesClick(TObject *Sender);
+        void __fastcall ExampleSpectrumProgramsMenuEntryClick(
+          TObject *Sender);
+        void __fastcall ResetSpeechClick(TObject *Sender);
+        void __fastcall EnableJoystick1AutoFireClick(TObject *Sender);
+        void __fastcall EnableJoystick2AutoFireClick(TObject *Sender);
+        void __fastcall ZXCFUploadJumperClosedClick(TObject *Sender);
+        void __fastcall ConnectSpectrum128KeypadClick(TObject *Sender);
+        void __fastcall ConnectJoystick1Click(TObject *Sender);
+        void __fastcall ConnectJoystick2Click(TObject *Sender);
+        void __fastcall ZoomFullScreenClick(TObject *Sender);
+        void __fastcall SimpleIdeRomEnabledClick(TObject *Sender);
+//        void __fastcall SwitchOnMemotextClick(TObject *Sender);
+        void __fastcall SwitchOnMemocalcClick(TObject *Sender);
+        void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
         int StartUpWidth, StartUpHeight;
         void BuildConfigMenu();
         void BuildDocumentationMenu();
-        void BuildExamplesMenu();
-        void AddInstructionFiles(TMenuItem* CategorySubMenu, AnsiString path);
-        void AddExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
+        void BuildZX81ExamplesMenu();
+        void BuildSpectrumExamplesMenu();
+        void AddDocumentationFiles(TMenuItem* CategorySubMenu, AnsiString path);
+        void AddZX81ExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
+        void AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;
         bool LShift, RShift;
         Graphics::TBitmap *LEDGreenOn;
@@ -306,6 +335,9 @@ private:	// User declarations
         void UpdateAnnotationImage(TMenuItem* item);
         void UpdateEmulatorAnnotationSettings();
         void LoadIniFile(AnsiString FileName);
+        void __fastcall SelectJoystick1Click(TObject *Sender);
+        void __fastcall SelectJoystick2Click(TObject *Sender);
+        void UpdateJoystickMenuOptions();
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
@@ -325,6 +357,8 @@ public:		// User declarations
         void __fastcall RunFrame();
         int RunFrameEnable;
         void EnableAnnotationOptions();
+        void BuildMenuJoystickSelection();
+        void BuildMemotechInterfaceSelection();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

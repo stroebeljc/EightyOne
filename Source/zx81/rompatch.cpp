@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * rompatch.cpeepeep
  */
 
 #include <vcl4.h>
@@ -199,13 +196,11 @@ bool LarkenSaveTrack(int& pc)
 
 void InitPatches(int machineType)
 {
-        bool larken = true;
-        
         patches.clear();
 
         if ((machineType == MACHINEZX81) || (machineType == MACHINETS1000) || (machineType == MACHINETS1500) ||
-            (machineType == MACHINETK85) || (machineType == MACHINER470)|| (machineType == MACHINEZX97LE) ||
-            ((machineType == MACHINEZX80) && (!strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom"))))
+            (machineType == MACHINETK85) || (machineType == MACHINER470) || (machineType == MACHINEZX97LE) ||
+            ((machineType == MACHINEZX80) && ((emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3))))
         {
                 patches[0x02ffcd] = ZX81SaveDelayStartSaving;
                 patches[0x03561f] = ZX81LambdaGetByteStartLoading;
@@ -227,7 +222,7 @@ void InitPatches(int machineType)
                 patches[0x0203c9] = ZX80ZX81LambdaStopTape;
         }
 
-        if (larken)
+        if (machine.floppytype == FLOPPYLARKEN81)
         {
                 patches[0x38DEc9] = LarkenLoadTrack;
                 patches[0x3A10c9] = LarkenSaveTrack;

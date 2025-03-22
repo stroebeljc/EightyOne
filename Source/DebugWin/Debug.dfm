@@ -1,6 +1,6 @@
 object Dbg: TDbg
-  Left = 197
-  Top = 116
+  Left = 517
+  Top = 254
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Debug Window'
@@ -12,6 +12,7 @@ object Dbg: TDbg
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
@@ -2143,7 +2144,7 @@ object Dbg: TDbg
   end
   object MemoryWindowTimer: TTimer
     Enabled = False
-    Interval = 50
+    Interval = 10000
     OnTimer = MemoryWindowTimerExpired
     Left = 326
     Top = 216

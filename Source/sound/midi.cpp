@@ -1,4 +1,5 @@
-/* EightyOne - a Sinclair emulators.
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * midi.cpp - Midi support.  Basicly, collect data one bit at a time from the
-  * emulated machine, reassemble the data then send it to the host midi device
+ */
+ 
+/* midi.cpp - Midi support.  Basicly, collect data one bit at a time from the
+ * emulated machine, reassemble the data then send it to the host midi device
  */
 
 #include <windows.h>
@@ -37,13 +38,10 @@ CMidi::CMidi(void)
 
 void CMidi::WriteBit(int Bit)
 {
-        // Only the +2A/+3 have midi out, so if we're emulating
-        // anything else ignore the midi data
         // Midi is transmitted at 31.25 kbs, 1 start bit, 8 data bits, MSB first,
         //  then 1 stop bit.
 
-        if (emulator.machine==MACHINESPECTRUM &&
-                ( spectrum.model==SPECCYPLUS2A || spectrum.model==SPECCYPLUS3))
+        if (emulator.machine==MACHINESPECTRUM && spectrum.model>=SPECCY128)
         {
                 // Midi data arrives in bit 2 of the port, so to build a midi byte
                 // we do the following:
@@ -51,7 +49,7 @@ void CMidi::WriteBit(int Bit)
                 // 2. Ignore everything except the (now) least sugnificant bit
                 // 3. Shift it left 8 bita
                 // 4. Or it with what we've already received.
-                // Once the start bit reaches bot 0, we've receieved a full byte,
+                // Once the start bit reaches bit 0, we've receieved a full byte,
                 // So output it.
 
                 MidiByte = (MidiByte>>1) | (((~Bit>>2)&1)<<8);

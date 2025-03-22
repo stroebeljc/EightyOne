@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2019 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -474,10 +474,41 @@ void zx81BasicLoader::ExtractInverseCharacters()
         }
 }
 
-void zx81BasicLoader::ExtractDoubleQuoteCharacters()
+void zx81BasicLoader::ExtractDoubleQuoteCharacters(bool tokeniseRemContents, bool acceptAlternateKeywordSpelling)
 {
-        int i = 0;
-        bool withinQuote = false;
+        int i;
+        bool withinQuote = false;    
+
+        unsigned char* pRemBuffer = new unsigned char[sizeof(mLineBuffer)];
+
+        strcpy((char*)pRemBuffer, (char*)mLineBuffer);
+
+        if (acceptAlternateKeywordSpelling)
+        {
+                i = 0;
+                while (pRemBuffer[i] != '\0')
+                {
+                        pRemBuffer[i] = (unsigned char)toupper(pRemBuffer[i]);
+                        i++;
+                }
+        }
+
+        i = 0;
+
+        while (pRemBuffer[i] == Blank || pRemBuffer[i] == ' ')
+        {
+                i++;
+        }
+
+        const char* const rem = "REM ";
+        char* pRem = strstr((char*)&pRemBuffer[i], rem);
+        bool withinRem = (pRem == (char*)&pRemBuffer[i]);
+        if (withinRem && !tokeniseRemContents)
+        {
+                return;
+        }
+
+        i = 0;
 
         while (mLineBuffer[i] != '\0')
         {
@@ -510,6 +541,14 @@ void zx81BasicLoader::ExtractDoubleQuoteCharacters()
                                 else
                                 {
                                         withinQuote = false;
+                                        if (withinRem && tokeniseRemContents && mLineBuffer[i-1] == '\"')
+                                        {
+                                                mLineBuffer[i-1] = Blank;
+                                                mLineBufferOutput[i-1] = DoubleQuote;
+                                                mLineBufferPopulated[i-1] = true;
+
+                                                mLineBuffer[i] = Blank;
+                                        }
                                 }
                         }
                 }

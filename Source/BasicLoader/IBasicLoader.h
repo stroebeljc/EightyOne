@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2019 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,6 @@ protected:
         void ChangeWord(int addressOffset, int word);
         void ProcessLine(LineEntry lineEntry, int& addressOffset, bool tokeniseRemContents, bool tokeniseStrings, bool discardSurplusSpaces, bool acceptAlternateKeywordSpelling, bool zxTokenSupport);
         void MaskOutRemContents(unsigned char* buffer);
-        unsigned char* ExtractLineNumber(int& lineNumber);
         void ReplaceTokenEndCharacters(map<unsigned char, string>& tokens, const unsigned char oldChar, const unsigned char newChar);
         void DoTokenise(map<unsigned char, string> tokens);
         bool StartOfNumber(int index);
@@ -102,7 +101,7 @@ protected:
         virtual bool SupportUppercaseOnly() { return false; }
         virtual void ExtractInverseCharacters() {}
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr) { return false; }
-        virtual void ExtractDoubleQuoteCharacters() {}
+        virtual void ExtractDoubleQuoteCharacters(bool tokeniseRemContents, bool acceptAlternateKeywordSpelling) {}
         virtual bool SupportFloatingPointNumbers() { return false; }
         virtual unsigned char GetEmbbededNumberMark() { return '\0'; }
         virtual void OutputFloatingPointEncoding(double value, int& addressOffset) {}

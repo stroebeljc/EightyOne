@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * wavload_.cpp
  */
 
 //---------------------------------------------------------------------------
@@ -692,7 +689,7 @@ void __fastcall TWavLoad::ConvertNextBlock1Click(TObject *Sender)
 
         Silence = (TapePos - StartTapePos) * TStatesSample;
 
-        bool zx81File = (emulator.machine != MACHINEZX80 || (emulator.machine == MACHINEZX80 && (LowerCase(machine.CurRom) != "zx80.rom")));
+        bool zx81File = (emulator.machine != MACHINEZX80 || (emulator.machine == MACHINEZX80 && (emulator.romcrc != CRCZX80)));
 
         while (byte!=-1 && DataCount!=E_LINE)
         {

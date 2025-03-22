@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ bool LoadRomCartridgeFile(char *filename)
         int fptr;
 
         fptr=open(filename, O_RDONLY | O_BINARY);
-        if (fptr<1) return false;
+        if (fptr<0) return false;
 
         struct stat st;
         if (stat(filename, &st))

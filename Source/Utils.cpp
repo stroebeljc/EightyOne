@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * Utils.cpp
  */
 
 //---------------------------------------------------------------------------
@@ -275,6 +272,7 @@ AnsiString RemoveExt(AnsiString Fname)
                 || Ext==".bas" || Ext==".BAS"
                 || Ext==".web" || Ext==".WEB"
                 || Ext==".pdf" || Ext==".PDF"
+                || Ext==".ref" || Ext==".REF"
                 ) && pos>1)
                 Fname = Fname.SubString(1,pos-1);
 
@@ -365,4 +363,53 @@ int EnumeratePorts(TStrings *List, AnsiString Type)
 }
 
 //---------------------------------------------------------------------------
+
+void AccessIniFileInteger(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, int& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteInteger(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadInteger(section, entryName, entryValue);
+        }
+}
+
+void AccessIniFileBoolean(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, bool& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteBool(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadBool(section, entryName, entryValue);
+        }
+}
+
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, AnsiString& entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryValue);
+        }
+        else
+        {
+                entryValue = ini->ReadString(section, entryName, entryValue);
+        }
+}
+
+void AccessIniFileString(TIniFile* ini, IniFileAccessType accessType, AnsiString section, AnsiString entryName, char* entryValue)
+{
+        if (accessType == Write)
+        {
+                ini->WriteString(section, entryName, entryValue);
+        }
+        else
+        {
+                AnsiString value = ini->ReadString(section, entryName, entryValue);
+                strcpy(entryValue, value.c_str());
+        }
+}
 

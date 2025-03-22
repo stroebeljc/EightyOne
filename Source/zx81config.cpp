@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * zx81config.c
- *
  */
 
 #include <string.h>
@@ -40,26 +37,28 @@ int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 bool directMemoryAccess;
 
-const char* iniFolder                 = "EightyOne\\";
-const char* temporaryFolder           = "EightyOne\\";
+const char* iniFolder                     = "EightyOne\\";
+const char* temporaryFolder               = "EightyOne\\";
 
-const char* nvMemoryFolder            = "NV_Memory\\";
-const char* examplesDrivesFolder      = "Examples\\Drives\\";
-const char* documentationFolder       = "Documentation\\";
-const char* exampleZX81ProgramsFolder = "Examples\\ZX81 Programs\\";
+const char* nvMemoryFolder                = "NV_Memory\\";
+const char* documentationFolder           = "Documentation\\";
+const char* exampleZX81ProgramsFolder     = "Examples\\ZX81 Programs\\";
+const char* exampleSpectrumProgramsFolder = "Examples\\Spectrum Programs\\";
 
-const char* romsFolder                = "ROMs\\";
-const char* fdcRomsFolder             = "ROMs\\FDCs\\";
-const char* ideRomsFolder             = "ROMs\\IDEs\\";
-const char* interfaceRomsFolder       = "ROMs\\Interfaces\\";
-const char* graphicRomsFolder         = "ROMs\\Graphics\\";
-const char* replacementRomsFolder     = "ROMs\\Replacement ROMs\\";
+const char* romsFolder                    = "ROMs\\";
+const char* fdcRomsFolder                 = "FDCs\\";
+const char* ideRomsFolder                 = "IDEs\\";
+const char* interfaceRomsFolder           = "Interfaces\\";
+const char* graphicRomsFolder             = "Graphics\\";
+const char* replacementRomsFolder         = "Replacement Operating Systems\\";
+const char* speechRomsFolder              = "Speech\\";
 
-const char* romCartridgeFolder        = "ROM Cartridges\\";
-const char* if2RomsFolder             = "ROM Cartridges\\ZX Interface 2\\";
-const char* ts1510RomsFolder          = "ROM Cartridges\\TS1510\\";
-const char* ts2068RomsFolder          = "ROM Cartridges\\TS2068\\";
-const char* tc2068RomsFolder          = "ROM Cartridges\\TC2068\\";
+const char* romCartridgeFolder            = "ROM Cartridges\\";
+const char* if2RomsFolder                 = "ROM Cartridges\\ZX Interface 2\\";
+const char* ts1510RomsFolder              = "ROM Cartridges\\TS1510\\";
+const char* ts2068RomsFolder              = "ROM Cartridges\\TS2068\\";
+const char* tc2068RomsFolder              = "ROM Cartridges\\TC2068\\";
+const char* spectrumPlus2RomsFolder       = "ROM Cartridges\\Spectrum+2\\";;
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
 
@@ -90,9 +89,9 @@ void load_config(void)
         emulator.inverse=0;
         zx81.extfont=0;
         emulator.frameskip=0;
-        machine.aysound=0;
         machine.aytype=0;
         machine.speech=0;
+        machine.joystickInterfaceType=0;
         zx81.vsyncsound=0;
         emulator.beepersound=0;
         machine.ts2050=0;
@@ -113,13 +112,22 @@ void load_config(void)
         zx81.chromaMode=0x0F;
         zx81.chromaColourSwitchOn = 0;
         zx81.FloatingPointHardwareFix = 0;
+        zx81.z80Assembler = 0;
+        zx81.memocalc = 0;
+//        zx81.memotext = 0;
+        zx81.z80AssemblerOn = 0;
+        zx81.memocalcOn = 0;
+//        zx81.memotextOn = 0;
+
         machine.NTSC=0;
         machine.clockspeed=3250000;
         machine.tperscanline=207;
         machine.tperframe=312*207;
         machine.fps=50;
-        spectrum.intposition=0;
+        spectrum.interruptPosition=0;
         machine.zxprinter=1;
+        machine.joystick1Controller = -1;
+        machine.joystick2Controller = -1;
 
         emulator.ColouriseHorizontalSyncPulse = false;
         emulator.ColouriseVerticalSyncPulse = false;
@@ -152,31 +160,28 @@ void load_config(void)
 
         LoadMachineRoms();
 
-        AnsiString simplePlus3Rom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("simple+3e8bit(sm8en3eE).rom");
-        strcpy(emulator.ROMSPP3E, simplePlus3Rom.c_str());
-        AnsiString zxcflbaRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zxcflba.rom");
-        strcpy(emulator.ROMZXCF, zxcflbaRom.c_str());
-        AnsiString zx8blbsRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zx8blbs.rom");
-        strcpy(emulator.ROMZX8BIT, zx8blbsRom.c_str());
-        AnsiString zxidelbsRom = AnsiString(emulator.cwd) + ideRomsFolder + AnsiString("zxidelbs.rom");
-        strcpy(emulator.ROMZX16BIT, zxidelbsRom.c_str());
-
-        AnsiString plusdRom = fdcRomsFolder + AnsiString("plusd.rom");
+        AnsiString plusdRom = AnsiString("+d.g+dos.v1-a.rom");
         strcpy(emulator.ROMPLUSD, plusdRom.c_str());
-        AnsiString discipleRom = fdcRomsFolder + AnsiString("disciple.rom");
+        AnsiString discipleRom = AnsiString("disciple.gdos.v3.rom");
         strcpy(emulator.ROMDISCIPLE, discipleRom.c_str());
-        AnsiString opusdiscoveryRom = fdcRomsFolder + AnsiString("opusdiscovery.rom");
-        strcpy(emulator.ROMOPUSD, opusdiscoveryRom.c_str());
-        AnsiString trdosRom = fdcRomsFolder + AnsiString("trdos.rom");
-        strcpy(emulator.ROMBETADISC, trdosRom.c_str());
-        AnsiString mwcfideRom = fdcRomsFolder + AnsiString("mwcfide.rom");
-        strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
-        AnsiString larken81Rom = fdcRomsFolder + AnsiString("larken81.rom");
+        AnsiString opusdiscoveryRom = AnsiString("discovery.v2-22.rom");
+        strcpy(emulator.ROMDISCOVERY, opusdiscoveryRom.c_str());
+        AnsiString trdosRom = AnsiString("beta128.trdos.v5-03.rom");
+        strcpy(emulator.ROMBETADISK, trdosRom.c_str());
+        AnsiString larken81Rom = AnsiString("larken81.rom");
         strcpy(emulator.ROMLARKEN81, larken81Rom.c_str());
-        AnsiString interface1Ed1Rom = fdcRomsFolder + AnsiString("interface1.edition1.rom");
-        strcpy(emulator.ROMINTERFACE1ED1, interface1Ed1Rom.c_str());
-        AnsiString interface1Ed2Rom = fdcRomsFolder + AnsiString("interface1.edition2.rom");
-        strcpy(emulator.ROMINTERFACE1ED2, interface1Ed2Rom.c_str());
+
+        AnsiString interface1Ed1Rom = AnsiString("interface1.edition2.rom");
+        strcpy(emulator.ROMINTERFACE1, interface1Ed1Rom.c_str());
+
+        AnsiString simpleIde8BitRom = AnsiString("zx8blbs.rom");
+        strcpy(emulator.ROMSIMPLE8BIT, simpleIde8BitRom.c_str());
+        AnsiString simpleIde16BitRom = AnsiString("zxidelbs.rom");
+        strcpy(emulator.ROMSIMPLE16BIT, simpleIde16BitRom.c_str());
+        AnsiString simpleIdeCFRom = AnsiString("zxcflba.rom");
+        strcpy(emulator.ROMSIMPLECF, simpleIdeCFRom.c_str());
+        AnsiString mwcfideRom = AnsiString("mwcfide.rom");
+        strcpy(emulator.ROMMWCFIDE, mwcfideRom.c_str());
 
         AnsiString uSpeechRom = interfaceRomsFolder + AnsiString("uspeech.rom");
         strcpy(emulator.ROMUSPEECH, uSpeechRom.c_str());
@@ -197,6 +202,16 @@ void load_config(void)
         strcpy(emulator.ROMMEMOTECH, memotechRom.c_str());
         AnsiString QuicksilvaHiResRom = graphicRomsFolder + AnsiString("quicksilvahires.rom");
         strcpy(emulator.ROMQUICKSILVAHIRES, QuicksilvaHiResRom.c_str());
+        AnsiString z80Assembler = interfaceRomsFolder + AnsiString("z80assembler.rom");
+        strcpy(emulator.ROMASSEMBLER, z80Assembler.c_str());
+        AnsiString memocalc = interfaceRomsFolder + AnsiString("memocalc.rom");
+        strcpy(emulator.ROMMEMOCALC, memocalc.c_str());
+//        AnsiString memotext = interfaceRomsFolder + AnsiString("memotext.rom");
+//        strcpy(emulator.ROMMEMOTEXT, memotext.c_str());
+
+        AnsiString speechRomsPath = AnsiString(emulator.cwd) + AnsiString(romsFolder)
+                + AnsiString(speechRomsFolder);
+        strcpy(emulator.ROMSPEECHPATH, speechRomsPath.c_str());
 
         strcpy(emulator.machinename, "EightyOne");
         *(emulator.romcartridgefilepath) = '\0';
@@ -213,20 +228,24 @@ void load_config(void)
         tv.Interlaced=0;
         tv.DisableAdvanced=0;
 
-        spectrum.usource=0;
         spectrum.kbissue=SPECKBISS3;
-        spectrum.driveatype=DRIVE3INCHSS;
-        spectrum.drivebtype=DRIVE3INCHSS;
-        spectrum.driveaimg[0]='\0';
-        spectrum.drivebimg[0]='\0';
-        spectrum.drivebusy=-1;
+        machine.driveatype=DRIVE3INCHSS;
+        machine.drivebtype=DRIVE3INCHSS;
+        machine.driveaimg[0]='\0';
+        machine.drivebimg[0]='\0';
+        machine.drivebusy=-1;
+        machine.HDType=HDNONE;
+        machine.divIDEJumperEClosed=0;
+        machine.zxcfUploadJumperClosed=192;
+        machine.simpleIdeRomEnabled=0;
+
+        spectrum.usource=0;
         spectrum.kmouse=0;
-        spectrum.HDType=HDNONE;
-        spectrum.divIDEJumperEClosed=0;
-        spectrum.UploadJumperZXCF=0;
         spectrum.MFVersion=MFNONE;
         spectrum.spectraMode=0x00;
         spectrum.spectraColourSwitchOn = 0;
+        spectrum.specdrum=0;
+        spectrum.spectrum128Keypad=0;
 
         mouse.x=0;
         mouse.y=0;
@@ -243,7 +262,6 @@ void LoadMachineRoms()
         strcpy(emulator.ROMSP48, "spectrum48.rom");
         strcpy(emulator.ROMSPP, "spectrum48.rom");
         strcpy(emulator.ROMSP128, "spectrum128.rom");
-        strcpy(emulator.ROMQL, "ql.js.rom");
 
         strcpy(emulator.ROMSPP2, "spectrum+2.rom");
         strcpy(emulator.ROMSPP2A, "spectrum+3.version4-1.rom");
@@ -262,3 +280,16 @@ void LoadMachineRoms()
 
         strcpy(emulator.ROM97LE, "zx97.rom");
 }
+
+AnsiString PrependFolder(AnsiString folder, char* romFile)
+{
+        AnsiString path = romFile;
+
+        if (path.Pos("\\") == 0)
+        {
+                path = folder + path;
+        }
+
+        return path;
+}
+

@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2019 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ private:
         virtual void OutputEndOfProgramData(int& addressOffset);
         virtual void ExtractInverseCharacters();
         virtual bool SingleEscapeSequence(unsigned char chr, unsigned char& zxChr);
-        virtual void ExtractDoubleQuoteCharacters();
+        virtual void ExtractDoubleQuoteCharacters(bool tokeniseRemContents, bool acceptAlternateKeywordSpelling);
         virtual unsigned char GetEmbbededNumberMark();
         virtual bool SupportUppercaseOnly();
         virtual bool TokenSupportsLineNumber(unsigned char chr);

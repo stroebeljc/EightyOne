@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * zx81.c
- *
  */
 
 #include <vcl4.h>
@@ -46,6 +43,10 @@
 #include "LiveMemoryWindow_.h"
 #include "BasicLister\BasicLister_.h"
 #include "sp0256drv.h"
+#include "floppy.h"
+#include "Digitalkdrv.h"
+#include "Joystick.h"
+#include "main_.h"
 
 #define LASTINSTNONE  0
 #define LASTINSTINFE  1
@@ -67,6 +68,7 @@ int memoryLoadToAddress(char *filename, void* destAddress, int length);
 
 void add_blank(SCANLINE *line, int clockCount, BYTE colour);
 
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 extern AnsiString getMachineRoot(AnsiString fullRomName);
 
 extern void LogOutAccess(int address, BYTE data);
@@ -84,6 +86,8 @@ extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
+
+extern AnsiString PrependFolder(AnsiString folder, char* romFile);
 
 static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0xFF;
@@ -219,16 +223,35 @@ extern long noise;
 
 extern int font_load(const char*, char*,int);
 
+AnsiString AdjustPathIfReplacementRom(char* curRom)
+{
+        AnsiString romPath = emulator.cwd;
+        romPath += romsFolder;
+        romPath += curRom;
+
+        AnsiString rom = curRom;
+
+        if (!FileExists(romPath))
+        {
+                rom = replacementRomsFolder;
+                rom += curRom;
+
+                romPath = emulator.cwd;
+                romPath += romsFolder;
+                romPath += rom;
+
+                if (!FileExists(romPath))
+                {
+                        rom = curRom;
+                }
+        }
+
+        return rom;
+}
+
 BYTE get_i_reg(void)
 {
         return(z80.i);
-}
-
-void zx81_reset()
-{
-        QuicksilvaHiResMode=0;
-        ResetRomCartridge();
-        DisableChroma();
 }
 
 void zx81_initialise()
@@ -282,7 +305,8 @@ void zx81_initialise()
                         romname = overlayName;
                 }
         }
-        romlen=memory_load(romname.c_str(), 0, 65536);
+        AnsiString romPath = AdjustPathIfReplacementRom(romname.c_str());
+        romlen=memory_load(romPath.c_str(), 0, 65536);
         emulator.romcrc=CRC32Block(memory,romlen);
 
         if (zx81.extfont) font_load("lambda8300characterset.bin",(char*)font,512);
@@ -301,7 +325,7 @@ void zx81_initialise()
         if (emulator.machine==MACHINEZX97LE)
         {
                 for(i=0;i<8191;i++) memory[i+0xa000]=memory[i+0x2000];
-                for(i=0;i<16384;i++) zx97.bankmem[i]=memory[i+0x4000];
+                for(i=0;i<16384;i++) zx97bankmem[i]=memory[i+0x4000];
                 zx81.ROMTOP=8191;
         }
 
@@ -319,15 +343,28 @@ void zx81_initialise()
                 memory_device_rom_load(emulator.ROMG007,10240,2048);
         }
 
-        if (spectrum.floppytype==FLOPPYLARKEN81)
+        if (zx81.z80Assembler)
         {
-                memory_device_rom_load(emulator.ROMLARKEN81, 14336, 2048);
-                memory[0x38DB] = 0xCD;
+                memory_device_rom_load(emulator.ROMASSEMBLER, 12288, 4096);
+        }    
+        else if (zx81.memocalc)
+        {
+                memory_device_rom_load(emulator.ROMMEMOCALC, 12288, 4096);
+        }
+//        else if (zx81.memotext)
+//        {
+//                memory_device_rom_load(emulator.ROMMEMOTEXT, 12288, 4096);
+//        }
+
+        if (machine.floppytype==FLOPPYLARKEN81)
+        {
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMLARKEN81);
+                memory_device_rom_load(romFile.c_str(), 14336, 2048);
+
                 memory[0x38DC] = 0x2B;
                 memory[0x38DD] = 0x0F;
                 memory[0x38DE] = 0xC9;
 
-                memory[0x3A0D] = 0xCD;
                 memory[0x3A0E] = 0x2B;
                 memory[0x3A0F] = 0x0F;
                 memory[0x3A10] = 0xC9;
@@ -336,11 +373,13 @@ void zx81_initialise()
                 memory[12301]=0;
         }
 
-        if (spectrum.HDType==HDPITERSCF)
+        if (machine.HDType==HDSIMPLECF)
         {
                 ATA_Reset();
                 ATA_SetMode(ATA_MODE_16BIT);
-                memory_device_rom_load(emulator.ROMMWCFIDE, 32768, 32768);
+
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMMWCFIDE);
+                memory_device_rom_load(romFile.c_str(), 32768, 32768);
         }
 
         ZX1541PORT=0;
@@ -355,7 +394,8 @@ void zx81_initialise()
         d8255_reset();
         d8251reset();
         z80_reset();
-
+        floppy_init();
+        
         tStatesCount = 0;
 
         CreateZXpand();
@@ -387,7 +427,7 @@ void zx81_initialise()
         allowSoundOutput = false;
         scanlineCounter = 0;
         vsyncFound = false;
-
+        
         if (lambdaSelected)
         {
                 ink=colourWhite; paper=border=colourBlack;
@@ -403,15 +443,26 @@ void zx81_initialise()
         videoFlipFlop3Clear = 0;
         prevVideoFlipFlop3Q = 0;
 
-        zx80rom = !strcmp(machine.CurRom, "zx80.rom");
-        zx81rom = !strcmp(machine.CurRom, "zx81.edition1.rom") || !strcmp(machine.CurRom, "zx81.edition2.rom") || !strcmp(machine.CurRom, "zx81.edition3.rom") ||
-                  !strcmp(machine.CurRom, "tk85.rom") || !strcmp(machine.CurRom, "ts1500.rom");
+        zx80rom = (emulator.romcrc == CRCZX80);
+        zx81rom = (emulator.romcrc == CRCZX81_ED1) || (emulator.romcrc == CRCZX81_ED2) || (emulator.romcrc == CRCZX81_ED3) || (emulator.romcrc == CRCTK85) || (emulator.romcrc == CRCTS1500);
 
         annotatableROM = IsAnnotatableROM();
 }
 
+void zx81_reset()
+{
+        QuicksilvaHiResMode=0;
+        ResetRomCartridge();
+        DisableChroma();
+
+        InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
+}
+
 void CreateZXpand()
 {
+        ZXpand::SetSDCardPath();
+
         if (zxpand)
         {
                 delete(zxpand);
@@ -437,7 +488,7 @@ BOOL IsAnnotatableROM()
         case MACHINEZX80:
                 if (zx80rom)
                 {
-                        annotatableROM = !strcmp(machine.CurRom, "zx80.rom");
+                        annotatableROM = (emulator.romcrc == CRCZX80);
                         break;
                 }
 
@@ -446,11 +497,11 @@ BOOL IsAnnotatableROM()
         case MACHINETK85:
         case MACHINER470:
         case MACHINETS1500:
-                annotatableROM = zx81rom || !strcmp(machine.CurRom, "ringo470.rom");
+                annotatableROM = zx81rom || (emulator.romcrc == CRCR470);
                 break;
 
         case MACHINELAMBDA:
-                annotatableROM = !strcmp(machine.CurRom, "lambda8300.rom") || !strcmp(machine.CurRom, "lambda8300colour.rom");
+                annotatableROM = (emulator.romcrc == CRCLAMBDA) || (emulator.romcrc == CRCLAMBDACOLOUR);
                 break;
 
         default:
@@ -486,12 +537,23 @@ void zx81_WriteByte(int Address, int Data)
                 }
         }
 
+        if (machine.speech == SPEECH_TYPE_DIGITALKER)
+        {
+                if (Address == 49149) Digitalker.Write1((BYTE)Data);
+                if (Address == 49148) Digitalker.Write2((BYTE)Data);
+        }
+
         // Quicksilva Sound Board uses a memory mapped AY8912 chip
 
         if (machine.aytype == AY_TYPE_QUICKSILVA)
         {
                 if (Address == 0x7fff) SelectAYReg=Data&15;
                 if (Address == 0x7ffe) Sound.AYWrite(SelectAYReg,Data,frametstates);
+        }
+
+        if (machine.speech == SPEECH_TYPE_TALKBACK)
+        {
+                if (Address == 0x4021) sp0256_AL2.Write((BYTE)Data);
         }
 
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
@@ -517,7 +579,7 @@ void zx81_WriteByte(int Address, int Data)
                         if (zx97.protectb0 && ((d8255_read(D8255PRTB)&15)==0)) return;
                         if (zx97.protectb115 && ((d8255_read(D8255PRTB)&15)>0)) return;
 
-                        zx97.bankmem[(Address&16383) +  16384*(d8255_read(D8255PRTB)&15)]=(unsigned char)Data;
+                        zx97bankmem[(Address&16383) +  16384*(d8255_read(D8255PRTB)&15)]=(unsigned char)Data;
                         return;
                 }
 
@@ -542,7 +604,7 @@ void zx81_WriteByte(int Address, int Data)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (spectrum.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -583,7 +645,12 @@ void zx81_WriteByte(int Address, int Data)
                 return;
         }
 
-        if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
+//        if ((zx81.z80Assembler || zx81.memocalc || zx81.memotext) && Address >= 0x3000 && Address < 0x4000)
+        if ((zx81.z80Assembler || zx81.memocalc) && Address >= 0x3000 && Address < 0x4000)
+        {
+                return;
+        }    
+        else if (zx81.truehires == HIRESQUICKSILVA && Address >= 0x2000 && Address < 0x4000)
         {
                 QuicksilvaHiResMode = 0;
                 return;
@@ -636,6 +703,7 @@ void zx81_setbyte(int Address, int Data)
         directMemoryAccess = false;
 }
 
+// Called by emulated program
 void zx81_writebyte(int Address, int Data)
 {
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
@@ -689,7 +757,7 @@ BYTE zx81_ReadByte(int Address)
 
                 if (Address>=49152)
                 {
-                        data=(BYTE)(zx97.bankmem[(Address&16383) + (d8255_read(D8255PRTB)&15)*16384]);
+                        data=(BYTE)(zx97bankmem[(Address&16383) + (d8255_read(D8255PRTB)&15)*16384]);
                         noise = (noise<<8) | data;
                         return data;
                 }
@@ -698,7 +766,7 @@ BYTE zx81_ReadByte(int Address)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (spectrum.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -744,6 +812,11 @@ BYTE zx81_ReadByte(int Address)
                 // CR  zxpand enables the ROM for character access
                 data=memory[Address];
         }
+//        else if ((zx81.z80AssemblerOn || zx81.memocalcOn || zx81.memotextOn) && Address >= 0x3000 && Address < 0x4000)
+        else if ((zx81.z80AssemblerOn || zx81.memocalcOn) && Address >= 0x3000 && Address < 0x4000)
+        {
+                data=memory[Address];
+        }
         else if ((zx81.chrgen == CHRGENQS) && !chromaSelected && (Address >= 0x8400) && (Address < 0x8800))
         {
                 data=memory[Address];
@@ -767,6 +840,10 @@ BYTE zx81_ReadByte(int Address)
                  (Address >= 0x2800 && Address < 0x3000)))
         {
                 data=memory[Address];
+        }
+        else if ((machine.speech == SPEECH_TYPE_TALKBACK) && (Address == 0x4021) && (memory[Address] & 0x40))
+        {
+                data = sp0256_AL2.Busy() ? (BYTE)0x00 : idleDataBus;
         }
         else if (zx81.RAM816k && Address >= 0x2000 && Address < 0x4000)
         {
@@ -792,8 +869,19 @@ BYTE zx81_ReadByte(int Address)
                         else
                                 data=memory[Address];
                 }
+//                else if (zx81.memocalcOn || zx81.memotextOn)
+                else if (zx81.memocalcOn)
+                {
+                        if      (Address == 0x0417) data = 0x07;
+                        else if (Address == 0x0418) data = 0x02;
+                        else if (Address == 0x041A) data = 0x00;
+                        else if (Address == 0x041B) data = 0x36;
+                        else data = memory[Address];
+                }
                 else
+                {
                         data=memory[Address];
+                }
         }
         else if ((Address & 0x7FFF) >= 0x4000)
         {
@@ -808,7 +896,7 @@ BYTE zx81_ReadByte(int Address)
                         // Shadow 8-16K RAM at 40-48K
                         data=memory[Address & 0x7FFF];
                 }
-                else if ((emulator.machine == MACHINEZX80) && !strcmp(machine.CurRom, "zx80.rom") && !zx81.zxpand && (Address & 0x1000))
+                else if ((emulator.machine == MACHINEZX80) && (emulator.romcrc == CRCZX80) && !zx81.zxpand && (Address & 0x1000))
                 {
                         data = idleDataBus;
                 }
@@ -898,6 +986,7 @@ BYTE zx81_readbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE zx81_opcode_fetch(int Address)
 {
+        static bool startOfDFile = true;
         static int calls = 0;
         int inv;
         int bit6, update=0;
@@ -912,6 +1001,11 @@ BYTE zx81_opcode_fetch(int Address)
                 if (zxpand) zxpand->Update(1);
         }
 
+        if (nmiGeneratorEnabled)
+        {
+                startOfDFile = true;
+        }
+
         if (Address < zx81.m1not)
         {
                 // This is not video related, so just return the opcode
@@ -919,7 +1013,7 @@ BYTE zx81_opcode_fetch(int Address)
                 data = zx81_ReadByte(Address);
 
                 // The floating point hardware fix intercepts instruction opcode fetches from addresses
-                // matching %-0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
+                // matching %x0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
                 // The fix affects addresses $0335, $0735, $1335, $1735, $2335, $2735, $3335 and $3735,
                 // and upper locations $8335, $8735, $9335, $9735, $A335, $A735, $B335 and $B735 which
                 // can affect programs utilising the M1Not modification that allows code to run from the
@@ -980,7 +1074,13 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
                 // when the I register is odd.
-                if (opcode!=118)
+                BYTE rRegister = (BYTE)((z80.r7 & 0x80) | (z80.r & 0x7F));
+
+                if (startOfDFile && opcode != 0x76)
+                {
+                        startOfDFile = false;
+                }
+                if (!startOfDFile && (rRegister != 0x80 && rRegister != 0x81))
                 {
                         inv=(MemotechMode==3);
                         update=1;
@@ -1141,12 +1241,15 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 return;
         }
 
-        if ((spectrum.HDType==HDPITERSCF) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
         // Note that the Parrot only decodes A7, A5, and A4.
         //  If these are all 0, then the Parrot performs I/O.
         if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) sp0256_AL2.Write((BYTE)Data);
+
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x8F) == 0x0F) Sound.AYWrite(SelectAYReg, Data,frametstates);
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x8F) == 0x8F) SelectAYReg=Data&15;
 
         switch(Address&255)
         {
@@ -1156,21 +1259,25 @@ void zx81_writeport(int Address, int Data, int *tstates)
 
         case 0x07:
                 if (zxpand) zxpand->IO_Write(Address>>8, Data);
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER) sp0256_AL2.Write((BYTE)Data);
                 break;
 
-        case 0x0f:
         case 0x1f:
-                if (machine.aytype==AY_TYPE_ZONX)
-                        Sound.AYWrite(SelectAYReg, Data,frametstates);
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x3f:
-                if (machine.aytype==AY_TYPE_FULLER)
-                        SelectAYReg=Data&15;
-
-        case 0x5f:
-                if (machine.aytype==AY_TYPE_FULLER)
-                        Sound.AYWrite(SelectAYReg, Data,frametstates);
+                if (machine.speech == SPEECH_TYPE_MAGECO)
+                {
+                        if (Data & 0x80)
+                        {
+                                sp0256_AL2.Reset();
+                        }
+                        else
+                        {
+                                sp0256_AL2.Write((BYTE)Data);
+                        }
+                }
                 break;
 
         case 0x73:
@@ -1182,7 +1289,8 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xbf:
-                if (spectrum.floppytype==FLOPPYZX1541)
+                if (machine.floppytype==FLOPPYZX1541)
+                {
                         ZX1541PORT=(BYTE)Data;
 
                         Data>>=2;
@@ -1191,6 +1299,7 @@ void zx81_writeport(int Address, int Data, int *tstates)
                         if (Data&2) IECAssertATN(0); else IECReleaseATN(0);
                         if (Data&4) IECAssertClock(0); else IECReleaseClock(0);
                         if (Data&8) IECAssertData(0); else IECReleaseData(0);
+                }
                 break;
 
         case 0xc7:
@@ -1198,22 +1307,14 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xcf:
-                if (machine.aytype==AY_TYPE_ZONX) SelectAYReg=Data&15;
-                else d8255_write(D8255PRTB, (BYTE)Data);
+                d8255_write(D8255PRTB, (BYTE)Data);
                 break;
 
         case 0xd7:
                 d8255_write(D8255PRTC, (BYTE)Data);
                 break;
 
-        case 0xdf:
-                if (machine.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
-                if (machine.aytype==AY_TYPE_ZONX) SelectAYReg=Data&15;
-                break;
-
         case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE) SelectAYReg=Data;
-                break;
 
         case 0xfb:
                 if (machine.zxprinter) ZXPrinterWritePort((BYTE)Data);
@@ -1272,16 +1373,35 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (! (keyb & (1<<i)) ) data |= ZXKeyboard[i];
                 }
 
-                return (BYTE)(~data);
+                data = (BYTE)~data;
+
+                if (machine.joystickInterfaceType != JOYSTICK_NONE && machine.joystick1Connected)
+                {
+                        if (machine.joystickInterfaceType == JOYSTICK_CURSOR)
+                        {
+                                if (!(Address & 0x0800)) data &= ReadJoystick1_Left();
+                                if (!(Address & 0x1000)) data &= ReadJoystick1_RightUpDownFire();
+                        }
+                        else if (machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE)
+                        {
+                                if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                                if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                                if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                                if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                                if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
+                        }
+                }
+
+                return data;
         }
         else
         {
-                if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
+                if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                         return (BYTE)(ATA_ReadRegister(((Address>>2)&1) | ((Address>>5)&6)));
 
                 // Note that the Parrot only decodes A7, A5, and A4.
                 //  If these are all 0, then the Parrot performs I/O.
-                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return !sp0256_AL2.Busy();
+                if ((machine.speech == SPEECH_TYPE_PARROT) && ((Address&0xB0)==0)) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : (BYTE)(idleDataBus | 0x01);
 
                 switch(Address&255)
                 {
@@ -1301,16 +1421,24 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (zxpand) return (BYTE)zxpand->IO_ReadStatus();
                         return 0;
 
+                case 0x1f:
+                        if (machine.joystickInterfaceType == JOYSTICK_KEMPSTON && machine.joystick1Connected) return (BYTE)~ReadJoystick1();
+                        break;
+
+                case 0x3f:
+                        if (machine.speech == SPEECH_TYPE_MAGECO) return sp0256_AL2.Busy() ? (BYTE)(idleDataBus & 0xFE) : (BYTE)(idleDataBus | 0x01);
+                        break;
+
                 case 0x41:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0xfe);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0xfe);
                         break;
 
                 case 0x43:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0x1e);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0x1e);
                         break;
 
                 case 0x45:
-                        if (spectrum.floppytype==FLOPPYLARKEN81) return(0x26);
+                        if (machine.floppytype==FLOPPYLARKEN81) return(0x26);
                         break;
 
                 case 0x5f:
@@ -1324,7 +1452,7 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (machine.ts2050) return(d8251readCTRL());
 
                 case 0xbf:
-                        if (spectrum.floppytype==FLOPPYZX1541)
+                        if (machine.floppytype==FLOPPYZX1541)
                         {
                                 int a = ZX1541PORT & 3;
 
@@ -1334,10 +1462,6 @@ BYTE ReadInputPort(int Address, int *tstates)
                                 if (!IECIsData()) a |= 128;
                                 return (BYTE)a;
                         }
-
-                case 0xdd:
-                        if (machine.aytype==AY_TYPE_ACE)
-                                return (BYTE)Sound.AYRead(SelectAYReg);
 
                 case 0xf5:
                         beeper = 1-beeper;
@@ -1551,9 +1675,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
+                int ts=z80_do_opcode();
 
-                if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))
+                if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);
@@ -1579,8 +1703,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 {
                         int c = 0;
                         int instructionPosition = lineClockCounter;
-                        bool insertedWaitStates = false;
                         bool nmiOffInstruction = (LastInstruction == LASTINSTOUTFD);
+                        bool insertedWaitStates = false;
 
                         while ((mCycles[c] != 0) && !insertedWaitStates)
                         {
@@ -1720,7 +1844,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (spectrum.floppytype == FLOPPYZX1541)
+                if (machine.floppytype == FLOPPYZX1541)
                 {
                         IECClockTick(ts);
                 }
@@ -1851,7 +1975,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         if (memotechResetRequested)
                         {
                                 MemotechMode=0;
-                                z80.i=0x1e;
                         }
 
                         int nmiResponseWaitDuration = 0;
@@ -2136,11 +2259,11 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
-                int ts = z80_do_opcode();
+                int ts=z80_do_opcode();
 
                 if (BasicLister->Visible &&
-                    ((zx80rom && z80.pc.w == 0x04F4) ||
-                     (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B))))
+                    ((zx80rom && (z80.pc.w == 0x04F4 || z80.pc.w == 0x0202)) ||
+                     (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);
@@ -2266,7 +2389,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (spectrum.floppytype == FLOPPYZX1541)
+                if (machine.floppytype == FLOPPYZX1541)
                 {
                         IECClockTick(ts);
                 }

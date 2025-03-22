@@ -26,35 +26,48 @@
 
 #include "sound\SoundDX.h"
 
-#define AY_TYPE_NONE            0
-#define AY_TYPE_QUICKSILVA      1
-#define AY_TYPE_ZONX            2
-#define AY_TYPE_FULLER          3
-#define AY_TYPE_ACE             4
-#define AY_TYPE_SINCLAIR        5
-#define AY_TYPE_TIMEX           6
-#define AY_TYPE_BOLDFIELD       7
+#define AY_TYPE_NONE                    0
+#define AY_TYPE_QUICKSILVA              1
+#define AY_TYPE_ZONX                    2
+#define AY_TYPE_FULLER                  3
+#define AY_TYPE_ACE_USER                4
+#define AY_TYPE_SINCLAIR                5
+#define AY_TYPE_TS2068                  6
+#define AY_TYPE_TC2068                  7
+#define AY_TYPE_BOLDFIELD               8
+#define AY_TYPE_DKTRONICS               9
 
-#define AY_CLOCK_QUICKSILVA	(3250000/4)
-#define AY_CLOCK_ZONX		1625000
-#define AY_CLOCK_FULLER         1625000
-#define AY_CLOCK_ACE            1625000
-#define AY_CLOCK_SINCLAIR       1773400
-#define AY_CLOCK_TIMEX          1764000
-#define AY_CLOCK_BOLDFIELD      1773400
+#define AY_CLOCK_QUICKSILVA	        (3250000/4)
+#define AY_CLOCK_ZONX_ZX81              1625000
+#define AY_CLOCK_ZONX_SPEC48            1750000
+#define AY_CLOCK_ZONX_SPEC128           1773400
+#define AY_CLOCK_FULLER                 1638190
+#define AY_CLOCK_ACE_USER               1625000
+#define AY_CLOCK_SINCLAIR_128K          1773400
+#define AY_CLOCK_SINCLAIR_48K           1750000
+#define AY_CLOCK_TS2068                 1764000
+#define AY_CLOCK_TC2068                 1750000
+#define AY_CLOCK_BOLDFIELD              1773400
+#define AY_CLOCK_DKTRONICS_128K         1773400
+#define AY_CLOCK_DKTRONICS_48K          1750000
 
-#define SPEECH_TYPE_NONE        0
-#define SPEECH_TYPE_USPEECH     1
-#define SPEECH_TYPE_PARROT      1
+#define SPEECH_TYPE_NONE                0
+#define SPEECH_TYPE_USPEECH             1
+#define SPEECH_TYPE_PARROT              2
+#define SPEECH_TYPE_SWEETTALKER         3
+#define SPEECH_TYPE_MAGECO              4
+#define SPEECH_TYPE_TALKBACK            5
+#define SPEECH_TYPE_DKTRONICS           6
+#define SPEECH_TYPE_ORATOR              7
+#define SPEECH_TYPE_DIGITALKER          8
 
 // assume all three tone channels together match the beeper volume.
 // Must be <=127 for all channels; 4 x 31 = 124.
 
 #define AMPL_BEEPER		31
 #define AMPL_AY_TONE		31	/* three of these */
-
-// full range of beeper volume
-#define VOL_BEEPER		(AMPL_BEEPER*2)
+#define AMPL_SPECDRUM		31
+#define AMPL_SPEECH             31
 
 // max. number of sub-frame AY port writes allowed;
 // given the number of port writes theoretically possible in a
@@ -62,50 +75,70 @@
 
 #define AY_CHANGE_MAX		8000
 
+// Measured an approximate sampling rate from the SpecDrum software of 22kHz.
+// At 50fps this is about 440 samples, which I doubled and rounded up to get this. 
+#define SPECDRUM_BUFFSIZE       1000
+
 
 struct AYChangeTag
 {
-        unsigned long tstates;
         unsigned short ofs;
         unsigned char reg,val;
 };
 
+struct SpecDrumChangeTag
+{
+        unsigned short ofs;
+        unsigned char val;
+};
 
 class CSound
 {
 public:
-	void AYInit(void);
+	void InitDevices(void);
         int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
         int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
 
-	void End(void);
-	void AYWrite(int reg,int val, int frametstates);
-	int AYRead(int reg);
-	void AYReset(void);
-	void Frame(void);
-	void Beeper(int on, int frametstates);
+        void End(void);
+        void AYWrite(int reg,int val, int frametstates);
+        void AYWrite128(int reg, int val, int frametstates);
+        void AYWriteTimex(int reg, int val, int frametstates);
+        int AYRead(int reg);
+        int AYRead128(int reg);
+        int AYReadTimex(int reg, int joysticks);
+        void AYReset(void);
+        void SpecDrumWrite(BYTE data, int frametstates);
+        void Frame(bool pause);
+        void Beeper(int on, int frametstates);
 
-        int VolumeLevel[4];
+        int VolumeLevel[6];
         bool ACBMix;
+        unsigned char AYRegisterStore[16];
 
 private:
         CDSnd DXSound;
 
         HWND m_hWnd;
         int m_BitsPerSample;
+        int m_BytesPerSample;
         int m_SampleRate;
         int m_Channels;
         int m_FPS;
+        double m_SamplesPerTState;
 
+        void AYInit(void);
         void AYOverlay(void);
+        void SpeechOverlay(void);
+        void SpecDrumInit(void);
+        void SpecDrumOverlay(void);
+        void DigiTalkOverlay(void);
 
         int SelectAYReg;
         int FrameSize;
         int FramesPerSecond;
 
         unsigned char AYToneLevels[16];
-        unsigned char *Buffer;
-        unsigned char *SoundPtr;
+        short *Buffer;
         int OldPos,FillPos,OldVal,OldValOrig;
 
 	// timer used for fadeout after beeper-toggle;
@@ -128,10 +161,13 @@ private:
 	// we have 16 so we can fake an 8910 if needed
 
         unsigned char AYRegisters[16];
-        unsigned char AYRegisterStore[16];
         struct AYChangeTag AYChange[AY_CHANGE_MAX];
         int AYChangeCount;
-        unsigned int FineValue, CoarseValue, TonePeriod;
+
+        // SpecDrum buffer
+        struct SpecDrumChangeTag SpecDrumChange[SPECDRUM_BUFFSIZE];
+        int SpecDrumChangeCount;
+        int SpecDrumLevel;
 
 };
 

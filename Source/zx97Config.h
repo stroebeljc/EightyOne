@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * zx97Config.h
- *
  */
 
 //---------------------------------------------------------------------------
@@ -30,6 +27,8 @@
 #include <Forms.hpp>
 #include <Dialogs.hpp>
 #include <IniFiles.hpp>
+#include "zx81config.h"
+#include "Utils.h"
 //---------------------------------------------------------------------------
 class TZX97Dialog : public TForm
 {
@@ -40,28 +39,23 @@ __published:	// IDE-managed Components
         TCheckBox *ProtectB0;
         TCheckBox *ProtectB115;
         TCheckBox *SaveRAM;
-        TLabel *Label2;
-        TComboBox *PrinterOutput;
-        TLabel *Label3;
-        TEdit *FileName;
-        TButton *FileNameSelector;
-        TSaveDialog *SaveDialog1;
         TButton *OK;
         TCheckBox *SwapRAMROM;
-        void __fastcall PrinterOutputChange(TObject *Sender);
-        void __fastcall FileNameSelectorClick(TObject *Sender);
-        void __fastcall Protect08Click(TObject *Sender);
-        void __fastcall ProtectABClick(TObject *Sender);
-        void __fastcall ProtectB0Click(TObject *Sender);
-        void __fastcall ProtectB115Click(TObject *Sender);
-        void __fastcall OKClick(TObject *Sender);
-        void __fastcall FormDestroy(TObject *Sender);
-        void __fastcall SwapRAMROMClick(TObject *Sender);
+        TButton *Cancel;
+    void __fastcall OKClick(TObject *Sender);
+    void __fastcall CancelClick(TObject *Sender);
 private:	// User declarations
-        void SaveSettings(TIniFile *ini);
+        void SaveToInternalSettings();
+        void LoadFromInternalSettings();
+        void AccessIniFile(TIniFile* ini, IniFileAccessType accessType);
+        ZX97 Zx97form;
 public:		// User declarations
-        void LoadSettings(TIniFile *ini);
         __fastcall TZX97Dialog(TComponent* Owner);
+        void LoadSettings(TIniFile *ini);
+        void SaveSettings(TIniFile *ini);
+        void UpdateMachine(ZX97& settings);
+        void RetrieveFormSettings(ZX97& settings);
+        void UpdateFormSettings(ZX97& settings);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TZX97Dialog *ZX97Dialog;

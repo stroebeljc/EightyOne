@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * spec48.c
- *
  */
 #include <vcl4.h>
 
@@ -25,7 +22,8 @@
 #include <fcntl.h>
 #include <io.h>
 #include <mem.h>
-#include <midi.h>
+#include "midi.h"
+#include "keypad.h"
 #include "zx81.h"
 #include "z80\z80.h"
 #include "snap.h"
@@ -49,19 +47,22 @@
 #include "Spectra\Spectra.h"
 #include "LiveMemoryWindow_.h"
 #include "BasicLister\BasicLister_.h"
+#include "Digitalkdrv.h"
+#include "Joystick.h"
+#include "main_.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
 #define VSYNCCOLOUR     VBLANKCOLOUR
 #define BACKPORCHCOLOUR VBLANKCOLOUR
 
-#define FLAG_Z	      0x40
+#define FLAG_C	        0x01
+#define FLAG_Z	        0x40
 
 extern "C"
 {
         int CRC32Block(BYTE *memory, int romlen);
         void P3DriveMachineHasInitialised(void);
-//        void MidiClockTick(int);
 }
 
 extern void InitialiseSpectra();
@@ -96,15 +97,16 @@ static BYTE ReadPort(int Address, int *tstates);
 
 const BYTE idleDataBus = 0xFF;
 
-BYTE SpecMem[(128+64+16)*1024];  //enough memory for 64k ROM + 128k RAM + extra 16k on SE
-BYTE TimexMem[(64+64)*1024];  // Timex has two more blocks of 64k each
+BYTE SpectrumMem[(128+64+16)*1024];     //enough memory for 64k ROM + 128k RAM + extra 16k on SE
+BYTE TimexMem[(64+64)*1024];            // Timex has two more blocks of 64k each
 BYTE TimexWritable[16];
-BYTE divIDEMem[5*8192];       // divIDE has 8k of FlashRAM and 32k of RAM
-BYTE ZXCFMem[64*16384];  // ZXCF has 1024k arranged as 64 x 16k pages
-BYTE MFMem[16*1024]; // Multiface - 1 x 16k page
-BYTE PlusDMem[16*1024]; //Disciple/PlusD RAM - 8k RAM, 8k ROM
+BYTE divIDEMem[5*8192];                 // divIDE has 8k of FlashRAM and 32k of RAM
+BYTE ZXCFMem[64*16384];                 // ZXCF has 1024k arranged as 64 x 16k pages
+BYTE MultifaceMem[16*1024];             // Multiface - 1 x 16k page
+BYTE FloppyMem[16*1024];                //Disciple/PlusD/Beta/Opus RAM - 8k RAM, 8k ROM
 BYTE uSpeechMem[16*1024];
 BYTE uSourceMem[16*1024];
+BYTE simpleIDEMem[16*1024];
 
 int divIDEPaged, divIDEPage0, divIDEPage1, divIDEPort, divIDEMapRam;
 int divIDEPage0WP, divIDEPage1WP, divIDEAllRamMode, divIDEAllRamModeInvoked;
@@ -127,7 +129,7 @@ int SPECMICState, SPECTopBorder, SPECLeftBorder, SPECBorder=7, FloatingBus;
 int SPECBlk[4], SPECVideoBank, SPECBankEnable, ContendCounter;
 int SPECKb, SPECNextBorder=7;
 int SPECVSync=0;
-BYTE SPECLast7ffd, SPECLast1ffd;
+BYTE SPECLast7ffd, SPECLast1ffd, SPECLastfffd;
 extern void ZXPrinterReset();
 extern void ZXPrinterWritePort(unsigned char Data);
 extern unsigned char ZXPrinterReadPort(void);
@@ -144,6 +146,10 @@ bool romSp128;
 bool romPlus2;
 bool romPlus3;
 
+BOOL insertWaitsWhileSP0256Busy;
+
+extern AnsiString AdjustPathIfReplacementRom(char* curRom);
+
 extern unsigned short RZXCounter;
 extern RZX_INFO rzx;
 
@@ -155,6 +161,8 @@ extern wd1770_drive PlusDDrives[], *PlusDCur;
 
 int USEFDC765DLL;
 extern "C" void LoadFDC765DLL(void);
+
+extern void spec_load_z80(char *fname);
 
 BYTE ContendArray[80000];
 
@@ -168,13 +176,296 @@ RZX_EMULINFO  RZXemulinfo =
 
 int RZXError;
 
+extern AnsiString PrependFolder(AnsiString folder, char* romFile);
+
+void spec48_reset(void)
+{
+        SPECBlk[0]=0;
+        SPECBlk[1]=5+4;
+        SPECBlk[2]=2+4;
+        SPECBlk[3]=0+4;
+
+        SPECVideoBank=5+4;
+        SPECLast7ffd=0;
+        SPECLast1ffd=0;
+        SPECLastfffd=0;
+
+        if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068) SPECBankEnable=0;
+        else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
+        else SPECBankEnable=0;
+
+        MFActive=0;
+        MFLockout=0;
+
+        TIMEXByte=0;
+        TIMEXMode=0;
+        TIMEXColour=0;
+        TIMEXBank=0;
+        TIMEXPage=0;
+
+        uSpeechPaged=0;
+        uSourcePaged=0;
+
+        ZXCFPort=128;
+        if (machine.HDType==HDZXCF)
+        {
+                if (machine.zxcfUploadJumperClosed) ZXCFPort=0;
+                else ZXCFPort=192;
+        }
+
+        MFActive=0;
+        MFLockout=0;
+
+        PlusDPaged=PlusDMemSwap=0;
+        PlusDCur= &PlusDDrives[0];
+        PlusDCur->side=0;
+        if (machine.floppytype==FLOPPYBETA && (spectrum.model == SPECCY16 || spectrum.model == SPECCY48 || spectrum.model == SPECCYPLUS))
+        {
+                PlusDPaged=1;
+        }
+
+        z80_reset();
+        d8255_reset();
+        d8251reset();
+        z80_reset();
+        floppy_init();
+        ATA_Reset();
+        if (machine.HDType==HDSIMPLE3E) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDDIVIDE) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDZXCF) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDSIMPLECF) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDSIMPLE16BIT) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
+        if (machine.HDType==HDSIMPLE8BIT) ATA_SetMode(ATA_MODE_8BIT);
+        mouse.buttons=255;
+
+        ResetRomCartridge();
+        DisableSpectra();
+
+        InitialiseJoysticks();
+        Form1->BuildMenuJoystickSelection();
+}
+
+void spec48_initialise()
+{
+        int j, romlen, pos, delay;
+        unsigned int i;
+
+        machine.drivebusy = -1;
+
+        insertWaitsWhileSP0256Busy = false;
+
+        z80_init();
+        tStatesCount = 0;
+
+        machine.plus3arabicPagedOut = 0;
+        divIDEAllRamModeInvoked = 0;
+        divIDEPaged=0;
+        divIDEPage0=0;
+        divIDEPage1=1;
+        divIDEPort=0;
+        divIDEMapRam=0;
+        divIDEPage0WP=0;
+        divIDEPage1WP=0;
+        divIDEAllRamMode=0;
+
+        directMemoryAccess = false;
+        ResetLastIOAccesses();
+        InitialiseRomCartridge();
+        InitialiseSpectra();
+
+        if (machine.zxprinter)
+        {
+                ZXPrinterReset();
+        }
+
+        for(i=0;i<sizeof(SpectrumMem);i++) SpectrumMem[i]=(BYTE)random(256);
+        for(i=0;i<sizeof(TimexMem);i++) TimexMem[i]=255;
+        for(i=0;i<sizeof(FloppyMem);i++) FloppyMem[i]=255;
+        for(i=0;i<sizeof(simpleIDEMem);i++) simpleIDEMem[i]=255;
+
+        for(i=0;i<sizeof(TimexWritable);i++)
+                TimexWritable[i]=0;
+
+        if (machine.HDType == HDSIMPLECF)
+        {
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLECF);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(simpleIDEMem, memory, romlen);
+        }
+        else if (machine.HDType == HDSIMPLE8BIT)
+        {
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLE8BIT);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(simpleIDEMem, memory, romlen);
+        }
+        else if (machine.HDType == HDSIMPLE16BIT)
+        {
+                AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLE16BIT);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(simpleIDEMem, memory, romlen);
+        }
+
+        if (machine.floppytype==FLOPPYDISCIPLE)
+        {
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMDISCIPLE);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(FloppyMem, memory, romlen);
+        }
+        else if (machine.floppytype==FLOPPYPLUSD)
+        {
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMPLUSD);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(FloppyMem, memory, romlen);
+        }
+        else if (machine.floppytype==FLOPPYOPUSD)
+        {
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMDISCOVERY);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(FloppyMem, memory, romlen);
+        }
+        else if (machine.floppytype==FLOPPYBETA)
+        {
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMBETADISK);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(FloppyMem, memory, romlen);
+        }
+        else if (machine.floppytype==FLOPPYIF1)
+        {
+                AnsiString romFile = PrependFolder(fdcRomsFolder, emulator.ROMINTERFACE1);
+                romlen=memory_device_rom_load(romFile.c_str(),0,16384);
+                memcpy(SpectrumMem+32768,memory,romlen);
+                if (romlen<=8192) memcpy(SpectrumMem+32768+8192,memory,romlen);
+
+                IF1->HardReset();
+        }
+
+        if (machine.speech == SPEECH_TYPE_USPEECH)
+        {
+                romlen=memory_device_rom_load(emulator.ROMUSPEECH,0,16384);
+                memcpy(uSpeechMem, memory, romlen);
+        }
+
+        if (spectrum.usource)
+        {
+                romlen=memory_device_rom_load(emulator.ROMUSOURCE,0,16384);
+                memcpy(uSourceMem, memory, romlen);
+        }
+
+        AnsiString romPath = AdjustPathIfReplacementRom(machine.CurRom);
+        romlen=memory_load(romPath.c_str(), 0, 65536);
+        emulator.romcrc=CRC32Block(memory,romlen);
+
+        if ((spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2 || spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 16384)
+        {
+                memcpy(memory + 16384, memory, 16384);
+                romlen += 16384;
+        }
+        if ((spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 32768)
+        {
+                memcpy(memory + 32768, memory, 32768);
+                romlen += 32768;
+        }
+
+        memcpy(SpectrumMem, memory, romlen);
+
+        if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
+        {
+                memcpy(TimexMem+65536, memory+16384, 8192);
+        }
+
+        if (spectrum.MFVersion == MF128)
+        {
+                romlen=memory_device_rom_load(emulator.ROMMULTIFACE128,0,65536);
+                memcpy(MultifaceMem,memory,romlen);
+        }
+        else if (spectrum.MFVersion == MFPLUS3)
+        {
+                romlen=memory_device_rom_load(emulator.ROMMULTIFACE3,0,65536);
+                memcpy(MultifaceMem,memory,romlen);
+        }
+
+        if (strlen(emulator.ROMDock)) LoadDock(emulator.ROMDock);
+
+        SPECTopBorder = (machine.NTSC) ? 32:56;
+        SPECLeftBorder = 1+37*2;
+
+        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.interruptPosition;
+        if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
+
+        for(i=0;i<80000;i++) ContendArray[i]=0;
+
+        pos=spectrum.interruptPosition-1;
+
+        for(i=0;i<192;i++)
+        {
+                delay=6;
+                for(j=0;j<128;j++)
+                {
+                        if (delay>0) ContendArray[pos+j]=(BYTE)delay;
+                        if (--delay==-2) delay=6;
+                }
+
+                pos += machine.tperscanline;
+        }
+
+        spec48_reset();
+        P3DriveMachineHasInitialised();
+
+        rom48 = (emulator.romcrc == CRCSP48 || emulator.romcrc == CRCSPANISH48);
+        rom128 = (emulator.romcrc == CRCSP128);
+        romSp128 = (emulator.romcrc == CRCSPANISH128);
+        bool romEnglishPlus2 = (emulator.romcrc == CRCPLUS2);
+        bool romFrenchPlus2 = (emulator.romcrc == CRCFRENCHPLUS2);
+        bool romSpanishPlus2 = (emulator.romcrc == CRCSPANISHPLUS2);
+        romPlus2 = romEnglishPlus2 || romFrenchPlus2 || romSpanishPlus2;
+        bool romEnglishPlus3v40 = (emulator.romcrc == CRCPLUS3V40);
+        bool romEnglishPlus3v41 = (emulator.romcrc == CRCPLUS3V41);
+        bool romSpanishPlus3v40 = (emulator.romcrc == CRCSPANISHPLUS3V40);
+        bool romSpanishPlus3v41 = (emulator.romcrc == CRCSPANISHPLUS3V41);
+        romPlus3 = romEnglishPlus3v40 || romSpanishPlus3v40 || romEnglishPlus3v41 || romSpanishPlus3v41;
+
+        if (romPlus2)
+        {
+                if (romEnglishPlus2)
+                {
+                        spectrumPlus2AddLineAddress = 0x2D14;
+                }
+                else if (romFrenchPlus2)
+                {
+                        spectrumPlus2AddLineAddress = 0x2D29;
+                }
+                else
+                {
+                        spectrumPlus2AddLineAddress = 0x2D26;
+                }
+        }
+
+        if (romPlus3)
+        {
+                if (romEnglishPlus3v40)
+                {
+                        spectrumPlus3AddLineAddress = 0x0DBC;
+                }
+                else if (romEnglishPlus3v41)
+                {
+                        spectrumPlus3AddLineAddress = 0x0DC1;
+                }
+                else if (romSpanishPlus3v40)
+                {
+                        spectrumPlus3AddLineAddress = 0x0DD3;
+                }
+                else
+                {
+                        spectrumPlus3AddLineAddress = 0x0DD8;
+                }
+        }
+}
+
 void spec48_LoadRZX(char *FileName)
 {
         rzx_playback(FileName);
         RZXCounter=0;
 }
-
-extern void spec_load_z80(char *fname);
 
 rzx_u32 RZXcallback(int Msg, void *data)
 {
@@ -243,7 +534,7 @@ static void divIDEPage(void)
         {
                 divIDEPage0=0;                                // $0000-$1FFF = EEPROM bank
                 divIDEPage1=1+(divIDEPort&3);                 // $2000-$3FFF = RAM banks 0-3 (values 1-4)
-                divIDEPage0WP=spectrum.divIDEJumperEClosed;   // $0000-$1FFF write protected if jumper E option ticked
+                divIDEPage0WP=machine.divIDEJumperEClosed;    // $0000-$1FFF write protected if jumper E option ticked
                 divIDEPage1WP=0;                              // $2000-$3FFF is unprotected
         }
         // Else if memory has been paged in automatically
@@ -270,266 +561,6 @@ static void divIDEPage(void)
 void spec48_exit(void)
 {
         floppy_shutdown();
-}
-
-void spec48_reset(void)
-{
-        SPECBlk[0]=0;
-        SPECBlk[1]=5+4;
-        SPECBlk[2]=2+4;
-        SPECBlk[3]=0+4;
-
-        SPECVideoBank=5+4;
-        SPECLast7ffd=0;
-        SPECLast1ffd=0;
-
-        if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068) SPECBankEnable=0;
-        else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
-        else SPECBankEnable=0;
-
-        MFActive=0;
-        MFLockout=0;
-
-        TIMEXByte=0;
-        TIMEXMode=0;
-        TIMEXColour=0;
-        TIMEXBank=0;
-        TIMEXPage=0;
-
-        uSpeechPaged=0;
-        uSourcePaged=0;
-
-        ZXCFPort=128;
-        if (spectrum.HDType==HDZXCF)
-        {
-                if (spectrum.UploadJumperZXCF) ZXCFPort=192;
-                else ZXCFPort=0;
-        }
-
-        MFActive=0;
-        MFLockout=0;
-
-        PlusDPaged=PlusDMemSwap=0;
-        PlusDCur= &PlusDDrives[0];
-        PlusDCur->side=0;
-        if (spectrum.floppytype==FLOPPYBETA && spectrum.autoboot) PlusDPaged=1;
-
-        z80_reset();
-        d8255_reset();
-        d8251reset();
-        z80_reset();
-        floppy_init();
-        ATA_Reset();
-        if (spectrum.HDType==HDPLUS3E) ATA_SetMode(ATA_MODE_8BIT);
-        if (spectrum.HDType==HDDIVIDE) ATA_SetMode(ATA_MODE_16BIT);
-        if (spectrum.HDType==HDZXCF) ATA_SetMode(ATA_MODE_16BIT);
-        if (spectrum.HDType==HDPITERSCF) ATA_SetMode(ATA_MODE_16BIT);
-        if (spectrum.HDType==HDPITERS16B) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
-        if (spectrum.HDType==HDPITERS8B) ATA_SetMode(ATA_MODE_8BIT);
-        mouse.buttons=255;
-
-        ResetRomCartridge();
-        DisableSpectra();
-}
-
-void spec48_initialise()
-{
-        int j, romlen, pos, delay;
-        unsigned int i;
-        
-        z80_init();
-        tStatesCount = 0;
-
-        machine.plus3arabicPagedOut = 0;
-        divIDEAllRamModeInvoked = 0;
-        divIDEPaged=0;
-        divIDEPage0=0;
-        divIDEPage1=1;
-        divIDEPort=0;
-        divIDEMapRam=0;
-        divIDEPage0WP=0;
-        divIDEPage1WP=0;
-        divIDEAllRamMode=0;
-
-        directMemoryAccess = false;
-        ResetLastIOAccesses();
-        InitialiseRomCartridge();
-        InitialiseSpectra();
-
-        if (machine.zxprinter)
-        {
-                ZXPrinterReset();
-        }
-
-        for(i=0;i<sizeof(SpecMem);i++) SpecMem[i]=(BYTE)random(256);
-        for(i=0;i<sizeof(TimexMem);i++) TimexMem[i]=255;
-        for(i=0;i<sizeof(PlusDMem);i++) PlusDMem[i]=255;
-
-        for(i=0;i<sizeof(TimexWritable);i++)
-                TimexWritable[i]=0;
-
-        if (spectrum.floppytype==FLOPPYDISCIPLE)
-        {
-                romlen=memory_device_rom_load(emulator.ROMDISCIPLE,0,16384);
-                memcpy(PlusDMem, memory, romlen);
-        }
-
-        if (spectrum.floppytype==FLOPPYPLUSD)
-        {
-                romlen=memory_device_rom_load(emulator.ROMPLUSD,0,16384);
-                memcpy(PlusDMem, memory, romlen);
-        }
-
-        if (spectrum.floppytype==FLOPPYOPUSD)
-        {
-                romlen=memory_device_rom_load(emulator.ROMOPUSD,0,16384);
-                memcpy(PlusDMem, memory, romlen);
-        }
-
-        if (spectrum.floppytype==FLOPPYBETA)
-        {
-                romlen=memory_device_rom_load(emulator.ROMBETADISC,0,16384);
-                memcpy(PlusDMem, memory, romlen);
-        }
-
-        if (machine.speech == SPEECH_TYPE_USPEECH)
-        {
-                romlen=memory_device_rom_load(emulator.ROMUSPEECH,0,16384);
-                memcpy(uSpeechMem, memory, romlen);
-        }
-
-        if (spectrum.usource)
-        {
-                romlen=memory_device_rom_load(emulator.ROMUSOURCE,0,16384);
-                memcpy(uSourceMem, memory, romlen);
-        }
-
-        if (spectrum.floppytype==FLOPPYIF1)
-        {
-                AnsiString romPath;
-
-                if (IF1->RomEdition->Text == "Edition 2")
-                {
-                        romPath = emulator.ROMINTERFACE1ED2;
-                }
-                else
-                {
-                        romPath = emulator.ROMINTERFACE1ED1;
-                }
-
-                romlen=memory_device_rom_load(romPath.c_str(),0,65536);
-
-                memcpy(SpecMem+32768,memory,romlen);
-                if (romlen<=8192) memcpy(SpecMem+32768+8192,memory,romlen);
-        }
-
-        romlen=memory_load(machine.CurRom, 0, 65536);
-        emulator.romcrc=CRC32Block(memory,romlen);
-
-        if ((spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2 || spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 16384)
-        {
-                memcpy(memory + 16384, memory, 16384);
-                romlen += 16384;
-        }
-        if ((spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3) && romlen == 32768)
-        {
-                memcpy(memory + 32768, memory, 32768);
-                romlen += 32768;
-        }
-
-        memcpy(SpecMem, memory, romlen);
-
-        if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
-        {
-                memcpy(TimexMem+65536, memory+16384, 8192);
-        }
-
-        if (spectrum.MFVersion == MF128)
-        {
-                romlen=memory_device_rom_load(emulator.ROMMULTIFACE128,0,65536);
-                memcpy(MFMem,memory,romlen);
-        }
-        else if (spectrum.MFVersion == MFPLUS3)
-        {
-                romlen=memory_device_rom_load(emulator.ROMMULTIFACE3,0,65536);
-                memcpy(MFMem,memory,romlen);
-        }
-
-        if (strlen(emulator.ROMDock)) LoadDock(emulator.ROMDock);
-
-        SPECTopBorder= (machine.NTSC) ? 32:56;
-        SPECLeftBorder=1+37*2;
-
-        InteruptPosition=((SPECLeftBorder/2)+SPECTopBorder*machine.tperscanline)-spectrum.intposition;
-        if (InteruptPosition<0) InteruptPosition+=machine.tperframe;
-
-        for(i=0;i<79999;i++) ContendArray[i]=0;
-
-        pos=spectrum.intposition-1;
-
-        for(i=0;i<192;i++)
-        {
-                delay=6;
-                for(j=0;j<128;j++)
-                {
-                        if (delay>0) ContendArray[pos+j]=(BYTE)delay;
-                        if (--delay==-2) delay=6;
-                }
-
-                pos += machine.tperscanline;
-        }
-
-        spec48_reset();
-        P3DriveMachineHasInitialised();
-
-        rom48 = (emulator.romcrc == CRCSP48 || emulator.romcrc == CRCSPANISH48);
-        rom128 = (emulator.romcrc == CRCSP128);
-        romSp128 = (emulator.romcrc == CRCSPANISH128);
-        bool romEnglishPlus2 = (emulator.romcrc == CRCPLUS2);
-        bool romFrenchPlus2 = (emulator.romcrc == CRCFRENCHPLUS2);
-        bool romSpanishPlus2 = (emulator.romcrc == CRCSPANISHPLUS2);
-        romPlus2 = romEnglishPlus2 || romFrenchPlus2 || romSpanishPlus2;
-        bool romEnglishPlus3v40 = (emulator.romcrc == CRCPLUS3V40);
-        bool romEnglishPlus3v41 = (emulator.romcrc == CRCPLUS3V41);
-        bool romSpanishPlus3v40 = (emulator.romcrc == CRCSPANISHPLUS3V40);
-        bool romSpanishPlus3v41 = (emulator.romcrc == CRCSPANISHPLUS3V41);
-        romPlus3 = romEnglishPlus3v40 || romSpanishPlus3v40 || romEnglishPlus3v41 || romSpanishPlus3v41;
-
-        if (romPlus2)
-        {
-                if (romEnglishPlus2)
-                {
-                        spectrumPlus2AddLineAddress = 0x2D14;
-                }
-                else if (romFrenchPlus2)
-                {
-                        spectrumPlus2AddLineAddress = 0x2D29;
-                }
-                else
-                {
-                        spectrumPlus2AddLineAddress = 0x2D26;
-                }
-        }
-
-        if (romPlus3)
-        {
-                if (romEnglishPlus3v40)
-                {
-                        spectrumPlus3AddLineAddress = 0x0DBC;
-                }
-                else if (romEnglishPlus3v41)
-                {
-                        spectrumPlus3AddLineAddress = 0x0DC1;
-                }
-                else if (romSpanishPlus3v40)
-                {
-                        spectrumPlus3AddLineAddress = 0x0DD3;
-                }
-                else
-                {
-                        spectrumPlus3AddLineAddress = 0x0DD8;
-                }
-        }
 }
 
 void SPECLoadCheck(void)
@@ -639,11 +670,11 @@ void spec48_WriteByte(int Address, int Data)
                 if (PlusDPaged)
                 {
                         Address ^= PlusDMemSwap;
-                        if (spectrum.floppytype == FLOPPYBETA) return;
+                        if (machine.floppytype == FLOPPYBETA) return;
                         if (Address<8192) return;
-                        PlusDMem[Address]=(BYTE)Data;
+                        FloppyMem[Address]=(BYTE)Data;
 
-                        if (spectrum.floppytype==FLOPPYOPUSD)
+                        if (machine.floppytype==FLOPPYOPUSD)
                         {
                                 if (Address>=14336) ;           // Undefined on Opus
                                 else if (Address>=12288)
@@ -663,14 +694,14 @@ void spec48_WriteByte(int Address, int Data)
 
                 if (MFActive && (Address>8191))
                 {
-                        MFMem[Address]=(BYTE)Data;
+                        MultifaceMem[Address]=(BYTE)Data;
                         return;
                 }
 
                 if (!(ZXCFPort&128))
                 {
                         if (!(ZXCFPort&64)) return;
-                        ZXCFMem[(((ZXCFPort&63)&(spectrum.ZXCFRAMSize-1))<<14)+Address]=(BYTE)Data;
+                        ZXCFMem[(((ZXCFPort&63)&(machine.ZXCFRAMSize-1))<<14)+Address]=(BYTE)Data;
                         return;
                 }
 
@@ -686,6 +717,11 @@ void spec48_WriteByte(int Address, int Data)
                                 if (!divIDEPage1WP)
                                         divIDEMem[(Address&8191)+(divIDEPage1*8192)]=(BYTE)Data;
                         }
+                        return;
+                }
+
+                if (machine.simpleIdeRomEnabled && (machine.HDType == HDSIMPLECF || machine.HDType == HDSIMPLE8BIT || machine.HDType == HDSIMPLE16BIT || machine.HDType == HDSIMPLE3E))
+                {
                         return;
                 }
 
@@ -764,9 +800,9 @@ BYTE spec48_ReadByte(int Address)
                 if (PlusDPaged)
                 {
                         Address ^= PlusDMemSwap;
-                        data=PlusDMem[Address];
+                        data=FloppyMem[Address];
 
-                        if (spectrum.floppytype==FLOPPYOPUSD)
+                        if (machine.floppytype==FLOPPYOPUSD)
                         {
                                 if (Address>=14336) data=255;   // Undefined on Opus
                                 else if (Address>=12288)        // 6821 PIA
@@ -787,14 +823,14 @@ BYTE spec48_ReadByte(int Address)
 
                 if (MFActive)
                 {
-                        data=MFMem[Address];
+                        data=MultifaceMem[Address];
                         noise = (noise<<8) | data;
                         return(data);
                 }
 
                 if (!(ZXCFPort&128))
                 {
-                        data=ZXCFMem[(((ZXCFPort&63)&(spectrum.ZXCFRAMSize-1))<<14)+Address];
+                        data=ZXCFMem[(((ZXCFPort&63)&(machine.ZXCFRAMSize-1))<<14)+Address];
                         noise = (noise<<8) | data;
                         return data;
                 }
@@ -803,6 +839,13 @@ BYTE spec48_ReadByte(int Address)
                 {
                         if (Address<8192) data=divIDEMem[Address+(divIDEPage0*8192)];
                         else data=divIDEMem[(Address&8191)+(divIDEPage1*8192)];
+                        noise = (noise<<8) | data;
+                        return data;
+                }
+
+                if (machine.simpleIdeRomEnabled && (machine.HDType == HDSIMPLECF || machine.HDType == HDSIMPLE8BIT || machine.HDType == HDSIMPLE16BIT || machine.HDType == HDSIMPLE3E))
+                {
+                        data = simpleIDEMem[Address];
                         noise = (noise<<8) | data;
                         return data;
                 }
@@ -892,7 +935,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
 {
         LogOutAccess(Address, (BYTE)Data);
 
-        if (spectrum.HDType == HDDIVIDE)
+        if (machine.HDType == HDDIVIDE)
         {
                 if ((Address & 0xA3) == 0xA3)
                 {
@@ -927,7 +970,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                         if (Data&64) divIDEMapRam=1;
                                         divIDEPage();
 
-                                        bool allRamModeAvailable = spectrum.divIDEAllRamSupported && !spectrum.divIDEJumperEClosed;
+                                        bool allRamModeAvailable = machine.divIDEAllRamSupported && !machine.divIDEJumperEClosed;
 
                                         if (allRamModeAvailable && (Data == 0x42 || (divIDEAllRamModeInvoked && (Data & 0x82) == 0x02)))
                                         {
@@ -944,11 +987,16 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 }
         }
 
-        if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                 ATA_WriteRegister(((Address>>2)&1) | ((Address>>5)&6), Data);
 
-        if ((spectrum.HDType==HDPITERS16B) && ((Address&0xe9)==0x69))
+        if ((machine.HDType==HDSIMPLE16BIT) && ((Address&0xe9)==0x69))
                 ATA_WriteRegister(((Address>>4)&1) | (Address&6), Data);
+
+        if (spectrum.specdrum && ((Address & 0x20) == 0x00))
+        {
+                Sound.SpecDrumWrite((BYTE)Data,frametstates);
+        }
 
         if (((Address & 0x20) == 0x00) && spectrum.model == SPECCYPLUS3 && emulator.romcrc == CRCARABICPLUS3)
         {
@@ -967,32 +1015,50 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                 romlen = memory_load(machine.CurRom, 0, 65536, 0);
                         }
 
-                        memcpy(SpecMem, memory, romlen);
+                        memcpy(SpectrumMem, memory, romlen);
                 }
         }
 
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x9F) == 0x1F) Sound.AYWrite(SelectAYReg, Data,frametstates);
+        if (machine.aytype==AY_TYPE_ZONX && (Address & 0x9F) == 0x9F) SelectAYReg=Data&15;
+
         switch(Address&255)
         {
-        case 0x1b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_cmdreg((BYTE)Data);
+        case 0x07:
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
+                {
+                        sp0256_AL2.Write((BYTE)Data);
+                        insertWaitsWhileSP0256Busy = true;
+                }
                 break;
 
-        case 0x1f:       
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
+        case 0x1b:
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_cmdreg((BYTE)Data);
+                break;
+
+        case 0x1f:
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_set_motor((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_cmdreg((BYTE)Data);
+                if (machine.speech == SPEECH_TYPE_SWEETTALKER)
+                {
+                        sp0256_AL2.Write((BYTE)Data);
+                        insertWaitsWhileSP0256Busy = true;
+                }
                 break;
 
         case 0x3f:
                 if (spectrum.MFVersion==MF128) MFLockout=1;
                 if (machine.aytype==AY_TYPE_FULLER) SelectAYReg=Data&15;
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_trackreg((BYTE)Data);
+                if (machine.aytype==AY_TYPE_DKTRONICS) SelectAYReg=Data&15;
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_trackreg((BYTE)Data);
         case 0x5b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_trackreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_trackreg((BYTE)Data);
                 break;
 
         case 0x5f:
                 if (machine.aytype==AY_TYPE_FULLER) Sound.AYWrite(SelectAYReg, Data, frametstates);
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg((BYTE)Data);
+                if (machine.aytype==AY_TYPE_DKTRONICS) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_secreg((BYTE)Data);
                 break;
 
         case 0x73:
@@ -1003,23 +1069,28 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0x7b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0x2000;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0x2000;
                 break;
 
         case 0x7f:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_datareg((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_write_datareg((BYTE)Data);
+                if (machine.speech == SPEECH_TYPE_DKTRONICS) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0x9b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_secreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_secreg((BYTE)Data);
+                break;
+
+        case 0x9f:
+                if (machine.speech == SPEECH_TYPE_ORATOR) sp0256_AL2.Write((BYTE)Data);
                 break;
 
         case 0xbb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDPaged=0;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDPaged=0;
                 break;
 
         case 0xbf:
-                if (spectrum.HDType==HDZXCF)
+                if (machine.HDType==HDZXCF)
                 {
                         int a=(Address>>8)&255;
 
@@ -1067,11 +1138,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xdb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) floppy_write_datareg((BYTE)Data);
-                break;
-
-        case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE) SelectAYReg=Data;
+                if (machine.floppytype==FLOPPYDISCIPLE) floppy_write_datareg((BYTE)Data);
                 break;
 
         case 0xdf:
@@ -1087,24 +1154,27 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                 break;
                         }
                 default:
-                        if (machine.aytype==AY_TYPE_ACE) Sound.AYWrite(SelectAYReg, Data, frametstates);
                         break;
                 }
+
+                if (machine.speech==SPEECH_TYPE_DIGITALKER) Digitalker.Write2((BYTE)Data);
+                break;
+
         case 0xe3:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_cmdreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_cmdreg((BYTE)Data);
                 break;
 
         case 0xe7:
-                if (spectrum.floppytype==FLOPPYPLUSD) PlusDPaged=0;
-                if (spectrum.floppytype==FLOPPYIF1) IF1PortE7Write(Data,tstates);
+                if (machine.floppytype==FLOPPYPLUSD) PlusDPaged=0;
+                if (machine.floppytype==FLOPPYIF1) IF1PortE7Write(Data,tstates);
                 break;
 
         case 0xeb:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_trackreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_trackreg((BYTE)Data);
                 break;
 
         case 0xef:
-                if (spectrum.HDType==HDPLUS3E)
+                if (machine.HDType==HDSIMPLE3E)
                 {
                         int Addr=0;
                         if (Address&256) Addr |=1;
@@ -1113,12 +1183,12 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
                         ATA_WriteRegister(Addr,Data);
                 }
-                if (spectrum.floppytype==FLOPPYIF1) IF1PortEFWrite(Data);
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_set_motor((BYTE)Data);
+                if (machine.floppytype==FLOPPYIF1) IF1PortEFWrite(Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_set_motor((BYTE)Data);
                 break;
 
         case 0xf3:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_secreg((BYTE)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_secreg((BYTE)Data);
                 break;
 
         case 0xf4:
@@ -1127,21 +1197,24 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 break;
 
         case 0xf5:
-                if (machine.aytype==AY_TYPE_TIMEX) SelectAYReg=Data;
+                if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068)) SelectAYReg=Data;
                 break;
 
         case 0xf6:
-                if (machine.aytype==AY_TYPE_TIMEX) Sound.AYWrite(SelectAYReg, Data, frametstates);
+                if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068))
+                        Sound.AYWriteTimex(SelectAYReg, Data, frametstates);
                 break;
 
         case 0xf7:
-                if (spectrum.floppytype==FLOPPYIF1) IF1PortF7Write(Data);
-                if (spectrum.floppytype==FLOPPYPLUSD) PrinterWriteData((unsigned char)Data);
+                if (machine.floppytype==FLOPPYIF1) IF1PortF7Write(Data);
+                if (machine.floppytype==FLOPPYPLUSD) PrinterWriteData((unsigned char)Data);
                 break;
 
         case 0xfb:
-                if (spectrum.floppytype==FLOPPYPLUSD) floppy_write_datareg((BYTE)Data);
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PrinterWriteData((unsigned char)Data);
+                if (machine.floppytype==FLOPPYPLUSD) floppy_write_datareg((BYTE)Data);
+                if (machine.floppytype==FLOPPYDISCIPLE) PrinterWriteData((unsigned char)Data);
                 if (machine.zxprinter) ZXPrinterWritePort((unsigned char)Data);
                 break;
         case 0xfd:
@@ -1162,22 +1235,25 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         break;
 
                 case 0x7f:
-                        if (!SPECBankEnable) break;
-                        SPECLast7ffd=(BYTE)Data;
-                        SPECBlk[0]= ((SPECLast1ffd>>1)&2) | ((Data>>4)&1);
-                        SPECBlk[3]=4+(Data&7);
-                        SPECVideoBank=(Data>>3)&1 ? 11:9;
-                        SPECBankEnable=!((Data>>5)&1);
-                        if (machine.colour == COLOURSPECTRA)
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCY128)
                         {
-                                DetermineSpectraDisplayBank();
+                                if (!SPECBankEnable) break;
+                                SPECLast7ffd=(BYTE)Data;
+                                SPECBlk[0]= ((SPECLast1ffd>>1)&2) | ((Data>>4)&1);
+                                SPECBlk[3]=4+(Data&7);
+                                SPECVideoBank=(Data>>3)&1 ? 11:9;
+                                SPECBankEnable=!((Data>>5)&1);
+                                if (machine.colour == COLOURSPECTRA)
+                                {
+                                        DetermineSpectraDisplayBank();
+                                }
                         }
                         break;
 
                 case 0x1f:
                         if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
-                                spectrum.drivebusy = (Data&8) ? 1:0;
+                                machine.drivebusy = (Data&8) ? 1:0;
                                 floppy_set_motor((BYTE)Data);
                                 PrinterSetStrobe((unsigned char)(Data&16));
 
@@ -1204,18 +1280,27 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                 }
                         }
                         break;
-                case 0xff:
-                        SelectAYReg=Data;
+                case 0xbf:
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
+                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
+                        {
+                                Sound.AYWrite128(SelectAYReg, Data, frametstates);
+                        }
                         break;
 
-                case 0xbf:
-                        Sound.AYWrite(SelectAYReg, Data, frametstates);
+                case 0xff:
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
+                            ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
+                        {
+                                SPECLastfffd=(BYTE)Data;
+                                SelectAYReg=Data;
+                        }
                         break;
                 }
                 break;
 
         case 0xff:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) floppy_set_motor((BYTE)Data);
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) floppy_set_motor((BYTE)Data);
 
                 if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                 {
@@ -1224,6 +1309,8 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         TIMEXColour=(Data>>3)&7;
                         TIMEXBank=(Data>>7)&1;
                 }
+
+                if (machine.speech==SPEECH_TYPE_DIGITALKER) Digitalker.Write1((BYTE)Data);
                 break;
 
         default:
@@ -1295,7 +1382,6 @@ int spec48_contendio(int Address, int states, int time)
 */
 }
 
-
 BYTE spec48_readport(int Address, int *tstates)
 {
         BYTE data = ReadPort(Address, tstates);
@@ -1315,25 +1401,25 @@ BYTE ReadPort(int Address, int *tstates)
                 //rzx_close();
         }
 
-        if (spectrum.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
+        if (machine.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
                 return (BYTE)ATA_ReadRegister((Address>>2)&7);
 
-        if ((spectrum.HDType==HDPITERSCF || spectrum.HDType==HDPITERS8B) && ((Address&0x3b)==0x2b))
+        if ((machine.HDType==HDSIMPLECF || machine.HDType==HDSIMPLE8BIT) && ((Address&0x3b)==0x2b))
                 return (BYTE)ATA_ReadRegister(((Address>>2)&1) | ((Address>>5)&6));
 
-        if ((spectrum.HDType==HDPITERS16B) && ((Address&0xe9)==0x69))
+        if ((machine.HDType==HDSIMPLE16BIT) && ((Address&0xe9)==0x69))
                 return (BYTE)ATA_ReadRegister(((Address>>4)&1) | (Address&6));
 
         switch(Address&255)
         {
         case 0x1b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_statusreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_statusreg());
                 break;
 
         case 0x1f:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
-                if (spectrum.floppytype==FLOPPYDISCIPLE)
-                        return (BYTE)(PrinterBusy()<<6);
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick1();
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return (BYTE)(PrinterBusy()<<6);
                 break;
 
         case 0x3f:
@@ -1354,15 +1440,15 @@ BYTE ReadPort(int Address, int *tstates)
                 default:
                         break;
                 }
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_trackreg());
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_trackreg());
                 break;
 
         case 0x5b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_trackreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_trackreg());
                 break;
 
         case 0x5f:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_secreg());
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_secreg());
                 break;
 
         case 0x73:
@@ -1374,19 +1460,21 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x7b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDMemSwap=0;
                 break;
 
         case 0x7f:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_FULLER) return ReadJoystick1();
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
+                if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
 
         case 0x9b:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_secreg());
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_secreg());
                 break;
 
         case 0xbb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) PlusDPaged=1;
+                if (machine.floppytype==FLOPPYDISCIPLE) PlusDPaged=1;
                 break;
 
         case 0xbf:
@@ -1411,7 +1499,7 @@ BYTE ReadPort(int Address, int *tstates)
                         }
                 }
 
-                if (spectrum.HDType==HDZXCF)
+                if (machine.HDType==HDZXCF)
                 {
                         int a=(Address>>8)&255;
 
@@ -1436,12 +1524,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xdb:
-                if (spectrum.floppytype==FLOPPYDISCIPLE) return(floppy_read_datareg());
-                break;
-
-        case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE)
-                        return (BYTE)Sound.AYRead(SelectAYReg);
+                if (machine.floppytype==FLOPPYDISCIPLE) return(floppy_read_datareg());
                 break;
 
         case 0xdf:
@@ -1469,21 +1552,21 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xe3:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_statusreg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_statusreg());
                 break;
 
         case 0xe7:
-                if (spectrum.floppytype==FLOPPYIF1) return (BYTE)IF1PortE7Read(tstates);
-                if (spectrum.floppytype==FLOPPYPLUSD) PlusDPaged=1;
+                if (machine.floppytype==FLOPPYIF1) return (BYTE)IF1PortE7Read(tstates);
+                if (machine.floppytype==FLOPPYPLUSD) PlusDPaged=1;
                 break;
 
         case 0xeb:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_trackreg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_trackreg());
                 break;
 
         case 0xef:
-                if (spectrum.floppytype==FLOPPYIF1) return (BYTE)IF1PortEFRead();
-                if (spectrum.HDType==HDPLUS3E)
+                if (machine.floppytype==FLOPPYIF1) return (BYTE)IF1PortEFRead();
+                if (machine.HDType==HDSIMPLE3E)
                 {
                         int Addr=0;
                         if (Address&256) Addr |=1;
@@ -1495,7 +1578,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf3:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_secreg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_secreg());
                 break;
 
         case 0xf4:
@@ -1504,35 +1587,70 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xf6:
-                if (machine.aytype==AY_TYPE_TIMEX)
-                        return (BYTE)Sound.AYRead(SelectAYReg);
+                if ((machine.aytype==AY_TYPE_TS2068 && spectrum.model==SPECCYTS2068) ||
+                    (machine.aytype==AY_TYPE_TC2068 && spectrum.model==SPECCYTC2068))
+                {
+                        if ((machine.joystickInterfaceType == JOYSTICK_TIMEX) && (Address & 0x0300) != 0x0000)
+                        {
+                                return (BYTE)Sound.AYReadTimex(SelectAYReg, (Address >> 8) & 0x03);
+                        }
+                        else
+                        {
+                                return (BYTE)Sound.AYRead(SelectAYReg);
+                        }
+                }
                 break;
 
         case 0xf7:
-                if (spectrum.floppytype==FLOPPYIF1) return (BYTE)IF1PortF7Read();
-                if (spectrum.floppytype==FLOPPYPLUSD)
+                if (machine.floppytype==FLOPPYIF1) return (BYTE)IF1PortF7Read();
+                if (machine.floppytype==FLOPPYPLUSD)
                         return (BYTE)(PrinterBusy()<<7);
                 break;
 
         case 0xfb:
-                if (spectrum.floppytype==FLOPPYPLUSD) return(floppy_read_datareg());
+                if (machine.floppytype==FLOPPYPLUSD) return(floppy_read_datareg());
                 if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));
                 break;
 
         case 0xfd:
                 switch((Address>>8)&255)
                 {
-                case 0x0f:      return (BYTE)PrinterBusy();
-                case 0xff:      return (BYTE)Sound.AYRead(SelectAYReg);
+                case 0x0f:
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        {
+                                return (BYTE)PrinterBusy();
+                        }
+                        break;
+                case 0xff:
+                        if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR)
+                        {
+                                if ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCYPLUS2A))
+                                {
+                                        return (BYTE)Sound.AYRead(SelectAYReg);
+                                }
+                                else if (spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2)
+                                {
+                                        return (BYTE)Sound.AYRead128(SelectAYReg);
+                                }
+                        }
+                        break;
                 case 0x3f:
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        {
                                 return(floppy_read_datareg());
+                        }
+                        break;
                 case 0x2f:
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        {
                                 return(floppy_read_statusreg());
+                        }
+                        break;
                 }
                 break;
 
         case 0xff:
-                if (spectrum.floppytype==FLOPPYBETA && PlusDPaged)
+                if (machine.floppytype==FLOPPYBETA && PlusDPaged)
                         return(floppy_get_state());
                 if (spectrum.model==SPECCYTC2048 || spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068)
                         return (BYTE)TIMEXByte;
@@ -1555,13 +1673,31 @@ BYTE ReadPort(int Address, int *tstates)
                         keyb=(BYTE)(Address/256);
                         for(i=0; i<8; i++) if (! (keyb & (1<<i)) ) data |= ZXKeyboard[i];
 
-                        //if (z80.pc.w==0x05f3)
-                        //{
-                        //        TZXStartPlaying();
-                        //        if (TZXFlashLoad()) SPECFlashLoading=1;
-                        //}
+                        data = (BYTE)(~data);
 
-                        return (BYTE)(~data);
+                        if (machine.joystickInterfaceType != JOYSTICK_NONE)
+                        {
+                                if (machine.joystickInterfaceType == JOYSTICK_INTERFACE2)
+                                {
+                                        if (machine.joystick1Connected && !(Address & 0x1000)) data &= ReadJoystick1();
+                                        if (machine.joystick2Connected && !(Address & 0x0800)) data &= ReadJoystick2();
+                                }
+                                else if (machine.joystickInterfaceType == JOYSTICK_CURSOR && machine.joystick1Connected)
+                                {
+                                        if (!(Address & 0x0800)) data &= ReadJoystick1_Left();
+                                        if (!(Address & 0x1000)) data &= ReadJoystick1_RightUpDownFire();
+                                }
+                                else if (machine.joystickInterfaceType == JOYSTICK_PROGRAMMABLE && machine.joystick1Connected)
+                                {
+                                        if (!(Address & JoystickLeft1.AddressMask))  data &= ReadJoystick1_Left();
+                                        if (!(Address & JoystickRight1.AddressMask)) data &= ReadJoystick1_Right();
+                                        if (!(Address & JoystickUp1.AddressMask))    data &= ReadJoystick1_Up();
+                                        if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
+                                        if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
+                                }
+                        }
+                        
+                        return data;
                 }
                 break;
         }
@@ -1581,9 +1717,9 @@ void spec48_nmi(void)
                 MFActive=1;
                 MFLockout=0;
         }
-        else if (spectrum.floppytype==FLOPPYDISCIPLE
-                || spectrum.floppytype==FLOPPYPLUSD
-                || spectrum.floppytype==FLOPPYBETA)
+        else if (machine.floppytype==FLOPPYDISCIPLE
+                || machine.floppytype==FLOPPYPLUSD
+                || machine.floppytype==FLOPPYBETA)
         {
                 PlusDPaged=1;
         }
@@ -1649,9 +1785,9 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!(TIMEXPage&1)
                         && (ZXCFPort&128)
-                        && spectrum.HDType!=HDPITERSCF
-                        && spectrum.HDType!=HDPITERS8B
-                        && spectrum.HDType!=HDPITERS16B
+                        && machine.HDType!=HDSIMPLECF
+                        && machine.HDType!=HDSIMPLE8BIT
+                        && machine.HDType!=HDSIMPLE16BIT
                         && (    (SPECBlk[0]==0 && spectrum.model<SPECCYTC2068)
                              || (SPECBlk[0]==1 && spectrum.model>SPECCYTS2068 && spectrum.model<SPECCYPLUS2A)
                              || (SPECBlk[0]==3 && spectrum.model>SPECCYPLUS2) ))
@@ -1666,15 +1802,15 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 }
                         }
 
-                        if (spectrum.floppytype==FLOPPYDISCIPLE
+                        if (machine.floppytype==FLOPPYDISCIPLE
                                 && (LastPC==0x0008 || LastPC==0x0066 || LastPC==0x28E))
                                         PlusDPaged=1;
 
-                        if (spectrum.floppytype==FLOPPYPLUSD
+                        if (machine.floppytype==FLOPPYPLUSD
                                 && (LastPC==0x0008 || LastPC==0x003A || LastPC==0x0066))
                                         PlusDPaged=1;
 
-                        if (spectrum.floppytype==FLOPPYBETA)
+                        if (machine.floppytype==FLOPPYBETA)
                         {
                                 if (LastPC>=0x3D00 && LastPC<=0x3dff) PlusDPaged=1;
                                 if (LastPC>=0x4000) PlusDPaged=0;
@@ -1684,10 +1820,18 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
                 }                 
 
-                ts=z80_do_opcode();
+                if (!insertWaitsWhileSP0256Busy)
+                {
+                        ts=z80_do_opcode();
+                }
+                else
+                {
+                        ts = 1;
+                        insertWaitsWhileSP0256Busy = (sp0256_AL2.Busy() && !emulator.single_step) ? true : false;
+                }
 
                 if (BasicLister->Visible &&
-                    ((spectrumBasicRomPagedIn && z80.pc.w == 0x15AB) ||
+                    ((spectrumBasicRomPagedIn && (z80.pc.w == 0x15AB || (z80.pc.w == 0x0805 && FLAG_C) || z80.pc.w == 0x08F0)) ||
                      (spectrum128BasicRomPagedIn && z80.pc.w == 0x2CEE) ||
                      (spanish128BasicRomPagedIn && z80.pc.w == 0x03E5) ||
                      (spectrumPlus2BasicRomPagedIn && z80.pc.w == spectrumPlus2AddLineAddress) ||
@@ -1701,8 +1845,12 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (machine.zxprinter) ZXPrinterClockTick(ts);
                 PrinterClockTick(ts);
                 Midi.ClockTick(ts);
-                if (spectrum.floppytype==FLOPPYIF1) IF1ClockTick(ts);
-                else if (spectrum.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
+                if (spectrum.model == SPECCY128 || spectrum.model == SPECCYPLUS2)
+                {
+                        Keypad.ClockTick(ts);
+                }
+                if (machine.floppytype==FLOPPYIF1) IF1ClockTick(ts);
+                else if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 
                 if (LastPC==0x0) WavStop();
 
@@ -1715,22 +1863,22 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 }
                 if (!WavPlaying()) SPECFlashLoading=0;
 
-                if (spectrum.floppytype==FLOPPYIF1) 
+                if (machine.floppytype==FLOPPYIF1) 
                 {
                         if ((LastPC==0x0008 || LastPC==0x1708)) SPECBlk[0]=2;
                         if (LastPC==0x0700)
                                 SPECBlk[0]=(SPECLast7ffd>>4)&1;
                 }
 
-                if (spectrum.floppytype==FLOPPYOPUSD)
+                if (machine.floppytype==FLOPPYOPUSD)
                 {
                         if (LastPC==0x0008 || LastPC==0x0048 || LastPC==0x1708) PlusDPaged=1;
                         if (LastPC==0x1748) PlusDPaged=0;
                 }
 
-                if (spectrum.HDType==HDDIVIDE)
+                if (machine.HDType==HDDIVIDE)
                 {
-                        if (spectrum.divIDEJumperEClosed)
+                        if (machine.divIDEJumperEClosed)
                         {
                                 if (divIDEAllRamMode)
                                 {
@@ -1738,7 +1886,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         divIDEPage();
                                 }
 
-                                if (LastPC==0x00 || LastPC==0x08 || LastPC==0x38 || LastPC==0x66 ||
+                                if (LastPC==0x0000 || LastPC==0x0008 || LastPC==0x0038 || LastPC==0x0066 ||
                                     LastPC==0x04c6 || LastPC==0x0562 || (z80.pc.w>=0x3d00 && z80.pc.w<=0x3dff))
                                 {
                                         divIDEPaged |= 1;
@@ -1976,14 +2124,14 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 Sy++;
                 if (Sy>=machine.scanlines)
                 {
-                        fts =0; //-= machine.tperframe;
+                        fts = 0;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_type = SYNCTYPEV;
                         emulator.scanlinesPerFrame = Sy;
                         Sy=0;
-                        //borrow=0;
                         loop=machine.tperscanline;
                 }
+
                 clean_exit=1;
         }
         else    clean_exit=0;

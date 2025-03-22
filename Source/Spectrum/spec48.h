@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,40 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * spec48.h
- *
  */
 
 #ifndef spec48_h
 #define spec48_h
 
-#include "z80\config.h"
+#include "configuration.h"
 
-#define RAMRead(Bank, Address) (SpecMem[(Bank<<14) | ((Address)&16383)])
-#define RAMWrite(Bank, Address, Data) ((SpecMem[(Bank<<14) | ((Address)&16383)])=Data)
+#define RAMRead(Bank, Address) (SpectrumMem[(Bank<<14) | ((Address)&16383)])
+#define RAMWrite(Bank, Address, Data) ((SpectrumMem[(Bank<<14) | ((Address)&16383)])=Data)
 
-extern BYTE SpecMem[];  //enough memory for 64k ROM + 128k RAM
+extern BYTE SpectrumMem[];  //enough memory for 64k ROM + 128k RAM
 extern BYTE TimexMem[];  // Timex has two more blocks of 64k each
 extern BYTE SpectraMem[]; // Spectra has two banks of 16K RAM
 extern BYTE SPECLast7ffd;
 extern BYTE divIDEMem[];       // divIDE has 8k of FlashRAM and 32k of RAM
 extern BYTE ZXCFMem[];  // ZXCF has 1024k arranged as 64 x 16k pages
-#define kbD0 1
-#define kbD1 2
-#define kbD2 4
-#define kbD3 8
-#define kbD4 16
-#define kbD5 32
-
-#define kbA8  0
-#define kbA9  1
-#define kbA10 2
-#define kbA11 3
-#define kbA12 4
-#define kbA13 5
-#define kbA14 6
-#define kbA15 7
 
 extern int SPECNextBorder;
 extern BYTE memory[];

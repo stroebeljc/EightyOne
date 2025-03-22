@@ -1,22 +1,26 @@
 object HW: THW
-  Left = 522
-  Top = 267
-  BorderIcons = []
+  Left = 203
+  Top = 122
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'Hardware'
-  ClientHeight = 368
-  ClientWidth = 408
+  ClientHeight = 392
+  ClientWidth = 418
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
+  DesignSize = (
+    418
+    392)
   TextHeight = 13
   object RamPackLbl: TLabel
     Left = 105
@@ -35,72 +39,13 @@ object HW: THW
   object Machine: TPageControl
     Left = 3
     Top = 8
-    Width = 402
+    Width = 412
     Height = 93
     ActivePage = Sinclair
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     object Sinclair: TTabSheet
       Caption = 'Sinclair'
-      object QLBtn: TOffice97Button
-        Left = 320
-        Top = 0
-        Width = 70
-        Height = 65
-        Caption = 'QL'
-        Color = 13434879
-        HoverFont.Charset = DEFAULT_CHARSET
-        HoverFont.Color = clWindowText
-        HoverFont.Height = -11
-        HoverFont.Name = 'MS Sans Serif'
-        HoverFont.Style = []
-        InactiveColor = clBtnFace
-        InactiveGlyph.Data = {
-          62040000424D6204000000000000620000002800000020000000200000000100
-          08000000000000040000120B0000120B00000B0000000B0000007B797B00FFFF
-          000021FF21005B5C5B009C9E9C004AFFFF000000FF00FFFFFF004D4D4E00029B
-          FC00000000000707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070700000000000000000000000000000000000000000000000000
-          0000000000070A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
-          0A0A0A0A0A000A070A00000A0000000000000000000004000000030A0A080A0A
-          0A080A0A0A000A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
-          0A0A0A0A0A000A000A000300000A000A000A000A000A000A0000000A0A0A0A0A
-          0A0A0A0A0A000A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
-          0A0A0A0A0A000A000A0000000A030A000A000A000A000A000A00000A0A0A0A0A
-          0A0A0A0A0A000A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A000A0A080A0A
-          0A0A0A0A0A000A000A00000A040A000A000A000A000A000A000A000A0A0A0A0A
-          0A0A0A0A0A000A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
-          0A0A0A0A0A000A000A030A030A040A000A000A000A000A000A000A03080A0A0A
-          0A0A0A0A0A000A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
-          0A0A0A0A0A000A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
-          0A0A0A0A0A070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          0707070707070707070707070707070707070707070707070707070707070707
-          070707070707}
-        Position = bsTop
-        ShowGlyph = True
-        TabOrder = 6
-        Transparent = True
-        UseCustomGlyphs = True
-        Visible = False
-        Toggle = True
-        OnClick = QLBtnClick
-      end
       object ZX80Btn: TOffice97Button
         Left = 0
         Top = 0
@@ -190,7 +135,7 @@ object HW: THW
         OnClick = ZX80BtnClick
       end
       object ZX81Btn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -278,7 +223,7 @@ object HW: THW
         OnClick = ZX81BtnClick
       end
       object Spec48Btn: TOffice97Button
-        Left = 195
+        Left = 201
         Top = 0
         Width = 65
         Height = 65
@@ -366,7 +311,7 @@ object HW: THW
         OnClick = Spec48BtnClick
       end
       object Spec128Btn: TOffice97Button
-        Left = 325
+        Left = 335
         Top = 0
         Width = 65
         Height = 65
@@ -424,7 +369,7 @@ object HW: THW
         OnClick = Spec128BtnClick
       end
       object Spec16Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -512,7 +457,7 @@ object HW: THW
         OnClick = Spec16BtnClick
       end
       object SpecPlusBtn: TOffice97Button
-        Left = 260
+        Left = 268
         Top = 0
         Width = 65
         Height = 65
@@ -616,7 +561,7 @@ object HW: THW
         OnClick = SpecP2BtnClick
       end
       object SpecP2aBtn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -674,7 +619,7 @@ object HW: THW
         OnClick = SpecP2aBtnClick
       end
       object SpecP3Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -824,7 +769,7 @@ object HW: THW
         OnClick = TS1000BtnClick
       end
       object TS1500Btn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -866,7 +811,7 @@ object HW: THW
         OnClick = TS1500BtnClick
       end
       object TC2048Btn: TOffice97Button
-        Left = 195
+        Left = 201
         Top = 0
         Width = 65
         Height = 65
@@ -908,7 +853,7 @@ object HW: THW
         OnClick = TC2048BtnClick
       end
       object TS2068Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -950,7 +895,7 @@ object HW: THW
         OnClick = TS2068BtnClick
       end
       object TC2068Btn: TOffice97Button
-        Left = 260
+        Left = 268
         Top = 0
         Width = 65
         Height = 65
@@ -1054,7 +999,7 @@ object HW: THW
         OnClick = LambdaBtnClick
       end
       object R470Btn: TOffice97Button
-        Left = 65
+        Left = 67
         Top = 0
         Width = 65
         Height = 65
@@ -1112,7 +1057,7 @@ object HW: THW
         OnClick = R470BtnClick
       end
       object TK85Btn: TOffice97Button
-        Left = 130
+        Left = 134
         Top = 0
         Width = 65
         Height = 65
@@ -1170,7 +1115,7 @@ object HW: THW
         OnClick = TK85BtnClick
       end
       object AceBtn: TOffice97Button
-        Left = 195
+        Left = 201
         Top = 0
         Width = 65
         Height = 65
@@ -1352,15 +1297,24 @@ object HW: THW
     end
   end
   object OK: TButton
-    Left = 329
-    Top = 339
+    Left = 179
+    Top = 363
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
-    Default = True
-    TabOrder = 3
+    TabOrder = 5
     OnClick = OKClick
+  end
+  object Cancel: TButton
+    Left = 259
+    Top = 363
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    TabOrder = 6
+    OnClick = CancelClick
   end
   object RamPackBox: TComboBox
     Left = 169
@@ -1368,7 +1322,6 @@ object HW: THW
     Width = 81
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 1
     OnChange = RamPackBoxChange
     Items.Strings = (
@@ -1383,15 +1336,15 @@ object HW: THW
   object Advanced: TPageControl
     Left = 3
     Top = 140
-    Width = 401
-    Height = 193
+    Width = 412
+    Height = 217
     ActivePage = Interfaces
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 2
     object Interfaces: TTabSheet
       Caption = 'Interfaces'
       object SoundCardLbl: TLabel
-        Left = 47
+        Left = 46
         Top = 20
         Width = 34
         Height = 13
@@ -1399,7 +1352,7 @@ object HW: THW
         Caption = 'Sound:'
       end
       object ChrGenLbl: TLabel
-        Left = 6
+        Left = 5
         Top = 44
         Width = 75
         Height = 13
@@ -1407,7 +1360,7 @@ object HW: THW
         Caption = 'Chr$ Generator:'
       end
       object HiResLbl: TLabel
-        Left = 3
+        Left = 2
         Top = 68
         Width = 78
         Height = 13
@@ -1415,7 +1368,7 @@ object HW: THW
         Caption = 'High Resolution:'
       end
       object ColourLabel: TLabel
-        Left = 48
+        Left = 47
         Top = 92
         Width = 33
         Height = 13
@@ -1423,16 +1376,16 @@ object HW: THW
         Caption = 'Colour:'
       end
       object RomCartridgeLabel: TLabel
-        Left = 8
-        Top = 140
+        Left = 7
+        Top = 164
         Width = 73
         Height = 13
         Alignment = taRightJustify
         Caption = 'ROM Cartridge:'
       end
       object ZXpandEmulationInfo: TImage
-        Left = 374
-        Top = 94
+        Left = 382
+        Top = 16
         Width = 15
         Height = 15
         AutoSize = True
@@ -1485,39 +1438,76 @@ object HW: THW
         OnClick = ZXpandEmulationInfoClick
       end
       object SpeechBoxLbl: TLabel
-        Left = 41
+        Left = 40
         Top = 116
         Width = 40
         Height = 13
         Alignment = taRightJustify
         Caption = 'Speech:'
       end
+      object JoystickBoxLabel: TLabel
+        Left = 39
+        Top = 140
+        Width = 41
+        Height = 13
+        Alignment = taRightJustify
+        Caption = 'Joystick:'
+      end
+      object JoystickLeftBoxLabel: TLabel
+        Left = 184
+        Top = 139
+        Width = 12
+        Height = 13
+        Caption = 'L='
+        Enabled = False
+      end
+      object JoystickRightBoxLabel: TLabel
+        Left = 224
+        Top = 139
+        Width = 14
+        Height = 13
+        Caption = 'R='
+        Enabled = False
+      end
+      object JoystickUpBoxLabel: TLabel
+        Left = 264
+        Top = 139
+        Width = 14
+        Height = 13
+        Caption = 'U='
+        Enabled = False
+      end
+      object JoystickDownBoxLabel: TLabel
+        Left = 304
+        Top = 139
+        Width = 14
+        Height = 13
+        Caption = 'D='
+        Enabled = False
+      end
+      object JoystickFireBoxLabel: TLabel
+        Left = 344
+        Top = 139
+        Width = 12
+        Height = 13
+        Caption = 'F='
+        Enabled = False
+      end
       object SoundCardBox: TComboBox
-        Left = 86
+        Left = 85
         Top = 16
-        Width = 89
+        Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
         OnChange = SoundCardBoxChange
-        Items.Strings = (
-          'None'
-          'Ace User'
-          'Boldfield'
-          'Fuller Box'
-          'Sinclair 128K'
-          'Timex'
-          'Quicksilva'
-          'Zon X')
       end
       object ChrGenBox: TComboBox
-        Left = 86
+        Left = 85
         Top = 40
-        Width = 89
+        Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 1
         OnChange = ChrGenBoxChange
         Items.Strings = (
@@ -1528,12 +1518,11 @@ object HW: THW
           'Kayde')
       end
       object HiResBox: TComboBox
-        Left = 86
+        Left = 85
         Top = 64
-        Width = 89
+        Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 2
         OnChange = HiResBoxChange
         Items.Strings = (
@@ -1545,79 +1534,78 @@ object HW: THW
       end
       object KMouse: TCheckBox
         Left = 184
-        Top = 36
+        Top = 76
         Width = 105
         Height = 17
         Caption = 'Kempston Mouse'
-        TabOrder = 7
+        TabOrder = 21
+        OnClick = KMouseClick
       end
       object TS2050: TCheckBox
         Left = 184
-        Top = 93
+        Top = 15
         Width = 101
         Height = 17
         Caption = 'TS2050 Modem'
         Color = clBtnFace
         ParentColor = False
-        TabOrder = 10
+        TabOrder = 18
         OnClick = TS2050Click
       end
       object Multiface: TCheckBox
         Left = 184
-        Top = 55
+        Top = 95
         Width = 97
         Height = 17
         Caption = 'Multiface 128'
-        TabOrder = 8
+        TabOrder = 22
         OnClick = MultifaceClick
       end
       object TS2050Config: TButton
-        Left = 184
-        Top = 110
-        Width = 76
+        Left = 201
+        Top = 32
+        Width = 80
         Height = 20
-        Caption = 'Configure'
-        TabOrder = 11
+        Caption = 'Configure...'
+        TabOrder = 19
         OnClick = TS2050ConfigClick
       end
       object ZXPrinter: TCheckBox
-        Left = 184
-        Top = 74
+        Left = 304
+        Top = 57
         Width = 97
         Height = 17
         Caption = 'ZX Printer'
-        TabOrder = 9
+        TabOrder = 26
         OnClick = ZXPrinterClick
       end
       object ZXpand: TCheckBox
-        Left = 300
-        Top = 93
+        Left = 304
+        Top = 15
         Width = 65
         Height = 17
         Caption = 'ZXpand'
-        TabOrder = 12
+        TabOrder = 24
         OnClick = ZXpandClick
       end
       object ColourBox: TComboBox
-        Left = 86
+        Left = 85
         Top = 88
-        Width = 89
+        Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 3
         OnChange = ColourBoxChange
         Items.Strings = (
           'None')
       end
       object RomCartridgeBox: TComboBox
-        Left = 86
-        Top = 136
-        Width = 89
+        Left = 85
+        Top = 160
+        Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 5
+        TabOrder = 11
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
           'None'
@@ -1628,32 +1616,31 @@ object HW: THW
           'ZXC4')
       end
       object BrowseRomCartridge: TButton
-        Left = 370
-        Top = 136
-        Width = 19
+        Left = 380
+        Top = 160
+        Width = 21
         Height = 21
         Caption = '...'
         Enabled = False
-        TabOrder = 20
+        TabOrder = 17
         OnClick = BrowseROMCartridgeClick
       end
       object ButtonZXpandSDCard: TButton
-        Left = 300
-        Top = 110
-        Width = 76
+        Left = 321
+        Top = 32
+        Width = 80
         Height = 20
-        Caption = 'SD Card'
-        TabOrder = 13
+        Caption = 'SD Card...'
+        TabOrder = 25
         OnClick = ButtonZXpandSDCardClick
       end
       object ZXC1ConfigurationBox: TComboBox
         Left = 184
-        Top = 136
+        Top = 160
         Width = 89
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 14
+        TabOrder = 12
         Visible = False
         OnChange = RomCartridgeBoxChange
         Items.Strings = (
@@ -1666,263 +1653,428 @@ object HW: THW
       end
       object uSource: TCheckBox
         Left = 184
-        Top = 17
+        Top = 57
         Width = 97
         Height = 17
-        Caption = 'Currah µSource'
-        TabOrder = 6
+        Caption = 'Currah '#181'Source'
+        TabOrder = 20
         OnClick = uSourceClick
       end
       object RomCartridgeFileBox: TEdit
         Left = 184
-        Top = 136
-        Width = 184
+        Top = 160
+        Width = 194
         Height = 21
         Enabled = False
-        TabOrder = 15
+        TabOrder = 16
       end
       object SinclairRomCartridgeFileBox: TComboBox
         Left = 184
-        Top = 136
-        Width = 184
+        Top = 160
+        Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
-        TabOrder = 16
+        TabOrder = 15
         Visible = False
         OnChange = SinclairRomCartridgeFileBoxChange
       end
       object TS1510RomCartridgeFileBox: TComboBox
         Left = 184
-        Top = 136
-        Width = 184
+        Top = 160
+        Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
-        TabOrder = 17
+        TabOrder = 14
         Visible = False
         OnChange = TS1510RomCartridgeFileBoxChange
       end
       object TC2068RomCartridgeFileBox: TComboBox
         Left = 184
-        Top = 136
-        Width = 184
+        Top = 160
+        Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
-        TabOrder = 18
+        TabOrder = 29
         Visible = False
         OnChange = TC2068RomCartridgeFileBoxChange
       end
       object TS2068RomCartridgeFileBox: TComboBox
         Left = 184
-        Top = 136
-        Width = 184
+        Top = 160
+        Width = 194
         Height = 21
         DropDownCount = 10
-        ItemHeight = 13
-        TabOrder = 19
+        TabOrder = 13
         Visible = False
         OnChange = TS2068RomCartridgeFileBoxChange
       end
       object SpeechBox: TComboBox
-        Left = 86
+        Left = 85
         Top = 112
-        Width = 89
+        Width = 94
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 4
         OnChange = SpeechBoxChange
         Items.Strings = (
           'None')
       end
+      object SpecDrum: TCheckBox
+        Left = 184
+        Top = 114
+        Width = 121
+        Height = 17
+        Caption = 'Cheetah SpecDrum'
+        TabOrder = 23
+        OnClick = SpecDrumClick
+      end
+      object JoystickBox: TComboBox
+        Left = 85
+        Top = 136
+        Width = 94
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 5
+        OnChange = JoystickBoxChange
+        Items.Strings = (
+          'None')
+      end
+      object JoystickLeftBox: TEdit
+        Left = 200
+        Top = 136
+        Width = 17
+        Height = 21
+        AutoSize = False
+        CharCase = ecUpperCase
+        Enabled = False
+        MaxLength = 1
+        TabOrder = 6
+        Text = '-'
+        OnChange = JoystickLeftBoxChange
+        OnExit = JoystickBoxExit
+        OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
+        OnMouseUp = JoystickBoxMouseUp
+      end
+      object JoystickRightBox: TEdit
+        Left = 240
+        Top = 136
+        Width = 17
+        Height = 21
+        AutoSize = False
+        CharCase = ecUpperCase
+        Enabled = False
+        MaxLength = 1
+        TabOrder = 7
+        Text = '-'
+        OnChange = JoystickRightBoxChange
+        OnExit = JoystickBoxExit
+        OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
+        OnMouseUp = JoystickBoxMouseUp
+      end
+      object JoystickUpBox: TEdit
+        Left = 280
+        Top = 136
+        Width = 17
+        Height = 21
+        AutoSize = False
+        CharCase = ecUpperCase
+        Enabled = False
+        MaxLength = 1
+        TabOrder = 8
+        Text = '-'
+        OnChange = JoystickUpBoxChange
+        OnExit = JoystickBoxExit
+        OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
+        OnMouseUp = JoystickBoxMouseUp
+      end
+      object JoystickDownBox: TEdit
+        Left = 320
+        Top = 136
+        Width = 17
+        Height = 21
+        AutoSize = False
+        CharCase = ecUpperCase
+        Enabled = False
+        MaxLength = 1
+        TabOrder = 9
+        Text = '-'
+        OnChange = JoystickDownBoxChange
+        OnExit = JoystickBoxExit
+        OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
+        OnMouseUp = JoystickBoxMouseUp
+      end
+      object JoystickFireBox: TEdit
+        Left = 360
+        Top = 136
+        Width = 17
+        Height = 21
+        AutoSize = False
+        CharCase = ecUpperCase
+        Enabled = False
+        MaxLength = 1
+        TabOrder = 10
+        Text = '-'
+        OnChange = JoystickFireBoxChange
+        OnExit = JoystickBoxExit
+        OnKeyDown = JoystickBoxKeyDown
+        OnKeyPress = JoystickBoxKeyPress
+        OnMouseUp = JoystickBoxMouseUp
+      end
+      object Z80Assembler: TCheckBox
+        Left = 304
+        Top = 76
+        Width = 97
+        Height = 17
+        Caption = 'Z80 Assembler'
+        TabOrder = 27
+        OnClick = Z80AssemblerClick
+      end
+      object Memocalc: TCheckBox
+        Left = 304
+        Top = 95
+        Width = 97
+        Height = 17
+        Caption = 'Memocalc'
+        TabOrder = 28
+        OnClick = MemocalcClick
+      end
+      object Memotext: TCheckBox
+        Left = 304
+        Top = 114
+        Width = 97
+        Height = 17
+        Caption = 'Memotext'
+        TabOrder = 30
+        Visible = False
+      end
     end
     object FloppyDrives: TTabSheet
       Caption = 'Drives'
       ImageIndex = 1
-      object LabelA: TLabel
-        Left = 207
-        Top = 20
-        Width = 10
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'A:'
-      end
-      object LabelB: TLabel
-        Left = 207
-        Top = 44
-        Width = 10
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'B:'
-      end
-      object LabelFDC: TLabel
-        Left = 24
-        Top = 20
-        Width = 24
-        Height = 13
-        Caption = 'FDC:'
-      end
-      object LabelIDE: TLabel
-        Left = 28
-        Top = 72
-        Width = 21
-        Height = 13
-        Caption = 'IDE:'
-      end
-      object ZXCFLabel: TLabel
-        Left = 184
-        Top = 72
-        Width = 34
-        Height = 13
-        Caption = 'SRAM:'
-      end
-      object DriveAType: TComboBox
-        Left = 224
-        Top = 16
-        Width = 153
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 3
-        OnChange = DriveATypeChange
-        Items.Strings = (
-          'None'
-          '3" Single Sided (180k)'
-          '3" Double Sided (360k)'
-          '3.5" Double Sided (720k)'
-          '5.25" Double Sided (720k)')
-      end
-      object DriveBType: TComboBox
-        Left = 224
-        Top = 40
-        Width = 153
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 4
-        OnChange = DriveBTypeChange
-        Items.Strings = (
-          'None'
-          '3" Single Sided (180k)'
-          '3" Double Sided (360k)'
-          '3.5" Double Sided (720k)'
-          '5.25" Double Sided (720k)')
-      end
-      object FDC: TComboBox
-        Left = 56
-        Top = 16
-        Width = 113
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
+      object GroupBox1: TGroupBox
+        Left = 4
+        Top = 4
+        Width = 393
+        Height = 85
+        Caption = 'Floppy Drives'
         TabOrder = 0
-        OnChange = FDCChange
-        Items.Strings = (
-          'None'
-          '+3'
-          'MGT Disciple'
-          'MGT Plus D')
+        object LabelFDC: TLabel
+          Left = 8
+          Top = 28
+          Width = 27
+          Height = 13
+          Caption = 'Type:'
+        end
+        object DriveATypeLabel: TLabel
+          Left = 175
+          Top = 28
+          Width = 10
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'A:'
+        end
+        object DriveBTypeLabel: TLabel
+          Left = 175
+          Top = 56
+          Width = 10
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'B:'
+        end
+        object FDCRomBoxLabel: TLabel
+          Left = 160
+          Top = 28
+          Width = 28
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'ROM:'
+        end
+        object NoMicrodrivesLabel: TLabel
+          Left = 252
+          Top = 56
+          Width = 57
+          Height = 13
+          Caption = 'Microdrives:'
+        end
+        object FDCBox: TComboBox
+          Left = 40
+          Top = 24
+          Width = 113
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 0
+          OnChange = FDCBoxChange
+          Items.Strings = (
+            'None'
+            '+3'
+            'MGT Disciple'
+            'MGT Plus D')
+        end
+        object DriveAType: TComboBox
+          Left = 192
+          Top = 24
+          Width = 161
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 3
+          OnChange = DriveATypeChange
+          Items.Strings = (
+            'None'
+            '3" Single-Sided (180K)'
+            '3" Double-Sided (360K)'
+            '3.5" Double-Sided (720K)'
+            '5.25" Double-Sided (720K)')
+        end
+        object DriveBType: TComboBox
+          Left = 192
+          Top = 52
+          Width = 161
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 4
+          OnChange = DriveBTypeChange
+          Items.Strings = (
+            'None'
+            '3" Single-Sided (180K)'
+            '3" Double-Sided (360K)'
+            '3.5" Double-Sided (720K)'
+            '5.25" Double-Sided (720K)')
+        end
+        object FDCRomBox: TComboBox
+          Left = 192
+          Top = 24
+          Width = 171
+          Height = 21
+          ItemHeight = 0
+          TabOrder = 1
+          OnChange = FDCRomBoxChange
+        end
+        object Interface1Configure: TButton
+          Left = 40
+          Top = 52
+          Width = 113
+          Height = 20
+          Caption = 'Configure RS232...'
+          TabOrder = 5
+          OnClick = Interface1ConfigureClick
+        end
+        object FDCRomBoxBrowse: TButton
+          Left = 364
+          Top = 24
+          Width = 19
+          Height = 21
+          Caption = '...'
+          TabOrder = 2
+          OnClick = FDCRomBoxBrowseClick
+        end
+        object NoMicrodrivesComboBox: TComboBox
+          Left = 314
+          Top = 52
+          Width = 47
+          Height = 21
+          TabOrder = 6
+          Text = 'NoMicrodrivesComboBox'
+          OnChange = NoMicrodrivesComboBoxChange
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8')
+        end
       end
-      object Autoboot: TCheckBox
-        Left = 224
-        Top = 19
-        Width = 113
-        Height = 15
-        Caption = 'Autoboot TR-DOS'
-        TabOrder = 2
-      end
-      object IF1Config: TButton
-        Left = 224
-        Top = 16
-        Width = 81
-        Height = 20
-        Caption = 'Configure'
+      object GroupBox2: TGroupBox
+        Left = 4
+        Top = 96
+        Width = 393
+        Height = 85
+        Caption = 'IDE Drives'
         TabOrder = 1
-        OnClick = IF1ConfigClick
-      end
-      object IDEBox: TComboBox
-        Left = 56
-        Top = 68
-        Width = 113
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 5
-        OnChange = IDEBoxChange
-        Items.Strings = (
-          'Simple +3e 8-Bit')
-      end
-      object ZXCFRAM: TComboBox
-        Left = 224
-        Top = 68
-        Width = 81
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 6
-        Items.Strings = (
-          '128k'
-          '512k'
-          '1024k')
-      end
-      object Upload: TCheckBox
-        Left = 56
-        Top = 100
-        Width = 97
-        Height = 17
-        Caption = 'Upload Jumper'
-        Checked = True
-        State = cbChecked
-        TabOrder = 7
-      end
-    end
-    object QLSettings: TTabSheet
-      Caption = 'QL'
-      ImageIndex = 3
-      object LabelProcessor: TLabel
-        Left = 120
-        Top = 20
-        Width = 50
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'Processor:'
-      end
-      object LabelMemory: TLabel
-        Left = 130
-        Top = 52
-        Width = 40
-        Height = 13
-        Alignment = taRightJustify
-        Caption = 'Memory:'
-      end
-      object QLCPU: TComboBox
-        Left = 184
-        Top = 16
-        Width = 97
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 0
-        Items.Strings = (
-          'MC68000'
-          'MC68008'
-          'MC68010'
-          'MC68020')
-      end
-      object QLMem: TComboBox
-        Left = 184
-        Top = 48
-        Width = 97
-        Height = 21
-        Style = csDropDownList
-        ItemHeight = 13
-        TabOrder = 1
-        Items.Strings = (
-          '128k'
-          '256k'
-          '512k')
+        object LabelIDE: TLabel
+          Left = 8
+          Top = 28
+          Width = 27
+          Height = 13
+          Caption = 'Type:'
+        end
+        object ZXCFLabel: TLabel
+          Left = 161
+          Top = 28
+          Width = 27
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'RAM:'
+        end
+        object IDERomBoxLabel: TLabel
+          Left = 160
+          Top = 28
+          Width = 28
+          Height = 13
+          Alignment = taRightJustify
+          Caption = 'ROM:'
+        end
+        object Plus3eNoticeLabel: TLabel
+          Left = 8
+          Top = 52
+          Width = 375
+          Height = 26
+          AutoSize = False
+          Caption = 
+            'The +3e ROM is supported by this IDE device. Browse for the appr' +
+            'opriate ROM from the Advanced Settings tab. Disable the on-board' +
+            ' ROM using the jumper.'
+          WordWrap = True
+        end
+        object IDEBox: TComboBox
+          Left = 40
+          Top = 24
+          Width = 113
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 0
+          OnChange = IDEBoxChange
+          Items.Strings = (
+            'Simple +3e 8-Bit')
+        end
+        object ZXCFRAM: TComboBox
+          Left = 192
+          Top = 24
+          Width = 81
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 1
+          OnChange = ZXCFRAMChange
+          Items.Strings = (
+            '128K'
+            '512K'
+            '1024K')
+        end
+        object IDERomBox: TComboBox
+          Left = 192
+          Top = 24
+          Width = 171
+          Height = 21
+          ItemHeight = 0
+          TabOrder = 2
+          OnChange = IDERomBoxChange
+        end
+        object IDERomBoxBrowse: TButton
+          Left = 364
+          Top = 24
+          Width = 19
+          Height = 21
+          Caption = '...'
+          TabOrder = 3
+          OnClick = IDERomBoxBrowseClick
+        end
       end
     end
     object AdvSettings: TTabSheet
@@ -1955,6 +2107,7 @@ object HW: THW
         ParentColor = False
         State = cbChecked
         TabOrder = 2
+        OnClick = ProtectROMClick
       end
       object NTSC: TCheckBox
         Left = 72
@@ -1983,7 +2136,9 @@ object HW: THW
         Top = 80
         Width = 145
         Height = 17
-        Hint = 'Allows unrestricted machine code to run from the 32k-48k range'
+        Hint = 
+          'Overcomes the restriction that prevents machine code running fro' +
+          'm the 32K-48K range on the ZX81'
         Caption = 'M1Not Circuit'
         Color = clBtnFace
         ParentColor = False
@@ -2003,6 +2158,7 @@ object HW: THW
         ParentBiDiMode = False
         ParentColor = False
         TabOrder = 7
+        OnClick = Issue2Click
       end
       object FloatingPointHardwareFix: TCheckBox
         Left = 72
@@ -2010,8 +2166,8 @@ object HW: THW
         Width = 153
         Height = 17
         Hint = 
-          'Sinclair released strap-on board to the Z80 to overcome the floa' +
-          'ting point maths bug in the edition 1 ROM'
+          'Sinclair fitted a strap-on board to the Z80 to overcome the floa' +
+          'ting point maths bug in the edition 1 ZX81 ROM'
         Caption = 'Floating Point Hardware Fix'
         Color = clBtnFace
         ParentColor = False
@@ -2037,7 +2193,7 @@ object HW: THW
         Height = 17
         Hint = 
           'Wilf Rigter'#39's modification to prevent Wait state insertion at ev' +
-          'ery NMI'
+          'ery NMI to speed up ZX81 SLOW mode by 10%'
         Caption = 'Improved Wait Circuit'
         Color = clBtnFace
         ParentColor = False
@@ -2051,13 +2207,44 @@ object HW: THW
         Top = 16
         Width = 201
         Height = 21
-        ItemHeight = 0
         TabOrder = 0
         OnChange = RomBoxChange
       end
     end
   end
+  object DefaultsButton: TButton
+    Left = 4
+    Top = 363
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = 'Defaults'
+    TabOrder = 3
+    OnClick = DefaultsButtonClick
+  end
+  object Apply: TButton
+    Left = 339
+    Top = 363
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = 'Apply'
+    Enabled = False
+    TabOrder = 7
+    OnClick = ApplyClick
+  end
+  object RestoreButton: TButton
+    Left = 84
+    Top = 363
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = 'Restore'
+    TabOrder = 4
+    OnClick = RestoreButtonClick
+  end
   object RomSelect: TOpenDialog
+    DefaultExt = '.rom'
     Filter = 'Cartridge Files|*.rom;*.bin;*.dck'
     Options = [ofHideReadOnly, ofNoChangeDir, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Select Cartridge File'

@@ -1,6 +1,6 @@
 object FSSettings: TFSSettings
-  Left = 484
-  Top = 165
+  Left = 189
+  Top = 81
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Display Settings'
@@ -12,6 +12,7 @@ object FSSettings: TFSSettings
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
@@ -94,7 +95,9 @@ object FSSettings: TFSSettings
     Width = 65
     Height = 17
     Caption = 'GDI'
+    Checked = True
     TabOrder = 0
+    TabStop = True
     OnClick = GDIBtnClick
   end
   object DDrawBtn: TRadioButton
@@ -103,9 +106,7 @@ object FSSettings: TFSSettings
     Width = 89
     Height = 17
     Caption = 'DirectDraw'
-    Checked = True
     TabOrder = 1
-    TabStop = True
     OnClick = GDIBtnClick
   end
 end

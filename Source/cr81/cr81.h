@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * zx81.h
- *
  */
 
 #ifndef zx81_h
@@ -24,22 +21,6 @@
 
 #include "z80\config.h"
 #include "zx81config.h"
-
-#define kbD0 1
-#define kbD1 2
-#define kbD2 4
-#define kbD3 8
-#define kbD4 16
-#define kbD5 32
-
-#define kbA8  0
-#define kbA9  1
-#define kbA10 2
-#define kbA11 3
-#define kbA12 4
-#define kbA13 5
-#define kbA14 6
-#define kbA15 7
 
 #ifdef __cplusplus
 

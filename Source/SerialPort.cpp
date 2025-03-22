@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2006 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
- * SerialPort.cpp
  */
 
 //---------------------------------------------------------------------------
@@ -35,15 +32,11 @@
 TSerialConfig *SerialConfig;
 
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 BYTE d8251readDATA(void) { return(SerialConfig->ReadDATA()); }
 BYTE d8251readCTRL(void) { return(SerialConfig->ReadCTRL()); }
 void d8251writeDATA(BYTE data) {SerialConfig->WriteDATA(data); }
 void d8251writeCTRL(BYTE data) { SerialConfig->WriteCTRL(data); }
 void d8251reset(void) { SerialConfig->Reset(); }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 BYTE TSerialConfig::ReadDATA()
 {
@@ -209,8 +202,6 @@ void TSerialConfig::Reset(void)
         }
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 void __fastcall TSerialConfig::ComPort1Error(TObject *Sender,
       TComErrors Errors)
 {
@@ -332,7 +323,6 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
         if (Sender) Close();
 }
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 
 void TSerialConfig::LoadSettings(TIniFile *ini)
 {
@@ -370,7 +360,6 @@ void TSerialConfig::SaveSettings(TIniFile *ini)
                 File=NULL;
         }
 }
-
 
 void __fastcall TSerialConfig::ComPortListChange(TObject *Sender)
 {
@@ -411,4 +400,6 @@ void __fastcall TSerialConfig::ClientSocketError(TObject *Sender,
         ErrorCode=0;
 }
 //---------------------------------------------------------------------------
+
+
 

@@ -12,6 +12,7 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   Icon.Data = {
     0000010002002020100000000000E80200002600000010101000000000002801
     00000E0300002800000020000000400000000100040000000000800200000000
@@ -102,6 +103,8 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 17
     Alignment = taLeftJustify
     Caption = 'Discard surplus spaces'
+    Checked = True
+    State = cbChecked
     TabOrder = 3
   end
   object cboAcceptAlternateKeywordSpelling: TCheckBox
@@ -111,6 +114,8 @@ object LoadBasicListingOptionsForm: TLoadBasicListingOptionsForm
     Height = 17
     Alignment = taLeftJustify
     Caption = 'Accept alternate keyword spellings'
+    Checked = True
+    State = cbChecked
     TabOrder = 4
   end
   object cboLineNumberIncrement: TComboBox

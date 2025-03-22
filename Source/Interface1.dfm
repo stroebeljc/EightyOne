@@ -1,21 +1,21 @@
 object IF1: TIF1
-  Left = 500
-  Top = 141
-  BorderIcons = [biSystemMenu]
+  Left = 191
+  Top = 170
+  BorderIcons = []
   BorderStyle = bsToolWindow
-  Caption = 'ZX Interface 1'
+  Caption = 'ZX Interface 1 RS232'
   ClientHeight = 168
-  ClientWidth = 424
+  ClientWidth = 234
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object GroupSerial: TGroupBox
@@ -251,76 +251,14 @@ object IF1: TIF1
     end
   end
   object OK: TButton
-    Left = 342
+    Left = 150
     Top = 136
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'OK'
-    TabOrder = 3
-    OnClick = OKClick
-  end
-  object GroupROM: TGroupBox
-    Left = 232
-    Top = 8
-    Width = 185
-    Height = 57
-    Caption = 'ROM'
     TabOrder = 1
-    object Label11: TLabel
-      Left = 8
-      Top = 25
-      Width = 77
-      Height = 13
-      Caption = 'Release Edition:'
-    end
-    object RomEdition: TComboBox
-      Left = 98
-      Top = 21
-      Width = 81
-      Height = 21
-      Style = csDropDownList
-      ItemHeight = 13
-      TabOrder = 0
-      OnChange = RomEditionChange
-      Items.Strings = (
-        'Edition 1'
-        'Edition 2')
-    end
-  end
-  object GroupDrives: TGroupBox
-    Left = 232
-    Top = 72
-    Width = 185
-    Height = 57
-    Caption = 'Microdrives'
-    TabOrder = 2
-    object Label4: TLabel
-      Left = 8
-      Top = 23
-      Width = 85
-      Height = 13
-      Caption = 'Number of Drives:'
-    end
-    object NoMicroDrives: TComboBox
-      Left = 98
-      Top = 19
-      Width = 81
-      Height = 21
-      Style = csDropDownList
-      DropDownCount = 9
-      ItemHeight = 13
-      TabOrder = 0
-      Items.Strings = (
-        '0'
-        '1'
-        '2'
-        '3'
-        '4'
-        '5'
-        '6'
-        '7'
-        '8')
-    end
+    OnClick = OKClick
   end
   object ComPort: TComPort
     BaudRate = br9600

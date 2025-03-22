@@ -1,6 +1,6 @@
 object MemoryWindow: TMemoryWindow
-  Left = 450
-  Top = 469
+  Left = 197
+  Top = 159
   Width = 580
   Height = 302
   HorzScrollBar.Visible = False
@@ -16,6 +16,7 @@ object MemoryWindow: TMemoryWindow
   Font.Height = -11
   Font.Name = 'Courier New'
   Font.Style = []
+  FormStyle = fsStayOnTop
   KeyPreview = True
   OldCreateOrder = False
   PopupMenu = PopupMenu1

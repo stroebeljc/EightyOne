@@ -1,5 +1,5 @@
-/* EightyOne  - A Windows ZX80/81/clone emulator.
- * Copyright (C) 2003-2019 Michael D Wynne
+/* EightyOne - A Windows emulator of the Sinclair ZX range of computers.
+ * Copyright (C) 2003-2025 Michael D Wynne
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         }
                         else if (GetLineLabel(entry))
                         {
+                                if (currentLineNumber == -1) currentLineNumber = 0;
                                 entry.lineNumber = currentLineNumber + lineNumberIncrement;
                                 if (BasicLineExists(entry))
                                 {
@@ -152,6 +153,7 @@ void IBasicLoader::ReadBasicListingFile(AnsiString filename)
                         }
                         else
                         {
+                                if (currentLineNumber == -1) currentLineNumber = 0;
                                 currentLineNumber += lineNumberIncrement;
                                 entry.lineNumber = currentLineNumber;
                         }
@@ -318,7 +320,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
         ExtractZxTokenFormatExtensions(zxTokenSupport);
         ExtractInverseCharacters();
         ExtractEscapeCharacters();
-        ExtractDoubleQuoteCharacters();
+        ExtractDoubleQuoteCharacters(tokeniseRemContents, acceptAlternateKeywordSpelling);
         ExtractZxTokenFormatExtensionByteEncoding(zxTokenSupport);
 
         memset(mLineBufferTokenised, 0, sizeof(mLineBufferTokenised));
@@ -333,7 +335,7 @@ void IBasicLoader::ProcessLine(LineEntry lineEntry, int& addressOffset, bool tok
                         i++;
                 }
         }
-        
+
         // Append a space at the end of the line to ensure a token without a trailing space is detected
         i = strlen((char*)mLineBufferTokenised);
         mLineBufferTokenised[i] = ' ';
@@ -513,25 +515,6 @@ void IBasicLoader::MaskOutRemContents(unsigned char* buffer)
         
         char* pContents = pRem + strlen(rem);
         memset(pContents, Blank, strlen(pContents));
-}
-
-unsigned char* IBasicLoader::ExtractLineNumber(int& lineNumber)
-{
-        unsigned char* pCommand;
-
-        lineNumber = strtol((const char*)mLineBuffer, &(char*)pCommand, 10);
-
-        if (pCommand == mLineBuffer)
-        {
-                throw runtime_error("Line number missing");
-        }
-
-        if ((lineNumber < 0) || (lineNumber > 16383))
-        {
-                throw out_of_range("Line number too high");
-        }
-
-        return pCommand;
 }
 
 bool IBasicLoader::StartOfNumber(int index)
@@ -932,7 +915,7 @@ void IBasicLoader::DoTokenise(map<unsigned char, string> tokens)
                 bool tokenEndsWithSpace = (endChar == ' ');
                 bool tokenEndsWithAlpha = isalpha(endChar);
 
-                if (endChar == '(' || endChar == ')' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';')
+                if (endChar == '(' || endChar == ')' || endChar == '!' || endChar == '\"' || (endChar == '#' && pToken[lenToken-2] != ' ') || (endChar == '*' &&  it->second != "**") || endChar == '\'' || endChar == ',' || endChar == ';' || endChar == ':')
                 {
                         lenToken--;
                 }

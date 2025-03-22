@@ -6,9 +6,10 @@
         <AppType>Application</AppType>
         <MainSource>EightyOne.cpp</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
+        <CC_Suffix Condition="'$(CC_Suffix)'==''">c</CC_Suffix>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -53,7 +54,7 @@
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
         <ProjectType>CppVCLApplication</ProjectType>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <AllPackageLibs>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib</AllPackageLibs>
+        <AllPackageLibs>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib;OffBtn.lib</AllPackageLibs>
         <_TCHARMapping>char</_TCHARMapping>
         <Multithreaded>true</Multithreaded>
         <Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
@@ -63,8 +64,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <BCC_PCHUsage>None</BCC_PCHUsage>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <IncludePath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>Keypad\;Joystick\;Digitalker\;SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>Keypad\;Joystick\;Digitalker\;SP0256\;RomCartridge\;Spectra\;Chroma\;ql\;Ace\;BasicLoader\;rzx\;IECBus\;peripherals\;lib765\;ide\;1772\;Spectrum\;zx81\;68k\;zxpand\;z80\;sound\;tzx\;BasicLister\;zxprinter\;Debug68k\;DebugWin\;wavtape\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <BCC_IncludePath>zlib\minizip\;zlib\;..\Components\ComPort Library\;libdsk\;..\Components\Office Button 97\OffBtn97\32-Bit\;$(BCC_IncludePath)</BCC_IncludePath>
         <DCC_LongStrings>false</DCC_LongStrings>
         <RunBCCOutOfProcess>true</RunBCCOutOfProcess>
@@ -86,6 +87,7 @@
         <BCC_wprc>true</BCC_wprc>
         <BCC_ZeroLengthEmptyBaseClass>true</BCC_ZeroLengthEmptyBaseClass>
         <BCC_ZeroLengthEmptyMemberFuncs>true</BCC_ZeroLengthEmptyMemberFuncs>
+        <BCC_UseClassicCompiler>false</BCC_UseClassicCompiler>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindcompvclsmp;bindcompvclwinx;bindengine;CloudService;CPort_R;CustomIPTransport;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXInterBaseDriver;DBXMySQLDriver;DBXSqliteDriver;dsnap;dsnapcon;dsnapxml;FireDAC;FireDACADSDriver;FireDACCommon;FireDACCommonDriver;FireDACCommonODBC;FireDACIBDriver;FireDACMSAccDriver;FireDACMySQLDriver;FireDACPgDriver;FireDACSqliteDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inet;inetdb;inetdbxpress;OffBtn;OfficeButton97;RESTBackendComponents;RESTComponents;rtl;soapmidas;soaprtl;soapserver;tethering;vcl;vclactnband;vcldb;vcldsnap;vcledge;vclFireDAC;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -134,7 +136,7 @@
         <ILINK_LibraryPath>$(BDSLIB)\$(PLATFORM)$(CC_SUFFIX)\debug;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <ILINK_Verbose>true</ILINK_Verbose>
-        <LinkPackageStatics>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib</LinkPackageStatics>
+        <LinkPackageStatics>rtl.lib;vcl.lib;OfficeButton97.lib;CPort_R.lib;OffBtn.lib</LinkPackageStatics>
         <Icon_MainIcon>icons\zx81.ico</Icon_MainIcon>
         <VerInfo_MinorVer>41</VerInfo_MinorVer>
         <VerInfo_Release>1</VerInfo_Release>
@@ -169,30 +171,6 @@
         </CppCompile>
         <CppCompile Include="1772\wd1770.c">
             <BuildOrder>73</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\68000.c">
-            <BuildOrder>52</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68kadd.c">
-            <BuildOrder>53</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68karith.c">
-            <BuildOrder>54</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68klogop.c">
-            <BuildOrder>55</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68kmisc.c">
-            <BuildOrder>56</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68kmove.c">
-            <BuildOrder>57</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68kshift.c">
-            <BuildOrder>58</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="68k\op68ksub.c">
-            <BuildOrder>59</BuildOrder>
         </CppCompile>
         <CppCompile Include="About_.cpp">
             <Form>About</Form>
@@ -246,15 +224,6 @@
         <CppCompile Include="Chroma\Chroma.cpp">
             <BuildOrder>94</BuildOrder>
         </CppCompile>
-        <CppCompile Include="Debug68k\d68k.c">
-            <BuildOrder>41</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="Debug68k\debug68.cpp">
-            <Form>Debug68k</Form>
-            <FormType>dfm</FormType>
-            <DependentOn>Debug68k\debug68.h</DependentOn>
-            <BuildOrder>12</BuildOrder>
-        </CppCompile>
         <CppCompile Include="DebugWin\Debug.cpp">
             <Form>Dbg</Form>
             <FormType>dfm</FormType>
@@ -303,6 +272,12 @@
             <DependentOn>DebugWin\SetBreakpoint_.h</DependentOn>
             <BuildOrder>10</BuildOrder>
         </CppCompile>
+        <CppCompile Include="Digitalker\Digitalk.cpp">
+            <BuildOrder>113</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="Digitalker\Digitalkdrv.cpp">
+            <BuildOrder>114</BuildOrder>
+        </CppCompile>
         <CppCompile Include="EightyOne.cpp">
             <BuildOrder>0</BuildOrder>
         </CppCompile>
@@ -333,6 +308,9 @@
             <DependentOn>Interface1.h</DependentOn>
             <BuildOrder>115</BuildOrder>
         </CppCompile>
+        <CppCompile Include="Joystick\Joystick.cpp">
+            <BuildOrder>115</BuildOrder>
+        </CppCompile>
         <CppCompile Include="kbstatus.cpp">
             <DependentOn>kbstatus.h</DependentOn>
             <BuildOrder>114</BuildOrder>
@@ -354,6 +332,15 @@
             <FormType>dfm</FormType>
             <DependentOn>Keyboard_.h</DependentOn>
             <BuildOrder>5</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="Keypad\keypad.cpp">
+            <BuildOrder>115</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="Keypad_.cpp">
+            <Form>Keypad128</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>Keypad_.h</DependentOn>
+            <BuildOrder>116</BuildOrder>
         </CppCompile>
         <CppCompile Include="lib765\765drive.c">
             <BuildOrder>75</BuildOrder>
@@ -419,9 +406,6 @@
             <DependentOn>Plus3Drives.h</DependentOn>
             <BuildOrder>31</BuildOrder>
         </CppCompile>
-        <CppCompile Include="ql\ql.cpp">
-            <BuildOrder>91</BuildOrder>
-        </CppCompile>
         <CppCompile Include="RomCartridge\IF2RomCartridge.cpp">
             <BuildOrder>117</BuildOrder>
         </CppCompile>
@@ -455,9 +439,6 @@
             <DependentOn>sound\SoundOP.h</DependentOn>
             <BuildOrder>36</BuildOrder>
         </CppCompile>
-        <CppCompile Include="SP0256\audio.cpp">
-            <BuildOrder>121</BuildOrder>
-        </CppCompile>
         <CppCompile Include="SP0256\sp0256.c">
             <BuildOrder>127</BuildOrder>
         </CppCompile>
@@ -469,12 +450,6 @@
         </CppCompile>
         <CppCompile Include="SP0256\sp0256_al2.cpp">
             <BuildOrder>124</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="SP0256\SystemClock.cpp">
-            <BuildOrder>127</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="SP0256\Win32Audio.cpp">
-            <BuildOrder>128</BuildOrder>
         </CppCompile>
         <CppCompile Include="Spectra\Spectra.cpp">
             <BuildOrder>116</BuildOrder>
@@ -654,9 +629,6 @@
         <CppCompile Include="zxpand\ff.cpp">
             <BuildOrder>45</BuildOrder>
         </CppCompile>
-        <CppCompile Include="zxpand\js.cpp">
-            <BuildOrder>42</BuildOrder>
-        </CppCompile>
         <CppCompile Include="zxpand\smbsd.cpp">
             <BuildOrder>46</BuildOrder>
         </CppCompile>
@@ -681,51 +653,51 @@
             <DependentOn>zxprinter\zxprinter.h</DependentOn>
             <BuildOrder>121</BuildOrder>
         </CppCompile>
-        <FormResources Include="tzx\tzxEditArchive.dfm"/>
-        <FormResources Include="tzx\tzxEditData.dfm"/>
-        <FormResources Include="SymBrowse.dfm"/>
-        <FormResources Include="Speed_.dfm"/>
-        <FormResources Include="SplashScreen.dfm"/>
         <FormResources Include="tzx\tzxEditGeneral.dfm"/>
         <FormResources Include="tzx\tzxEditHWInfo.dfm"/>
         <FormResources Include="tzx\tzxEditPause.dfm"/>
+        <FormResources Include="tzx\tzxEditData.dfm"/>
+        <FormResources Include="SymBrowse.dfm"/>
+        <FormResources Include="tzx\tzxEditArchive.dfm"/>
         <FormResources Include="tzx\tzxEditText.dfm"/>
         <FormResources Include="sound\SoundForm.dfm"/>
         <FormResources Include="sound\SoundOP.dfm"/>
+        <FormResources Include="Speed_.dfm"/>
+        <FormResources Include="SplashScreen.dfm"/>
         <FormResources Include="zx97Config.dfm"/>
         <FormResources Include="zxprinter\zxprinter.dfm"/>
         <FormResources Include="wavtape\wavload_.dfm"/>
         <FormResources Include="tzx\TZXMan.dfm"/>
         <FormResources Include="ZipFile_.dfm"/>
-        <FormResources Include="BasicLoader\BasicLoaderOptions_.dfm"/>
-        <FormResources Include="BasicLister\BasicListerOptions_.dfm"/>
-        <FormResources Include="BasicLister\BasicLister_.dfm"/>
-        <FormResources Include="BasicLister\BasicListingFormatInfo_.dfm"/>
-        <FormResources Include="DebugWin\ProfilePlot_.dfm"/>
         <FormResources Include="DebugWin\Profiler.dfm"/>
         <FormResources Include="DebugWin\ProfSampEdit.dfm"/>
-        <FormResources Include="DebugWin\Hist.dfm"/>
-        <FormResources Include="Debug68k\debug68.dfm"/>
+        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
+        <FormResources Include="DebugWin\ProfilePlot_.dfm"/>
         <FormResources Include="DebugWin\Debug.dfm"/>
         <FormResources Include="DebugWin\EditValue_.dfm"/>
-        <FormResources Include="Artifacts_.dfm"/>
+        <FormResources Include="DebugWin\Hist.dfm"/>
+        <FormResources Include="FullScreen.dfm"/>
+        <FormResources Include="HW_.dfm"/>
+        <FormResources Include="DebugWin\SetBreakpoint_.dfm"/>
         <FormResources Include="About_.dfm"/>
-        <FormResources Include="DebugWin\SearchSequence_.dfm"/>
-        <FormResources Include="MakeHDF.dfm"/>
+        <FormResources Include="BasicLoader\BasicLoaderOptions_.dfm"/>
+        <FormResources Include="BasicLister\BasicListingFormatInfo_.dfm"/>
+        <FormResources Include="Artifacts_.dfm"/>
+        <FormResources Include="BasicLister\BasicListerOptions_.dfm"/>
+        <FormResources Include="BasicLister\BasicLister_.dfm"/>
         <FormResources Include="memoryWindow.dfm"/>
         <FormResources Include="MemSave_.dfm"/>
-        <FormResources Include="main_.dfm"/>
-        <FormResources Include="LiveMemoryWindow_.dfm"/>
         <FormResources Include="Parallel.dfm"/>
+        <FormResources Include="MakeHDF.dfm"/>
+        <FormResources Include="LiveMemoryWindow_.dfm"/>
+        <FormResources Include="main_.dfm"/>
         <FormResources Include="SerialPort.dfm"/>
         <FormResources Include="Plus3Drives.dfm"/>
-        <FormResources Include="HW_.dfm"/>
-        <FormResources Include="FullScreen.dfm"/>
-        <FormResources Include="DebugWin\SetBreakpoint_.dfm"/>
-        <FormResources Include="Interface1.dfm"/>
-        <FormResources Include="Keyboard_.dfm"/>
         <FormResources Include="kb_.dfm"/>
         <FormResources Include="KeyboardFunctions_.dfm"/>
+        <FormResources Include="Interface1.dfm"/>
+        <FormResources Include="Keyboard_.dfm"/>
+        <FormResources Include="Keypad_.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -808,7 +780,19 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="..\Components\DirectDraw\ddraw.lib" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\Components\DirectDraw\ddraw.lib" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\Components\DirectSound\dsound.lib" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -832,7 +816,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName=".\EightyOne.tds" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>EightyOne.tds</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="libdsk.lib" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="libdsk.lib" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="zlib.lib" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

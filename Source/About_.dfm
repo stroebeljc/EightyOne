@@ -12,6 +12,7 @@ object About: TAbout
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
   PixelsPerInch = 96
@@ -557,7 +558,7 @@ object About: TAbout
     Top = 52
     Width = 218
     Height = 13
-    Caption = '© 2011-2024 Charlie Robson and Paul Farrow'
+    Caption = '© 2011-2025 Charlie Robson and Paul Farrow'
   end
   object Image2: TImage
     Left = 200

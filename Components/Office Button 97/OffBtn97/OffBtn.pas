@@ -244,7 +244,8 @@ const
     {$IFDEF VER93}  'C++Builder 1.0' {$ENDIF}
     {$IFDEF VER110} 'C++Builder 3.0' {$ENDIF}
     {$IFDEF VER125} 'C++Builder 4.0' {$ENDIF}
-    {$IFDEF VER350} 'Delphi/C++Builder 11.0' {$ENDIF};
+    {$IFDEF VER350} 'Delphi/C++Builder 11.0' {$ENDIF}
+    {$IFDEF VER360} 'Delphi/C++Builder 12.0' {$ENDIF};
 var
   CopyRightPtr: Pointer;
 

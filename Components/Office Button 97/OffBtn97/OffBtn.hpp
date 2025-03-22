@@ -1,22 +1,24 @@
 ﻿// CodeGear C++Builder
-// Copyright (c) 1995, 2022 by Embarcadero Technologies, Inc.
+// Copyright (c) 1995, 2024 by Embarcadero Technologies, Inc.
 // All rights reserved
 
-// (DO NOT EDIT: machine generated header) 'OffBtn.dpk' rev: 35.00 (Windows)
+// (DO NOT EDIT: machine generated header) 'OffBtn.dpk' rev: 36.00 (Windows)
 
 #ifndef OffbtnHPP
 #define OffbtnHPP
 
 #pragma delphiheader begin
 #pragma option push
+#if defined(__BORLANDC__) && !defined(__clang__)
 #pragma option -w-      // All warnings off
 #pragma option -Vx      // Zero-length empty class member 
+#endif
 #pragma pack(push,8)
 #include <System.hpp>	// (rtl)
 #include <SysInit.hpp>
 #include <OffBtn.hpp>
 #include <System.UITypes.hpp>	// (rtl)
-#include <Winapi.Windows.hpp>	// (rtl)
+#include <Winapi.Windows.PkgHelper.hpp>	// (rtl)
 #include <Winapi.PsAPI.hpp>	// (rtl)
 #include <System.Character.hpp>	// (rtl)
 #include <System.Internal.ExcUtils.hpp>	// (rtl)
@@ -26,10 +28,10 @@
 #include <System.TypInfo.hpp>	// (rtl)
 #include <System.Math.hpp>	// (rtl)
 #include <System.Generics.Defaults.hpp>	// (rtl)
-#include <System.Rtti.hpp>	// (rtl)
 #include <System.TimeSpan.hpp>	// (rtl)
+#include <System.SyncObjs.hpp>	// (rtl)
+#include <System.Rtti.hpp>	// (rtl)
 #include <System.Classes.hpp>	// (rtl)
-#include <Winapi.ShellAPI.hpp>	// (rtl)
 #include <System.DateUtils.hpp>	// (rtl)
 #include <System.IOUtils.hpp>	// (rtl)
 #include <System.IniFiles.hpp>	// (rtl)
@@ -40,8 +42,8 @@
 #include <System.Actions.hpp>	// (rtl)
 #include <Vcl.ActnList.hpp>	// (vcl)
 #include <System.HelpIntfs.hpp>	// (rtl)
-#include <System.SyncObjs.hpp>	// (rtl)
 #include <Winapi.UxTheme.hpp>	// (rtl)
+#include <System.AnsiStrings.hpp>	// (rtl)
 #include <Vcl.GraphUtil.hpp>	// (vcl)
 #include <Vcl.StdCtrls.hpp>	// (vcl)
 #include <Vcl.Clipbrd.hpp>	// (vcl)
@@ -50,12 +52,11 @@
 #include <Vcl.Dialogs.hpp>	// (vcl)
 #include <Vcl.ExtCtrls.hpp>	// (vcl)
 #include <Vcl.Themes.hpp>	// (vcl)
-#include <System.AnsiStrings.hpp>	// (rtl)
 #include <System.Win.ComObj.hpp>	// (rtl)
 #include <Winapi.FlatSB.hpp>	// (rtl)
 #include <Vcl.Forms.hpp>	// (vcl)
 #include <Vcl.Menus.hpp>	// (vcl)
-#include <Winapi.MsCTF.hpp>	// (rtl)
+#include <Winapi.MsCTF.PkgHelper.hpp>	// (rtl)
 #include <Vcl.Controls.hpp>	// (vcl)
 // PRG_EXT: .bpl
 // BPI_DIR: .

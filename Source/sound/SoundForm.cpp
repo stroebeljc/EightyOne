@@ -60,8 +60,6 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
         delete ini;
-
-        Sound.ReInitialise(0, 0, 16, 44100, 2);
 }
 //---------------------------------------------------------------------------
 void __fastcall TMidiForm::OKClick(TObject *Sender)

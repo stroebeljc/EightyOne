@@ -64,10 +64,10 @@
 // assume all three tone channels together match the beeper volume.
 // Must be <=127 for all channels; 4 x 31 = 124.
 
-#define AMPL_BEEPER		31
-#define AMPL_AY_TONE		31	/* three of these */
-#define AMPL_SPECDRUM		31
-#define AMPL_SPEECH             31
+#define VOLUME_MAX              31
+#define AMPL_BEEPER             31
+#define AMPL_AY_TONE            (31*256) /* three of these */
+#define ADJUSTTO16BIT           256
 
 // max. number of sub-frame AY port writes allowed;
 // given the number of port writes theoretically possible in a
@@ -137,7 +137,7 @@ private:
         int FrameSize;
         int FramesPerSecond;
 
-        unsigned char AYToneLevels[16];
+        double AYToneLevels[16];
         short *Buffer;
         int OldPos,FillPos,OldVal,OldValOrig;
 

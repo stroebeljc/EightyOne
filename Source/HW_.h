@@ -321,6 +321,7 @@ __published:	// IDE-managed Components
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall Z80AssemblerClick(TObject *Sender);
         void __fastcall MemocalcClick(TObject *Sender);
+        void __fastcall RomCartridgeFileBoxChange(TObject *Sender);
 //        void __fastcall MemotextClick(TObject *Sender);
 private:	// User declarations
         int RamPackHeight;

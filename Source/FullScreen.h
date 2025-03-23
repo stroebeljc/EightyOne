@@ -54,6 +54,7 @@ __published:	// IDE-managed Components
         void __fastcall GDIBtnClick(TObject *Sender);
         void __fastcall OKClick(TObject *Sender);
 private:	// User declarations
+        int nativeSizeW,nativeSizeH,nativeBpp;
 public:		// User declarations
         __fastcall TFSSettings(TComponent* Owner);
         void SaveSettings(TIniFile *ini);

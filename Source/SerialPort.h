@@ -39,6 +39,7 @@
 #include "CPort.hpp"
 #include <Dialogs.hpp>
 #include <ExtCtrls.hpp>
+#include <System.Win.ScktComp.hpp>
 #if __CODEGEARC__ >= 0x0620
 #include <System.Win.ScktComp.hpp>
 #else
@@ -49,7 +50,7 @@ class TSerialConfig : public TForm
 {
 __published:	// IDE-managed Components
         TComboBox *ComPortList;
-        TLabel *Label1;
+		TLabel *Label1;
         TComPort *ComPort1;
         TCheckBox *Enabled;
         TButton *OK;

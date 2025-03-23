@@ -285,16 +285,16 @@ void __fastcall TSerialConfig::OKClick(TObject *Sender)
                 if (( ClientSocket->Host == "") || (ClientSocket->Port==0))
                         Enabled->Checked=false;
 
-                if (Enabled->Checked) ClientSocket->Open();
+				if (Enabled->Checked) ClientSocket->Open();
         }
         else
         {
-                ComPort1->Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
+				ComPort1->Port=ComPortList->Items->Strings[ComPortList->ItemIndex];
 
                 SendTo=SERIALCOM;
                 if (Enabled->Checked)
                 {
-                        try { ComPort1->Open(); }
+						try { ComPort1->Open(); }
                         catch(EComPort &E)
                         {
                                 UnicodeString Msg = "Could not open port ";

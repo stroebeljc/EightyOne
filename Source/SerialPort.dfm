@@ -13,9 +13,7 @@ object SerialConfig: TSerialConfig
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   FormStyle = fsStayOnTop
-  OldCreateOrder = False
   Scaled = False
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 42
@@ -61,7 +59,6 @@ object SerialConfig: TSerialConfig
       Width = 121
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 0
       Items.Strings = (
         '110'
@@ -84,7 +81,6 @@ object SerialConfig: TSerialConfig
       Width = 121
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 1
       Items.Strings = (
         '110'
@@ -107,7 +103,6 @@ object SerialConfig: TSerialConfig
       Width = 121
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 2
       Items.Strings = (
         '110'
@@ -163,7 +158,6 @@ object SerialConfig: TSerialConfig
     Width = 121
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 0
     OnChange = ComPortListChange
   end
@@ -263,6 +257,8 @@ object SerialConfig: TSerialConfig
     FlowControl.ControlRTS = rtsDisable
     FlowControl.XonXoffOut = False
     FlowControl.XonXoffIn = False
+    StoredProps = [spBasic]
+    TriggersOnRxChar = True
     OnRxChar = ComPort1RxChar
     OnTxEmpty = ComPort1TxEmpty
     OnBreak = ComPort1Break

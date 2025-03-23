@@ -1,0 +1,83 @@
+﻿// CodeGear C++Builder
+// Copyright (c) 1995, 2024 by Embarcadero Technologies, Inc.
+// All rights reserved
+
+// (DO NOT EDIT: machine generated header) 'CPortSetup.pas' rev: 36.00 (Windows)
+
+#ifndef CportsetupHPP
+#define CportsetupHPP
+
+#pragma delphiheader begin
+#pragma option push
+#if defined(__BORLANDC__) && !defined(__clang__)
+#pragma option -w-      // All warnings off
+#pragma option -Vx      // Zero-length empty class member 
+#endif
+#pragma pack(push,8)
+#include <System.hpp>
+#include <SysInit.hpp>
+#include <Winapi.Windows.hpp>
+#include <Winapi.Messages.hpp>
+#include <System.SysUtils.hpp>
+#include <System.Classes.hpp>
+#include <Vcl.Graphics.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.Dialogs.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Buttons.hpp>
+#include <CPort.hpp>
+#include <CPortCtl.hpp>
+
+//-- user supplied -----------------------------------------------------------
+
+namespace Cportsetup
+{
+//-- forward type declarations -----------------------------------------------
+class DELPHICLASS TComSetupFrm;
+//-- type declarations -------------------------------------------------------
+class PASCALIMPLEMENTATION TComSetupFrm : public Vcl::Forms::TForm
+{
+	typedef Vcl::Forms::TForm inherited;
+	
+__published:
+	Vcl::Stdctrls::TButton* Button1;
+	Vcl::Stdctrls::TButton* Button2;
+	Vcl::Stdctrls::TGroupBox* GroupBox1;
+	Vcl::Stdctrls::TLabel* Label1;
+	Vcl::Stdctrls::TLabel* Label2;
+	Vcl::Stdctrls::TLabel* Label3;
+	Vcl::Stdctrls::TLabel* Label4;
+	Vcl::Stdctrls::TLabel* Label5;
+	Vcl::Stdctrls::TLabel* Label6;
+	Cportctl::TComComboBox* Combo2;
+	Cportctl::TComComboBox* Combo3;
+	Cportctl::TComComboBox* Combo4;
+	Cportctl::TComComboBox* Combo5;
+	Cportctl::TComComboBox* Combo6;
+	Cportctl::TComComboBox* Combo1;
+public:
+	/* TCustomForm.Create */ inline __fastcall virtual TComSetupFrm(System::Classes::TComponent* AOwner) : Vcl::Forms::TForm(AOwner) { }
+	/* TCustomForm.CreateNew */ inline __fastcall virtual TComSetupFrm(System::Classes::TComponent* AOwner, int Dummy) : Vcl::Forms::TForm(AOwner, Dummy) { }
+	/* TCustomForm.CreateScaledNew */ inline __fastcall virtual TComSetupFrm(System::Classes::TComponent* AOwner, int ADPI, int Dummy) : Vcl::Forms::TForm(AOwner, ADPI, Dummy) { }
+	/* TCustomForm.Destroy */ inline __fastcall virtual ~TComSetupFrm() { }
+	
+public:
+	/* TWinControl.CreateParented */ inline __fastcall TComSetupFrm(HWND ParentWindow) : Vcl::Forms::TForm(ParentWindow) { }
+	
+};
+
+
+//-- var, const, procedure ---------------------------------------------------
+extern DELPHI_PACKAGE void __fastcall EditComPort(Cport::TCustomComPort* ComPort);
+}	/* namespace Cportsetup */
+#if !defined(DELPHIHEADER_NO_IMPLICIT_NAMESPACE_USE) && !defined(NO_USING_NAMESPACE_CPORTSETUP)
+using namespace Cportsetup;
+#endif
+#pragma pack(pop)
+#pragma option pop
+
+#pragma delphiheader end.
+//-- end unit ----------------------------------------------------------------
+#endif	// CportsetupHPP

@@ -4786,7 +4786,7 @@ void THW::SelectDefaultRom()
                 break;
 
         case MACHINELAMBDA:
-                RomBox->Text = "lambda8300.rom";
+                RomBox->Text = "lambda8300colour.rom";
                 break;
 
         case MACHINEZX97LE:

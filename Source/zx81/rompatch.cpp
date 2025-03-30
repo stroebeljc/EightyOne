@@ -214,7 +214,14 @@ void InitPatches(int machineType)
                 patches[0x01cb11] = ZX80OutByteSaveByte;
                 patches[0x0203c3] = ZX80ZX81LambdaStopTape;
         }
-        else if (machineType == MACHINELAMBDA)
+        else if ((machineType == MACHINELAMBDA) && (emulator.romcrc == CRCLAMBDA))
+        {
+                patches[0x038ccd] = LambdaSaveDelayStartSaving;
+                patches[0x03e31f] = ZX81LambdaGetByteStartLoading;
+                patches[0x03ab5e] = ZX81LambdaOutByteSaveByte;
+                patches[0x0221fd] = ZX80ZX81LambdaStopTape;
+        }
+        else if ((machineType == MACHINELAMBDA) && (emulator.romcrc == CRCLAMBDACOLOUR))
         {
                 patches[0x0d0d16] = LambdaSaveDelayStartSaving;
                 patches[0x19b307] = ZX81LambdaGetByteStartLoading;

@@ -16,9 +16,9 @@ COLOUR PACK OPERATION INSTRUCTION FOR USER WITH THEIR COMPUTER SERIAL NO. UNDER 
 5. Initialize the colour pattern by the following program
 
     10 POKE 12301,1
-	20 FOR A=8192 TO 10240
-	30 POKE A,7
-	40 NEXT A
+    20 FOR A=8192 TO 10240
+    30 POKE A,7
+    40 NEXT A
    RUN
    
 the background will be initialized to black colour with white characters.
@@ -27,7 +27,7 @@ the background will be initialized to black colour with white characters.
 
    POKE 12301,N  (WHERE 0 <= N <= 7)
      IS USED TO ENABLE COLOUR FUNCTION.   WHILE
-	 
+     
    POKE 12300,N  (WHERE 0 <= N <= 7)
      IS USED TO DISABLE COLOUR FUNCTION.
 
@@ -36,13 +36,13 @@ DEMONSTRATION PROGRAM
 
     10 REM HORIZONTAL BARS
     20 C=1
-	30 FOR A=0 TO 7
-	40 FOR B=0 TO 31
-	50 PRINT AT A,B;"#"     (# = Inverse space)
-	60 Z=A*33+B+8319
-	70 POKE Z,INT C
-	80 NEXT B
-	90 POKE Z+1,0
+    30 FOR A=0 TO 7
+    40 FOR B=0 TO 31
+    50 PRINT AT A,B;"#"     (# = Inverse space)
+    60 Z=A*33+B+8319
+    70 POKE Z,INT C
+    80 NEXT B
+    90 POKE Z+1,0
    100 C=C+1
    110 NEXT A
    RUN
@@ -58,7 +58,7 @@ DEMONSTRATION PROGRAM
    280 NEXT A
    RUN
 
-	
+    
 COLOUR CONTROL CODE
 
 VALUE  COLOUR
@@ -98,14 +98,14 @@ COLOUR PACK OPERATION INSTRUCTION FOR USER WITH THEIR COMPUTER SERIAL NO. OVER 0
 COLOUR BAR DEMONSTRATION PROGRAM
 
     10 BORDER 7
-	20 C=1
-	30 FOR A=0 TO 31
-	40 INK C
-	50 FOR B=0 TO 31
-	60 PRINT AT A,B,;"#"     (# = Inverse space)
-	70 NEXT B
-	80 C=C+1
-	90 NEXT A
+    20 C=1
+    30 FOR A=0 TO 31
+    40 INK C
+    50 FOR B=0 TO 31
+    60 PRINT AT A,B;"#"     (# = Inverse space)
+    70 NEXT B
+    80 C=C+1
+    90 NEXT A
    RUN
 
 

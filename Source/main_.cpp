@@ -130,6 +130,10 @@ void __fastcall TForm1::WndProc(TMessage &Message)
                         Form1->RunFrame();
                 break;
 
+        case WM_KILLFOCUS:
+                PCAllKeysUp();
+                break;
+
         default:
                 break;
         }

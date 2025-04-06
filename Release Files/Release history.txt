@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.42 - 01/04/2025 (by John Stroebel and Paul Farrow)
+Version 1.42 - 06/04/2025 (by John Stroebel and Paul Farrow)
 * Bug fixes:
   - Bottom 3 volume levels of AY sound output were being capped to 0.
   - The Apply button was not being enabled after browsing for a ROM cartridge file.
@@ -15,6 +15,7 @@ Version 1.42 - 01/04/2025 (by John Stroebel and Paul Farrow)
   - Corrected typo and formatting of the Lambda 8300 colour interface instructions.
   - Fixed stuck keys when application loses focus.
   - Fixed possible infinite loop when using DirectDraw video.
+  - Fix program stall when invalid WAV file is loaded into the Wav Loader.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to

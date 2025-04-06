@@ -123,7 +123,7 @@ bool TWavFile::LoadCSW(AnsiString FName)
 bool TWavFile::LoadFile(AnsiString FName)
 {
         FILE *f;
-        int error = 1;
+        int error;
 
         if (FileNameGetExt(FName)==".CSW") return(LoadCSW(FName));
 

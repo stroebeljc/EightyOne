@@ -123,6 +123,7 @@ bool TWavFile::LoadCSW(AnsiString FName)
 bool TWavFile::LoadFile(AnsiString FName)
 {
         FILE *f;
+        int error = 1;
 
         if (FileNameGetExt(FName)==".CSW") return(LoadCSW(FName));
 
@@ -141,23 +142,24 @@ bool TWavFile::LoadFile(AnsiString FName)
 
                 if (!strncmp(blkname,"RIFF",4))
                 {
-                        fseek(f,-8,SEEK_CUR);
+                        error = fseek(f,-8,SEEK_CUR);
                         fread(&Head,sizeof(struct RIFFHeader),1,f);
                 }
                 else if (!strncmp(blkname,"fmt",3))
                 {
-                        fseek(f,-8,SEEK_CUR);
+                        error = fseek(f,-8,SEEK_CUR);
                         fread(&Format,sizeof(struct RIFFFormat),1,f);
                         if (Format.BlkLen>16) fseek(f, Format.BlkLen-16, SEEK_CUR);
                 }
                 else if (!strncmp(blkname,"data",4))
                 {
-                        fseek(f,-8,SEEK_CUR);
+                        error = fseek(f,-8,SEEK_CUR);
                         fread(&Data, /*sizeof(struct RIFFData)*/ 8,1,f);
                 }
-                else fseek(f, blklen, SEEK_CUR);
-        } while(!feof(f) && strncmp(Data.Head, "data",4));
+                else error = fseek(f, blklen, SEEK_CUR);
+        } while(!feof(f) && !error && strncmp(Data.Head, "data",4));
 
+        if (error) { fclose(f); return false; }
         if (strncmp(Head.Head, "RIFF",4)) { fclose(f); return false; }
         if (strncmp(Format.Head,"fmt",3)) { fclose(f); return false; }
         if (strncmp(Data.Head,"data",4)) { fclose(f); return false; }

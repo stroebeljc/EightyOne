@@ -159,16 +159,13 @@ bool TWavFile::LoadFile(AnsiString FName)
                 else error = fseek(f, blklen, SEEK_CUR);
         } while(!feof(f) && !error && strncmp(Data.Head, "data",4));
 
-        if (error)
+        if (error || strncmp(Head.Head, "RIFF",4) || strncmp(Format.Head,"fmt",3)
+            || strncmp(Data.Head,"data",4))
         {
                 fclose(f);
                 Application->MessageBox("Invalid WAV File Format","Error", MB_OK | MB_ICONERROR);
                 return false;
         }
-
-        if (strncmp(Head.Head, "RIFF",4)) { fclose(f); return false; }
-        if (strncmp(Format.Head,"fmt",3)) { fclose(f); return false; }
-        if (strncmp(Data.Head,"data",4)) { fclose(f); return false; }
 
         SampleRate = Format.SampleRate;
         NoSamples = Data.DataLen /  Format.BytesSample;

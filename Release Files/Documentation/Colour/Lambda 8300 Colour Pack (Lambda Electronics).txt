@@ -99,7 +99,7 @@ COLOUR BAR DEMONSTRATION PROGRAM
 
     10 BORDER 7
     20 C=1
-    30 FOR A=0 TO 31
+    30 FOR A=0 TO 21
     40 INK C
     50 FOR B=0 TO 31
     60 PRINT AT A,B;"#"     (# = Inverse space)

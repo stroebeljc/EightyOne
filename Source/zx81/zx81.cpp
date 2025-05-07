@@ -254,6 +254,18 @@ BYTE get_i_reg(void)
         return(z80.i);
 }
 
+void DisableLambda()
+{
+        if (lambdaSelected)
+        {
+                ink=colourWhite; paper=border=colourBlack;
+        }
+        else
+        {
+                ink=colourBlack; paper=border=colourBrightWhite;
+        }
+}
+
 void zx81_initialise()
 {
         int i, romlen;
@@ -262,6 +274,7 @@ void zx81_initialise()
 
         chromaSelected = (machine.colour == COLOURCHROMA);
         lambdaSelected = (emulator.machine == MACHINELAMBDA);
+        zx81.lambdaColourEnabled = false;
 
         directMemoryAccess = false;
         ResetLastIOAccesses();
@@ -283,9 +296,9 @@ void zx81_initialise()
 
         InitialiseChroma();
 
-        for(i=0;i<65536;i++) memory[i]=7;
-        for(i=0;i<1024;i++) font[i]=0;
-        for(i=0;i<1024;i++) memhrg[i]=0;
+        for(i=0;i<65536;i++) memory[i]=(BYTE)rand();
+        for(i=0;i<1024;i++) font[i]=(BYTE)rand();
+        for(i=0;i<1024;i++) memhrg[i]=(BYTE)rand();
 
         AnsiString romname = machine.CurRom;
 
@@ -427,15 +440,8 @@ void zx81_initialise()
         allowSoundOutput = false;
         scanlineCounter = 0;
         vsyncFound = false;
-        
-        if (lambdaSelected)
-        {
-                ink=colourWhite; paper=border=colourBlack;
-        }
-        else
-        {
-                ink=colourBlack; paper=border=colourBrightWhite;
-        }
+
+        DisableLambda();
 
         videoFlipFlop1Q = 1;
         videoFlipFlop2Q = 0;
@@ -559,9 +565,24 @@ void zx81_WriteByte(int Address, int Data)
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
         // with a further 8 shadows between 49152 and 57344.
 
-        if (machine.colour==COLOURLAMBDA && Address>=8192 && Address<16384)
+        if (machine.colour==COLOURLAMBDA && Address>=0x2000 && Address<0x4000)
         {
-                Address = (Address&1023)+8192;
+                if (Address>=0x3000)
+                {
+                        if (Address&1)
+                                zx81.lambdaColourEnabled = true;
+                        else
+                        {
+                                zx81.lambdaColourEnabled = false;
+                                DisableLambda();
+                        }
+
+                        return;
+                }
+                else
+                {
+                        Address = (Address&1023)+8192;
+                }
 
                 goto writeMem;
         }
@@ -1172,7 +1193,7 @@ BYTE zx81_opcode_fetch(int Address)
                 // somewhere.  The only time this doesn't happen is if we encountered
                 // an opcode with bit 6 set above M1NOT.
 
-                if (machine.colour == COLOURLAMBDA)
+                if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
                 {
                         int c;
 

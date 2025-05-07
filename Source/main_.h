@@ -193,6 +193,7 @@ __published:	// IDE-managed Components
 //        TMenuItem *SwitchOnMemotext;
         TMenuItem *N17;
         TMenuItem *SwitchOnZ80Assembler;
+        TMenuItem *ConnectLambdaColour;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -316,6 +317,7 @@ __published:	// IDE-managed Components
 //        void __fastcall SwitchOnMemotextClick(TObject *Sender);
         void __fastcall SwitchOnMemocalcClick(TObject *Sender);
         void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
+        void __fastcall ConnectLambdaColourClick(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;

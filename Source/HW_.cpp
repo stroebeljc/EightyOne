@@ -974,6 +974,10 @@ void THW::ConfigureColour()
                 break;
         }
 
+        zx81.lambdaColourConnected = (machine.colour == COLOURLAMBDA);
+        Form1->ConnectLambdaColour->Checked = zx81.lambdaColourConnected;
+        Form1->ConnectLambdaColour->Enabled = zx81.lambdaColourConnected;
+
         Artifacts->SelectRGBOutput(machine.colour == COLOURSPECTRA);
         Artifacts->ForceVibrantColours(machine.colour == COLOURCHROMA);
         if (machine.colour == COLOURSPECTRA)
@@ -2052,6 +2056,7 @@ void THW::SetupForZX81(void)
         Form1->ResetQuicksilvaHiRes->Visible = true;
         Form1->QSChrEnable->Visible = true;
         Form1->ChromaColourEnable->Visible = true;
+        Form1->ConnectLambdaColour->Visible = true;
         Form1->SwitchOnMemocalc->Visible = true;
 //        Form1->SwitchOnMemotext->Visible = true;
         Form1->SwitchOnZ80Assembler->Visible = true;
@@ -2297,6 +2302,7 @@ void THW::SetupForSpectrum(void)
         Form1->ResetQuicksilvaHiRes->Visible = false;
         Form1->QSChrEnable->Visible = false;
         Form1->ChromaColourEnable->Visible = false;
+        Form1->ConnectLambdaColour->Visible = false;
         Form1->SwitchOnMemocalc->Visible = false;
 //        Form1->SwitchOnMemotext->Visible = false;
         Form1->SwitchOnZ80Assembler->Visible = false;
@@ -3412,6 +3418,7 @@ void __fastcall THW::AceBtnClick(TObject *Sender)
         Form1->ResetQuicksilvaHiRes->Visible = false;
         Form1->QSChrEnable->Visible = false;
         Form1->ChromaColourEnable->Visible = false;
+        Form1->ConnectLambdaColour->Visible = false;
         Form1->SwitchOnMemocalc->Visible = false;
 //        Form1->SwitchOnMemotext->Visible = false;
         Form1->SwitchOnZ80Assembler->Visible = false;

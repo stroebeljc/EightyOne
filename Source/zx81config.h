@@ -184,6 +184,8 @@ typedef struct
         CFGBYTE beeperExcludeHSyncs;
         CFGBYTE chromaMode;
         CFGBYTE chromaColourSwitchOn;
+        CFGBYTE lambdaColourEnabled;
+        CFGBYTE lambdaColourConnected;
         CFGBYTE FloatingPointHardwareFix;
         CFGBYTE z80Assembler;
         CFGBYTE memocalc;

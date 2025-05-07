@@ -455,6 +455,7 @@ void load_snap_colour(FILE *f)
         int Addr, Count, Chr;
         char *tok;
         bool chroma = false;
+        bool lambda = false;
 
         Addr=0xC000;
 
@@ -472,7 +473,7 @@ void load_snap_colour(FILE *f)
                         tok = get_token(f);
                         SetComboBox(HW->ColourBox, tok);
                         chroma = (HW->ColourBox->Text == "Chroma");
-                        bool lambda = (HW->ColourBox->Text == "Lambda");
+                        lambda = (HW->ColourBox->Text == "Lambda");
                         if (chroma)
                         {
                                 Form1->ChromaColourEnable->Visible = true;
@@ -481,6 +482,8 @@ void load_snap_colour(FILE *f)
                         }
                         else if (lambda)
                         {
+                                Form1->ConnectLambdaColour->Visible = true;
+                                Form1->ConnectLambdaColour->Enabled = true;
                                 machine.colour = COLOURLAMBDA;
                         }
                 }
@@ -492,6 +495,15 @@ void load_snap_colour(FILE *f)
                 {
                         zx81.chromaColourSwitchOn = (CFGBYTE)hex2dec(get_token(f));
                         Form1->ChromaColourEnable->Checked = zx81.chromaColourSwitchOn;
+                }
+                else if (lambda && !strcmp(tok,"COLOUR_CONNECTED"))
+                {
+                        zx81.lambdaColourConnected = (CFGBYTE)hex2dec(get_token(f));
+                        Form1->ConnectLambdaColour->Checked = zx81.lambdaColourConnected;
+                }
+                else if (lambda && !strcmp(tok,"COLOUR_ENABLED"))
+                {
+                        zx81.lambdaColourEnabled = (CFGBYTE)hex2dec(get_token(f));
                 }
                 else if (chroma && *tok=='*')
                 {
@@ -1014,6 +1026,11 @@ int save_snap_zx81(char *filename)
 		fprintf(f,"\nCHROMA_MODE %02X\n", zx81.chromaMode);
 		fprintf(f,"COLOUR_ENABLED %02X\n", zx81.chromaColourSwitchOn);
 	}
+	else if (machine.colour == COLOURLAMBDA)
+	{
+		fprintf(f,"COLOUR_CONNECTED %02X\n", zx81.lambdaColourConnected);
+		fprintf(f,"COLOUR_ENABLED %02X\n", zx81.lambdaColourEnabled);
+        }
 
 	fprintf(f,"\n[CHR$_GENERATOR]\n");
 	fprintf(f,"TYPE %s\n", HW->ChrGenBox->Text.c_str());

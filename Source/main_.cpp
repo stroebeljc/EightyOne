@@ -1184,6 +1184,7 @@ void TForm1::LoadSettings(TIniFile *ini)
 
         SpectraColourEnable->Checked      = ini->ReadBool("MAIN", "SpectraColourEnable",      SpectraColourEnable->Checked);
         ChromaColourEnable->Checked       = ini->ReadBool("MAIN", "ChromaColourEnable",       ChromaColourEnable->Checked);
+        ConnectLambdaColour->Checked      = ini->ReadBool("MAIN", "ConnectLambdaColour",      ConnectLambdaColour->Checked);
         ConnectSpectrum128Keypad->Checked = ini->ReadBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
         ConnectJoystick1->Checked         = ini->ReadBool("MAIN", "ConnectJoystick1",         ConnectJoystick1->Checked);
         ConnectJoystick2->Checked         = ini->ReadBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
@@ -1233,6 +1234,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         spectrum.spectrum128Keypad       = (CFGBYTE)(ConnectSpectrum128Keypad->Checked ? 1 : 0);
         spectrum.spectraColourSwitchOn   = (CFGBYTE)(SpectraColourEnable->Checked      ? 1 : 0);
         zx81.chromaColourSwitchOn        = (CFGBYTE)(ChromaColourEnable->Checked       ? 1 : 0);
+        zx81.lambdaColourConnected       = (CFGBYTE)(ConnectLambdaColour->Checked      ? 1 : 0);
 
         machine.joystick1Connected       = (CFGBYTE)(ConnectJoystick1->Checked         ? 1 : 0);
         machine.joystick2Connected       = (CFGBYTE)(ConnectJoystick2->Checked         ? 1 : 0);
@@ -1309,6 +1311,7 @@ void TForm1::SaveSettings(TIniFile *ini)
 
         ini->WriteBool("MAIN", "SpectraColourEnable",      SpectraColourEnable->Checked);
         ini->WriteBool("MAIN", "ChromaColourEnable",       ChromaColourEnable->Checked);
+        ini->WriteBool("MAIN", "ConnectLambdaColour",      ConnectLambdaColour->Checked);
         ini->WriteBool("MAIN", "ConnectSpectrum128Keypad", ConnectSpectrum128Keypad->Checked);
         ini->WriteBool("MAIN", "ConnectJoystick1",         ConnectJoystick1->Checked);
         ini->WriteBool("MAIN", "ConnectJoystick2",         ConnectJoystick2->Checked);
@@ -2255,6 +2258,20 @@ void __fastcall TForm1::ChromaColourEnableClick(TObject *Sender)
         if (previousChromaColourEnable)
         {
                 DisableChroma();
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::ConnectLambdaColourClick(TObject *Sender)
+{
+        bool previousConnectLambdaColour = ConnectLambdaColour->Checked;
+
+        ConnectLambdaColour->Checked = !ConnectLambdaColour->Checked;
+        zx81.lambdaColourConnected = ConnectLambdaColour->Checked;
+
+        if (previousConnectLambdaColour)
+        {
+                DisableLambda();
         }
 }
 //---------------------------------------------------------------------------

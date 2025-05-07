@@ -45,5 +45,6 @@ extern BOOL IsAnnotatableROM();
 extern void CreateZXpand();
 extern BOOL memotechResetPressed;
 extern BOOL insertWaitsWhileSP0256Busy;
+extern void DisableLambda();
 
 #endif

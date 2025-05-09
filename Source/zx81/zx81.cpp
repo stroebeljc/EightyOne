@@ -754,17 +754,6 @@ BYTE zx81_ReadByte(int Address)
                 }
         }
 
-        // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
-        // with a further 8 shadows between 49152 and 57344.
-
-        if (machine.colour==COLOURLAMBDA && ((Address>=8192 && Address<16384)
-                                          || (Address>=49152 && Address<57344)))
-        {
-                Address = (Address&1023)+8192;
-                data=memory[Address];
-                return (BYTE)data;
-        }
-
         // ZX97 has various bank switched modes - check out the website for details
 
         if (emulator.machine==MACHINEZX97LE)
@@ -1199,7 +1188,7 @@ BYTE zx81_opcode_fetch(int Address)
                         // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
                         // Ink = bits 0-2, Paper = bits 4-6
 
-                        c=zx81_ReadByte((Address&1023)+8192);
+                        c=memory[(Address&1023)+8192];
 
                         ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                         c = (c >> 4);

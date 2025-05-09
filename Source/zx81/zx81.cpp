@@ -563,7 +563,7 @@ void zx81_WriteByte(int Address, int Data)
         }
 
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
-        // with a further 8 shadows between 49152 and 57344.
+        // Addresses written between 12k-16k also control the lambda enable/disable
 
         if (machine.colour==COLOURLAMBDA && Address>=0x2000 && Address<0x4000)
         {
@@ -578,7 +578,7 @@ void zx81_WriteByte(int Address, int Data)
                         }
                 }
 
-                Address = (Address&1023)+8192;
+                Address = (Address&0x03FF)+0x2000;
 
                 goto writeMem;
         }
@@ -752,6 +752,14 @@ BYTE zx81_ReadByte(int Address)
                 {
                         return data;
                 }
+        }
+
+        // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
+
+        if (machine.colour==COLOURLAMBDA && Address>=0x2000 && Address<0x4000)
+        {
+                data=memory[(Address&0x03FF)+0x2000];
+                return (BYTE)data;
         }
 
         // ZX97 has various bank switched modes - check out the website for details
@@ -1178,7 +1186,8 @@ BYTE zx81_opcode_fetch(int Address)
                 // somewhere.  The only time this doesn't happen is if we encountered
                 // an opcode with bit 6 set above M1NOT.
 
-                if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
+                if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected &&
+                    Address>=0xC000 && Address<0xE000)
                 {
                         int c;
 
@@ -1188,7 +1197,7 @@ BYTE zx81_opcode_fetch(int Address)
                         // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
                         // Ink = bits 0-2, Paper = bits 4-6
 
-                        c=memory[(Address&1023)+8192];
+                        c=memory[(Address&0x03FF)+0x2000];
 
                         ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                         c = (c >> 4);

@@ -576,13 +576,9 @@ void zx81_WriteByte(int Address, int Data)
                                 zx81.lambdaColourEnabled = false;
                                 DisableLambda();
                         }
+                }
 
-                        return;
-                }
-                else
-                {
-                        Address = (Address&1023)+8192;
-                }
+                Address = (Address&1023)+8192;
 
                 goto writeMem;
         }

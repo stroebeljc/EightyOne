@@ -178,6 +178,7 @@ int tstates, frametstates;
 int tStatesCount;
 int configbyte=0;
 int setborder=0;
+int firstHalt=0;
 int emulation_stop=0;
 int LastInstruction;
 int MemotechMode=0;
@@ -1197,25 +1198,18 @@ BYTE zx81_opcode_fetch(int Address)
                         // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
                         // Ink = bits 0-2, Paper = bits 4-6
 
+                        firstHalt=0;
                         c=memory[(Address&0x03FF)+0x2000];
+
+                        if (setborder)
+                        {
+                                border=c;
+                                setborder=0;
+                        }
 
                         ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                         c = (c >> 4);
                         paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-
-                        if (setborder)
-                        {
-                                border=paper;
-                                setborder=0;
-                        }
-                }
-                else if (chromaSelected)
-                {
-                        if (setborder)
-                        {
-                                border = GetChromaBorderColour();
-                                setborder = 0;
-                        }
                 }
                 else if (!lambdaSelected)
                 {
@@ -1238,6 +1232,17 @@ BYTE zx81_opcode_fetch(int Address)
                 // opcodes, and generate the noise.
 
                 SetChromaColours();
+                if (!firstHalt)
+                {
+                        firstHalt=1;
+                }
+                else if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
+                {
+                        int c = border;
+                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                        c = (c >> 4);
+                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                }
 
                 noise |= data;
                 return opcode;

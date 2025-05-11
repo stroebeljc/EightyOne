@@ -18,6 +18,7 @@ Version 1.42 - 07/05/2025 (by John Stroebel and Paul Farrow)
   - Fixed program stall when an invalid WAV file is loaded into the Wav Loader.
   - Fixed enabled/disable behavior of Lambda Colour hardware. Added enable state to snapshot.
   - Fixed a typo in the Lambda Colour documentation.
+  - Fixed Lambda Colour border behavior.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to

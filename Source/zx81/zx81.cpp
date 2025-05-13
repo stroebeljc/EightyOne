@@ -167,7 +167,7 @@ const BYTE BLANKCOLOUR = Black;
 static const int MaxScanlineActivePixelLength = 500;
 static BYTE carryOverScanlineBuffer[MaxScanlineActivePixelLength];
 
-int border, ink, paper;
+int ink, paper;
 
 BOOL nmiGeneratorEnabled;
 BOOL syncOutputWhite;
@@ -177,8 +177,7 @@ int lineClockCarryCounter;
 int tstates, frametstates;
 int tStatesCount;
 int configbyte=0;
-int setborder=0;
-int firstHalt=0;
+int lambdaAddress=0;
 int emulation_stop=0;
 int LastInstruction;
 int MemotechMode=0;
@@ -259,11 +258,11 @@ void DisableLambda()
 {
         if (lambdaSelected)
         {
-                ink=colourWhite; paper=border=colourBlack;
+                ink=colourWhite; paper=colourBlack;
         }
         else
         {
-                ink=colourBlack; paper=border=colourBrightWhite;
+                ink=colourBlack; paper=colourBrightWhite;
         }
 }
 
@@ -1187,35 +1186,6 @@ BYTE zx81_opcode_fetch(int Address)
                 // somewhere.  The only time this doesn't happen is if we encountered
                 // an opcode with bit 6 set above M1NOT.
 
-                if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected &&
-                    Address>=0xC000 && Address<0xE000)
-                {
-                        int c;
-
-                        // If Lambda colour is enabled, we had better fetch
-                        // the ink and paper colour from memory too.
-                        //
-                        // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
-                        // Ink = bits 0-2, Paper = bits 4-6
-
-                        firstHalt=0;
-                        c=memory[(Address&0x03FF)+0x2000];
-
-                        if (setborder)
-                        {
-                                border=c;
-                                setborder=0;
-                        }
-
-                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                        c = (c >> 4);
-                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                }
-                else if (!lambdaSelected)
-                {
-                        border = colourBrightWhite;
-                }
-
                 // Finally load the bitmap we retrieved into the video shift
                 // register, remembering to make some video noise too.
 
@@ -1232,17 +1202,6 @@ BYTE zx81_opcode_fetch(int Address)
                 // opcodes, and generate the noise.
 
                 SetChromaColours();
-                if (!firstHalt)
-                {
-                        firstHalt=1;
-                }
-                else if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
-                {
-                        int c = border;
-                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                        c = (c >> 4);
-                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                }
 
                 noise |= data;
                 return opcode;
@@ -1369,8 +1328,6 @@ BYTE ReadInputPort(int Address, int *tstates)
 {
         static int beeper;
         BYTE data = 0;
-
-        setborder=1;
 
         // The Chroma IO port is fully decoded
         if (ChromaIORead(Address, &data))
@@ -1693,6 +1650,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
+                if (z80.pc.w>=0xC000 && z80.pc.w<0xE000)
+                        lambdaAddress=(z80.pc.w&0x03FF)+0x2001;
+
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
                 int ts=z80_do_opcode();
@@ -1835,16 +1795,37 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         shift_register <<= 1;
                         shift_reg_inv <<= 1;
 
-                        if (chromaSelected && ((i & 7) == 7))
+                        if ((i & 7) == 7)
                         {
-                                if (frameSynchronised)
+                                if (chromaSelected)
                                 {
-                                        GetChromaColours(&ink, &paper);
+                                        if (frameSynchronised)
+                                        {
+                                                GetChromaColours(&ink, &paper);
+                                        }
+                                        else
+                                        {
+                                                ink = colourBlack;
+                                                paper = colourBrightWhite;
+                                        }
                                 }
-                                else
+
+                                if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
                                 {
-                                        ink = colourBlack;
-                                        paper = colourBrightWhite;
+                                        int c;
+
+                                        // If Lambda colour is enabled, we had better fetch
+                                        // the ink and paper colour from memory. The memory address
+                                        // is only updated on memory accessed with bits A15-A13 = 110
+                                        //
+                                        // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
+                                        // Ink = bits 0-2, Paper = bits 4-6
+
+                                        c=memory[lambdaAddress];
+
+                                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                                        c = (c >> 4);
+                                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                                 }
                         }
                 }

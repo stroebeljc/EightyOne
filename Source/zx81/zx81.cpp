@@ -1650,7 +1650,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
-                if (z80.pc.w>=0xC000 && z80.pc.w<0xE000)
+                if (machine.colour == COLOURLAMBDA && z80.pc.w>=0xC000 && z80.pc.w<0xE000)
                         lambdaAddress=((z80.pc.w+1)&0x03FF)+0x2000;
 
                 LastInstruction = LASTINSTNONE;

@@ -1816,7 +1816,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         shift_register <<= 1;
                         shift_reg_inv <<= 1;
 
-                        if (chromaSelected && (i & 7) == 7)
+                        if (chromaSelected && ((i & 7) == 7))
                         {
                                 if (frameSynchronised)
                                 {

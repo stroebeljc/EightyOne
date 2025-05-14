@@ -1180,7 +1180,31 @@ BYTE zx81_opcode_fetch(int Address)
                 update=1;
         }
 
-        if (update)
+        if (machine.colour == COLOURLAMBDA)
+        {
+                int c;
+
+                // If Lambda colour is enabled, we had better fetch
+                // the ink and paper colour from memory. The memory address
+                // is only updated on memory accessed with bits A15-A13 = 110
+                //
+                // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
+                // Ink = bits 0-2, Paper = bits 4-6
+
+                if (z80.pc.w>=0xC000 && z80.pc.w<0xE000)
+                        lambdaAddress=(z80.pc.w&0x03FF)+0x2000;
+
+                if (zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
+                {
+                        c=memory[lambdaAddress];
+
+                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                        c = (c >> 4);
+                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                }
+        }
+
+        if (update && !z80.halted)
         {
                 // Update gets set to true if we managed to fetch a bitmap from
                 // somewhere.  The only time this doesn't happen is if we encountered
@@ -1650,9 +1674,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
-                if (machine.colour == COLOURLAMBDA && z80.pc.w>=0xC000 && z80.pc.w<0xE000)
-                        lambdaAddress=((z80.pc.w+1)&0x03FF)+0x2000;
-
                 LastInstruction = LASTINSTNONE;
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
                 int ts=z80_do_opcode();
@@ -1808,24 +1829,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                                 ink = colourBlack;
                                                 paper = colourBrightWhite;
                                         }
-                                }
-
-                                if (machine.colour == COLOURLAMBDA && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
-                                {
-                                        int c;
-
-                                        // If Lambda colour is enabled, we had better fetch
-                                        // the ink and paper colour from memory. The memory address
-                                        // is only updated on memory accessed with bits A15-A13 = 110
-                                        //
-                                        // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
-                                        // Ink = bits 0-2, Paper = bits 4-6
-
-                                        c=memory[lambdaAddress];
-
-                                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                                        c = (c >> 4);
-                                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                                 }
                         }
                 }

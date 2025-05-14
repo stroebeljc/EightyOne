@@ -109,7 +109,11 @@ int z80_do_opcode()
 
     //if (z80.halted) opcode=0;
     numberOfM1Cycles = 1;
-    opcode = opcode_fetch( PC++ );
+    opcode = opcode_fetch( PC );
+    if (z80.halted)
+        opcode = 0x00;
+    else
+        PC++;
 
     switch(opcode) {
     case 0x00:		/* NOP */
@@ -643,7 +647,6 @@ int z80_do_opcode()
       break;
     case 0x76:		/* HALT */
       z80.halted=1;
-      PC--;
       break;
     case 0x77:		/* LD (HL),A */
       InsertMCycle(3);

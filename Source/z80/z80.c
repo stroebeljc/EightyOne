@@ -112,7 +112,6 @@ int z80_interrupt(int bus)
         {
                 if (z80.halted)
                 {
-                        PC++;
                         z80.halted = 0;
                 }
 
@@ -166,7 +165,6 @@ int z80_nmi()
         if (z80.halted)
         {
                 z80.halted=0;
-                PC++;
         }
 
         writebyte(--SP, PCH);

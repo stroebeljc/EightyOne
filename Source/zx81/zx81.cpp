@@ -1816,19 +1816,16 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         shift_register <<= 1;
                         shift_reg_inv <<= 1;
 
-                        if ((i & 7) == 7)
+                        if (chromaSelected && (i & 7) == 7)
                         {
-                                if (chromaSelected)
+                                if (frameSynchronised)
                                 {
-                                        if (frameSynchronised)
-                                        {
-                                                GetChromaColours(&ink, &paper);
-                                        }
-                                        else
-                                        {
-                                                ink = colourBlack;
-                                                paper = colourBrightWhite;
-                                        }
+                                        GetChromaColours(&ink, &paper);
+                                }
+                                else
+                                {
+                                        ink = colourBlack;
+                                        paper = colourBrightWhite;
                                 }
                         }
                 }

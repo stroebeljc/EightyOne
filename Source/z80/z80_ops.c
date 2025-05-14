@@ -107,11 +107,10 @@ int z80_do_opcode()
     InsertMCycle(4);
     contend( PC, 4 ); R++; RZXCounter--;
 
-    //if (z80.halted) opcode=0;
     numberOfM1Cycles = 1;
     opcode = opcode_fetch( PC );
     if (z80.halted)
-        opcode = 0x00;
+        opcode = 0x00;  /* No PC increment and always NOP while halted */
     else
         PC++;
 

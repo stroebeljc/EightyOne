@@ -89,7 +89,7 @@ int StackChange;
 
 void DebugUpdate(void)
 {
-        static int lastpc;
+        static int lastpc, lastHalted;
         int i;
 
         if (z80.pc.w==0x66 && Dbg->SkipNMIBtn->Checked)
@@ -111,12 +111,16 @@ void DebugUpdate(void)
         }
 
         i=z80.pc.w;
-        if (lastpc!=z80.pc.w)
+        if (lastpc!=i)
         {
+                // Remove prefetched instruction after a HALT opcode
+                if (lastHalted)
+                        recentHistoryPos = (recentHistoryPos - 1) & 3;
+
                 recentHistory[recentHistoryPos] = i;
                 recentHistoryPos = (recentHistoryPos + 1) & 3;
 
-                if (Dbg->EnableHistory->Checked)
+                if (Dbg->EnableHistory->Checked && !z80.halted)
                 {
                         bool show0K8KAddresses = HistoryBox->Show0K8KAddresses();
                         bool show8K16KAddresses = HistoryBox->Show8K16KAddresses();
@@ -150,6 +154,8 @@ void DebugUpdate(void)
 
                 lastpc=z80.pc.w;
         }
+
+        lastHalted=z80.halted;
 
         displayedTStatesCount = tStatesCount;
 
@@ -548,7 +554,7 @@ bool TDbg::BreakPointHit()
 
 bool TDbg::BPExeHit(int addr, breakpoint* const bp)
 {
-        if (bp->HitExe(BP_EXE, addr))
+        if (bp->HitExe(BP_EXE, addr) && !z80.halted)
 	{
                 breakpoint* lastBP = &Breakpoint[Breakpoints - 1];
 

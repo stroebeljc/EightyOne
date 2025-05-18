@@ -545,9 +545,10 @@ object TZX: TTZX
     DefaultExt = 'tzx'
     Filter = 
       'All Tape Files|*.tzx;*.tap;*.t81;*.p;*.p81;*.o;*.81;*.80;*.a83;*' +
-      '.zip;*b80;*b81;*b82|Spectrum Files|*.tzx;*.tap;*.b82|ZX81 Files|' +
-      '*.t81;*.p;*.p81;*.81;*.b81|ZX80 Files|*.t81;*.o;*.80;*.b80|Lambd' +
-      'a Files|*.a83'
+      '.zip;*b80;*b81;*b82|Spectrum Files (*.tzx;*.tap;*.b82)|*.tzx;*.t' +
+      'ap;*.b82|ZX81 Files (*.t81;*.p;*.p81;*.81;*.b81)|*.t81;*.p;*.p81' +
+      ';*.81;*.b81|ZX80 Files (*.o;*.80;*.b80)|*.t81;*.o;*.80;*.b80|Lam' +
+      'bda Files (*.p;*.a83)|*.p;*.a83'
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
     Left = 104
     Top = 120

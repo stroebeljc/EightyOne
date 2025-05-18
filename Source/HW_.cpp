@@ -51,6 +51,7 @@
 #include "BasicLister\IBasicLister.h"
 #include "zx81\zx81BasicLister.h"
 #include "zx81\zx80BasicLister.h"
+#include "Lambda\lambdaBasicLister.h"
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
 #include "zx97config.h"
@@ -928,6 +929,12 @@ void THW::ConfigureBasicLister()
                  !strcmp(machine.CurRom, "tk85.rom"))
         {
                 BasicLister->SetBasicLister(new zx81BasicLister(zx81.zxpand));
+                Form1->BasicListerOption->Enabled = true;
+        }
+        else if (!strcmp(machine.CurRom, "lambda8300.rom") ||
+                 !strcmp(machine.CurRom, "lambda8300colour.rom"))
+        {
+                BasicLister->SetBasicLister(new lambdaBasicLister(zx81.zxpand));
                 Form1->BasicListerOption->Enabled = true;
         }
         else if (!strcmp(machine.CurRom, "spectrum48.rom") ||

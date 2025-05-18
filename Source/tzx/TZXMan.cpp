@@ -36,6 +36,7 @@
 #include "spectrum\specBasicLoader.h"
 #include "BasicLoaderOptions_.h"
 #include "BasicLister\BasicLister_.h"
+#include "Lambda\lambdaBasicLoader.h"
 
 #ifndef edt1
 #define edt1 0x480
@@ -211,7 +212,7 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                 Extension = FileNameGetExt(Filename);
         }
 
-        if ((Extension == ".B80") || (Extension == ".B81") || (Extension == ".B82") || (Extension == ".TXT") || (Extension == ".BAS"))
+        if ((Extension == ".B80") || (Extension == ".B81") || (Extension == ".B82") || (Extension == ".A83") || (Extension == ".TXT") || (Extension == ".BAS"))
         {
                 IBasicLoader* loader = NULL;
 
@@ -228,6 +229,10 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                         bool spec128 = (emulator.machine==MACHINESPECTRUM && spectrum.model>=SPECCY128);
                         bool if1 = (machine.floppytype == FLOPPYIF1);
                         loader = new specBasicLoader(spec128, if1);
+                }
+                else if (Extension == ".A83" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINELAMBDA))
+                {
+                        loader = new lambdaBasicLoader(zx81.zxpand);
                 }
 
                 int res = LoadBasicListingOptionsForm->ShowModal();
@@ -255,6 +260,13 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                         if (emulator.machine != MACHINESPECTRUM)
                         {
                                 HWSetMachine(MACHINESPECTRUM, SPECCY48);
+                        }
+                }
+                else if (Extension == ".A83" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINELAMBDA))
+                {
+                        if (emulator.machine != MACHINELAMBDA)
+                        {
+                                HWSetMachine(MACHINELAMBDA, NULL);
                         }
                 }
 

@@ -30,10 +30,6 @@ __fastcall TBasicListingFormatInfoForm::TBasicListingFormatInfoForm(TComponent* 
 {
 }
 //---------------------------------------------------------------------------
-void TBasicListingFormatInfoForm::SetActivePage(int index)
-{
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TBasicListingFormatInfoForm::Weblink1Click(TObject *Sender)
 {

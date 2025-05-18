@@ -709,24 +709,6 @@ void TBasicLister::GetSaveOptions()
 
 void __fastcall TBasicLister::ToolButtonInfoClick(TObject *Sender)
 {
-        AnsiString machine = mBasicLister->GetMachineName();
-        if (machine == "ZX80")
-        {
-                BasicListingFormatInfoForm->SetActivePage(0);
-        }
-        else if (machine == "ZX81")
-        {
-                BasicListingFormatInfoForm->SetActivePage(1);
-        }
-        else if (machine == "Spectrum")
-        {
-                BasicListingFormatInfoForm->SetActivePage(2);
-        }
-        else
-        {
-                return;
-        }
-
         BasicListingFormatInfoForm->Left = BasicLister->Left + (BasicLister->Width - BasicListingFormatInfoForm->Width) / 2;
         BasicListingFormatInfoForm->Top = BasicLister->Top + (BasicLister->Height - BasicListingFormatInfoForm->Height) / 2;
 

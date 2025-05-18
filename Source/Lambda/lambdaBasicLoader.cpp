@@ -36,7 +36,7 @@ void lambdaBasicLoader::OutputStartOfProgramData(AnsiString filename, int& addre
         OutputByte(addressOffset, 0xFF);        //VERSN
         OutputWord(addressOffset, 0x407D);      //E_PPC
         OutputWord(addressOffset, 0x4396);      //D_FILE
-        OutputWord(addressOffset, 0x407E);      //DF_CC
+        OutputWord(addressOffset, 0x4375);      //DF_CC
         OutputWord(addressOffset, 0x0000);      //VARS
         OutputWord(addressOffset, 0x0000);      //DEST
         OutputWord(addressOffset, 0x0000);      //E_LINE
@@ -93,11 +93,11 @@ void lambdaBasicLoader::OutputEndOfProgramData(int& addressOffset)
 
         // Update system variables
         int varsOffset = 7;
-        ChangeWord(varsOffset, varsAddress);
+        ChangeWord(varsOffset, varsAddress+1);
         int elineOffset = 11;
-        ChangeWord(elineOffset, varsAddress+1);
+        ChangeWord(elineOffset, varsAddress+2);
         int chaddOffset = 13;
-        ChangeWord(chaddOffset, varsAddress+5);
+        ChangeWord(chaddOffset, varsAddress+6);
         int stkbotOffset = 17;
         ChangeWord(stkbotOffset, elineAddress+5);
         int stkendOffset = 19;

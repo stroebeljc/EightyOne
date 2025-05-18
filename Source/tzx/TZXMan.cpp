@@ -241,33 +241,21 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
                         return;
                 }
 
-                if (Extension == ".B80" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINEZX80))
+                if (Extension == ".B80" && emulator.machine != MACHINEZX80)
                 {
-                        if (emulator.machine != MACHINEZX80)
-                        {
                                 HWSetMachine(MACHINEZX80, NULL);
-                        }
                 }
-                else if (Extension == ".B81" || ((Extension == ".TXT" || Extension == ".BAS") && (emulator.machine == MACHINEZX81 || emulator.machine == MACHINETS1000 || emulator.machine == MACHINETS1500 || emulator.machine == MACHINETK85)))
+                else if (Extension == ".B81" && emulator.machine != MACHINEZX81 && emulator.machine != MACHINETS1000 && emulator.machine != MACHINETS1500 && emulator.machine != MACHINETK85)
                 {
-                        if ((emulator.machine != MACHINEZX81 && emulator.machine != MACHINETS1000 && emulator.machine != MACHINETS1500 && emulator.machine != MACHINETK85))
-                        {
                                 HWSetMachine(MACHINEZX81, NULL);
-                        }
                 }
-                else if (Extension == ".B82" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINESPECTRUM))
+                else if (Extension == ".B82" && emulator.machine != MACHINESPECTRUM)
                 {
-                        if (emulator.machine != MACHINESPECTRUM)
-                        {
                                 HWSetMachine(MACHINESPECTRUM, SPECCY48);
-                        }
                 }
-                else if (Extension == ".A83" || ((Extension == ".TXT" || Extension == ".BAS") && emulator.machine == MACHINELAMBDA))
+                else if (Extension == ".A83" && emulator.machine != MACHINELAMBDA)
                 {
-                        if (emulator.machine != MACHINELAMBDA)
-                        {
                                 HWSetMachine(MACHINELAMBDA, NULL);
-                        }
                 }
 
                 bool tokeniseRemContents = LoadBasicListingOptionsForm->GetTokeniseRemContents();

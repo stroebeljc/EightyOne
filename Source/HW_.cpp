@@ -934,7 +934,7 @@ void THW::ConfigureBasicLister()
         else if (!strcmp(machine.CurRom, "lambda8300.rom") ||
                  !strcmp(machine.CurRom, "lambda8300colour.rom"))
         {
-                BasicLister->SetBasicLister(new lambdaBasicLister(zx81.zxpand));
+                BasicLister->SetBasicLister(new lambdaBasicLister(!strcmp(machine.CurRom, "lambda8300colour.rom")));
                 Form1->BasicListerOption->Enabled = true;
         }
         else if (!strcmp(machine.CurRom, "spectrum48.rom") ||

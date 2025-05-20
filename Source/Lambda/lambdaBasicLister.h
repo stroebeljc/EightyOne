@@ -25,7 +25,7 @@
 class lambdaBasicLister : public IBasicLister
 {
 public:
-        lambdaBasicLister(bool zxpandEnabled);
+        lambdaBasicLister(bool colourrom);
         virtual AnsiString GetMachineName();
         virtual AnsiString GetBasicFileExtension();
         virtual bool ZxTokenSupported();
@@ -43,7 +43,7 @@ private:
         static const unsigned char Newline = 118;
         static const unsigned char Number = 126;
 
-        bool mZxpandEnabled;
+        bool mColourROM;
         std::map<AnsiString, AnsiString> mZxTokenChars;
 
         virtual int GetProgramStartAddress();

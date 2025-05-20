@@ -110,10 +110,7 @@ int z80_interrupt(int bus)
 {
         if (IFF1)
         {
-                if (z80.halted)
-                {
-                        z80.halted = 0;
-                }
+                z80.halted = 0;
 
                 IFF1 = 0;
                 IFF2 = 0;
@@ -162,10 +159,7 @@ int z80_nmi()
         StackChange += 2;
         IFF1 = 0;
 
-        if (z80.halted)
-        {
-                z80.halted=0;
-        }
+        z80.halted=0;
 
         writebyte(--SP, PCH);
         writebyte(--SP, PCL);

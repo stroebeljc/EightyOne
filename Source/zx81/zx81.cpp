@@ -1678,7 +1678,10 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
                 int ts=z80_do_opcode();
 
-                if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))
+                if (BasicLister->Visible &&
+                        (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206)) ||
+                        (emulator.romcrc == CRCLAMBDACOLOUR && (z80.pc.w == 0x0EC4 || z80.pc.w == 0x02FB)) ||
+                        (emulator.romcrc == CRCLAMBDA && ((z80.pc.w == 0x082C && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x0849 || z80.pc.w == 0x0220)))
                 {
                         const bool keepScrollbarPosition = true;
                         BasicLister->Refresh(keepScrollbarPosition);

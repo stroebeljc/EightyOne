@@ -71,7 +71,14 @@ void TZXPrinter::ScrollOutput()
 
         PrinterOutput->Height += 8;
         ScrollBar->Max = PrinterOutput->Height;
-        ScrollBar->Position += 8;
+        if (ScrollBar->Max - ScrollBar->Position <= 8)
+                ScrollBar->Position = ScrollBar->Max;
+        if (ScrollBar->Enabled == false && ScrollBar->Max >= DisplayImage->Height)
+        {
+                ScrollBar->Enabled = true;
+                ScrollBar->Position = ScrollBar->Max;
+        }
+        ScrollBar->Min = ScrollBar->Enabled ? DisplayImage->Height : 0;
 
         Bitmap->Canvas->Pen->Color = Bg;
         for(y=Bitmap->Height-8; y < Bitmap->Height; y++)
@@ -104,9 +111,10 @@ __fastcall TZXPrinter::TZXPrinter(TComponent* Owner)
         Counter1=25;
         Counter2=16;
 
-        ScrollBar->Position = PrinterOutput->Height;
         ScrollBar->Min=0;
-        ScrollBar->Max=PrinterOutput->Height;
+        ScrollBar->Max=0;
+        ScrollBar->Position=0;
+        ScrollBar->Enabled=false;
 
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
@@ -288,9 +296,10 @@ void __fastcall TZXPrinter::ClearImageClick(TObject *Sender)
         YPos=0;
         Counter2=16;
 
-        ScrollBar->Min=1;
-        ScrollBar->Max=PrinterOutput->Height;
-        ScrollBar->Position = PrinterOutput->Height;
+        ScrollBar->Min=0;
+        ScrollBar->Max=0;
+        ScrollBar->Position=0;
+        ScrollBar->Enabled=false;
 }
 //---------------------------------------------------------------------------
 
@@ -438,6 +447,31 @@ void __fastcall TZXPrinter::FeedTimerExpired(TObject *Sender)
 void __fastcall TZXPrinter::FeedClick(TObject *Sender)
 {
         OutputLine();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TZXPrinter::FormMouseWheel(TObject *Sender,
+      TShiftState Shift, int WheelDelta, TPoint &MousePos, bool &Handled)
+{
+        if (ScrollBar->Enabled)
+        {
+                int currentPos = ScrollBar->Position;
+                int newPos = currentPos - (WheelDelta / 20);
+
+                if (newPos < ScrollBar->Min)
+                {
+                        newPos = ScrollBar->Min;
+                }
+
+                if (newPos > ScrollBar->Max)
+                {
+                        newPos = ScrollBar->Max;
+                }
+
+                ScrollBar->Position = newPos;
+        }
+
+        Handled = true;
 }
 //---------------------------------------------------------------------------
 

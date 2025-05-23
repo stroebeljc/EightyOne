@@ -17,6 +17,7 @@ object ZXPrinter: TZXPrinter
   OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
+  OnMouseWheel = FormMouseWheel
   PixelsPerInch = 96
   TextHeight = 13
   object DisplayImage: TImage

@@ -64,6 +64,8 @@ __published:	// IDE-managed Components
         void __fastcall FeedMouseUp(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
         void __fastcall FeedClick(TObject *Sender);
+        void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
+          int WheelDelta, TPoint &MousePos, bool &Handled);
 private:	// User declarations
         int StaticWidth;
         void ScrollOutput(void);

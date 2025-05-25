@@ -257,8 +257,8 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ConfigureCharacterBitmapFile(romBase);
 
         ConfigureMachineSettings();
-        ConfigureRamTop();
         ConfigureDefaultRamSettings();
+        ConfigureRamTop();
         DetermineRamSizeLabel(NewMachineName);
         ConfigureRom();
         ConfigureColour();

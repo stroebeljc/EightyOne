@@ -20,6 +20,7 @@ Version 1.42 - 23/05/2025 (by John Stroebel and Paul Farrow)
   - Fixed a typo in the Lambda Colour documentation.
   - Fixed Lambda Colour border behavior.
   - Fixed incorrect Z80 instruction fetch and associated debug behavior when halted.
+  - Fixed incorrect RAMTOP initialization when RAM pack value of None is selected.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to

@@ -165,8 +165,8 @@ void __fastcall TLiveMemoryWindow::FormMouseMove(TObject *Sender,
         if (X > 511) X = 511;
         if (Y > 255) Y = 255;
 
-        long my = map(Y, 0, 256, _memStart * 4, _memEnd * 4 - 1);
-        unsigned short addr = (unsigned short)(my * 256 + X);
+        long my = map(Y, 0, 256, _memStart * 4, _memEnd * 4);
+        unsigned short addr = (unsigned short)(my * 256 + X / 2);
 
         StatusBar1->Panels->Items[0]->Text = Format("$%0.4x",
                 ARRAYOFCONST((addr)));

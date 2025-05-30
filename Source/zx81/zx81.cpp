@@ -177,7 +177,6 @@ int lineClockCarryCounter;
 int tstates, frametstates;
 int tStatesCount;
 int configbyte=0;
-int lambdaAddress=0;
 int emulation_stop=0;
 int LastInstruction;
 int MemotechMode=0;

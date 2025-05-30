@@ -278,12 +278,9 @@ void UpdateLambdaColour(int address)
         // Ink = bits 0-2, Paper = bits 4-6
 
         int shifted_address = address>>13;
-        if (shifted_address == 6 && !directMemoryAccess)
-                lambdaAddress=(address&0x03FF)+0x2000;
-
-        if (zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
+        if (shifted_address == 6 && !directMemoryAccess && zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
         {
-                c=memory[lambdaAddress];
+                c=memory[(address&0x03FF)+0x2000];
 
                 ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
                 c = (c >> 4);

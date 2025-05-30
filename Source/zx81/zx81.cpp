@@ -266,6 +266,31 @@ void DisableLambda()
         }
 }
 
+void UpdateLambdaColour(int address)
+{
+        int c;
+
+        // If Lambda colour is enabled, we had better fetch
+        // the ink and paper colour from memory. The memory address
+        // is updated whenever MREQ is low with bits A15-A13 = 6
+        //
+        // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
+        // Ink = bits 0-2, Paper = bits 4-6
+
+        int shifted_address = address>>13;
+        if (shifted_address == 6 && !directMemoryAccess)
+                lambdaAddress=(address&0x03FF)+0x2000;
+
+        if (zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
+        {
+                c=memory[lambdaAddress];
+
+                ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+                c = (c >> 4);
+                paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
+        }
+}
+
 void zx81_initialise()
 {
         int i, romlen;
@@ -565,22 +590,29 @@ void zx81_WriteByte(int Address, int Data)
         // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
         // Addresses written between 12k-16k also control the lambda enable/disable
 
-        if (machine.colour==COLOURLAMBDA && Address>=0x2000 && Address<0x4000)
+        if (machine.colour==COLOURLAMBDA)
         {
-                if (Address>=0x3000)
+                int shifted_address = Address>>13;
+                if (shifted_address == 1)
                 {
-                        if (Address&1)
-                                zx81.lambdaColourEnabled = true;
-                        else
+                        if (Address&0x1000)
                         {
-                                zx81.lambdaColourEnabled = false;
-                                DisableLambda();
+                                if (Address&1)
+                                        zx81.lambdaColourEnabled = true;
+                                else
+                                {
+                                        zx81.lambdaColourEnabled = false;
+                                        DisableLambda();
+                                }
                         }
+
+                        // Write to the Lambda's 1kB buffer
+                        Address = (Address&0x03FF)+0x2000;
+
+                        goto writeMem;
                 }
 
-                Address = (Address&0x03FF)+0x2000;
-
-                goto writeMem;
+                UpdateLambdaColour(Address);
         }
 
         // ZX97 has various bank switched modes - check out the website for details
@@ -754,12 +786,24 @@ BYTE zx81_ReadByte(int Address)
                 }
         }
 
-        // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
-
-        if (machine.colour==COLOURLAMBDA && Address>=0x2000 && Address<0x4000)
+        if (machine.colour==COLOURLAMBDA)
         {
-                data=memory[(Address&0x03FF)+0x2000];
-                return (BYTE)data;
+                int shifted_address = Address>>13;
+                if (shifted_address == 0)
+                {
+                        // Lambda Colour forces ROMCS low in this address range
+                        data=memory[Address];
+                        return (BYTE)data;
+                }
+                else if (shifted_address == 1)
+                {
+                        // Read from Lambda's 1kB buffer
+                        // The lambda colour board has 1k of RAM mapped between 8k-16k (8 shadows)
+                        data=memory[(Address&0x03FF)+0x2000];
+                        return (BYTE)data;
+                }
+
+                UpdateLambdaColour(Address);
         }
 
         // ZX97 has various bank switched modes - check out the website for details
@@ -1044,12 +1088,15 @@ BYTE zx81_opcode_fetch(int Address)
                 return(data);
         }
 
+        if (machine.colour==COLOURLAMBDA)
+                UpdateLambdaColour(Address);
+
         // We can only execute code below M1NOT.  If an opcode fetch occurs
-        // above M1NOT, we actually fetch (address&32767).  This is important
+        // above M1NOT, we actually fetch (address&0x7FFF).  This is important
         // because it makes it impossible to place the display file in the
         // 48-64k region if a 64k RAM Pack is used.  How does the real
         // Hardware work?
-        data = zx81_ReadByte((Address>=49152)?Address&32767:Address);
+        data = zx81_ReadByte((Address>=0xC000)?Address&0x7FFF:Address);
         opcode=data;
         bit6=opcode&64;
 
@@ -1178,30 +1225,6 @@ BYTE zx81_opcode_fetch(int Address)
                 }
 
                 update=1;
-        }
-
-        if (machine.colour == COLOURLAMBDA)
-        {
-                int c;
-
-                // If Lambda colour is enabled, we had better fetch
-                // the ink and paper colour from memory. The memory address
-                // is only updated on memory accessed with bits A15-A13 = 110
-                //
-                // 0=Black, 1=Blue, 2=Green, 3=Cyan, 4=Red, 5=Magenta, 6=Yellow, 7=White
-                // Ink = bits 0-2, Paper = bits 4-6
-
-                if (z80.pc.w>=0xC000 && z80.pc.w<0xE000)
-                        lambdaAddress=(z80.pc.w&0x03FF)+0x2000;
-
-                if (zx81.lambdaColourEnabled && zx81.lambdaColourConnected)
-                {
-                        c=memory[lambdaAddress];
-
-                        ink = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                        c = (c >> 4);
-                        paper = (c & 0x01) | ((c & 0x02) << 1) | ((c & 0x04) >> 1);
-                }
         }
 
         if (update && !z80.halted)

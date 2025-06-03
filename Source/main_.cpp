@@ -355,6 +355,7 @@ void __fastcall TForm1::KeyboardMap1Click(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::N1001Click(TObject *Sender)
 {
+        if (FullScreen) SwitchFullScreen();
         N1001->Checked=true;
         N2001->Checked=false;
         N4001->Checked=false;
@@ -385,6 +386,7 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
 
 void __fastcall TForm1::N2001Click(TObject *Sender)
 {
+        if (FullScreen) SwitchFullScreen();
         N1001->Checked=false;
         N2001->Checked=true;
         N4001->Checked=false;
@@ -415,6 +417,7 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
 
 void __fastcall TForm1::N4001Click(TObject *Sender)
 {
+        if (FullScreen) SwitchFullScreen();
         N1001->Checked=false;
         N2001->Checked=false;
         N4001->Checked=true;
@@ -445,6 +448,7 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
 
 void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 {
+        if (FullScreen) SwitchFullScreen();
         N1001->Checked=false;
         N2001->Checked=false;
         N4001->Checked=false;
@@ -747,8 +751,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         Dbg->DisableMemoryWindowAutoUpdates();
 
-        char escKey = VK_ESCAPE;
-        if (FullScreen) FormKeyPress(NULL, escKey);
+        if (FullScreen) SwitchFullScreen();
         
         if (!Restart)
         {
@@ -834,8 +837,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 {
                         Filename=CommandLine[i];
 
-                        char escKey = VK_ESCAPE;
-                        if (Filename.UpperCase()=="FULLSCREEN") FormKeyPress(NULL, escKey);
+                        if (Filename.UpperCase()=="FULLSCREEN") SwitchFullScreen();
 
                         Ext = FileNameGetExt(Filename);
 
@@ -949,6 +951,100 @@ void __fastcall TForm1::WavLoadBtnClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void TForm1::SwitchFullScreen(void)
+{
+        FullScreen = !FullScreen;
+
+        if (FullScreen)
+        {
+                SaveX=Left;
+                SaveY=Top;
+                SaveW=ClientWidth;
+                SaveH=ClientHeight;
+                SaveWinW=Width;
+                SaveWinH=Height;
+                SaveStyle=GetWindowLongPtr(Form1->Handle, GWL_STYLE);
+                SaveExStyle=GetWindowLongPtr(Form1->Handle, GWL_EXSTYLE);
+                FileMenu1->Visible=false;
+                View1->Visible=false;
+                Control1->Visible=false;
+                Options1->Visible=false;
+                Tools1->Visible=false;
+                Help1->Visible=false;
+
+                Screen->Cursor = crNone;
+                RenderInit();
+                RecalcPalette();
+                RecalcWinSize();
+                AccurateInit(true);
+                Artifacts->TrackBarChange(NULL);
+                SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
+                SetWindowLongPtr(Form1->Handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+                if (RenderMode==RENDERGDI)
+                {
+                        DEVMODE Mode;
+                        int i, retval;
+
+                        SaveScrW = GetSystemMetrics(SM_CXSCREEN);
+                        SaveScrH = GetSystemMetrics(SM_CYSCREEN);
+                        SaveScrBpp = GetDeviceCaps(Form1->Canvas->Handle, BITSPIXEL)
+                                * GetDeviceCaps(Form1->Canvas->Handle, PLANES);
+
+                        i=0;
+                        memset(&Mode, 0, sizeof(DEVMODE));
+                        do
+                        {
+                                retval=EnumDisplaySettings(NULL,i, &Mode);
+
+                                if ((unsigned short)Mode.dmPelsWidth == FScreen.Width
+                                        && (unsigned short)Mode.dmPelsHeight == FScreen.Height
+                                        && (unsigned short)Mode.dmBitsPerPel == FScreen.Bpp)
+                                {
+                                        ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
+                                        retval=0;
+                                }
+
+                                i++;
+                        } while(retval);
+
+                        SetWindowPos(Form1->Handle, HWND_TOPMOST, 0, 0, FScreen.Width, FScreen.Height, SWP_SHOWWINDOW);
+                        ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
+                        ShowWindow(Form1->Handle, SW_MAXIMIZE);
+                }
+        }
+        else
+        {
+                if (RenderMode==RENDERGDI)
+                {
+                ChangeDisplaySettings(NULL, 0);
+                }
+                RenderInit();
+                Screen->Cursor = crDefault;
+                AccurateInit(true);
+                ClientWidth=SaveW;
+                ClientHeight=SaveH;
+                Width=SaveWinW;
+                Height=SaveWinH;
+                Left=SaveX;
+                Top=SaveY;
+                FileMenu1->Visible=true;
+                View1->Visible=true;
+                Control1->Visible=true;
+                Options1->Visible=true;
+                Tools1->Visible=true;
+                Help1->Visible=true;
+                SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, SaveExStyle);
+                SetWindowLongPtr(Form1->Handle, GWL_STYLE, SaveStyle);
+                SetWindowPos(Form1->Handle, HWND_NOTOPMOST,
+                                Left,Top,
+                                Width,
+                                Height, SWP_SHOWWINDOW);
+                RecalcPalette();
+                RecalcWinSize();
+                Artifacts->TrackBarChange(NULL);
+        }
+}
+
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
 {
         extern void RecalcWinSize(void);
@@ -957,97 +1053,6 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
         // CTRL + [ generates the same key code as ESC and so an additional check is made to see if the right control key is being pressed
         if (Key == VK_ESCAPE && !IsAsyncKeyPressed(VK_RCONTROL))
         {
-                FullScreen = !FullScreen;
-
-                if (FullScreen)
-                {
-                        SaveX=Left;
-                        SaveY=Top;
-                        SaveW=ClientWidth;
-                        SaveH=ClientHeight;
-                        SaveWinW=Width;
-                        SaveWinH=Height;
-                        SaveStyle=GetWindowLongPtr(Form1->Handle, GWL_STYLE);
-                        SaveExStyle=GetWindowLongPtr(Form1->Handle, GWL_EXSTYLE);
-                        FileMenu1->Visible=false;
-                        View1->Visible=false;
-                        Control1->Visible=false;
-                        Options1->Visible=false;
-                        Tools1->Visible=false;
-                        Help1->Visible=false;
-
-                        Screen->Cursor = crNone;
-                        RenderInit();
-                        RecalcPalette();
-                        RecalcWinSize();
-                        AccurateInit(true);
-                        Artifacts->TrackBarChange(NULL);
-                        SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
-                        SetWindowLongPtr(Form1->Handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-                        if (RenderMode==RENDERGDI)
-                        {
-                                DEVMODE Mode;
-                                int i, retval;
-
-                                SaveScrW = GetSystemMetrics(SM_CXSCREEN);
-                                SaveScrH = GetSystemMetrics(SM_CYSCREEN);
-                                SaveScrBpp = GetDeviceCaps(Form1->Canvas->Handle, BITSPIXEL)
-                                                * GetDeviceCaps(Form1->Canvas->Handle, PLANES);
-
-                                i=0;
-                                memset(&Mode, 0, sizeof(DEVMODE));
-                                do
-                                {
-                                        retval=EnumDisplaySettings(NULL,i, &Mode);
-
-                                        if ((unsigned short)Mode.dmPelsWidth == FScreen.Width
-                                                && (unsigned short)Mode.dmPelsHeight == FScreen.Height
-                                                && (unsigned short)Mode.dmBitsPerPel == FScreen.Bpp)
-                                        {
-                                                ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
-                                                retval=0;
-                                        }
-
-                                        i++;
-                                } while(retval);
-
-                                SetWindowPos(Form1->Handle, HWND_TOPMOST, 0, 0, FScreen.Width, FScreen.Height, SWP_SHOWWINDOW);
-                                ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
-                                ShowWindow(Form1->Handle, SW_MAXIMIZE);
-                        }
-                }
-                else
-                {
-                        if (RenderMode==RENDERGDI)
-                        {
-                                ChangeDisplaySettings(NULL, 0);
-                        }
-                        RenderInit();
-                        Screen->Cursor = crDefault;
-                        AccurateInit(true);
-                        ClientWidth=SaveW;
-                        ClientHeight=SaveH;
-                        Width=SaveWinW;
-                        Height=SaveWinH;
-                        Left=SaveX;
-                        Top=SaveY;
-                        FileMenu1->Visible=true;
-                        View1->Visible=true;
-                        Control1->Visible=true;
-                        Options1->Visible=true;
-                        Tools1->Visible=true;
-                        Help1->Visible=true;
-                        SetWindowLongPtr(Form1->Handle, GWL_EXSTYLE, SaveExStyle);
-                        SetWindowLongPtr(Form1->Handle, GWL_STYLE, SaveStyle);
-                        SetWindowPos(Form1->Handle, HWND_NOTOPMOST,
-                                        Left,Top,
-                                        Width,
-                                        Height, SWP_SHOWWINDOW);
-                        RecalcPalette();
-                        RecalcWinSize();
-                        Artifacts->TrackBarChange(NULL);
-                }
-
         }
 }
 //---------------------------------------------------------------------------
@@ -1158,8 +1163,7 @@ void __fastcall TForm1::InverseVideoClick(TObject *Sender)
 
 void __fastcall TForm1::FormDeactivate(TObject *Sender)
 {
-        char escKey = VK_ESCAPE;
-        if (FullScreen) FormKeyPress(NULL, escKey);
+        if (FullScreen) SwitchFullScreen();
 }
 //---------------------------------------------------------------------------
 
@@ -2963,8 +2967,7 @@ void __fastcall TForm1::ConnectJoystick2Click(TObject *Sender)
 
 void __fastcall TForm1::ZoomFullScreenClick(TObject *Sender)
 {
-        char escKey = VK_ESCAPE;
-        FormKeyPress(Sender, escKey);
+        SwitchFullScreen();
 }
 //---------------------------------------------------------------------------
 

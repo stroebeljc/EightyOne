@@ -4,7 +4,7 @@ This can be done manually or via Options > Configuration > Reset To Default Sett
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Version 1.42 - 02/06/2025 (by John Stroebel and Paul Farrow)
+Version 1.42 - 03/06/2025 (by John Stroebel and Paul Farrow)
 * Bug fixes:
   - Bottom 3 volume levels of AY sound output were being capped to 0.
   - The Apply button was not being enabled after browsing for a ROM cartridge file.
@@ -24,6 +24,7 @@ Version 1.42 - 02/06/2025 (by John Stroebel and Paul Farrow)
   - Fixed live memory view status bar display address for mouse location.
   - Corrected documentation folder name for Business Applications.
   - Fixed an unrecoverable exception when switching to/from User Defined view mode.
+  - Switch out of FullScreen mode when other Zoom hotkeys are used.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to

@@ -115,6 +115,7 @@ int AutoLoadCount=0;
 SCANLINE *BuildLine, Video;
 
 static bool iniFileExists = false;
+static HWND OldhWnd=NULL;
 
 const int bufferLength = 255;
 char webBuffer[bufferLength];
@@ -374,6 +375,11 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
         }
+
+        if (Form1->Handle != OldhWnd)
+        {
+                Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
+        }
 }
 //-----------------------------------------------------------------------
 
@@ -399,6 +405,11 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
         }
+
+        if (Form1->Handle != OldhWnd)
+        {
+                Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -423,6 +434,11 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
+        }
+
+        if (Form1->Handle != OldhWnd)
+        {
+                Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
         }
 }
 //---------------------------------------------------------------------------
@@ -455,6 +471,11 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
+        }
+
+        if (Form1->Handle != OldhWnd)
+        {
+                Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
         }
 }
 //---------------------------------------------------------------------------
@@ -781,8 +802,6 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         int targetfps;
         AnsiString Filename, Ext;
         int i=0;
-
-        static HWND OldhWnd=NULL;
 
         if (Form1->Handle != OldhWnd)
         {

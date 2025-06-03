@@ -23,6 +23,7 @@ Version 1.42 - 02/06/2025 (by John Stroebel and Paul Farrow)
   - Fixed incorrect RAMTOP initialization when RAM pack value of None is selected.
   - Fixed live memory view status bar display address for mouse location.
   - Corrected documentation folder name for Business Applications.
+  - Fixed an unrecoverable exception when switching to/from User Defined view mode.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to

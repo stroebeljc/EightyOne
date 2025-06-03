@@ -142,6 +142,7 @@ void CSound::End(void)
 {
         DXSound.End();
         if(Buffer) delete []Buffer;
+        Buffer = NULL;
 }
 
 void CSound::InitDevices()

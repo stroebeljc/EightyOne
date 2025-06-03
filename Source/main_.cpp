@@ -1047,7 +1047,6 @@ void TForm1::SwitchFullScreen(void)
 
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
 {
-        extern void RecalcWinSize(void);
         if (Key == ' ') rzx_close();
 }
 //---------------------------------------------------------------------------

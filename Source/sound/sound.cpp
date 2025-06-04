@@ -113,10 +113,13 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
         BeeperTick=0;
         BeeperTickIncr=(1<<24)/m_SampleRate;
 
-        InitDevices();  // initialise sound generating devices
+        if (FPS || BitsPerSample || SampleRate || Channels)
+        {  // Only initialise sound generating devices if sound parameters have changed
+                InitDevices();
 
-        sp0256_AL2.SetSamplingFreq(m_SampleRate);
-        Digitalker.SetSamplingFreq(m_SampleRate);
+                sp0256_AL2.SetSamplingFreq(m_SampleRate);
+                Digitalker.SetSamplingFreq(m_SampleRate);
+        }
 
         DXSound.Play();
         return(0);
@@ -127,12 +130,6 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
 int CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
-        if (!hWnd) hWnd = m_hWnd;
-        if (!FPS) FPS = m_FPS;
-        if (!BitsPerSample) BitsPerSample = m_BitsPerSample;
-        if (!SampleRate) SampleRate = m_SampleRate;
-        if (!Channels) Channels = m_Channels;
-
         End();
         return Initialise(hWnd,FPS,BitsPerSample,SampleRate,Channels);
 }

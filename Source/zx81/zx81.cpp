@@ -1088,11 +1088,11 @@ BYTE zx81_opcode_fetch(int Address)
                 UpdateLambdaColour(Address);
 
         // We can only execute code below M1NOT.  If an opcode fetch occurs
-        // above M1NOT, we actually fetch (address&0x7FFF).  This is important
+        // above M1NOT, we actually fetch (address&32767).  This is important
         // because it makes it impossible to place the display file in the
         // 48-64k region if a 64k RAM Pack is used.  How does the real
         // Hardware work?
-        data = zx81_ReadByte((Address>=0xC000)?Address&0x7FFF:Address);
+        data = zx81_ReadByte((Address>=49152)?Address&32767:Address);
         opcode=data;
         bit6=opcode&64;
 

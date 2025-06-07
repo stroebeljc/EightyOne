@@ -764,7 +764,7 @@ int TDbg::getRegisterValue(int registerIndex)
 			break;
 
 		case RegR:
-                        value = z80.r;
+                        value = (z80.r7&128) | (z80.r&127);
 			break;
 
 		case RegIXh:
@@ -1018,7 +1018,7 @@ void TDbg::UpdateVals(void)
         SetLabelInfo(IY, z80.iy.w);
         SetLabelInfo(PC, z80.pc.w);
         SetLabelInfo(SP, z80.sp.w);
-        SetLabelInfo(IR, (z80.i<<8) | (z80.r7 & 128) | ((z80.r) & 127));
+        SetLabelInfo(IR, (z80.i<<8) | (z80.r7 & 128) | (z80.r & 127));
         SetLabelInfo(A, z80.af.b.h, 2);
         SetLabelInfo(A_, z80.af_.b.h, 2);
         F->Caption = Bin8(z80.af.b.l);
@@ -1750,7 +1750,7 @@ void __fastcall TDbg::IRClick(TObject *Sender)
         EditValue->CentreOn(this);
 
         int v;
-        v = (z80.i << 8) | (z80.r7 & 128) | z80.r;
+        v = (z80.i << 8) | (z80.r7 & 128) | (z80.r & 127);
         if (EditValue->Edit2(v, 2))
         {
                 z80.r = (WORD)(v&127);

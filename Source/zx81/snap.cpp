@@ -159,7 +159,7 @@ void load_snap_cpu(FILE *f)
                         a=hex2dec(get_token(f));
 
                         z80.i = (BYTE)((a>>8) & 255);
-                        z80.r = (WORD)(a & 255);
+                        z80.r = (WORD)(a & 127);
                         z80.r7 = (BYTE)(a & 128);
                 }
         }
@@ -804,7 +804,8 @@ void load_snap_ace(FILE *f)
         z80.iff1 = memory[memptr]; memptr+=4;
         z80.iff2 = memory[memptr]; memptr+=4;
         z80.i = memory[memptr]; memptr+=4;
-        z80.r = memory[memptr];
+        z80.r7 = memory[memptr]&128;
+        z80.r = memory[memptr]&127;
 }
 
 int load_ZX81_snapshot(char* filename)
@@ -934,7 +935,7 @@ int save_snap_zx81(char *filename)
 	fprintf(f,"BC %04X    BC_ %04X\n", z80.bc.w,z80.bc_.w);
 	fprintf(f,"AF %04X    AF_ %04X\n", z80.af.w,z80.af_.w);
 	fprintf(f,"IX %04X    IY  %04X\n", z80.ix.w,z80.iy.w);
-	fprintf(f,"IR %04X\n", (z80.i<<8) | (z80.r7 & 128) | ((z80.r) & 127));
+	fprintf(f,"IR %04X\n", (z80.i<<8) | (z80.r7 & 128) | (z80.r & 127));
 
 	fprintf(f,"IM %02X      IF1 %02X\n", z80.im, z80.iff1);
 	fprintf(f,"HT %02X      IF2 %02X\n", z80.halted, z80.iff2);
@@ -1159,7 +1160,7 @@ int save_snap_ace(char *filename)
 	memory[memptr] = z80.iff1; memptr+=4;
 	memory[memptr] = z80.iff2; memptr+=4;
 	memory[memptr] = z80.i; memptr+=4;
-	memory[memptr] = z80.r; memptr+=4;
+	memory[memptr] = (z80.r7 & 128) | (z80.r & 127); memptr+=4;
 	memory[memptr] = 0x80; memory[memptr+1] = 0x00; memory[memptr+2] = 0x00; memory[memptr+3] = 0x00;
 
 	Addr=0x2000;

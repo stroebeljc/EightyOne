@@ -804,8 +804,8 @@ void load_snap_ace(FILE *f)
         z80.iff1 = memory[memptr]; memptr+=4;
         z80.iff2 = memory[memptr]; memptr+=4;
         z80.i = memory[memptr]; memptr+=4;
-        z80.r7 = memory[memptr]&128;
-        z80.r = memory[memptr]&127;
+        z80.r7 = (BYTE)(memory[memptr]&128);
+        z80.r = (WORD)(memory[memptr]&127);
 }
 
 int load_ZX81_snapshot(char* filename)
@@ -1160,7 +1160,7 @@ int save_snap_ace(char *filename)
 	memory[memptr] = z80.iff1; memptr+=4;
 	memory[memptr] = z80.iff2; memptr+=4;
 	memory[memptr] = z80.i; memptr+=4;
-	memory[memptr] = (z80.r7 & 128) | (z80.r & 127); memptr+=4;
+	memory[memptr] = (WORD)((z80.r7 & 128) | (z80.r & 127)); memptr+=4;
 	memory[memptr] = 0x80; memory[memptr+1] = 0x00; memory[memptr+2] = 0x00; memory[memptr+3] = 0x00;
 
 	Addr=0x2000;

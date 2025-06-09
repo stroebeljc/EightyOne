@@ -76,6 +76,7 @@ void TZXPrinter::ScrollOutput()
         if (ScrollBar->Enabled == false && ScrollBar->Max >= DisplayImage->Height)
         {
                 ScrollBar->Enabled = true;
+                ScrollBar->Visible = true;
                 ScrollBar->Position = ScrollBar->Max;
         }
         ScrollBar->Min = ScrollBar->Enabled ? DisplayImage->Height : 0;
@@ -115,6 +116,7 @@ __fastcall TZXPrinter::TZXPrinter(TComponent* Owner)
         ScrollBar->Max=0;
         ScrollBar->Position=0;
         ScrollBar->Enabled=false;
+        ScrollBar->Visible=false;
 
         ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
@@ -300,6 +302,7 @@ void __fastcall TZXPrinter::ClearImageClick(TObject *Sender)
         ScrollBar->Max=0;
         ScrollBar->Position=0;
         ScrollBar->Enabled=false;
+        ScrollBar->Visible=false;
 }
 //---------------------------------------------------------------------------
 

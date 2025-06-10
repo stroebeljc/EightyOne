@@ -26,6 +26,7 @@ Version 1.42 - 03/06/2025 (by John Stroebel and Paul Farrow)
   - Fixed an unrecoverable exception when switching to/from User Defined view mode.
   - Switch out of FullScreen mode when other Zoom hotkeys are used.
   - Fixed breakpoint conditions and snapshot information related to R register values.
+  - Fixed manual display mode reset behavior of Memotech HRG.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to

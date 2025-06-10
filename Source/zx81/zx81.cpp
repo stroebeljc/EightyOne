@@ -966,7 +966,7 @@ BYTE zx81_ReadByte(int Address)
         }
 
         // Memotech Hi-res board uses the internal 1K of RAM to overlay the ROM at addresses 0K-1K when z80.i is odd
-        if ((Address<1024 && (zx81.truehires==HIRESMEMOTECH)) && (z80.i&1))
+        if ((Address<1024 && (zx81.truehires==HIRESMEMOTECH)) && (z80.i&1) && MemotechMode)
         {
                 data=memhrg[Address];
         }

@@ -1040,7 +1040,7 @@ BYTE zx81_readbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE zx81_opcode_fetch(int Address)
 {
-        static bool startOfDFile = true;
+        static int lastR = 0;
         static int calls = 0;
         int inv;
         int bit6, update=0;
@@ -1055,16 +1055,13 @@ BYTE zx81_opcode_fetch(int Address)
                 if (zxpand) zxpand->Update(1);
         }
 
-        if (nmiGeneratorEnabled)
-        {
-                startOfDFile = true;
-        }
-
         if (Address < zx81.m1not)
         {
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
                 data = zx81_ReadByte(Address);
+
+                lastR = 0; // Only set when above m1not
 
                 // The floating point hardware fix intercepts instruction opcode fetches from addresses
                 // matching %x0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.
@@ -1130,18 +1127,20 @@ BYTE zx81_opcode_fetch(int Address)
         else if ((z80.i&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
-                // when the I register is odd.
-                BYTE rRegister = (BYTE)((z80.r7 & 0x80) | (z80.r & 0x7F));
+                // when the I register is odd. The R register is used to count
+                // video character positions, but it can only be seen during the
+                // refresh cycle (T3-T4) after an instruction fetch. Hold it for
+                // use on the next instruction cycle (T1-T2).
+                // Without knowing the actual PAL logic, this is the best we can
+                // do to mimic the real hardware.
 
-                if (startOfDFile && opcode != 0x76)
-                {
-                        startOfDFile = false;
-                }
-                if (!startOfDFile && (rRegister != 0x80 && rRegister != 0x81))
+                if ((lastR&0x40) && lastR!=0x7F)
                 {
                         inv=(MemotechMode==3);
                         update=1;
                 }
+
+                lastR = z80.r;
         }
         else if (zx81.truehires==HIRESQUICKSILVA && QuicksilvaHiResMode && syncOutputWhite)
         {

@@ -1140,7 +1140,7 @@ BYTE zx81_opcode_fetch(int Address)
                         update=1;
                 }
 
-                lastR = (z80.r&0x7F);
+                lastR = z80.r&0x7F;
         }
         else if (zx81.truehires==HIRESQUICKSILVA && QuicksilvaHiResMode && syncOutputWhite)
         {

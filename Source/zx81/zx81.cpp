@@ -1055,13 +1055,17 @@ BYTE zx81_opcode_fetch(int Address)
                 if (zxpand) zxpand->Update(1);
         }
 
+        if (!(Address & 0x8000))
+        {
+                lastR = 0; // Allows Memotech HRG to detect instruction execution
+                           // transition to video memory.
+        }
+
         if (Address < zx81.m1not)
         {
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
                 opcode = zx81_ReadByte(Address);
-
-                lastR = 0; // Only set when above m1not
 
                 // The floating point hardware fix intercepts instruction opcode fetches from addresses
                 // matching %x0xx0x1100110101 and forces bit 6 of the instruction opcode to 0.

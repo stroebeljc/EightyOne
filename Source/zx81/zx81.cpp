@@ -1042,8 +1042,8 @@ BYTE zx81_opcode_fetch(int Address)
 {
         static int lastR = 0;
         static int calls = 0;
-        int inv;
-        int bit6, update=0;
+        bool inv;
+        bool bit6;
         BYTE opcode, data;
 
         // very rough timing here;
@@ -1059,7 +1059,7 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 // This is not video related, so just return the opcode
                 // and generate some video noise.
-                data = zx81_ReadByte(Address);
+                opcode = zx81_ReadByte(Address);
 
                 lastR = 0; // Only set when above m1not
 
@@ -1073,12 +1073,12 @@ BYTE zx81_opcode_fetch(int Address)
                 {
                         if ((Address & 0x4BFF) == 0x0335)
                         {
-                                data &= 0xBF;
+                                opcode &= 0xBF;
                         }
                 }
 
-                noise |= data;
-                return(data);
+                noise |= opcode;
+                return(opcode);
         }
 
         if (machine.colour==COLOURLAMBDA)
@@ -1089,9 +1089,10 @@ BYTE zx81_opcode_fetch(int Address)
         // because it makes it impossible to place the display file in the
         // 48-64k region if a 64k RAM Pack is used.  How does the real
         // Hardware work?
-        data = zx81_ReadByte((Address>=49152)?Address&32767:Address);
-        opcode=data;
-        bit6=opcode&64;
+        opcode = zx81_ReadByte((Address>=49152)?Address&32767:Address);
+        data = opcode;
+        bit6 = opcode&0x40;
+        inv = opcode&0x80;
 
         // Since we got here, we're generating video (ouch!)
         // Bit six of the opcode is important.  If set, the opcode
@@ -1100,54 +1101,53 @@ BYTE zx81_opcode_fetch(int Address)
         // generate the TV picture (exactly how depends on which
         // display method is used)
 
-        if (!bit6) opcode=0;
-        inv = data&128;
-
-        bool zx80 = (emulator.machine == MACHINEZX80);
         bool chrgenChr128 = (zx81.chrgen == CHRGENCHR128);
         bool upper16KAccess = (z80.i >= 0xC0);
         bool region8KAccess = (z80.i >= 0x20) && (z80.i < 0x40);
-        bool wrxAccess = (zx81.truehires == HIRESWRX) && !bit6;
 
-        bool chroma80 = zx80 && chromaSelected;
+        bool chroma80 = (emulator.machine == MACHINEZX80) && chromaSelected;
         bool chroma80Chr128 = chroma80 && chrgenChr128 && upper16KAccess;
-        bool notChr128mode  = !chroma80Chr128 && (z80.i > zx81.maxireg);
-        bool chr128mode8kRam = !chroma80Chr128 && region8KAccess && zx81.RAM816k;
+        bool notChr128mode  = z80.i > zx81.maxireg;
+        bool chr128mode8kRam = region8KAccess && zx81.RAM816k;
 
         // First check for WRX graphics.  This is easy, we just create a
         // 16 bit Address from the IR Register pair and fetch that byte
         // loading it into the video shift register.
-        if ((notChr128mode || chr128mode8kRam) && wrxAccess && !chroma80Chr128)
+        if ((zx81.truehires == HIRESWRX) && !bit6 && (notChr128mode || chr128mode8kRam) && !chroma80Chr128)
         {
                 FetchChromaColour(Address, data, lineCounter, memory);
 
+                // The IR registers are used to provide video data, but they can
+                // only be seen during the refresh cycle (T3-T4) after an instruction
+                // fetch (T1-T2). Look back to the prior refresh to get the correct value.
                 data=zx81_ReadByte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
-                update=1;
         }
         else if ((z80.i&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
                 // when the I register is odd. The R register is used to count
                 // video character positions, but it can only be seen during the
-                // refresh cycle (T3-T4) after an instruction fetch. Hold it for
+                // refresh cycle (T3-T4) after an instruction fetch. Save it for
                 // use on the next instruction cycle (T1-T2).
+                // This last value is cleared when executing below 32k to allow
+                // the HRG to detect the start of a video line.
                 // Without knowing the actual PAL logic, this is the best we can
                 // do to mimic the real hardware.
 
                 if ((lastR&0x40) && lastR!=0x7F)
                 {
-                        inv=(MemotechMode==3);
-                        update=1;
+                        inv = (MemotechMode==3);
+                        bit6 = 0;
                 }
 
                 lastR = z80.r&0x7F;
         }
-        else if (zx81.truehires==HIRESQUICKSILVA && QuicksilvaHiResMode && syncOutputWhite)
+        else if ((zx81.truehires==HIRESQUICKSILVA) && QuicksilvaHiResMode && syncOutputWhite)
         {
                 if (opcode!=118)
                 {
-                        inv=0;
-                        update=1;
+                        inv = 0;
+                        bit6 = 0;
                         data=zx81_ReadByte(QsHiResAddress);
                         QsHiResAddress++;
                         if (QsHiResAddress == 0xB800)
@@ -1163,8 +1163,8 @@ BYTE zx81_opcode_fetch(int Address)
                 // the bit 6 detection entirely and relies on the R
                 // register to generate an interrupt at the right time.
 
-                inv=0;
-                update=1;
+                inv = 0;
+                bit6 = 0;
         }
         else if (!bit6)
         {
@@ -1189,7 +1189,7 @@ BYTE zx81_opcode_fetch(int Address)
                 }
                 else
                 {
-                    data = (BYTE)(data&63);
+                        data = (BYTE)(data&63);
                 }
 
                 // If I points to ROM, OR I points anywhere else for
@@ -1218,11 +1218,9 @@ BYTE zx81_opcode_fetch(int Address)
                 {
                         data=255;
                 }
-
-                update=1;
         }
 
-        if (update && !z80.halted)
+        if (!bit6 && !z80.halted)
         {
                 // Update gets set to true if we managed to fetch a bitmap from
                 // somewhere.  The only time this doesn't happen is if we encountered

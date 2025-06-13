@@ -1146,10 +1146,9 @@ BYTE zx81_opcode_fetch(int Address)
         }
         else if ((zx81.truehires==HIRESQUICKSILVA) && QuicksilvaHiResMode && syncOutputWhite)
         {
-                if (opcode!=118)
+                if (!bit6 && !z80.halted)
                 {
                         inv = 0;
-                        bit6 = 0;
                         data=zx81_ReadByte(QsHiResAddress);
                         QsHiResAddress++;
                         if (QsHiResAddress == 0xB800)

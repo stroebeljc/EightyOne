@@ -48,6 +48,7 @@ void TZXPrinter::ResetPrinter(void)
         XPos=0;
         Counter2=16;
         StylusActive=false;
+        Momentum=0;
 }
 void TZXPrinter::OutputBit(void)
 {
@@ -149,17 +150,32 @@ void __fastcall TZXPrinter::DrawImage()
 //---------------------------------------------------------------------------
 void TZXPrinter::ClockTick(int ts)
 {
-        if (!MotorOn) return;
+        if (!MotorOn && Momentum < 0.001) return;
         Counter1-=ts;
         if (Counter1>0) return;
+
+        if (Momentum < 0.001)
+                Momentum = 0.001;
+
         if (MotorSlow)
         {
-                Counter1 += 4064 - ((100-BitSpeed) * 10);
+                Counter1 += (4064 - ((100-BitSpeed) * 10))/Momentum;
+                if (MotorOn)
+                        Momentum += 0.025;
+                else
+                        Momentum -= 0.0025;
         }
         else
         {
-                Counter1 += 1016 - ((100-BitSpeed) * 10);
+                Counter1 += (1016 - ((100-BitSpeed) * 10))/Momentum;
+                if (MotorOn)
+                        Momentum += 0.1;
+                else
+                        Momentum -= 0.01;
         }
+
+        if (Momentum > 1.0)
+                Momentum = 1.0;
 
         if (Counter2)
         {
@@ -199,7 +215,8 @@ void TZXPrinter::WritePort(unsigned char Data)
 
         if (Data & (1 << motorOn))
         {
-                ResetPrinter();
+                MotorOn = false;
+                //ResetPrinter();
         }
         else
         {

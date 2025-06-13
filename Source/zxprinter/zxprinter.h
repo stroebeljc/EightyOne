@@ -75,6 +75,7 @@ private:	// User declarations
         Graphics::TBitmap *PrinterOutput;
         bool MotorOn, MotorSlow, StylusActive, OnPaper, EncoderWheel;
         int XPos, YPos, Counter1, Counter2;
+        float Momentum;
 public:		// User declarations
         __fastcall TZXPrinter(TComponent* Owner);
         void ResetPrinter(void);

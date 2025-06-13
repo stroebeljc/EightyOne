@@ -1040,7 +1040,7 @@ BYTE zx81_readbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE zx81_opcode_fetch(int Address)
 {
-        static int lastR = 0;
+        static bool lastInstFromVMem = false;
         static int calls = 0;
         bool inv;
         bool bit6;
@@ -1057,8 +1057,8 @@ BYTE zx81_opcode_fetch(int Address)
 
         if (!(Address & 0x8000))
         {
-                lastR = 0; // Allows Memotech HRG to detect instruction execution
-                           // transition to video memory.
+                lastInstFromVMem = false; // Allows Memotech HRG to detect
+                        // instruction execution transition to video memory.
         }
 
         if (Address < zx81.m1not)
@@ -1130,21 +1130,19 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
                 // when the I register is odd. The R register is used to count
-                // video character positions, but it can only be seen during the
-                // refresh cycle (T3-T4) after an instruction fetch. Save it for
-                // use on the next instruction cycle (T1-T2).
-                // This last value is cleared when executing below 32k to allow
+                // video character positions and detects end of line when it wraps.
+                // We also need to know when executing below 32k to allow
                 // the HRG to detect the start of a video line.
                 // Without knowing the actual PAL logic, this is the best we can
                 // do to mimic the real hardware.
 
-                if ((lastR&0x40) && lastR!=0x7F)
+                if (lastInstFromVMem && (z80.r & 0x40))
                 {
                         inv = (MemotechMode==3);
                         bit6 = 0;
                 }
 
-                lastR = z80.r&0x7F;
+                lastInstFromVMem = true;
         }
         else if ((zx81.truehires==HIRESQUICKSILVA) && QuicksilvaHiResMode && syncOutputWhite)
         {

@@ -1151,10 +1151,6 @@ BYTE zx81_opcode_fetch(int Address)
                         inv = 0;
                         data=zx81_ReadByte(QsHiResAddress);
                         QsHiResAddress++;
-                        if (QsHiResAddress == 0xB800)
-                        {
-                                QsHiResAddress = 0xA000;
-                        }
                 }
         }
         else if ((z80.i&1) && (zx81.truehires==HIRESG007))
@@ -1877,13 +1873,11 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 case LASTINSTOUTFD:     // NMI generator off
                         nmiGeneratorEnabled = false;
                         syncOutputWhite = true;
-                        QsHiResAddress = 0xA000;
                         break;
 
                 case LASTINSTOUTFE:     // NMI generator on
                         nmiGeneratorEnabled = true;
                         syncOutputWhite = true;
-                        QsHiResAddress = 0xA000;
                         break;
 
                 case LASTINSTOUTFF:     // VSync end

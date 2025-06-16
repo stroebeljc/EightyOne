@@ -1852,6 +1852,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (machine.floppytype==FLOPPYIF1) IF1ClockTick(ts);
                 else if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 
+                DebugUpdate(ts);
+
                 if (LastPC==0x0) WavStop();
 
                 i=70;
@@ -2106,8 +2108,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         rzx_close();
                         spec48_nmi();
                 }
-
-                DebugUpdate(ts);
         }
         while ((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
 

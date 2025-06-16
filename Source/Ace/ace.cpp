@@ -412,6 +412,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 WavClockTick(ts, ACEMICState);
                 if (machine.zxprinter) ZXPrinterClockTick(ts);
                 //sound_beeper(GetEarState());
+                DebugUpdate(ts);
 
                 loop-=ts;
                 fts+=ts;
@@ -463,7 +464,6 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                         CurScanLine->scanline[CurScanLine->scanline_len++]=(BYTE)colour;
                         shift_register <<= 1;
                 }
-                DebugUpdate(ts);
         } while(loop>0 && !emulation_stop && sts<MaxScanLen);
 
 

@@ -48,7 +48,7 @@ struct LastIOAccess
         BYTE data;
 };
 
-extern void DebugUpdate(void);
+extern void DebugUpdate(int tstates);
 extern void ResetLastIOAccesses();
 extern void LogInAccess(int address, BYTE data);
 extern void LogOutAccess(int address, BYTE data);

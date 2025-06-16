@@ -55,7 +55,7 @@ extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
 extern void ResetLastIOAccesses();
-extern void DebugUpdate(void);
+extern void DebugUpdate(int tstates);
 
 extern int RasterY;
 extern long noise;
@@ -463,7 +463,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                         CurScanLine->scanline[CurScanLine->scanline_len++]=(BYTE)colour;
                         shift_register <<= 1;
                 }
-                DebugUpdate();
+                DebugUpdate(ts);
         } while(loop>0 && !emulation_stop && sts<MaxScanLen);
 
 

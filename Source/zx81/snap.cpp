@@ -61,7 +61,7 @@ void load_snap_drives(FILE* f);
 void ProcessTag(char* tok, FILE* f);
 
 extern void HWSetMachine(int machine, int speccy);
-extern void DebugUpdate();
+extern void DebugUpdate(int tstates);
 
 AnsiString ReplaceSpaces(AnsiString text)
 {
@@ -870,7 +870,7 @@ int do_load_snap(char *filename)
                 load_ZX81_snapshot(filename);
         }
 
-        DebugUpdate();
+        DebugUpdate(0);
         return(1);
 }
 

@@ -74,7 +74,7 @@ extern AnsiString getMachineRoot(AnsiString fullRomName);
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
 extern void ResetLastIOAccesses();
-extern void DebugUpdate(void);
+extern void DebugUpdate(int tstates);
 extern long noise;
 extern int SelectAYReg;
 extern int RasterY;
@@ -2106,7 +2106,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 tstotal += ts;
 
-                DebugUpdate();
+                DebugUpdate(ts);
         }
         while ((CurScanLine->scanline_len < scanlineActivePixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
 
@@ -2521,7 +2521,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 tstotal += ts;
 
-                DebugUpdate();
+                DebugUpdate(ts);
         }
         while ((CurScanLine->scanline_len < scanlineThresholdPixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
 

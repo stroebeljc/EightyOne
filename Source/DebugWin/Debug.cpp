@@ -87,7 +87,7 @@ int StepOutRequested;
 int RetExecuted;
 int StackChange;
 
-void DebugUpdate(void)
+void DebugUpdate(int tstates)
 {
         static int lastpc, lastHalted;
         int i;
@@ -157,7 +157,7 @@ void DebugUpdate(void)
 
         lastHalted=z80.halted;
 
-        displayedTStatesCount = tStatesCount;
+        displayedTStatesCount += tstates;
 
         if (Dbg->BreakPointHit() || (RetExecuted && StepOutRequested && (StackChange < 0)))
         {
@@ -1343,6 +1343,7 @@ void __fastcall TDbg::RunStopClick(TObject *Sender)
         if(!emulation_stop)
         {
                 MemoryWindow->ClearChanges();
+                displayedTStatesCount = 0;
         }
         UpdateVals();
         StepOutRequested = 0;
@@ -1393,6 +1394,7 @@ void __fastcall TDbg::ContinuousClick(TObject *Sender)
 
 void __fastcall TDbg::SingleStepClick(TObject *Sender)
 {
+        displayedTStatesCount = 0;
         StepOutRequested = 0;
         MemoryWindow->ClearChanges();
         emulation_stop=0;

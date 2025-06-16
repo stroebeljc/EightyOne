@@ -84,7 +84,7 @@ extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 extern void LogOutAccess(int address, BYTE data);
 extern void LogInAccess(int address, BYTE data);
 extern void ResetLastIOAccesses();
-extern void DebugUpdate(void);
+extern void DebugUpdate(int tstates);
 extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern void LoadDock(char *filename);
 
@@ -2107,7 +2107,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         spec48_nmi();
                 }
 
-                DebugUpdate();
+                DebugUpdate(ts);
         }
         while ((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
 

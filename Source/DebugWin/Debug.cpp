@@ -1394,7 +1394,6 @@ void __fastcall TDbg::ContinuousClick(TObject *Sender)
 
 void __fastcall TDbg::SingleStepClick(TObject *Sender)
 {
-        displayedTStatesCount = 0;
         StepOutRequested = 0;
         MemoryWindow->ClearChanges();
         emulation_stop=0;

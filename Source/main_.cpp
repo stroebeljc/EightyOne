@@ -733,7 +733,7 @@ void __fastcall TForm1::ResetZX811Click(TObject *Sender)
         Dbg->ClearSkipAddresses();
         if (machine.reset) machine.reset();
         emulation_stop=initialStopState;
-        DebugUpdate(0);
+        DebugUpdate();
         if (BasicLister->ListerAvailable())
         {
                 BasicLister->Clear();
@@ -1471,7 +1471,7 @@ void __fastcall TForm1::HardReset1Click(TObject *Sender)
         Sound.InitDevices();
         emulation_stop=initialStopState;
         Dbg->Reset();
-        DebugUpdate(0);
+        DebugUpdate();
         LiveMemoryWindow->Reset();
         if (BasicLister->ListerAvailable())
         {

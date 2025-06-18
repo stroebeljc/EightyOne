@@ -29,6 +29,7 @@
 #include "snap.h"
 #include "zx81config.h"
 #include "WavCInterface.h"
+#include "Debug.h"
 #include "sound.h"
 #include "dev8255.h"
 #include "serialport.h"
@@ -81,10 +82,6 @@ extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 
 extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
-extern void LogOutAccess(int address, BYTE data);
-extern void LogInAccess(int address, BYTE data);
-extern void ResetLastIOAccesses();
-extern void DebugUpdate(int tstates);
 extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
 extern void LoadDock(char *filename);
 
@@ -1852,8 +1849,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (machine.floppytype==FLOPPYIF1) IF1ClockTick(ts);
                 else if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 
-                DebugUpdate(ts);
-
                 if (LastPC==0x0) WavStop();
 
                 i=70;
@@ -2108,6 +2103,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         rzx_close();
                         spec48_nmi();
                 }
+
+                DebugUpdate();
         }
         while ((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
 

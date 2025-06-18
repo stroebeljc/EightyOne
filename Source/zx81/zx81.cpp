@@ -27,6 +27,7 @@
 #include "snap.h"
 #include "zx81config.h"
 #include "WavCInterface.h"
+#include "Debug.h"
 #include "sound.h"
 #include "dev8255.h"
 #include "serialport.h"
@@ -71,10 +72,6 @@ void add_blank(SCANLINE *line, int clockCount, BYTE colour);
 extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 extern AnsiString getMachineRoot(AnsiString fullRomName);
 
-extern void LogOutAccess(int address, BYTE data);
-extern void LogInAccess(int address, BYTE data);
-extern void ResetLastIOAccesses();
-extern void DebugUpdate(int tstates);
 extern long noise;
 extern int SelectAYReg;
 extern int RasterY;
@@ -430,8 +427,6 @@ void zx81_initialise()
         z80_reset();
         floppy_init();
         
-        tStatesCount = 0;
-
         CreateZXpand();
 
         P3DriveMachineHasInitialised();
@@ -2106,7 +2101,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 tstotal += ts;
 
-                DebugUpdate(ts);
+                DebugUpdate();
         }
         while ((CurScanLine->scanline_len < scanlineActivePixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
 
@@ -2521,7 +2516,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
 
                 tstotal += ts;
 
-                DebugUpdate(ts);
+                DebugUpdate();
         }
         while ((CurScanLine->scanline_len < scanlineThresholdPixelLength) && (CurScanLine->sync_type == SYNCNONE) && !emulation_stop);
 

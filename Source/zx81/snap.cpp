@@ -36,6 +36,7 @@
 #include "Artifacts_.h"
 #include "SoundForm.h"
 #include "kb_.h"
+#include "Debug.h"
 
 extern int lineCounter;
 extern int MemotechMode;
@@ -61,7 +62,6 @@ void load_snap_drives(FILE* f);
 void ProcessTag(char* tok, FILE* f);
 
 extern void HWSetMachine(int machine, int speccy);
-extern void DebugUpdate(int tstates);
 
 AnsiString ReplaceSpaces(AnsiString text)
 {
@@ -870,7 +870,7 @@ int do_load_snap(char *filename)
                 load_ZX81_snapshot(filename);
         }
 
-        DebugUpdate(0);
+        DebugUpdate();
         return(1);
 }
 

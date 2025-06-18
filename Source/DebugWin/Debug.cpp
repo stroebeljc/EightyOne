@@ -544,6 +544,7 @@ bool TDbg::BreakPointHit()
                         if (bp->Hits >= bp->HitCount)
                         {
                                 bp->Hits = 0;
+                                tStatesCount = 0;
                                 return true;
                         }
 		}
@@ -1343,7 +1344,6 @@ void __fastcall TDbg::RunStopClick(TObject *Sender)
         if(!emulation_stop)
         {
                 MemoryWindow->ClearChanges();
-                tStatesCount = 0;
         }
         UpdateVals();
         StepOutRequested = 0;

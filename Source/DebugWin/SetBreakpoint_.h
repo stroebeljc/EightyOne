@@ -76,6 +76,7 @@ private:	// User declarations
         void BreakTypeChangeFlag();
         void BreakTypeChangeMem();
         void BreakTypeChangeTStates();
+        void BreakTypeChangeBasic();
         void SetConditionList(TComboBox* const conditionList, AnsiString conditions);
         void SetEditBox(TEdit* const editBox, AnsiString defaultText);
         void SetEditBoxLabels(AnsiString breakAddressLabel, AnsiString breakValueLabel);

@@ -148,6 +148,17 @@ int zx81BasicLister::GetProgramEndAddress()
         return getbyte(vars) + (getbyte(vars + 1) << 8);
 }
 
+int zx81BasicLister::GetBasicLineExecuteStartAddress()
+{
+        return 3386;
+}
+
+int zx81BasicLister::GetNextBasicLineNumber()
+{
+        const int ppc = 16391;
+        return getbyte(ppc) + (getbyte(ppc + 1) << 8);
+}
+
 unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
 {
         unsigned char c;

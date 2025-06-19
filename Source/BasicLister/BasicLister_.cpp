@@ -508,25 +508,27 @@ int TBasicLister::FindLineDisplayedOnRow(int row)
 void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-        if (Button != mbLeft)
-        {
-                return;
-        }
-
         int rowWithinClientArea = (Y - ToolBar->Height) / (PixelsPerCharacterHeight * mScaling);
         int row = rowWithinClientArea + ScrollBar->Position;
 
         int index = FindLineDisplayedOnRow(row);
-        if (index != -1 && index != mLastHighlightedEntryIndex)
-        {
-                HighlightEntry(index);
-        }
-        else
-        {
-                UnhighlightEntry(index);
-        }
 
-        EnableButtons();
+        if (Button == mbLeft)
+        {
+                if (index != -1 && index != mLastHighlightedEntryIndex)
+                {
+                        HighlightEntry(index);
+                }
+                else
+                {
+                        UnhighlightEntry(index);
+                }
+
+                EnableButtons();
+        }
+        else if (Button == mbRight)
+        {
+        }
 }
 
 //---------------------------------------------------------------------------
@@ -656,6 +658,16 @@ void TBasicLister::LoadSettings(TIniFile *ini)
         ToolButtonLineEnds->Down = ini->ReadBool("BASICLISTER", "ShowLineEnds", ToolButtonLineEnds->Down);
 
         if (Form1->BasicListerOption->Checked) Show();
+}
+
+int TBasicLister::BasicLineExecuteStartAddress()
+{
+        return mBasicLister->GetBasicLineExecuteStartAddress();
+}
+
+int TBasicLister::NextBasicLineNumberToExecute()
+{
+        return mBasicLister->GetNextBasicLineNumber();
 }
 
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)

@@ -83,6 +83,8 @@ public:
         virtual bool ZxTokenSupported() { return false; }
         virtual int GetProgramStartAddress() { return 65535; }
         virtual int GetProgramEndAddress() { return 65535; }
+        virtual int GetBasicLineExecuteStartAddress() { return 65535; }
+        virtual int GetNextBasicLineNumber() { return 65535; }
 
 protected:
         COLORREF mInk;

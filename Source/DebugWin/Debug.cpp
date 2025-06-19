@@ -37,6 +37,7 @@
 #include "SymBrowse.h"
 #include "Profiler.h"
 #include "DbgDissassem.cpp"
+#include "BasicLister\BasicLister_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -237,6 +238,11 @@ int TDbg::FindBreakPointEntry(int index, struct breakpoint& bp, bool editing)
                                                      (Breakpoint[i].ConditionValue == bp.ConditionValue) &&
                                                      (Breakpoint[i].Value == bp.Value);
                                 break;
+
+                        case BP_BASIC:
+                                existingBreakpoint = (Breakpoint[i].Type == bp.Type) &&
+                                                     (Breakpoint[i].Addr == bp.Addr);
+                                break;
                 }
 
                 if (existingBreakpoint && (!editing || (editing && (index != i))))
@@ -331,6 +337,10 @@ AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
 
                 case BP_FLAG:
                         str = ConstructFlagBreakpointText(bp);
+                        break;
+
+                case BP_BASIC:
+                        str = ConstructBasicBreakpointText(bp);
                         break;
         }
 
@@ -467,6 +477,13 @@ AnsiString TDbg::ConstructExeBreakpointText(breakpoint* const bp)
         return str;
 }
 
+AnsiString TDbg::ConstructBasicBreakpointText(breakpoint* const bp)
+{
+        AnsiString str = "BASIC Line = " + IntToStr(bp->Addr);
+
+        return str;
+}
+
 void TDbg::DelBreakPoint(int index)
 {
         int j;
@@ -528,6 +545,7 @@ bool TDbg::BreakPointHit()
                     Dbg->BPRegisterValueHit(bp) ||
                     Dbg->BPFlagValueHit(bp) ||
                     Dbg->BPMemoryValueHit(bp) ||
+                    Dbg->BPBasicHit(z80.pc.w, bp) ||
                     Dbg->BPTCyclesHit(z80.pc.w, bp))
 		{
                         if (!bp->Permanent)
@@ -721,6 +739,22 @@ bool TDbg::BPRegisterValueHit(breakpoint* const bp)
 
                 default:
                         break;
+        }
+
+        return false;
+}
+
+bool TDbg::BPBasicHit(int pc, breakpoint* const bp)
+{
+        if (bp->Type != BP_BASIC || !bp->Enabled)
+        {
+                return false;
+        }
+
+        if (bp->Addr == BasicLister->NextBasicLineNumberToExecute() &&
+                pc == BasicLister->BasicLineExecuteStartAddress())
+        {
+                return true;
         }
 
         return false;

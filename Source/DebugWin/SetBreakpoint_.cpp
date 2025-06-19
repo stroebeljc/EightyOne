@@ -217,7 +217,11 @@ void TSetBreakpoint::ConfigureBreakpointFields(struct breakpoint& bp)
         {
                 int maxDigits = GetBreakAddressMaxDigits(bp.Type);
 
-                if ((BreakType->ItemIndex == BP_INH) || (BreakType->ItemIndex == BP_OUTH))
+                if (BreakType->ItemIndex == BP_BASIC)
+                {
+                        BreakAddress->Text = IntToStr(bp.Addr);
+                }
+                else if ((BreakType->ItemIndex == BP_INH) || (BreakType->ItemIndex == BP_OUTH))
                 {
                         BreakAddress->Text = "$" + IntToHex(bp.Addr >> 8, maxDigits);
                 }
@@ -367,6 +371,10 @@ void __fastcall TSetBreakpoint::BreakTypeChange(TObject *Sender)
                 case BP_FLAG:
                         BreakTypeChangeFlag();
                         break;
+
+                case BP_BASIC:
+                        BreakTypeChangeBasic();
+                        break;
         }
 
         BreakConditionAddrChange(Sender);
@@ -475,6 +483,12 @@ void TSetBreakpoint::BreakTypeChangeTStates()
         SetEditBox(BreakValue, "0    ");
 }
 
+void TSetBreakpoint::BreakTypeChangeBasic()
+{
+        SetConditionList(BreakConditionAddr, "=");
+        SetEditBox(BreakAddress, "1   ");
+}
+
 //---------------------------------------------------------------------------
 
 void TSetBreakpoint::SetEditBoxLabels(AnsiString breakAddressLabel, AnsiString breakValueLabel)
@@ -546,6 +560,11 @@ void __fastcall TSetBreakpoint::BreakConditionAddrChange(TObject *Sender)
 
                                 case BP_FLAG:
                                         SetEditBoxLabels("Bit", "Value");
+                                        break;
+
+                                case BP_BASIC:
+                                        SetEditBoxLabels("Line", "");
+                                        BreakValue->Enabled = false;
                                         break;
 
                         }
@@ -740,6 +759,10 @@ void TSetBreakpoint::GetBreakAddressLimits(BreakpointType type, int& lowerLimit,
                 case BP_OUTL:
                 case BP_OUTH:
                         upperLimit = 0xFF;
+                        break;
+
+                case BP_BASIC:
+                        upperLimit = 9999;
                         break;
 
                 default:

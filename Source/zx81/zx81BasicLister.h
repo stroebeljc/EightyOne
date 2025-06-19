@@ -48,6 +48,8 @@ private:
 
         virtual int GetProgramStartAddress();
         virtual int GetProgramEndAddress();
+        virtual int GetBasicLineExecuteStartAddress();
+        virtual int GetNextBasicLineNumber();
         virtual unsigned char ConvertToZXCode(unsigned char code);
         virtual inline unsigned char GetFloatingPointNumberCode();
         virtual inline unsigned char GetLineEndingCode();

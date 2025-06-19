@@ -36,7 +36,8 @@ enum BreakpointType
         BP_TCYCLES,
         BP_MEMORY,
         BP_REGISTER,
-        BP_FLAG
+        BP_FLAG,
+        BP_BASIC
 };
 
 enum BreakpointCondition

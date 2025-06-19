@@ -340,6 +340,7 @@ private:	// User declarations
         int getRegisterValue(int registerIndex);
         AnsiString ConstructRegisterBreakpointText(breakpoint* const bp);
         AnsiString ConstructExeBreakpointText(breakpoint* const bp);
+        AnsiString ConstructBasicBreakpointText(breakpoint* const bp);
         AnsiString ConstructTStatesBreakpointText(breakpoint* const bp);
         AnsiString ConstructFlagBreakpointText(breakpoint* const bp);
         AnsiString ConstructLowIOBreakpointText(AnsiString type, breakpoint* const bp);
@@ -352,6 +353,7 @@ private:	// User declarations
         bool BPReadWriteHit(BreakpointType type, int addr, int value, breakpoint* const bp);
         bool BPFlagValueHit(breakpoint* const bp);
         bool BPMemoryValueHit(breakpoint* const bp);
+        bool BPBasicHit(int pc, breakpoint* const bp);
         bool BPRegisterValueHit(breakpoint* const bp);
         bool IsStepOverInstruction(int Addr);
         void EditBreakpoint();

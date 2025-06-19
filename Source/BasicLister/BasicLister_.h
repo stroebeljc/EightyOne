@@ -119,6 +119,8 @@ public:		// User declarations
         bool ListerAvailable();
         void Refresh(bool keepScrollbarPosition);
         void Clear();
+        int BasicLineExecuteStartAddress();
+        int NextBasicLineNumberToExecute();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TBasicLister *BasicLister;

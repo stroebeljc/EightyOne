@@ -210,7 +210,8 @@ object SetBreakpoint: TSetBreakpoint
       'T-Cycles'
       'Memory'
       'Register'
-      'Flag')
+      'Flag'
+      'BASIC')
   end
   object BreakConditionValue: TComboBox
     Left = 199

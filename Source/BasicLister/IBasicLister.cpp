@@ -371,7 +371,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
 {
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
-        int xpos = (x << 3) * mScaling;
+        int xpos = ((x+1) << 3) * mScaling;
         int ypos = (y << 3) * mScaling;
         const int srcW = 8;
         const int srcH = 8;

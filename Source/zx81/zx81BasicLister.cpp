@@ -159,6 +159,11 @@ int zx81BasicLister::GetNextBasicLineNumber()
         return getbyte(ppc) + (getbyte(ppc + 1) << 8);
 }
 
+bool zx81BasicLister::BasicDebugSupported()
+{
+        return true;
+}
+
 unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
 {
         unsigned char c;

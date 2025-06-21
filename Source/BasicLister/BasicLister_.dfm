@@ -172,4 +172,19 @@ object BasicLister: TBasicLister
     Left = 8
     Top = 40
   end
+  object PopupMenu1: TPopupMenu
+    AutoPopup = False
+    OnPopup = PopupMenu1Popup
+    Left = 56
+    Top = 64
+    object AddBreakPoint: TMenuItem
+      Caption = 'Add BreakPoint'
+      OnClick = AddBreakPointClick
+    end
+    object Enabled1: TMenuItem
+      Caption = 'Enabled'
+      Enabled = False
+      OnClick = Enabled1Click
+    end
+  end
 end

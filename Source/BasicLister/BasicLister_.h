@@ -31,11 +31,19 @@
 #include <ToolWin.hpp>
 #include <Dialogs.hpp>
 #include <IniFiles.hpp>
+#include <Menus.hpp>
 
 #include <string>
 #include <vector>
 
 //---------------------------------------------------------------------------
+
+enum LineMode
+{
+        HIGHLIGHT,
+        BREAKPOINT
+};
+
 class TBasicLister : public TForm
 {
 __published:	// IDE-managed Components
@@ -52,6 +60,9 @@ __published:	// IDE-managed Components
         TToolButton *ToolButtonLineEnds;
         TToolButton *ToolButton5;
         TToolButton *ToolButtonInfo;
+        TPopupMenu *PopupMenu1;
+        TMenuItem *AddBreakPoint;
+        TMenuItem *Enabled1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -65,6 +76,9 @@ __published:	// IDE-managed Components
         void __fastcall ToolButtonLineEndsClick(TObject *Sender);
         void __fastcall ToolButtonSettingsClick(TObject *Sender);
         void __fastcall ToolButtonInfoClick(TObject *Sender);
+        void __fastcall PopupMenu1Popup(TObject *Sender);
+        void __fastcall AddBreakPointClick(TObject *Sender);
+        void __fastcall Enabled1Click(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;
@@ -74,6 +88,9 @@ private:	// User declarations
         HWND mHWND;
         int mLastHighlightedEntryIndex;
         int mLastFilterIndex;
+        int mLastRowIndex;
+        int mLastBreakPointIndex;
+        int mLastBreakPointMenuIndex;
         IBasicLister* mBasicLister;
         int mBMWidth;
         int mBMHeight;
@@ -98,7 +115,11 @@ private:	// User declarations
         void HighlightLine(int lineNumber);
         void HighlightEntry(int index);
         void UnhighlightEntry(int index);
-        void ColourRows(int startRow, int endRow, bool highlight);
+        void ColourRows(int startRow, int endRow, LineMode mode, bool setornot);
+        void UnBreakPointRows(int startRow, int endRow);
+        void BreakPointRows(int startRow, int endRow);
+        void BreakPointLine(int lineNumber);
+        void BreakPointEntry(int index);
         void DisableButtons();
         void EnableButtons();
         void SaveListingToFile();
@@ -107,6 +128,7 @@ private:	// User declarations
         int FindLineIndex(int lineNumber);
         int FindLineDisplayedOnRow(int row);
         COLORREF GetHighlightColour();
+        COLORREF GetBreakPointColour();
         void GetSaveOptions();
         void SizeWindow();
 
@@ -119,6 +141,8 @@ public:		// User declarations
         bool ListerAvailable();
         void Refresh(bool keepScrollbarPosition);
         void Clear();
+        void BreakAtNextBasicLine();
+        void UnBreakPointLastEntry();
         int BasicLineExecuteStartAddress();
         int NextBasicLineNumberToExecute();
 };

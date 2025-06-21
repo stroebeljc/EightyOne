@@ -28,6 +28,7 @@
 #include <fstream>
 #include "BasicListerOptions_.h"
 #include "BasicListingFormatInfo_.h"
+#include "Debug.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -42,8 +43,14 @@ enum StatusBarIndex
 
 //---------------------------------------------------------------------------
 __fastcall TBasicLister::TBasicLister(TComponent* Owner)
-        : TForm(Owner), mBitmap(NULL), mHWND(this->Handle),
-          mLastHighlightedEntryIndex(-1), mLastFilterIndex(1), mBasicLister(NULL)
+        : TForm(Owner),
+        mBitmap(NULL),
+        mHWND(this->Handle),
+        mLastHighlightedEntryIndex(-1),
+        mLastFilterIndex(1),
+        mBasicLister(NULL),
+        mLastBreakPointIndex(-1),
+        mLastBreakPointMenuIndex(-1)
 {
         mLines = new std::vector<LineInfo>();
 
@@ -129,7 +136,7 @@ void TBasicLister::ConstructBitmap()
         }
 
         int displayRows = mBasicLister->GetProgramRows();
-        int displayColumns = mBasicLister->GetDisplayColumns();
+        int displayColumns = 1 + mBasicLister->GetDisplayColumns();
 
         mBMWidth = displayColumns * PixelsPerCharacterWidth * mScaling;
         mBMHeight = displayRows * PixelsPerCharacterHeight * mScaling;
@@ -160,16 +167,35 @@ void TBasicLister::ConstructBitmap()
 void TBasicLister::UnhighlightRows(int startRow, int endRow)
 {
         const bool unhighlight = false;
-        ColourRows(startRow, endRow, unhighlight);
+        ColourRows(startRow, endRow, HIGHLIGHT, unhighlight);
 }
 
 void TBasicLister::HighlightRows(int startRow, int endRow)
 {
         const bool highlight = true;
-        ColourRows(startRow, endRow, highlight);
+        ColourRows(startRow, endRow, HIGHLIGHT, highlight);
 }
 
-void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
+void TBasicLister::UnBreakPointRows(int startRow, int endRow)
+{
+        const bool unbreakpoint = false;
+        ColourRows(startRow, endRow, BREAKPOINT, unbreakpoint);
+        if (mLastHighlightedEntryIndex != -1)
+        {
+                int startRow = (*mLines)[mLastHighlightedEntryIndex].startDisplayRow;
+                int endRow = startRow + (*mLines)[mLastHighlightedEntryIndex].displayRows - 1;
+                HighlightRows(startRow, endRow);
+        }
+}
+
+void TBasicLister::BreakPointRows(int startRow, int endRow)
+{
+        UnhighlightRows(startRow, endRow);
+        const bool breakpoint = true;
+        ColourRows(startRow, endRow, BREAKPOINT, breakpoint);
+}
+
+void TBasicLister::ColourRows(int startRow, int endRow, LineMode mode, bool setornot)
 {
         if (endRow - startRow > 20)
         {
@@ -182,8 +208,22 @@ void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
 
         COLORREF paperColour = mBasicLister->GetPaperColour();
         COLORREF highlightColour = GetHighlightColour();
-        COLORREF findColour = highlight ? paperColour : highlightColour;
-        COLORREF replaceColour = highlight ? highlightColour : paperColour;
+        COLORREF breakpointColour = GetBreakPointColour();
+        COLORREF findColour;
+        COLORREF replaceColour;
+
+        switch (mode)
+        {
+        case HIGHLIGHT:
+                findColour = setornot ? paperColour : highlightColour;
+                replaceColour = setornot ? highlightColour : paperColour;
+                break;
+
+        case BREAKPOINT:
+                findColour = setornot ? paperColour : breakpointColour;
+                replaceColour = setornot ? breakpointColour : paperColour;
+                break;
+        }
 
         int startY = startRow * PixelsPerCharacterHeight * mScaling;
         int endY = (endRow + 1) * PixelsPerCharacterHeight * mScaling;
@@ -220,6 +260,12 @@ void TBasicLister::HighlightLine(int lineNumber)
 {
         int index = FindLineIndex(lineNumber);
         HighlightEntry(index);
+}
+
+void TBasicLister::BreakPointLine(int lineNumber)
+{
+        int index = FindLineIndex(lineNumber);
+        BreakPointEntry(index);
 }
 
 void TBasicLister::UnhighlightEntry(int index)
@@ -274,6 +320,38 @@ void TBasicLister::HighlightEntry(int index)
         StatusBar->Panels->Items[PanelLineInfo]->Text = lineDetails;
 }
 
+void TBasicLister::UnBreakPointLastEntry()
+{
+        if (mLastBreakPointIndex == -1)
+        {
+                return;
+        }
+
+        int startRow = (*mLines)[mLastBreakPointIndex].startDisplayRow;
+        int endRow = startRow + (*mLines)[mLastBreakPointIndex].displayRows - 1;
+        UnBreakPointRows(startRow, endRow);
+
+        Invalidate();
+
+        mLastBreakPointIndex = -1;
+}
+
+void TBasicLister::BreakPointEntry(int index)
+{
+        if (index != -1)
+        {
+                UnBreakPointLastEntry();
+
+                int startRow = (*mLines)[index].startDisplayRow;
+                int endRow = startRow + (*mLines)[index].displayRows - 1;
+                BreakPointRows(startRow, endRow);
+        }
+
+        Invalidate();
+
+        mLastBreakPointIndex = index;
+}
+
 int TBasicLister::FindLineIndex(int lineNumber)
 {
         int index = mLines->size() - 1;
@@ -294,6 +372,11 @@ int TBasicLister::FindLineIndex(int lineNumber)
 COLORREF TBasicLister::GetHighlightColour()
 {
         return RGB(255, 255, 132);
+}
+
+COLORREF TBasicLister::GetBreakPointColour()
+{
+        return RGB(255, 134, 134);
 }
 
 //---------------------------------------------------------------------------
@@ -511,23 +594,25 @@ void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
         int rowWithinClientArea = (Y - ToolBar->Height) / (PixelsPerCharacterHeight * mScaling);
         int row = rowWithinClientArea + ScrollBar->Position;
 
-        int index = FindLineDisplayedOnRow(row);
+        mLastRowIndex = FindLineDisplayedOnRow(row);
 
         if (Button == mbLeft)
         {
-                if (index != -1 && index != mLastHighlightedEntryIndex)
+                if (mLastRowIndex != mLastHighlightedEntryIndex)
                 {
-                        HighlightEntry(index);
+                        HighlightEntry(mLastRowIndex);
                 }
                 else
                 {
-                        UnhighlightEntry(index);
+                        UnhighlightEntry(mLastRowIndex);
                 }
 
                 EnableButtons();
+                return;
         }
-        else if (Button == mbRight)
+        else if (Button == mbRight && mBasicLister->BasicDebugSupported())
         {
+                if (mLastRowIndex != -1) PopupMenu1->Popup(Mouse->CursorPos.x, Mouse->CursorPos.y);
         }
 }
 
@@ -670,6 +755,11 @@ int TBasicLister::NextBasicLineNumberToExecute()
         return mBasicLister->GetNextBasicLineNumber();
 }
 
+void TBasicLister::BreakAtNextBasicLine()
+{
+        BreakPointLine(mBasicLister->GetNextBasicLineNumber());
+}
+
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         int scrollPos = ScrollBar->Position;
@@ -677,10 +767,12 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
 
         int highlightIndex = mLastHighlightedEntryIndex;
+        int breakpointIndex = mLastBreakPointIndex;
 
         LoadProgram();
 
         HighlightEntry(highlightIndex);
+        BreakPointEntry(breakpointIndex);
 
         EnableButtons();
         
@@ -729,6 +821,45 @@ void __fastcall TBasicLister::ToolButtonInfoClick(TObject *Sender)
         BasicListingFormatInfoForm->ShowModal();
 
         EnableButtons();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::PopupMenu1Popup(TObject *Sender)
+{
+        breakpoint bp((*mLines)[mLastRowIndex].lineNumber, BP_BASIC);
+        mLastBreakPointMenuIndex = Dbg->FindBreakPointEntry(0, bp, false);
+        if (mLastBreakPointMenuIndex < 0)
+        {
+                PopupMenu1->Items->Items[0]->Caption = "Add Breakpoint";
+                PopupMenu1->Items->Items[1]->Enabled = false;
+                PopupMenu1->Items->Items[1]->Checked = false;
+        }
+        else
+        {
+                PopupMenu1->Items->Items[0]->Caption = "Delete Breakpoint";
+                PopupMenu1->Items->Items[1]->Enabled = true;
+                PopupMenu1->Items->Items[1]->Checked = Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
+        }
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TBasicLister::AddBreakPointClick(TObject *Sender)
+{
+        if (mLastBreakPointMenuIndex < 0)
+        {
+                breakpoint bp((*mLines)[mLastRowIndex].lineNumber, BP_BASIC);
+                Dbg->AddBreakPoint(bp);
+        }
+        else
+                Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::Enabled1Click(TObject *Sender)
+{
+        Dbg->SetBreakpointEnabledState(mLastBreakPointMenuIndex,
+                !Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex));
 }
 //---------------------------------------------------------------------------
 

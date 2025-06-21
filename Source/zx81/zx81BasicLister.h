@@ -50,6 +50,7 @@ private:
         virtual int GetProgramEndAddress();
         virtual int GetBasicLineExecuteStartAddress();
         virtual int GetNextBasicLineNumber();
+        virtual bool BasicDebugSupported();
         virtual unsigned char ConvertToZXCode(unsigned char code);
         virtual inline unsigned char GetFloatingPointNumberCode();
         virtual inline unsigned char GetLineEndingCode();

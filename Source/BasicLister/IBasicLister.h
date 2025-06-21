@@ -85,6 +85,7 @@ public:
         virtual int GetProgramEndAddress() { return 65535; }
         virtual int GetBasicLineExecuteStartAddress() { return 65535; }
         virtual int GetNextBasicLineNumber() { return 65535; }
+        virtual bool BasicDebugSupported() { return false; }
 
 protected:
         COLORREF mInk;

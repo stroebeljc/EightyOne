@@ -373,6 +373,8 @@ public:		// User declarations
         void ResetBreakpointHits();
         void ClearSkipAddresses();
         void Reset();
+        bool BreakpointIsEnabled(int index);
+        void SetBreakpointEnabledState(int index, bool enable);
 
         bool AddBreakPoint(struct breakpoint& bp);
         int FindBreakPointEntry(int index, struct breakpoint& bp, bool editing);

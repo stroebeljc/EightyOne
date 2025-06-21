@@ -276,9 +276,21 @@ bool TDbg::AddBreakPoint(struct breakpoint& bp)
         if (BPList->RowCount > 1)
                 BPList->Row = BPList->RowCount - 2;
 
+        BPListChanged();
         UpdateBreakpointButtons();
 
         return true;
+}
+
+void TDbg::BPListChanged()
+{
+        BPList->Invalidate();
+        if (BPListChangeCB != NULL) BPListChangeCB();
+}
+
+void TDbg::SetBPListChangedCB(void (*callback)(void))
+{
+        BPListChangeCB = callback;
 }
 
 bool TDbg::BreakpointIsEnabled(int index)
@@ -289,7 +301,18 @@ bool TDbg::BreakpointIsEnabled(int index)
 void TDbg::SetBreakpointEnabledState(int index, bool enable)
 {
         Breakpoint[index].Enabled = enable;
-        BPList->Invalidate();
+        BPListChanged();
+}
+
+void TDbg::SetEnabledStateAllOfType(BreakpointType type, bool enable)
+{
+        int j;
+        for(j=0; j<Breakpoints;j++)
+        {
+                if (Breakpoint[j].Type == type) Breakpoint[j].Enabled = enable;
+        }
+
+        BPListChanged();
 }
 
 AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
@@ -510,6 +533,8 @@ void TDbg::DelBreakPoint(int index)
         {
                 BPList->Row--;
         }
+
+        BPListChanged();
 }
 
 bool TDbg::BreakPointHit()
@@ -1359,7 +1384,8 @@ void TDbg::EnableVals(void)
 }
 //---------------------------------------------------------------------------
 __fastcall TDbg::TDbg(TComponent* Owner)
-        : TForm(Owner)
+        : TForm(Owner),
+        BPListChangeCB(NULL)
 {
         TIniFile *ini;
 
@@ -2254,14 +2280,14 @@ void __fastcall TDbg::BPListDblClick(TObject *Sender)
 void __fastcall TDbg::DisableClick(TObject *Sender)
 {
         Breakpoint[BPList->Row].Enabled = false;
-        BPList->Invalidate();
+        BPListChanged();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TDbg::EnableClick(TObject *Sender)
 {
         Breakpoint[BPList->Row].Enabled = true;
-        BPList->Invalidate();
+        BPListChanged();
 }
 //---------------------------------------------------------------------------
 

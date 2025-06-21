@@ -483,7 +483,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 
         x++;
-        if (x == GetDisplayColumns())
+        if (x == 1 + GetDisplayColumns())
         {
                 x = 1;
                 y++;

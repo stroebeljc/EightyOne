@@ -67,6 +67,7 @@ __published:	// IDE-managed Components
         TMenuItem *Enabled1;
         TImage *BpEnabledImg;
         TImage *BpDisabledImg;
+        TMenuItem *DisableAll1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -83,6 +84,7 @@ __published:	// IDE-managed Components
         void __fastcall PopupMenu1Popup(TObject *Sender);
         void __fastcall AddBreakPointClick(TObject *Sender);
         void __fastcall Enabled1Click(TObject *Sender);
+        void __fastcall DisableAll1Click(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;
@@ -135,6 +137,7 @@ private:	// User declarations
         COLORREF GetBreakPointColour();
         void GetSaveOptions();
         void SizeWindow();
+        void ScrollToIndex(int index);
 
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);

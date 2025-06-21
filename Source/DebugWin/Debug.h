@@ -319,6 +319,7 @@ __published:	// IDE-managed Components
         void __fastcall AutoUpdateMemoryClick(TObject *Sender);
         void __fastcall MemoryWindowTimerExpired(TObject *Sender);
 private:	// User declarations
+        void (*BPListChangeCB)(void);
         void EnableValues(bool enable);
         void EnableVals(void);
         void DisableVals(void);
@@ -358,6 +359,7 @@ private:	// User declarations
         bool IsStepOverInstruction(int Addr);
         void EditBreakpoint();
         void UpdateBreakpointButtons();
+        void BPListChanged();
 
 public:		// User declarations
         __fastcall TDbg(TComponent* Owner);
@@ -375,6 +377,7 @@ public:		// User declarations
         void Reset();
         bool BreakpointIsEnabled(int index);
         void SetBreakpointEnabledState(int index, bool enable);
+        void SetEnabledStateAllOfType(BreakpointType type, bool enable);
 
         bool AddBreakPoint(struct breakpoint& bp);
         int FindBreakPointEntry(int index, struct breakpoint& bp, bool editing);
@@ -396,6 +399,7 @@ public:		// User declarations
         void ReloadHistoryWindow();
         void ClearHistoryWindow();
         void DisableMemoryWindowAutoUpdates();
+        void SetBPListChangedCB(void (*callback)(void));
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

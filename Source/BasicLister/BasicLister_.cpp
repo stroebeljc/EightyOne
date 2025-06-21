@@ -34,6 +34,8 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TBasicLister *BasicLister;
+extern void RefreshCallback();
+
 
 enum StatusBarIndex
 {
@@ -53,6 +55,7 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         mLastBreakPointMenuIndex(-1)
 {
         mLines = new std::vector<LineInfo>();
+        Dbg->SetBPListChangedCB(RefreshCallback);
 
         TIniFile* ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
@@ -138,7 +141,7 @@ void TBasicLister::ConstructBitmap()
         }
 
         int displayRows = mBasicLister->GetProgramRows();
-        int displayColumns = mBasicLister->GetDisplayColumns();
+        int displayColumns = 1 + mBasicLister->GetDisplayColumns();
 
         mBMWidth = displayColumns * PixelsPerCharacterWidth * mScaling;
         mBMHeight = displayRows * PixelsPerCharacterHeight * mScaling;
@@ -269,6 +272,13 @@ void TBasicLister::BreakPointLine(int lineNumber)
 {
         int index = FindLineIndex(lineNumber);
         BreakPointEntry(index);
+        ScrollToIndex(index);
+}
+
+void RefreshCallback()
+{
+        const bool keepScrollbarPosition = true;
+        BasicLister->Refresh(keepScrollbarPosition);
 }
 
 void TBasicLister::UnhighlightEntry(int index)
@@ -442,6 +452,8 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
 
         LoadProgram();
 
+        BreakPointEntry(mLastBreakPointIndex);
+
         if (keepScrollbarPosition)
         {
                 ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
@@ -587,6 +599,16 @@ int TBasicLister::FindLineDisplayedOnRow(int row)
         }
 
         return index;
+}
+
+void TBasicLister::ScrollToIndex(int index)
+{
+        if (mProgramDisplayRows > DisplayableRows)
+        {
+                double relativePos = mProgramDisplayRows > 0 ? (double)(*mLines)[index].startDisplayRow / mProgramDisplayRows : 0;
+
+                ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
+        }
 }
 
 //---------------------------------------------------------------------------
@@ -836,12 +858,14 @@ void __fastcall TBasicLister::PopupMenu1Popup(TObject *Sender)
                 PopupMenu1->Items->Items[0]->Caption = "Add Breakpoint";
                 PopupMenu1->Items->Items[1]->Enabled = false;
                 PopupMenu1->Items->Items[1]->Checked = false;
+                PopupMenu1->Items->Items[2]->Enabled = false;
         }
         else
         {
                 PopupMenu1->Items->Items[0]->Caption = "Delete Breakpoint";
                 PopupMenu1->Items->Items[1]->Enabled = true;
                 PopupMenu1->Items->Items[1]->Checked = Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
+                PopupMenu1->Items->Items[2]->Enabled = true;
         }
 }
 //---------------------------------------------------------------------------
@@ -859,8 +883,7 @@ void __fastcall TBasicLister::AddBreakPointClick(TObject *Sender)
                 Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
         }
 
-        const bool keepScrollbarPosition = true;
-        Refresh(keepScrollbarPosition);
+        RefreshCallback();
 }
 //---------------------------------------------------------------------------
 
@@ -869,8 +892,15 @@ void __fastcall TBasicLister::Enabled1Click(TObject *Sender)
         int newstate = !Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
         Dbg->SetBreakpointEnabledState(mLastBreakPointMenuIndex, newstate);
 
-        const bool keepScrollbarPosition = true;
-        Refresh(keepScrollbarPosition);
+        RefreshCallback();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::DisableAll1Click(TObject *Sender)
+{
+        Dbg->SetEnabledStateAllOfType(BP_BASIC, false);
+
+        RefreshCallback();
 }
 //---------------------------------------------------------------------------
 

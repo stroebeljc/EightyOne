@@ -257,5 +257,10 @@ object BasicLister: TBasicLister
       Enabled = False
       OnClick = Enabled1Click
     end
+    object DisableAll1: TMenuItem
+      Caption = 'Disable All'
+      Enabled = False
+      OnClick = DisableAll1Click
+    end
   end
 end

@@ -94,6 +94,8 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
         {
                 mBasicLister->PopulateKeywords();
                 mBasicLister->SetLines(mLines);
+                mBasicLister->SetBpEnabledBitmap(BpEnabledImg->Picture->Bitmap);
+                mBasicLister->SetBpDisabledBitmap(BpDisabledImg->Picture->Bitmap);
         }
 }
 
@@ -136,7 +138,7 @@ void TBasicLister::ConstructBitmap()
         }
 
         int displayRows = mBasicLister->GetProgramRows();
-        int displayColumns = 1 + mBasicLister->GetDisplayColumns();
+        int displayColumns = mBasicLister->GetDisplayColumns();
 
         mBMWidth = displayColumns * PixelsPerCharacterWidth * mScaling;
         mBMHeight = displayRows * PixelsPerCharacterHeight * mScaling;
@@ -225,6 +227,7 @@ void TBasicLister::ColourRows(int startRow, int endRow, LineMode mode, bool seto
                 break;
         }
 
+        int startX = PixelsPerCharacterWidth * mScaling;
         int startY = startRow * PixelsPerCharacterHeight * mScaling;
         int endY = (endRow + 1) * PixelsPerCharacterHeight * mScaling;
 
@@ -234,7 +237,7 @@ void TBasicLister::ColourRows(int startRow, int endRow, LineMode mode, bool seto
         {
                 int xWidth = mBMWidth * mScaling;
 
-                for (int x = 0; x < xWidth; x += mScaling)
+                for (int x = startX; x < xWidth; x += mScaling)
                 {
                         COLORREF pixelColor = GetPixel(chdc, x, y);
                         if (pixelColor == findColour)
@@ -852,14 +855,22 @@ void __fastcall TBasicLister::AddBreakPointClick(TObject *Sender)
                 Dbg->AddBreakPoint(bp);
         }
         else
+        {
                 Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
+        }
+
+        const bool keepScrollbarPosition = true;
+        Refresh(keepScrollbarPosition);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TBasicLister::Enabled1Click(TObject *Sender)
 {
-        Dbg->SetBreakpointEnabledState(mLastBreakPointMenuIndex,
-                !Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex));
+        int newstate = !Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
+        Dbg->SetBreakpointEnabledState(mLastBreakPointMenuIndex, newstate);
+
+        const bool keepScrollbarPosition = true;
+        Refresh(keepScrollbarPosition);
 }
 //---------------------------------------------------------------------------
 

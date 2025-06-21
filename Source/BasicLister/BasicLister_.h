@@ -32,6 +32,8 @@
 #include <Dialogs.hpp>
 #include <IniFiles.hpp>
 #include <Menus.hpp>
+#include <ExtCtrls.hpp>
+#include <Graphics.hpp>
 
 #include <string>
 #include <vector>
@@ -63,6 +65,8 @@ __published:	// IDE-managed Components
         TPopupMenu *PopupMenu1;
         TMenuItem *AddBreakPoint;
         TMenuItem *Enabled1;
+        TImage *BpEnabledImg;
+        TImage *BpDisabledImg;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);

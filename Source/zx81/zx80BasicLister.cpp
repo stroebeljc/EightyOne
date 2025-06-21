@@ -230,6 +230,7 @@ bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         lineInfo.lineLength = lineHeaderLength + length;
         lineInfo.contentLength = length;
         lineInfo.displayRows = (lineInfo.displayLength + (GetDisplayColumns() - 1)) / GetDisplayColumns();
+        lineInfo.breakStyle = BPNONE;
 
         return true;
 }

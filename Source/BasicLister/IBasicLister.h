@@ -20,9 +20,17 @@
 #define IBASICLISTER
 
 #include <Classes.hpp>
+#include <Graphics.hpp>
 #include <vector>
 #include <string>
 #include "zx81config.h"
+
+enum BPStyle
+{
+        BPNONE,
+        BPENABLED,
+        BPDISABLED
+};
 
 const int PixelsPerCharacterWidth = 8;
 const int PixelsPerCharacterHeight = 8;
@@ -37,6 +45,7 @@ struct LineInfo
         int displayLength;
         int displayRows;
         int startDisplayRow;
+        int breakStyle;
 };
 
 class IBasicLister
@@ -54,8 +63,11 @@ private:
         bool mSupportEmbeddedControlCodes;
         AnsiString mEscapeCharacter;
         int mScaling;
+        void* BpEnabledBitmap;
+        void* BpDisabledBitmap;
 
         void RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
+        void RenderBPStyle(HDC hdc, int& x, int& y, int breakStyle);
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
         void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
         void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
@@ -74,6 +86,8 @@ public:
         void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
+        void SetBpEnabledBitmap(Graphics::TBitmap* bitmap);
+        void SetBpDisabledBitmap(Graphics::TBitmap* bitmap);
 
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }

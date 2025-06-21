@@ -24,11 +24,16 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include "Debug.h"
 
 using namespace std;
 
+extern Graphics::TPicture *listerBPpicture;
+
 IBasicLister::IBasicLister() :
-        mProgramDisplayRows(0)
+        mProgramDisplayRows(0),
+        BpEnabledBitmap(NULL),
+        BpDisabledBitmap(NULL)
 {
 }
 
@@ -80,6 +85,16 @@ int IBasicLister::GetKeywordLength(unsigned char code)
 void IBasicLister::SetLines(std::vector<LineInfo>* linesInfo)
 {
         mLines = linesInfo;
+}
+
+void IBasicLister::SetBpEnabledBitmap(Graphics::TBitmap* bitmap)
+{
+        BpEnabledBitmap = bitmap;
+}
+
+void IBasicLister::SetBpDisabledBitmap(Graphics::TBitmap* bitmap)
+{
+        BpDisabledBitmap = bitmap;
 }
 
 void IBasicLister::ExtractProgramDetails()
@@ -201,6 +216,20 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         }
 
         lineInfo.displayRows = (lineInfo.displayLength + (GetDisplayColumns() - 1)) / GetDisplayColumns();
+        breakpoint bp(lineInfo.lineNumber, BP_BASIC);
+        int index = Dbg->FindBreakPointEntry(0, bp, false);
+        if (index < 0)
+        {
+                lineInfo.breakStyle = BPNONE;
+        }
+        else if (Dbg->BreakpointIsEnabled(index))
+        {
+                lineInfo.breakStyle = BPENABLED;
+        }
+        else
+        {
+                lineInfo.breakStyle = BPDISABLED;
+        }
 
         return true;
 }
@@ -255,9 +284,12 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
 {
         int x = 0;
 
-        int lineNumber = lineInfo.lineNumber;
+        int breakStyle = lineInfo.breakStyle;
+        RenderBPStyle(hdc, x, y, breakStyle);
 
+        int lineNumber = lineInfo.lineNumber;
         RenderLineNumber(hdc, cshdc, x, y, lineNumber);
+        
         bool requiresInitialSpace = RequiresInitialSpace();
         if (requiresInitialSpace)
         {
@@ -274,10 +306,37 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
         }
         while (lengthRemaining > 0);
 
-        if (x > 0)
+        if (x > 1)
         {
-                x = 0;
+                x = 1;
                 y++;
+        }
+}
+
+void IBasicLister::RenderBPStyle(HDC hdc, int& x, int& y, int breakStyle)
+{
+        int xpos = (x << 3) * mScaling;
+        int ypos = (y << 3) * mScaling;
+        const int srcW = 16;
+        const int srcH = 16;
+        int destW = 8 * mScaling;
+        int destH = 8 * mScaling;
+        x++;
+
+        Graphics::TBitmap* bitmap = NULL;
+
+        if (breakStyle == BPENABLED) bitmap = (Graphics::TBitmap*)BpEnabledBitmap;
+        else if (breakStyle == BPDISABLED) bitmap = (Graphics::TBitmap*)BpDisabledBitmap;
+        
+        if (bitmap)
+        {
+                HDC cshdc = CreateCompatibleDC(hdc);
+                HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)(bitmap)->Handle);
+
+                StretchBlt(hdc, xpos, ypos, destW, destH, cshdc, 0, 0, srcW, srcH, SRCCOPY);
+
+                SelectObject(cshdc, oldBitmap);
+                DeleteDC(cshdc);
         }
 }
 
@@ -371,7 +430,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
 {
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
-        int xpos = ((x+1) << 3) * mScaling;
+        int xpos = (x << 3) * mScaling;
         int ypos = (y << 3) * mScaling;
         const int srcW = 8;
         const int srcH = 8;
@@ -426,7 +485,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         x++;
         if (x == GetDisplayColumns())
         {
-                x = 0;
+                x = 1;
                 y++;
         }
 }

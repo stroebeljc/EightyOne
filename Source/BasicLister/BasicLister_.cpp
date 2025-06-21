@@ -882,8 +882,6 @@ void __fastcall TBasicLister::AddBreakPointClick(TObject *Sender)
         {
                 Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
         }
-
-        RefreshCallback();
 }
 //---------------------------------------------------------------------------
 
@@ -891,16 +889,12 @@ void __fastcall TBasicLister::Enabled1Click(TObject *Sender)
 {
         int newstate = !Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
         Dbg->SetBreakpointEnabledState(mLastBreakPointMenuIndex, newstate);
-
-        RefreshCallback();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TBasicLister::DisableAll1Click(TObject *Sender)
 {
         Dbg->SetEnabledStateAllOfType(BP_BASIC, false);
-
-        RefreshCallback();
 }
 //---------------------------------------------------------------------------
 

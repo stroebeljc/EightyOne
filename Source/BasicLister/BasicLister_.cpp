@@ -113,6 +113,15 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
                 mToolbarHeight = ToolBar->Height + (mHasDebug ? DebugControls->Height: 0);
                 SizeWindow();
         }
+        else
+        {
+                mHasDebug = false;
+                mToolbarHeight = ToolBar->Height;
+                DebugControls->Visible = false;
+                DebugControls->Enabled = false;
+                ToolButtonStartStop->Enabled = false;
+                StepBasic->Enabled = false;
+        }
 }
 
 bool TBasicLister::ListerAvailable()
@@ -792,16 +801,18 @@ void TBasicLister::LoadSettings(TIniFile *ini)
 
 int TBasicLister::BasicLineExecuteStartAddress()
 {
-        return mBasicLister->GetBasicLineExecuteStartAddress();
+        return mBasicLister != NULL ? mBasicLister->GetBasicLineExecuteStartAddress() : 65535;
 }
 
 int TBasicLister::NextBasicLineNumberToExecute()
 {
-        return mBasicLister->GetNextBasicLineNumber();
+        return mBasicLister != NULL ? mBasicLister->GetNextBasicLineNumber() : 65535;
 }
 
 void TBasicLister::BreakAtNextBasicLine()
 {
+        if (mBasicLister == NULL) return;
+
         BreakPointLine(mBasicLister->GetNextBasicLineNumber());
 }
 

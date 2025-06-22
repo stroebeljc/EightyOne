@@ -150,7 +150,7 @@ int zx81BasicLister::GetProgramEndAddress()
 
 int zx81BasicLister::GetBasicLineExecuteStartAddress()
 {
-        return 3386;
+        return 1651; // Call to LINE-RUN
 }
 
 int zx81BasicLister::GetNextBasicLineNumber()

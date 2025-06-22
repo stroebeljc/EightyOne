@@ -315,6 +315,19 @@ void TDbg::SetEnabledStateAllOfType(BreakpointType type, bool enable)
         BPListChanged();
 }
 
+void TDbg::BasicStartStop(bool step)
+{
+        MemoryWindow->ClearChanges();
+        BasicLister->UnBreakPointLastEntry();
+        if (step || !emulation_stop)
+        {
+                breakpoint bp(-1, BP_BASIC);
+                bp.Permanent = false;
+                AddBreakPoint(bp);
+        }
+        if (emulation_stop) RunStopClick(NULL);
+}
+
 AnsiString TDbg::GetBreakpointText(breakpoint* const bp)
 {
         AnsiString str;
@@ -787,8 +800,9 @@ bool TDbg::BPBasicHit(int pc, breakpoint* const bp)
                 return false;
         }
 
-        if (bp->Addr == BasicLister->NextBasicLineNumberToExecute() &&
-                pc == BasicLister->BasicLineExecuteStartAddress())
+        if (pc == BasicLister->BasicLineExecuteStartAddress() &&
+                (bp->Addr == BasicLister->NextBasicLineNumberToExecute() ||
+                 !bp->Permanent))
         {
                 BasicLister->BreakAtNextBasicLine();
                 return true;

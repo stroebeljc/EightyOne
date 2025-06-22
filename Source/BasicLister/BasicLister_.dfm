@@ -1,11 +1,12 @@
 object BasicLister: TBasicLister
   Left = 242
   Top = 124
+  Hint = 'S'
   BorderIcons = [biSystemMenu]
   BorderStyle = bsToolWindow
   Caption = 'BASIC Listing'
   ClientHeight = 325
-  ClientWidth = 273
+  ClientWidth = 297
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -59,7 +60,7 @@ object BasicLister: TBasicLister
   TextHeight = 13
   object BpEnabledImg: TImage
     Left = 88
-    Top = 48
+    Top = 112
     Width = 16
     Height = 16
     AutoSize = True
@@ -95,7 +96,7 @@ object BasicLister: TBasicLister
   end
   object BpDisabledImg: TImage
     Left = 112
-    Top = 48
+    Top = 112
     Width = 16
     Height = 16
     Picture.Data = {
@@ -129,10 +130,10 @@ object BasicLister: TBasicLister
     Visible = False
   end
   object ScrollBar: TScrollBar
-    Left = 256
-    Top = 30
+    Left = 280
+    Top = 60
     Width = 17
-    Height = 276
+    Height = 246
     Align = alRight
     Kind = sbVertical
     PageSize = 0
@@ -142,7 +143,7 @@ object BasicLister: TBasicLister
   object StatusBar: TStatusBar
     Left = 0
     Top = 306
-    Width = 273
+    Width = 297
     Height = 19
     Panels = <
       item
@@ -157,7 +158,7 @@ object BasicLister: TBasicLister
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 273
+    Width = 297
     Height = 30
     ButtonHeight = 21
     ButtonWidth = 54
@@ -166,16 +167,24 @@ object BasicLister: TBasicLister
     ShowCaptions = True
     TabOrder = 2
     Wrapable = False
-    object ToolButtonRefresh: TToolButton
+    object ToolButton2: TToolButton
       Left = 0
       Top = 2
+      Width = 8
+      Caption = 'ToolButton2'
+      ImageIndex = 9
+      Style = tbsSeparator
+    end
+    object ToolButtonRefresh: TToolButton
+      Left = 8
+      Top = 2
       AutoSize = True
-      Caption = ' Refresh '
+      Caption = 'Refresh '
       ImageIndex = 0
       OnClick = ToolButtonRefreshClick
     end
     object ToolButton1: TToolButton
-      Left = 54
+      Left = 59
       Top = 2
       Width = 8
       Caption = 'ToolButton1'
@@ -183,7 +192,7 @@ object BasicLister: TBasicLister
       Style = tbsDivider
     end
     object ToolButtonSettings: TToolButton
-      Left = 62
+      Left = 67
       Top = 2
       AutoSize = True
       Caption = 'Settings'
@@ -191,7 +200,7 @@ object BasicLister: TBasicLister
       OnClick = ToolButtonSettingsClick
     end
     object ToolButton3: TToolButton
-      Left = 111
+      Left = 116
       Top = 2
       Width = 8
       Caption = 'ToolButton3'
@@ -199,14 +208,14 @@ object BasicLister: TBasicLister
       Style = tbsDivider
     end
     object ToolButtonSave: TToolButton
-      Left = 119
+      Left = 124
       Top = 2
       Caption = 'Save'
       ImageIndex = 4
       OnClick = ToolButtonSaveClick
     end
     object ToolButton4: TToolButton
-      Left = 173
+      Left = 178
       Top = 2
       Width = 8
       Caption = 'ToolButton4'
@@ -214,7 +223,7 @@ object BasicLister: TBasicLister
       Style = tbsDivider
     end
     object ToolButtonLineEnds: TToolButton
-      Left = 181
+      Left = 186
       Top = 2
       AutoSize = True
       Caption = 'Line Ends'
@@ -223,7 +232,7 @@ object BasicLister: TBasicLister
       OnClick = ToolButtonLineEndsClick
     end
     object ToolButton5: TToolButton
-      Left = 239
+      Left = 244
       Top = 2
       Width = 6
       Caption = 'ToolButton5'
@@ -231,7 +240,7 @@ object BasicLister: TBasicLister
       Style = tbsDivider
     end
     object ToolButtonInfo: TToolButton
-      Left = 245
+      Left = 250
       Top = 2
       AutoSize = True
       Caption = 'Info'
@@ -239,15 +248,62 @@ object BasicLister: TBasicLister
       OnClick = ToolButtonInfoClick
     end
   end
+  object DebugControls: TToolBar
+    Left = 0
+    Top = 30
+    Width = 297
+    Height = 30
+    ButtonHeight = 19
+    ButtonWidth = 61
+    Caption = 'DebugControls'
+    EdgeBorders = [ebBottom]
+    Enabled = False
+    List = True
+    ShowCaptions = True
+    TabOrder = 3
+    Visible = False
+    object ToolButton6: TToolButton
+      Left = 0
+      Top = 2
+      Width = 8
+      Caption = 'ToolButton6'
+      ImageIndex = 0
+      Style = tbsSeparator
+    end
+    object ToolButtonStartStop: TToolButton
+      Left = 8
+      Top = 2
+      AutoSize = True
+      Caption = 'Start/Stop'
+      ImageIndex = 1
+      OnClick = ToolButtonStartStopClick
+    end
+    object ToolButton7: TToolButton
+      Left = 73
+      Top = 2
+      Width = 8
+      Caption = 'ToolButton7'
+      ImageIndex = 2
+      Style = tbsDivider
+    end
+    object StepBasic: TToolButton
+      Left = 81
+      Top = 2
+      AutoSize = True
+      Caption = 'Step'
+      ImageIndex = 3
+      OnClick = StepBasicClick
+    end
+  end
   object SaveDialog: TSaveDialog
     Left = 8
-    Top = 40
+    Top = 104
   end
   object PopupMenu1: TPopupMenu
     AutoPopup = False
     OnPopup = PopupMenu1Popup
     Left = 48
-    Top = 40
+    Top = 104
     object AddBreakPoint: TMenuItem
       Caption = 'Add BreakPoint'
       OnClick = AddBreakPointClick

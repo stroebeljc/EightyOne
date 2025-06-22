@@ -68,6 +68,12 @@ __published:	// IDE-managed Components
         TImage *BpEnabledImg;
         TImage *BpDisabledImg;
         TMenuItem *DisableAll1;
+        TToolBar *DebugControls;
+        TToolButton *ToolButton2;
+        TToolButton *ToolButton6;
+        TToolButton *ToolButtonStartStop;
+        TToolButton *ToolButton7;
+        TToolButton *StepBasic;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -85,6 +91,8 @@ __published:	// IDE-managed Components
         void __fastcall AddBreakPointClick(TObject *Sender);
         void __fastcall Enabled1Click(TObject *Sender);
         void __fastcall DisableAll1Click(TObject *Sender);
+        void __fastcall ToolButtonStartStopClick(TObject *Sender);
+        void __fastcall StepBasicClick(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;
@@ -109,6 +117,8 @@ private:	// User declarations
         bool mLimitLineLengths;
         bool mOutputFullWidthLineNumbers;
         int mScaling;
+        int mToolbarHeight;
+        bool mHasDebug;
 
         void ClearBitmap();
         void ConstructBitmap();

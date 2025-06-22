@@ -52,10 +52,12 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         mLastFilterIndex(1),
         mBasicLister(NULL),
         mLastBreakPointIndex(-1),
-        mLastBreakPointMenuIndex(-1)
+        mLastBreakPointMenuIndex(-1),
+        mHasDebug(false)
 {
         mLines = new std::vector<LineInfo>();
         Dbg->SetBPListChangedCB(RefreshCallback);
+        mToolbarHeight = ToolBar->Height;
 
         TIniFile* ini = new TIniFile(emulator.inipath);
         LoadSettings(ini);
@@ -72,7 +74,7 @@ void TBasicLister::SizeWindow()
         int displayAreaHeight = (DisplayableRows * PixelsPerCharacterHeight * mScaling);
 
         ClientWidth = displayAreaWidth + ScrollBar->Width + 1;
-        ClientHeight = ToolBar->Height + StatusBar->Height + displayAreaHeight;
+        ClientHeight = mToolbarHeight + StatusBar->Height + displayAreaHeight;
 }
 
 __fastcall TBasicLister::~TBasicLister()
@@ -95,10 +97,21 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
         
         if (mBasicLister != NULL)
         {
+                mHasDebug = mBasicLister->BasicDebugSupported();
+                if (mHasDebug)
+                {
+                        DebugControls->Visible = true;
+                        DebugControls->Enabled = true;
+                        ToolButtonStartStop->Enabled = true;
+                        StepBasic->Enabled = true;
+                }
+
                 mBasicLister->PopulateKeywords();
                 mBasicLister->SetLines(mLines);
                 mBasicLister->SetBpEnabledBitmap(BpEnabledImg->Picture->Bitmap);
                 mBasicLister->SetBpDisabledBitmap(BpDisabledImg->Picture->Bitmap);
+                mToolbarHeight = ToolBar->Height + (mHasDebug ? DebugControls->Height: 0);
+                SizeWindow();
         }
 }
 
@@ -406,15 +419,15 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
                 int programDisplayPixels = programDisplayRows * PixelsPerCharacterHeight * mScaling;
                 int copyHeight = (programDisplayPixels > mBMHeight) ? programDisplayPixels : mBMHeight;
 
-                ::BitBlt(hdc, 0, ToolBar->Height - ScrollBar->Position * PixelsPerCharacterHeight * mScaling, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
+                ::BitBlt(hdc, 0, mToolbarHeight - ScrollBar->Position * PixelsPerCharacterHeight * mScaling, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
         }
         else
         {
                 RECT rect;
                 rect.left = 0;
-                rect.top = ToolBar->Height;
+                rect.top = mToolbarHeight;
                 rect.right = ClientWidth;
-                rect.bottom = ClientHeight - ToolBar->Height - StatusBar->Height;
+                rect.bottom = ClientHeight - mToolbarHeight - StatusBar->Height;
                 FillRect(chdc, &rect, (HBRUSH)(COLOR_BTNFACE+1));
         }
 
@@ -550,6 +563,8 @@ void TBasicLister::DisableButtons()
         ToolButtonSave->Enabled = false;
         ToolButtonLineEnds->Enabled = false;
         ToolButtonInfo->Enabled = false;
+        ToolButtonStartStop->Enabled = true;
+        StepBasic->Enabled = true;
 
         ScrollBar->Enabled = false;
 }
@@ -562,6 +577,11 @@ void TBasicLister::EnableButtons()
         ToolButtonSave->Enabled = programLoaded;
         ToolButtonLineEnds->Enabled = programLoaded;
         ToolButtonInfo->Enabled = true;
+        if (mHasDebug)
+        {
+                ToolButtonStartStop->Enabled = true;
+                StepBasic->Enabled = true;
+        }
 
         ScrollBar->Enabled = (mProgramDisplayRows > DisplayableRows);
 }
@@ -616,7 +636,7 @@ void TBasicLister::ScrollToIndex(int index)
 void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-        int rowWithinClientArea = (Y - ToolBar->Height) / (PixelsPerCharacterHeight * mScaling);
+        int rowWithinClientArea = (Y - mToolbarHeight) / (PixelsPerCharacterHeight * mScaling);
         int row = rowWithinClientArea + ScrollBar->Position;
 
         mLastRowIndex = FindLineDisplayedOnRow(row);
@@ -635,7 +655,7 @@ void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
                 EnableButtons();
                 return;
         }
-        else if (Button == mbRight && mBasicLister->BasicDebugSupported())
+        else if (Button == mbRight && mHasDebug)
         {
                 if (mLastRowIndex != -1) PopupMenu1->Popup(Mouse->CursorPos.x, Mouse->CursorPos.y);
         }
@@ -895,6 +915,19 @@ void __fastcall TBasicLister::Enabled1Click(TObject *Sender)
 void __fastcall TBasicLister::DisableAll1Click(TObject *Sender)
 {
         Dbg->SetEnabledStateAllOfType(BP_BASIC, false);
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TBasicLister::ToolButtonStartStopClick(TObject *Sender)
+{
+        Dbg->BasicStartStop(false);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::StepBasicClick(TObject *Sender)
+{
+        Dbg->BasicStartStop(true);
 }
 //---------------------------------------------------------------------------
 

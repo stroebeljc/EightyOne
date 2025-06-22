@@ -878,14 +878,12 @@ void __fastcall TBasicLister::PopupMenu1Popup(TObject *Sender)
                 PopupMenu1->Items->Items[0]->Caption = "Add Breakpoint";
                 PopupMenu1->Items->Items[1]->Enabled = false;
                 PopupMenu1->Items->Items[1]->Checked = false;
-                PopupMenu1->Items->Items[2]->Enabled = false;
         }
         else
         {
                 PopupMenu1->Items->Items[0]->Caption = "Delete Breakpoint";
                 PopupMenu1->Items->Items[1]->Enabled = true;
                 PopupMenu1->Items->Items[1]->Checked = Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
-                PopupMenu1->Items->Items[2]->Enabled = true;
         }
 }
 //---------------------------------------------------------------------------

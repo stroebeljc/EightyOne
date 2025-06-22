@@ -315,7 +315,6 @@ object BasicLister: TBasicLister
     end
     object DisableAll1: TMenuItem
       Caption = 'Disable All'
-      Enabled = False
       OnClick = DisableAll1Click
     end
   end

@@ -71,6 +71,7 @@
 #include "ProfilePlot_.h"
 #include "Profiler.h"
 #include "BasicLister\BasicLister_.h"
+#include "BasicLister\BasicVariables_.h"
 #include "BasicLister\BasicListerOptions_.h"
 #include "BasicLoader\BasicLoaderOptions_.h"
 #include "ROMCartridge\IF2ROMCartridge.h"
@@ -2339,7 +2340,9 @@ void MoveWindows(int l = -1, int t = -1)
         MoveWindow(LiveMemoryWindow, l, t);
         MoveWindow(ProfilePlot, l, t);
         MoveWindow(Profiler, l, t);
-        MoveWindow(BasicLister, l, t);}
+        MoveWindow(BasicLister, l, t);
+        MoveWindow(BasicVariables, l, t);
+}
 
 void __fastcall TForm1::GatherWindows1Click(TObject *Sender)
 {

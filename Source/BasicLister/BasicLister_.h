@@ -74,6 +74,8 @@ __published:	// IDE-managed Components
         TToolButton *ToolButtonStartStop;
         TToolButton *ToolButton7;
         TToolButton *StepBasic;
+        TToolButton *ToolButton8;
+        TToolButton *Variables;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -93,6 +95,7 @@ __published:	// IDE-managed Components
         void __fastcall DisableAll1Click(TObject *Sender);
         void __fastcall ToolButtonStartStopClick(TObject *Sender);
         void __fastcall StepBasicClick(TObject *Sender);
+        void __fastcall VariablesClick(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;
@@ -152,7 +155,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);
         virtual __fastcall ~TBasicLister();
-        void SetBasicLister(IBasicLister* basicLister);
+        void SetBasicLister(IBasicLister* basicLister, bool exiting = false);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
         bool ListerAvailable();
@@ -162,6 +165,7 @@ public:		// User declarations
         void UnBreakPointLastEntry();
         int BasicLineExecuteStartAddress();
         int NextBasicLineNumberToExecute();
+        void CheckUpdate(int pc);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TBasicLister *BasicLister;

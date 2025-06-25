@@ -56,6 +56,7 @@
                  spl->IncProgress("Basic Loader"); Application->CreateForm(__classid(TSaveBasicListingOptionsForm), &SaveBasicListingOptionsForm);
                  spl->IncProgress("Basic Lister"); Application->CreateForm(__classid(TBasicLister), &BasicLister);
                  spl->IncProgress("Basic Lister"); Application->CreateForm(__classid(TBasicListingFormatInfoForm), &BasicListingFormatInfoForm);
+                 spl->IncProgress("Basic Lister"); Application->CreateForm(__classid(TBasicVariables), &BasicVariables);
                  spl->IncProgress("TV Emulation"); Application->CreateForm(__classid(TArtifacts), &Artifacts);
                  spl->IncProgress("ZX97"); Application->CreateForm(__classid(TZX97Dialog), &ZX97Dialog);
                  spl->IncProgress("ZX Interface 1"); Application->CreateForm(__classid(TIF1), &IF1);

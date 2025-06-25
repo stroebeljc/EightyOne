@@ -38,6 +38,7 @@
 #include "Profiler.h"
 #include "DbgDissassem.cpp"
 #include "BasicLister\BasicLister_.h"
+#include "BasicLister\BasicVariables_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -179,6 +180,7 @@ void DebugUpdate(void)
         }
 
         Profiler->DebugTick(&z80);
+        BasicLister->CheckUpdate(z80.pc.w);
 
         if (Dbg->Continuous->Checked==true && Dbg->Visible==true)
                 Dbg->UpdateVals();

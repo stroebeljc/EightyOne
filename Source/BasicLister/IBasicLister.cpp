@@ -24,6 +24,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include <cmath>
 #include "Debug.h"
 
 using namespace std;
@@ -32,6 +33,7 @@ extern Graphics::TPicture *listerBPpicture;
 
 IBasicLister::IBasicLister() :
         mProgramDisplayRows(0),
+        mVariablesDisplayRows(0),
         BpEnabledBitmap(NULL),
         BpDisabledBitmap(NULL)
 {
@@ -63,6 +65,8 @@ void IBasicLister::PopulateKeywords()
 
 IBasicLister::~IBasicLister()
 {
+        BpEnabledBitmap = NULL;
+        BpDisabledBitmap = NULL;
 }
 
 int IBasicLister::GetKeywordLength(unsigned char code)
@@ -85,6 +89,11 @@ int IBasicLister::GetKeywordLength(unsigned char code)
 void IBasicLister::SetLines(std::vector<LineInfo>* linesInfo)
 {
         mLines = linesInfo;
+}
+
+void IBasicLister::SetVariables(std::vector<VariableInfo>* variablesInfo)
+{
+        mVariables = variablesInfo;
 }
 
 void IBasicLister::SetBpEnabledBitmap(Graphics::TBitmap* bitmap)
@@ -234,9 +243,139 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         return true;
 }
 
+void IBasicLister::ExtractVariablesDetails()
+{
+        const int startAddressOfVariables = GetVariablesStartAddress();
+
+        mVariables->clear();
+
+        mVariablesDisplayRows = 0;
+        bool varAvailable;
+        int displayRow = 0;
+
+        int address = startAddressOfVariables;
+
+        mEmbeddedNumberSize = GetEmbeddedNumberSize();
+        //mFloatingPointNumberCode = GetFloatingPointNumberCode();
+        mLineEndingCode = 256;
+        mSupportsFloatingPointNumbers = false;
+        mSupportEmbeddedControlCodes = false;
+
+        do
+        {
+                VariableInfo varInfo;
+
+                varAvailable = ExtractEachVariable(&address, varInfo);
+                if (varAvailable)
+                {
+                        varInfo.startDisplayRow = displayRow;
+                        mVariables->push_back(varInfo);
+
+                        mVariablesDisplayRows++;
+                        displayRow++;
+                }
+        }
+        while (varAvailable);
+}
+
+bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
+{
+        varInfo.address = *address;
+
+        const int EndOfVariablesMarker = 0x80;
+        int typeByte = getbyte((*address)++);
+        if (typeByte == EndOfVariablesMarker)
+        {
+                return false;
+        }
+
+        varInfo.type = (unsigned char)(typeByte & 0xE0);
+        unsigned char letter;
+        int size;
+        switch (varInfo.type)
+        {
+        case SingleNumber: // Single letter number
+                varInfo.nameSize = 1;
+                varInfo.addressContent = *address;
+                varInfo.contentLength = mEmbeddedNumberSize;
+                break;
+
+        case MultiNumber: // Multi-letter number
+                varInfo.nameSize = 1;
+                do
+                {
+                        letter = getbyte((*address)++);
+                        varInfo.nameSize++;
+                } while (!(letter & 0xC0));
+                varInfo.addressContent = *address;
+                varInfo.contentLength = mEmbeddedNumberSize;
+                break;
+
+        case NumberArray: // Array of numbers
+                {
+                varInfo.nameSize = 1;
+                size = getbyte((*address)++) + 256*getbyte((*address)++);
+                varInfo.addressArray = (*address)++;
+                int dimensions = getbyte(varInfo.addressArray);
+                for (int i = 0; i < dimensions; i++)
+                {
+                        int currentDim = getbyte((*address)++) + 256*getbyte((*address)++);
+                        varInfo.nameSize += std::log10(currentDim) + 2;
+                }
+                varInfo.nameSize++; // final paren
+                varInfo.addressContent = *address;
+                varInfo.contentLength = size - (1 + 2*dimensions);
+                }
+                break;
+
+        case ForNextControl: // FOR-NEXT control variable
+                varInfo.nameSize = 1;
+                varInfo.addressContent = *address;
+                varInfo.contentLength = GetForVariableLength();
+                break;
+
+        case SimpleString: // String
+                varInfo.nameSize = 2; // single letter and '$'
+                size = getbyte((*address)++) + 256*getbyte((*address)++);
+                varInfo.addressContent = *address;
+                varInfo.contentLength = size;
+                break;
+
+        case CharacterArray: // Array of characters
+                {
+                varInfo.nameSize = 2;
+                size = getbyte((*address)++) + 256*getbyte((*address)++);
+                varInfo.addressArray = (*address)++;
+                int dimensions = getbyte(varInfo.addressArray);
+                for (int i = 0; i < dimensions; i++)
+                {
+                        int currentDim = getbyte((*address)++) + 256 * getbyte((*address)++);
+                        varInfo.nameSize += std::log10(currentDim) + 2;
+                }
+                varInfo.nameSize++; // final paren
+                varInfo.addressContent = *address;
+                varInfo.contentLength = size - (1 + 2*dimensions);
+                }
+                break;
+
+        default:
+                return false;
+        }
+
+        *address += varInfo.contentLength;
+
+        return true;
+}
+
+
 int IBasicLister::GetProgramRows()
 {
         return mProgramDisplayRows;
+}
+
+int IBasicLister::GetVariablesRows()
+{
+        return mVariablesDisplayRows;
 }
 
 void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds)
@@ -245,6 +384,18 @@ void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool
         if (mLines->size() > 0)
         {
                 canvasColour = showLineEnds ? GetBackgroundColour() : GetDefaultPaperColour();
+        }
+        HBRUSH hBrush = CreateSolidBrush(canvasColour);
+        FillRect(hdc, &rect, hBrush);
+        DeleteObject(hBrush);
+}
+
+void IBasicLister::ClearRenderedVariablesList(HDC hdc, HBITMAP bitmap, RECT rect)
+{
+        COLORREF canvasColour = GetSysColor(COLOR_BTNFACE);
+        if (mLines->size() > 0)
+        {
+                canvasColour = GetDefaultPaperColour();
         }
         HBRUSH hBrush = CreateSolidBrush(canvasColour);
         FillRect(hdc, &rect, hBrush);
@@ -269,6 +420,38 @@ void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLi
         {
                 LineInfo lineInfo = *it;
                 RenderLine(hdc, cshdc, yOffset, lineInfo);
+        }
+
+        SelectObject(cshdc, oldBitmap);
+        DeleteDC(cshdc);
+}
+
+void IBasicLister::RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scaling)
+{
+        mScaling = scaling;
+
+        int yOffset = 0;
+
+        InitialiseColours();
+
+        HDC cshdc = CreateCompatibleDC(hdc);
+
+        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)((Graphics::TBitmap*)machine.cset)->Handle);
+
+        ClearRenderedVariablesList(hdc, bitmap, rect);
+
+        int maxNameSize = 0;
+        for (std::vector<VariableInfo>::iterator it = mVariables->begin(); it != mVariables->end(); it++)
+        {
+                VariableInfo varInfo = *it;
+                if (varInfo.nameSize > maxNameSize)
+                        maxNameSize = varInfo.nameSize;
+        }
+
+        for (std::vector<VariableInfo>::iterator it = mVariables->begin(); it != mVariables->end(); it++)
+        {
+                VariableInfo varInfo = *it;
+                RenderVariable(hdc, cshdc, maxNameSize, yOffset, varInfo);
         }
 
         SelectObject(cshdc, oldBitmap);
@@ -313,6 +496,45 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
         }
 }
 
+void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, VariableInfo& varInfo)
+{
+        int x = xOffset;
+
+        RenderVariableName(hdc, cshdc, xOffset, y, varInfo);
+
+        RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('='));
+
+        int address = varInfo.addressContent;
+        int lengthRemaining = varInfo.contentLength;
+
+        switch (varInfo.type)
+        {
+        case SimpleString:
+        case CharacterArray:
+                RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
+                while (lengthRemaining-- > 0)
+                {
+                        RenderVarCharacter(hdc, cshdc, x, y, getbyte(address++));
+                }
+                RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
+                break;
+
+        case SingleNumber:
+        case MultiNumber:
+        case ForNextControl:
+                {
+                AnsiString numStr = AnsiString(ConvertZXFloatToDouble(&address));
+                for (int i = 1; i <= numStr.Length(); i++)
+                {
+                        RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(numStr[i]));
+                }
+                }
+                break;
+        }
+
+        y++;
+}
+
 void IBasicLister::RenderBPStyle(HDC hdc, int& x, int& y, int breakStyle)
 {
         int xpos = (x << 3) * mScaling;
@@ -348,6 +570,64 @@ void IBasicLister::RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int line
         {
                 unsigned char c = ConvertToZXCode(formattedLineNumber[i]);
                 RenderCharacter(hdc, cshdc, x, y, c);
+        }
+}
+
+void IBasicLister::RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, VariableInfo varInfo)
+{
+        int tempX = 0;
+        for (int i = varInfo.nameSize; i < xOffset; i++)
+        {
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode(' '));
+        }
+
+        // All variable types start with a letter
+        unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address));
+        RenderVarCharacter(hdc, cshdc, tempX, y, c);
+
+        switch (varInfo.type)
+        {
+        case MultiNumber: // Multi-letter number
+                for (int i = 1; i < varInfo.nameSize; i++)
+                {
+                        unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address + i));
+                        RenderVarCharacter(hdc, cshdc, tempX, y, c);
+                }
+                break;
+
+        case CharacterArray: // Array of characters
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode('$'));
+        case NumberArray: // Array of numbers
+                {
+                int address = varInfo.addressArray;
+                int numDim = getbyte(address++);
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode('('));
+                for (int i = numDim; i > 0; i--)
+                {
+                        int dimension = getbyte(address++) + 256*getbyte(address++);
+                        AnsiString dimStr = AnsiString(dimension);
+                        for (int j = 1; j <= dimStr.Length(); j++)
+                        {
+                                unsigned char c = ConvertToZXCode(dimStr[j]);
+                                RenderVarCharacter(hdc, cshdc, tempX, y, c);
+                        }
+                        if (i > 1)
+                        {
+                                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode(','));
+                        }
+                }
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode(')'));
+                }
+                break;
+
+        case SimpleString: // String
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode('$'));
+                break;
+
+        case SingleNumber: // Single letter number
+        case ForNextControl: // FOR-NEXT control variable
+        default:
+                break;
         }
 }
 
@@ -426,7 +706,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
         }
 }
 
-void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
+void IBasicLister::RenderCharacterInternal(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
 {
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
@@ -481,12 +761,31 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
                         }
                 }
         }
+}
+
+void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
+{
+        RenderCharacterInternal(hdc, cshdc, x, y, c);
 
         x++;
         if (x == 1 + GetDisplayColumns())
         {
                 x = 1;
                 y++;
+        }
+}
+
+void IBasicLister::RenderVarCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
+{
+        if (x < GetVarDisplayColumns() - 3)
+        {
+                RenderCharacterInternal(hdc, cshdc, x, y, c);
+                x++;
+        }
+        else if (x <= GetVarDisplayColumns())
+        {
+                RenderCharacterInternal(hdc, cshdc, x, y, ConvertToZXCode('.'));
+                x++;
         }
 }
 
@@ -679,3 +978,18 @@ AnsiString IBasicLister::FormatLineNumber(int lineNumber, bool outputFullWidthLi
         return lineNum;
 }
 
+double IBasicLister::ConvertZXFloatToDouble(int* address)
+{
+        unsigned char exponent = getbyte((*address)++);
+        unsigned char mantissa0 = getbyte((*address)++);
+        unsigned char mantissa1 = getbyte((*address)++);
+        unsigned char mantissa2 = getbyte((*address)++);
+        unsigned char mantissa3 = getbyte((*address)++);
+        if (exponent + mantissa0 + mantissa1 + mantissa2 + mantissa3 == 0) return 0;
+        double signMultiplier = ((mantissa0 & 0x80) != 0) ? -1.0 : 1.0;
+        double mantissaSum = (mantissa0 | 0x80)/pow(2.0,8) + mantissa1/pow(2.0,16) + mantissa2/pow(2.0,24) + mantissa3/pow(2.0,32);
+        double rawResult = pow(2.0,exponent-128) * mantissaSum * signMultiplier;
+        //int sigfigs = 8-(1+int(log10(abs(rawResult))));
+        //return int(pow(10.0,sigfigs) * rawResult + 0.5)/pow(10.0,sigfigs);
+        return rawResult;
+}

@@ -29,6 +29,7 @@
 #include "BasicListerOptions_.h"
 #include "BasicListingFormatInfo_.h"
 #include "Debug.h"
+#include "BasicVariables_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -80,14 +81,14 @@ void TBasicLister::SizeWindow()
 __fastcall TBasicLister::~TBasicLister()
 {
         ::DeleteObject(mBitmap);
-        SetBasicLister(NULL);
+        SetBasicLister(NULL, true);
         delete mLines;
 }
 
-void TBasicLister::SetBasicLister(IBasicLister* basicLister)
+void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
 {
         mLines->clear();
-        
+
         if (mBasicLister != NULL)
         {
                 delete mBasicLister;
@@ -104,6 +105,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
                         DebugControls->Enabled = true;
                         ToolButtonStartStop->Enabled = true;
                         StepBasic->Enabled = true;
+                        Variables->Enabled = true;
                 }
 
                 mBasicLister->PopulateKeywords();
@@ -121,7 +123,10 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
                 DebugControls->Enabled = false;
                 ToolButtonStartStop->Enabled = false;
                 StepBasic->Enabled = false;
+                Variables->Enabled = false;
         }
+
+        if (!exiting) BasicVariables->SetLister(mBasicLister);
 }
 
 bool TBasicLister::ListerAvailable()
@@ -480,6 +485,8 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
         {
                 ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
         }
+
+        BasicVariables->Refresh();
 }
 //---------------------------------------------------------------------------
 
@@ -816,6 +823,12 @@ void TBasicLister::BreakAtNextBasicLine()
         BreakPointLine(mBasicLister->GetNextBasicLineNumber());
 }
 
+void TBasicLister::CheckUpdate(int pc)
+{
+        if (pc == BasicLineExecuteStartAddress())
+                BasicVariables->Refresh();
+}
+
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         int scrollPos = ScrollBar->Position;
@@ -937,6 +950,18 @@ void __fastcall TBasicLister::ToolButtonStartStopClick(TObject *Sender)
 void __fastcall TBasicLister::StepBasicClick(TObject *Sender)
 {
         Dbg->BasicStartStop(true);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::VariablesClick(TObject *Sender)
+{
+        if (BasicVariables->Visible)
+        {
+                BasicVariables->Close();
+                return;
+        }
+
+        BasicVariables->Show();
 }
 //---------------------------------------------------------------------------
 

@@ -198,6 +198,30 @@ unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
                         c = Dollar;
                         break;
 
+                case '(':
+                        c = OpenParen;
+                        break;
+
+                case ')':
+                        c = ClosedParen;
+                        break;
+
+                case ',':
+                        c = Comma;
+                        break;
+
+                case '.':
+                        c = Period;
+                        break;
+
+                case '-':
+                        c = Minus;
+                        break;
+
+                case '+':
+                        c = Plus;
+                        break;
+
                 default:
                         if (code >= '0' && code <= '9')
                         {
@@ -211,6 +235,11 @@ unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
         }
 
         return c;
+}
+
+unsigned char zx81BasicLister::ConvertVariableNameCode(unsigned char code)
+{
+        return (unsigned char)((code & 0x1F) | 0x20);
 }
 
 unsigned char zx81BasicLister::GetFloatingPointNumberCode()
@@ -237,6 +266,18 @@ bool zx81BasicLister::ZxTokenSupported()
 {
         return true;
 }
+
+int zx81BasicLister::GetForVariableLength()
+{
+        return 17;
+}
+
+int zx81BasicLister::GetVariablesStartAddress()
+{
+        const int vars = 16400;
+        return getbyte(vars) + (getbyte(vars + 1) << 8);
+}
+
 
 bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes)
 {

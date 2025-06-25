@@ -294,6 +294,21 @@ object BasicLister: TBasicLister
       ImageIndex = 3
       OnClick = StepBasicClick
     end
+    object ToolButton8: TToolButton
+      Left = 119
+      Top = 2
+      Width = 8
+      Caption = 'ToolButton8'
+      ImageIndex = 4
+      Style = tbsDivider
+    end
+    object Variables: TToolButton
+      Left = 127
+      Top = 2
+      Caption = 'Variables'
+      ImageIndex = 4
+      OnClick = VariablesClick
+    end
   end
   object SaveDialog: TSaveDialog
     Left = 8

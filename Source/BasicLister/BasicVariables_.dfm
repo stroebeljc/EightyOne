@@ -5,8 +5,7 @@ object BasicVariables: TBasicVariables
   HorzScrollBar.Margin = 1
   HorzScrollBar.ThumbSize = 1
   Anchors = [akLeft, akTop, akRight, akBottom]
-  AutoScroll = False
-  BorderStyle = bsSizeToolWin
+  BorderStyle = bsToolWindow
   Caption = 'BASIC Variables'
   ClientHeight = 93
   ClientWidth = 314

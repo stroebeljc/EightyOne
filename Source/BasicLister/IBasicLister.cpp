@@ -777,7 +777,7 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
 
 void IBasicLister::RenderVarCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
 {
-        if (x < GetVarDisplayColumns() - 3)
+        if (x < GetVarDisplayColumns() - 2)
         {
                 RenderCharacterInternal(hdc, cshdc, x, y, c);
                 x++;
@@ -987,9 +987,8 @@ double IBasicLister::ConvertZXFloatToDouble(int* address)
         unsigned char mantissa3 = getbyte((*address)++);
         if (exponent + mantissa0 + mantissa1 + mantissa2 + mantissa3 == 0) return 0;
         double signMultiplier = ((mantissa0 & 0x80) != 0) ? -1.0 : 1.0;
-        double mantissaSum = (mantissa0 | 0x80)/pow(2.0,8) + mantissa1/pow(2.0,16) + mantissa2/pow(2.0,24) + mantissa3/pow(2.0,32);
-        double rawResult = pow(2.0,exponent-128) * mantissaSum * signMultiplier;
-        //int sigfigs = 8-(1+int(log10(abs(rawResult))));
-        //return int(pow(10.0,sigfigs) * rawResult + 0.5)/pow(10.0,sigfigs);
-        return rawResult;
+        double mantissaSum = (mantissa0 | 0x80)/256.0 + mantissa1/65536.0 + mantissa2/16777216.0 + mantissa3/4294967296.0;
+        double absRawResult = pow(2.0,exponent-128) * mantissaSum;
+        int sigfigs = 8-(1+int(log10(absRawResult)));
+        return int(pow(10.0,sigfigs) * absRawResult + 0.5)/pow(10.0,sigfigs) * signMultiplier;
 }

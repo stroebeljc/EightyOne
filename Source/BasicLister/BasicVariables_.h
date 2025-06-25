@@ -19,7 +19,6 @@ __published:	// IDE-managed Components
 private:	// User declarations
         HBITMAP mBitmap;
         HWND mHWND;
-        HBITMAP mOffscreenBitmap;
 
         int mRows;
         int mToolbarHeight;

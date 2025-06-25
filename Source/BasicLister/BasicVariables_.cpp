@@ -28,10 +28,11 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
 
  __fastcall TBasicVariables::~TBasicVariables()
 {
-        if (mOffscreenBitmap)
+        if (mBitmap)
         {
-                ::DeleteObject(mOffscreenBitmap);
+            ::DeleteObject(mBitmap);
         }
+
         delete mVariables;
 }
 
@@ -64,6 +65,11 @@ void __fastcall TBasicVariables::SetLister(IBasicLister *lister)
 
 void TBasicVariables::ClearBitmap()
 {
+        if (mBitmap)
+        {
+            ::DeleteObject(mBitmap);
+        }
+
         HDC hdc = (HDC)Canvas->Handle;
         HDC chdc = CreateCompatibleDC(hdc);
 

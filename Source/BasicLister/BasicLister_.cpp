@@ -136,6 +136,11 @@ bool TBasicLister::ListerAvailable()
 
 void TBasicLister::ClearBitmap()
 {
+        if (mBitmap)
+        {
+            ::DeleteObject(mBitmap);
+        }
+
         HDC hdc = (HDC)Canvas->Handle;
         HDC chdc = CreateCompatibleDC(hdc);
 

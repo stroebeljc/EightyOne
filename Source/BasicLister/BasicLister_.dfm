@@ -254,7 +254,7 @@ object BasicLister: TBasicLister
     Width = 297
     Height = 30
     ButtonHeight = 19
-    ButtonWidth = 61
+    ButtonWidth = 55
     Caption = 'DebugControls'
     EdgeBorders = [ebBottom]
     Enabled = False
@@ -274,12 +274,12 @@ object BasicLister: TBasicLister
       Left = 8
       Top = 2
       AutoSize = True
-      Caption = 'Start/Stop'
+      Caption = 'Stop'
       ImageIndex = 1
       OnClick = ToolButtonStartStopClick
     end
     object ToolButton7: TToolButton
-      Left = 73
+      Left = 46
       Top = 2
       Width = 8
       Caption = 'ToolButton7'
@@ -287,7 +287,7 @@ object BasicLister: TBasicLister
       Style = tbsDivider
     end
     object StepBasic: TToolButton
-      Left = 81
+      Left = 54
       Top = 2
       AutoSize = True
       Caption = 'Step'
@@ -295,7 +295,7 @@ object BasicLister: TBasicLister
       OnClick = StepBasicClick
     end
     object ToolButton8: TToolButton
-      Left = 119
+      Left = 92
       Top = 2
       Width = 8
       Caption = 'ToolButton8'
@@ -303,7 +303,7 @@ object BasicLister: TBasicLister
       Style = tbsDivider
     end
     object Variables: TToolButton
-      Left = 127
+      Left = 100
       Top = 2
       Caption = 'Variables'
       ImageIndex = 4

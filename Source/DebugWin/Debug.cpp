@@ -317,15 +317,21 @@ void TDbg::SetEnabledStateAllOfType(BreakpointType type, bool enable)
         BPListChanged();
 }
 
-void TDbg::BasicStartStop(bool step)
+void TDbg::BasicStartStop(bool addBP)
 {
         MemoryWindow->ClearChanges();
         BasicLister->UnBreakPointLastEntry();
-        if (step || !emulation_stop)
+        breakpoint bp(-1, BP_BASIC);
+        if (addBP)
         {
-                breakpoint bp(-1, BP_BASIC);
                 bp.Permanent = false;
                 AddBreakPoint(bp);
+        }
+        else
+        {
+                int bpIndex = FindBreakPointEntry(0, bp, false);
+                if (bpIndex >= 0)
+                        DelBreakPoint(bpIndex);
         }
         if (emulation_stop) RunStopClick(NULL);
 }

@@ -400,7 +400,7 @@ public:		// User declarations
         void ClearHistoryWindow();
         void DisableMemoryWindowAutoUpdates();
         void SetBPListChangedCB(void (*callback)(void));
-        void BasicStartStop(bool step);
+        void BasicStartStop(bool addBP);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

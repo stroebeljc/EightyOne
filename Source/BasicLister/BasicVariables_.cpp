@@ -63,6 +63,15 @@ void __fastcall TBasicVariables::SetLister(IBasicLister *lister)
         }
 }
 
+void TBasicVariables::Clear()
+{
+        mVariables->clear();
+
+        SizeWindow();
+        ClearBitmap();
+        Invalidate();
+}
+
 void TBasicVariables::ClearBitmap()
 {
         if (mBitmap)
@@ -158,7 +167,6 @@ void TBasicVariables::Refresh(void)
 {
         if (!Visible) return;
 
-        ClearBitmap();
         Invalidate();
 
         LoadVariables();

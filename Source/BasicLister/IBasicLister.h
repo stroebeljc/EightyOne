@@ -96,7 +96,7 @@ private:
         bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem);
         void RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, VariableInfo varInfo);
         void RenderCharacterInternal(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
-        void RenderVarCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
+        bool RenderVarCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
         AnsiString FormatLineNumber(int lineNumber, bool outputFullWidthLineNumbers = false);
         COLORREF GetBackgroundColour();
         unsigned char GetEscapeCharacter() { return '\\'; }

@@ -104,7 +104,6 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                         DebugControls->Visible = true;
                         DebugControls->Enabled = true;
                         ToolButtonStartStop->Enabled = true;
-                        StepBasic->Enabled = true;
                         Variables->Enabled = true;
                 }
 
@@ -122,9 +121,10 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                 DebugControls->Visible = false;
                 DebugControls->Enabled = false;
                 ToolButtonStartStop->Enabled = false;
-                StepBasic->Enabled = false;
                 Variables->Enabled = false;
         }
+
+        StepBasic->Enabled = false;
 
         if (!exiting) BasicVariables->SetLister(mBasicLister);
 }
@@ -505,6 +505,8 @@ void TBasicLister::Clear()
         Invalidate();
 
         EnableButtons();
+
+        BasicVariables->Clear();
 }
 //---------------------------------------------------------------------------
 
@@ -584,8 +586,6 @@ void TBasicLister::DisableButtons()
         ToolButtonSave->Enabled = false;
         ToolButtonLineEnds->Enabled = false;
         ToolButtonInfo->Enabled = false;
-        ToolButtonStartStop->Enabled = true;
-        StepBasic->Enabled = true;
 
         ScrollBar->Enabled = false;
 }
@@ -598,11 +598,6 @@ void TBasicLister::EnableButtons()
         ToolButtonSave->Enabled = programLoaded;
         ToolButtonLineEnds->Enabled = programLoaded;
         ToolButtonInfo->Enabled = true;
-        if (mHasDebug)
-        {
-                ToolButtonStartStop->Enabled = true;
-                StepBasic->Enabled = true;
-        }
 
         ScrollBar->Enabled = (mProgramDisplayRows > DisplayableRows);
 }
@@ -825,6 +820,8 @@ void TBasicLister::BreakAtNextBasicLine()
 {
         if (mBasicLister == NULL) return;
 
+        StepBasic->Enabled = true;
+
         BreakPointLine(mBasicLister->GetNextBasicLineNumber());
 }
 
@@ -948,12 +945,25 @@ void __fastcall TBasicLister::DisableAll1Click(TObject *Sender)
 
 void __fastcall TBasicLister::ToolButtonStartStopClick(TObject *Sender)
 {
-        Dbg->BasicStartStop(false);
+        if (ToolButtonStartStop->Caption == "Start")
+        {
+                ToolButtonStartStop->Caption = "Stop";
+                Dbg->BasicStartStop(false);
+        }
+        else
+        {
+                ToolButtonStartStop->Caption = "Start";
+                Dbg->BasicStartStop(true);
+        }
+
+        StepBasic->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TBasicLister::StepBasicClick(TObject *Sender)
 {
+        ToolButtonStartStop->Caption = "Start";
+        StepBasic->Enabled = false;
         Dbg->BasicStartStop(true);
 }
 //---------------------------------------------------------------------------

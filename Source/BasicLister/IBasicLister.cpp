@@ -446,6 +446,9 @@ void IBasicLister::RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scali
                 VariableInfo varInfo = *it;
                 if (varInfo.nameSize > maxNameSize)
                         maxNameSize = varInfo.nameSize;
+                const int NameSizeLimit = 15;
+                if (maxNameSize > NameSizeLimit)
+                        maxNameSize = NameSizeLimit;
         }
 
         for (std::vector<VariableInfo>::iterator it = mVariables->begin(); it != mVariables->end(); it++)
@@ -506,15 +509,16 @@ void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, Varia
 
         int address = varInfo.addressContent;
         int lengthRemaining = varInfo.contentLength;
+        bool notDone = true;
 
         switch (varInfo.type)
         {
         case SimpleString:
         case CharacterArray:
                 RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
-                while (lengthRemaining-- > 0)
+                while (notDone && lengthRemaining-- > 0)
                 {
-                        RenderVarCharacter(hdc, cshdc, x, y, getbyte(address++));
+                        notDone = RenderVarCharacter(hdc, cshdc, x, y, getbyte(address++));
                 }
                 RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
                 break;
@@ -529,6 +533,22 @@ void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, Varia
                         RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(numStr[i]));
                 }
                 }
+                break;
+
+        case NumberArray:
+                RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('('));
+                while (notDone && lengthRemaining > 0)
+                {
+                        lengthRemaining -= 5;
+                        AnsiString numStr = AnsiString(ConvertZXFloatToDouble(&address));
+                        for (int i = 1; i <= numStr.Length() && notDone; i++)
+                        {
+                                notDone = RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(numStr[i]));
+                        }
+                        if (notDone && lengthRemaining > 0)
+                                RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(' '));
+                }
+                RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(')'));
                 break;
         }
 
@@ -588,10 +608,13 @@ void IBasicLister::RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, V
         switch (varInfo.type)
         {
         case MultiNumber: // Multi-letter number
-                for (int i = 1; i < varInfo.nameSize; i++)
+                {
+                int usedSize = (varInfo.nameSize < xOffset) ? varInfo.nameSize : xOffset;
+                for (int i = 1; i < usedSize; i++)
                 {
                         unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address + i));
                         RenderVarCharacter(hdc, cshdc, tempX, y, c);
+                }
                 }
                 break;
 
@@ -775,18 +798,22 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         }
 }
 
-void IBasicLister::RenderVarCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
+bool IBasicLister::RenderVarCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
 {
         if (x < GetVarDisplayColumns() - 2)
         {
                 RenderCharacterInternal(hdc, cshdc, x, y, c);
                 x++;
+                return true;
         }
-        else if (x <= GetVarDisplayColumns())
+
+        while (x <= GetVarDisplayColumns())
         {
                 RenderCharacterInternal(hdc, cshdc, x, y, ConvertToZXCode('.'));
                 x++;
         }
+
+        return false;
 }
 
 AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers)

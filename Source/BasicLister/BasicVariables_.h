@@ -42,6 +42,7 @@ public:		// User declarations
 
         void __fastcall SetLister(IBasicLister *lister);
         void Refresh();
+        void Clear();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TBasicVariables *BasicVariables;

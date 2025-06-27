@@ -106,6 +106,9 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                         ToolButtonStartStop->Enabled = true;
                         Variables->Enabled = true;
                 }
+                else
+                        BasicVariables->Close();
+
 
                 mBasicLister->PopulateKeywords();
                 mBasicLister->SetLines(mLines);
@@ -709,6 +712,7 @@ void __fastcall TBasicLister::FormClose(TObject *Sender,
       TCloseAction &Action)
 {
         Form1->BasicListerOption->Checked = false;        
+        BasicVariables->Close();
 }
 //---------------------------------------------------------------------------
                     

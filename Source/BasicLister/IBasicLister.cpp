@@ -255,12 +255,6 @@ void IBasicLister::ExtractVariablesDetails()
 
         int address = startAddressOfVariables;
 
-        mEmbeddedNumberSize = GetEmbeddedNumberSize();
-        //mFloatingPointNumberCode = GetFloatingPointNumberCode();
-        mLineEndingCode = 256;
-        mSupportsFloatingPointNumbers = false;
-        mSupportEmbeddedControlCodes = false;
-
         do
         {
                 VariableInfo varInfo;
@@ -289,7 +283,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 return false;
         }
 
-        varInfo.type = (unsigned char)(typeByte & 0xE0);
+        varInfo.type = TranslateVariableType((unsigned char)(typeByte & 0xE0));
         unsigned char letter;
         int size;
         switch (varInfo.type)
@@ -298,6 +292,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 varInfo.nameSize = 1;
                 varInfo.addressContent = *address;
                 varInfo.contentLength = mEmbeddedNumberSize;
+                *address += varInfo.contentLength;
                 break;
 
         case MultiNumber: // Multi-letter number
@@ -309,6 +304,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 } while (!(letter & 0xC0));
                 varInfo.addressContent = *address;
                 varInfo.contentLength = mEmbeddedNumberSize;
+                *address += varInfo.contentLength;
                 break;
 
         case NumberArray: // Array of numbers
@@ -325,6 +321,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 varInfo.nameSize++; // final paren
                 varInfo.addressContent = *address;
                 varInfo.contentLength = size - (1 + 2*dimensions);
+                *address += varInfo.contentLength;
                 }
                 break;
 
@@ -332,6 +329,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 varInfo.nameSize = 1;
                 varInfo.addressContent = *address;
                 varInfo.contentLength = GetForVariableLength();
+                *address += varInfo.contentLength;
                 break;
 
         case SimpleString: // String
@@ -339,6 +337,31 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 size = getbyte((*address)++) + 256*getbyte((*address)++);
                 varInfo.addressContent = *address;
                 varInfo.contentLength = size;
+                *address += varInfo.contentLength;
+                break;
+
+        case ZX80String: // ZX80 String
+                varInfo.nameSize = 2; // single letter and '$'
+                varInfo.addressContent = *address;
+                size = 1;
+                while (getbyte((*address)++) != 0x01)
+                {
+                        size++;
+                }
+                varInfo.contentLength = size;
+                break;
+
+        case ZX80Array: // Array of numbers
+                {
+                varInfo.nameSize = 1;
+                size = getbyte(*address);
+                varInfo.nameSize += std::log10(size) + 2;
+                varInfo.nameSize++; // final paren
+                varInfo.addressArray = (*address)++;
+                varInfo.addressContent = *address;
+                varInfo.contentLength = 2*(1 + size);
+                *address += varInfo.contentLength;
+                }
                 break;
 
         case CharacterArray: // Array of characters
@@ -355,14 +378,13 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 varInfo.nameSize++; // final paren
                 varInfo.addressContent = *address;
                 varInfo.contentLength = size - (1 + 2*dimensions);
+                *address += varInfo.contentLength;
                 }
                 break;
 
         default:
                 return false;
         }
-
-        *address += varInfo.contentLength;
 
         return true;
 }
@@ -513,6 +535,7 @@ void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, Varia
 
         switch (varInfo.type)
         {
+        case ZX80String:
         case SimpleString:
         case CharacterArray:
                 RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
@@ -520,14 +543,14 @@ void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, Varia
                 {
                         notDone = RenderVarCharacter(hdc, cshdc, x, y, getbyte(address++));
                 }
-                RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
+                if (varInfo.type != ZX80String) RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
                 break;
 
         case SingleNumber:
         case MultiNumber:
         case ForNextControl:
                 {
-                AnsiString numStr = AnsiString(ConvertZXFloatToDouble(&address));
+                AnsiString numStr = AnsiString(ConvertZXNumberToDouble(&address));
                 for (int i = 1; i <= numStr.Length(); i++)
                 {
                         RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(numStr[i]));
@@ -535,12 +558,13 @@ void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, Varia
                 }
                 break;
 
+        case ZX80Array:
         case NumberArray:
                 RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('('));
                 while (notDone && lengthRemaining > 0)
                 {
-                        lengthRemaining -= 5;
-                        AnsiString numStr = AnsiString(ConvertZXFloatToDouble(&address));
+                        lengthRemaining -= mEmbeddedNumberSize;
+                        AnsiString numStr = AnsiString(ConvertZXNumberToDouble(&address));
                         for (int i = 1; i <= numStr.Length() && notDone; i++)
                         {
                                 notDone = RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode(numStr[i]));
@@ -643,6 +667,22 @@ void IBasicLister::RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, V
                 }
                 break;
 
+        case ZX80Array: // Array of numbers
+                {
+                int address = varInfo.addressArray;
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode('('));
+                int size = getbyte(address++);
+                AnsiString dimStr = AnsiString(size);
+                for (int j = 1; j <= dimStr.Length(); j++)
+                {
+                        unsigned char c = ConvertToZXCode(dimStr[j]);
+                        RenderVarCharacter(hdc, cshdc, tempX, y, c);
+                }
+                RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode(')'));
+                }
+                break;
+
+        case ZX80String:
         case SimpleString: // String
                 RenderVarCharacter(hdc, cshdc, tempX, y, ConvertToZXCode('$'));
                 break;
@@ -1005,17 +1045,3 @@ AnsiString IBasicLister::FormatLineNumber(int lineNumber, bool outputFullWidthLi
         return lineNum;
 }
 
-double IBasicLister::ConvertZXFloatToDouble(int* address)
-{
-        unsigned char exponent = getbyte((*address)++);
-        unsigned char mantissa0 = getbyte((*address)++);
-        unsigned char mantissa1 = getbyte((*address)++);
-        unsigned char mantissa2 = getbyte((*address)++);
-        unsigned char mantissa3 = getbyte((*address)++);
-        if (exponent + mantissa0 + mantissa1 + mantissa2 + mantissa3 == 0) return 0;
-        double signMultiplier = ((mantissa0 & 0x80) != 0) ? -1.0 : 1.0;
-        double mantissaSum = (mantissa0 | 0x80)/256.0 + mantissa1/65536.0 + mantissa2/16777216.0 + mantissa3/4294967296.0;
-        double absRawResult = pow(2.0,exponent-128) * mantissaSum;
-        int sigfigs = 8-(1+int(log10(absRawResult)));
-        return int(pow(10.0,sigfigs) * absRawResult + 0.5)/pow(10.0,sigfigs) * signMultiplier;
-}

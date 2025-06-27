@@ -401,6 +401,7 @@ public:		// User declarations
         void DisableMemoryWindowAutoUpdates();
         void SetBPListChangedCB(void (*callback)(void));
         void BasicStartStop(bool addBP);
+        void RemoveAllBasicBPs();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TDbg *Dbg;

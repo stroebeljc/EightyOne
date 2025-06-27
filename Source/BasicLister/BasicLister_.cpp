@@ -820,6 +820,7 @@ void TBasicLister::BreakAtNextBasicLine()
 {
         if (mBasicLister == NULL) return;
 
+        ToolButtonStartStop->Caption = "Start";
         StepBasic->Enabled = true;
 
         BreakPointLine(mBasicLister->GetNextBasicLineNumber());
@@ -977,6 +978,12 @@ void __fastcall TBasicLister::VariablesClick(TObject *Sender)
         }
 
         BasicVariables->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::DeletAll1Click(TObject *Sender)
+{
+        Dbg->RemoveAllBasicBPs();        
 }
 //---------------------------------------------------------------------------
 

@@ -62,9 +62,12 @@ private:
         virtual inline unsigned char GetFloatingPointNumberCode();
         virtual inline unsigned char GetLineEndingCode();
         virtual std::string GetKeywords();
+        virtual int GetEmbeddedNumberSize();
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes);
         virtual AnsiString TranslateToZxToken(AnsiString chr);
+        virtual int TranslateVariableType(unsigned char code);
         virtual int GetForVariableLength();
         virtual int GetVariablesStartAddress();
+        virtual double ConvertZXNumberToDouble(int* address);
 };
 

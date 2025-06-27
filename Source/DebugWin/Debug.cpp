@@ -951,11 +951,34 @@ int TDbg::getRegisterValue(int registerIndex)
 
 void TDbg::DelTempBreakPoints(void)
 {
-        int i;
-        for(i=0; i<Breakpoints; i++)
+        int i = 0;
+        while (i<Breakpoints)
+        {
                 if (!Breakpoint[i].Permanent)
+                {
                         DelBreakPoint(i);
+                        i = 0;
+                }
+                else
+                        i++;
+        }
 }
+
+void TDbg::RemoveAllBasicBPs(void)
+{
+        int i = 0;
+        while (i<Breakpoints)
+        {
+                if (Breakpoint[i].Type == BP_BASIC)
+                {
+                        DelBreakPoint(i);
+                        i = 0;
+                }
+                else
+                        i++;
+        }
+}
+
 //---------------------------------------------------------------------------
 int TDbg::Hex2Dec(AnsiString num)
 {

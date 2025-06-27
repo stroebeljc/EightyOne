@@ -76,6 +76,7 @@ __published:	// IDE-managed Components
         TToolButton *StepBasic;
         TToolButton *ToolButton8;
         TToolButton *Variables;
+        TMenuItem *DeletAll1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -96,6 +97,7 @@ __published:	// IDE-managed Components
         void __fastcall ToolButtonStartStopClick(TObject *Sender);
         void __fastcall StepBasicClick(TObject *Sender);
         void __fastcall VariablesClick(TObject *Sender);
+        void __fastcall DeletAll1Click(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;

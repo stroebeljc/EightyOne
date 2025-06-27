@@ -332,5 +332,9 @@ object BasicLister: TBasicLister
       Caption = 'Disable All'
       OnClick = DisableAll1Click
     end
+    object DeletAll1: TMenuItem
+      Caption = 'Delete All'
+      OnClick = DeletAll1Click
+    end
   end
 end

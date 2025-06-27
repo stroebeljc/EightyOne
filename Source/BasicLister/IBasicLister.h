@@ -66,13 +66,6 @@ private:
         static const int VarDisplayColumns = 50;
         static const int EmbeddedNumberSize = 5;
 
-        static const int SingleNumber = 0x60;
-        static const int MultiNumber = 0xA0;
-        static const int NumberArray = 0x80;
-        static const int ForNextControl = 0xE0;
-        static const int SimpleString = 0x40;
-        static const int CharacterArray = 0xC0;
-
         std::vector<LineInfo>* mLines;
         std::vector<VariableInfo>* mVariables;
         int mProgramDisplayRows;
@@ -102,6 +95,16 @@ private:
         unsigned char GetEscapeCharacter() { return '\\'; }
 
 public:
+        static const int UnsupportedType = 0;
+        static const int SingleNumber = 1;
+        static const int MultiNumber = 2;
+        static const int NumberArray = 3;
+        static const int ForNextControl = 4;
+        static const int SimpleString = 5;
+        static const int CharacterArray = 6;
+        static const int ZX80String = 7;
+        static const int ZX80Array = 8;
+
         IBasicLister();
         virtual ~IBasicLister();
         void PopulateKeywords();
@@ -157,8 +160,9 @@ protected:
         virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
         virtual bool RequiresInitialSpace() { return true; }
         virtual AnsiString TranslateToZxToken(AnsiString chr) { return chr; }
-        virtual double ConvertZXFloatToDouble(int* address);
-        
+        virtual int TranslateVariableType(unsigned char code) { return UnsupportedType; }
+        virtual double ConvertZXNumberToDouble(int* address) { return 0; }
+
         int GetKeywordLength(unsigned char code);
 
         std::string mKeyword[256];

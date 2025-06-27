@@ -164,6 +164,11 @@ bool zx81BasicLister::BasicDebugSupported()
         return true;
 }
 
+int zx81BasicLister::GetEmbeddedNumberSize()
+{
+        return 5;
+}
+
 unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
 {
         unsigned char c;
@@ -267,6 +272,27 @@ bool zx81BasicLister::ZxTokenSupported()
         return true;
 }
 
+int zx81BasicLister::TranslateVariableType(unsigned char code)
+{
+        switch (code)
+        {
+        case 0x60:
+                return SingleNumber;
+        case 0xA0:
+                return MultiNumber;
+        case 0x80:
+                return NumberArray;
+        case 0xE0:
+                return ForNextControl;
+        case 0x40:
+                return SimpleString;
+        case 0xC0:
+                return CharacterArray;
+        default:
+                return UnsupportedType;
+        }
+}
+
 int zx81BasicLister::GetForVariableLength()
 {
         return 17;
@@ -307,3 +333,17 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
         return containsMachineCode;
 }
 
+double zx81BasicLister::ConvertZXNumberToDouble(int* address)
+{
+        unsigned char exponent = getbyte((*address)++);
+        unsigned char mantissa0 = getbyte((*address)++);
+        unsigned char mantissa1 = getbyte((*address)++);
+        unsigned char mantissa2 = getbyte((*address)++);
+        unsigned char mantissa3 = getbyte((*address)++);
+        if (exponent + mantissa0 + mantissa1 + mantissa2 + mantissa3 == 0) return 0;
+        double signMultiplier = ((mantissa0 & 0x80) != 0) ? -1.0 : 1.0;
+        double mantissaSum = (mantissa0 | 0x80)/256.0 + mantissa1/65536.0 + mantissa2/16777216.0 + mantissa3/4294967296.0;
+        double absRawResult = pow(2.0,exponent-128) * mantissaSum;
+        int sigfigs = 8-(1+int(log10(absRawResult)));
+        return int(pow(10.0,sigfigs) * absRawResult + 0.5)/pow(10.0,sigfigs) * signMultiplier;
+}

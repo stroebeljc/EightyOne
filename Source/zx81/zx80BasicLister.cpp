@@ -18,6 +18,7 @@
 
 #include "zx80BasicLister.h"
 #include "zx81config.h"
+#include "Debug.h"
 
 using namespace std;
 
@@ -167,6 +168,27 @@ int zx80BasicLister::GetProgramEndAddress()
         return getbyte(vars) + (getbyte(vars + 1) << 8);
 }
 
+int zx80BasicLister::GetBasicLineExecuteStartAddress()
+{
+        return 1152;
+}
+
+int zx80BasicLister::GetNextBasicLineNumber()
+{
+        const int ppc = 16386;
+        return getbyte(ppc) + (getbyte(ppc + 1) << 8);
+}
+
+bool zx80BasicLister::BasicDebugSupported()
+{
+        return true;
+}
+
+int zx80BasicLister::GetEmbeddedNumberSize()
+{
+        return 2;
+}
+
 bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
 {
         int endAddress = GetProgramEndAddress();
@@ -230,7 +252,20 @@ bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         lineInfo.lineLength = lineHeaderLength + length;
         lineInfo.contentLength = length;
         lineInfo.displayRows = (lineInfo.displayLength + (GetDisplayColumns() - 1)) / GetDisplayColumns();
-        lineInfo.breakStyle = BPNONE;
+        breakpoint bp(lineInfo.lineNumber, BP_BASIC);
+        int index = Dbg->FindBreakPointEntry(0, bp, false);
+        if (index < 0)
+        {
+                lineInfo.breakStyle = BPNONE;
+        }
+        else if (Dbg->BreakpointIsEnabled(index))
+        {
+                lineInfo.breakStyle = BPENABLED;
+        }
+        else
+        {
+                lineInfo.breakStyle = BPDISABLED;
+        }
 
         return true;
 }
@@ -249,6 +284,42 @@ unsigned char zx80BasicLister::ConvertToZXCode(unsigned char code)
                         c = Asterisk;
                         break;
 
+                case '=':
+                        c = Equal;
+                        break;
+
+                case '\"':
+                        c = Quote;
+                        break;
+
+                case '$':
+                        c = Dollar;
+                        break;
+
+                case '(':
+                        c = OpenParen;
+                        break;
+
+                case ')':
+                        c = ClosedParen;
+                        break;
+
+                case ',':
+                        c = Comma;
+                        break;
+
+                case '.':
+                        c = Period;
+                        break;
+
+                case '-':
+                        c = Minus;
+                        break;
+
+                case '+':
+                        c = Plus;
+                        break;
+
                 default:
                         if (code >= '0' && code <= '9')
                         {
@@ -262,6 +333,11 @@ unsigned char zx80BasicLister::ConvertToZXCode(unsigned char code)
         }
 
         return c;
+}
+
+unsigned char zx80BasicLister::ConvertVariableNameCode(unsigned char code)
+{
+        return (unsigned char)((code & 0x1F) | 0x20);
 }
 
 bool zx80BasicLister::SupportFloatingPointNumbers()
@@ -287,6 +363,36 @@ AnsiString zx80BasicLister::GetBasicFileExtension()
 bool zx80BasicLister::ZxTokenSupported()
 {
         return true;
+}
+
+int zx80BasicLister::GetForVariableLength()
+{
+        return 6;
+}
+
+int zx80BasicLister::GetVariablesStartAddress()
+{
+        const int vars = 16392;
+        return getbyte(vars) + (getbyte(vars + 1) << 8);
+}
+
+int zx80BasicLister::TranslateVariableType(unsigned char code)
+{
+        switch (code)
+        {
+        case 0x60:
+                return SingleNumber;
+        case 0x40:
+                return MultiNumber;
+        case 0x80:
+                return ZX80String;
+        case 0xA0:
+                return ZX80Array;
+        case 0xE0:
+                return ForNextControl;
+        default:
+                return UnsupportedType;
+        }
 }
 
 bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes)
@@ -321,3 +427,7 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
         return containsMachineCode;
 }
 
+double zx80BasicLister::ConvertZXNumberToDouble(int* address)
+{
+        return (signed short)(getbyte((*address)++) + 256*getbyte((*address)++));
+}

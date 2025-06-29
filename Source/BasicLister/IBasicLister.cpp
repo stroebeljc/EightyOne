@@ -159,11 +159,20 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
 
                 unsigned char b = (unsigned char)getbyte((*address)++);
 
-                if (mSupportsFloatingPointNumbers && (b == mFloatingPointNumberCode) && ((length - c) >= mEmbeddedNumberSize))
+                if (mSupportsFloatingPointNumbers && (b == mFloatingPointNumberCode))
                 {
-                        c += mEmbeddedNumberSize;
-                        (*address) += mEmbeddedNumberSize;
-                        
+                        if ((length - (c + 1)) >= mEmbeddedNumberSize)
+                        {
+                                c += mEmbeddedNumberSize;
+                                (*address) += mEmbeddedNumberSize;
+                        }
+                        else
+                        {
+                                int leftover = length - (c + 1);
+                                c += leftover;
+                                (*address) += leftover;
+                        }
+
                         lastKeywordEndedWithSpace = false;
                         continue;
                 }
@@ -306,8 +315,16 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
         if (mSupportsFloatingPointNumbers && (c == mFloatingPointNumberCode))
         {
-                address += mEmbeddedNumberSize;
-                lengthRemaining -= mEmbeddedNumberSize;
+                if (lengthRemaining >= mEmbeddedNumberSize)
+                {
+                        address += mEmbeddedNumberSize;
+                        lengthRemaining -= mEmbeddedNumberSize;
+                }
+                else
+                {
+                        address += lengthRemaining;
+                        lengthRemaining = 0;
+                }
                 
                 return;
         }

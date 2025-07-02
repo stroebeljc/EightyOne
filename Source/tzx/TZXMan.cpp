@@ -988,6 +988,9 @@ void __fastcall TTZX::ConvertBlocktoWave1Click(TObject *Sender)
         AutoStart=AutoStartBtn->Down;
         AutoLoad=AutoLoadBtn->Down;
 
+        if (FlashLoad) FlashLoad1Click(NULL);
+        if (AutoStart) AutoStartStopClick(NULL);
+
         StopBtnClick(NULL);
         //RewEndClick(NULL);
         WavLoad->NewClick(NULL);

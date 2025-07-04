@@ -71,7 +71,7 @@ __published:	// IDE-managed Components
         TToolBar *DebugControls;
         TToolButton *ToolButton2;
         TToolButton *ToolButton6;
-        TToolButton *ToolButtonStartStop;
+        TToolButton *ToolButtonRunStop;
         TToolButton *ToolButton7;
         TToolButton *StepBasic;
         TToolButton *ToolButton8;
@@ -94,7 +94,7 @@ __published:	// IDE-managed Components
         void __fastcall AddBreakPointClick(TObject *Sender);
         void __fastcall Enabled1Click(TObject *Sender);
         void __fastcall DisableAll1Click(TObject *Sender);
-        void __fastcall ToolButtonStartStopClick(TObject *Sender);
+        void __fastcall ToolButtonRunStopClick(TObject *Sender);
         void __fastcall StepBasicClick(TObject *Sender);
         void __fastcall VariablesClick(TObject *Sender);
         void __fastcall DeletAll1Click(TObject *Sender);

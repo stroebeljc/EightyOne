@@ -6,6 +6,7 @@
 #include <Classes.hpp>
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
+#include <IniFiles.hpp>
 #include <Forms.hpp>
 #include "IBasicLister.h"
 //---------------------------------------------------------------------------
@@ -41,6 +42,8 @@ public:		// User declarations
         virtual __fastcall ~TBasicVariables();
 
         void __fastcall SetLister(IBasicLister *lister);
+        void SaveSettings(TIniFile* ini);
+        void LoadSettings(TIniFile* ini);
         void Refresh();
         void Clear();
 };

@@ -270,13 +270,13 @@ object BasicLister: TBasicLister
       ImageIndex = 0
       Style = tbsSeparator
     end
-    object ToolButtonStartStop: TToolButton
+    object ToolButtonRunStop: TToolButton
       Left = 8
       Top = 2
       AutoSize = True
       Caption = 'Stop'
       ImageIndex = 1
-      OnClick = ToolButtonStartStopClick
+      OnClick = ToolButtonRunStopClick
     end
     object ToolButton7: TToolButton
       Left = 46
@@ -307,6 +307,7 @@ object BasicLister: TBasicLister
       Top = 2
       Caption = 'Variables'
       ImageIndex = 4
+      Style = tbsCheck
       OnClick = VariablesClick
     end
   end

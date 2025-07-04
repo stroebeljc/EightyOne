@@ -23,6 +23,10 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
 
         mToolbarHeight = 0;
 
+        TIniFile* ini = new TIniFile(emulator.inipath);
+        LoadSettings(ini);
+        delete ini;
+
         SizeWindow();
 }
 
@@ -183,6 +187,16 @@ void TBasicVariables::LoadVariables()
         Invalidate();
 }
 
+void TBasicVariables::SaveSettings(TIniFile *ini)
+{
+        ini->WriteInteger("BASICVARIABLES", "Top", Top);
+        ini->WriteInteger("BASICVARIABLES", "Left", Left);
+}
 
+void TBasicVariables::LoadSettings(TIniFile *ini)
+{
+        Top = ini->ReadInteger("BASICVARIABLES", "Top", Top);
+        Left = ini->ReadInteger("BASICVARIABLES", "Left", Left);
+}
 
 

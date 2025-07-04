@@ -1380,6 +1380,7 @@ void TForm1::SaveSettings(TIniFile *ini)
         ParallelPort->SaveSettings(ini);
         MidiForm->SaveSettings(ini);
         BasicLister->SaveSettings(ini);
+        BasicVariables->SaveSettings(ini);
         LoadBasicListingOptionsForm->SaveSettings(ini);
         SaveBasicListingOptionsForm->SaveSettings(ini);
 }
@@ -2148,6 +2149,7 @@ void TForm1::LoadIniFile(AnsiString FileName)
         MidiForm->LoadSettings(ini);
         ZipFile->LoadSettings(ini);
         BasicLister->LoadSettings(ini);
+        BasicVariables->LoadSettings(ini);
         LoadBasicListingOptionsForm->LoadSettings(ini);
         SaveBasicListingOptionsForm->LoadSettings(ini);
 

@@ -103,8 +103,9 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                 {
                         DebugControls->Visible = true;
                         DebugControls->Enabled = true;
-                        ToolButtonStartStop->Enabled = true;
+                        ToolButtonRunStop->Enabled = true;
                         Variables->Enabled = true;
+                        if (Variables->Down) BasicVariables->Show();
                 }
                 else
                         BasicVariables->Close();
@@ -123,7 +124,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                 mToolbarHeight = ToolBar->Height;
                 DebugControls->Visible = false;
                 DebugControls->Enabled = false;
-                ToolButtonStartStop->Enabled = false;
+                ToolButtonRunStop->Enabled = false;
                 Variables->Enabled = false;
         }
 
@@ -799,6 +800,7 @@ void TBasicLister::SaveSettings(TIniFile *ini)
         ini->WriteInteger("BASICLISTER", "Top", Top);
         ini->WriteInteger("BASICLISTER", "Left", Left);
         ini->WriteBool("BASICLISTER", "ShowLineEnds", ToolButtonLineEnds->Down);
+        ini->WriteBool("BASICLISTER", "Variables", Variables->Down);
 }
 
 void TBasicLister::LoadSettings(TIniFile *ini)
@@ -806,6 +808,7 @@ void TBasicLister::LoadSettings(TIniFile *ini)
         Top = ini->ReadInteger("BASICLISTER", "Top", Top);
         Left = ini->ReadInteger("BASICLISTER", "Left", Left);
         ToolButtonLineEnds->Down = ini->ReadBool("BASICLISTER", "ShowLineEnds", ToolButtonLineEnds->Down);
+        Variables->Down = ini->ReadBool("BASICLISTER", "Variables", Variables->Down);
 
         if (Form1->BasicListerOption->Checked) Show();
 }
@@ -824,7 +827,7 @@ void TBasicLister::BreakAtNextBasicLine()
 {
         if (mBasicLister == NULL) return;
 
-        ToolButtonStartStop->Caption = "Start";
+        ToolButtonRunStop->Caption = "Run";
         StepBasic->Enabled = true;
 
         BreakPointLine(mBasicLister->GetNextBasicLineNumber());
@@ -948,16 +951,16 @@ void __fastcall TBasicLister::DisableAll1Click(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TBasicLister::ToolButtonStartStopClick(TObject *Sender)
+void __fastcall TBasicLister::ToolButtonRunStopClick(TObject *Sender)
 {
-        if (ToolButtonStartStop->Caption == "Start")
+        if (ToolButtonRunStop->Caption == "Run")
         {
-                ToolButtonStartStop->Caption = "Stop";
+                ToolButtonRunStop->Caption = "Stop";
                 Dbg->BasicStartStop(false);
         }
         else
         {
-                ToolButtonStartStop->Caption = "Start";
+                ToolButtonRunStop->Caption = "Run";
                 Dbg->BasicStartStop(true);
         }
 
@@ -967,7 +970,7 @@ void __fastcall TBasicLister::ToolButtonStartStopClick(TObject *Sender)
 
 void __fastcall TBasicLister::StepBasicClick(TObject *Sender)
 {
-        ToolButtonStartStop->Caption = "Start";
+        ToolButtonRunStop->Caption = "Run";
         StepBasic->Enabled = false;
         Dbg->BasicStartStop(true);
 }
@@ -975,6 +978,7 @@ void __fastcall TBasicLister::StepBasicClick(TObject *Sender)
 
 void __fastcall TBasicLister::VariablesClick(TObject *Sender)
 {
+        Variables->Down = !Variables->Down;
         if (BasicVariables->Visible)
         {
                 BasicVariables->Close();

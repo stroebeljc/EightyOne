@@ -84,7 +84,7 @@ private:
         void RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, VariableInfo& varInfo);
         void RenderBPStyle(HDC hdc, int& x, int& y, int breakStyle);
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
-        void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
+        bool RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace, bool isVariable = false);
         void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
         bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem);
         void RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, VariableInfo varInfo);

@@ -533,6 +533,7 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
 void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, VariableInfo& varInfo)
 {
         int x = xOffset;
+        bool lastKeywordEndedWithSpace = false;
 
         RenderVariableName(hdc, cshdc, xOffset, y, varInfo);
 
@@ -548,9 +549,9 @@ void IBasicLister::RenderVariable(HDC hdc, HDC cshdc, int xOffset, int& y, Varia
         case SimpleString:
         case CharacterArray:
                 RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
-                while (notDone && lengthRemaining-- > 0)
+                while (notDone && lengthRemaining > 0)
                 {
-                        notDone = RenderVarCharacter(hdc, cshdc, x, y, getbyte(address++));
+                        notDone = RenderToken(hdc, cshdc, address, x, y, lengthRemaining, lastKeywordEndedWithSpace, true);
                 }
                 if (varInfo.type != ZX80String) RenderVarCharacter(hdc, cshdc, x, y, ConvertToZXCode('\"'));
                 break;
@@ -703,7 +704,7 @@ void IBasicLister::RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, V
         }
 }
 
-void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace)
+bool IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace, bool isVariable)
 {
         unsigned char c = (unsigned char)getbyte(address);
         address++;
@@ -712,7 +713,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
         if (endOfLine && (c == mLineEndingCode))
         {
-                return;
+                return true;
         }
 
         if (mSupportsFloatingPointNumbers && (c == mFloatingPointNumberCode))
@@ -728,7 +729,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                         lengthRemaining = 0;
                 }
                 
-                return;
+                return true;
         }
 
         if (mSupportEmbeddedControlCodes && IsEmbeddedControlCode(c))
@@ -747,9 +748,10 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
                 ProcessControlCode(c, arg1, arg2);
 
-                return;
+                return true;
         }
 
+        bool retVal = true;
         int length = GetKeywordLength(c);
         if (length > 1)
         {
@@ -764,18 +766,24 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                         startIndex = 1;
                 }
 
-                for (int i = startIndex; i < length; i++)
+                for (int i = startIndex; i < length && retVal; i++)
                 {
                         unsigned char code = mKeyword[c].at(i);
                         unsigned char zxCode = ConvertToZXCode(code);
-                        RenderCharacter(hdc, cshdc, x, y, zxCode);
+                        if (isVariable)
+                                retVal = RenderVarCharacter(hdc, cshdc, x, y, zxCode);
+                        else
+                                RenderCharacter(hdc, cshdc, x, y, zxCode);
                 }
 
                 lastKeywordEndedWithSpace = keywordEndsWithSpace;
         }
         else
         {
-                RenderCharacter(hdc, cshdc, x, y, c);
+                if (isVariable)
+                        retVal = RenderVarCharacter(hdc, cshdc, x, y, c);
+                else
+                        RenderCharacter(hdc, cshdc, x, y, c);
 
                 bool characterIsSpace = (mKeyword[c] == " ");
 
@@ -784,6 +792,8 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                         lastKeywordEndedWithSpace = false;
                 }
         }
+
+        return retVal;
 }
 
 void IBasicLister::RenderCharacterInternal(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)

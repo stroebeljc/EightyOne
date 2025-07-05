@@ -168,6 +168,7 @@ public:		// User declarations
         int BasicLineExecuteStartAddress();
         int NextBasicLineNumberToExecute();
         void CheckUpdate(int pc);
+        void CallShow();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TBasicLister *BasicLister;

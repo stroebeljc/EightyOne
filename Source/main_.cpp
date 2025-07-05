@@ -2390,7 +2390,7 @@ void __fastcall TForm1::BasicListerOptionClick(TObject *Sender)
         BasicListerOption->Checked = !BasicListerOption->Checked;
         if (BasicListerOption->Checked)
         {
-                BasicLister->Show();
+                BasicLister->CallShow();
         }
         else
         {

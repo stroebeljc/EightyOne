@@ -105,7 +105,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                         DebugControls->Enabled = true;
                         ToolButtonRunStop->Enabled = true;
                         Variables->Enabled = true;
-                        if (Variables->Down) BasicVariables->Show();
+                        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->Show();
                 }
                 else
                 {
@@ -465,12 +465,17 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
         DeleteDC(chdc);
 }
 
+void TBasicLister::CallShow()
+{
+        Show();
+        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->Show();
+}
+
 //---------------------------------------------------------------------------
 
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
         LoadProgram();
-        if (Variables->Down) BasicVariables->Show();
 }
 //---------------------------------------------------------------------------
 

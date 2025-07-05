@@ -108,7 +108,14 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                         if (Variables->Down) BasicVariables->Show();
                 }
                 else
+                {
+                        DebugControls->Visible = false;
+                        DebugControls->Enabled = false;
+                        ToolButtonRunStop->Enabled = false;
+                        Variables->Enabled = false;
+                        Variables->Down = false;
                         BasicVariables->Close();
+                }
 
 
                 mBasicLister->PopulateKeywords();
@@ -463,6 +470,7 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
         LoadProgram();
+        if (Variables->Down) BasicVariables->Show();
 }
 //---------------------------------------------------------------------------
 

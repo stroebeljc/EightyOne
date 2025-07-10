@@ -9,20 +9,23 @@
 #include <IniFiles.hpp>
 #include <Forms.hpp>
 #include "IBasicLister.h"
+#include <ComCtrls.hpp>
 //---------------------------------------------------------------------------
 
 
 class TBasicVariables : public TForm
 {
 __published:	// IDE-managed Components
+        TStatusBar *StatusBar;
         void __fastcall FormPaint(TObject *Sender);
+        void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
 
 private:	// User declarations
         HBITMAP mBitmap;
         HWND mHWND;
 
         int mRows;
-        int mToolbarHeight;
         IBasicLister* mBasicLister;
         std::vector<VariableInfo>* mVariables;
         int mVariablesDisplayRows;
@@ -36,6 +39,17 @@ private:	// User declarations
         void ExtractVariablesDetails();
         void SizeWindow();
         void LoadVariables();
+        void UnhighlightRow(int row);
+        void HighlightRow(int row);
+        void ColourRows(int row, bool setornot);
+        COLORREF GetHighlightColour();
+        void UnhighlightEntry(int index);
+        void HighlightEntry(int index);
+        int FindVariableDisplayedOnRow(int row);
+        int FindHighlightedVariableIndex();
+        void ConfigureStatusBar();
+        int TotalVariablesSize();
+        int SingleVariableSize(int index);
 
 public:		// User declarations
         __fastcall TBasicVariables(TComponent* Owner);

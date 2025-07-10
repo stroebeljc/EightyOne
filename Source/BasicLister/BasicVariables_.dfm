@@ -21,7 +21,23 @@ object BasicVariables: TBasicVariables
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
+  OnMouseDown = FormMouseDown
   OnPaint = FormPaint
   PixelsPerInch = 96
   TextHeight = 13
+  object StatusBar: TStatusBar
+    Left = 0
+    Top = 74
+    Width = 314
+    Height = 19
+    Panels = <
+      item
+        Width = 150
+      end
+      item
+        Width = 150
+      end>
+    SimplePanel = False
+    SizeGrip = False
+  end
 end

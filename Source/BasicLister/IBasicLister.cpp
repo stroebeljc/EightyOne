@@ -267,6 +267,7 @@ void IBasicLister::ExtractVariablesDetails()
         do
         {
                 VariableInfo varInfo;
+                varInfo.highLighted = false;
 
                 varAvailable = ExtractEachVariable(&address, varInfo);
                 if (varAvailable)
@@ -300,6 +301,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
         case SingleNumber: // Single letter number
                 varInfo.nameSize = 1;
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 0;
                 varInfo.contentLength = mEmbeddedNumberSize;
                 *address += varInfo.contentLength;
                 break;
@@ -312,6 +314,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                         varInfo.nameSize++;
                 } while (!(letter & 0xC0));
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 0;
                 varInfo.contentLength = mEmbeddedNumberSize;
                 *address += varInfo.contentLength;
                 break;
@@ -329,6 +332,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 }
                 varInfo.nameSize++; // final paren
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 2 + (1 + 2*dimensions);
                 varInfo.contentLength = size - (1 + 2*dimensions);
                 *address += varInfo.contentLength;
                 }
@@ -337,6 +341,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
         case ForNextControl: // FOR-NEXT control variable
                 varInfo.nameSize = 1;
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 0;
                 varInfo.contentLength = GetForVariableLength();
                 *address += varInfo.contentLength;
                 break;
@@ -345,6 +350,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 varInfo.nameSize = 2; // single letter and '$'
                 size = getbyte((*address)++) + 256*getbyte((*address)++);
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 2;
                 varInfo.contentLength = size;
                 *address += varInfo.contentLength;
                 break;
@@ -352,6 +358,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
         case ZX80String: // ZX80 String
                 varInfo.nameSize = 2; // single letter and '$'
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 0;
                 size = 1;
                 while (getbyte((*address)++) != 0x01)
                 {
@@ -368,6 +375,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 varInfo.nameSize++; // final paren
                 varInfo.addressArray = (*address)++;
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 1;
                 varInfo.contentLength = 2*(1 + size);
                 *address += varInfo.contentLength;
                 }
@@ -386,6 +394,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 }
                 varInfo.nameSize++; // final paren
                 varInfo.addressContent = *address;
+                varInfo.overheadLength = 2 + (1 + 2*dimensions);
                 varInfo.contentLength = size - (1 + 2*dimensions);
                 *address += varInfo.contentLength;
                 }

@@ -53,10 +53,12 @@ struct VariableInfo
         int type;
         int address;
         int nameSize;
+        int overheadLength;
         int addressContent;
         int addressArray;
         int contentLength;
         int startDisplayRow;
+        bool highLighted;
 };
 
 class IBasicLister

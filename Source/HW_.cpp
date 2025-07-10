@@ -2465,15 +2465,16 @@ void THW::SetupForSpectrum(void)
 
         ColourLabel->Caption = "Colour:";
 
+        ColourBox->Items->Strings[0] = "Sinclair";
+        ColourBox->ItemIndex = 0;
+        ColourBox->Enabled = true;
+        ColourLabel->Enabled = true;
+        
         bool spectraAlreadyAvailable = (ColourBox->Items->Strings[1] == "Spectra");
         if (!spectraAlreadyAvailable)
         {
                 while(ColourBox->Items->Count>1) ColourBox->Items->Delete(ColourBox->Items->Count-1);
-                ColourBox->Items->Strings[0] = "Sinclair";
                 ColourBox->Items->Add("Spectra");
-                ColourBox->ItemIndex = 0;
-                ColourBox->Enabled = true;
-                ColourLabel->Enabled = true;
         }
 
         ProtectROM->Enabled = true;

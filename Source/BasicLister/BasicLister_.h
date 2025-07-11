@@ -46,6 +46,15 @@ enum LineMode
         BREAKPOINT
 };
 
+enum PopUpMenuItems
+{
+        Add_Delete_BP,
+        RunTo_BP,
+        Enable_BP,
+        DisableAll_BP,
+        DeleteAll_BP
+};
+
 class TBasicLister : public TForm
 {
 __published:	// IDE-managed Components
@@ -77,6 +86,7 @@ __published:	// IDE-managed Components
         TToolButton *ToolButton8;
         TToolButton *Variables;
         TMenuItem *DeletAll1;
+        TMenuItem *RuntoLine1;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall ScrollBarChange(TObject *Sender);
@@ -98,6 +108,7 @@ __published:	// IDE-managed Components
         void __fastcall StepBasicClick(TObject *Sender);
         void __fastcall VariablesClick(TObject *Sender);
         void __fastcall DeletAll1Click(TObject *Sender);
+        void __fastcall RuntoLine1Click(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 48;

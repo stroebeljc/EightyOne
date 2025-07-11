@@ -922,15 +922,15 @@ void __fastcall TBasicLister::PopupMenu1Popup(TObject *Sender)
         mLastBreakPointMenuIndex = Dbg->FindBreakPointEntry(0, bp, false);
         if (mLastBreakPointMenuIndex < 0)
         {
-                PopupMenu1->Items->Items[0]->Caption = "Add Breakpoint";
-                PopupMenu1->Items->Items[1]->Enabled = false;
-                PopupMenu1->Items->Items[1]->Checked = false;
+                PopupMenu1->Items->Items[Add_Delete_BP]->Caption = "Add Breakpoint";
+                PopupMenu1->Items->Items[Enable_BP]->Enabled = false;
+                PopupMenu1->Items->Items[Enable_BP]->Checked = false;
         }
         else
         {
-                PopupMenu1->Items->Items[0]->Caption = "Delete Breakpoint";
-                PopupMenu1->Items->Items[1]->Enabled = true;
-                PopupMenu1->Items->Items[1]->Checked = Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
+                PopupMenu1->Items->Items[Add_Delete_BP]->Caption = "Delete Breakpoint";
+                PopupMenu1->Items->Items[Enable_BP]->Enabled = true;
+                PopupMenu1->Items->Items[Enable_BP]->Checked = Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
         }
 }
 //---------------------------------------------------------------------------
@@ -1004,7 +1004,22 @@ void __fastcall TBasicLister::VariablesClick(TObject *Sender)
 
 void __fastcall TBasicLister::DeletAll1Click(TObject *Sender)
 {
-        Dbg->RemoveAllBasicBPs();        
+        Dbg->RemoveAllBasicBPs();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicLister::RuntoLine1Click(TObject *Sender)
+{
+        if (mLastBreakPointMenuIndex < 0)
+        {
+                breakpoint bp((*mLines)[mLastRowIndex].lineNumber, BP_BASIC);
+                bp.Permanent = false;
+                Dbg->AddBreakPoint(bp);
+        }
+        else
+        {
+                Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
+        }
 }
 //---------------------------------------------------------------------------
 

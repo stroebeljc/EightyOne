@@ -810,7 +810,7 @@ bool TDbg::BPBasicHit(int pc, breakpoint* const bp)
 
         if (pc == BasicLister->BasicLineExecuteStartAddress() &&
                 (bp->Addr == BasicLister->NextBasicLineNumberToExecute() ||
-                 !bp->Permanent))
+                 (!bp->Permanent && bp->Addr < 0)))
         {
                 BasicLister->BreakAtNextBasicLine();
                 return true;

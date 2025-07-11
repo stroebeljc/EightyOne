@@ -324,6 +324,10 @@ object BasicLister: TBasicLister
       Caption = 'Add BreakPoint'
       OnClick = AddBreakPointClick
     end
+    object RuntoLine1: TMenuItem
+      Caption = 'Run to Line'
+      OnClick = RuntoLine1Click
+    end
     object Enabled1: TMenuItem
       Caption = 'Enabled'
       Enabled = False

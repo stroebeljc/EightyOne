@@ -50,14 +50,15 @@ void TBasicVariables::SizeWindow()
 {
         mScaling = SaveBasicListingOptionsForm->GetScalingFator();
 
-        int displayRows = mVariables->size();
+        int totalRows = mBasicLister != NULL ? mBasicLister->GetVariablesRows() : DisplayableRows;
+        int displayRows = min(totalRows, DisplayableRows);
         int displayColumns = mBasicLister != NULL ? mBasicLister->GetVarDisplayColumns() : 40;
 
         mBMWidth = displayColumns * PixelsPerCharacterWidth * mScaling;
-        mBMHeight = displayRows * PixelsPerCharacterHeight * mScaling;
+        mBMHeight = totalRows * PixelsPerCharacterHeight * mScaling;
 
-        ClientWidth = mBMWidth + 1;
-        ClientHeight = mBMHeight + StatusBar->Height + 1;
+        ClientWidth = mBMWidth + ScrollBar->Width + 1;
+        ClientHeight = displayRows * PixelsPerCharacterHeight * mScaling + StatusBar->Height + 1;
 }
 
 void __fastcall TBasicVariables::SetLister(IBasicLister *lister)
@@ -106,6 +107,27 @@ void TBasicVariables::ClearBitmap()
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+}
+
+void TBasicVariables::ConfigureScrollBar()
+{
+        ScrollBar->Min = 0;
+        mVariablesDisplayRows = mBasicLister != NULL ? mBasicLister->GetVariablesRows() : 0;
+        bool scrollable = (mVariablesDisplayRows > DisplayableRows);
+        if (scrollable)
+        {
+                ScrollBar->Max = mVariablesDisplayRows - DisplayableRows;
+        }
+        else
+        {
+                ScrollBar->Max = mVariablesDisplayRows;
+        }
+
+        ScrollBar->SmallChange = 1;
+        ScrollBar->LargeChange = DisplayableRows;
+        ScrollBar->Position = 1;
+        ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
+        ScrollBar->Enabled = scrollable;
 }
 
 void TBasicVariables::ConfigureStatusBar()
@@ -355,7 +377,7 @@ void __fastcall TBasicVariables::FormPaint(TObject *Sender)
                 int variablesDisplayPixels = variablesDisplayRows * PixelsPerCharacterHeight * mScaling;
                 int copyHeight = (variablesDisplayPixels > mBMHeight) ? variablesDisplayPixels : mBMHeight;
 
-                ::BitBlt(hdc, 0, 0, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
+                ::BitBlt(hdc, 0, - ScrollBar->Position * PixelsPerCharacterHeight * mScaling, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
         }
         else
         {
@@ -372,24 +394,22 @@ void __fastcall TBasicVariables::FormPaint(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TBasicVariables::Refresh(void)
+void TBasicVariables::Refresh(bool onLineExec)
 {
         if (!Visible) return;
 
-        Invalidate();
-
-        LoadVariables();
-}
-
-void TBasicVariables::LoadVariables()
-{
         if (mBasicLister != NULL)
         {
                 ExtractVariablesDetails();
                 ConstructBitmap();
         }
-        
+
         ConfigureStatusBar();
+        
+        if (!onLineExec)
+        {
+                ConfigureScrollBar();
+        }
 
         Invalidate();
 }
@@ -410,7 +430,8 @@ void TBasicVariables::LoadSettings(TIniFile *ini)
 void __fastcall TBasicVariables::FormMouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-        int row = Y / (PixelsPerCharacterHeight * mScaling);
+        int rowWithinClientArea = Y / (PixelsPerCharacterHeight * mScaling);
+        int row = rowWithinClientArea + ScrollBar->Position;
 
         int index = FindVariableDisplayedOnRow(row);
 
@@ -426,6 +447,39 @@ void __fastcall TBasicVariables::FormMouseDown(TObject *Sender,
                         UnhighlightEntry(index);
                 }
         }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicVariables::FormMouseWheel(TObject *Sender,
+      TShiftState Shift, int WheelDelta, TPoint &MousePos, bool &Handled)
+{
+        if (mVariablesDisplayRows > DisplayableRows)
+        {
+                int currentPos = ScrollBar->Position;
+                int newPos = currentPos - (WheelDelta / 120);
+
+                if (newPos < ScrollBar->Min)
+                {
+                        newPos = ScrollBar->Min;
+                }
+
+                if (newPos > ScrollBar->Max)
+                {
+                        newPos = ScrollBar->Max;
+                }
+
+                ScrollBar->Position = newPos;
+                
+                Invalidate();
+        }
+
+        Handled = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicVariables::ScrollBarChange(TObject *Sender)
+{
+        Invalidate();
 }
 //---------------------------------------------------------------------------
 

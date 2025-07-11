@@ -508,7 +508,7 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
                 ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
         }
 
-        BasicVariables->Refresh();
+        BasicVariables->Refresh(false);
 }
 //---------------------------------------------------------------------------
 
@@ -849,7 +849,7 @@ void TBasicLister::BreakAtNextBasicLine()
 void TBasicLister::CheckUpdate(int pc)
 {
         if (pc == BasicLineExecuteStartAddress())
-                BasicVariables->Refresh();
+                BasicVariables->Refresh(true);
 }
 
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)

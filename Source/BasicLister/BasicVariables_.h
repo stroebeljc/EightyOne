@@ -17,11 +17,17 @@ class TBasicVariables : public TForm
 {
 __published:	// IDE-managed Components
         TStatusBar *StatusBar;
+        TScrollBar *ScrollBar;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
+        void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
+          int WheelDelta, TPoint &MousePos, bool &Handled);
+        void __fastcall ScrollBarChange(TObject *Sender);
 
 private:	// User declarations
+        static const int DisplayableRows = 20;
+
         HBITMAP mBitmap;
         HWND mHWND;
 
@@ -38,7 +44,6 @@ private:	// User declarations
         void ConstructBitmap();
         void ExtractVariablesDetails();
         void SizeWindow();
-        void LoadVariables();
         void UnhighlightRow(int row);
         void HighlightRow(int row);
         void ColourRows(int row, bool setornot);
@@ -47,6 +52,7 @@ private:	// User declarations
         void HighlightEntry(int index);
         int FindVariableDisplayedOnRow(int row);
         int FindHighlightedVariableIndex();
+        void ConfigureScrollBar();
         void ConfigureStatusBar();
         int TotalVariablesSize();
         int SingleVariableSize(int index);
@@ -58,7 +64,7 @@ public:		// User declarations
         void __fastcall SetLister(IBasicLister *lister);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
-        void Refresh();
+        void Refresh(bool onLineExec);
         void Clear();
 };
 //---------------------------------------------------------------------------

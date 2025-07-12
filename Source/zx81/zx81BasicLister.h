@@ -58,7 +58,7 @@ private:
         virtual int GetNextBasicLineNumber();
         virtual bool BasicDebugSupported();
         virtual unsigned char ConvertToZXCode(unsigned char code);
-        virtual unsigned char ConvertVariableNameCode(unsigned char code);
+        virtual unsigned char ConvertVariableNameCode(unsigned char code, bool first);
         virtual inline unsigned char GetFloatingPointNumberCode();
         virtual inline unsigned char GetLineEndingCode();
         virtual std::string GetKeywords();

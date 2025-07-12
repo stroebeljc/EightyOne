@@ -145,7 +145,7 @@ protected:
 
         virtual std::string GetKeywords() { return std::string(""); }
         virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }
-        virtual inline unsigned char ConvertVariableNameCode(unsigned char code) { return code; }
+        virtual inline unsigned char ConvertVariableNameCode(unsigned char code, bool first) { return code; }
         virtual inline bool SupportFloatingPointNumbers() { return true; }
         virtual unsigned char GetFloatingPointNumberCode() { return 0; }
         virtual unsigned char GetLineEndingCode() { return 0; }

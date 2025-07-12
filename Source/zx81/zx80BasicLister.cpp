@@ -335,9 +335,11 @@ unsigned char zx80BasicLister::ConvertToZXCode(unsigned char code)
         return c;
 }
 
-unsigned char zx80BasicLister::ConvertVariableNameCode(unsigned char code)
+unsigned char zx80BasicLister::ConvertVariableNameCode(unsigned char code, bool first)
 {
-        return (unsigned char)((code & 0x1F) | 0x20);
+        unsigned char retVal = (unsigned char)(code & 0x3F);
+        if (first) retVal |= 0x20;
+        return retVal;
 }
 
 bool zx80BasicLister::SupportFloatingPointNumbers()

@@ -242,9 +242,11 @@ unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
         return c;
 }
 
-unsigned char zx81BasicLister::ConvertVariableNameCode(unsigned char code)
+unsigned char zx81BasicLister::ConvertVariableNameCode(unsigned char code, bool first)
 {
-        return (unsigned char)((code & 0x1F) | 0x20);
+        unsigned char retVal = (unsigned char)(code & 0x3F);
+        if (first) retVal |= 0x20;
+        return retVal;
 }
 
 unsigned char zx81BasicLister::GetFloatingPointNumberCode()

@@ -645,7 +645,7 @@ void IBasicLister::RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, V
         }
 
         // All variable types start with a letter
-        unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address));
+        unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address), true);
         RenderVarCharacter(hdc, cshdc, tempX, y, c);
 
         switch (varInfo.type)
@@ -655,7 +655,7 @@ void IBasicLister::RenderVariableName(HDC hdc, HDC cshdc, int xOffset, int& y, V
                 int usedSize = (varInfo.nameSize < xOffset) ? varInfo.nameSize : xOffset;
                 for (int i = 1; i < usedSize; i++)
                 {
-                        unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address + i));
+                        unsigned char c = ConvertVariableNameCode(getbyte(varInfo.address + i), false);
                         RenderVarCharacter(hdc, cshdc, tempX, y, c);
                 }
                 }

@@ -1015,6 +1015,9 @@ void __fastcall TBasicLister::RuntoLine1Click(TObject *Sender)
                 breakpoint bp((*mLines)[mLastRowIndex].lineNumber, BP_BASIC);
                 bp.Permanent = false;
                 Dbg->AddBreakPoint(bp);
+                ToolButtonRunStop->Caption = "Stop";
+                Dbg->BasicStartStop(false);
+                StepBasic->Enabled = false;
         }
         else
         {

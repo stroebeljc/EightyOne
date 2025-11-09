@@ -4586,20 +4586,6 @@ bool THW::NewKey(TEdit* textBox, char key)
 void THW::SetCharacter(TEdit* textBox, KeyInfo& keyInfo)
 {
         char c = *(textBox->Text.c_str());
-
-        if (keyInfo.Character == '^')
-        {
-                c = VK_SHIFT;
-        }
-        else if (keyInfo.Character == '.')
-        {
-                c = VK_CONTROL;
-        }
-        else if (keyInfo.Character == '#')
-        {
-                c = VK_RETURN;
-        }
-
         keyInfo.Character = c;
         DetermineKeyMatrixPosition(NewMachine, keyInfo);
 }

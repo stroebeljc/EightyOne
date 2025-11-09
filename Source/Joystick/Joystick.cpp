@@ -121,7 +121,7 @@ BYTE ReadJoystick1()
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick1Id].dwPOV;
                         if ((JoyInfo[joystick1Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)
@@ -187,7 +187,7 @@ BYTE ReadJoystick2()
         {
                 JoyInfo[joystick2Id].dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick2Id] && joyGetPosEx(joystick2Id, &JoyInfo[joystick2Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick2Id, &JoyInfo[joystick2Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick2Id].dwPOV;
                         if ((JoyInfo[joystick2Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)
@@ -247,11 +247,11 @@ BYTE ReadJoystick1_Left()
 {
         BYTE result = 0xFF;
 
-        if (joystick1Id >= 0)
+        if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNX | JOY_RETURNZ | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick1Id].dwPOV;
                         if ((JoyInfo[joystick1Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)
@@ -276,11 +276,11 @@ BYTE ReadJoystick1_Right()
 {
         BYTE result = 0xFF;
 
-        if (joystick1Id >= 0)
+        if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNX | JOY_RETURNZ | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick1Id].dwPOV;
                         if ((JoyInfo[joystick1Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)
@@ -305,11 +305,11 @@ BYTE ReadJoystick1_Up()
 {
         BYTE result = 0xFF;
 
-        if (joystick1Id >= 0)
+        if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNY | JOY_RETURNR | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick1Id].dwPOV;
                         if ((JoyInfo[joystick1Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)
@@ -334,11 +334,11 @@ BYTE ReadJoystick1_Down()
 {
         BYTE result = 0xFF;
 
-        if (joystick1Id >= 0)
+        if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNY | JOY_RETURNR | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick1Id].dwPOV;
                         if ((JoyInfo[joystick1Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)
@@ -365,11 +365,11 @@ BYTE ReadJoystick1_Fire()
 
         bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
 
-        if (joystick1Id >= 0)
+        if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNBUTTONS;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         if ((JoyInfo[joystick1Id].dwButtons & 0x03FF) || readFireButton) result &= JoystickFire1.Data;
                 }
@@ -392,11 +392,11 @@ BYTE ReadJoystick1_RightUpDownFire()
 
         bool readFireButton = (machine.joystick1AutoFireEnabled && (joystick1AutoFireReadCount < JoystickReadsOn));
 
-        if (joystick1Id >= 0)
+        if (joystick1Id >= 0 && controllerPresent[joystick1Id])
         {
                 JoyInfo[joystick1Id].dwFlags = JOY_RETURNBUTTONS | JOY_RETURNX | JOY_RETURNY | JOY_RETURNR | JOY_RETURNZ | JOY_RETURNPOV;
 
-                if (controllerPresent[joystick1Id] && joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
+                if (joyGetPosEx(joystick1Id, &JoyInfo[joystick1Id]) == JOYERR_NOERROR)
                 {
                         DWORD POV = JoyInfo[joystick1Id].dwPOV;
                         if ((JoyInfo[joystick1Id].dwFlags & JOY_RETURNPOV) && POV != JOY_POVCENTERED)

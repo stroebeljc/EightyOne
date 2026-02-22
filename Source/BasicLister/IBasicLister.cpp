@@ -370,13 +370,13 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
         case ZX80Array: // Array of numbers
                 {
                 varInfo.nameSize = 1;
-                size = getbyte(*address);
+                size = getbyte(*address) + 1;
                 varInfo.nameSize += std::log10(size) + 2;
                 varInfo.nameSize++; // final paren
                 varInfo.addressArray = (*address)++;
                 varInfo.addressContent = *address;
                 varInfo.overheadLength = 1;
-                varInfo.contentLength = 2*(1 + size);
+                varInfo.contentLength = 2*size;
                 *address += varInfo.contentLength;
                 }
                 break;

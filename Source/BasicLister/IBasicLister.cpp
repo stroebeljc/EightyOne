@@ -328,6 +328,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 for (int i = 0; i < dimensions; i++)
                 {
                         int currentDim = getbyte((*address)++) + 256*getbyte((*address)++);
+                        if (currentDim == 0) return false;
                         varInfo.nameSize += std::log10(currentDim) + 2;
                 }
                 varInfo.nameSize++; // final paren
@@ -390,6 +391,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 for (int i = 0; i < dimensions; i++)
                 {
                         int currentDim = getbyte((*address)++) + 256 * getbyte((*address)++);
+                        if (currentDim == 0) return false;
                         varInfo.nameSize += std::log10(currentDim) + 2;
                 }
                 varInfo.nameSize++; // final paren

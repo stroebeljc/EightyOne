@@ -1697,7 +1697,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
 
                         if ((zx81rom && zxpandDisabled && z80.pc.w == 0x0206) ||
-                         (zx81.zxpand && !zxpandDisabled && z80.pc.w == 0x0877) ||
+                         (!zxpandDisabled && (z80.pc.w == 0x0877 || z80.pc.w == 0x1E3A)) ||
                          ((zx81rom || !zxpandDisabled) && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B)) ||
                          (emulator.romcrc == CRCLAMBDACOLOUR && (z80.pc.w == 0x0EC4 || z80.pc.w == 0x02FB)) ||
                          (emulator.romcrc == CRCLAMBDA && ((z80.pc.w == 0x082C && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x0849 || z80.pc.w == 0x0220)))

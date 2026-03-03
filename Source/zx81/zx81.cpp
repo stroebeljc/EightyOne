@@ -849,7 +849,7 @@ BYTE zx81_ReadByte(int Address)
         }
 
         // The Chroma interface has precedence over devices containing RAM connected behind it
-        if (ChromaRAMRead(Address, (BYTE*)&data, memory))
+        if (!directMemoryAccess && ChromaRAMRead(Address, (BYTE*)&data, memory))
         {
         }
         else if (zxpandRamAccess)

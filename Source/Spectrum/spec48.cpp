@@ -1215,23 +1215,23 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 if (machine.zxprinter) ZXPrinterWritePort((unsigned char)Data);
                 break;
         case 0xfd:
-                switch(Address>>8)
+                switch ((Address>>8)&0xf0)
                 {
-                case 0x0f:
+                case 0x00:
                         if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
                                 PrinterWriteData((unsigned char)Data);
                         }
                         break;
 
-                case 0x3f:
+                case 0x30:
                         if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
                                 floppy_write_datareg((BYTE)Data);
                         }
                         break;
 
-                case 0x7f:
+                case 0x70:
                         if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCY128)
                         {
                                 if (!SPECBankEnable) break;
@@ -1247,7 +1247,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         }
                         break;
 
-                case 0x1f:
+                case 0x10:
                         if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
                         {
                                 machine.drivebusy = (Data&8) ? 1:0;
@@ -1277,7 +1277,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                                 }
                         }
                         break;
-                case 0xbf:
+                case 0xb0:
                         if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
                             ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
                         {
@@ -1285,7 +1285,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         }
                         break;
 
-                case 0xff:
+                case 0xf0:
                         if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR &&
                             ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCY128)))
                         {
@@ -1610,15 +1610,15 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0xfd:
-                switch((Address>>8)&255)
+                switch((Address>>8)&0xf0)
                 {
-                case 0x0f:
+                case 0x00:
                         if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
                         {
                                 return (BYTE)PrinterBusy();
                         }
                         break;
-                case 0xff:
+                case 0xf0:
                         if (emulator.machine == MACHINESPECTRUM && machine.aytype == AY_TYPE_SINCLAIR)
                         {
                                 if ((spectrum.model >= SPECCY16 && spectrum.model <= SPECCYPLUS) || (spectrum.model >= SPECCYPLUS2A))
@@ -1631,13 +1631,13 @@ BYTE ReadPort(int Address, int *tstates)
                                 }
                         }
                         break;
-                case 0x3f:
+                case 0x30:
                         if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
                         {
                                 return(floppy_read_datareg());
                         }
                         break;
-                case 0x2f:
+                case 0x20:
                         if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
                         {
                                 return(floppy_read_statusreg());

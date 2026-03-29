@@ -74,6 +74,7 @@ public:		// User declarations
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void SendData(unsigned char Data);
+        bool PortConnected(void) { return Port!=PORTNOTHING; }
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TParallelPort *ParallelPort;

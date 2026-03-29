@@ -92,7 +92,7 @@ extern BYTE ZXKeyboard[8];
 
 static BYTE ReadPort(int Address, int *tstates);
 
-const BYTE idleDataBus = 0xFF;
+BYTE idleDataBus;
 
 BYTE SpectrumMem[(128+64+16)*1024];     //enough memory for 64k ROM + 128k RAM + extra 16k on SE
 BYTE TimexMem[(64+64)*1024];            // Timex has two more blocks of 64k each
@@ -190,6 +190,8 @@ void spec48_reset(void)
         if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068) SPECBankEnable=0;
         else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
         else SPECBankEnable=0;
+
+        idleDataBus = 0xFF;
 
         MFActive=0;
         MFLockout=0;
@@ -395,11 +397,23 @@ void spec48_initialise()
 
         for(i=0;i<192;i++)
         {
-                delay=6;
-                for(j=0;j<128;j++)
+                if (spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3)
                 {
-                        if (delay>0) ContendArray[pos+j]=(BYTE)delay;
-                        if (--delay==-2) delay=6;
+                        delay=1;
+                        for(j=0;j<128;j++)
+                        {
+                                if (delay>0) ContendArray[pos+j]=(BYTE)delay;
+                                if (--delay<0) delay=7;
+                        }
+                }
+                else
+                {
+                        delay=6;
+                        for(j=0;j<128;j++)
+                        {
+                                if (delay>0) ContendArray[pos+j]=(BYTE)delay;
+                                if (--delay==-2) delay=6;
+                        }
                 }
 
                 pos += machine.tperscanline;
@@ -1218,7 +1232,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 switch ((Address>>8)&0xf0)
                 {
                 case 0x00:
-                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
+                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A) && ParallelPort->PortConnected())
                         {
                                 PrinterWriteData((unsigned char)Data);
                         }
@@ -1328,17 +1342,27 @@ void spec48_writeport(int Address, int Data, int *tstates)
                         SPECKb = Data;
                 }
         }
+
+        if (spectrum.model>SPECCYPLUS2 && SPECBankEnable && (Address<0x1000) && !(Address&2))
+                idleDataBus = (BYTE)(FloatingBus|1);
 }
 
 int spec48_contend(int Address, int states, int time)
 {
-        if (Address>=16384 && Address<=32768) time += ContendArray[ContendCounter+states+time];
+        if ((Address>=0x4000 && Address<0x8000) ||
+            (Address>=0xC000 && emulator.machine == MACHINESPECTRUM &&
+             ((spectrum.model >= SPECCY128 && spectrum.model <= SPECCYPLUS2 && (SPECBlk[3]&1)) ||
+              (spectrum.model >= SPECCYPLUS2A && SPECBlk[3] >= 4+4))))
+        {
+                BYTE currentContend = ContendArray[ContendCounter+states+time];
+                time += currentContend;
+        }
         return(time);
 }
 
 int spec48_contendio(int Address, int states, int time)
 {
-        if (!(Address&1) || (Address>=16384 && Address<=32768))
+        if (!(Address&1) || (Address>=0x4000 && Address<0x8000))
                 time += ContendArray[ContendCounter+states+time];
         return(time);
 
@@ -1613,7 +1637,7 @@ BYTE ReadPort(int Address, int *tstates)
                 switch((Address>>8)&0xf0)
                 {
                 case 0x00:
-                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A && ParallelPort->PortConnected())
                         {
                                 return (BYTE)PrinterBusy();
                         }
@@ -1699,7 +1723,9 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
         }
 
-        if (spectrum.model<=SPECCY128) return (BYTE)FloatingBus;
+        if (spectrum.model<=SPECCYPLUS2) return (BYTE)FloatingBus;
+        if (spectrum.model>SPECCYPLUS2 && SPECBankEnable && (Address<0x1000) && !(Address&2))
+                idleDataBus = (BYTE)(FloatingBus|1);
 
         return(idleDataBus);
 }
@@ -1940,7 +1966,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         {
                                                 delay=258;
                                                 DrawingBorder=1;
-                                                FloatingBus=255;
+                                                if (spectrum.model <= SPECCYPLUS2) FloatingBus=255;
                                         }
                                         else
                                         {
@@ -2126,7 +2152,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         CurScanLine->sync_type = SYNCTYPEV;
                         emulator.scanlinesPerFrame = Sy;
                         Sy=0;
-                        loop=machine.tperscanline;
                 }
 
                 clean_exit=1;

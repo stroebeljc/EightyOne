@@ -1784,6 +1784,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 {
         static int borrow=0;
         static int clean_exit=1;
+        static int IntPending=0;
         int MaxScanLen;
         int LastPC;
         int ts;
@@ -1874,7 +1875,20 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 if (++flash >32) flash=0;
                                 DCCount = (++DCCount)&3;
                                 IntDue=0;
+                                IntPending=32;
                                 ContendCounter=(InteruptPosition-fts)+machine.tperframe;
+                                if (!ts)
+                                {
+                                        ts=z80_do_opcode();
+                                }
+                        }
+                        else if (IntPending>0)
+                        {
+                                ts=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
+                                if (!ts)
+                                {
+                                        ts=z80_do_opcode();
+                                }
                         }
                         else
                                 ts=z80_do_opcode();
@@ -1885,6 +1899,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         insertWaitsWhileSP0256Busy = (sp0256_AL2.Busy() && !emulator.single_step) ? true : false;
                 }
                 UpdateSpecVideo(ts, FALSE);
+                if (IntPending>0)
+                        IntPending-=ts;
 
                 if (BasicLister->Visible &&
                     ((spectrumBasicRomPagedIn && (z80.pc.w == 0x15AB || (z80.pc.w == 0x0805 && FLAG_C) || z80.pc.w == 0x08F0)) ||

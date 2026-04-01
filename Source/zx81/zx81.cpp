@@ -1214,8 +1214,8 @@ BYTE zx81_opcode_fetch(int Address)
 
         if (!bit6 && !z80.halted)
         {
-                // Update gets set to true if we managed to fetch a bitmap from
-                // somewhere.  The only time this doesn't happen is if we encountered
+                // We managed to fetch a bitmap from somewhere.
+                // The only time this doesn't happen is if we encountered
                 // an opcode with bit 6 set above M1NOT.
 
                 // Finally load the bitmap we retrieved into the video shift

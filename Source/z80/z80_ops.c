@@ -50,6 +50,7 @@ extern int StackChange;
 static int mCycles[maxMCycles];
 static int mCycleIndex ;
 static int inputOutputMCycle;
+int interruptLatchEnable;
 int numberOfM1Cycles;
 
 void InsertMCycle(int cycleLength)
@@ -100,6 +101,7 @@ int z80_do_opcode()
 
     tstates=0;
     RetExecuted = 0;
+    interruptLatchEnable = 1;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */
@@ -1301,6 +1303,7 @@ int z80_do_opcode()
       break;
     case 0xfb:		/* EI */
       IFF1=IFF2=1;
+      interruptLatchEnable=0; /* Delay interrupt sampling */
       break;
     case 0xfc:		/* CALL M,nnnn */
       InsertMCycle(3);

@@ -989,7 +989,7 @@ BYTE zx81_opcode_fetch(int Address)
         static bool startOfDFile = true;
         static int calls = 0;
         int inv;
-        int bit6, update=0;
+        int bit6;
         BYTE opcode, data;
 
         // very rough timing here;
@@ -1046,7 +1046,6 @@ BYTE zx81_opcode_fetch(int Address)
         // generate the TV picture (exactly how depends on which
         // display method is used)
 
-        if (!bit6) opcode=0;
         inv = data&128;
 
         bool zx80 = (emulator.machine == MACHINEZX80);
@@ -1068,7 +1067,6 @@ BYTE zx81_opcode_fetch(int Address)
                 FetchChromaColour(Address, data, lineCounter, memory);
 
                 data=zx81_ReadByte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
-                update=1;
         }
         else if ((z80.i&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
@@ -1083,15 +1081,14 @@ BYTE zx81_opcode_fetch(int Address)
                 if (!startOfDFile && (rRegister != 0x80 && rRegister != 0x81))
                 {
                         inv=(MemotechMode==3);
-                        update=1;
+                        bit6 = 0;
                 }
         }
         else if (zx81.truehires==HIRESQUICKSILVA && QuicksilvaHiResMode && syncOutputWhite)
         {
-                if (opcode!=118)
+                if (!bit6 && !z80.halted)
                 {
                         inv=0;
-                        update=1;
                         data=zx81_ReadByte(QsHiResAddress);
                         QsHiResAddress++;
                         if (QsHiResAddress == 0xB800)
@@ -1108,7 +1105,7 @@ BYTE zx81_opcode_fetch(int Address)
                 // register to generate an interrupt at the right time.
 
                 inv=0;
-                update=1;
+                bit6 = 0;
         }
         else if (!bit6)
         {
@@ -1162,14 +1159,12 @@ BYTE zx81_opcode_fetch(int Address)
                 {
                         data=255;
                 }
-
-                update=1;
         }
 
-        if (update)
+        if (!bit6 && !z80.halted)
         {
-                // Update gets set to true if we managed to fetch a bitmap from
-                // somewhere.  The only time this doesn't happen is if we encountered
+                // We managed to fetch a bitmap from somewhere.
+                // The only time this doesn't happen is if we encountered
                 // an opcode with bit 6 set above M1NOT.
 
                 if (machine.colour == COLOURLAMBDA)

@@ -50,6 +50,7 @@ extern int StackChange;
 static int mCycles[maxMCycles];
 static int mCycleIndex ;
 static int inputOutputMCycle;
+int interruptLatchEnable;
 int numberOfM1Cycles;
 
 void InsertMCycle(int cycleLength)
@@ -100,6 +101,7 @@ int z80_do_opcode()
 
     tstates=0;
     RetExecuted = 0;
+    interruptLatchEnable = 1;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */
@@ -107,9 +109,12 @@ int z80_do_opcode()
     InsertMCycle(4);
     contend( PC, 4 ); R++; RZXCounter--;
 
-    //if (z80.halted) opcode=0;
     numberOfM1Cycles = 1;
-    opcode = opcode_fetch( PC++ );
+    opcode = opcode_fetch( PC );
+    if (z80.halted)
+        opcode = 0x00;  /* No PC increment and always NOP while halted */
+    else
+        PC++;
 
     switch(opcode) {
     case 0x00:		/* NOP */
@@ -643,7 +648,6 @@ int z80_do_opcode()
       break;
     case 0x76:		/* HALT */
       z80.halted=1;
-      PC--;
       break;
     case 0x77:		/* LD (HL),A */
       InsertMCycle(3);
@@ -1299,6 +1303,7 @@ int z80_do_opcode()
       break;
     case 0xfb:		/* EI */
       IFF1=IFF2=1;
+      interruptLatchEnable=0; /* Delay interrupt sampling */
       break;
     case 0xfc:		/* CALL M,nnnn */
       InsertMCycle(3);

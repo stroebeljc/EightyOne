@@ -51,6 +51,7 @@ BYTE parity_table[0x100]; /* The parity of the lookup value */
 BYTE sz53p_table[0x100]; /* OR the above two tables together */
 
 int nmiOccurred;
+extern int interruptLatchEnable;
 
 extern int StackChange;
 extern int StepOutRequested;
@@ -108,13 +109,9 @@ void z80_reset( void )
 /* Process a z80 maskable interrupt */
 int z80_interrupt(int bus)
 {
-        if (IFF1)
+        if (IFF1 && interruptLatchEnable!=0)
         {
-                if (z80.halted)
-                {
-                        PC++;
-                        z80.halted = 0;
-                }
+                z80.halted = 0;
 
                 IFF1 = 0;
                 IFF2 = 0;
@@ -160,23 +157,24 @@ int z80_interrupt(int bus)
 /* Process a z80 non-maskable interrupt */
 int z80_nmi()
 {
-        StackChange += 2;
-        IFF1 = 0;
-
-        if (z80.halted)
+        if (interruptLatchEnable!=0)
         {
+                StackChange += 2;
+                IFF1 = 0;
+
                 z80.halted=0;
-                PC++;
+
+                writebyte(--SP, PCH);
+                writebyte(--SP, PCL);
+
+                numberOfM1Cycles++;
+                R++;
+                PC = 0x0066;
+
+                nmiOccurred = 0;
+
+                return 11;
         }
-
-        writebyte(--SP, PCH);
-        writebyte(--SP, PCL);
-
-        numberOfM1Cycles++;
-        R++;
-        PC = 0x0066;
-
-        nmiOccurred = 0;
-
-        return 11;
+        else
+                return 0;
 }

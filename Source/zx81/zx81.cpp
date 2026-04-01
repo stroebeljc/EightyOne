@@ -988,8 +988,8 @@ BYTE zx81_opcode_fetch(int Address)
 {
         static bool startOfDFile = true;
         static int calls = 0;
-        int inv;
-        int bit6;
+        bool inv;
+        bool bit6;
         BYTE opcode, data;
 
         // very rough timing here;

@@ -146,6 +146,11 @@ bool romSp128;
 bool romPlus2;
 bool romPlus3;
 
+static int loop;
+static int sts, chars;
+static int Sy;
+static int DCCount;
+
 BOOL insertWaitsWhileSP0256Busy;
 
 extern AnsiString AdjustPathIfReplacementRom(char* curRom);
@@ -189,6 +194,10 @@ void spec48_reset(void)
         SPECLast7ffd=0;
         SPECLast1ffd=0;
         SPECLastfffd=0;
+        loop=machine.tperscanline;
+        fts=sts=chars=0;
+        Sy=0;
+        DCCount=0;
 
         if (spectrum.model==SPECCYTS2068 || spectrum.model==SPECCYTC2068) SPECBankEnable=0;
         else if (spectrum.model>=SPECCY128) SPECBankEnable=1;
@@ -1731,13 +1740,13 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 {
         int ts,i;
         static int ink, paper, ink2, paper2;
-        static int Sy=0, loop=207;
         static int borrow=0;
-        static int sts=0, chars=0, delay=0, IntDue=0;
-        static int DrawingBorder=1, DCCount=0;
+        static int delay=0, IntDue=0;
+        static int DrawingBorder=1;
         static int BaseColour, PBaseColour;
         static int shift_register;
         static int clean_exit=1;
+        static int IntPending=0;
         int attr, attr2, b1, b2;
         int MaxScanLen;
         int PrevBit=0, PrevGhost=0;
@@ -1775,8 +1784,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 delay=SPECLeftBorder - borrow*2;
                 chars=0;
         }
-
-        if (fts<=0) IntDue=1;
 
         MaxScanLen = scale * emulator.single_step? 1:500;
         do
@@ -1822,13 +1829,43 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!insertWaitsWhileSP0256Busy)
                 {
-                        ts=z80_do_opcode();
+                        ts = 0;
+                        if (fts>InteruptPosition && IntDue)
+                        {
+                                InteruptTime=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
+                                if (rzx.mode==RZX_PLAYBACK)
+                                {
+                                        rzx_update(&RZXCounter);
+                                }
+
+                                ts+=InteruptTime;
+                                if (++flash >32) flash=0;
+                                DrawingBorder=1;
+                                DCCount = (++DCCount)&3;
+                                IntDue=0;
+                                IntPending=32-(fts-InteruptPosition)+1;
+                                ContendCounter=(fts-InteruptPosition);
+                                ContendCounter= (ContendCounter+1)&~3;
+                        }
+                        else if (IntPending>0)
+                                ts+=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
+
+                        if (ts)
+                        {
+                                if (!WavInGroup()) WavStop();
+                        }
+                        else
+                        {
+                                ts=z80_do_opcode();
+                        }
                 }
                 else
                 {
                         ts = 1;
                         insertWaitsWhileSP0256Busy = (sp0256_AL2.Busy() && !emulator.single_step) ? true : false;
                 }
+                if (IntPending>0)
+                        IntPending-=ts;
 
                 if (BasicLister->Visible &&
                     ((spectrumBasicRomPagedIn && (z80.pc.w == 0x15AB || (z80.pc.w == 0x0805 && FLAG_C) || z80.pc.w == 0x08F0)) ||
@@ -1902,24 +1939,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!SpeedUpCount)
                 {
-                        if (fts>InteruptPosition && IntDue)
-                        {
-                                InteruptTime=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
-                                if (rzx.mode==RZX_PLAYBACK)
-                                {
-                                        rzx_update(&RZXCounter);
-                                }
-
-                                if (InteruptTime && !WavInGroup()) WavStop();
-                                ts+=InteruptTime;
-                                if (++flash >32) flash=0;
-                                DrawingBorder=1;
-                                DCCount = (++DCCount)&3;
-                                IntDue=0;
-                                ContendCounter=(fts-InteruptPosition);
-                                ContendCounter= (ContendCounter+1)&~3;
-                        }
-
                         loop-=ts;
                         fts+=ts;
                         sts+=ts;
@@ -2124,12 +2143,12 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 Sy++;
                 if (Sy>=machine.scanlines)
                 {
-                        fts = 0;
+                        fts -= machine.tperframe;
+                        IntDue = 1;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_type = SYNCTYPEV;
                         emulator.scanlinesPerFrame = Sy;
                         Sy=0;
-                        loop=machine.tperscanline;
                 }
 
                 clean_exit=1;

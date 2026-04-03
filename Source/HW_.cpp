@@ -1790,7 +1790,7 @@ void THW::ConfigureMachineSettings()
                 {
                         machine.clockspeed = 3546900;
                         machine.tperscanline = 228;
-                        spectrum.interruptPosition = 14336+32;
+                        spectrum.interruptPosition = 14336+28;
                         machine.scanlines = 311;
                         machine.fps = 50;
                         machine.tperframe = machine.tperscanline * machine.scanlines;

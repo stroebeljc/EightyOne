@@ -87,8 +87,6 @@ extern void LoadDock(char *filename);
 
 extern long noise;
 extern int SelectAYReg;
-extern int emulation_stop;
-extern BYTE ZXKeyboard[8];
 
 static BYTE ReadPort(int Address, int *tstates);
 
@@ -136,6 +134,7 @@ int InteruptPosition;
 int SPECFlashLoading=0;
 int fts=0;
 int flash=0;
+static bool interruptAck=false;
 
 bool rom48;
 bool rom128;
@@ -218,9 +217,6 @@ void spec48_reset(void)
                 if (machine.zxcfUploadJumperClosed) ZXCFPort=0;
                 else ZXCFPort=192;
         }
-
-        MFActive=0;
-        MFLockout=0;
 
         PlusDPaged=PlusDMemSwap=0;
         PlusDCur= &PlusDDrives[0];
@@ -465,6 +461,11 @@ void spec48_initialise()
                         spectrumPlus3AddLineAddress = 0x0DD8;
                 }
         }
+}
+
+void spec48_interruptack(void)
+{
+        interruptAck = true;
 }
 
 void spec48_LoadRZX(char *FileName)
@@ -1715,6 +1716,8 @@ BYTE ReadPort(int Address, int *tstates)
 
 void spec48_nmi(void)
 {
+        rzx_close();
+        
         uSpeechPaged=0;
         uSourcePaged=0;
 
@@ -1750,7 +1753,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         int scale= (tv.AdvancedEffects ? 2:1);
         int LastPC;
         int SpeedUp, SpeedUpCount;
-        int InteruptTime;
         int shiftCount;
 
         int HSyncDuration = spectrum.model >= SPECCY128 ? 31 : 27;
@@ -1826,16 +1828,13 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!insertWaitsWhileSP0256Busy)
                 {
-                        ts = 0;
                         if (fts>InteruptPosition && IntDue)
                         {
-                                InteruptTime=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
                                 if (rzx.mode==RZX_PLAYBACK)
                                 {
                                         rzx_update(&RZXCounter);
                                 }
 
-                                ts+=InteruptTime;
                                 if (++flash >32) flash=0;
                                 DrawingBorder=1;
                                 DCCount = (++DCCount)&3;
@@ -1844,17 +1843,12 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 ContendCounter=(fts-InteruptPosition);
                                 ContendCounter= (ContendCounter+1)&~3;
                         }
-                        else if (IntPending>0)
-                                ts+=(TIMEXByte&64)?0:z80_interrupt(idleDataBus);
 
-                        if (ts)
-                        {
-                                if (!WavInGroup()) WavStop();
-                        }
-                        else
-                        {
-                                ts=z80_do_opcode();
-                        }
+                        z80_databus(idleDataBus);
+                        if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>0));
+                        ts=z80_do_opcode();
+                        if (interruptAck && !WavInGroup()) WavStop();
+                        interruptAck = false;
                 }
                 else
                 {
@@ -2116,12 +2110,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 }
                 else
                         SpeedUpCount -=ts;
-
-                if (nmiOccurred)
-                {
-                        rzx_close();
-                        spec48_nmi();
-                }
 
                 DebugUpdate();
         }

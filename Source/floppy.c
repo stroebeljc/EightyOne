@@ -99,11 +99,6 @@ void LoadFDC765DLL(void)
 #define NMIREADTICKER 80
 #define NMIWRITETICKER 100
 
-void OpusNMI( wd1770_drive *d )
-{
-        nmiOccurred = 1;
-}
-
 //
 // OpusD6821Access(Reg, Data, Dir)
 //
@@ -600,7 +595,7 @@ void floppy_eject(int drive)
                 d->reset_datarq = NULL;
                 d->iface = NULL;
 
-                if (machine.floppytype==FLOPPYOPUSD) d->set_datarq=OpusNMI;
+                if (machine.floppytype==FLOPPYOPUSD) d->set_datarq=machine.nmiInterrupt;
         }
 }
 

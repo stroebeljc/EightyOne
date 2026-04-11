@@ -63,6 +63,7 @@
 #include "symbolstore.h"
 #include "SymBrowse.h"
 #include "Spectra\Spectra.h"
+#include "spec48.h"
 #include "Chroma\Chroma.h"
 #include "MemoryWindow.h"
 #include "Hist.h"
@@ -99,7 +100,6 @@ extern bool ShowSplash;
 extern int frametstates;
 
 extern "C" void z80_reset();
-extern "C" int z80_nmi();
 extern char **CommandLine;
 extern void spec_load_z80(char *fname);
 extern void spec_load_sna(char *fname);
@@ -1791,7 +1791,7 @@ void __fastcall TForm1::FormMouseUp(TObject *Sender, TMouseButton Button,
 
 void __fastcall TForm1::GenerateNMI1Click(TObject *Sender)
 {
-        nmiOccurred = 1;
+        if (machine.nmiInterrupt) machine.nmiInterrupt();
 }
 //---------------------------------------------------------------------------
 void FetchFolderList(vector<AnsiString>* pEntries, AnsiString path)

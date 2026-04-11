@@ -1051,7 +1051,7 @@ BYTE zx81_opcode_fetch(int Address)
 
         int refreshAddr = z80_refreshAddr();
         int iRegister = (refreshAddr >> 8) & 0xFF;
-        BYTE rRegister = (BYTE)(refreshAddr & 0xFF);
+        BYTE rRegister = (BYTE)(refreshAddr & 0x7F);
         bool zx80 = (emulator.machine == MACHINEZX80);
         bool chrgenChr128 = (zx81.chrgen == CHRGENCHR128);
         bool upper16KAccess = (iRegister >= 0xC0);
@@ -1076,11 +1076,11 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
                 // when the I register is odd.
-                if (startOfDFile && opcode != 0x76)
+                if (startOfDFile && (rRegister == 0x7F))
                 {
                         startOfDFile = false;
                 }
-                if (!startOfDFile && (rRegister != 0x80 && rRegister != 0x81))
+                if (!startOfDFile && (rRegister != 0x7F))
                 {
                         inv=(MemotechMode==3);
                         bit6 = 0;

@@ -50,14 +50,20 @@ BYTE sz53_table[0x100]; /* The S, Z, 5 and 3 bits of the lookup value */
 BYTE parity_table[0x100]; /* The parity of the lookup value */
 BYTE sz53p_table[0x100]; /* OR the above two tables together */
 
-int nmiOccurred;
+extern int nmiLatched;
 extern int interruptLatchEnable;
+extern int interruptLine;
+extern int databus;
+extern int refreshAddr;
 
 extern int StackChange;
 extern int StepOutRequested;
 
+extern void InsertMCycle(int cycleLength);
+
 /* This is what everything acts on! */
 processor z80;
+void (*z80_INTACK)(void);
 
 static void z80_init_tables(void);
 
@@ -65,6 +71,7 @@ static void z80_init_tables(void);
 void z80_init(void)
 {
         z80_init_tables();
+        z80_INTACK=machine.interruptAckCb;
 }
 
 /* Initalise the tables used to set flags */
@@ -103,23 +110,41 @@ void z80_reset( void )
         z80.halted=0;
         StackChange=0;
         StepOutRequested=0;
-        nmiOccurred = 0;
+        nmiLatched = 0;
+        interruptLine = 1;
+        refreshAddr = 0;
+}
+
+void z80_interrupt(int state)
+{
+        interruptLine = (state != 0);
+}
+
+void z80_databus(int bus)
+{
+        databus = bus;
 }
 
 /* Process a z80 maskable interrupt */
-int z80_interrupt(int bus)
+int z80_interrupt_internal(void)
 {
         if (IFF1 && interruptLatchEnable!=0)
         {
                 z80.halted = 0;
 
+                InsertMCycle(7);
+                numberOfM1Cycles=1;
+                if (z80_INTACK) z80_INTACK();
+                R++;
+                R = (WORD)(R & 127);
+
                 IFF1 = 0;
                 IFF2 = 0;
 
+                InsertMCycle(3);
                 writebyte(--SP, PCH);
+                InsertMCycle(3);
                 writebyte(--SP, PCL);
-
-                R++;
 
                 switch (IM)
                 {
@@ -138,8 +163,10 @@ int z80_interrupt(int bus)
                         }
                         case 2:
 	                {
-	                        WORD vectorAddress = (WORD)((I << 8) + bus);
+	                        WORD vectorAddress = (WORD)((I << 8) + databus);
+                                InsertMCycle(3);
         	                PCL = readbyte(vectorAddress++);
+                                InsertMCycle(3);
                                 PCH = readbyte(vectorAddress);
 	                        StackChange += 2;
                                 return 19;
@@ -154,27 +181,36 @@ int z80_interrupt(int bus)
         return 0;
 }
 
-/* Process a z80 non-maskable interrupt */
-int z80_nmi()
+/* Trigger a z80 non-maskable interrupt */
+void z80_nmi(void)
 {
-        if (interruptLatchEnable!=0)
-        {
-                StackChange += 2;
-                IFF1 = 0;
+        nmiLatched = 1;
+}
 
-                z80.halted=0;
+/* Process a z80 non-maskable interrupt */
+int z80_nmi_internal(void)
+{
+    if (interruptLatchEnable!=0 && nmiLatched!=0)
+    {
+        StackChange += 2;
+        IFF1 = 0;
+        nmiLatched = 0;
 
-                writebyte(--SP, PCH);
-                writebyte(--SP, PCL);
+        z80.halted=0;
 
-                numberOfM1Cycles++;
-                R++;
-                PC = 0x0066;
+        InsertMCycle(5);
+        numberOfM1Cycles=1;
+        R++;
+        R = (WORD)(R & 127);
 
-                nmiOccurred = 0;
+        InsertMCycle(3);
+        writebyte(--SP, PCH);
+        InsertMCycle(3);
+        writebyte(--SP, PCL);
 
-                return 11;
-        }
-        else
-                return 0;
+        PC = 0x0066;
+
+        return 11;
+    }
+    return 0;
 }

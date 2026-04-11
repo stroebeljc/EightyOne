@@ -73,6 +73,7 @@ static int Sy;
 
 static BYTE ReadInputPort(int Address, int *tstates);
 static BYTE idleDataBus = 0x20;
+static bool interruptAck=false;
 
 extern void ZXPrinterReset();
 extern void ZXPrinterWritePort(unsigned char Data);
@@ -128,6 +129,11 @@ void ace_reset()
         Form1->BuildMenuJoystickSelection();
 }
 
+void ace_interruptack(void)
+{
+        interruptAck = true;
+}
+
 void ace_writebyte(int Address, int Data)
 {
         lastMemoryWriteAddrLo = lastMemoryWriteAddrHi;
@@ -166,7 +172,7 @@ void ace_writebyte(int Address, int Data)
                 return;
         }
 
-        if (machine.ace96k && z80.r7 && Address>=16384)
+        if (machine.ace96k && (z80_refreshAddr()&0x0080) && Address>=16384)
                 Address+=65536;
         memory[Address]=(BYTE)Data;
 }
@@ -185,7 +191,7 @@ BYTE ace_ReadByte(int Address)
 
         if (Address>=0x2800 && Address<=0x2fff) return(255);
 
-        if (machine.ace96k && z80.r7 && Address>=16384) Address+=65536;
+        if (machine.ace96k && (z80_refreshAddr()&0x0080) && Address>=16384) Address+=65536;
         data=memory[Address];
         noise = (noise<<8) | data;
         return data;
@@ -399,18 +405,17 @@ int ace_do_scanline(SCANLINE *CurScanLine)
 
                 if (z80.pc.w==0x1820) WavStartRec();
 
-                ts=0;
                 if (fts>0 && IntDue)
                 {
-                        ts+=z80_interrupt(idleDataBus);
                         IntDue=0;
                         IntPending=1664-fts+1;
                 }
-                else if (IntPending>0)
-                        ts+=z80_interrupt(idleDataBus);
+                z80_interrupt(!(IntPending>0));
 
-                if (ts) WavStop();
-                else ts+=z80_do_opcode();
+                z80_databus(idleDataBus);
+                ts=z80_do_opcode();
+                if (interruptAck) WavStop();
+                interruptAck = false;
 
                 if (IntPending>0)
                         IntPending-=ts;

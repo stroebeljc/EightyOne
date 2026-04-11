@@ -116,7 +116,7 @@ int ZX80MaximumSupportedScanlineLength;
 
 const int ZX80HSyncDuration = 20;
 const int ZX80HSyncDurationPixels = ZX80HSyncDuration * 2;
-const int ZX80HSyncAcceptanceDuration = (3 * ZX80HSyncDuration) / 2;
+const int ZX80HSyncAcceptanceDuration = ZX80HSyncDuration;
 const int ZX80HSyncAcceptanceDurationPixels = ZX80HSyncAcceptanceDuration * 2;
 const int ZX80MaximumSupportedScanlineOverhang = ZX80HSyncDuration * 2;
 const int ZX80MaximumSupportedScanlineOverhangPixels = ZX80MaximumSupportedScanlineOverhang * 2;
@@ -216,7 +216,7 @@ int QsHiResAddress;
 
 int shift_register=0, shift_reg_inv, shift_store=0;
 
-bool interruptPending = false;
+bool interruptAck = false;
 
 extern int shift_register, shift_reg_inv;
 extern long noise;
@@ -249,9 +249,9 @@ AnsiString AdjustPathIfReplacementRom(char* curRom)
         return rom;
 }
 
-BYTE get_i_reg(void)
+void zx81_interruptack(void)
 {
-        return(z80.i);
+        interruptAck = true;
 }
 
 void zx81_initialise()
@@ -437,7 +437,7 @@ void zx81_initialise()
                 ink=colourBlack; paper=border=colourBrightWhite;
         }
 
-        videoFlipFlop1Q = 1;
+        videoFlipFlop1Q = 0;
         videoFlipFlop2Q = 0;
         videoFlipFlop3Q = 0;
         videoFlipFlop3Clear = 0;
@@ -911,8 +911,9 @@ BYTE zx81_ReadByte(int Address)
                 }
         }
 
+        bool ibit0 = (z80_refreshAddr()&0x0100)!=0;
         // Memotech Hi-res board uses the internal 1K of RAM to overlay the ROM at addresses 0K-1K when z80.i is odd
-        if ((Address<1024 && (zx81.truehires==HIRESMEMOTECH)) && (z80.i&1))
+        if ((Address<1024 && (zx81.truehires==HIRESMEMOTECH)) && ibit0)
         {
                 data=memhrg[Address];
         }
@@ -924,7 +925,7 @@ BYTE zx81_ReadByte(int Address)
         }
 
         if ((Address<256 || (Address>=512 && Address<768))
-                && (z80.i&1) && (zx81.truehires==HIRESG007))
+                && ibit0 && (zx81.truehires==HIRESG007))
                         data=memory[Address+8192];
 
         noise = (noise<<8) | data;
@@ -1048,15 +1049,18 @@ BYTE zx81_opcode_fetch(int Address)
 
         inv = data&128;
 
+        int refreshAddr = z80_refreshAddr();
+        int iRegister = (refreshAddr >> 8) & 0xFF;
+        BYTE rRegister = (BYTE)(refreshAddr & 0xFF);
         bool zx80 = (emulator.machine == MACHINEZX80);
         bool chrgenChr128 = (zx81.chrgen == CHRGENCHR128);
-        bool upper16KAccess = (z80.i >= 0xC0);
-        bool region8KAccess = (z80.i >= 0x20) && (z80.i < 0x40);
+        bool upper16KAccess = (iRegister >= 0xC0);
+        bool region8KAccess = (iRegister >= 0x20) && (iRegister < 0x40);
         bool wrxAccess = (zx81.truehires == HIRESWRX) && !bit6;
 
         bool chroma80 = zx80 && chromaSelected;
         bool chroma80Chr128 = chroma80 && chrgenChr128 && upper16KAccess;
-        bool notChr128mode  = !chroma80Chr128 && (z80.i > zx81.maxireg);
+        bool notChr128mode  = !chroma80Chr128 && (iRegister > zx81.maxireg);
         bool chr128mode8kRam = !chroma80Chr128 && region8KAccess && zx81.RAM816k;
 
         // First check for WRX graphics.  This is easy, we just create a
@@ -1066,14 +1070,12 @@ BYTE zx81_opcode_fetch(int Address)
         {
                 FetchChromaColour(Address, data, lineCounter, memory);
 
-                data=zx81_ReadByte((z80.i<<8) | (z80.r7 & 128) | ((z80.r-1) & 127));
+                data=zx81_ReadByte(refreshAddr);
         }
-        else if ((z80.i&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
+        else if ((iRegister&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
                 // when the I register is odd.
-                BYTE rRegister = (BYTE)((z80.r7 & 0x80) | (z80.r & 0x7F));
-
                 if (startOfDFile && opcode != 0x76)
                 {
                         startOfDFile = false;
@@ -1097,7 +1099,7 @@ BYTE zx81_opcode_fetch(int Address)
                         }
                 }
         }
-        else if ((z80.i&1) && (zx81.truehires==HIRESG007))
+        else if ((iRegister&1) && (zx81.truehires==HIRESG007))
         {
                 // Like Memotech, G007 is enabled when I is odd.
                 // However, it is much simpler, in that it disables
@@ -1119,9 +1121,9 @@ BYTE zx81_opcode_fetch(int Address)
                 // character sets are only 64 characters in size.
 
                 bool chrgenQS = (zx81.chrgen == CHRGENQS);
-                bool lower16KAccess = (z80.i < 0x40);
+                bool lower16KAccess = (iRegister < 0x40);
 
-                bool chr128 = chrgenChr128 && (z80.i & 1) && !chroma80;
+                bool chr128 = chrgenChr128 && (iRegister & 1) && !chroma80;
                 bool qsChars = chrgenQS && zx81.enableQSchrgen;
 
                 if (chr128 || qsChars || chroma80Chr128)
@@ -1151,7 +1153,7 @@ BYTE zx81_opcode_fetch(int Address)
                         else
                         {
                                 video = 1;
-                                data=readoperandbyte(((z80.i & 254) << 8) + (data << 3) | lineCounter);
+                                data=readoperandbyte(((iRegister & 254) << 8) + (data << 3) | lineCounter);
                                 video = 0;
                         }
                 }
@@ -1208,7 +1210,7 @@ BYTE zx81_opcode_fetch(int Address)
                 shift_register |= data;
                 shift_reg_inv |= inv ? 255 : 0;
                 if (lambdaSelected) noise |= (Address>>8);
-                else noise |= z80.i;
+                else noise |= iRegister;
                 return(0);
         }
         else
@@ -1672,6 +1674,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
                 int ts=z80_do_opcode();
 
+                z80_databus(idleDataBus);
+                z80_interrupt((z80_refreshAddr() & 0x0040)!=0);
+
                 if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))
                 {
                         const bool keepScrollbarPosition = true;
@@ -1729,36 +1734,31 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 int interruptResponseDuration = 0;
 
-                if (interruptPending)
+                if (interruptAck)
                 {
-                        interruptResponseDuration = z80_interrupt(idleDataBus);
+                        interruptResponseDuration = ts;
 
-                        if (interruptResponseDuration > 0)
+                        // Immediately after the instruction is the interrupt response. This should occur at a known position relative to the HSync pulse.
+                        // If it does not then the line clock counter is adjusted.
+                        if (lineClockCounter != InterruptResponsePositionStart)
                         {
-                                // Immediately after the instruction is the interrupt response. This should occur at a known position relative to the HSync pulse.
-                                // If it does not then the line clock counter is adjusted.
-                                if (lineClockCounterAfterInstruction != InterruptResponsePositionStart)
+                                int lineCounterAdjustment = InterruptResponsePositionStart - lineClockCounter;
+                                lineClockCounter += lineCounterAdjustment;
+                                lineClockCounterAfterInstruction += lineCounterAdjustment;
+
+                                int lineCounterAdjustmentPixels = (lineCounterAdjustment * 2);
+
+                                if (lineCounterAdjustmentPixels >= -ZX81HSyncPositionTolerancePixels)
                                 {
-                                        int lineCounterAdjustment = InterruptResponsePositionStart - lineClockCounterAfterInstruction;
-                                        lineClockCounter += lineCounterAdjustment;
-                                        lineClockCounterAfterInstruction += lineCounterAdjustment;
-
-                                        int lineCounterAdjustmentPixels = (lineCounterAdjustment * 2);
-
-                                        if (lineCounterAdjustmentPixels >= -ZX81HSyncPositionTolerancePixels)
+                                        scanlineActivePixelLength += lineCounterAdjustmentPixels;
+                                        if (scanlineActivePixelLength > MaxScanlineActivePixelLength)
                                         {
-                                                scanlineActivePixelLength += lineCounterAdjustmentPixels;
-                                                if (scanlineActivePixelLength > MaxScanlineActivePixelLength)
-                                                {
-                                                        scanlineActivePixelLength = MaxScanlineActivePixelLength;
-                                                }
+                                                scanlineActivePixelLength = MaxScanlineActivePixelLength;
                                         }
                                 }
-
-                                ts += interruptResponseDuration;
                         }
 
-                        interruptPending = false;
+                        interruptAck = false;
                 }
 
                 int pixels = ts << 1;
@@ -1822,11 +1822,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                         paper = colourBrightWhite;
                                 }
                         }
-                }
-
-                if (!(z80.r & 0x40))
-                {
-                        interruptPending = true;
                 }
 
                 frametstates += ts;
@@ -1965,7 +1960,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 if (nmiGeneratorEnabled && (OtherInstructionOverlapsHSync || nmiOnInstructionOverlapsHSync))
                 {
-                        int nmiResponseDuration = z80_nmi();
+                        z80_nmi();
 
                         if (memotechResetRequested)
                         {
@@ -1985,13 +1980,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                                 }
                         }
 
-                        int nmiResponseActualDuration = nmiResponseDuration + nmiResponseWaitDuration;
                         int instructionOverhangHSyncDuration = ZX81HSyncPositionStart - lineClockCounter;
                         int remainingHSyncDuration = ZX81HSyncDuration - instructionOverhangHSyncDuration;
 
                         if (lineClockCounter >= ZX81HSyncPositionEnd)
                         {
-                                lineClockCarryCounter += nmiResponseActualDuration - remainingHSyncDuration;
+                                lineClockCarryCounter += nmiResponseWaitDuration - remainingHSyncDuration;
                                 if (lineClockCarryCounter < 0)
                                 {
                                         lineClockCarryCounter = 0;
@@ -2000,21 +1994,21 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         else
                         {
                                 int instructionOutstanding = -lineClockCounter;
-                                lineClockCarryCounter += instructionOutstanding + nmiResponseActualDuration;
+                                lineClockCarryCounter += instructionOutstanding + nmiResponseWaitDuration;
                         }
 
-                        ts += nmiResponseActualDuration;
-                        frametstates += nmiResponseActualDuration;
-                        tStatesCount += nmiResponseActualDuration;
+                        ts += nmiResponseWaitDuration;
+                        frametstates += nmiResponseWaitDuration;
+                        tStatesCount += nmiResponseWaitDuration;
 
                         nmiDetectedDuringInstruction = false;
                         int colour = (syncOutputWhite ? paper : ink) << 4;
 
-                        while (nmiResponseActualDuration > 0)
+                        while (nmiResponseWaitDuration > 0)
                         {
                                 zx81_DrawClockCycle(CurScanLine, lineClockCounter, (BYTE)colour, nmiDetectedDuringInstruction, NonMaskableInterrupt);
                                 lineClockCounter--;
-                                nmiResponseActualDuration--;
+                                nmiResponseWaitDuration--;
                         }
                 }
                 else if (lineClockCounter < ZX81HSyncPositionEnd)
@@ -2256,6 +2250,9 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 z80.pc.w = (WORD)PatchTest(z80.pc.w);
                 int ts=z80_do_opcode();
 
+                z80_databus(idleDataBus);
+                z80_interrupt((z80_refreshAddr() & 0x0040)!=0);
+
                 if (BasicLister->Visible &&
                     ((zx80rom && (z80.pc.w == 0x04F4 || z80.pc.w == 0x0202)) ||
                      (zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))))
@@ -2264,50 +2261,37 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         BasicLister->Refresh(keepScrollbarPosition);
                 }
 
-                prevVideoFlipFlop3Q = videoFlipFlop3Q;
                 int numberOfM1Cycles = z80_NumberOfM1Cycles();
 
                 for (int i = 0; i < numberOfM1Cycles; i++)
                 {
+                        prevVideoFlipFlop3Q = videoFlipFlop3Q;
                         if (videoFlipFlop3Clear)
                         {
                                 videoFlipFlop3Q = videoFlipFlop2Q;
                         }
 
                         videoFlipFlop2Q = !videoFlipFlop1Q;
-                }
 
-                if (!videoFlipFlop3Q)
-                {
-                        videoFlipFlop1Q = 0;
-
-                        if (prevVideoFlipFlop3Q)
+                        if (!videoFlipFlop3Q)
                         {
-                                lineCounter = (++lineCounter) & 7;
+                                videoFlipFlop1Q = 0;
+
+                                if (prevVideoFlipFlop3Q)
+                                {
+                                        lineCounter = (++lineCounter) & 7;
+                                }
                         }
                 }
 
                 bool z80Halted = z80.halted;
                 int interruptResponseDuration = 0;
 
-                if (interruptPending)
+                if (interruptAck)
                 {
-                        interruptResponseDuration = z80_interrupt(idleDataBus);
-
-                        if (interruptResponseDuration > 0)
-                        {
-                                if (videoFlipFlop3Clear)
-                                {
-                                        videoFlipFlop3Q = videoFlipFlop2Q;
-                                }
-
-                                videoFlipFlop2Q = !videoFlipFlop1Q;
-                                videoFlipFlop1Q = 1;
-                                
-                                ts += interruptResponseDuration;
-                        }
-
-                        interruptPending = false;
+                        interruptResponseDuration = ts;
+                        videoFlipFlop1Q = 1; // INTACK
+                        interruptAck = false;
                 }
 
                 int instructionPixels = ts << 1;
@@ -2369,11 +2353,6 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
-                if (!(z80.r & 0x40))
-                {
-                        interruptPending = true;
-                }
-
                 frametstates += ts;
                 tStatesCount += ts;
 
@@ -2394,11 +2373,11 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 case LASTINSTOUTFD:
                 case LASTINSTOUTFE:
                 case LASTINSTOUTFF:     // VSync end
-                        videoFlipFlop1Q = 0;
-                        videoFlipFlop2Q = 1;
+                        videoFlipFlop1Q = 1;
                         videoFlipFlop3Clear = 1;
                         if (!videoFlipFlop3Q)
                         {
+                                videoFlipFlop1Q = 0;
                                 CurScanLine->sync_len += ts;
 
                                 if (CurScanLine->sync_len > ZX80HSyncAcceptanceDuration)

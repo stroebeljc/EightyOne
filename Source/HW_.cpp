@@ -1717,6 +1717,8 @@ void THW::ConfigureMachineSettings()
         {
         case MACHINEACE:
                 machine.initialise = ace_initialise;
+                machine.nmiInterrupt = NULL;
+                machine.interruptAckCb = ace_interruptack;
                 machine.do_scanline = ace_do_scanline;
                 machine.writebyte = ace_writebyteProxy;
                 machine.setbyte = ace_writebyte;
@@ -1734,6 +1736,8 @@ void THW::ConfigureMachineSettings()
 
         case MACHINESPECTRUM:
                 machine.initialise = spec48_initialise;
+                machine.nmiInterrupt = spec48_nmi;
+                machine.interruptAckCb = spec48_interruptack;
                 machine.do_scanline = spec48_do_scanline;
                 machine.writebyte = spec48_writebyteProxy;
                 machine.setbyte = spec48_setbyte;
@@ -1779,7 +1783,7 @@ void THW::ConfigureMachineSettings()
                 {
                         machine.clockspeed = 3546900;
                         machine.tperscanline = 228;
-                        spectrum.interruptPosition = 14336+28;
+                        spectrum.interruptPosition = 14336+22;
                         machine.scanlines = 311;
                         machine.fps = 50;
                         machine.tperframe = machine.tperscanline * machine.scanlines;
@@ -1787,6 +1791,8 @@ void THW::ConfigureMachineSettings()
                 break;
         default:
                 machine.initialise = zx81_initialise;
+                machine.nmiInterrupt = NULL;
+                machine.interruptAckCb = zx81_interruptack;
                 machine.do_scanline = (emulator.machine == MACHINEZX80) ? zx80_do_scanline : zx81_do_scanline;
                 machine.writebyte = zx81_writebyteProxy;
                 machine.setbyte = zx81_setbyte;

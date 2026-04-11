@@ -41,6 +41,9 @@ static void z80_fdxx(BYTE opcode2);
 static void z80_ddfdcbxx(BYTE opcode3, WORD tempaddr);
 #endif
 
+extern int z80_interrupt_internal(void);
+extern int z80_nmi_internal(void);
+
 unsigned short RZXCounter=0;
 
 extern int RetExecuted;
@@ -52,6 +55,10 @@ static int mCycleIndex ;
 static int inputOutputMCycle;
 int interruptLatchEnable;
 int numberOfM1Cycles;
+int nmiLatched;
+int interruptLine;
+int databus;
+int refreshAddr;
 
 void InsertMCycle(int cycleLength)
 {
@@ -86,6 +93,11 @@ int z80_NumberOfM1Cycles()
         return numberOfM1Cycles;
 }
 
+int z80_refreshAddr(void)
+{
+        return refreshAddr;
+}
+
 void SetSP(int i)
 {
         //spBase = i;
@@ -101,6 +113,20 @@ int z80_do_opcode()
 
     tstates=0;
     RetExecuted = 0;
+
+    refreshAddr = (z80.i<<8) | (z80.r7 & 0x80) | (z80.r & 0x7F);
+
+    tstates+=z80_nmi_internal();
+
+    if (tstates==0 && !interruptLine)
+        tstates+=z80_interrupt_internal();
+
+    if (tstates)
+    {
+        z80.tstates = tstates;
+        return tstates;
+    }
+
     interruptLatchEnable = 1;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid

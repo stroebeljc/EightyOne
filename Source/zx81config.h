@@ -243,6 +243,8 @@ typedef struct
 typedef struct
 {
         void (*initialise)();
+        void (*nmiInterrupt)();
+        void (*interruptAckCb)();
         int (*do_scanline)(SCANLINE *line);
         void (*writebyte)(int Address, int Data);
         void (*setbyte)(int Address, int Data);

@@ -65,8 +65,10 @@ typedef struct {
 extern void z80_init(void);
 extern void z80_reset(void);
 
-extern int z80_interrupt(int bus);
-extern int z80_nmi();
+extern void z80_databus(int bus);
+extern void z80_interrupt(int state);
+extern void z80_nmi(void);
+extern int z80_refreshAddr(void);
 
 extern int z80_do_opcode(void);
 
@@ -86,7 +88,6 @@ extern int z80_InputOutputMCycle();
 extern int z80_NumberOfM1Cycles();
 
 extern int numberOfM1Cycles;
-extern int nmiOccurred;
 
 #ifdef __cplusplus
 }

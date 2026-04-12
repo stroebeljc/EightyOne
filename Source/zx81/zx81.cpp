@@ -987,7 +987,7 @@ BYTE zx81_readbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE zx81_opcode_fetch(int Address)
 {
-        static bool startOfDFile = true;
+        static bool withinDFile = false;
         static int calls = 0;
         bool inv;
         bool bit6;
@@ -1004,7 +1004,7 @@ BYTE zx81_opcode_fetch(int Address)
 
         if (nmiGeneratorEnabled)
         {
-                startOfDFile = true;
+                withinDFile = false;
         }
 
         if (Address < zx81.m1not)
@@ -1075,12 +1075,15 @@ BYTE zx81_opcode_fetch(int Address)
         else if ((iRegister&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
-                // when the I register is odd.
-                if (startOfDFile && (rRegister == 0x7F))
+                // when the I register is odd. The behavior effectively clears
+                // bit6 after the first HALT occurs in display memory. After this,
+                // only the HALT at the end of each line should pass to the CPU
+                // data bus as nonzero.
+                if (rRegister == 0x7F)
                 {
-                        startOfDFile = false;
+                        withinDFile = true;
                 }
-                if (!startOfDFile && (rRegister != 0x7F))
+                else if (withinDFile)
                 {
                         inv=(MemotechMode==3);
                         bit6 = 0;

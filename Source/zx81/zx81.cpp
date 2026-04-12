@@ -1036,7 +1036,7 @@ BYTE zx81_readbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE zx81_opcode_fetch(int Address)
 {
-        static bool lastInstFromVMem = false;
+        static bool withinDFile = false;
         static int calls = 0;
         bool inv;
         bool bit6;
@@ -1051,10 +1051,10 @@ BYTE zx81_opcode_fetch(int Address)
                 if (zxpand) zxpand->Update(1);
         }
 
-        if (!(Address & 0x8000))
+        if (nmiGeneratorEnabled)
         {
-                lastInstFromVMem = false; // Allows Memotech HRG to detect
-                        // instruction execution transition to video memory.
+                // Memotech actually uses the NMI line to clear this latch.
+                withinDFile = false;
         }
 
         if (Address < zx81.m1not)
@@ -1125,20 +1125,19 @@ BYTE zx81_opcode_fetch(int Address)
         else if ((iRegister&1) && (zx81.truehires==HIRESMEMOTECH) && MemotechMode)
         {
                 // Next Check Memotech Hi-res.  Memotech is only enabled
-                // when the I register is odd. The R register is used to count
-                // video character positions and detect end of line.
-                // We also need to know when executing below 32k to allow
-                // the HRG to detect the start of a video line.
-                // Without knowing the actual PAL logic, this is the best we can
-                // do to mimic the real hardware.
-
-                if (lastInstFromVMem && (rRegister != 0x7F))
+                // when the I register is odd. The behavior effectively clears
+                // bit6 after the first HALT occurs in display memory. After this,
+                // only the HALT at the end of each line should pass to the CPU
+                // data bus as nonzero.
+                if (rRegister == 0x7F)
+                {
+                        withinDFile = true;
+                }
+                else if (withinDFile)
                 {
                         inv = (MemotechMode==3);
                         bit6 = 0;
                 }
-
-                lastInstFromVMem = true;
         }
         else if ((zx81.truehires==HIRESQUICKSILVA) && QuicksilvaHiResMode && syncOutputWhite)
         {

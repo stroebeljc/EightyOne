@@ -190,7 +190,7 @@ void z80_nmi(void)
 /* Process a z80 non-maskable interrupt */
 int z80_nmi_internal(void)
 {
-    if (interruptLatchEnable!=0 && nmiLatched!=0)
+    if (nmiLatched!=0)
     {
         StackChange += 2;
         IFF1 = 0;

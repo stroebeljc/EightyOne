@@ -404,16 +404,16 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                 if (fts>0 && IntDue)
                 {
                         IntDue=0;
-                        IntPending=1664-fts+1;
+                        IntPending=1664-fts;
                 }
-                z80_interrupt(!(IntPending>0));
+                z80_interrupt(!(IntPending>=0));
 
                 z80_databus(idleDataBus);
                 ts=z80_do_opcode();
                 if (interruptAck) WavStop();
                 interruptAck = false;
 
-                if (IntPending>0)
+                if (IntPending>=0)
                         IntPending-=ts;
 
                 i=70;

@@ -1860,13 +1860,13 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 DrawingBorder=1;
                                 DCCount = (++DCCount)&3;
                                 IntDue=0;
-                                IntPending=32-(fts-InteruptPosition)+1;
+                                IntPending=32-(fts-InteruptPosition);
                                 ContendCounter=(fts-InteruptPosition);
                                 ContendCounter= (ContendCounter+1)&~3;
                         }
 
                         z80_databus(idleDataBus);
-                        if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>0));
+                        if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0));
                         ts=z80_do_opcode();
                         if (interruptAck && !WavInGroup()) WavStop();
                         interruptAck = false;
@@ -1876,7 +1876,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         ts = 1;
                         insertWaitsWhileSP0256Busy = (sp0256_AL2.Busy() && !emulator.single_step) ? true : false;
                 }
-                if (IntPending>0)
+                if (IntPending>=0)
                         IntPending-=ts;
 
                 if (BasicLister->Visible &&

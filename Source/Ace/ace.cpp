@@ -26,7 +26,6 @@
 #include "snap.h"
 #include "zx81config.h"
 #include "WavCInterface.h"
-#include "Debug.h"
 #include "sound.h"
 #include "dev8255.h"
 #include "serialport.h"
@@ -52,6 +51,11 @@ extern "C"
 void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
 extern AnsiString AdjustPathIfReplacementRom(char* curRom);
+
+extern void LogOutAccess(int address, BYTE data);
+extern void LogInAccess(int address, BYTE data);
+extern void ResetLastIOAccesses();
+extern void DebugUpdate(void);
 
 extern int RasterY;
 extern long noise;
@@ -298,11 +302,14 @@ BYTE ace_readport(int Address, int *tstates)
 
 BYTE ReadInputPort(int Address, int *tstates)
 {
+        BYTE data=idleDataBus;
+
         if (!(Address&1))
         {
-                BYTE keyb, data=0xC0;
+                BYTE keyb;
                 int i;
 
+                data=0xC0;
                 if (GetEarState()) data |= 32;
 
                 keyb=(BYTE)(Address/256);
@@ -321,38 +328,36 @@ BYTE ReadInputPort(int Address, int *tstates)
                         if (!(Address & JoystickDown1.AddressMask))  data &= ReadJoystick1_Down();
                         if (!(Address & JoystickFire1.AddressMask))  data &= ReadJoystick1_Fire();
                 }
-
-                return data;
         }
 
         if ((machine.HDType==HDACECF) && ((Address&128) == 0))
-                return (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
+                data = (BYTE)(ATA_ReadRegister((Address>>8)&0x07));
 
         if (machine.joystick1Connected && (Address & 0x0001) == 0x0001)
-                return (BYTE)~ReadJoystick1();
+                data = (BYTE)~ReadJoystick1();
 
         switch(Address&255)
         {
         case 0x73:
-                if (machine.ts2050) return(d8251readDATA());
+                if (machine.ts2050) data = d8251readDATA();
 
         case 0x77:
-                if (machine.ts2050) return(d8251readCTRL());
+                if (machine.ts2050) data = d8251readCTRL();
 
         case 0xdd:
-                if (machine.aytype==AY_TYPE_ACE_USER) return (BYTE)(Sound.AYRead(SelectAYReg));
+                if (machine.aytype==AY_TYPE_ACE_USER) data = (BYTE)(Sound.AYRead(SelectAYReg));
 
         case 0xfb:
-                if (machine.zxprinter) return(ZXPrinterReadPort(idleDataBus));
+                if (machine.zxprinter) data = ZXPrinterReadPort(idleDataBus);
 
         case 0xff:
-                if (machine.aytype==AY_TYPE_BOLDFIELD) return (BYTE)(Sound.AYRead(SelectAYReg));
+                if (machine.aytype==AY_TYPE_BOLDFIELD) data = (BYTE)(Sound.AYRead(SelectAYReg));
 
         default:
                 break;
         }
 
-        return(idleDataBus);
+        return(data);
 }
 
 int ace_contend(int Address, int tstates, int time)

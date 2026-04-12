@@ -568,5 +568,5 @@ default:		/* Instruction did not involve H or L, so backtrack
 PC--;			/* FIXME: will be contended again */
 tstates-=4;             /* Also, recover tstates */ 
 R--;			/* Decrement the R register as well */
-interruptLatchEnable=0; /* Delay interrupt sampling */
+withinPrefixedInstruction=1; /* Delay interrupt sampling */
 break;

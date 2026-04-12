@@ -1690,6 +1690,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 bool instructionOverlapsHSync = (lineClockCounterAfterInstruction < ZX81HSyncPositionStart);
                 bool startOfHSyncPulse = (lineClockCounter >= ZX81HSyncPositionStart) && instructionOverlapsHSync;
+                if (nmiGeneratorEnabled && startOfHSyncPulse)
+                        z80_nmi();
                 if (syncOutputWhite && startOfHSyncPulse)
                 {
                         lineCounter = (++lineCounter) & 7;
@@ -1805,6 +1807,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         bool outOperationActive = outFF && (i >= (pixels - PortActiveDurationPixels));
                         bool interruptResponseActive = (i >= (pixels - interruptResponsePixels));
                         InterruptResponseType interruptResponse = interruptResponseActive ? MaskableInterrupt : NoInterrupt;
+                        if (z80.pc.w == 0x0066)
+                                interruptResponse = NonMaskableInterrupt;
 
                         int clockIndex = i/2;
                         bool firstUserProgramInstructionClock = nmiGeneratorEnabled && (clockIndex == 0);
@@ -1963,8 +1967,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 if (nmiGeneratorEnabled && (OtherInstructionOverlapsHSync || nmiOnInstructionOverlapsHSync))
                 {
-                        z80_nmi();
-
                         if (memotechResetRequested)
                         {
                                 MemotechMode=0;

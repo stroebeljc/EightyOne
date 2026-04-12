@@ -53,7 +53,8 @@ extern int StackChange;
 static int mCycles[maxMCycles];
 static int mCycleIndex ;
 static int inputOutputMCycle;
-int interruptLatchEnable;
+int withinPrefixedInstruction=0;
+int interruptLatchEnable=1;
 int numberOfM1Cycles;
 int nmiLatched;
 int interruptLine;
@@ -98,11 +99,6 @@ int z80_refreshAddr(void)
         return refreshAddr;
 }
 
-void SetSP(int i)
-{
-        //spBase = i;
-}
-
 /* Execute Z80 opcodes until the next event */
 int z80_do_opcode()
 {
@@ -116,18 +112,22 @@ int z80_do_opcode()
 
     refreshAddr = (z80.i<<8) | (z80.r7 & 0x80) | (z80.r & 0x7F);
 
-    tstates+=z80_nmi_internal();
-
-    if (tstates==0 && !interruptLine)
-        tstates+=z80_interrupt_internal();
-
-    if (tstates)
+    if (!withinPrefixedInstruction)
     {
-        z80.tstates = tstates;
-        return tstates;
+        tstates+=z80_nmi_internal();
+
+        if (tstates==0 && !interruptLine)
+            tstates+=z80_interrupt_internal();
+
+        if (tstates)
+        {
+            z80.tstates = tstates;
+            return tstates;
+        }
     }
 
-    interruptLatchEnable = 1;
+    withinPrefixedInstruction = 0;
+    interruptLatchEnable=1;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */
@@ -392,7 +392,6 @@ int z80_do_opcode()
       InsertMCycle(3);
       contend( PC, 3 );
       SPH=opcode_fetch(PC++);
-      SetSP(SP);
       StackChange=0;
       break;
     case 0x32:		/* LD (nnnn),A */
@@ -412,7 +411,6 @@ int z80_do_opcode()
       tstates += 2;
       AddToMCycle(2);
       SP++;
-      SetSP(SP);
       StackChange--;
       break;
     case 0x34:		/* INC (HL) */
@@ -474,7 +472,6 @@ int z80_do_opcode()
       tstates += 2;
       AddToMCycle(2);
       SP--;
-      SetSP(SP);
       StackChange++;
       break;
     case 0x3c:		/* INC A */
@@ -1317,7 +1314,6 @@ int z80_do_opcode()
       tstates += 2;
       AddToMCycle(2);
       SP=HL;
-      SetSP(HL);
       StackChange=0;
       break;
     case 0xfa:		/* JP M,nnnn */

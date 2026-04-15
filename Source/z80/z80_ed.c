@@ -344,7 +344,7 @@ break;
 case 0xa2:	/* INI */
 {
   BYTE initemp=readport(BC,&tstates);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -363,7 +363,7 @@ break;
 case 0xa3:	/* OUTI */
 {
   WORD outitemp=readbyte(HL);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   InsertMCycle(4);
@@ -416,7 +416,7 @@ break;
 case 0xaa:	/* IND */
 {
   WORD initemp=readport(BC,&tstates);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -435,7 +435,7 @@ break;
 case 0xab:	/* OUTD */
 {
   WORD outitemp=readbyte(HL);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   InsertMCycle(4);
@@ -503,7 +503,7 @@ break;
 case 0xb2:	/* INIR */
 {
   WORD initemp=readport(BC,&tstates);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -529,7 +529,7 @@ break;
 case 0xb3:	/* OTIR */
 {
   WORD outitemp=readbyte(HL);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   tstates++; contend( HL, 4 );
@@ -607,7 +607,7 @@ break;
 case 0xba:	/* INDR */
 {
   WORD initemp=readport(BC,&tstates);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -633,7 +633,7 @@ break;
 case 0xbb:	/* OTDR */
 {
   WORD outitemp=readbyte(HL);
-  WORD flagtemp;
+  int flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   tstates++; contend( HL, 4 );

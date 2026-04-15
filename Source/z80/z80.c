@@ -102,7 +102,7 @@ static void z80_init_tables(void)
 void z80_reset( void )
 {
         AF =BC =DE =HL =0;
-        AF_=BC_=DE_=HL_=0;
+        AF_=BC_=DE_=HL_=WZ_=0;
         IX=IY=0;
         I=R=R7=0;
         SP=PC=0;
@@ -151,23 +151,25 @@ int z80_interrupt_internal(void)
                         case 0:
                         {
                                 // Assume a RST 38h placed on the data bus
-                                PC = 0x0038;
+                                PC = WZ_ = 0x0038;
                                 StackChange += 2;
                                 return 13;
                         }
                         case 1:
                         {
-                                PC = 0x0038;
+                                PC = WZ_ = 0x0038;
                                 StackChange += 2;
                                 return 13;
                         }
                         case 2:
 	                {
-	                        WORD vectorAddress = (WORD)((I << 8) + databus);
+	                        W_= I;
+                                Z_=(BYTE)databus;
                                 InsertMCycle(3);
-        	                PCL = readbyte(vectorAddress++);
+        	                PCL = readbyte(WZ_++);
                                 InsertMCycle(3);
-                                PCH = readbyte(vectorAddress);
+                                PCH = readbyte(WZ_);
+                                WZ_=PC;
 	                        StackChange += 2;
                                 return 19;
         	        }
@@ -208,7 +210,7 @@ int z80_nmi_internal(void)
         InsertMCycle(3);
         writebyte(--SP, PCL);
 
-        PC = 0x0066;
+        PC=WZ_=0x0066;
 
         return 11;
     }

@@ -366,6 +366,7 @@ case 0x46:	/* BIT 0,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(0,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -403,6 +404,7 @@ case 0x4e:	/* BIT 1,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(1,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -440,6 +442,7 @@ case 0x56:	/* BIT 2,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(2,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -477,6 +480,7 @@ case 0x5e:	/* BIT 3,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(3,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -514,6 +518,7 @@ case 0x66:	/* BIT 4,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(4,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -551,6 +556,7 @@ case 0x6e:	/* BIT 5,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(5,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -588,6 +594,7 @@ case 0x76:	/* BIT 6,(HL) */
   InsertMCycle(4);
   contend( HL, 4 );
   BIT(6,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -596,27 +603,27 @@ BIT(6,A);
 break;
 
 case 0x78:	/* BIT 7,B */
-BIT7(B);
+BIT(7,B);
 break;
 
 case 0x79:	/* BIT 7,C */
-BIT7(C);
+BIT(7,C);
 break;
 
 case 0x7a:	/* BIT 7,D */
-BIT7(D);
+BIT(7,D);
 break;
 
 case 0x7b:	/* BIT 7,E */
-BIT7(E);
+BIT(7,E);
 break;
 
 case 0x7c:	/* BIT 7,H */
-BIT7(H);
+BIT(7,H);
 break;
 
 case 0x7d:	/* BIT 7,L */
-BIT7(L);
+BIT(7,L);
 break;
 
 case 0x7e:	/* BIT 7,(HL) */
@@ -624,12 +631,13 @@ case 0x7e:	/* BIT 7,(HL) */
   BYTE bytetemp = readbyte(HL);
   InsertMCycle(4);
   contend( HL, 4 );
-  BIT7(bytetemp);
+  BIT(7,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
 case 0x7f:	/* BIT 7,A */
-BIT7(A);
+BIT(7,A);
 break;
 
 case 0x80:	/* RES 0,B */

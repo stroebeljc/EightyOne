@@ -343,7 +343,8 @@ break;
 
 case 0xa2:	/* INI */
 {
-  WORD initemp=readport(BC,&tstates);
+  BYTE initemp=readport(BC,&tstates);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -352,14 +353,17 @@ case 0xa2:	/* INI */
   writebyte(HL,initemp);
   WZ_=(WORD)(BC+1);
   B--; HL++;
-  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=initemp+((C+1)&0xFF);
+  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
 }
 break;
 
 case 0xa3:	/* OUTI */
 {
   WORD outitemp=readbyte(HL);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   InsertMCycle(4);
@@ -368,8 +372,10 @@ case 0xa3:	/* OUTI */
   B--; WZ_=(WORD)(BC+1);
   writeport(BC,outitemp,&tstates);
   HL++;
-  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=outitemp+L;
+  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
 }
 break;
 
@@ -410,6 +416,7 @@ break;
 case 0xaa:	/* IND */
 {
   WORD initemp=readport(BC,&tstates);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -418,14 +425,17 @@ case 0xaa:	/* IND */
   writebyte(HL,initemp);
   WZ_=(WORD)(BC-1);
   B--; HL--;
-  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=initemp+((C-1)&0xFF);
+  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
 }
 break;
 
 case 0xab:	/* OUTD */
 {
   WORD outitemp=readbyte(HL);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   InsertMCycle(4);
@@ -434,9 +444,11 @@ case 0xab:	/* OUTD */
   B--;
   writeport(BC,outitemp,&tstates);
   HL--;
-  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
+  flagtemp=outitemp+L;
+  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
   WZ_=(WORD)(BC-1);
-  /* C,H and P/V flags not implemented */
 }
 break;
 
@@ -491,6 +503,7 @@ break;
 case 0xb2:	/* INIR */
 {
   WORD initemp=readport(BC,&tstates);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -500,8 +513,10 @@ case 0xb2:	/* INIR */
   WZ_=(WORD)(BC+1);
   B--; HL++;
   if (B) WZ_=(WORD)(PC-1);
-  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=initemp+((C+1)&0xFF);
+  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
   if(B) {
     AddToMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
@@ -514,6 +529,7 @@ break;
 case 0xb3:	/* OTIR */
 {
   WORD outitemp=readbyte(HL);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   tstates++; contend( HL, 4 );
@@ -522,8 +538,10 @@ case 0xb3:	/* OTIR */
   else WZ_=(WORD)(BC+1);
   writeport(BC,outitemp,&tstates);
   HL++;
-  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=outitemp+L;
+  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   if(B) {
@@ -544,7 +562,7 @@ case 0xb8:	/* LDDR */
   InsertMCycle(3);
   InsertMCycle(5);
   contend( HL, 3 ); contend( DE, 3 ); contend( DE, 1 ); contend( DE, 1 );
-  if(BC!=1) WZ_=PC;
+  //if(BC!=1) WZ_=PC;
   writebyte(DE,bytetemp);
   HL--; DE--; BC--;
   bytetemp += A;
@@ -590,6 +608,7 @@ break;
 case 0xba:	/* INDR */
 {
   WORD initemp=readport(BC,&tstates);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
@@ -599,8 +618,10 @@ case 0xba:	/* INDR */
   WZ_=(WORD)(BC-1);
   B--; HL--;
   if (B) WZ_=(WORD)(PC-1);
-  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=initemp+((C-1)&0xFF);
+  F = (BYTE)((initemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
   if(B) {
     AddToMCycle(5);
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
@@ -613,6 +634,7 @@ break;
 case 0xbb:	/* OTDR */
 {
   WORD outitemp=readbyte(HL);
+  WORD flagtemp;
   AddToMCycle(1);
   InsertMCycle(3);
   tstates++; contend( HL, 4 );
@@ -621,8 +643,10 @@ case 0xbb:	/* OTDR */
   else WZ_=(WORD)(BC-1);
   writeport(BC,outitemp,&tstates);
   HL--;
-  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B]);
-  /* C,H and P/V flags not implemented */
+  flagtemp=outitemp+L;
+  F = (BYTE)((outitemp & 0x80 ? FLAG_N : 0 ) | sz53_table[B] |
+        (flagtemp>0xFF ? (FLAG_H | FLAG_C) : 0) |
+        parity_table[(flagtemp&7)^B]);
   InsertMCycle(4);
   inputOutputMCycle = mCycleIndex;
   if(B) {

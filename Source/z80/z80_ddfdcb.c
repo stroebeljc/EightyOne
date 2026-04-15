@@ -631,6 +631,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(0,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -647,6 +648,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(1,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -663,6 +665,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(2,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -679,6 +682,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(3,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -695,6 +699,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(4,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -711,6 +716,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(5,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -727,6 +733,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(6,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 
@@ -743,6 +750,7 @@ InsertMCycle(4);
 {
   BYTE bytetemp=readbyte(WZ_);
   BIT(7,bytetemp);
+  MEMPTR_FLAGS();
 }
 break;
 

@@ -469,6 +469,7 @@ case 0xb0:	/* LDIR */
     contend( DE, 1 );
     WZ_=(WORD)(PC-1);
     PC-=(WORD)2;
+    withinLoop=1;
   }
 }
 break;
@@ -496,6 +497,7 @@ case 0xb1:	/* CPIR */
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=(WORD)2;
+    withinLoop=1;
   }
 }
 break;
@@ -522,6 +524,7 @@ case 0xb2:	/* INIR */
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=(WORD)2;
+    inoutLoop=withinLoop=1;
   }
 }
 break;
@@ -550,6 +553,7 @@ case 0xb3:	/* OTIR */
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
     PC-=(WORD)2;
+    inoutLoop=withinLoop=1;
   } else {
     contend_io( BC, 3 );
   }
@@ -573,6 +577,7 @@ case 0xb8:	/* LDDR */
     contend( DE, 1 );
     WZ_=(WORD)(PC-1);
     PC-=(WORD)2;
+    withinLoop=1;
   }
 }
 break;
@@ -600,6 +605,7 @@ case 0xb9:	/* CPDR */
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=(WORD)2;
+    withinLoop=1;
   }
 }
 break;
@@ -626,6 +632,7 @@ case 0xba:	/* INDR */
     contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 ); contend( HL, 1 );
     contend( HL, 1 );
     PC-=(WORD)2;
+    inoutLoop=withinLoop=1;
   }
 }
 break;
@@ -654,6 +661,7 @@ case 0xbb:	/* OTDR */
     contend( PC, 1 ); contend( PC, 1 ); contend( PC  , 1 ); contend( PC, 1 );
     contend( PC, 1 ); contend( PC, 1 ); contend( PC-1, 1 );
     PC-=(WORD)2;
+    inoutLoop=withinLoop=1;
   } else {
     contend_io( BC, 3 );
   }

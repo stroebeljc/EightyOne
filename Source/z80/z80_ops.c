@@ -55,6 +55,8 @@ static int mCycleIndex ;
 static int inputOutputMCycle;
 int withinPrefixedInstruction=0;
 int interruptLatchEnable=1;
+int withinLoop=0;
+int inoutLoop=0;
 int numberOfM1Cycles;
 int nmiLatched;
 int interruptLine;
@@ -128,6 +130,7 @@ int z80_do_opcode()
 
     withinPrefixedInstruction = 0;
     interruptLatchEnable=1;
+    inoutLoop=withinLoop=0;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */

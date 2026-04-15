@@ -562,7 +562,6 @@ case 0xb8:	/* LDDR */
   InsertMCycle(3);
   InsertMCycle(5);
   contend( HL, 3 ); contend( DE, 3 ); contend( DE, 1 ); contend( DE, 1 );
-  //if(BC!=1) WZ_=PC;
   writebyte(DE,bytetemp);
   HL--; DE--; BC--;
   bytetemp += A;

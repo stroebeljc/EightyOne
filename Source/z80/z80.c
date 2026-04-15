@@ -55,6 +55,8 @@ extern int interruptLatchEnable;
 extern int interruptLine;
 extern int databus;
 extern int refreshAddr;
+extern int withinLoop;
+extern int inoutLoop;
 
 extern int StackChange;
 extern int StepOutRequested;
@@ -125,6 +127,31 @@ void z80_databus(int bus)
         databus = bus;
 }
 
+void z80_ioLoopFlags(void)
+{
+        WZ_=PC;
+        if (withinLoop) MEMPTR_FLAGS();
+        if (inoutLoop)
+        {
+                if (F & FLAG_C) {
+                        if (F & FLAG_N) {
+                                if ((F & FLAG_P) ^ parity_table[(B - 1) & 0x7] ^ FLAG_P) F |= FLAG_P;
+                                else F &= ~FLAG_P;
+                                if ((B & 0x0F) == 0x00) F |= FLAG_H;
+                                else F &= ~FLAG_H;
+                        } else {
+                                if ((F & FLAG_P) ^ parity_table[(B + 1) & 0x7] ^ FLAG_P) F |= FLAG_P;
+                                else F &= ~FLAG_P;
+                                if ((B & 0x0F) == 0x0F) F |= FLAG_H;
+                                else F &= ~FLAG_H;
+                        }
+                } else {
+                        if ((F & FLAG_P) ^ parity_table[B & 0x7] ^ FLAG_P) F |= FLAG_P;
+                        else F &= ~FLAG_P;
+                }
+        }
+}
+
 /* Process a z80 maskable interrupt */
 int z80_interrupt_internal(void)
 {
@@ -145,6 +172,8 @@ int z80_interrupt_internal(void)
                 writebyte(--SP, PCH);
                 InsertMCycle(3);
                 writebyte(--SP, PCL);
+
+                z80_ioLoopFlags();
 
                 switch (IM)
                 {
@@ -209,6 +238,8 @@ int z80_nmi_internal(void)
         writebyte(--SP, PCH);
         InsertMCycle(3);
         writebyte(--SP, PCL);
+
+        z80_ioLoopFlags();
 
         PC=WZ_=0x0066;
 

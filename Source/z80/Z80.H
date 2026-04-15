@@ -50,7 +50,7 @@ typedef union {
 /* What's stored in the main processor */
 typedef struct {
   regpair af,bc,de,hl;
-  regpair af_,bc_,de_,hl_;
+  regpair af_,bc_,de_,hl_,wz_;
   regpair ix,iy;
   BYTE i;
   WORD r;		/* The low seven bits of the R register. 16 bits long

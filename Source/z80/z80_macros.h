@@ -60,6 +60,10 @@
 #define L_  z80.hl_.b.l
 #define HL_ z80.hl_.w
 
+#define W_  z80.wz_.b.h
+#define Z_  z80.wz_.b.l
+#define WZ_ z80.wz_.w
+
 #define IXH z80.ix.b.h
 #define IXL z80.ix.b.l
 #define IX  z80.ix.w
@@ -165,26 +169,24 @@
 
 #define BIT(bit,value)\
 {\
-  F = (BYTE)(( F & FLAG_C ) | ( (value) & ( FLAG_3 | FLAG_5 ) ) |\
-    ( ( (value) & ( 0x01 << bit ) ) ? FLAG_H : ( FLAG_P | FLAG_H | FLAG_Z ) ));\
+  F = (BYTE)(( F & FLAG_C ) | FLAG_H |\
+    ( (value) & ( FLAG_3 | FLAG_5) ) |\
+    ( ( (value) & ( 0x01 << bit ) ) ?\
+        (bit==7 ? FLAG_S : 0)\
+       : ( FLAG_P | FLAG_Z ) ));\
 }
 
-#define BIT7(value)\
+#define CALL(jump)\
 {\
-  F = (BYTE)(( F & FLAG_C ) | ( (value) & ( FLAG_3 | FLAG_5 ) ) |\
-    ( ( (value) & 0x80 ) ? ( FLAG_H | FLAG_S ) :\
-      ( FLAG_P | FLAG_H | FLAG_Z ) ));\
-}
-
-#define CALL()\
-{\
-  BYTE calltempl, calltemph;\
-  calltempl=readoperandbyte(PC++);\
+  Z_=readoperandbyte(PC++);\
   AddToMCycle(1);\
   contend( PC, 1 );\
-  calltemph=readoperandbyte(PC++);\
-  PUSH16(PCL,PCH);\
-  PCL=calltempl; PCH=calltemph;\
+  W_=readoperandbyte(PC++);\
+  if (jump)\
+  {\
+    PUSH16(PCL,PCH);\
+    PC=WZ_;\
+  }\
 }
 
 #define CP(value)\
@@ -234,51 +236,51 @@ break
 
 #define LD16_NNRR(regl,regh)\
 {\
-  WORD ldtemp;\
   InsertMCycle(3);\
   contend( PC, 3 );\
-  ldtemp=readoperandbyte(PC++);\
+  Z_=readoperandbyte(PC++);\
   InsertMCycle(3);\
   contend( PC, 3 );\
-  ldtemp|=(WORD)(readoperandbyte(PC++) << 8);\
+  W_=readoperandbyte(PC++);\
   InsertMCycle(3);\
-  contend( ldtemp, 3 );\
-  writebyte(ldtemp++,(regl));\
+  contend( WZ_, 3 );\
+  writebyte(WZ_++,(regl));\
   InsertMCycle(3);\
-  contend( ldtemp, 3 );\
-  writebyte(ldtemp,(regh));\
+  contend( WZ_, 3 );\
+  writebyte(WZ_,(regh));\
 }
 
 #define LD16_RRNN(regl,regh)\
 {\
-  WORD ldtemp;\
   InsertMCycle(3);\
   contend( PC, 3 );\
-  ldtemp=readoperandbyte(PC++);\
+  Z_=readoperandbyte(PC++);\
   InsertMCycle(3);\
   contend( PC, 3 );\
-  ldtemp|=(WORD)(readoperandbyte(PC++) << 8);\
+  W_=readoperandbyte(PC++);\
   InsertMCycle(3);\
-  contend( ldtemp, 3 );\
-  (regl)=readbyte(ldtemp++);\
+  contend( WZ_, 3 );\
+  (regl)=readbyte(WZ_++);\
   InsertMCycle(3);\
-  contend( ldtemp, 3 );\
-  (regh)=readbyte(ldtemp);\
+  contend( WZ_, 3 );\
+  (regh)=readbyte(WZ_);\
 }
 
-#define JP()\
+#define JP(jump)\
 {\
-  WORD jptemp=PC;\
-  PCL=readoperandbyte(jptemp++);\
-  PCH=readoperandbyte(jptemp);\
+  Z_=readoperandbyte(PC++);\
+  W_=readoperandbyte(PC++);\
+  if (jump) PC=WZ_;\
 }
 
 #define JR()\
 {\
+  SBYTE offset=(SBYTE)readoperandbyte(PC);\
   AddToMCycle(5);\
   contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 ); contend( PC, 1 );\
   contend( PC, 1 );\
-  PC+=(SBYTE)readoperandbyte(PC);\
+  WZ_=(WORD)(PC+1+offset);\
+  PC+=offset;\
 }
 
 #define OR(value)\
@@ -326,6 +328,7 @@ break
   InsertMCycle(3);\
   contend( SP, 3 );\
   (PCH)=readbyte(SP++);\
+  WZ_=PC;\
   StackChange -= 2;\
   RetExecuted = 1;\
 }
@@ -361,6 +364,7 @@ break
 {\
   PUSH16(PCL,PCH);\
   PC=(value);\
+  WZ_=PC;\
 }
 
 #define SBC(value)\
@@ -433,6 +437,14 @@ break
 {\
   A ^= (value);\
   F = sz53p_table[A];\
+}
+
+#define MEMPTR_FLAGS()\
+{\
+  if (W_&0x20) F |= FLAG_5;\
+  else  F &= ~FLAG_5;\
+  if (W_&0x08) F |= FLAG_3;\
+  else  F &= ~FLAG_3;\
 }
 
 #endif		/* #ifndef FUSE_Z80_MACROS_H */

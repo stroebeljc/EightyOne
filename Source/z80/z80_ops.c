@@ -43,6 +43,7 @@ static void z80_ddfdcbxx(BYTE opcode3, WORD tempaddr);
 
 extern int z80_interrupt_internal(void);
 extern int z80_nmi_internal(void);
+extern void z80_loopFlags(int inoutLoop);
 
 unsigned short RZXCounter=0;
 
@@ -55,8 +56,6 @@ static int mCycleIndex ;
 static int inputOutputMCycle;
 int withinPrefixedInstruction=0;
 int interruptLatchEnable=1;
-int withinLoop=0;
-int inoutLoop=0;
 int numberOfM1Cycles;
 int nmiLatched;
 int interruptLine;
@@ -130,7 +129,6 @@ int z80_do_opcode()
 
     withinPrefixedInstruction = 0;
     interruptLatchEnable=1;
-    inoutLoop=withinLoop=0;
 
     /* Do the instruction fetch; opcode_fetch used here to avoid
        triggering read breakpoints */
@@ -456,7 +454,7 @@ int z80_do_opcode()
       writebyte(HL,opcode_fetch(PC++));
       break;
     case 0x37:		/* SCF */
-      F &= ~( FLAG_N | FLAG_H );
+      F &= ~( FLAG_N | FLAG_H | FLAG_3 | FLAG_5 );
       F |= (BYTE)(( A & ( FLAG_3 | FLAG_5 ) ) | FLAG_C);
       break;
     case 0x38:		/* JR C,offset */

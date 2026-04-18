@@ -329,6 +329,8 @@ private:	// User declarations
         void AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;
         bool LShift, RShift;
+        HANDLE mWorkerThread;
+        HANDLE mRunFrameEvent;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
         Graphics::TBitmap *LEDRedOn;
@@ -340,6 +342,8 @@ private:	// User declarations
         void __fastcall SelectJoystick1Click(TObject *Sender);
         void __fastcall SelectJoystick2Click(TObject *Sender);
         void UpdateJoystickMenuOptions();
+        static DWORD WINAPI HandleRunFrameThreadProc(LPVOID param);
+        void HandleRunFrame(void);
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);

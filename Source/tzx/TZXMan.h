@@ -131,7 +131,16 @@ __published:	// IDE-managed Components
         void __fastcall GroupEnd1Click(TObject *Sender);
 private:	// User declarations
         int Mx, My;
+        bool mWorkerRunning;
         void UpdateScrollBar(void);
+        static DWORD WINAPI HandleSaveThreadProc(LPVOID param);
+        void HandleSave(void);
+        static DWORD WINAPI HandleOpenThreadProc(LPVOID param);
+        void HandleOpen(void);
+        static DWORD WINAPI HandleConvertBlocktoWaveThreadProc(LPVOID param);
+        void HandleConvertBlocktoWave(void);
+        static DWORD WINAPI HandleConvertTapetoWaveThreadProc(LPVOID param);
+        void HandleConvertTapetoWave(void);
 public:		// User declarations
         __fastcall TTZX(TComponent* Owner);
         void LoadSettings(TIniFile *ini);

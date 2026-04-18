@@ -134,6 +134,10 @@ void __fastcall TForm1::WndProc(TMessage &Message)
                 PCAllKeysUp();
                 break;
 
+        case WM_PAINT:
+                AccPaint();
+                break;
+
         default:
                 break;
         }
@@ -149,6 +153,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         int i;
 
         RunFrameEnable=false;
+        mWorkerThread=NULL;
 
         strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (emulator.cwd[strlen(emulator.cwd)-1]!='\\')
@@ -210,6 +215,11 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         TIniFile *ini;
 
         RunFrameEnable=false;
+
+	mRunFrameEvent = CreateEvent(NULL, FALSE, FALSE, "Run_Frame");
+        mWorkerThread = CreateThread(NULL, 0, HandleRunFrameThreadProc, this, 0, NULL);
+
+        ResumeThread(mWorkerThread);    // Start/Resume the Frame Thread
 
         Application->OnMessage = AppMessage;
 
@@ -740,6 +750,9 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         emulation_stop=true;
         RunFrameEnable=false;
+
+        if (mWorkerThread) TerminateThread(mWorkerThread,0);
+        mWorkerThread=NULL;
 
         PCAllKeysUp();
 
@@ -2370,9 +2383,30 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::RunFrame()
 {
-        static int j, borrow, Drive;
+        SetEvent(mRunFrameEvent);
+}
+
+DWORD WINAPI TForm1::HandleRunFrameThreadProc(LPVOID param)
+{
+        TForm1* self = static_cast<TForm1*>(param);
+
+        if(!self) return -1;
+
+        self->HandleRunFrame();
+        return 0;
+}
+
+void TForm1::HandleRunFrame(void)
+{
+        int j;
+        static int borrow, Drive;
         unsigned short rshift = VK_RSHIFT;
         unsigned short lshift = VK_LSHIFT;
+
+        while(1)
+        {
+                WaitForSingleObject(mRunFrameEvent,INFINITE);
+                ResetEvent(mRunFrameEvent);
 
         if (emulator.UseRShift)
         {
@@ -2400,7 +2434,7 @@ void __fastcall TForm1::RunFrame()
         if (emulation_stop)
         {
                 AccurateUpdateDisplay(false);
-                return;
+                continue;
         }
         if (AutoLoadCount) DoAutoLoad();
 
@@ -2448,6 +2482,7 @@ void __fastcall TForm1::RunFrame()
         if (romcartridge.type == ROMCARTRIDGEZXC1)
         {
                 RomCartridgeZXC1TimerTick();
+        }
         }
 }
 

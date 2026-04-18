@@ -75,7 +75,6 @@ __published:	// IDE-managed Components
           int X, int Y);
         void __fastcall OKBtnClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
-        void __fastcall SaveBtnClick(TObject *Sender);
         void __fastcall NewClick(TObject *Sender);
         void __fastcall VolumeChange(TObject *Sender);
         void __fastcall BiasChange(TObject *Sender);
@@ -102,12 +101,19 @@ private:	// User declarations
         int CurrentTStates, ScreenCounter;
         AnsiString StatusText;
         int Channel;
+        bool mWorkerRunning;
         AnsiString FileName;
         AnsiString RemoveExt(AnsiString Fname);
         int GetPulse(int *HighLen, int *LowLen, bool start);
         int GetBit(bool *bit, bool started);
         int GetByte(bool start);
         void EncodeBit(bool bit);
+        static DWORD WINAPI HandleLoadThreadProc(LPVOID param);
+        void HandleLoad(void);
+        static DWORD WINAPI HandleSaveWavThreadProc(LPVOID param);
+        void HandleSaveWav(void);
+        static DWORD WINAPI HandleOpenWavThreadProc(LPVOID param);
+        void HandleOpenWav(void);
 
         int ImgX, ImgY, ImgW, ImgH;
         float ImgScale;

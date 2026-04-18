@@ -2383,6 +2383,8 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::RunFrame()
 {
+        Sound.Frame(emulation_stop || emulator.single_step);
+
         SetEvent(mRunFrameEvent);
 }
 
@@ -2428,8 +2430,6 @@ void TForm1::HandleRunFrame(void)
                         else FormKeyUp(NULL, lshift,z);
                 }
         }
-
-        Sound.Frame(emulation_stop || emulator.single_step);
 
         if (emulation_stop)
         {

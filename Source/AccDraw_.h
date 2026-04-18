@@ -21,6 +21,8 @@
 #ifndef AccDraw_H
 #define AccDraw_H
 
+extern int AccDrawInit(void);
+extern void AccDrawClose(void);
 extern void AccurateInit(int resize);
 extern void AccurateUpdateDisplay(bool singlestep);
 extern void RecalcPalette(void);

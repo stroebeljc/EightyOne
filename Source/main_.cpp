@@ -215,6 +215,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         TIniFile *ini;
 
         RunFrameEnable=false;
+        AccDrawInit();
 
 	mRunFrameEvent = CreateEvent(NULL, FALSE, FALSE, "Run_Frame");
         mWorkerThread = CreateThread(NULL, 0, HandleRunFrameThreadProc, this, 0, NULL);
@@ -759,6 +760,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         Sound.End();
 
         RenderEnd();
+        AccDrawClose();
 
         if ((dir = opendir(emulator.temppath)) != NULL)
         {

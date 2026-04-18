@@ -99,6 +99,7 @@ LPDIRECTDRAWCLIPPER pcClipper=NULL;
 HWND hWnd;
 LPDIRECTDRAWSURFACE7 DDFrame;
 DDSURFACEDESC2 DDFrameSurface;
+CRITICAL_SECTION CriticalSection;
 
 Graphics::TBitmap *GDIFrame;
 
@@ -676,6 +677,7 @@ int AccurateDraw(SCANLINE *Line)
 
         if (!dest) return(0);
 
+        EnterCriticalSection(&CriticalSection);
         for(i=0; i<Line->scanline_len; i++)
         {
                 c=Line->scanline[i];
@@ -755,6 +757,7 @@ int AccurateDraw(SCANLINE *Line)
                 for(i=0;i<8;i++) *(DWORD *)(dest+RasterX+i*BPP) = Colours[15];
                 AccurateUpdateDisplay(true);
         }
+        LeaveCriticalSection(&CriticalSection);
         return(0);
 }
 
@@ -912,11 +915,23 @@ void RecalcPalette(void)
         }
 }
 
+int AccDrawInit(void)
+{
+        return InitializeCriticalSectionAndSpinCount(&CriticalSection, 0x00000400);
+}
+
+void AccDrawClose(void)
+{
+        DeleteCriticalSection(&CriticalSection);
+}
+
 void AccurateInit(int resize)
 {
+        EnterCriticalSection(&CriticalSection);
         dest=buffer=NULL;
         if (Form1->RenderMode==RENDERDDRAW) DDAccurateInit(resize);
         else GDIAccurateInit(resize);
+        LeaveCriticalSection(&CriticalSection);
 }
 
 void AccurateUpdateDisplay(bool singlestep)
@@ -927,8 +942,10 @@ void AccurateUpdateDisplay(bool singlestep)
 
 void AccPaint()
 {
+        EnterCriticalSection(&CriticalSection);
         if (Form1->RenderMode==RENDERDDRAW) DDAccuratePaint();
         else GDIAccuratePaint();
+        LeaveCriticalSection(&CriticalSection);
 }
 
 static void GetPixelColour(int x, int y, unsigned char *r, unsigned char *g, unsigned char *b)

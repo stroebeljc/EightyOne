@@ -402,23 +402,13 @@ void DDAccurateInit(int resize)
 void DDAccurateUpdateDisplay(bool singlestep)
 {
         static int framecounter=0;
-        RECT rDest;
-        
+
         if (++framecounter > emulator.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
 
-        POINT p = {0, 0};
-        if(!Form1->FullScreen) p=Form1->ClientToScreen(p);
-
-        rDest=rcdest;
-        rDest.left += p.x;
-        rDest.top += p.y;
-        rDest.right += p.x;
-        rDest.bottom += p.y;
-
-        InvalidateRect(Form1->Handle, &rDest, FALSE);
+        Form1->Invalidate();
 
         dest=buffer= (BYTE*)DDFrameSurface.lpSurface;
 }
@@ -608,22 +598,14 @@ void GDIAccurateInit(int resize)
 
 void GDIAccurateUpdateDisplay(bool singlestep)
 {
-        RECT rect;
         static int framecounter=0;
-        
+
         if (++framecounter > emulator.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
 
-        rect.left = rcdest.Left;
-        rect.top = rcdest.Top;
-        rect.right = (rcdest.Right-rcdest.Left);
-        rect.bottom = (rcdest.Bottom-rcdest.Top);
-
-        InvalidateRect(Form1->Handle, &rect, FALSE);
-// Commented out the error dialog to prevent error displayed after bring PC out of hibernation
-//      if (!ret) ShowMessage(SysErrorMessage(GetLastError()));
+        Form1->Invalidate();
 
         dest=buffer= (unsigned char *) GDIFrame->ScanLine[0];
 }

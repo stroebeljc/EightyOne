@@ -750,12 +750,12 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         emulation_stop=true;
         RunFrameEnable=false;
 
-        if (mWorkerThread) TerminateThread(mWorkerThread,0);
-        mWorkerThread=NULL;
-
         PCAllKeysUp();
 
         Sound.End();
+
+        if (mWorkerThread) TerminateThread(mWorkerThread,0);
+        mWorkerThread=NULL;
 
         RenderEnd();
         AccDrawClose();

@@ -115,7 +115,7 @@ void TWavLoad::UpdateImage()
 }
 //---------------------------------------------------------------------------
 __fastcall TWavLoad::TWavLoad(TComponent* Owner)
-        : TForm(Owner), mWorkerRunning(false)
+        : TForm(Owner)
 {
         TIniFile *ini;
 
@@ -182,22 +182,6 @@ void TWavLoad::LoadFile(AnsiString FName)
 }
             
 void __fastcall TWavLoad::LoadClick(TObject *Sender)
-{
-        CreateThread(NULL, 0, HandleLoadThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TWavLoad::HandleLoadThreadProc(LPVOID param)
-{
-        TWavLoad* self = static_cast<TWavLoad*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleLoad();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TWavLoad::HandleLoad(void)
 {
         if (LoadWavDialog->Execute()) LoadFile(LoadWavDialog->FileName);
         RecordBtn->Enabled=Wav.CanRecord();
@@ -411,6 +395,22 @@ void TWavLoad::SaveSettings(TIniFile *ini)
         ini->WriteString("WAVLOAD","Filename",LoadWavDialog->FileName);
         ini->WriteString("WAVLOAD","Dir",LoadWavDialog->InitialDir);
 }
+
+void __fastcall TWavLoad::SaveBtnClick(TObject *Sender)
+{
+        AnsiString Filter = "Windows WAV Files|*.wav";
+
+        if (FileName != "") SaveWavDialog->FileName = RemoveExt(FileName);
+        else SaveWavDialog->FileName = RemoveExt(SaveWavDialog->FileName);
+
+        SaveWavDialog->Filter = Filter;
+        SaveWavDialog->DefaultExt = "wav";
+        SaveWavDialog->FilterIndex=1;
+
+        if (!SaveWavDialog->Execute()) return;
+
+        Wav.SaveFile(SaveWavDialog->FileName);
+}
 //---------------------------------------------------------------------------
 AnsiString TWavLoad::RemoveExt(AnsiString Fname)
 {
@@ -593,22 +593,6 @@ void __fastcall TWavLoad::BiasChange(TObject *Sender)
 
 void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
 {
-        CreateThread(NULL, 0, HandleSaveWavThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TWavLoad::HandleSaveWavThreadProc(LPVOID param)
-{
-        TWavLoad* self = static_cast<TWavLoad*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleSaveWav();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TWavLoad::HandleSaveWav(void)
-{
         AnsiString Filter = "Windows WAV Files|*.wav";
 
         if (FileName != "") SaveWavDialog->FileName = RemoveExt(FileName);
@@ -625,22 +609,6 @@ void TWavLoad::HandleSaveWav(void)
 //---------------------------------------------------------------------------
 
 void __fastcall TWavLoad::OpenWav1Click(TObject *Sender)
-{
-        CreateThread(NULL, 0, HandleOpenWavThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TWavLoad::HandleOpenWavThreadProc(LPVOID param)
-{
-        TWavLoad* self = static_cast<TWavLoad*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleOpenWav();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TWavLoad::HandleOpenWav(void)
 {
         if (LoadWavDialog->Execute())
         {

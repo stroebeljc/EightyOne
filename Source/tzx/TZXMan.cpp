@@ -184,7 +184,7 @@ void TTZX::UpdateButtons(void)
 }
 //---------------------------------------------------------------------------
 __fastcall TTZX::TTZX(TComponent* Owner)
-        : TForm(Owner), mWorkerRunning(false)
+        : TForm(Owner)
 {
         TIniFile *ini;
 
@@ -292,22 +292,6 @@ void TTZX::LoadFile(AnsiString Filename, bool Insert)
 //---------------------------------------------------------------------------
 void __fastcall TTZX::Open1Click(TObject *Sender)
 {
-        CreateThread(NULL, 0, HandleOpenThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TTZX::HandleOpenThreadProc(LPVOID param)
-{
-        TTZX* self = static_cast<TTZX*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleOpen();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TTZX::HandleOpen(void)
-{
         int i, insert=false;
 
         TZXFile.Stop(false);
@@ -340,7 +324,6 @@ void TTZX::HandleOpen(void)
         }
         UpdateTable(true);
 }
-
 //---------------------------------------------------------------------------
 
 void __fastcall TTZX::FormResize(TObject *Sender)
@@ -453,22 +436,6 @@ void __fastcall TTZX::NewTZXClick(TObject *Sender)
 
 void __fastcall TTZX::SaveAs1Click(TObject *Sender)
 {
-        CreateThread(NULL, 0, HandleSaveThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TTZX::HandleSaveThreadProc(LPVOID param)
-{
-        TTZX* self = static_cast<TTZX*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleSave();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TTZX::HandleSave(void)
-{
         int zx81, spec, other;
         int canT81, canTAP, canP, canP81;
         AnsiString Filter;
@@ -521,7 +488,6 @@ void TTZX::HandleSave(void)
         if (!SaveDialog->Execute()) return;
         TZXFile.SaveFile(SaveDialog->FileName);
 }
-
 //---------------------------------------------------------------------------
 
 void __fastcall TTZX::FlashLoad1Click(TObject *Sender)
@@ -969,22 +935,6 @@ void __fastcall TTZX::FormCreate(TObject *Sender)
 
 void __fastcall TTZX::ConvertTapetoWave1Click(TObject *Sender)
 {
-        CreateThread(NULL, 0, HandleConvertTapetoWaveThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TTZX::HandleConvertTapetoWaveThreadProc(LPVOID param)
-{
-        TTZX* self = static_cast<TTZX*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleConvertTapetoWave();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TTZX::HandleConvertTapetoWave(void)
-{
         int i;
         bool FlashLoad, AutoStart, AutoLoad;
 
@@ -1030,22 +980,6 @@ void TTZX::HandleConvertTapetoWave(void)
 //---------------------------------------------------------------------------
 
 void __fastcall TTZX::ConvertBlocktoWave1Click(TObject *Sender)
-{
-        CreateThread(NULL, 0, HandleConvertBlocktoWaveThreadProc, this, 0, NULL);
-}
-
-DWORD WINAPI TTZX::HandleConvertBlocktoWaveThreadProc(LPVOID param)
-{
-        TTZX* self = static_cast<TTZX*>(param);
-        if (self->mWorkerRunning) return 1;
-
-        self->mWorkerRunning=true;
-        self->HandleConvertBlocktoWave();
-        self->mWorkerRunning=false;
-        return 0;
-}
-
-void TTZX::HandleConvertBlocktoWave(void)
 {
         int i,Block;
         bool FlashLoad, AutoStart, AutoLoad;

@@ -130,14 +130,16 @@ void __fastcall TForm1::WndProc(TMessage &Message)
                 PCAllKeysUp();
                 break;
 
-        case WM_PAINT:
-                AccPaint();
-                break;
-
         default:
                 break;
         }
 	TForm::WndProc(Message);
+}
+
+void __fastcall TForm1::CreateParams(TCreateParams &Params)
+{
+    TForm::CreateParams(Params);
+    RenderEnd();
 }
 
 //---------------------------------------------------------------------------
@@ -149,7 +151,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         int i;
 
         RunFrameEnable=false;
-        mWorkerThread=NULL;
+        mWindowHandle=mWorkerThread=NULL;
 
         strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (emulator.cwd[strlen(emulator.cwd)-1]!='\\')
@@ -263,7 +265,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         BuildZX81ExamplesMenu();
         BuildSpectrumExamplesMenu();
 
-        if (Sound.Initialise(Form1->Handle, machine.fps, 16, 44100, 2)) MessageBox(NULL, "", "Sound Error", 0);
+        if (Sound.Initialise(Form1->Handle, SoundDXReady, machine.fps, 16, 44100, 2)) MessageBox(NULL, "", "Sound Error", 0);
 
         if (emulator.checkInstallationPathLength && strlen(emulator.cwd) >= 180)
         {
@@ -2393,7 +2395,7 @@ DWORD WINAPI TForm1::HandleRunFrameThreadProc(LPVOID param)
 void TForm1::HandleRunFrame(void)
 {
         int j;
-        static int borrow, Drive;
+        int borrow=0, Drive=0;
         unsigned short rshift = VK_RSHIFT;
         unsigned short lshift = VK_LSHIFT;
 
@@ -2404,82 +2406,72 @@ void TForm1::HandleRunFrame(void)
 
                 if (!RunFrameEnable) continue;
 
-        Sound.Frame(emulation_stop || emulator.single_step);
+                Sound.Frame(emulation_stop || emulator.single_step);
 
-        if (emulator.UseRShift)
-        {
-                bool L=IsAsyncKeyPressed(VK_LSHIFT);
-                bool R=IsAsyncKeyPressed(VK_RSHIFT);
-                TShiftState z;
-
-                if (R != RShift)
+                if (emulator.UseRShift)
                 {
-                        RShift=R;
-                        if (R) FormKeyDown(NULL, rshift, z);
-                        else FormKeyUp(NULL, rshift,z);
+                        bool L=IsAsyncKeyPressed(VK_LSHIFT);
+                        bool R=IsAsyncKeyPressed(VK_RSHIFT);
+                        TShiftState z;
+
+                        if (R != RShift)
+                        {
+                                RShift=R;
+                                if (R) FormKeyDown(NULL, rshift, z);
+                                else FormKeyUp(NULL, rshift,z);
+                        }
+
+                        if (L != LShift)
+                        {
+                                LShift=L;
+                                if (L) FormKeyDown(NULL, lshift,z);
+                                else FormKeyUp(NULL, lshift,z);
+                        }
                 }
 
-                if (L != LShift)
+                if (emulation_stop)
                 {
-                        LShift=L;
-                        if (L) FormKeyDown(NULL, lshift,z);
-                        else FormKeyUp(NULL, lshift,z);
+                        AccurateUpdateDisplay(false);
+                        continue;
                 }
-        }
+                if (AutoLoadCount) DoAutoLoad();
 
-        if (emulation_stop)
-        {
-                AccurateUpdateDisplay(false);
-                continue;
-        }
-        if (AutoLoadCount) DoAutoLoad();
+                if (machine.drivebusy != Drive)
+                {
+                        StatusBar1->Refresh();
+                        StatusBar1->Invalidate();
+                        Drive=machine.drivebusy;
+                }
 
-        if (machine.drivebusy != Drive)
-        {
-                StatusBar1->Refresh();
-                StatusBar1->Invalidate();
-                Drive=machine.drivebusy;
-        }
+                if (spectrum.kmouse)
+                {
+                        mouse.x = Controls::Mouse->CursorPos.x;
+                        mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
+                }
 
-        if (spectrum.kmouse)
-        {
-                mouse.x = Controls::Mouse->CursorPos.x;
-                mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
-        }
+                fps++;
+                frametstates=0;
 
-        fps++;
-        frametstates=0;
+                j=emulator.single_step?1:(machine.tperframe + borrow);
 
-        j=emulator.single_step?1:(machine.tperframe + borrow);
+                if (emulator.machine != MACHINESPECTRUM && j!=1 && !AutoLoadCount)
+                {
+                        j += (emulator.speedup * machine.tperframe) / machine.tperscanline;
+                }
 
-        if (emulator.machine != MACHINESPECTRUM && j!=1 && !AutoLoadCount)
-        {
-                j += (emulator.speedup * machine.tperframe) / machine.tperscanline;
-        }
+                while (j>0 && !emulation_stop)
+                {
+                        j-= machine.do_scanline(BuildLine);
+                        AccurateDraw(BuildLine);
+                }
 
-        while (j>0 && !emulation_stop)
-        {
-                j-= machine.do_scanline(BuildLine);
-                try { AccurateDraw(BuildLine); }
-                catch (...) {}
-                //WaitForSingleObject(Mutex,INFINITE);
-                //templine=BuildLine;
-                //BuildLine=DisplayLine;
-                //DisplayLine=templine;
-                //BuildLine->sync_len=DisplayLine->sync_len;
-                //BuildLine->sync_valid=DisplayLine->sync_valid;
-                //ReleaseMutex(Mutex);
-                //SwitchToThread();
-                //Sleep(0);
-                //AccurateDraw(DisplayLine);
-        }
+                if (!emulation_stop) borrow=j;
+                else borrow=0;
 
-        if (!emulation_stop) borrow=j;
-
-        if (romcartridge.type == ROMCARTRIDGEZXC1)
-        {
-                RomCartridgeZXC1TimerTick();
-        }
+                if (romcartridge.type == ROMCARTRIDGEZXC1)
+                {
+                        RomCartridgeZXC1TimerTick();
+                }
         }
 }
 
@@ -3109,6 +3101,12 @@ void __fastcall TForm1::SwitchOnZ80AssemblerClick(TObject *Sender)
 {
         SwitchOnZ80Assembler->Checked = !SwitchOnZ80Assembler->Checked;
         zx81.z80AssemblerOn = (CFGBYTE)(SwitchOnZ80Assembler->Checked ?  1 : 0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FormPaint(TObject *Sender)
+{
+        AccPaint();
 }
 //---------------------------------------------------------------------------
 

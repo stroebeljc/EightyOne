@@ -18,15 +18,15 @@
 
 #include <dsound.h>
 #include "sound\SoundDX.h"
-extern HANDLE SoundDXReady;
 
 CDSnd::CDSnd(void)
 {
         m_ThreadHandle=NULL;
         m_hWnd=NULL;
+        m_readyEvent=NULL;
 }
 
-int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CDSnd::Initialise(HWND hWnd, HANDLE readyEvent, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
 
         m_BitsPerSample=BitsPerSample;
@@ -34,6 +34,7 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_Channels=Channels;
         m_FPS=FPS;
         m_hWnd=hWnd;
+        if (readyEvent!=NULL) m_readyEvent=readyEvent;
 
 
         // If any essentials haven't been initialised,
@@ -305,18 +306,7 @@ void CDSnd::ThreadFN()
                 ResetEvent(m_pHEvent[0]);
                 ResetEvent(m_pHEvent[1]);
 
-                SetEvent(SoundDXReady);
-                /*SetLastError(0);
-                SendMessage( m_hWnd, WM_USER, NULL, NULL);
-                if (GetLastError())
-                {
-                        char buf[256];
-                        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                buf, sizeof(buf), NULL);
-
-                       MessageBox(NULL, buf,"Message Sending Error",2);
-                }*/
+                SetEvent(m_readyEvent);
         }
 }
 

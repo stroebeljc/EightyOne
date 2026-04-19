@@ -104,6 +104,7 @@ CRITICAL_SECTION CriticalSection;
 Graphics::TBitmap *GDIFrame;
 
 BYTE *dest=NULL, *buffer=NULL;
+bool initialized=false;
 
 TRect BorderTop, BorderBottom, BorderLeft, BorderRight;
 TRect rcsource, rcdest;
@@ -134,6 +135,7 @@ bool DDError(bool result, AnsiString Message)
 
 void DDEnd(void)
 {
+        DDFrame=NULL;
         if (m_pDD)
         {
                 if (m_pddsFrontBuffer != NULL)
@@ -628,7 +630,8 @@ void GDIAccurateUpdateDisplay(bool singlestep)
 
 void GDIAccuratePaint(void)
 {
-        StretchBlt(Form1->Canvas->Handle,
+        if (GDIFrame)
+                StretchBlt(Form1->Canvas->Handle,
                         rcdest.Left, rcdest.Top,
                         (rcdest.Right-rcdest.Left),
                         (rcdest.Bottom-rcdest.Top),
@@ -675,11 +678,15 @@ int AccurateDraw(SCANLINE *Line)
         static int LastVSyncLen=0, Shade=0;
         int i,c;
 
-        if (!dest) return(0);
 
         EnterCriticalSection(&CriticalSection);
         for(i=0; i<Line->scanline_len; i++)
         {
+                if (!dest || !buffer)
+                {
+                        goto LeaveEarly;
+                }
+
                 c=Line->scanline[i];
 
                 Plot(FrameNo*TVP, c+Shade);
@@ -757,6 +764,7 @@ int AccurateDraw(SCANLINE *Line)
                 for(i=0;i<8;i++) *(DWORD *)(dest+RasterX+i*BPP) = Colours[15];
                 AccurateUpdateDisplay(true);
         }
+LeaveEarly:
         LeaveCriticalSection(&CriticalSection);
         return(0);
 }
@@ -852,6 +860,8 @@ int RenderInit(void)
 
 void RenderEnd(void)
 {
+        if (!initialized) return;
+        EnterCriticalSection(&CriticalSection);
         if (GDIFrame)
         {
                 delete GDIFrame;
@@ -860,6 +870,7 @@ void RenderEnd(void)
 
         DDEnd();
         dest=buffer=NULL;
+        LeaveCriticalSection(&CriticalSection);
 }
 
 void RenderDrawBorder()
@@ -918,6 +929,7 @@ void RecalcPalette(void)
 
 int AccDrawInit(void)
 {
+        initialized=true;
         return InitializeCriticalSectionAndSpinCount(&CriticalSection, 0x00000400);
 }
 
@@ -943,7 +955,7 @@ void AccurateUpdateDisplay(bool singlestep)
 
 void AccPaint()
 {
-        TryEnterCriticalSection(&CriticalSection);
+        if (!initialized || !TryEnterCriticalSection(&CriticalSection)) return;
         if (Form1->RenderMode==RENDERDDRAW) DDAccuratePaint();
         else GDIAccuratePaint();
         LeaveCriticalSection(&CriticalSection);

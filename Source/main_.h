@@ -316,6 +316,7 @@ __published:	// IDE-managed Components
 //        void __fastcall SwitchOnMemotextClick(TObject *Sender);
         void __fastcall SwitchOnMemocalcClick(TObject *Sender);
         void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
+        void __fastcall FormPaint(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -330,6 +331,7 @@ private:	// User declarations
         bool DrivesChanged;
         bool LShift, RShift;
         HANDLE mWorkerThread;
+        HANDLE mWindowHandle;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
         Graphics::TBitmap *LEDRedOn;
@@ -347,6 +349,7 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
         virtual void __fastcall WndProc(TMessage &Msg);
+        virtual void __fastcall CreateParams(TCreateParams &Params);
 
         int BaseWidth;
         int BaseHeight;

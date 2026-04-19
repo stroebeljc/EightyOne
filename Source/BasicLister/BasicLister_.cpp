@@ -344,7 +344,7 @@ void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 DWORD WINAPI TBasicLister::HandleRefreshThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         try {
@@ -381,7 +381,7 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
 DWORD WINAPI TBasicLister::HandleClearThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         try {
@@ -531,7 +531,7 @@ int TBasicLister::FindLineDisplayedOnRow(int row)
 DWORD WINAPI TBasicLister::HandleMouseDownThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         try {
@@ -618,7 +618,7 @@ void __fastcall TBasicLister::ToolButtonSaveClick(TObject *Sender)
 DWORD WINAPI TBasicLister::HandleSaveListingToFileThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         try {
@@ -722,7 +722,7 @@ void TBasicLister::LoadSettings(TIniFile *ini)
 DWORD WINAPI TBasicLister::HandleLineEndsThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         try {

@@ -859,6 +859,7 @@ void RenderEnd(void)
         }
 
         DDEnd();
+        dest=buffer=NULL;
 }
 
 void RenderDrawBorder()

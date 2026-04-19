@@ -298,7 +298,7 @@ void __fastcall TTZX::Open1Click(TObject *Sender)
 DWORD WINAPI TTZX::HandleOpenThreadProc(LPVOID param)
 {
         TTZX* self = static_cast<TTZX*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleOpen();
@@ -459,7 +459,7 @@ void __fastcall TTZX::SaveAs1Click(TObject *Sender)
 DWORD WINAPI TTZX::HandleSaveThreadProc(LPVOID param)
 {
         TTZX* self = static_cast<TTZX*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleSave();
@@ -975,7 +975,7 @@ void __fastcall TTZX::ConvertTapetoWave1Click(TObject *Sender)
 DWORD WINAPI TTZX::HandleConvertTapetoWaveThreadProc(LPVOID param)
 {
         TTZX* self = static_cast<TTZX*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleConvertTapetoWave();
@@ -1037,7 +1037,7 @@ void __fastcall TTZX::ConvertBlocktoWave1Click(TObject *Sender)
 DWORD WINAPI TTZX::HandleConvertBlocktoWaveThreadProc(LPVOID param)
 {
         TTZX* self = static_cast<TTZX*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleConvertBlocktoWave();

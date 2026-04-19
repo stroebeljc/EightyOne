@@ -18,6 +18,7 @@
 
 #include <dsound.h>
 #include "sound\SoundDX.h"
+extern HANDLE SoundDXReady;
 
 CDSnd::CDSnd(void)
 {
@@ -304,7 +305,8 @@ void CDSnd::ThreadFN()
                 ResetEvent(m_pHEvent[0]);
                 ResetEvent(m_pHEvent[1]);
 
-                SetLastError(0);
+                SetEvent(SoundDXReady);
+                /*SetLastError(0);
                 SendMessage( m_hWnd, WM_USER, NULL, NULL);
                 if (GetLastError())
                 {
@@ -314,7 +316,7 @@ void CDSnd::ThreadFN()
                                 buf, sizeof(buf), NULL);
 
                        MessageBox(NULL, buf,"Message Sending Error",2);
-                }
+                }*/
         }
 }
 

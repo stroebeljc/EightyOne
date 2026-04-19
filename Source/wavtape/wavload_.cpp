@@ -189,7 +189,7 @@ void __fastcall TWavLoad::LoadClick(TObject *Sender)
 DWORD WINAPI TWavLoad::HandleLoadThreadProc(LPVOID param)
 {
         TWavLoad* self = static_cast<TWavLoad*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleLoad();
@@ -599,7 +599,7 @@ void __fastcall TWavLoad::SaveWav1Click(TObject *Sender)
 DWORD WINAPI TWavLoad::HandleSaveWavThreadProc(LPVOID param)
 {
         TWavLoad* self = static_cast<TWavLoad*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleSaveWav();
@@ -632,7 +632,7 @@ void __fastcall TWavLoad::OpenWav1Click(TObject *Sender)
 DWORD WINAPI TWavLoad::HandleOpenWavThreadProc(LPVOID param)
 {
         TWavLoad* self = static_cast<TWavLoad*>(param);
-        while (self->mWorkerRunning) Sleep(10);
+        if (self->mWorkerRunning) return 1;
 
         self->mWorkerRunning=true;
         self->HandleOpenWav();

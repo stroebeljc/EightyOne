@@ -215,7 +215,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                 Form1->GatherWindowsIfRequired();
                 Form1->Caption = "EightyOne";
                 Form1->Timer2->Enabled=true;
-                Form1->RunFrameEnable=1;
                 Form1->SetFocus();
 
                 Application->Run();

@@ -330,7 +330,6 @@ private:	// User declarations
         bool DrivesChanged;
         bool LShift, RShift;
         HANDLE mWorkerThread;
-        HANDLE mRunFrameEvent;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
         Graphics::TBitmap *LEDRedOn;
@@ -361,7 +360,6 @@ public:		// User declarations
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
         void GatherWindowsIfRequired();
-        void __fastcall RunFrame();
         int RunFrameEnable;
         void EnableAnnotationOptions();
         void BuildMenuJoystickSelection();

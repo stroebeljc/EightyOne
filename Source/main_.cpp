@@ -113,6 +113,7 @@ int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 int AutoLoadCount=0;
 
 SCANLINE *BuildLine, Video;
+HANDLE SoundDXReady;
 
 static bool iniFileExists = false;
 
@@ -125,11 +126,6 @@ void __fastcall TForm1::WndProc(TMessage &Message)
 {
         switch(Message.Msg)
         {
-        case WM_USER:
-                if (RunFrameEnable)
-                        Form1->RunFrame();
-                break;
-
         case WM_KILLFOCUS:
                 PCAllKeysUp();
                 break;
@@ -217,7 +213,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         RunFrameEnable=false;
         AccDrawInit();
 
-	mRunFrameEvent = CreateEvent(NULL, FALSE, FALSE, "Run_Frame");
+	SoundDXReady = CreateEvent(NULL, FALSE, FALSE, "SoundDX_Ready");
         mWorkerThread = CreateThread(NULL, 0, HandleRunFrameThreadProc, this, 0, NULL);
 
         ResumeThread(mWorkerThread);    // Start/Resume the Frame Thread
@@ -808,7 +804,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 AccurateInit(true);
         }
 
-
+        RunFrameEnable=true;
         if (startup<=6) startup++;
 
         switch(startup)
@@ -2383,12 +2379,6 @@ void __fastcall TForm1::FormShow(TObject *Sender)
         StatusBar1->Invalidate();
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::RunFrame()
-{
-        Sound.Frame(emulation_stop || emulator.single_step);
-
-        SetEvent(mRunFrameEvent);
-}
 
 DWORD WINAPI TForm1::HandleRunFrameThreadProc(LPVOID param)
 {
@@ -2409,8 +2399,12 @@ void TForm1::HandleRunFrame(void)
 
         while(1)
         {
-                WaitForSingleObject(mRunFrameEvent,INFINITE);
-                ResetEvent(mRunFrameEvent);
+                WaitForSingleObject(SoundDXReady,INFINITE);
+                ResetEvent(SoundDXReady);
+
+                if (!RunFrameEnable) continue;
+
+        Sound.Frame(emulation_stop || emulator.single_step);
 
         if (emulator.UseRShift)
         {
@@ -2466,7 +2460,8 @@ void TForm1::HandleRunFrame(void)
         while (j>0 && !emulation_stop)
         {
                 j-= machine.do_scanline(BuildLine);
-                AccurateDraw(BuildLine);
+                try { AccurateDraw(BuildLine); }
+                catch (...) {}
                 //WaitForSingleObject(Mutex,INFINITE);
                 //templine=BuildLine;
                 //BuildLine=DisplayLine;

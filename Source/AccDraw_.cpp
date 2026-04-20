@@ -937,7 +937,8 @@ void AccurateUpdateDisplay(bool singlestep)
 
 void AccPaint()
 {
-        if (!initialized || !TryEnterCriticalSection(&CriticalSection)) return;
+        if (!initialized) return;
+        EnterCriticalSection(&CriticalSection);
         if (Form1->RenderMode==RENDERDDRAW) DDAccuratePaint();
         else GDIAccuratePaint();
         LeaveCriticalSection(&CriticalSection);

@@ -122,20 +122,14 @@ char webBuffer[bufferLength];
 
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::WndProc(TMessage &Message)
+void __fastcall TForm1::WMKillFocus(TWMKillFocus &Message)
 {
-        switch(Message.Msg)
-        {
-        case WM_KILLFOCUS:
-                PCAllKeysUp();
-                break;
-
-        default:
-                break;
-        }
-	TForm::WndProc(Message);
+    PCAllKeysUp();
 }
-
+void __fastcall TForm1::WMEraseBkgnd(TWMEraseBkgnd &Message)
+{
+    Message.Result = 1; // Indicate background is handled
+}
 void __fastcall TForm1::CreateParams(TCreateParams &Params)
 {
     TForm::CreateParams(Params);

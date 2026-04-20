@@ -31,6 +31,11 @@
 TSoundOutput *SoundOutput;
 //---------------------------------------------------------------------------
 
+void __fastcall TSoundOutput::WMEraseBkgnd(TWMEraseBkgnd &Message)
+{
+    Message.Result = 1; // Indicate background is handled
+}
+
 void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
 {
         static int skip=0;

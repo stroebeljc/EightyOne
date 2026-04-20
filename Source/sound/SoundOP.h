@@ -43,6 +43,12 @@ private:	// User declarations
         short *m_dataBuffer;
 public:		// User declarations
         __fastcall TSoundOutput(TComponent* Owner);
+        void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, WMEraseBkgnd)
+ END_MESSAGE_MAP(TForm)
+
         void UpdateImage(short *data, int channels, int framesize);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

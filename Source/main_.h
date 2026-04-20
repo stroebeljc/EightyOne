@@ -348,8 +348,15 @@ private:	// User declarations
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
-        virtual void __fastcall WndProc(TMessage &Msg);
         virtual void __fastcall CreateParams(TCreateParams &Params);
+        void __fastcall WMKillFocus(TWMKillFocus &Message);
+        void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_KILLFOCUS, TWMKillFocus, WMKillFocus)
+   MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, WMEraseBkgnd)
+ END_MESSAGE_MAP(TForm)
+
 
         int BaseWidth;
         int BaseHeight;

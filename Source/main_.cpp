@@ -130,10 +130,12 @@ void __fastcall TForm1::WMEraseBkgnd(TWMEraseBkgnd &Message)
 {
     Message.Result = 1; // Indicate background is handled
 }
-void __fastcall TForm1::CreateParams(TCreateParams &Params)
+void __fastcall TForm1::CreateWnd()
 {
-    TForm::CreateParams(Params);
     RenderEnd();
+    TForm::CreateWnd();
+    RenderInit();
+    AccurateInit(true);
 }
 
 //---------------------------------------------------------------------------
@@ -239,8 +241,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         }
 
         delete ini;
-
-        Timer2->Interval=1000;
 
         LEDGreenOn = new Graphics::TBitmap;
         LEDGreenOff = new Graphics::TBitmap;
@@ -371,8 +371,9 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
 
         ClientWidth=BaseWidth;
         ClientHeight=BaseHeight;
-        if (StatusBar1->Visible)
+        if (mStatusBar1Visible)
         {
+                StatusBar1->Visible = mStatusBar1Visible;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -396,8 +397,9 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
 
         ClientWidth=BaseWidth*2;
         ClientHeight=BaseHeight*2;
-        if (StatusBar1->Visible)
+        if (mStatusBar1Visible)
         {
+                StatusBar1->Visible = mStatusBar1Visible;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -421,8 +423,9 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
 
         ClientWidth=BaseWidth*4;
         ClientHeight=BaseHeight*4;
-        if (StatusBar1->Visible)
+        if (mStatusBar1Visible)
         {
+                StatusBar1->Visible = mStatusBar1Visible;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -453,8 +456,9 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 
         ClientWidth=baseWidth;
         ClientHeight=baseHeight;
-        if (StatusBar1->Visible)
+        if (mStatusBar1Visible)
         {
+                StatusBar1->Visible = mStatusBar1Visible;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -789,17 +793,6 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         AnsiString Filename, Ext;
         int i=0;
 
-        static HWND OldhWnd=NULL;
-
-        if (Form1->Handle != OldhWnd)
-        {
-                OldhWnd=Form1->Handle;
-
-                RenderEnd();
-                RenderInit();
-                AccurateInit(true);
-        }
-
         RunFrameEnable=true;
         if (startup<=6) startup++;
 
@@ -1019,6 +1012,7 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char& Key)
                         Height=SaveWinH;
                         Left=SaveX;
                         Top=SaveY;
+                        StatusBar1->Visible = mStatusBar1Visible;
                         FileMenu1->Visible=true;
                         View1->Visible=true;
                         Control1->Visible=true;
@@ -1185,6 +1179,7 @@ void TForm1::LoadSettings(TIniFile *ini)
         Large1->Checked     = ini->ReadBool("MAIN", "BorderLarge",  Large1->Checked);
         FullImage1->Checked = ini->ReadBool("MAIN", "BorderFull",   FullImage1->Checked);
         StatusBar2->Checked = ini->ReadBool("MAIN", "StatusBar",    StatusBar2->Checked);
+        mStatusBar1Visible = StatusBar2->Checked;
 
         OpenTape1->FileName    = ini->ReadString( "MAIN", "LoadFile",       OpenTape1->FileName);
         OpenTape1->FilterIndex = ini->ReadInteger("MAIN", "LoadFileFilter", OpenTape1->FilterIndex);
@@ -1661,12 +1656,12 @@ void __fastcall TForm1::None1Click(TObject *Sender)
 
 void __fastcall TForm1::StatusBar2Click(TObject *Sender)
 {
-        StatusBar1->Visible = !StatusBar1->Visible;
+        StatusBar2->Checked = !StatusBar2->Checked;
+        StatusBar1->Visible = StatusBar2->Checked;
+        mStatusBar1Visible = StatusBar1->Visible;
 
         if (StatusBar1->Visible) Height += StatusBar1->Height;
         else Height -= StatusBar1->Height;
-
-        StatusBar2->Checked = StatusBar1->Visible;
 }
 
 //---------------------------------------------------------------------------
@@ -2395,7 +2390,7 @@ void TForm1::HandleRunFrame(void)
 
         while(1)
         {
-                WaitForSingleObject(SoundDXReady,INFINITE);
+                WaitForSingleObject(SoundDXReady,1000);
                 ResetEvent(SoundDXReady);
 
                 if (!RunFrameEnable) continue;

@@ -21,9 +21,12 @@
 #ifndef AccDraw_H
 #define AccDraw_H
 
+extern int AccDrawInit(void);
+extern void AccDrawClose(void);
 extern void AccurateInit(int resize);
 extern void AccurateUpdateDisplay(bool singlestep);
 extern void RecalcPalette(void);
+extern void AccPaint(void);
 extern DWORD Palette[];
 extern int RenderInit(void);
 extern void RenderEnd(void);

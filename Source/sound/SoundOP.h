@@ -34,11 +34,21 @@ __published:	// IDE-managed Components
         TImage *Image1;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormResize(TObject *Sender);
+        void __fastcall FormPaint(TObject *Sender);
 private:	// User declarations
         TRect rect;
         TCanvas *Img;
+        int m_framesize;
+        int m_channels;
+        short *m_dataBuffer;
 public:		// User declarations
         __fastcall TSoundOutput(TComponent* Owner);
+        void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, WMEraseBkgnd)
+ END_MESSAGE_MAP(TForm)
+
         void UpdateImage(short *data, int channels, int framesize);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);

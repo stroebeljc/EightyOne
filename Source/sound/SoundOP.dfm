@@ -18,6 +18,7 @@ object SoundOutput: TSoundOutput
   OldCreateOrder = False
   Scaled = False
   OnClose = FormClose
+  OnPaint = FormPaint
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13

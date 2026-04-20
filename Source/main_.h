@@ -318,6 +318,7 @@ __published:	// IDE-managed Components
         void __fastcall SwitchOnMemocalcClick(TObject *Sender);
         void __fastcall SwitchOnZ80AssemblerClick(TObject *Sender);
         void __fastcall ConnectLambdaColourClick(TObject *Sender);
+        void __fastcall FormPaint(TObject *Sender);
 private:	// User declarations
         int fps;
         bool startup;
@@ -331,6 +332,8 @@ private:	// User declarations
         void AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;
         bool LShift, RShift;
+        HANDLE mWorkerThread;
+        HANDLE mWindowHandle;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
         Graphics::TBitmap *LEDRedOn;
@@ -343,10 +346,20 @@ private:	// User declarations
         void __fastcall SelectJoystick2Click(TObject *Sender);
         void UpdateJoystickMenuOptions();
         void SwitchFullScreen();
+        static DWORD WINAPI HandleRunFrameThreadProc(LPVOID param);
+        void HandleRunFrame(void);
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
-        virtual void __fastcall WndProc(TMessage &Msg);
+        virtual void __fastcall CreateParams(TCreateParams &Params);
+        void __fastcall WMKillFocus(TWMKillFocus &Message);
+        void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_KILLFOCUS, TWMKillFocus, WMKillFocus)
+   MESSAGE_HANDLER(WM_ERASEBKGND, TWMEraseBkgnd, WMEraseBkgnd)
+ END_MESSAGE_MAP(TForm)
+
 
         int BaseWidth;
         int BaseHeight;
@@ -360,7 +373,6 @@ public:		// User declarations
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
         void GatherWindowsIfRequired();
-        void __fastcall RunFrame();
         int RunFrameEnable;
         void EnableAnnotationOptions();
         void BuildMenuJoystickSelection();

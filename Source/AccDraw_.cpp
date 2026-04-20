@@ -765,6 +765,7 @@ void RecalcWinSize(void)
 
         if (Form1->FullScreen)
         {
+                Form1->StatusBar1->Visible = false;
                 if (FScreen.Stretch)
                 {
                         rcdest.Top=0; rcdest.Bottom=FScreen.Height;
@@ -837,6 +838,7 @@ void CompleteFrame(void)
 
 int RenderInit(void)
 {
+        if (!initialized) return(1);
         if (Form1->RenderMode==RENDERDDRAW) return(DDInit());
         return(1);
 }
@@ -912,6 +914,7 @@ void RecalcPalette(void)
 
 int AccDrawInit(void)
 {
+        if (initialized) return (1);
         initialized=true;
         return InitializeCriticalSectionAndSpinCount(&CriticalSection, 0x00000400);
 }
@@ -923,6 +926,7 @@ void AccDrawClose(void)
 
 void AccurateInit(int resize)
 {
+        if (!initialized) return;
         EnterCriticalSection(&CriticalSection);
         dest=buffer=NULL;
         if (Form1->RenderMode==RENDERDDRAW) DDAccurateInit(resize);
@@ -932,8 +936,10 @@ void AccurateInit(int resize)
 
 void AccurateUpdateDisplay(bool singlestep)
 {
+        EnterCriticalSection(&CriticalSection);
         if (Form1->RenderMode==RENDERDDRAW) DDAccurateUpdateDisplay(singlestep);
         else GDIAccurateUpdateDisplay(singlestep);
+        LeaveCriticalSection(&CriticalSection);
 }
 
 void AccPaint()

@@ -351,7 +351,7 @@ private:	// User declarations
 
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
-        virtual void __fastcall CreateParams(TCreateParams &Params);
+        virtual void __fastcall CreateWnd(void);
         void __fastcall WMKillFocus(TWMKillFocus &Message);
         void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
 
@@ -364,6 +364,7 @@ public:		// User declarations
         int BaseWidth;
         int BaseHeight;
         bool FullScreen;
+        bool mStatusBar1Visible;
         int RenderMode;
         int SaveX, SaveY, SaveW, SaveH, SaveWinW, SaveWinH;
         int SaveScrW, SaveScrH, SaveScrBpp;

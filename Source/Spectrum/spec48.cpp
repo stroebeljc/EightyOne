@@ -1888,6 +1888,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         ts=z80_do_opcode();
                         WavClockTick(ts,0);
                         i--;
+                        if (!WavPlaying()) break;
                 }
                 if (!WavPlaying()) SPECFlashLoading=0;
 

@@ -2481,9 +2481,9 @@ void TForm1::HandleRunFrame(void)
 
                 j=emulator.single_step?1:(machine.tperframe + borrow);
 
-                if (emulator.machine != MACHINESPECTRUM && j!=1 && !AutoLoadCount)
+                if (j!=1 && !AutoLoadCount)
                 {
-                        j += (emulator.speedup * machine.tperframe) / machine.tperscanline;
+                        j *= emulator.speedup;
                 }
 
                 while (j>0 && !emulation_stop)

@@ -1752,14 +1752,10 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         int PrevBit=0, PrevGhost=0;
         int scale= (tv.AdvancedEffects ? 2:1);
         int LastPC;
-        int SpeedUp, SpeedUpCount;
         int shiftCount;
 
         int HSyncDuration = spectrum.model >= SPECCY128 ? 31 : 27;
         const int BackPorchDuration = 5;
-
-        SpeedUpCount=0;
-        SpeedUp=(emulator.speedup*machine.tperscanline)/100;
 
         CurScanLine->scanline_len=0;
 
@@ -1929,192 +1925,186 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         }
                 }
 
-                if (!SpeedUpCount)
+                loop-=ts;
+                fts+=ts;
+                sts+=ts;
+                frametstates+=ts;
+                tStatesCount += ts;
+                ContendCounter+=ts;
+
+                ts*=2;
+                while(ts--)
                 {
-                        loop-=ts;
-                        fts+=ts;
-                        sts+=ts;
-                        frametstates+=ts;
-                        tStatesCount += ts;
-                        ContendCounter+=ts;
+                        int colour, altcolour;
+                        delay--;
 
-                        ts*=2;
-                        while(ts--)
+                        if (TIMEXMode&4) SPECBorder=8+((~TIMEXColour)&7);
+                        else if (((CurScanLine->scanline_len-10)%16)==0)
+                                SPECBorder=SPECNextBorder;
+
+                        if (!(Sy<SPECTopBorder || Sy>SPECTopBorder+191 || delay))
                         {
-                                int colour, altcolour;
-                                delay--;
-
-                                if (TIMEXMode&4) SPECBorder=8+((~TIMEXColour)&7);
-                                else if (((CurScanLine->scanline_len-10)%16)==0)
-                                        SPECBorder=SPECNextBorder;
-
-                                if (!(Sy<SPECTopBorder || Sy>SPECTopBorder+191 || delay))
+                                if (chars>31)
                                 {
-                                        if (chars>31)
-                                        {
-                                                delay=258;
-                                                DrawingBorder=1;
-                                                FloatingBus=255;
-                                        }
-                                        else
-                                        {
-                                                DrawingBorder=0;
-                                                int y = Sy-SPECTopBorder;
-                                                int area = (y & 0xC0);
-                                                int line = ((y & 0x7) << 3);
-                                                int row = ((y >> 3) & 0x7);
-                                                int lineOffset = ((area | line | row) << 5);
-                                                int cellOffset = lineOffset + chars;
-                                                
-                                                switch(TIMEXMode)
-                                                {
-                                                case 0:
-                                                case 1:
-                                                        if (machine.colour != COLOURSPECTRA)
-                                                        {
-                                                                shift_register=RAMRead(SPECVideoBank, (TIMEXMode<<13)+cellOffset);
-                                                                attr=RAMRead(SPECVideoBank, (TIMEXMode<<13)+6144+chars+((y>>3)<<5));
-                                                        }
-                                                        else
-                                                        {
-                                                                shift_register = SpectraRAMRead(cellOffset);
-                                                                FetchSpectraAttributeFileBytes(y, chars, &attr, &attr2);
-                                                                shiftCount = 0;
-                                                        }
-                                                        break;
-                                                case 2:
-                                                case 3:
-                                                        attr=RAMRead(SPECVideoBank, 8192+cellOffset);
-                                                        shift_register=RAMRead(SPECVideoBank, cellOffset);
-                                                        break;
-                                                case 4:
-                                                case 5:
-                                                case 6:
-                                                case 7:
-                                                        attr=(((~TIMEXColour)&7)<<3) | TIMEXColour | 64;
-                                                        b1=RAMRead(SPECVideoBank, cellOffset);
-                                                        b2=RAMRead(SPECVideoBank, 8192+cellOffset);
-
-                                                        if (tv.AdvancedEffects)
-                                                                shift_register=(b1<<8)|b2;
-                                                        else
-                                                                shift_register=SPECShrink((b1<<8)|b2);
-
-                                                        break;
-                                                }
-
-                                                FloatingBus=attr;
-
-                                                int flashSwap = (flash & 0x10);
-
-                                                if (machine.colour == COLOURSPECTRA)
-                                                {
-                                                        DetermineSpectraInkPaper(attr, attr2, flashSwap, &ink, &ink2, &paper, &paper2);
-                                                        SPECNextBorder = DetermineSpectraBorderColour(SPECKb, flashSwap);
-                                                }
-                                                else
-                                                {
-                                                        int inkMask = 0x07;
-                                                        int paperMask = 0x38;
-                                                        int brightMask = 0x40;
-                                                        int flashMask = 0x80;
-                                                        int brightColour = 0x08;
-
-                                                        if ((attr &  flashMask) && flashSwap) shift_register = ~shift_register;
-                                                        ink = (attr & inkMask);
-                                                        paper = ((attr & paperMask) >> 3);
-                                                        if (attr & brightMask) { ink += brightColour; paper += brightColour; }
-                                                }
-
-                                                chars++;
-                                                noise=(noise<<8) | attr;
-                                                delay=8;
-                                        }
+                                        delay=258;
+                                        DrawingBorder=1;
+                                        FloatingBus=255;
                                 }
-
-                                if (DrawingBorder)
-                                    paper=paper2=SPECBorder;
-
-                                i=(tv.AdvancedEffects && (TIMEXMode&4)) ? 2:1;
-
-                                while(i--)
+                                else
                                 {
-                                        if (tv.AdvancedEffects && (TIMEXMode&4))
-                                                colour = ((shift_register&32768)?ink:paper) << 4;
-                                        else if (machine.colour != COLOURSPECTRA)
-                                                colour = ((shift_register&128)?ink:paper) << 4;
-                                        else
-                                        {
-                                                // SPECTRA
-                                                if (shiftCount < 4)
-                                                        colour = ((shift_register&128)?ink:paper);
-                                                else
-                                                        colour = ((shift_register&128)?ink2:paper2);
-                                        }
+                                        DrawingBorder=0;
+                                        int y = Sy-SPECTopBorder;
+                                        int area = (y & 0xC0);
+                                        int line = ((y & 0x7) << 3);
+                                        int row = ((y >> 3) & 0x7);
+                                        int lineOffset = ((area | line | row) << 5);
+                                        int cellOffset = lineOffset + chars;
                                         
-                                        if (fts >= (machine.scanlines-4)*machine.tperscanline)
-                                                colour=VSYNCCOLOUR;
-
-                                        altcolour=colour;
-                                        BaseColour=colour>>4;
-
-                                        if (emulator.dirtydisplay)
+                                        switch(TIMEXMode)
                                         {
-                                                if (PrevGhost) { colour|=4; PrevGhost=0; }
-                                                if (BaseColour!=PrevBit &&
-                                                        !( (BaseColour==0 && PrevBit==8)
-                                                        ||(BaseColour==8 && PrevBit==0)))
-                                                                { colour|=2; PrevGhost=1; }
-
-                                                if (noise&1) colour|=1;
-                                                noise>>=1;
-                                                PrevBit= BaseColour;
-                                        }
-                                        if (tv.DotCrawl)
-                                        {
-                                                if ((BaseColour&7) == (PBaseColour&7)) PBaseColour=BaseColour;
-
-                                                if (BaseColour!=PBaseColour)
+                                        case 0:
+                                        case 1:
+                                                if (machine.colour != COLOURSPECTRA)
                                                 {
-                                                        if (((Sy&3)==DCCount) || ((Sy&3)==((DCCount+1)&3)))
-                                                                altcolour=(PBaseColour+1)<<4;
-                                                        else    altcolour=(BaseColour+1)<<4;
+                                                        shift_register=RAMRead(SPECVideoBank, (TIMEXMode<<13)+cellOffset);
+                                                        attr=RAMRead(SPECVideoBank, (TIMEXMode<<13)+6144+chars+((y>>3)<<5));
                                                 }
+                                                else
+                                                {
+                                                        shift_register = SpectraRAMRead(cellOffset);
+                                                        FetchSpectraAttributeFileBytes(y, chars, &attr, &attr2);
+                                                        shiftCount = 0;
+                                                }
+                                                break;
+                                        case 2:
+                                        case 3:
+                                                attr=RAMRead(SPECVideoBank, 8192+cellOffset);
+                                                shift_register=RAMRead(SPECVideoBank, cellOffset);
+                                                break;
+                                        case 4:
+                                        case 5:
+                                        case 6:
+                                        case 7:
+                                                attr=(((~TIMEXColour)&7)<<3) | TIMEXColour | 64;
+                                                b1=RAMRead(SPECVideoBank, cellOffset);
+                                                b2=RAMRead(SPECVideoBank, 8192+cellOffset);
+
+                                                if (tv.AdvancedEffects)
+                                                        shift_register=(b1<<8)|b2;
+                                                else
+                                                        shift_register=SPECShrink((b1<<8)|b2);
+
+                                                break;
                                         }
 
-                                        bool HSyncPeriod = (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
-                                        bool BackporchPeriod = (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
-                                        if (HSyncPeriod)
+                                        FloatingBus=attr;
+
+                                        int flashSwap = (flash & 0x10);
+
+                                        if (machine.colour == COLOURSPECTRA)
                                         {
-                                                if (tv.AdvancedEffects && !(TIMEXMode&4))
-                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=HSYNCCOLOUR;
-                                                CurScanLine->scanline[CurScanLine->scanline_len++]=HSYNCCOLOUR;
-                                        }
-                                        else if (BackporchPeriod)
-                                        {
-                                                if (tv.AdvancedEffects && !(TIMEXMode&4))
-                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=BACKPORCHCOLOUR;
-                                                CurScanLine->scanline[CurScanLine->scanline_len++]=BACKPORCHCOLOUR;
+                                                DetermineSpectraInkPaper(attr, attr2, flashSwap, &ink, &ink2, &paper, &paper2);
+                                                SPECNextBorder = DetermineSpectraBorderColour(SPECKb, flashSwap);
                                         }
                                         else
                                         {
-                                                if (tv.AdvancedEffects && !(TIMEXMode&4))
-                                                        CurScanLine->scanline[CurScanLine->scanline_len++]=(BYTE)altcolour;
-                                                CurScanLine->scanline[CurScanLine->scanline_len++]=(BYTE)colour;
+                                                int inkMask = 0x07;
+                                                int paperMask = 0x38;
+                                                int brightMask = 0x40;
+                                                int flashMask = 0x80;
+                                                int brightColour = 0x08;
+
+                                                if ((attr &  flashMask) && flashSwap) shift_register = ~shift_register;
+                                                ink = (attr & inkMask);
+                                                paper = ((attr & paperMask) >> 3);
+                                                if (attr & brightMask) { ink += brightColour; paper += brightColour; }
                                         }
-                                        PBaseColour=BaseColour;
-                                        shift_register <<= 1;
-                                        ++shiftCount;
+
+                                        chars++;
+                                        noise=(noise<<8) | attr;
+                                        delay=8;
                                 }
                         }
-                        if (loop<0) SpeedUpCount=SpeedUp;
+
+                        if (DrawingBorder)
+                            paper=paper2=SPECBorder;
+
+                        i=(tv.AdvancedEffects && (TIMEXMode&4)) ? 2:1;
+
+                        while(i--)
+                        {
+                                if (tv.AdvancedEffects && (TIMEXMode&4))
+                                        colour = ((shift_register&32768)?ink:paper) << 4;
+                                else if (machine.colour != COLOURSPECTRA)
+                                        colour = ((shift_register&128)?ink:paper) << 4;
+                                else
+                                {
+                                        // SPECTRA
+                                        if (shiftCount < 4)
+                                                colour = ((shift_register&128)?ink:paper);
+                                        else
+                                                colour = ((shift_register&128)?ink2:paper2);
+                                }
+                                
+                                if (fts >= (machine.scanlines-4)*machine.tperscanline)
+                                        colour=VSYNCCOLOUR;
+
+                                altcolour=colour;
+                                BaseColour=colour>>4;
+
+                                if (emulator.dirtydisplay)
+                                {
+                                        if (PrevGhost) { colour|=4; PrevGhost=0; }
+                                        if (BaseColour!=PrevBit &&
+                                                !( (BaseColour==0 && PrevBit==8)
+                                                ||(BaseColour==8 && PrevBit==0)))
+                                                        { colour|=2; PrevGhost=1; }
+
+                                        if (noise&1) colour|=1;
+                                        noise>>=1;
+                                        PrevBit= BaseColour;
+                                }
+                                if (tv.DotCrawl)
+                                {
+                                        if ((BaseColour&7) == (PBaseColour&7)) PBaseColour=BaseColour;
+
+                                        if (BaseColour!=PBaseColour)
+                                        {
+                                                if (((Sy&3)==DCCount) || ((Sy&3)==((DCCount+1)&3)))
+                                                        altcolour=(PBaseColour+1)<<4;
+                                                else    altcolour=(BaseColour+1)<<4;
+                                        }
+                                }
+
+                                bool HSyncPeriod = (CurScanLine->scanline_len >= ((machine.tperscanline-HSyncDuration)*2*scale));
+                                bool BackporchPeriod = (CurScanLine->scanline_len < (BackPorchDuration*2*scale));
+                                if (HSyncPeriod)
+                                {
+                                        if (tv.AdvancedEffects && !(TIMEXMode&4))
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=HSYNCCOLOUR;
+                                        CurScanLine->scanline[CurScanLine->scanline_len++]=HSYNCCOLOUR;
+                                }
+                                else if (BackporchPeriod)
+                                {
+                                        if (tv.AdvancedEffects && !(TIMEXMode&4))
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=BACKPORCHCOLOUR;
+                                        CurScanLine->scanline[CurScanLine->scanline_len++]=BACKPORCHCOLOUR;
+                                }
+                                else
+                                {
+                                        if (tv.AdvancedEffects && !(TIMEXMode&4))
+                                                CurScanLine->scanline[CurScanLine->scanline_len++]=(BYTE)altcolour;
+                                        CurScanLine->scanline[CurScanLine->scanline_len++]=(BYTE)colour;
+                                }
+                                PBaseColour=BaseColour;
+                                shift_register <<= 1;
+                                ++shiftCount;
+                        }
                 }
-                else
-                        SpeedUpCount -=ts;
 
                 DebugUpdate();
         }
-        while ((loop>0 || SpeedUpCount>0) && !emulation_stop && sts<MaxScanLen);
+        while (loop>0 && !emulation_stop && sts<MaxScanLen);
 
         if (loop<=0)
         {

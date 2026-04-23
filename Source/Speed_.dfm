@@ -1,11 +1,11 @@
 object Speed: TSpeed
-  Left = 270
-  Top = 168
+  Left = 189
+  Top = 227
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Speed'
-  ClientHeight = 112
-  ClientWidth = 217
+  ClientHeight = 110
+  ClientWidth = 369
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,7 +21,7 @@ object Speed: TSpeed
   object AccuratePanel: TPanel
     Left = 0
     Top = 0
-    Width = 209
+    Width = 369
     Height = 73
     BevelOuter = bvNone
     TabOrder = 1
@@ -33,35 +33,84 @@ object Speed: TSpeed
       Caption = 'Speed:'
     end
     object Label10: TLabel
-      Left = 100
-      Top = 48
-      Width = 17
-      Height = 13
-      Caption = '16x'
-    end
-    object Label11: TLabel
-      Left = 16
+      Left = 12
       Top = 48
       Width = 11
       Height = 13
-      Caption = '1x'
+      Caption = '0x'
+    end
+    object Label11: TLabel
+      Left = 156
+      Top = 48
+      Width = 20
+      Height = 13
+      Caption = '1.0x'
     end
     object Label12: TLabel
-      Left = 184
+      Left = 336
       Top = 48
-      Width = 17
+      Width = 20
       Height = 13
-      Caption = '32x'
+      Caption = '4.0x'
+    end
+    object Label1: TLabel
+      Left = 40
+      Top = 48
+      Width = 26
+      Height = 13
+      Caption = '0.25x'
+    end
+    object Label2: TLabel
+      Left = 80
+      Top = 48
+      Width = 20
+      Height = 13
+      Caption = '0.5x'
+    end
+    object Label3: TLabel
+      Left = 120
+      Top = 48
+      Width = 26
+      Height = 13
+      Caption = '0.75x'
+    end
+    object Label4: TLabel
+      Left = 192
+      Top = 48
+      Width = 26
+      Height = 13
+      Caption = '1.25x'
+    end
+    object Label5: TLabel
+      Left = 232
+      Top = 48
+      Width = 20
+      Height = 13
+      Caption = '1.5x'
+    end
+    object Label6: TLabel
+      Left = 264
+      Top = 48
+      Width = 26
+      Height = 13
+      Caption = '1.75x'
+    end
+    object Label7: TLabel
+      Left = 304
+      Top = 48
+      Width = 20
+      Height = 13
+      Caption = '2.0x'
     end
     object AccurateSpeed: TTrackBar
       Left = 8
       Top = 16
-      Width = 201
+      Width = 353
       Height = 25
-      Max = 100
+      Max = 9
       Orientation = trHorizontal
-      Frequency = 17
-      Position = 0
+      Frequency = 1
+      Position = 4
       SelEnd = 0
       SelStart = 0
       TabOrder = 0
@@ -71,7 +120,7 @@ object Speed: TSpeed
     end
   end
   object Button1: TButton
-    Left = 136
+    Left = 280
     Top = 80
     Width = 75
     Height = 25

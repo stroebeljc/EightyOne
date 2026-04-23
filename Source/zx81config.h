@@ -313,7 +313,7 @@ typedef struct
 
         CFGBYTE single_step;
         int frameskip;
-        int speedup;
+        float speedup;
         int romcrc;
         int stop;
         CFGBYTE UseRShift;

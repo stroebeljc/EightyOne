@@ -49,10 +49,39 @@ void __fastcall TSpeed::Button1Click(TObject *Sender)
 
 void __fastcall TSpeed::Recalc(TObject *Sender)
 {
-        int speedup;
-
-        speedup=AccurateSpeed->Position * 32;
-        emulator.speedup = (machine.tperscanline * speedup)/100;
+        switch (AccurateSpeed->Position)
+        {
+        case 0:
+                emulator.speedup = 0.0;
+                break;
+        case 1:
+                emulator.speedup = 0.25;
+                break;
+        case 2:
+                emulator.speedup = 0.5;
+                break;
+        case 3:
+                emulator.speedup = 0.75;
+                break;
+        case 4:
+                emulator.speedup = 1.0;
+                break;
+        case 5:
+                emulator.speedup = 1.25;
+                break;
+        case 6:
+                emulator.speedup = 1.5;
+                break;
+        case 7:
+                emulator.speedup = 1.75;
+                break;
+        case 8:
+                emulator.speedup = 2.0;
+                break;
+        case 9:
+                emulator.speedup = 4.0;
+                break;
+        }
 }
 //---------------------------------------------------------------------------
 void TSpeed::LoadSettings(TIniFile *ini)

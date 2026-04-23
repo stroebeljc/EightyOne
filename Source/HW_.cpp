@@ -87,6 +87,7 @@ THW *HW;
 //---------------------------------------------------------------------------
 void HWSetMachine(int machine, int speccy)
 {
+        Form1->RunFrameEnable=false;
         switch(machine)
         {
         case MACHINEZX80:   HW->ZX80BtnClick(NULL);   break;
@@ -244,6 +245,7 @@ void __fastcall THW::ApplyClick(TObject *Sender)
 
 void THW::UpdateHardwareSettings(bool disableReset)
 {
+        Form1->RunFrameEnable=false;
         bool machineChanged = (NewMachine != emulator.machine);
         emulator.machine = (CFGBYTE)NewMachine;
         spectrum.model = NewSpec;

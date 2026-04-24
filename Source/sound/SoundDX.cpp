@@ -65,12 +65,12 @@ int CDSnd::Initialise(HWND hWnd, HANDLE readyEvent, int FPS, int BitsPerSample, 
         m_WFE.nAvgBytesPerSec = m_WFE.nSamplesPerSec * m_WFE.nBlockAlign;
 
         // Calculate Bufferlengths
-        // AudioQueue is 2 Seconds long
+        // AudioQueue is only 8 frames long because it's synchronized with the CPU thread.
         // DXbuffer is 2 frames long
 
         m_DXBufLen = (m_WFE.nBlockAlign * m_WFE.nSamplesPerSec) / FPS;
         m_DXBufLen = (m_DXBufLen & ~1) * 2;
-        m_QueueLen = m_DXBufLen * 40;
+        m_QueueLen = m_DXBufLen * 4;
 
 	//Create DirectSound
         int r = DirectSoundCreate(NULL, &m_lpDS, NULL);

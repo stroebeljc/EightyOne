@@ -79,13 +79,13 @@ void __fastcall TLiveMemoryWindow::Update(void)
         {
                 if (_writes[i])
                 {
-                        _writes[i]-=5;
+                        _writes[i]-=(BYTE)5;
                         _pbits[i].rgbBlue = _writes[i];
                         _pbits[i].rgbGreen = touchCol;
                 }
                 if (_reads[i])
                 {
-                        _reads[i]-=5;
+                        _reads[i]-=(BYTE)5;
                         _pbits[i].rgbRed = _reads[i];
                         _pbits[i].rgbGreen = touchCol;
                 }

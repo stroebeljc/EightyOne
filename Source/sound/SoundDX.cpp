@@ -287,13 +287,9 @@ void CDSnd::ThreadFN()
 	                }
 
 
-                        int delta;
+                        DWORD delta = m_QueueSize;
+                        if (m_QueueSize >= dwBytesAudio1) m_QueueSize -= delta;
 
-                        delta= m_QueueSize;
-                        if (m_QueueSize < dwBytesAudio1) delta = m_QueueSize;
-                        else
-
-                        m_QueueSize -= delta;
                         m_QueueStart += delta;
                         if (m_QueueStart >= m_QueueLen)
                                 m_QueueStart -= m_QueueLen;    // BUG //

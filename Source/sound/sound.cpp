@@ -707,6 +707,8 @@ void CSound::Frame(bool pause)
 {                  
         int f;
 
+        if (Buffer==NULL) return;
+
         if (pause)
         {
                 memset(Buffer, 0, FrameSize*m_Channels*m_BytesPerSample);

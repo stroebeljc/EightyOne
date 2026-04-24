@@ -40,13 +40,20 @@ void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
 {
         static int skip=0;
 
-        if (++skip <3 || m_dataBuffer!=NULL) return;
+        if (++skip <3) return;
         skip=0;
         
+        int oldsize = m_framesize*m_channels;
         m_framesize = framesize;
         m_channels = channels;
         int size = m_framesize*m_channels;
-        m_dataBuffer = new short[size];
+        if (m_dataBuffer==NULL)
+                m_dataBuffer = new short[size];
+        else if (size!=oldsize)
+        {
+                delete m_dataBuffer;
+                m_dataBuffer = new short[size];
+        }
         memcpy(m_dataBuffer,data,size*sizeof(short));
         Invalidate();
 }
@@ -70,6 +77,8 @@ void __fastcall TSoundOutput::FormClose(TObject *Sender,
       TCloseAction &Action)
 {
         Form1->SoundOutput1->Checked=false;
+        if (m_dataBuffer) delete m_dataBuffer;
+        m_dataBuffer=NULL;
 }
 //---------------------------------------------------------------------------
 
@@ -128,8 +137,6 @@ void __fastcall TSoundOutput::FormPaint(TObject *Sender)
                 else
                         Img->LineTo(x*Image1->Width/m_framesize, position);
         }
-        delete m_dataBuffer;
-        m_dataBuffer=NULL;
 }
 //---------------------------------------------------------------------------
 

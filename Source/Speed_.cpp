@@ -94,7 +94,7 @@ void TSpeed::LoadSettings(TIniFile *ini)
         //DirtyFastTStates = ini->ReadInteger("SPEED","DFAST",DirtyFastTStates);
         //DirtySlowTStates = ini->ReadInteger("SPEED","DSLOW",DirtySlowTStates);
 
-        AccurateSpeed->Position = ini->ReadInteger("SPEED","SACC",AccurateSpeed->Position);
+        AccurateSpeed->Position = ini->ReadInteger("SPEED","SACC2",AccurateSpeed->Position);
         //FastMode->Position = ini->ReadInteger("SPEED","SFAST",FastMode->Position);
         //SlowMode->Position = ini->ReadInteger("SPEED","SSLOW",SlowMode->Position);
         EnableFrameSkip->Checked = ini->ReadInteger("SPEED","FRAMESKIP", false);
@@ -115,7 +115,7 @@ void TSpeed::SaveSettings(TIniFile *ini)
         //ini->WriteInteger("SPEED","DFAST",DirtyFastTStates);
         //ini->WriteInteger("SPEED","DSLOW",DirtySlowTStates);
 
-        ini->WriteInteger("SPEED","SACC",AccurateSpeed->Position);
+        ini->WriteInteger("SPEED","SACC2",AccurateSpeed->Position);
         //ini->WriteInteger("SPEED","SFAST",FastMode->Position);
         //ini->WriteInteger("SPEED","SSLOW",SlowMode->Position);
         ini->WriteInteger("SPEED","FRAMESKIP",EnableFrameSkip->Checked);

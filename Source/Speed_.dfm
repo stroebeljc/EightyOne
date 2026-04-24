@@ -109,6 +109,7 @@ object Speed: TSpeed
       Height = 25
       Max = 9
       Orientation = trHorizontal
+      PageSize = 1
       Frequency = 1
       Position = 4
       SelEnd = 0

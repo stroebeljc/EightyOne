@@ -2434,6 +2434,7 @@ void TForm1::HandleRunFrame(void)
                 if (!RunFrameEnable) continue;
 
                 Sound.Frame(emulation_stop || emulator.single_step);
+                if (!emulation_stop && !emulator.single_step) LiveMemoryWindow->Update();
 
                 if (emulator.UseRShift)
                 {

@@ -59,7 +59,6 @@ void __fastcall TLiveMemoryWindow::Write(unsigned short address)
         if (!Writes1->Checked) return;
 
         _writes[address]=255;
-        Update();
 }
 //---------------------------------------------------------------------------
 
@@ -69,7 +68,6 @@ void __fastcall TLiveMemoryWindow::Read(unsigned short address)
         if (!Reads1->Checked) return;
 
         _reads[address]=255;
-        Update();
 }
 //---------------------------------------------------------------------------
 
@@ -77,23 +75,17 @@ void __fastcall TLiveMemoryWindow::Update(void)
 {
         BYTE touchCol = Touches1->Checked ? (BYTE)128 : (BYTE)0;
 
-        // should really be time based, not access count based
-        ++_count;
-        if (_count < 1000) return;
-
-        _count = 0;
-
         for(int i = 0; i < 65536; ++i)
         {
                 if (_writes[i])
                 {
-                        --_writes[i];
+                        _writes[i]-=5;
                         _pbits[i].rgbBlue = _writes[i];
                         _pbits[i].rgbGreen = touchCol;
                 }
                 if (_reads[i])
                 {
-                        --_reads[i];
+                        _reads[i]-=5;
                         _pbits[i].rgbRed = _reads[i];
                         _pbits[i].rgbGreen = touchCol;
                 }

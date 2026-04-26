@@ -1408,7 +1408,7 @@ BYTE spec48_readport(int Address, int *tstates)
 
 BYTE ReadPort(int Address, int *tstates)
 {
-        if (rzx.mode==RZX_PLAYBACK)
+        if (RZXModePlay())
         {
                 int RZXPortVal = rzx_get_input();
                 if (RZXPortVal>=0) return (BYTE)RZXPortVal;
@@ -1830,7 +1830,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!insertWaitsWhileSP0256Busy)
                 {
-                        if (fts>InteruptPosition && IntDue && (rzx.mode!=RZX_PLAYBACK || RZXCounter<=0))
+                        if (fts>InteruptPosition && IntDue && (!RZXModePlay() || RZXCounter<=0))
                         {
                                 if (++flash >32) flash=0;
                                 DrawingBorder=1;
@@ -1840,7 +1840,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 ContendCounter=(fts-InteruptPosition);
                                 ContendCounter= (ContendCounter+1)&~3;
 
-                                if (rzx.mode==RZX_PLAYBACK)
+                                if (RZXModePlay())
                                 {
                                         rzx_u16 rzx_counter;
                                         if (rzx_update(&rzx_counter)==RZX_OK)
@@ -1853,9 +1853,9 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         }
 
                         z80_databus(idleDataBus);
-                        if (rzx.mode!=RZX_PLAYBACK || RZXCounter>0)
+                        if (!RZXModePlay() || RZXCounter>0)
                         {
-                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),rzx.mode==RZX_PLAYBACK);
+                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),RZXModePlay());
                                 ts=z80_do_opcode();
                         }
                         else

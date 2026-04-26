@@ -149,7 +149,7 @@ static int DCCount;
 
 int RZXFramesTotal=0;
 int RZXFrameCount=0;
-bool RZXMode=false;
+bool RZXModePlay() { return rzx.mode==RZX_PLAYBACK; }
 
 BOOL insertWaitsWhileSP0256Busy;
 
@@ -476,7 +476,6 @@ void spec48_LoadRZX(char *FileName)
 {
         Form1->RunFrameEnable=false;
         while (Form1->FrameIsRunning) Sleep(10);
-        RZXMode=false;
         rzx_close();
         rzx_playback(FileName);
 }
@@ -502,7 +501,6 @@ rzx_u32 RZXcallback(int Msg, void *data)
 
                 //fts=a;
                 RZXFrameCount=0;
-                RZXMode=true;
                 Form1->RunFrameEnable=true;
                 break;
         default:
@@ -577,7 +575,6 @@ static void divIDEPage(void)
 
 void spec48_exit(void)
 {
-        RZXMode=false;
         rzx_close();
         floppy_shutdown();
 }
@@ -1725,9 +1722,8 @@ BYTE ReadPort(int Address, int *tstates)
 
 void spec48_nmi(void)
 {
-        RZXMode=false;
         rzx_close();
-        
+
         uSpeechPaged=0;
         uSourcePaged=0;
 
@@ -1850,22 +1846,24 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         if (rzx_update(&rzx_counter)==RZX_OK)
                                         {
                                                 RZXCounter=rzx_counter;
-                                                IntPending=0;
+                                                IntPending=4;
                                                 RZXFrameCount++;
                                         }
                                 }
                         }
 
+                        z80_databus(idleDataBus);
                         if (rzx.mode!=RZX_PLAYBACK || RZXCounter>0)
                         {
-                                z80_databus(idleDataBus);
-                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0));
+                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),rzx.mode==RZX_PLAYBACK);
                                 ts=z80_do_opcode();
-                                if (interruptAck && !WavInGroup()) WavStop();
-                                interruptAck = false;
                         }
                         else
-                                ts=4;
+                        {
+                                ts = loop; // finish drawing the frame during RZX playback
+                        }
+                        if (interruptAck && !WavInGroup()) WavStop();
+                        interruptAck = false;
                 }
                 else
                 {

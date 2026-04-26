@@ -65,7 +65,7 @@ extern void z80_init(void);
 extern void z80_reset(void);
 
 extern void z80_databus(int bus);
-extern void z80_interrupt(int state);
+extern void z80_interrupt(int state, int force);
 extern void z80_nmi(void);
 extern int z80_refreshAddr(void);
 

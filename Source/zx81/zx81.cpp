@@ -1687,7 +1687,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 int ts=z80_do_opcode();
 
                 z80_databus(idleDataBus);
-                z80_interrupt((z80_refreshAddr() & 0x0040)!=0);
+                z80_interrupt((z80_refreshAddr() & 0x0040)!=0,0);
 
                 if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))
                 {
@@ -2278,7 +2278,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 int ts=z80_do_opcode();
 
                 z80_databus(idleDataBus);
-                z80_interrupt((z80_refreshAddr() & 0x0040)!=0);
+                z80_interrupt((z80_refreshAddr() & 0x0040)!=0,0);
 
                 if (BasicLister->Visible &&
                     ((zx80rom && (z80.pc.w == 0x04F4 || z80.pc.w == 0x0202)) ||

@@ -58,6 +58,6 @@ extern void spec48_exit(void);
 
 extern int RZXFramesTotal;
 extern int RZXFrameCount;
-extern bool RZXMode;
+extern bool RZXModePlay();
 
 #endif

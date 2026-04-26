@@ -925,7 +925,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 }
         }
 
-        if (RZXMode)
+        if (RZXModePlay())
         {
                 AnsiString RZXInfo = "    ";
                 RZXInfo += RZXFrameCount;

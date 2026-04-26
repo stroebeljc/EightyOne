@@ -550,15 +550,10 @@ void __fastcall TForm1::Keyboard1Click(TObject *Sender)
 void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 {
         AnsiString Extension, Filename;
-        int stopped;
-
-        stopped=emulation_stop;
-        emulation_stop=true;
 
         PCAllKeysUp();
         if (!OpenTape1->Execute())
         {
-                emulation_stop=stopped;
                 return;
         }
 
@@ -604,8 +599,6 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 
                         loadFileSymbolsProxy(Filename.c_str());
         }
-
-        emulation_stop=stopped;
 }
 //---------------------------------------------------------------------------
 
@@ -695,6 +688,8 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
                 HistoryBox->ToolButtonClearClick(NULL);
         }
 
+        rzx_close();
+        
         if ((Ext == ".Z81") || (Ext == ".ACE")) load_snap(Path.c_str());
         if (Ext == ".Z80") spec_load_z80(Path.c_str());
         if (Ext == ".SNA") spec_load_sna(Path.c_str());

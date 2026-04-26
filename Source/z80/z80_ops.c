@@ -45,7 +45,7 @@ extern int z80_interrupt_internal(void);
 extern int z80_nmi_internal(void);
 extern void z80_loopFlags(int inoutLoop);
 
-unsigned short RZXCounter=0;
+int RZXCounter=0;
 
 extern int RetExecuted;
 extern int StackChange;

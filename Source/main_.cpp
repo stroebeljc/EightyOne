@@ -147,7 +147,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         char path[256];
         int i;
 
-        RunFrameEnable=false;
+        RunFrameEnable=FrameIsRunning=false;
         mWindowHandle=mWorkerThread=NULL;
 
         strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
@@ -775,6 +775,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         emulation_stop=true;
         RunFrameEnable=false;
+        while (FrameIsRunning) Sleep(10);
 
         PCAllKeysUp();
 
@@ -924,14 +925,25 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 }
         }
 
-        AnsiString scanlinesInfo = "";
-        if (emulator.scanlinesPerFrame > 0)
+        if (RZXMode)
         {
-                scanlinesInfo = "     ";
-                scanlinesInfo += emulator.scanlinesPerFrame;
-                scanlinesInfo += " Scanlines";
+                AnsiString RZXInfo = "    ";
+                RZXInfo += RZXFrameCount;
+                RZXInfo += "/";
+                RZXInfo += RZXFramesTotal;
+                StatusBar1->Panels->Items[3]->Text = RZXInfo;
         }
-        StatusBar1->Panels->Items[3]->Text = scanlinesInfo;
+        else
+        {
+                AnsiString scanlinesInfo = "";
+                if (emulator.scanlinesPerFrame > 0)
+                {
+                        scanlinesInfo = "     ";
+                        scanlinesInfo += emulator.scanlinesPerFrame;
+                        scanlinesInfo += " Scanlines";
+                }
+                StatusBar1->Panels->Items[3]->Text = scanlinesInfo;
+        }
         
         StatusBar1->Panels->Items[1]->Text = text;
         fps=0;
@@ -2431,7 +2443,11 @@ void TForm1::HandleRunFrame(void)
                 WaitForSingleObject(SoundDXReady,1000);
                 ResetEvent(SoundDXReady);
 
-                if (!RunFrameEnable) continue;
+                FrameIsRunning = RunFrameEnable;
+                if (!RunFrameEnable)
+                {
+                        continue;
+                }
 
                 Sound.Frame(emulation_stop || emulator.single_step);
                 if (!emulation_stop && !emulator.single_step) LiveMemoryWindow->Update();

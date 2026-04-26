@@ -147,11 +147,15 @@ static int sts, chars;
 static int Sy;
 static int DCCount;
 
+int RZXFramesTotal=0;
+int RZXFrameCount=0;
+bool RZXMode=false;
+
 BOOL insertWaitsWhileSP0256Busy;
 
 extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 
-extern unsigned short RZXCounter;
+extern int RZXCounter;
 extern RZX_INFO rzx;
 
 int TIMEXByte, TIMEXMode, TIMEXColour;
@@ -470,13 +474,16 @@ void spec48_interruptack(void)
 
 void spec48_LoadRZX(char *FileName)
 {
+        Form1->RunFrameEnable=false;
+        while (Form1->FrameIsRunning) Sleep(10);
+        RZXMode=false;
+        rzx_close();
         rzx_playback(FileName);
-        RZXCounter=0;
 }
 
 rzx_u32 RZXcallback(int Msg, void *data)
 {
-        int a;
+        //int a,b;
         //int b,c,d;
 
         switch(Msg)
@@ -485,21 +492,24 @@ rzx_u32 RZXcallback(int Msg, void *data)
                 break;
         case RZXMSG_LOADSNAP:
                 spec_load_z80( ((RZX_SNAPINFO *) data)->filename);
+                RZXCounter=0;
                 break;
         case RZXMSG_IRBNOTIFY:
-                a=((RZX_IRBINFO *) data)->framecount;
+                RZXFramesTotal=((RZX_IRBINFO *) data)->framecount;
                 //b=((RZX_IRBINFO *) data)->tstates;
                 //c=((RZX_IRBINFO *) data)->options;
                 //d=0;
 
-                fts=a;
-                RZXCounter=0;
+                //fts=a;
+                RZXFrameCount=0;
+                RZXMode=true;
+                Form1->RunFrameEnable=true;
                 break;
         default:
-                break;
+                return RZX_INVALID;
         }
 
-        return(0);
+        return RZX_OK;
 }
 
 extern bool GetVersionNumber(int& versionNumberMajor, int& versionNumberMinor, int& versionNumberPart3, int& versionNumberPart4);
@@ -567,6 +577,8 @@ static void divIDEPage(void)
 
 void spec48_exit(void)
 {
+        RZXMode=false;
+        rzx_close();
         floppy_shutdown();
 }
 
@@ -1399,13 +1411,10 @@ BYTE spec48_readport(int Address, int *tstates)
 
 BYTE ReadPort(int Address, int *tstates)
 {
-        int RZXPortVal;
-        
         if (rzx.mode==RZX_PLAYBACK)
         {
-                RZXPortVal = rzx_get_input();
+                int RZXPortVal = rzx_get_input();
                 if (RZXPortVal>=0) return (BYTE)RZXPortVal;
-                //rzx_close();
         }
 
         if (machine.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
@@ -1716,6 +1725,7 @@ BYTE ReadPort(int Address, int *tstates)
 
 void spec48_nmi(void)
 {
+        RZXMode=false;
         rzx_close();
         
         uSpeechPaged=0;
@@ -1824,13 +1834,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!insertWaitsWhileSP0256Busy)
                 {
-                        if (fts>InteruptPosition && IntDue)
+                        if (fts>InteruptPosition && IntDue && (rzx.mode!=RZX_PLAYBACK || RZXCounter<=0))
                         {
-                                if (rzx.mode==RZX_PLAYBACK)
-                                {
-                                        rzx_update(&RZXCounter);
-                                }
-
                                 if (++flash >32) flash=0;
                                 DrawingBorder=1;
                                 DCCount = (++DCCount)&3;
@@ -1838,13 +1843,29 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 IntPending=32-(fts-InteruptPosition);
                                 ContendCounter=(fts-InteruptPosition);
                                 ContendCounter= (ContendCounter+1)&~3;
+
+                                if (rzx.mode==RZX_PLAYBACK)
+                                {
+                                        rzx_u16 rzx_counter;
+                                        if (rzx_update(&rzx_counter)==RZX_OK)
+                                        {
+                                                RZXCounter=rzx_counter;
+                                                IntPending=0;
+                                                RZXFrameCount++;
+                                        }
+                                }
                         }
 
-                        z80_databus(idleDataBus);
-                        if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0));
-                        ts=z80_do_opcode();
-                        if (interruptAck && !WavInGroup()) WavStop();
-                        interruptAck = false;
+                        if (rzx.mode!=RZX_PLAYBACK || RZXCounter>0)
+                        {
+                                z80_databus(idleDataBus);
+                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0));
+                                ts=z80_do_opcode();
+                                if (interruptAck && !WavInGroup()) WavStop();
+                                interruptAck = false;
+                        }
+                        else
+                                ts=4;
                 }
                 else
                 {

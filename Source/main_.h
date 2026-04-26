@@ -373,7 +373,7 @@ public:		// User declarations
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
         void GatherWindowsIfRequired();
-        int RunFrameEnable;
+        int RunFrameEnable,FrameIsRunning;
         void EnableAnnotationOptions();
         void BuildMenuJoystickSelection();
         void BuildMemotechInterfaceSelection();

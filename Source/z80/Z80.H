@@ -53,8 +53,7 @@ typedef struct {
   regpair af_,bc_,de_,hl_,wz_;
   regpair ix,iy;
   BYTE i;
-  WORD r;		/* The low seven bits of the R register. 16 bits long
-			   so it can also act as an RZX instruction counter */
+  BYTE r;		/* The low seven bits of the R register. */
   BYTE r7;		/* The high bit of the R register */
   regpair sp,pc;
   BYTE iff1,iff2,im;

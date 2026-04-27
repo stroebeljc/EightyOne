@@ -155,7 +155,7 @@ BOOL insertWaitsWhileSP0256Busy;
 
 extern AnsiString AdjustPathIfReplacementRom(char* curRom);
 
-extern int RZXCounter;
+int RZXCounter;
 extern RZX_INFO rzx;
 
 int TIMEXByte, TIMEXMode, TIMEXColour;
@@ -944,6 +944,7 @@ BYTE spec48_readoperandbyte(int Address)
 // Called by Z80 instruction opcode fetches
 BYTE spec48_opcode_fetch(int Address)
 {
+        RZXCounter--;
         return(spec48_ReadByte(Address));
 }
 

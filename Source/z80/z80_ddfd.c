@@ -536,7 +536,7 @@ case 0xcb:		/* {DD,FD}CBxx opcodes */
   WZ_ = (WORD)(REGISTER + (SBYTE)readoperandbyte( PC++ ));
   AddToMCycle(5);
   contend( PC, 4 );
-  opcode3 = opcode_fetch( PC++ );
+  opcode3 = readoperandbyte( PC++ ); // not an M1 fetch
 #ifdef HAVE_ENOUGH_MEMORY
   switch(opcode3) {
 #include "z80_ddfdcb.c"

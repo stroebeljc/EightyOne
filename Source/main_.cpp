@@ -117,6 +117,7 @@ HANDLE SoundDXReady;
 
 static bool iniFileExists = false;
 static HWND OldhWnd=NULL;
+static int lastRZXFrameCount=0;
 
 const int bufferLength = 255;
 char webBuffer[bufferLength];
@@ -926,7 +927,11 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 RZXInfo += RZXFrameCount;
                 RZXInfo += "/";
                 RZXInfo += RZXFramesTotal;
+                RZXInfo += " > ";
+                RZXInfo += RZXFrameCount-lastRZXFrameCount;
+                RZXInfo += "fps";
                 StatusBar1->Panels->Items[3]->Text = RZXInfo;
+                lastRZXFrameCount=RZXFrameCount;
         }
         else
         {

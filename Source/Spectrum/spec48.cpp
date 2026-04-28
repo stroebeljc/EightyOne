@@ -1352,6 +1352,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
 int spec48_contend(int Address, int states, int time)
 {
+        if (RZXModePlay()) return 0;
         if (Address>=16384 && Address<=32768) time += ContendArray[ContendCounter+states+time];
         return(time);
 }
@@ -1413,6 +1414,7 @@ BYTE ReadPort(int Address, int *tstates)
         {
                 int RZXPortVal = rzx_get_input();
                 if (RZXPortVal>=0) return (BYTE)RZXPortVal;
+                return 0xb4;
         }
 
         if (machine.HDType==HDDIVIDE && ((Address&0xe3)==0xa3))
@@ -1831,14 +1833,14 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                 if (!insertWaitsWhileSP0256Busy)
                 {
-                        if (fts>InteruptPosition && IntDue && (!RZXModePlay() || RZXCounter<=0))
+                        if (IntDue && (RZXModePlay() ? RZXCounter<=0 : fts>InteruptPosition))
                         {
                                 if (++flash >32) flash=0;
                                 DrawingBorder=1;
                                 DCCount = (++DCCount)&3;
                                 IntDue=0;
-                                IntPending=32-(fts-InteruptPosition);
-                                ContendCounter=(fts-InteruptPosition);
+                                IntPending=RZXModePlay() ? -1 : 32-(fts-InteruptPosition);
+                                ContendCounter=RZXModePlay() ? 0 : (fts-InteruptPosition);
                                 ContendCounter= (ContendCounter+1)&~3;
 
                                 if (RZXModePlay())
@@ -1846,10 +1848,12 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         rzx_u16 rzx_counter;
                                         if (rzx_update(&rzx_counter)==RZX_OK)
                                         {
+                                                RZXFrameCount++;
                                                 RZXCounter=rzx_counter;
                                                 IntPending=4;
-                                                RZXFrameCount++;
                                         }
+                                        else
+                                                emulation_stop=1;
                                 }
                         }
 

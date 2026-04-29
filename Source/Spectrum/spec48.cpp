@@ -1853,8 +1853,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 IntPending=4;
                                                 if (RZXCounter<=4)
                                                         rzxInterruptRetrig=1;
-                                                else
-                                                        rzxInterruptRetrig=0;
                                         }
                                         else
                                                 emulation_stop=1;
@@ -1867,11 +1865,14 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),RZXModePlay());
                                 ts=z80_do_opcode();
                         }
+                        else if (rzxInterruptRetrig)
+                        {
+                                IntDue=1;
+                                rzxInterruptRetrig=0;
+                                ts=0;
+                        }
                         else
                         {
-                                if (rzxInterruptRetrig)
-                                        IntDue=1;
-
                                 ts = loop; // finish drawing the frame during RZX playback
                         }
                         if (interruptAck && !WavInGroup()) WavStop();

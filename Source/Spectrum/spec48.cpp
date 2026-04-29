@@ -1352,7 +1352,6 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
 int spec48_contend(int Address, int states, int time)
 {
-        if (RZXModePlay()) return 0;
         if (Address>=16384 && Address<=32768) time += ContendArray[ContendCounter+states+time];
         return(time);
 }
@@ -2137,7 +2136,11 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (CurScanLine->scanline_len > (machine.tperscanline*scale))
                         CurScanLine->scanline_len=(machine.tperscanline*2*scale);
 
-                borrow = -loop;
+                if (RZXModePlay())
+                        borrow = 0;
+                else
+                        borrow = -loop;
+
                 loop += machine.tperscanline;
 
                 Sy++;

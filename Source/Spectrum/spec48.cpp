@@ -1755,6 +1755,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         static int shift_register;
         static int clean_exit=1;
         static int IntPending=0;
+        static int rzxInterruptRetrig=0;
         int attr, attr2, b1, b2;
         int MaxScanLen;
         int PrevBit=0, PrevGhost=0;
@@ -1850,6 +1851,10 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                                 RZXFrameCount++;
                                                 RZXCounter=rzx_counter;
                                                 IntPending=4;
+                                                if (RZXCounter<=4)
+                                                        rzxInterruptRetrig=1;
+                                                else
+                                                        rzxInterruptRetrig=0;
                                         }
                                         else
                                                 emulation_stop=1;
@@ -1864,6 +1869,9 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         }
                         else
                         {
+                                if (rzxInterruptRetrig)
+                                        IntDue=1;
+
                                 ts = loop; // finish drawing the frame during RZX playback
                         }
                         if (interruptAck && !WavInGroup()) WavStop();
@@ -2137,16 +2145,24 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         CurScanLine->scanline_len=(machine.tperscanline*2*scale);
 
                 if (RZXModePlay())
+                {
                         borrow = 0;
+                        loop = machine.tperscanline;
+                }
                 else
+                {
                         borrow = -loop;
-
-                loop += machine.tperscanline;
+                        loop += machine.tperscanline;
+                }
 
                 Sy++;
                 if (Sy>=machine.scanlines)
                 {
-                        fts -= machine.tperframe;
+                        if (RZXModePlay())
+                                fts = 0;
+                        else
+                                fts -= machine.tperframe;
+
                         IntDue = 1;
                         CurScanLine->sync_len=414;
                         CurScanLine->sync_type = SYNCTYPEV;

@@ -1846,9 +1846,15 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 if (RZXModePlay())
                                 {
                                         rzx_u16 rzx_counter;
-                                        if (rzx_update(&rzx_counter)==RZX_OK)
+                                        int rzx_update_result;
+                                        do
                                         {
+                                                rzx_update_result=rzx_update(&rzx_counter);
                                                 RZXFrameCount++;
+                                        } while (rzx_counter==0 && rzx_update_result==RZX_OK);
+
+                                        if (rzx_update_result==RZX_OK)
+                                        {
                                                 RZXCounter=rzx_counter;
                                                 IntPending=4;
                                                 if (RZXCounter<=4)

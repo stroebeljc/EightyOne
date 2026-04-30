@@ -81,6 +81,9 @@ void __fastcall TSpeed::Recalc(TObject *Sender)
         case 9:
                 emulator.speedup = 4.0;
                 break;
+        case 10:
+                emulator.speedup = 8.0;
+                break;
         }
 }
 //---------------------------------------------------------------------------

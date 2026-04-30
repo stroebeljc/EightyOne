@@ -5,7 +5,7 @@ object Speed: TSpeed
   BorderStyle = bsToolWindow
   Caption = 'Speed'
   ClientHeight = 110
-  ClientWidth = 369
+  ClientWidth = 401
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,7 +21,7 @@ object Speed: TSpeed
   object AccuratePanel: TPanel
     Left = 0
     Top = 0
-    Width = 369
+    Width = 401
     Height = 73
     BevelOuter = bvNone
     TabOrder = 1
@@ -102,12 +102,18 @@ object Speed: TSpeed
       Height = 13
       Caption = '2.0x'
     end
+    object Label13: TLabel
+      Left = 368
+      Top = 48
+      Width = 20
+      Height = 13
+      Caption = '8.0x'
+    end
     object AccurateSpeed: TTrackBar
       Left = 8
       Top = 16
-      Width = 353
+      Width = 385
       Height = 25
-      Max = 9
       Orientation = trHorizontal
       PageSize = 1
       Frequency = 1
@@ -121,7 +127,7 @@ object Speed: TSpeed
     end
   end
   object Button1: TButton
-    Left = 280
+    Left = 304
     Top = 80
     Width = 75
     Height = 25

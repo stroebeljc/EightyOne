@@ -415,6 +415,8 @@ int rzx_init(const RZX_EMULINFO *emul, const RZX_CALLBACK callback)
 
 int rzx_playback(const char *filename)
 {
+  int seekReturn;
+  
   if(filename==0) return RZX_INVALID;
   if(inputbuffer==NULL)
   {
@@ -453,10 +455,11 @@ int rzx_playback(const char *filename)
   }
   /* ok, open the first IRB */
   rzx.mode=RZX_PLAYBACK;
-  if(rzx_seek_irb()!=RZX_OK)
+  seekReturn=rzx_seek_irb();
+  if(seekReturn!=RZX_OK)
   {
      rzx_close();
-     return RZX_FINISHED;
+     return seekReturn;
   }
   INcount=0;
   INold=0xFFFF;

@@ -477,7 +477,13 @@ void spec48_LoadRZX(char *FileName)
         Form1->RunFrameEnable=false;
         while (Form1->FrameIsRunning) Sleep(10);
         rzx_close();
-        if (rzx_playback(FileName)!=RZX_OK) spec48_reset();
+        int playReturn=rzx_playback(FileName);
+        if (playReturn!=RZX_OK)
+        {
+                spec48_reset();
+                if (playReturn==RZX_UNSUPPORTED)
+                        MessageBox(NULL,"Only Z80 embedded snapshots are supported.","RZX Playback Error",MB_OK);
+        }
 }
 
 rzx_u32 RZXcallback(int Msg, void *data)
@@ -1414,6 +1420,8 @@ BYTE ReadPort(int Address, int *tstates)
         {
                 int RZXPortVal = rzx_get_input();
                 if (RZXPortVal>=0) return (BYTE)RZXPortVal;
+                //Should not get past hear unless there is a playback error
+                //What to do in this case? Some files still play well, but many don't.
                 return 0xb4;
         }
 

@@ -477,29 +477,30 @@ void spec48_LoadRZX(char *FileName)
         Form1->RunFrameEnable=false;
         while (Form1->FrameIsRunning) Sleep(10);
         rzx_close();
-        rzx_playback(FileName);
+        if (rzx_playback(FileName)!=RZX_OK) spec48_reset();
 }
 
 rzx_u32 RZXcallback(int Msg, void *data)
 {
-        //int a,b;
-        //int b,c,d;
-
         switch(Msg)
         {
         case RZXMSG_CREATOR:
                 break;
         case RZXMSG_LOADSNAP:
-                spec_load_z80( ((RZX_SNAPINFO *) data)->filename);
+                {
+                char *filename=((RZX_SNAPINFO *) data)->filename;
+                String extension=ExtractFileExt(filename);
+
+                if (!CompareText(extension,".z80"))
+                        spec_load_z80( filename );
+                else
+                        return RZX_UNSUPPORTED;
+                        
                 RZXCounter=0;
+                }
                 break;
         case RZXMSG_IRBNOTIFY:
                 RZXFramesTotal=((RZX_IRBINFO *) data)->framecount;
-                //b=((RZX_IRBINFO *) data)->tstates;
-                //c=((RZX_IRBINFO *) data)->options;
-                //d=0;
-
-                //fts=a;
                 RZXFrameCount=0;
                 Form1->RunFrameEnable=true;
                 break;

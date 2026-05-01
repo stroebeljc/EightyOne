@@ -925,6 +925,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         {
                 AnsiString RZXInfo = "    ";
 
+                if (emulator.machine!=MACHINESPECTRUM) rzx_close();
                 if (lastRZXFrameCount>RZXFrameCount) lastRZXFrameCount=0;
                 RZXInfo += RZXFrameCount;
                 RZXInfo += "/";

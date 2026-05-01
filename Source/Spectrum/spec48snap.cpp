@@ -287,8 +287,8 @@ void spec_load_z80(char *fname)
                 case 1: speccy=SPECCY48; if1 = true; break;
                 case 3: speccy=SPECCY128; break;
                 case 4: speccy=SPECCY128; if1 = true; break;
-                case 7: speccy=SPECCYPLUS2A; break;
-                case 8: speccy=SPECCYPLUS2A; break;
+                case 7: speccy=SPECCYPLUS3; break;
+                case 8: speccy=SPECCYPLUS3; break;
                 case 9: speccy=SPECCY128; break;
                 case 10: speccy=SPECCY128; break;
                 case 11: speccy=SPECCY128; break;
@@ -310,8 +310,8 @@ void spec_load_z80(char *fname)
                 case 4: speccy=SPECCY128; break;
                 case 5: speccy=SPECCY128; if1 = true; break;
                 case 6: speccy=SPECCY128; mgt = true; break;
-                case 7: speccy=SPECCYPLUS2A; break;
-                case 8: speccy=SPECCYPLUS2A; break;
+                case 7: speccy=SPECCYPLUS3; break;
+                case 8: speccy=SPECCYPLUS3; break;
                 case 9: speccy=SPECCY128; break;
                 case 10: speccy=SPECCY128; break;
                 case 11: speccy=SPECCY128; break;

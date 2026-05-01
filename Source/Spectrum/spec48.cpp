@@ -477,6 +477,7 @@ void spec48_LoadRZX(char *FileName)
         Form1->RunFrameEnable=false;
         while (Form1->FrameIsRunning) Sleep(10);
         rzx_close();
+        emulation_stop=0;
         int playReturn=rzx_playback(FileName);
         if (playReturn!=RZX_OK)
         {

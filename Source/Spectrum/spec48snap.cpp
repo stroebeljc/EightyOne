@@ -385,8 +385,6 @@ void spec_load_z80(char *fname)
                 HW->SoundCardBox->ItemIndex = HW->SelectEntry(HW->SoundCardBox, "Fuller Box");
         else if ((buf[37] & 0x04) == 0x04)
                 HW->SoundCardBox->ItemIndex = HW->SelectEntry(HW->SoundCardBox, "Sinclair 128K");
-        else
-                HW->SoundCardBox->ItemIndex = 0;
 
         switch ((buf[29] & 0xC0) >> 6)
         {

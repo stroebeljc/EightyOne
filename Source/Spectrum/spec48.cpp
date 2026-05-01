@@ -149,6 +149,7 @@ static int DCCount;
 
 int RZXFramesTotal=0;
 int RZXFrameCount=0;
+int RZXErrorFrame=0;
 bool RZXModePlay() { return rzx.mode==RZX_PLAYBACK; }
 
 BOOL insertWaitsWhileSP0256Busy;
@@ -478,6 +479,7 @@ void spec48_LoadRZX(char *FileName)
         while (Form1->FrameIsRunning) Sleep(10);
         rzx_close();
         emulation_stop=0;
+        RZXFramesTotal=RZXErrorFrame=0;
         int playReturn=rzx_playback(FileName);
         if (playReturn!=RZX_OK)
         {
@@ -1421,8 +1423,9 @@ BYTE ReadPort(int Address, int *tstates)
         {
                 int RZXPortVal = rzx_get_input();
                 if (RZXPortVal>=0) return (BYTE)RZXPortVal;
-                //Should not get past hear unless there is a playback error
+                //Should not get past here unless there is a playback error
                 //What to do in this case? Some files still play well, but many don't.
+                RZXErrorFrame=RZXFrameCount;
                 return 0xb4;
         }
 

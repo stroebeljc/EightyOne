@@ -924,12 +924,20 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         if (RZXModePlay())
         {
                 AnsiString RZXInfo = "    ";
+
+                if (lastRZXFrameCount>RZXFrameCount) lastRZXFrameCount=0;
                 RZXInfo += RZXFrameCount;
                 RZXInfo += "/";
                 RZXInfo += RZXFramesTotal;
                 RZXInfo += " > ";
                 RZXInfo += RZXFrameCount-lastRZXFrameCount;
-                RZXInfo += "fps";
+                RZXInfo += "fps ";
+                if (RZXErrorFrame>0)
+                {
+                        RZXInfo += "(Error at ";
+                        RZXInfo += RZXErrorFrame;
+                        RZXInfo += ")";
+                }
                 StatusBar1->Panels->Items[3]->Text = RZXInfo;
                 lastRZXFrameCount=RZXFrameCount;
         }

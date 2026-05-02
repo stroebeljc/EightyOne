@@ -15,7 +15,6 @@ object MidiForm: TMidiForm
   FormStyle = fsStayOnTop
   OldCreateOrder = False
   Scaled = False
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object GroupBox1: TGroupBox

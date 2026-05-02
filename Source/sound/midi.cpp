@@ -34,6 +34,13 @@ CMidi::CMidi(void)
         MidiSerialCount=TIMEOUT;
         MidiBufferLen=0;
         outHandle=NULL;
+        InitializeCriticalSectionAndSpinCount(&CriticalSection, 0x00000400);
+}
+
+CMidi::~CMidi(void)
+{
+        Stop();
+        DeleteCriticalSection(&CriticalSection);
 }
 
 void CMidi::WriteBit(int Bit)
@@ -92,8 +99,11 @@ void CMidi::Write(int Byte)
                 return;
         }
 
+        EnterCriticalSection(&CriticalSection);
         if (outHandle)
                 midiOutShortMsg((HMIDIOUT)outHandle, *((int *)MidiBuffer));
+        LeaveCriticalSection(&CriticalSection);
+
         MidiBuffer[0]=MidiBuffer[1]=MidiBuffer[2]=MidiBuffer[3]=0;
 }
 
@@ -108,7 +118,9 @@ void CMidi::Start(void)
 
 void CMidi::Stop(void)
 {
+        EnterCriticalSection(&CriticalSection);
         if (outHandle) midiOutClose((HMIDIOUT)outHandle);
         outHandle=NULL;
+        LeaveCriticalSection(&CriticalSection);
 }
 

@@ -23,6 +23,7 @@ class CMidi
 {
 public:
         CMidi();
+        ~CMidi();
         void WriteBit(int Bit);
         void ClockTick(int ts);
         void Write(int Byte);
@@ -35,6 +36,7 @@ private:
         int MidiByte;
         unsigned char MidiBuffer[1024];
         int MidiBufferLen;
+        CRITICAL_SECTION CriticalSection;
         void *outHandle;     
 };
 

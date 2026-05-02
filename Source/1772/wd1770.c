@@ -330,6 +330,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             break;
 
         default:
+            wd1770_set_cmdint( d );
             d->state = wd1770_state_none;
             break;
         }

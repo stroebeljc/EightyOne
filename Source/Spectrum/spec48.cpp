@@ -231,18 +231,6 @@ void spec48_reset(void)
                 PlusDPaged=1;
         }
 
-        z80_reset();
-        d8255_reset();
-        d8251reset();
-        z80_reset();
-        floppy_init();
-        ATA_Reset();
-        if (machine.HDType==HDSIMPLE3E) ATA_SetMode(ATA_MODE_8BIT);
-        if (machine.HDType==HDDIVIDE) ATA_SetMode(ATA_MODE_16BIT);
-        if (machine.HDType==HDZXCF) ATA_SetMode(ATA_MODE_16BIT);
-        if (machine.HDType==HDSIMPLECF) ATA_SetMode(ATA_MODE_16BIT);
-        if (machine.HDType==HDSIMPLE16BIT) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
-        if (machine.HDType==HDSIMPLE8BIT) ATA_SetMode(ATA_MODE_8BIT);
         mouse.buttons=255;
 
         ResetRomCartridge();
@@ -415,6 +403,19 @@ void spec48_initialise()
                 pos += machine.tperscanline;
         }
 
+        z80_reset();
+        d8255_reset();
+        d8251reset();
+        z80_reset();
+        floppy_init();
+        ATA_Reset();
+        if (machine.HDType==HDSIMPLE3E) ATA_SetMode(ATA_MODE_8BIT);
+        if (machine.HDType==HDDIVIDE) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDZXCF) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDSIMPLECF) ATA_SetMode(ATA_MODE_16BIT);
+        if (machine.HDType==HDSIMPLE16BIT) ATA_SetMode(ATA_MODE_16BIT_WRSWAP);
+        if (machine.HDType==HDSIMPLE8BIT) ATA_SetMode(ATA_MODE_8BIT);
+        
         spec48_reset();
         P3DriveMachineHasInitialised();
 
@@ -1445,8 +1446,8 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x1f:
-                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick1();
                 if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_statusreg());
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_KEMPSTON) return (BYTE)~ReadJoystick1();
                 if (machine.floppytype==FLOPPYDISCIPLE) return (BYTE)(PrinterBusy()<<6);
                 break;
 
@@ -1492,8 +1493,8 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
 
         case 0x7f:
-                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_FULLER) return ReadJoystick1();
                 if (machine.floppytype==FLOPPYBETA && PlusDPaged) return(floppy_read_datareg());
+                if (machine.joystick1Connected && machine.joystickInterfaceType == JOYSTICK_FULLER) return ReadJoystick1();
                 if (machine.speech == SPEECH_TYPE_DKTRONICS) return sp0256_AL2.Busy() ? idleDataBus : (BYTE)(idleDataBus & 0x7F);
                 break;
 

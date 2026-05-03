@@ -656,11 +656,11 @@ void floppy_setimage(int drive, char *filename, int readonly)
 
                         if (machine.floppytype==FLOPPYDISCIPLE && d->density!=0) d->disk.sectorsize = 256;
 
-                        if( !strcmp( filename + ( l - 4 ), ".dsk" ) ) d->disk.alternatesides = 1;
-                        else if( !strcmp( filename + ( l - 4 ), ".mgt" ) ) d->disk.alternatesides = 1;
-                        else if( !strcmp( filename + ( l - 4 ), ".img" ) ) d->disk.alternatesides = 0;
-                        else if( !strcmp( filename + ( l - 4 ), ".opd" )
-                                   || !strcmp( filename + ( l - 4 ), ".opu" ))
+                        if( !stricmp( filename + ( l - 4 ), ".dsk" ) ) d->disk.alternatesides = 1;
+                        else if( !stricmp( filename + ( l - 4 ), ".mgt" ) ) d->disk.alternatesides = 1;
+                        else if( !stricmp( filename + ( l - 4 ), ".img" ) ) d->disk.alternatesides = 0;
+                        else if( !stricmp( filename + ( l - 4 ), ".opd" )
+                                   || !stricmp( filename + ( l - 4 ), ".opu" ))
                         {
                                 d->disk.alternatesides = 1;
                                 d->disk.numlayers = 1;
@@ -668,7 +668,7 @@ void floppy_setimage(int drive, char *filename, int readonly)
                                 d->disk.numsectors = 18;
                                 d->disk.sectorsize = 256;
                         }
-                        else if( !strcmp( filename + ( l - 4 ), ".trd" ))
+                        else if( !stricmp( filename + ( l - 4 ), ".trd" ))
                         {
                                 d->disk.alternatesides = 1;
                                 d->disk.numlayers = 2;

@@ -334,6 +334,7 @@ void spec_load_z80(char *fname)
                 }
         }
         HWSetMachine(MACHINESPECTRUM, speccy);
+        HW->DefaultsButtonClick(NULL);
 
         if (if1)
         {
@@ -353,33 +354,7 @@ void spec_load_z80(char *fname)
                         HW->FDCBox->ItemIndex = HW->SelectEntry(HW->FDCBox, "+D");
                         HW->FDCBoxChange(HW->FDCBox);
                 }
-                else
-                {
-                        HW->FDCBox->ItemIndex = 0;
-                        HW->FDCBoxChange(HW->FDCBox);
-                }
         }
-        else
-        {
-                HW->FDCBox->ItemIndex = 0;
-                HW->FDCBoxChange(HW->FDCBox);
-        }
-
-        // Disable various items that are not configured by the snapshot
-        HW->RomCartridgeBox->ItemIndex = 0;
-        HW->RomCartridgeBoxChange(HW->RomCartridgeBox);
-
-        HW->IDEBox->ItemIndex = 0;
-        HW->IDEBoxChange(HW->IDEBox);
-
-        HW->SpeechBox->ItemIndex = 0;
-        HW->SpeechBoxChange(HW->SpeechBox);
-
-        HW->SpecDrum->Checked=false;
-        HW->KMouse->Checked=false;
-        HW->uSource->Checked=false;
-        HW->ZXPrinter->Checked=false;
-        HW->TS2050->Checked=false;
 
         if ((buf[37] & 0x44) == 0x44)
                 HW->SoundCardBox->ItemIndex = HW->SelectEntry(HW->SoundCardBox, "Fuller Box");
@@ -418,7 +393,6 @@ void spec_load_z80(char *fname)
         }
 
         HWSetMachine(MACHINESPECTRUM, speccy);
-        machine.initialise();
 
         z80.af.b.h = buf[0]; z80.af.b.l = buf[1];
         z80.bc.w = (WORD)(buf[2] + 256*buf[3]);

@@ -352,6 +352,7 @@ void floppy_ClockTick(int ts)
                         if (NMICount<0)
                         {
                                 wd1770_set_datarq(PlusDCur);
+                                wd1770_check_stall(PlusDCur);
                                 NMICount+=(PlusDCur->state == wd1770_state_read)? NMIREADTICKER
                                                                         : NMIWRITETICKER;
                         }

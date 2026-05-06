@@ -417,7 +417,7 @@ void floppy_init()
                 || machine.floppytype==FLOPPYOPUSD
                 || machine.floppytype==FLOPPYBETA)
         {
-                for( i = 0; i < 2; i++ )
+                for( i = 0; i < FLOPPYDRIVES; i++ )
                 {
                     floppy_eject(i);
                 }
@@ -430,8 +430,8 @@ void floppy_init()
         {
                 u765_Shutdown();
                 u765_Initialise();
-                floppy_setimage(0,machine.driveaimg,1);
-                floppy_setimage(1,machine.drivebimg,1);
+                floppy_setimage(0,machine.driveimg[0],1);
+                floppy_setimage(1,machine.driveimg[1],1);
                 return;
         }
 
@@ -515,8 +515,8 @@ void floppy_init()
 	        fdc_setdrive(p3_fdc, 2, p3_drive_null);
 	        fdc_setdrive(p3_fdc, 3, p3_drive_null);
 
-                floppy_setimage(0,machine.driveaimg,1);
-                floppy_setimage(1,machine.drivebimg,1);
+                floppy_setimage(0,machine.driveimg[0],1);
+                floppy_setimage(1,machine.driveimg[1],1);
         }
 }
 

@@ -240,6 +240,14 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 
         if( !( b & 0x20 ) )
         {                               /* Read Sector */
+            if (b & 0x01)
+            {
+                d->status_register &= ~WD1770_SR_BUSY;
+                d->state = wd1770_state_none;
+                wd1770_set_cmdint( d );
+                wd1770_reset_datarq( d );
+                return;
+            }
             d->state = wd1770_state_read;
         }
         else
@@ -345,8 +353,8 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             break;
 
         default:
-            wd1770_set_cmdint( d );
             d->state = wd1770_state_none;
+            wd1770_set_cmdint( d );
             break;
         }
 
@@ -465,6 +473,7 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
         && d->state != wd1770_state_writetrack)
     {
         d->state = wd1770_state_none;
+        wd1770_reset_datarq( d );
         return;
     }
 

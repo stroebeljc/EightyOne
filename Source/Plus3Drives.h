@@ -158,7 +158,6 @@ private:	// User declarations
 
         bool NewFloppyDisk(AnsiString& filePath);
         bool CreateFloppyDiskImage(AnsiString title, AnsiString filter, AnsiString defaultExt, AnsiString& filePath);
-        void OpenFloppyDriveImage(int driveNumber, char* driveimg, TEdit* driveText, int readonly);
         void FloppyDiskEject(int driveNumber, TEdit* DriveText, char* driveimg);
 
         void NewHardDiskImage(int driveNumber, TEdit* HDText, TCheckBox* HDReadOnly, TComboBox* HDList);
@@ -174,6 +173,7 @@ public:		// User declarations
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void InsertFile(AnsiString Filename);
+        void OpenFloppyDriveImage(int driveNumber, AnsiString driveText, int readonly);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TP3Drive *P3Drive;

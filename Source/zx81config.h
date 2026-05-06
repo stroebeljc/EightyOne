@@ -137,6 +137,8 @@
 #define FLOPPYZX1541    7
 #define FLOPPYLARKEN81  8
 
+#define FLOPPYDRIVES    2
+
 #define DRIVENONE       0
 #define DRIVE3INCHSS    1
 #define DRIVE3INCHDS    2
@@ -264,8 +266,7 @@ typedef struct
         int floppytype;
         int driveatype;
         int drivebtype;
-        char driveaimg[256];
-        char drivebimg[256];
+        char driveimg[FLOPPYDRIVES][512];
         int drivebusy;
         int HDType;
         int divIDEJumperEClosed;

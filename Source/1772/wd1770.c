@@ -85,12 +85,13 @@ void wd1770_check_stall( wd1770_drive *d )
 {
     if (d->state==wd1770_state_writetrack && d->data_track_first_write<1)
     {
-        if (d->data_track_first_write--<-3)
+        if (d->data_track_first_write--<-5)
         {
             d->status_register &= ~WD1770_SR_BUSY;
             d->status_register |= WD1770_SR_LOST;
             d->state = wd1770_state_none;
             wd1770_set_cmdint( d );
+            wd1770_reset_datarq( d );
         }
     }
 }
@@ -473,7 +474,6 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
         && d->state != wd1770_state_writetrack)
     {
         d->state = wd1770_state_none;
-        wd1770_reset_datarq( d );
         return;
     }
 
@@ -493,7 +493,7 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
 
     if (d->state == wd1770_state_writetrack)
     {
-        d->data_track_first_write++;
+        d->data_track_first_write=1;
         if (d->data_track_state==0)
         {
             // MFM Double Density

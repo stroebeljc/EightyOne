@@ -399,9 +399,6 @@ void zx81_initialise()
                 memory[0x3A0E] = 0x2B;
                 memory[0x3A0F] = 0x0F;
                 memory[0x3A10] = 0xC9;
-
-                memory[12300]=69;
-                memory[12301]=0;
         }
 
         if (machine.HDType==HDSIMPLECF)
@@ -1289,6 +1286,10 @@ void zx81_writeport(int Address, int Data, int *tstates)
                                 sp0256_AL2.Write((BYTE)Data);
                         }
                 }
+                break;
+
+        case 0x57:
+                if (machine.floppytype==FLOPPYLARKEN81) LarkenDriveSelect((BYTE)Data);
                 break;
 
         case 0x73:

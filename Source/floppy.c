@@ -47,6 +47,7 @@ wd1770_drive PlusDDrives[2], *PlusDCur;
 #define LARKENSIZE (80*1984)
 unsigned char LarkenDrive[LARKENSIZE*2];
 char LarkenPath0[MAXPATH], LarkenPath1[MAXPATH];
+int LarkenDriveSelectValue=0;
 
 #include "larhead.h"
 
@@ -843,11 +844,16 @@ int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_for
 	return 0;
 }
 
-int LarkenLoadTrack(int Drive, int TrackNo, unsigned char *buf)
+void LarkenDriveSelect(BYTE data)
+{
+        LarkenDriveSelectValue = (data==2);
+}
+
+int LarkenLoadTrack(int TrackNo, unsigned char *buf)
 {
         int offset;
 
-        offset=Drive*LARKENSIZE;
+        offset=LarkenDriveSelectValue*LARKENSIZE;
 
         if (LarkenDrive[offset+140]!=0xff)
         {
@@ -862,11 +868,11 @@ int LarkenLoadTrack(int Drive, int TrackNo, unsigned char *buf)
         return(1);
 }
 
-void LarkenSaveTrack(int Drive, int TrackNo, unsigned char *buf)
+void LarkenSaveTrack(int TrackNo, unsigned char *buf)
 {
         unsigned char *p;
 
-        p=LarkenDrive + LARKENSIZE*Drive;
+        p=LarkenDrive + LARKENSIZE*LarkenDriveSelectValue;
         p += TrackNo*1984;
 
         memcpy(p, buf, 1984);

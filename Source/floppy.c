@@ -399,12 +399,14 @@ void floppy_shutdown()
 
 void floppy_init()
 {
+        int i;
+
         Data_Reg_A=0; Data_Dir_A=0; Control_A=0;
         Data_Reg_B=0; Data_Dir_B=0; Control_B=0;
 
         if (machine.floppytype==FLOPPYLARKEN81)
         {
-                for( int i = 0; i < FLOPPYDRIVES; i++ )
+                for( i = 0; i < FLOPPYDRIVES; i++ )
                 {
                     floppy_eject(i);
                 }
@@ -418,7 +420,7 @@ void floppy_init()
                 || machine.floppytype==FLOPPYOPUSD
                 || machine.floppytype==FLOPPYBETA)
         {
-                for( int i = 0; i < FLOPPYDRIVES; i++ )
+                for( i = 0; i < FLOPPYDRIVES; i++ )
                 {
                     floppy_eject(i);
                 }
@@ -431,7 +433,7 @@ void floppy_init()
         {
                 u765_Shutdown();
                 u765_Initialise();
-                for( int i = 0; i < FLOPPYDRIVES; i++ )
+                for( i = 0; i < FLOPPYDRIVES; i++ )
                 {
                     floppy_setimage(i,machine.driveimg[i],1);
                 }
@@ -518,7 +520,7 @@ void floppy_init()
 	        fdc_setdrive(p3_fdc, 2, p3_drive_null);
 	        fdc_setdrive(p3_fdc, 3, p3_drive_null);
 
-                for( int i = 0; i < FLOPPYDRIVES; i++ )
+                for( i = 0; i < FLOPPYDRIVES; i++ )
                 {
                     floppy_setimage(i,machine.driveimg[i],1);
                 }

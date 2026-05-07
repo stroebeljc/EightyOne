@@ -250,6 +250,11 @@ void zx81_interruptack(void)
         interruptAck = true;
 }
 
+void zx81_exit(void)
+{
+        floppy_shutdown();
+}
+
 void DisableLambda()
 {
         if (lambdaSelected)

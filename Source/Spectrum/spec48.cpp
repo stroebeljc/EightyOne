@@ -586,7 +586,7 @@ static void divIDEPage(void)
 
 void spec48_exit(void)
 {
-        rzx_close();
+        if (RZXFramesTotal>0) rzx_close();
         floppy_shutdown();
 }
 

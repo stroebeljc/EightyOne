@@ -416,6 +416,7 @@ void zx81_initialise()
         }
 
         ZX1541PORT=0;
+        IECReset();
 
         nmiGeneratorEnabled = false;
         syncOutputWhite = false;
@@ -1471,8 +1472,6 @@ BYTE ReadInputPort(int Address, int *tstates)
                         {
                                 int a = ZX1541PORT & 3;
 
-                                if (!IECIsReset()) a |= 16;
-                                if (!IECIsATN()) a |= 32;
                                 if (!IECIsClock()) a |= 64;
                                 if (!IECIsData()) a |= 128;
                                 return (BYTE)a;

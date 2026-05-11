@@ -32,17 +32,12 @@ static unsigned int Reset = 0;
 static unsigned int ATN = 0;
 static unsigned int Clock = 0;
 static unsigned int Data = 0;
-static unsigned int TimeOut = 0;
 
-void Device8Tick(void);
-void Device8TurnAround(void);
-void Device8UnTurnAround(void);
-void Device8Talk(void);
-void Received1541(int Byte);
-int Device8Listen(void);
-
-char SendBuffer[65536], *SendBuf;
-int SendBufLen=0;
+void DeviceTick(void);
+void DeviceTurnAround(int DeviceNo);
+void DeviceUnTurnAround(int DeviceNo);
+void DeviceTalk(int DeviceNo);
+int DeviceListen(int DeviceNo);
 
 #define IDLE            0
 #define READYTOSEND     1
@@ -59,73 +54,107 @@ int SendBufLen=0;
 #define CLOSE           0xe0
 #define DATA            0x60
 
-void Device8Tick(void)
+#define READDATA        0x11
+#define WRITEDATA       0x12
+
+#define DISKDRIVES      2
+#define BASEDEVICE      8
+
+char SendBuffer[65536], *SendBuf;
+int SendBufLen;
+
+static unsigned int TimeOut;
+static int ListenState;
+static int TalkState;
+static int ProtocolState=IDLE;
+static int ActiveDevice=BASEDEVICE;
+
+void DeviceTick(void)
 {
-        int Byte;
+        int Byte, i;
 
-        if (SendBufLen) Device8Talk();
-        else
-        {
-                Byte=Device8Listen();
-                if (Byte!=-1) Received1541(Byte);
-        }
-}
-
-void Received1541(int Byte)
-{
-        static int State=IDLE;
-
-        switch(State)
+        switch (ProtocolState)
         {
         case IDLE:
-        {
-                switch(Byte)
+                if (!IECIsATN()) break;
+                Byte=DeviceListen(ActiveDevice);
+                if (Byte<0) break;
+                for (i=0; i<DISKDRIVES; i++)
                 {
-                case 0x48:      State=TALK;
-                                break;
+                        if (Byte==TALK+BASEDEVICE+i)
+                        {
+                                ProtocolState=TALK;
+                        }
+                        else if (Byte==LISTEN+BASEDEVICE+i)
+                        {
+                                ProtocolState=LISTEN;
+                        }
+                }
 
-                default:        State=IDLE;
-                                break;
-
+                for (i=0; i<DISKDRIVES; i++)
+                {
+                        if ((Byte&0x1F)!=(BASEDEVICE+i)) IECReleaseData(BASEDEVICE+i);
+                        else
+                        {
+                                ActiveDevice=(Byte&0x1F);
+                                IECAssertData(ActiveDevice);
+                        }
                 }
                 break;
-        }
 
         case TALK:
-        {
-                if (Byte==0x6f)
+                Byte=DeviceListen(ActiveDevice);
+                if (Byte<0) break;
+                if (Byte==UNTALK) ProtocolState=IDLE;
+                else if ((Byte&0xF0)==OPEN) ProtocolState=READDATA;
+                else if ((Byte&0xF0)==DATA) ProtocolState=WRITEDATA;
+                 // TEMP CODE FOLLOWS
+                if (Byte==0x6F)
                 {
-                        strcpy(SendBuffer,"EightyOne 0.50");
+                        strcpy(SendBuffer,"EightyOne 0.50\r");
                         SendBuf=SendBuffer;
                         SendBufLen=strlen(SendBuf);
-                        Device8TurnAround();
+                        DeviceTurnAround(ActiveDevice);
                 }
+                break;
+
+        case LISTEN:
+                Byte=DeviceListen(ActiveDevice);
+                if (Byte<0) break;
+                if (Byte==UNLISTEN) ProtocolState=IDLE;
+                else if ((Byte&0xF0)==OPEN) ProtocolState=READDATA;
+                else if ((Byte&0xF0)==DATA) ProtocolState=READDATA;
+                break;
+
+        case READDATA:
+                Byte=DeviceListen(ActiveDevice);
+                if (Byte<0) break;
+                if (Byte==UNLISTEN) ProtocolState=IDLE;
+                break;
+
+        case WRITEDATA:
+                if (SendBufLen || TalkState!=IDLE) DeviceTalk(ActiveDevice);
+                else  ProtocolState=IDLE;
+                break;
         }
-
-
-        default:
-                State=IDLE;
-        }
-
 }
 
 
 // ***************************************************************
 
-void Device8Talk(void)
+void DeviceTalk(int DeviceNo)
 {
-        static int State=IDLE;
         static int BitCount;
 
-        switch(State)
+        switch(TalkState)
         {
         case IDLE:
                 if (IECIsData())
                 {
                         if (TimeOut>220)
                         {
-                                IECReleaseClock(8);
-                                State=READYTOSEND;
+                                IECReleaseClock(DeviceNo);
+                                TalkState=READYTOSEND;
                                 TimeOut=0;
                         }
                 }
@@ -134,27 +163,30 @@ void Device8Talk(void)
         case READYTOSEND:
                 if (!IECIsData())
                 {
-                        State=READYFORDATA;
+                        TalkState=READYFORDATA;
                 }
                 break;
 
         case READYFORDATA:
                 if (SendBufLen==1)
                 {
-                        if (IECIsData()) State=EOI;
+                        if (IECIsData()) TalkState=EOI;
                 }
                 else
                 {
                         TimeOut=0;
-                        IECAssertClock(8);
-                        State=GETTINGBITS;
+                        IECAssertClock(DeviceNo);
+                        TalkState=GETTINGBITS;
                 }
                 break;
 
         case EOI:
-                TimeOut=0;
-                IECAssertClock(8);
-                if (!IECIsData()) State=GETTINGBITS;
+                if (!IECIsData())
+                {
+                        TimeOut=0;
+                        IECAssertClock(DeviceNo);
+                        TalkState=GETTINGBITS;
+                }
                 break;
 
         case GETTINGBITS:
@@ -166,24 +198,21 @@ void Device8Talk(void)
                         {
                         case true:
                                 BitCount++;
-                                IECReleaseClock(8);
+                                IECReleaseClock(DeviceNo);
+                                if (!((*SendBuf)&1)) IECAssertData(DeviceNo);
+                                else IECReleaseData(DeviceNo);
+                                *SendBuf >>= 1;
+                                break;
+                        case false:
+                                IECReleaseData(DeviceNo);
+                                IECAssertClock(DeviceNo);
                                 if (BitCount==8)
                                 {
                                         BitCount=0;
                                         SendBufLen--;
                                         SendBuf++;
-                                        State=FRAMEACK;
+                                        TalkState=FRAMEACK;
                                 }
-                                else
-                                {
-                                        if ((*SendBuf)&1) IECAssertData(8);
-                                        else IECReleaseData(8);
-                                        *SendBuf >>= 1;
-                                }
-                                break;
-                        case false:
-                                IECReleaseData(8);
-                                IECAssertClock(8);
                         }
                 }
                 break;
@@ -191,35 +220,38 @@ void Device8Talk(void)
         case FRAMEACK:
                 if (IECIsData())
                 {
-                        if (!SendBufLen) Device8UnTurnAround();
-                        State=IDLE;
+                        if (!SendBufLen)
+                        {
+                                DeviceUnTurnAround(DeviceNo);
+                        }
+                        TalkState=IDLE;
                 }
         }
 }
 
 // ***************************************************************
 
-int Device8Listen(void)
+int DeviceListen(int DeviceNo)
 {
-        static int State=IDLE, LastByte=false;
-        static int LastClock=true;
+        static int LastByte;
+        static int LastClock;
         static int BitCount, BitValue;
 
-        switch(State)
+        switch(ListenState)
         {
         case IDLE:
                 if (IECIsClock())
                 {
-                        IECAssertData(8);
-                        State=READYTOSEND;
+                        IECAssertData(DeviceNo);
+                        ListenState=READYTOSEND;
                 }
                 break;
 
         case READYTOSEND:
                 if (!IECIsClock())
                 {
-                        IECReleaseData(8);
-                        State=READYFORDATA;
+                        IECReleaseData(DeviceNo);
+                        ListenState=READYFORDATA;
                         TimeOut=0;
                         LastByte=false;
                 }
@@ -228,7 +260,7 @@ int Device8Listen(void)
         case READYFORDATA:
                 if (IECIsClock())
                 {
-                        State=GETTINGBITS;
+                        ListenState=GETTINGBITS;
                         BitCount=0;
                         BitValue=0;
                         LastClock=IECIsClock();
@@ -238,8 +270,8 @@ int Device8Listen(void)
                         if ((!LastByte) && (TimeOut>160))
                         {
                                 LastByte=true;
-                                IECAssertData(8);
-                                State=EOI;
+                                IECAssertData(DeviceNo);
+                                ListenState=EOI;
                                 TimeOut=0;
                         }
                 }
@@ -248,8 +280,8 @@ int Device8Listen(void)
         case EOI:
                 if (TimeOut>200)
                 {
-                        IECReleaseData(8);
-                        State=READYFORDATA;
+                        IECReleaseData(DeviceNo);
+                        ListenState=READYFORDATA;
                         TimeOut=0;
                 }
                 break;
@@ -264,7 +296,7 @@ int Device8Listen(void)
                         if (BitCount==8)
                         {
                                 BitCount=0;
-                                State=FRAMEACK;
+                                ListenState=FRAMEACK;
                                 TimeOut=0;
                         }
                 }
@@ -274,11 +306,11 @@ int Device8Listen(void)
         case FRAMEACK:
                 if (IECIsClock())
                 {
-                        IECAssertData(8);
+                        IECAssertData(DeviceNo);
                         if (TimeOut>200)
                         {
                                 TimeOut=0;
-                                State=IDLE;
+                                ListenState=IDLE;
                                 return(BitValue);
                         }
                 }
@@ -290,16 +322,16 @@ int Device8Listen(void)
 
 // ***************************************************************
 
-void Device8TurnAround(void)
+void DeviceTurnAround(int DeviceNo)
 {
-        IECAssertClock(8);
-        IECReleaseData(8);
+        IECAssertClock(DeviceNo);
+        IECReleaseData(DeviceNo);
 }
 
-void Device8UnTurnAround(void)
+void DeviceUnTurnAround(int DeviceNo)
 {
-        IECAssertData(8);
-        IECReleaseClock(8);
+        IECAssertData(DeviceNo);
+        IECReleaseClock(DeviceNo);
 }
 
 
@@ -311,14 +343,18 @@ void IECReset(void)
         ATN = 0;
         Clock = 0;
         Data = 0;
+        ProtocolState=IDLE;
+        ActiveDevice=BASEDEVICE;
         TimeOut=0;
+        SendBufLen=0;
+        ListenState=IDLE;
+        TalkState=IDLE;
 }
 
 void IECClockTick(int ts)
 {
         TimeOut += ts;
-
-        Device8Tick();
+        DeviceTick();
 }
 
 // ***************************************************************

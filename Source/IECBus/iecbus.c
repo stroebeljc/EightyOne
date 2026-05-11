@@ -28,6 +28,16 @@
 #define true (!false)
 #endif
 
+extern void IEC_Listen(int iec_unit);
+extern void IEC_SEC_Listen(int iec_sec);
+extern void IEC_Write(int byte);
+extern void IEC_Unlisten(void);
+extern void IEC_Talk(int iec_unit);
+extern void IEC_SEC_Talk(int iec_sec);
+extern void IEC_Untalk(void);
+extern int IEC_Read(void);
+extern void Init_IECDos(void);
+
 static unsigned int Reset = 0;
 static unsigned int ATN = 0;
 static unsigned int Clock = 0;
@@ -57,6 +67,12 @@ int DeviceListen(int DeviceNo);
 #define READDATA        0x11
 #define WRITEDATA       0x12
 
+void Cleanup(void) {}
+void LedOn(void) {}
+void LedOff(void) {}
+void LedFlash(void) {}
+void VicMessage(const char* message, int size) {}
+
 #define DISKDRIVES      2
 #define BASEDEVICE      8
 
@@ -76,20 +92,13 @@ void DeviceTick(void)
         switch (ProtocolState)
         {
         case IDLE:
-                if (!IECIsATN()) break;
+                if (!IECIsATN())
+                {
+                        IECReleaseData(ActiveDevice);
+                        break;
+                }
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
-                for (i=0; i<DISKDRIVES; i++)
-                {
-                        if (Byte==TALK+BASEDEVICE+i)
-                        {
-                                ProtocolState=TALK;
-                        }
-                        else if (Byte==LISTEN+BASEDEVICE+i)
-                        {
-                                ProtocolState=LISTEN;
-                        }
-                }
 
                 for (i=0; i<DISKDRIVES; i++)
                 {
@@ -98,6 +107,16 @@ void DeviceTick(void)
                         {
                                 ActiveDevice=(Byte&0x1F);
                                 IECAssertData(ActiveDevice);
+                                if (Byte==TALK+BASEDEVICE+i)
+                                {
+                                        ProtocolState=TALK;
+                                        //IEC_Talk(ActiveDevice);
+                                }
+                                if (Byte==LISTEN+BASEDEVICE+i)
+                                {
+                                        ProtocolState=LISTEN;
+                                        //IEC_Listen(ActiveDevice);
+                                }
                         }
                 }
                 break;
@@ -105,9 +124,15 @@ void DeviceTick(void)
         case TALK:
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
-                if (Byte==UNTALK) ProtocolState=IDLE;
+                if (Byte==UNTALK)
+                {
+                        ProtocolState=IDLE;
+                        //IEC_Untalk();
+                        break;
+                }
                 else if ((Byte&0xF0)==OPEN) ProtocolState=READDATA;
                 else if ((Byte&0xF0)==DATA) ProtocolState=WRITEDATA;
+                //IEC_SEC_Talk(Byte);
                  // TEMP CODE FOLLOWS
                 if (Byte==0x6F)
                 {
@@ -121,20 +146,36 @@ void DeviceTick(void)
         case LISTEN:
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
-                if (Byte==UNLISTEN) ProtocolState=IDLE;
+                if (Byte==UNLISTEN)
+                {
+                        ProtocolState=IDLE;
+                        //IEC_Unlisten();
+                        break;
+                }
                 else if ((Byte&0xF0)==OPEN) ProtocolState=READDATA;
                 else if ((Byte&0xF0)==DATA) ProtocolState=READDATA;
+                //IEC_SEC_Listen(Byte);
                 break;
 
         case READDATA:
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
-                if (Byte==UNLISTEN) ProtocolState=IDLE;
+                if (Byte==UNLISTEN)
+                {
+                        ProtocolState=IDLE;
+                        //IEC_Unlisten();
+                        break;
+                }
+                //IEC_Write(Byte);
                 break;
 
         case WRITEDATA:
                 if (SendBufLen || TalkState!=IDLE) DeviceTalk(ActiveDevice);
-                else  ProtocolState=IDLE;
+                else
+                {
+                        ProtocolState=IDLE;
+                        //IEC_Untalk();
+                }
                 break;
         }
 }
@@ -349,6 +390,7 @@ void IECReset(void)
         SendBufLen=0;
         ListenState=IDLE;
         TalkState=IDLE;
+        //Init_IECDos();
 }
 
 void IECClockTick(int ts)

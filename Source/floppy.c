@@ -34,6 +34,7 @@
 #include "zx81config.h"
 #include "parallel.h"
 #include "z80.h"
+#include "iecbus.h"
 
 extern void fdl_setfilename(FDRV_PTR fd, const char *s);
 extern FDRV_PTR fd_newldsk(void);
@@ -530,6 +531,11 @@ void floppy_init()
 
 void floppy_eject(int drive)
 {
+        if (machine.floppytype==FLOPPYZX1541)
+        {
+                if (drive==0) IECEmptyDiskA();
+        }
+
         if (machine.floppytype==FLOPPYLARKEN81)
         {
                 int a;
@@ -608,6 +614,15 @@ int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_for
 void floppy_setimage(int drive, char *filename, int readonly)
 {
         int a;
+
+        if (machine.floppytype==FLOPPYZX1541)
+        {
+                floppy_eject(drive);
+                if (strlen(filename))
+                {
+                        if (drive==0) IECLoadDiskA(filename);
+                }
+        }
 
         if (machine.floppytype==FLOPPYLARKEN81)
         {

@@ -202,8 +202,8 @@ void TP3Drive::ConfigureOpenFloppyDiskImageDialog()
                 break;
 
         case FLOPPYZX1541:
-                OpenDialogFloppyDiskImage->DefaultExt = ".dsk";
-                OpenDialogFloppyDiskImage->Filter = "DSK Disk Images (*dsk)|*.dsk|Compressed Disk Images (*.zip)|All Disk Images (*dsk;*.zip)|*.dsk;*.zip";
+                OpenDialogFloppyDiskImage->DefaultExt = ".d64";
+                OpenDialogFloppyDiskImage->Filter = "D64 Disk Images (*d64)|*.d64|Compressed Disk Images (*.zip)|All Disk Images (*d64;*.zip)|*.d64;*.zip";
                 OpenDialogFloppyDiskImage->FilterIndex = 1;
                 OpenDialogFloppyDiskImage->Title = "Select ZX1541 Disk";
                 break;
@@ -888,7 +888,7 @@ bool TP3Drive::NewFloppyDisk(AnsiString& filePath)
                 break;
 
         case FLOPPYZX1541:
-                success = CreateFloppyDiskImage("Create New ZX1541 Floppy Disk", "DSK Disk Images (*.dsk)|*.dsk", ".dsk", filePath);
+                success = CreateFloppyDiskImage("Create New ZX1541 Floppy Disk", "D64 Disk Images (*.d64)|*.d64", ".d64", filePath);
                 break;
 
         default:

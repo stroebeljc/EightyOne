@@ -11,6 +11,9 @@
  *------------------------------------------------------------------------------
  */
 
+#ifndef _1541_H
+#define _1541_H
+
 /*----------------------------------------------------------------------------*/
 
 extern void Cleanup(void);
@@ -184,3 +187,6 @@ struct pc64entry {
 #define STAT_SEQ (S_ISUID)
 #define STAT_USR (S_ISGID)
 #define STAT_REL (S_ISUID|S_ISGID)
+
+#endif
+

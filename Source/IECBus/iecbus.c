@@ -36,7 +36,9 @@ extern void IEC_Talk(int iec_unit);
 extern void IEC_SEC_Talk(int iec_sec);
 extern void IEC_Untalk(void);
 extern int IEC_Read(void);
+extern int IEC_GetStatus(void);
 extern void Init_IECDos(void);
+extern int cmd_go(char *cmd);
 
 static unsigned int Reset = 0;
 static unsigned int ATN = 0;
@@ -79,9 +81,9 @@ void VicMessage(const char* message, int size) {}
 char SendBuffer[65536], *SendBuf;
 int SendBufLen;
 
-static unsigned int TimeOut;
-static int ListenState;
-static int TalkState;
+static unsigned int TimeOut=0;
+static int ListenState=IDLE;
+static int TalkState=IDLE;
 static int ProtocolState=IDLE;
 static int ActiveDevice=BASEDEVICE;
 
@@ -95,6 +97,7 @@ void DeviceTick(void)
                 if (!IECIsATN())
                 {
                         IECReleaseData(ActiveDevice);
+                        TalkState=ListenState=IDLE;
                         break;
                 }
                 Byte=DeviceListen(ActiveDevice);
@@ -110,12 +113,12 @@ void DeviceTick(void)
                                 if (Byte==TALK+BASEDEVICE+i)
                                 {
                                         ProtocolState=TALK;
-                                        //IEC_Talk(ActiveDevice);
+                                        IEC_Talk(ActiveDevice);
                                 }
                                 if (Byte==LISTEN+BASEDEVICE+i)
                                 {
                                         ProtocolState=LISTEN;
-                                        //IEC_Listen(ActiveDevice);
+                                        IEC_Listen(ActiveDevice);
                                 }
                         }
                 }
@@ -123,58 +126,62 @@ void DeviceTick(void)
 
         case TALK:
                 Byte=DeviceListen(ActiveDevice);
-                if (Byte<0) break;
+                if (!IECIsATN() || Byte<0) break;
                 if (Byte==UNTALK)
                 {
                         ProtocolState=IDLE;
-                        //IEC_Untalk();
+                        IEC_Untalk();
                         break;
                 }
                 else if ((Byte&0xF0)==OPEN) ProtocolState=READDATA;
                 else if ((Byte&0xF0)==DATA) ProtocolState=WRITEDATA;
-                //IEC_SEC_Talk(Byte);
-                 // TEMP CODE FOLLOWS
-                if (Byte==0x6F)
+                IEC_SEC_Talk(Byte);
+
+                SendBuf=SendBuffer;
+                SendBufLen=0;
+                do
                 {
-                        strcpy(SendBuffer,"EightyOne 0.50\r");
-                        SendBuf=SendBuffer;
-                        SendBufLen=strlen(SendBuf);
-                        DeviceTurnAround(ActiveDevice);
-                }
+                        *(SendBuf++)=(char)IEC_Read();
+                        SendBufLen++;
+                } while (!IEC_GetStatus());
+                SendBuf=SendBuffer;
+                DeviceTurnAround(ActiveDevice);
                 break;
 
         case LISTEN:
                 Byte=DeviceListen(ActiveDevice);
-                if (Byte<0) break;
+                if (!IECIsATN() || Byte<0) break;
                 if (Byte==UNLISTEN)
                 {
                         ProtocolState=IDLE;
-                        //IEC_Unlisten();
+                        IEC_Unlisten();
                         break;
                 }
                 else if ((Byte&0xF0)==OPEN) ProtocolState=READDATA;
                 else if ((Byte&0xF0)==DATA) ProtocolState=READDATA;
-                //IEC_SEC_Listen(Byte);
+                IEC_SEC_Listen(Byte);
                 break;
 
         case READDATA:
+                //if (IECIsATN()) break;
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
-                if (Byte==UNLISTEN)
+                if (IECIsATN() && Byte==UNLISTEN)
                 {
                         ProtocolState=IDLE;
-                        //IEC_Unlisten();
+                        IEC_Unlisten();
                         break;
                 }
-                //IEC_Write(Byte);
+                IEC_Write(Byte);
                 break;
 
         case WRITEDATA:
+                if (IECIsATN()) break;
                 if (SendBufLen || TalkState!=IDLE) DeviceTalk(ActiveDevice);
                 else
                 {
                         ProtocolState=IDLE;
-                        //IEC_Untalk();
+                        IEC_Untalk();
                 }
                 break;
         }
@@ -390,7 +397,22 @@ void IECReset(void)
         SendBufLen=0;
         ListenState=IDLE;
         TalkState=IDLE;
-        //Init_IECDos();
+        Init_IECDos();
+
+        IECEmptyDiskA();
+}
+
+void IECLoadDiskA(char *filename)
+{
+        char commandString[512];
+        strcpy(commandString, "g:");
+        strcat(commandString, filename);
+        cmd_go(commandString);
+}
+
+void IECEmptyDiskA(void)
+{
+        cmd_go("g:dummy.d64"); //point to a nonexistent file for now
 }
 
 void IECClockTick(int ts)

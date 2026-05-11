@@ -77,7 +77,10 @@
  *------------------------------------------------------------------------------
  */
 
+#define ENABLE1541
 #ifdef ENABLE1541
+
+#include "windows.h"
 
 #include "config.h"
 #include "md.h"
@@ -3655,4 +3658,8 @@ int IEC_Read(void)
     return '\r';
 }
 
+int IEC_GetStatus(void)
+{
+        return IEC_Status;
+}
 #endif

@@ -39,6 +39,9 @@ extern int IECIsData(void);
 
 extern void IECReset(void);
 extern void IECClockTick(int ts);
+
+extern void IECLoadDiskA(char *filename);
+extern void IECEmptyDiskA(void);
 #ifdef __cplusplus
 }
 #endif

@@ -52,7 +52,7 @@
 **	Video driver.
 **		Choose one of the listed.
 */
-#define __GO32__
+//#define __GO32__
 
 #define	noX11				/* X11 display */
 #define	noSVGALIB			/* linux svga library */
@@ -192,9 +192,9 @@
 
 #define noDIRFILE			/* 1541 dirfile support (obsolete) */
 
-#define ALWAYS_SAVE_P00			/* 1541 write x00 format */
+//#define ALWAYS_SAVE_P00			/* 1541 write x00 format */
 
-#define PRINTER_SUPPORT			/* Support iec printer emulation */
+//#define PRINTER_SUPPORT			/* Support iec printer emulation */
 
 /*----------------------------------------
 **	Real 1541 emulation configuration:

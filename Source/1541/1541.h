@@ -26,7 +26,7 @@ extern void IEC_Untalk(void);
 extern int IEC_Read(void);
 extern int IEC_GetStatus(void);
 extern void Init_IECDos(void);
-extern void IECPerformCommand(char *cmd);
+extern void IECPerformCommand(char *, int);
 
 extern void Cleanup(void);
 extern void LedOn(void);

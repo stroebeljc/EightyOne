@@ -546,7 +546,7 @@ void floppy_eject(int drive)
 {
         if (machine.floppytype==FLOPPYZX1541)
         {
-                if (drive==0) IECEmptyDiskA();
+                IECEjectDisk(drive);
         }
 
         if (machine.floppytype==FLOPPYLARKEN81)
@@ -648,7 +648,7 @@ void floppy_setimage(int drive, char *filename, int readonly)
                                 close(a);
                         }
 
-                        if (drive==0) IECLoadDiskA(filename);
+                        IECLoadDisk(drive, filename);
                 }
         }
 

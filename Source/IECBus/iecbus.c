@@ -40,6 +40,7 @@ void DeviceTurnAround(int DeviceNo);
 void DeviceUnTurnAround(int DeviceNo);
 void DeviceTalk(int DeviceNo);
 int DeviceListen(int DeviceNo);
+int SwitchDisk(int device);
 
 #define IDLE            0
 #define READYTOSEND     1
@@ -71,6 +72,8 @@ static int ListenState=IDLE;
 static int TalkState=IDLE;
 static int ProtocolState=IDLE;
 static int ActiveDevice=BASEDEVICE;
+static char ImagePath[DISKDRIVES][512];
+static int LastDevice=-1;
 
 void Cleanup(void) {}
 void LedOn(void) { machine.drivebusy = 1; }
@@ -105,12 +108,13 @@ void DeviceTick(void)
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
 
+                IECReleaseData(ActiveDevice);
                 for (i=0; i<DISKDRIVES; i++)
                 {
-                        if ((Byte&0x1F)!=(BASEDEVICE+i)) IECReleaseData(BASEDEVICE+i);
-                        else
+                        if ((Byte&0x1F)==(BASEDEVICE+i))
                         {
                                 ActiveDevice=(Byte&0x1F);
+                                if (!SwitchDisk(ActiveDevice)) break;
                                 IECAssertData(ActiveDevice);
                                 if (Byte==TALK+BASEDEVICE+i)
                                 {
@@ -132,6 +136,7 @@ void DeviceTick(void)
                 if (Byte==UNTALK)
                 {
                         ProtocolState=IDLE;
+                        IECReleaseData(ActiveDevice);
                         IEC_Untalk();
                         break;
                 }
@@ -156,6 +161,7 @@ void DeviceTick(void)
                 if (Byte==UNLISTEN)
                 {
                         ProtocolState=IDLE;
+                        IECReleaseData(ActiveDevice);
                         IEC_Unlisten();
                         break;
                 }
@@ -171,6 +177,7 @@ void DeviceTick(void)
                 if (IECIsATN() && Byte==UNLISTEN)
                 {
                         ProtocolState=IDLE;
+                        IECReleaseData(ActiveDevice);
                         IEC_Unlisten();
                         break;
                 }
@@ -184,6 +191,7 @@ void DeviceTick(void)
                 else
                 {
                         ProtocolState=IDLE;
+                        IECReleaseData(ActiveDevice);
                         IEC_Untalk();
                 }
                 break;
@@ -400,22 +408,51 @@ void IECReset(void)
         SendBufLen=0;
         ListenState=IDLE;
         TalkState=IDLE;
+        memset(ImagePath,0,sizeof(ImagePath));
 
-        IECEmptyDiskA();
+        IECPerformCommand("U:",2); // reset
 }
 
-void IECLoadDiskA(char *filename)
+int SwitchDisk(int device)
 {
         char commandString[512];
+
+        if (device==LastDevice) return 1; // no switch needed
+
+        if (!ImagePath[device-BASEDEVICE][0]) return 0; // no file to load, can't switch
+
+        LastDevice=device;
+
+        // choose drive
+        strcpy(commandString, "U0>x");
+        commandString[3]=(char)device;
+        IECPerformCommand(commandString,4);
+
+        // set image location
         strcpy(commandString, "G:");
-        strcat(commandString, filename);
-        IECPerformCommand(commandString);
+        strcat(commandString, ImagePath[device-BASEDEVICE]);
+        IECPerformCommand(commandString,strlen(commandString));
+        return 1;
 }
 
-void IECEmptyDiskA(void)
+void IECLoadDisk(int drive, char *filename)
 {
-        IECPerformCommand("U:");
-        IECPerformCommand("G:.\dummy");
+        if (drive<0 || drive>1) drive = 0;
+
+        strcpy(ImagePath[drive], filename);
+        if ((drive+BASEDEVICE)==LastDevice) LastDevice=-1; // force a switch
+}
+
+void IECEjectDisk(int drive)
+{
+        if (drive<0 || drive>1) drive = 0;
+
+        ImagePath[drive][0]=NULL;
+        if ((drive+BASEDEVICE)==LastDevice)
+        {
+                LastDevice=-1; // force a switch
+                IECPerformCommand("U:",2); // reset
+        }
 }
 
 void IECClockTick(int ts)

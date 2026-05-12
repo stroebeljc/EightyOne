@@ -385,7 +385,7 @@ char *systemname(void)
 //    if (uname(&uts) == -1)
 //	strcpy(uts.sysname,"unix");
 //    return uts.sysname;
-        return NULL;
+        return "EightyOne";
 }
 #endif
 
@@ -2680,9 +2680,9 @@ static void PerformCommand(char *cmd, int len)
     SetError(31, 0, 0);
 }
 
-void IECPerformCommand(char *cmd)
+void IECPerformCommand(char *cmd, int len)
 {
-        PerformCommand(cmd,strlen(cmd));
+        PerformCommand(cmd,len);
 }
 
 void SetCmdChannel(char *buf, int len)

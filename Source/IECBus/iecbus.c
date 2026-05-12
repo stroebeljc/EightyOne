@@ -17,6 +17,7 @@
  */
 
 #include "iecbus.h"
+#include "zx81config.h"
 #include <string.h>
 
 #define SET(Line, Device)  (Line) = ((Line) | (1<<(Device)))
@@ -70,9 +71,9 @@ int DeviceListen(int DeviceNo);
 #define WRITEDATA       0x12
 
 void Cleanup(void) {}
-void LedOn(void) {}
-void LedOff(void) {}
-void LedFlash(void) {}
+void LedOn(void) { machine.drivebusy = 1; }
+void LedOff(void) { machine.drivebusy = 0; }
+void LedFlash(void) { machine.drivebusy = 1; }
 void VicMessage(const char* message, int size) {}
 
 #define DISKDRIVES      2
@@ -177,9 +178,11 @@ void DeviceTick(void)
 
         case WRITEDATA:
                 if (IECIsATN()) break;
+                machine.drivebusy = 1;
                 if (SendBufLen || TalkState!=IDLE) DeviceTalk(ActiveDevice);
                 else
                 {
+                        machine.drivebusy = 0;
                         ProtocolState=IDLE;
                         IEC_Untalk();
                 }

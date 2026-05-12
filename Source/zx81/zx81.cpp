@@ -1870,11 +1870,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (machine.floppytype == FLOPPYZX1541)
-                {
-                        IECClockTick(ts);
-                }
-
+                if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
+                
                 bool previousSyncOutputWhite = syncOutputWhite;
 
                 switch (LastInstruction)
@@ -2395,10 +2392,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (machine.floppytype == FLOPPYZX1541)
-                {
-                        IECClockTick(ts);
-                }
+                if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 
                 switch (LastInstruction)
                 {

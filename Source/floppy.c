@@ -340,6 +340,11 @@ void floppy_ClockTick(int ts)
                 if (p3_fdc) fdc_tick(p3_fdc);
         }
 
+        if (machine.floppytype == FLOPPYZX1541)
+        {
+                IECClockTick(ts);
+        }
+
         if (machine.floppytype==FLOPPYPLUSD
                 || machine.floppytype==FLOPPYDISCIPLE
                 || machine.floppytype==FLOPPYOPUSD

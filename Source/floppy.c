@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <windows.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "floppy.h"
 #include "libdsk/config.h"
@@ -35,6 +36,7 @@
 #include "parallel.h"
 #include "z80.h"
 #include "iecbus.h"
+#include "1541.h"
 
 extern void fdl_setfilename(FDRV_PTR fd, const char *s);
 extern FDRV_PTR fd_newldsk(void);
@@ -617,9 +619,24 @@ void floppy_setimage(int drive, char *filename, int readonly)
 
         if (machine.floppytype==FLOPPYZX1541)
         {
-                floppy_eject(drive);
                 if (strlen(filename))
                 {
+                        struct stat statbuf;
+                        if ((stat(filename, &statbuf)!=0 && errno==ENOENT) ||
+                                statbuf.st_size==0)
+                        {
+                                char *zeros = calloc(1, D64_35_SIZE);
+                                a=open( filename, O_RDWR | O_BINARY);
+
+                                if (zeros)
+                                {
+                                        write(a, zeros, D64_35_SIZE);
+                                        free(zeros);
+                                }
+
+                                close(a);
+                        }
+
                         if (drive==0) IECLoadDiskA(filename);
                 }
         }

@@ -397,7 +397,6 @@ void IECReset(void)
         SendBufLen=0;
         ListenState=IDLE;
         TalkState=IDLE;
-        Init_IECDos();
 
         IECEmptyDiskA();
 }
@@ -412,7 +411,8 @@ void IECLoadDiskA(char *filename)
 
 void IECEmptyDiskA(void)
 {
-        cmd_go("g:dummy.d64"); //point to a nonexistent file for now
+        Init_IECDos();
+        cmd_go("g:.\dummy");
 }
 
 void IECClockTick(int ts)

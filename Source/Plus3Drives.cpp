@@ -203,7 +203,7 @@ void TP3Drive::ConfigureOpenFloppyDiskImageDialog()
 
         case FLOPPYZX1541:
                 OpenDialogFloppyDiskImage->DefaultExt = ".d64";
-                OpenDialogFloppyDiskImage->Filter = "D64 Disk Images (*d64)|*.d64|Compressed Disk Images (*.zip)|All Disk Images (*d64;*.zip)|*.d64;*.zip";
+                OpenDialogFloppyDiskImage->Filter = "D64 Disk Images (*d64)|*.d64|Compressed Disk Images (*.zip)|*.zip|All Disk Images (*d64;*.zip)|*.d64;*.zip";
                 OpenDialogFloppyDiskImage->FilterIndex = 1;
                 OpenDialogFloppyDiskImage->Title = "Select ZX1541 Disk";
                 break;

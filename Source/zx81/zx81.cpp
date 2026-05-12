@@ -416,7 +416,6 @@ void zx81_initialise()
         }
 
         ZX1541PORT=0;
-        IECReset();
 
         nmiGeneratorEnabled = false;
         syncOutputWhite = false;

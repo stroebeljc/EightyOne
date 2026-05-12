@@ -412,6 +412,12 @@ void floppy_init()
         Data_Reg_A=0; Data_Dir_A=0; Control_A=0;
         Data_Reg_B=0; Data_Dir_B=0; Control_B=0;
 
+        if (machine.floppytype==FLOPPYZX1541)
+        {
+                IECReset();
+                return;
+        }
+
         if (machine.floppytype==FLOPPYLARKEN81)
         {
                 for( i = 0; i < FLOPPYDRIVES; i++ )
@@ -419,8 +425,8 @@ void floppy_init()
                     floppy_eject(i);
                 }
 
-			    LarkenDriveSelectValue=0;
-			    return;
+                LarkenDriveSelectValue=0;
+                return;
         }
 
         if (machine.floppytype==FLOPPYPLUSD
@@ -633,7 +639,7 @@ void floppy_setimage(int drive, char *filename, int readonly)
                                 char *zeros = calloc(1, D64_35_SIZE);
                                 a=open( filename, O_RDWR | O_BINARY);
 
-                                if (zeros)
+                                if (zeros && a!=-1)
                                 {
                                         write(a, zeros, D64_35_SIZE);
                                         free(zeros);

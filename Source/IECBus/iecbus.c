@@ -18,6 +18,7 @@
 
 #include "iecbus.h"
 #include "zx81config.h"
+#include "1541.h"
 #include <string.h>
 
 #define SET(Line, Device)  (Line) = ((Line) | (1<<(Device)))
@@ -28,18 +29,6 @@
 #define false 0
 #define true (!false)
 #endif
-
-extern void IEC_Listen(int iec_unit);
-extern void IEC_SEC_Listen(int iec_sec);
-extern void IEC_Write(int byte);
-extern void IEC_Unlisten(void);
-extern void IEC_Talk(int iec_unit);
-extern void IEC_SEC_Talk(int iec_sec);
-extern void IEC_Untalk(void);
-extern int IEC_Read(void);
-extern int IEC_GetStatus(void);
-extern void Init_IECDos(void);
-extern int cmd_go(char *cmd);
 
 static unsigned int Reset = 0;
 static unsigned int ATN = 0;
@@ -70,23 +59,34 @@ int DeviceListen(int DeviceNo);
 #define READDATA        0x11
 #define WRITEDATA       0x12
 
-void Cleanup(void) {}
-void LedOn(void) { machine.drivebusy = 1; }
-void LedOff(void) { machine.drivebusy = 0; }
-void LedFlash(void) { machine.drivebusy = 1; }
-void VicMessage(const char* message, int size) {}
-
 #define DISKDRIVES      2
 #define BASEDEVICE      8
 
 char SendBuffer[65536], *SendBuf;
 int SendBufLen;
 
+static int FlashCounter=-1;
 static unsigned int TimeOut=0;
 static int ListenState=IDLE;
 static int TalkState=IDLE;
 static int ProtocolState=IDLE;
 static int ActiveDevice=BASEDEVICE;
+
+void Cleanup(void) {}
+void LedOn(void) { machine.drivebusy = 1; }
+void LedOff(void)
+{
+        FlashCounter=-1;
+        machine.drivebusy = 0;
+}
+void LedFlash(void) {
+        if (FlashCounter<0)
+        {
+                FlashCounter=0;
+                machine.drivebusy = 1;
+        }
+}
+void VicMessage(const char* message, int size) {}
 
 void DeviceTick(void)
 {
@@ -97,6 +97,7 @@ void DeviceTick(void)
         case IDLE:
                 if (!IECIsATN())
                 {
+                        LedOff();
                         IECReleaseData(ActiveDevice);
                         TalkState=ListenState=IDLE;
                         break;
@@ -164,9 +165,9 @@ void DeviceTick(void)
                 break;
 
         case READDATA:
-                //if (IECIsATN()) break;
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
+                LedFlash();
                 if (IECIsATN() && Byte==UNLISTEN)
                 {
                         ProtocolState=IDLE;
@@ -178,11 +179,10 @@ void DeviceTick(void)
 
         case WRITEDATA:
                 if (IECIsATN()) break;
-                machine.drivebusy = 1;
+                LedFlash();
                 if (SendBufLen || TalkState!=IDLE) DeviceTalk(ActiveDevice);
                 else
                 {
-                        machine.drivebusy = 0;
                         ProtocolState=IDLE;
                         IEC_Untalk();
                 }
@@ -407,21 +407,30 @@ void IECReset(void)
 void IECLoadDiskA(char *filename)
 {
         char commandString[512];
-        strcpy(commandString, "g:");
+        strcpy(commandString, "G:");
         strcat(commandString, filename);
-        cmd_go(commandString);
+        IECPerformCommand(commandString);
 }
 
 void IECEmptyDiskA(void)
 {
-        Init_IECDos();
-        cmd_go("g:.\dummy");
+        IECPerformCommand("U:");
+        IECPerformCommand("G:.\dummy");
 }
 
 void IECClockTick(int ts)
 {
         TimeOut += ts;
         DeviceTick();
+        if (FlashCounter>=0)
+        {
+                FlashCounter += ts;
+                if (FlashCounter > 600000)
+                {
+                        machine.drivebusy=!machine.drivebusy;
+                        FlashCounter=0;
+                }
+        }
 }
 
 // ***************************************************************

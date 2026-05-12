@@ -16,6 +16,18 @@
 
 /*----------------------------------------------------------------------------*/
 
+extern void IEC_Listen(int iec_unit);
+extern void IEC_SEC_Listen(int iec_sec);
+extern void IEC_Write(int byte);
+extern void IEC_Unlisten(void);
+extern void IEC_Talk(int iec_unit);
+extern void IEC_SEC_Talk(int iec_sec);
+extern void IEC_Untalk(void);
+extern int IEC_Read(void);
+extern int IEC_GetStatus(void);
+extern void Init_IECDos(void);
+extern void IECPerformCommand(char *cmd);
+
 extern void Cleanup(void);
 extern void LedOn(void);
 extern void LedOff(void);

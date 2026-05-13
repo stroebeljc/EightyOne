@@ -1883,7 +1883,9 @@ int cmd_go(char *cmd)
 static int cmd_scratch(char *cmd)
 {
     char *cp, *cp2, *cp3;
-    int i, idx, tpmod;
+    int i, idx, tpmod, abssec, track, sector;
+    struct FileEntry *direntry;
+    struct DataBlock *block;
 
     cp = strchr(cmd, ':');
     if (!cp) {
@@ -1893,10 +1895,6 @@ static int cmd_scratch(char *cmd)
     cp++;
     if (!*cp) {
 	SetError(30, 0, 0);
-	return 0;
-    }
-    if (emu_mode == EMU_MODE_D64) {
-	SetError(3, 0, 0);	/* unimplemented */
 	return 0;
     }
     strcbm2asc(cp);
@@ -1929,7 +1927,20 @@ static int cmd_scratch(char *cmd)
 		if (!(c4dhook[idx].flags & FLG_LOCK))
 		{
 		    c4dhook[idx].mode = -1;
-		    unlink(c4dhook[idx].u.osname);
+		        if (emu_mode == EMU_MODE_D64) {
+		            abssec = AbsoluteSector(c4dhook[idx].dirtrack, c4dhook[idx].dirsect);
+		            direntry = (struct FileEntry *)(ImageData + abssec * 256);
+		            direntry[c4dhook[idx].dirindex].type=0;
+		            ImageFlags[abssec] |= IF_DIRTY;
+		            for (track = direntry[c4dhook[idx].dirindex].datastart.track, sector = direntry[c4dhook[idx].dirindex].datastart.sector;
+		                (abssec = AbsoluteSector(track, sector)) != -1;
+		                  track = block[0].datanext.track, sector = block[0].datanext.sector) {
+		                  BAM_free(track, sector);
+		                  block = (struct DataBlock *)(ImageData + abssec * 256);
+		            }
+		            ReWriteImage(); // BAM was updated
+		        }
+		    else unlink(c4dhook[idx].u.osname);
 		    i++;
 		}
 	    }
@@ -1952,6 +1963,7 @@ static int cmd_rename(char *cmd)
 {
     char *cp, *cp2, *cp3;
     int i, idx;
+    struct FileEntry *direntry;
 
     cp = strchr(cmd, ':');
     if (!cp) {
@@ -2008,9 +2020,9 @@ static int cmd_rename(char *cmd)
 #endif
     {
 	if (emu_mode == EMU_MODE_D64 || ((c4dhook[i].flags & FLG_PC64))) {
-	    cp2 = (char *)ImageData + AbsoluteSector(c4dhook[i].dirtrack, c4dhook[i].dirsect) * 256 + c4dhook[i].dirindex * 32 + 5;
-	    memset(cp2, 0xA0, 16);	/* preset name data */
-	    memcpy(cp2, cp, strlen(cp));
+	    direntry = (struct FileEntry *)(ImageData + AbsoluteSector(c4dhook[i].dirtrack, c4dhook[i].dirsect) * 256);
+	    memset(direntry[c4dhook[i].dirindex].name, 0xA0, 16);	/* preset name data */
+	    memcpy(direntry[c4dhook[i].dirindex].name, cp, strlen(cp));
 	    SectorChanged(c4dhook[i].dirtrack, c4dhook[i].dirsect);
 	    SetError(0, 0, 0);
 	    return 1;

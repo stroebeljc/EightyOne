@@ -61,7 +61,7 @@ int SwitchDisk(int device);
 #define WRITEDATA       0x12
 
 #define DISKDRIVES      2
-#define BASEDEVICE      8
+#define BASEDEVICE      0x0A
 
 char SendBuffer[65536], *SendBuf;
 int SendBufLen;

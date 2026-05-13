@@ -102,7 +102,9 @@ struct c4entry {
     unsigned char	PACKED(flags);
     unsigned long	PACKED(size);
     unsigned char	PACKED(recordsize);
-    unsigned char	PACKED(pad);
+    unsigned char	PACKED(dirtrack);
+    unsigned char	PACKED(dirsect);
+    unsigned char	PACKED(dirindex);
 };
 
 #define FLG_PC64	1

@@ -1201,7 +1201,7 @@ static void read_d64_dir(void)
     for (track = d64_BAM->dirstart.track, sector = d64_BAM->dirstart.sector;
 		    (abssec = AbsoluteSector(track, sector)) != -1;
 				 track = dir[0].dirnext.track, sector = dir[0].dirnext.sector) {
-	if ((ImageFlags[abssec] && IF_USED))
+	if ((ImageFlags[abssec] & IF_USED))
 	    break;
 	ImageFlags[abssec] |= IF_USED;
 	dir = (struct FileEntry *)(ImageData + abssec * 256);
@@ -1232,12 +1232,15 @@ static void read_d64_dir(void)
     for (track = d64_BAM->dirstart.track, sector = d64_BAM->dirstart.sector;
 		    (abssec = AbsoluteSector(track, sector)) != -1;
 				 track = dir[0].dirnext.track, sector = dir[0].dirnext.sector) {
-	if ((ImageFlags[abssec] && IF_USED))
+	if ((ImageFlags[abssec] & IF_USED))
 	    break;
 	ImageFlags[abssec] |= IF_USED;
 	dir = (struct FileEntry *)(ImageData + abssec * 256);
 	for (i = 0; i < 8; i++) {
 	    if (dir[i].type != 0) {
+		c4dhook[cnt].dirtrack = track;
+		c4dhook[cnt].dirsect = sector;
+		c4dhook[cnt].dirindex = i;
 		c4dhook[cnt].u.d64.starttrack = dir[i].datastart.track;
 		c4dhook[cnt].u.d64.startsector = dir[i].datastart.sector;
 		c4dhook[cnt].size = (dir[i].size[0] + dir[i].size[1] * 256) * 254;
@@ -2005,8 +2008,12 @@ static int cmd_rename(char *cmd)
 #endif
     {
 	if (emu_mode == EMU_MODE_D64 || ((c4dhook[i].flags & FLG_PC64))) {
-	    SetError(3, 0, 0);	/* unimplemented */
-	    return 0;
+	    cp2 = (char *)ImageData + AbsoluteSector(c4dhook[i].dirtrack, c4dhook[i].dirsect) * 256 + c4dhook[i].dirindex * 32 + 5;
+	    memset(cp2, 0xA0, 16);	/* preset name data */
+	    memcpy(cp2, cp, strlen(cp));
+	    SectorChanged(c4dhook[i].dirtrack, c4dhook[i].dirsect);
+	    SetError(0, 0, 0);
+	    return 1;
 	}
 	rename(c4dhook[i].u.osname, cp);
     }

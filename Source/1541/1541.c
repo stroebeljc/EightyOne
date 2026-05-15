@@ -2858,8 +2858,6 @@ void WriteABlock(int ch)
             block->datanext.sector=(unsigned char)sector;
         }
 
-        if (chanbufp[ch]<256) return; // done writing
-
         // Store the location of the current sector
         lastD64Sector.track = (unsigned char)track;
         lastD64Sector.sector = (unsigned char)sector;
@@ -3074,7 +3072,7 @@ int DoOpenFile(int ch, char *name)
             memset(newD64entry->name, 0xA0, sizeof(newD64entry->name));
             memcpy(newD64entry->name, nbuf, strlen(name));
             ImageFlags[AbsoluteSector(dirtrack, dirsector)] |= IF_DIRTY;
-            lastD64Sector.track=18;
+            lastD64Sector.track=18; // tells the write routine to update the directory's datastart
             lastD64Sector.sector=0;
 	    chfd[ch] = -5;
 	    chanbufp[ch] = 2;

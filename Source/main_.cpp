@@ -956,6 +956,12 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         }
         
         StatusBar1->Panels->Items[1]->Text = text;
+        if (machine.drivebusy==0 && machine.drivebusy == Drive)
+        {
+                // make sure drive light turns off
+                StatusBar1->Refresh();
+                StatusBar1->Invalidate();
+        }
         fps=0;
 
         zx81.vsyncsound=Sound1->Checked;

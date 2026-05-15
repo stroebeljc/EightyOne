@@ -197,8 +197,7 @@ static int chanopen;
 static char nbuf[34];
 static struct pc64entry pc64header;
 static struct FileEntry *newD64entry=NULL;
-static struct TrackSector writeD64;
-static struct TrackSector lastSector;
+static struct TrackSector lastD64Sector;
 
 #ifdef __GO32__
 static char *emulver = "@(#) ALE DOSEMUL V1.9.5 MSDOS";
@@ -2792,43 +2791,22 @@ void ReadABlock(int ch)
 
 void WriteABlock(int ch)
 {
+    static int trackStartBias=-1;
     if (emu_mode == EMU_MODE_D64 && newD64entry) {
-        unsigned int track = writeD64.track;
-        unsigned int sector = writeD64.sector;
-        struct DataBlock *block = (struct DataBlock *)SectorPointer(track, sector);
-
-        if (!block)
-        {
-            SetError(25, 0, 0); // write error
-            return;
-        }
+        struct DataBlock *block;
+        unsigned int track = lastD64Sector.track;
+        unsigned int sector = lastD64Sector.sector;
 
         if (chanbufp[ch]==2) // no data
         {
-            BAM_free(track, sector); // free unused sector
             return;
         }
 
-        block->datanext.track = 0;
-        block->datanext.sector = (unsigned char)(chanbufp[ch]-1);
-        memcpy(block->data, chanbuf[ch]+2, chanbufp[ch]-2);
-        ImageFlags[AbsoluteSector(track, sector)] |= IF_DIRTY;
-
-        (*(unsigned short *)newD64entry->size)++;
-
-        if (lastSector.track!=0)
+        if (track==18)
         {
-            // Update datanext in the last sector written to point to the current sector
-            block = (struct DataBlock *)SectorPointer(lastSector.track, lastSector.sector);
-            if (!block)
-            {
-                SetError(25, 0, 0); // write error
-                return;
-            }
-            block->datanext=writeD64;
+                track+=trackStartBias; // do not use directory track
+                trackStartBias*=-1;
         }
-
-        if (chanbufp[ch]<256) return; // done writing
 
         if (!BAM_next_free_sector(&track, &sector) || track==0) // Get next available sector
         {
@@ -2844,12 +2822,48 @@ void WriteABlock(int ch)
             return;
         }
 
-        // Store the location of the current sector
-        lastSector = writeD64;
+        block = (struct DataBlock *)SectorPointer(track, sector);
 
-        // Point to the new sector for the next write
-        writeD64.track = (unsigned char)track;
-        writeD64.sector = (unsigned char)sector;
+        if (!block)
+        {
+            SetError(25, 0, 0); // write error
+            newD64entry=NULL;
+            return;
+        }
+
+        block->datanext.track = 0;
+        block->datanext.sector = (unsigned char)(chanbufp[ch]-1);
+        memcpy(block->data, chanbuf[ch]+2, chanbufp[ch]-2);
+        ImageFlags[AbsoluteSector(track, sector)] |= IF_DIRTY;
+
+        (*(unsigned short *)newD64entry->size)++; // update size in directory
+
+        if (lastD64Sector.track==18)
+        {
+            // Update datastart in directory
+            newD64entry->datastart.track = (unsigned char)track;
+            newD64entry->datastart.sector = (unsigned char)sector;
+        }
+        else
+        {
+            // Update datanext in the last sector written to point to the current sector
+            block = (struct DataBlock *)SectorPointer(lastD64Sector.track, lastD64Sector.sector);
+            if (!block)
+            {
+                SetError(25, 0, 0); // write error
+                newD64entry=NULL;
+                return;
+            }
+            block->datanext.track=(unsigned char)track;
+            block->datanext.sector=(unsigned char)sector;
+        }
+
+        if (chanbufp[ch]<256) return; // done writing
+
+        // Store the location of the current sector
+        lastD64Sector.track = (unsigned char)track;
+        lastD64Sector.sector = (unsigned char)sector;
+
         return;
     }
 
@@ -2996,7 +3010,7 @@ int DoOpenFile(int ch, char *name)
 	if (emu_mode == EMU_MODE_D64) {
             struct FileEntry *direntry=NULL;
             struct DataBlock *block=NULL;
-            int dirtrack,dirsector,trackdiff,lasttrack,lastsector;
+            int dirtrack,dirsector,lasttrack,lastsector;
             newD64entry=NULL;
 
             i = dirgetfirst(name);
@@ -3029,7 +3043,7 @@ int DoOpenFile(int ch, char *name)
                 return 1;
             }
 
-            if (!newD64entry) // create another sector in the directory
+            if (!newD64entry) // Unable to find free entry, so create another sector in the directory
             {
                 if (lasttrack!=18 || (dirsector=BAM_find_free_sector_on_track(lasttrack, lastsector))==-1)
                 {
@@ -3055,32 +3069,13 @@ int DoOpenFile(int ch, char *name)
 
             if (direntry[0].dirnext.track==0) direntry[0].dirnext.sector = 0xFF;
 
-            // Try to set the file's first track as close to 18 as possible
-            writeD64.sector=9;
-            trackdiff=-1;
-            do
-            {
-                writeD64.track=(unsigned char)(18+trackdiff);
-                if (writeD64.track<1 || writeD64.track>35) break;
-                trackdiff*=-1;
-                if (trackdiff<0) trackdiff--;
-            } while ((lastsector=BAM_find_free_sector_on_track(writeD64.track,writeD64.sector))==-1);
-
-            if (lastsector==-1)
-            {
-	        SetError(72, 0, 0);  // disk full
-                return 1;
-            }
-
-            writeD64.sector=(unsigned char)lastsector;
-            newD64entry->datastart.track = writeD64.track;
-            newD64entry->datastart.sector = writeD64.sector;
             *(unsigned short *)newD64entry[0].size = 0;
             newD64entry->type = 0x82;
             memset(newD64entry->name, 0xA0, sizeof(newD64entry->name));
             memcpy(newD64entry->name, nbuf, strlen(name));
             ImageFlags[AbsoluteSector(dirtrack, dirsector)] |= IF_DIRTY;
-            lastSector.track=0;
+            lastD64Sector.track=18;
+            lastD64Sector.sector=0;
 	    chfd[ch] = -5;
 	    chanbufp[ch] = 2;
 	    flags[ch] = F_WRITE;

@@ -2797,7 +2797,7 @@ void WriteABlock(int ch)
         unsigned int track = lastD64Sector.track;
         unsigned int sector = lastD64Sector.sector;
 
-        if (chanbufp[ch]==2) // no data
+        if (chanbufp[ch]<=2) // no data
         {
             return;
         }

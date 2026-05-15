@@ -146,11 +146,11 @@ void DeviceTick(void)
 
                 SendBuf=SendBuffer;
                 SendBufLen=0;
-                do
+                while (!IEC_GetStatus())
                 {
                         *(SendBuf++)=(char)IEC_Read();
                         SendBufLen++;
-                } while (!IEC_GetStatus());
+                }
                 SendBuf=SendBuffer;
                 DeviceTurnAround(ActiveDevice);
                 break;

@@ -118,6 +118,7 @@ HANDLE SoundDXReady;
 static bool iniFileExists = false;
 static HWND OldhWnd=NULL;
 static int lastRZXFrameCount=0;
+static int Drive=0;
 
 const int bufferLength = 255;
 char webBuffer[bufferLength];
@@ -2443,7 +2444,7 @@ DWORD WINAPI TForm1::HandleRunFrameThreadProc(LPVOID param)
 void TForm1::HandleRunFrame(void)
 {
         int j;
-        int borrow=0, Drive=0;
+        int borrow=0;
         unsigned short rshift = VK_RSHIFT;
         unsigned short lshift = VK_LSHIFT;
 

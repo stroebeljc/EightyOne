@@ -3754,7 +3754,7 @@ void IEC_Unlisten(void)
             IEC_SetStatus(0x02);
     }
     else if ((globflags & F_INLISTEN)) {
-	if (chfd[channel] < -1) {	/* [fast] opened cmd channel */
+	if (channel == CMD_CHAN && chfd[channel] < -1) {	/* [fast] opened cmd channel */
 	    if (chfd[channel] != -6)	/* chanopen */
 	    {
 		if (chanbufp[channel])

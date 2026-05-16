@@ -100,7 +100,6 @@ void DeviceTick(void)
         case IDLE:
                 if (!IECIsATN())
                 {
-                        LedOff();
                         IECReleaseData(ActiveDevice);
                         TalkState=ListenState=IDLE;
                         break;
@@ -173,7 +172,6 @@ void DeviceTick(void)
         case READDATA:
                 Byte=DeviceListen(ActiveDevice);
                 if (Byte<0) break;
-                LedFlash();
                 if (IECIsATN() && Byte==UNLISTEN)
                 {
                         ProtocolState=IDLE;
@@ -186,7 +184,6 @@ void DeviceTick(void)
 
         case WRITEDATA:
                 if (IECIsATN()) break;
-                LedFlash();
                 if (SendBufLen || TalkState!=IDLE) DeviceTalk(ActiveDevice);
                 else
                 {

@@ -305,6 +305,8 @@ void THW::UpdateHardwareSettings(bool disableReset)
         Form1->ConnectSpectrum128Keypad->Hint = StringReplace(Form1->ConnectSpectrum128Keypad->Hint, "#", GetKeypadMultiplyKey(), TReplaceFlags() << rfReplaceAll);
         Kb->UpdateCursors();
 
+        machine.drivebusy = -1;
+
         if (disableReset)
         {
                 ResetRequired = false;
@@ -320,8 +322,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
         InitialiseSound(machineChanged);
 
         Form1->EnableAnnotationOptions();
-
-        machine.drivebusy = -1;
 
         InitPatches(NewMachine);
 

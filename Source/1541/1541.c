@@ -1551,7 +1551,6 @@ int read1541dirblock(int ch)
 
 void SetError(int e, int t, int s)
 {
-    LedOff();
     if (e) {
 	if ((e != 73 && e != 1 && e != 65) || (e == 65 && t == 0)) {
 	    globflags |= F_ERRORMSG;
@@ -2584,6 +2583,7 @@ static void PerformCommand(char *cmd, int len)
 	    }
 	    if (cmd[1] == '9' || cmd[1] == 'I') {
 		SetError(0, 0, 0);
+		LedOff();
 		return;
 	    }
 	    if (cmd[1] == '1' || cmd[1] == 'A') {
@@ -2616,6 +2616,7 @@ static void PerformCommand(char *cmd, int len)
 	}
 	if (*cmd == 'I' || *cmd == 'V') {
 	    SetError(0, 0, 0);
+	    LedOff();
 	    return;
 	}
 	if (*cmd == 'N') {      	/* new */
@@ -2710,7 +2711,6 @@ void SetCmdChannel(char *buf, int len)
     chanbufp[CMD_CHAN] = 0;
     chanpos[CMD_CHAN] = 0;
     filelen[CMD_CHAN] = len;
-    SetError(0, 0, 0);			/* next error */
 }
 
 void Init_IECDos(void)
@@ -2742,6 +2742,7 @@ void Init_IECDos(void)
     read_the_dir();
     errors[73] = emulver + 5;
     SetError(73, 0, 0);
+    LedOff();
 }
 
 void ReadABlock(int ch)
@@ -2923,7 +2924,6 @@ int DoOpenFile(int ch, char *name)
 	    filepos[ch] = 0;
 	    chanpos[ch] = 0;
 	    ReadABlock(ch);
-	    SetError(0, 0, 0);
 	    return 0;
 	}
 	if (overwrite) {
@@ -2945,7 +2945,6 @@ int DoOpenFile(int ch, char *name)
 	    chanpos[ch] = 256;
 	    chanbuf[ch][0] = c4dhook[findfileidx].u.d64.starttrack;
 	    chanbuf[ch][1] = c4dhook[findfileidx].u.d64.startsector;
-	    SetError(0, 0, 0);
 	    ReadABlock(ch);
 	    return (errorcode != 0);
 	}
@@ -3045,7 +3044,7 @@ int DoOpenFile(int ch, char *name)
             {
                 if (lasttrack!=18 || (dirsector=BAM_find_free_sector_on_track(lasttrack, lastsector))==-1)
                 {
-                    SetError(71, 0, 0);
+                    SetError(72, 0, 0); // directory is full
                     return 1;
                 }
                 dirtrack=lasttrack;
@@ -3079,8 +3078,6 @@ int DoOpenFile(int ch, char *name)
 	    flags[ch] = F_WRITE;
 	    if (overwrite)
 	        flags[ch] |= F_OVERWRITE;
-
-	    SetError(0, 0, 0);
 	    return 0;
 	}
 
@@ -3570,7 +3567,6 @@ int ReadFromFile(int ch)
     if (chanpos[ch] == filelen[ch]) {
 	IEC_SetStatus(0x40);
 	if (ch == CMD_CHAN) {
-	    SetError(0, 0, 0);
 	    SetCmdChannel(errorbuf, strlen(errorbuf));
 	}
     }
@@ -3678,6 +3674,7 @@ void IEC_SEC_Listen(int iec_sec)
 		filenamelen[channel] = 0;
 		filenamebuf[channel][0] = 0;
 		globflags = F_INNAMELISTEN;
+		LedOn();
 		break;
 	    case 0xe:           /* file schliessen */
 		globflags = F_INCLOSE;
@@ -3694,6 +3691,7 @@ void IEC_SEC_Listen(int iec_sec)
 		    filelen[CMD_CHAN] = 0;
 		}
 		globflags = F_INLISTEN;
+		LedOn();
 		break;
 	    default:
 		break;
@@ -3771,6 +3769,7 @@ void IEC_Unlisten(void)
 	DoCloseFile(channel);
 	flags[channel] = 0;
 	globflags = 0;
+	if (errorcode<=1) LedOff();
     }
 #ifdef PRINTER_SUPPORT
     else if ((globflags & F_PR_CLOSE)) {

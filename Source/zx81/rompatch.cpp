@@ -40,8 +40,8 @@ int pop16(void)
 
 extern "C"
 {
-        int LarkenLoadTrack(int Drive, int TrackNo, unsigned char *buf);
-        void LarkenSaveTrack(int Drive, int TrackNo, unsigned char *buf);
+        int LarkenLoadTrack(int TrackNo, unsigned char *buf);
+        void LarkenSaveTrack(int TrackNo, unsigned char *buf);
 };
 
 
@@ -176,9 +176,8 @@ bool ZX80ZX81LambdaStopTape(int& pc)
 // handle: 0x38DEc9
 bool LarkenLoadTrack(int& pc)
 {
-        //int drive=memory[12301];
         //int track=memory[12289];
-        if (!LarkenLoadTrack((memory[12301]==2), memory[12289], memory+12352))
+        if (!LarkenLoadTrack(memory[12289], memory+12352))
         {
                 memory[14335]=0xFA;
                 pc=0x392E;
@@ -189,7 +188,7 @@ bool LarkenLoadTrack(int& pc)
 // handle: 0x3A10c9
 bool LarkenSaveTrack(int& pc)
 {
-        LarkenSaveTrack((memory[12301]==2), memory[12289], memory+12352);
+        LarkenSaveTrack(memory[12289], memory+12352);
         return true;
 }
 

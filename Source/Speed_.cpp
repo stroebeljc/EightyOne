@@ -49,10 +49,42 @@ void __fastcall TSpeed::Button1Click(TObject *Sender)
 
 void __fastcall TSpeed::Recalc(TObject *Sender)
 {
-        int speedup;
-
-        speedup=AccurateSpeed->Position * 32;
-        emulator.speedup = (machine.tperscanline * speedup)/100;
+        switch (AccurateSpeed->Position)
+        {
+        case 0:
+                emulator.speedup = 0.0;
+                break;
+        case 1:
+                emulator.speedup = 0.25;
+                break;
+        case 2:
+                emulator.speedup = 0.5;
+                break;
+        case 3:
+                emulator.speedup = 0.75;
+                break;
+        case 4:
+                emulator.speedup = 1.0;
+                break;
+        case 5:
+                emulator.speedup = 1.25;
+                break;
+        case 6:
+                emulator.speedup = 1.5;
+                break;
+        case 7:
+                emulator.speedup = 1.75;
+                break;
+        case 8:
+                emulator.speedup = 2.0;
+                break;
+        case 9:
+                emulator.speedup = 4.0;
+                break;
+        case 10:
+                emulator.speedup = 8.0;
+                break;
+        }
 }
 //---------------------------------------------------------------------------
 void TSpeed::LoadSettings(TIniFile *ini)
@@ -65,7 +97,7 @@ void TSpeed::LoadSettings(TIniFile *ini)
         //DirtyFastTStates = ini->ReadInteger("SPEED","DFAST",DirtyFastTStates);
         //DirtySlowTStates = ini->ReadInteger("SPEED","DSLOW",DirtySlowTStates);
 
-        AccurateSpeed->Position = ini->ReadInteger("SPEED","SACC",AccurateSpeed->Position);
+        AccurateSpeed->Position = ini->ReadInteger("SPEED","SACC2",AccurateSpeed->Position);
         //FastMode->Position = ini->ReadInteger("SPEED","SFAST",FastMode->Position);
         //SlowMode->Position = ini->ReadInteger("SPEED","SSLOW",SlowMode->Position);
         EnableFrameSkip->Checked = ini->ReadInteger("SPEED","FRAMESKIP", false);
@@ -86,7 +118,7 @@ void TSpeed::SaveSettings(TIniFile *ini)
         //ini->WriteInteger("SPEED","DFAST",DirtyFastTStates);
         //ini->WriteInteger("SPEED","DSLOW",DirtySlowTStates);
 
-        ini->WriteInteger("SPEED","SACC",AccurateSpeed->Position);
+        ini->WriteInteger("SPEED","SACC2",AccurateSpeed->Position);
         //ini->WriteInteger("SPEED","SFAST",FastMode->Position);
         //ini->WriteInteger("SPEED","SSLOW",SlowMode->Position);
         ini->WriteInteger("SPEED","FRAMESKIP",EnableFrameSkip->Checked);

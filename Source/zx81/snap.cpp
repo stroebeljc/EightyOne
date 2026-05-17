@@ -845,10 +845,9 @@ int do_load_snap(char *filename)
 {
         char* p=filename+strlen(filename)-4;
 
-        if (strcmp(p,".Z81") && strcmp(p,".z81")
-                && strcmp(p,".ace") && strcmp(p,".ACE") ) return(0);
+        if (stricmp(p,".z81") && stricmp(p,".ace")) return(0);
 
-        if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
+        if (!stricmp(p,".ace"))
         {
                 if (!load_ACE_snapshot(filename))
                 {
@@ -894,10 +893,9 @@ int save_snap(char *filename)
 
         p=filename+strlen(filename)-4;
 
-        if (strcmp(p,".Z81") && strcmp(p,".z81")
-                && strcmp(p,".ace") && strcmp(p,".ACE") ) return(0);
+        if (stricmp(p,".z81") && stricmp(p,".ace")) return(0);
 
-        if (!strcmp(p,".ace") || !strcmp(p,".ACE"))
+        if (!stricmp(p,".ace"))
         {
                 f = save_snap_ace(filename);
         }

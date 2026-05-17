@@ -96,7 +96,7 @@ class CSound
 {
 public:
 	void InitDevices(void);
-        int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
+        int Initialise(HWND hWnd, HANDLE readyEvent, int FPS, int BitsPerSample, int SampleRate, int Channels);
         int ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
 
         void End(void);

@@ -90,7 +90,7 @@ AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)
 
         while(strlen(Dest))
         {
-                if ((!strcmp(Dest,".zip")) || (!strcmp(Dest,".ZIP")))
+                if (!stricmp(Dest,".zip"))
                 {
                         Dest[0]='\0';
                         Dest[1]='\0';

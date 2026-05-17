@@ -77,7 +77,10 @@
  *------------------------------------------------------------------------------
  */
 
+#define ENABLE1541
 #ifdef ENABLE1541
+
+#include "windows.h"
 
 #include "config.h"
 #include "md.h"
@@ -99,7 +102,7 @@
 #include <stdlib.h>
 
 #include <io.h>
-//#include <unistd.h>
+#include <direct.h>
 
 #include "1541.h"
 
@@ -140,7 +143,7 @@ static unsigned char *ImageErrInfo;
 static int ImageDataSize = 0;
 static unsigned char ImageFlags[802];
 static int d64_has_errinfo = 0;
-static int d64_tracks = 0;
+static unsigned int d64_tracks = 0;
 static struct BAM *d64_BAM;
 
 static int emu_mode = 0;
@@ -193,6 +196,8 @@ static int dir;                /* starts with '$' */
 static int chanopen;
 static char nbuf[34];
 static struct pc64entry pc64header;
+static struct FileEntry *newD64entry=NULL;
+static struct TrackSector lastD64Sector;
 
 #ifdef __GO32__
 static char *emulver = "@(#) ALE DOSEMUL V1.9.5 MSDOS";
@@ -278,7 +283,7 @@ static char *errors[] = {
     "FORMAT SPEED ERROR"
 };
 
-static int ZBR_ns[43] = {
+static unsigned int ZBR_ns[43] = {
      0,
     21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
     19, 19, 19, 19, 19, 19, 19,
@@ -287,7 +292,7 @@ static int ZBR_ns[43] = {
     17, 17, 17, 17, 17, 17, 17
 };
 
-static int ZBR_st[43] = {
+static unsigned int ZBR_st[43] = {
       0,
       0,  21,  42,  63,  84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336,
     357, 376, 395, 414, 433, 452, 471,
@@ -322,7 +327,7 @@ static int ErrInfo2Error(int ei) {
 /*
  *	Print an unimplemented command.
  */
-static void NotImplemented(CONST unsigned char* cmd)
+static void NotImplemented(CONST char* cmd)
 {
 #ifndef __GO32__
     printf("1541: not implemented '");
@@ -382,24 +387,25 @@ char *systemname(void)
 //    if (uname(&uts) == -1)
 //	strcpy(uts.sysname,"unix");
 //    return uts.sysname;
+        return "EightyOne";
 }
 #endif
 
 static char asctocbm(unsigned char c)
 {
     if (c >= 'a' && c <= 'z')
-	return c & ~0x20;
+	return c & (unsigned char)~0x20;
     if (c >= 'A' && c <= 'Z')
-	return c | 0x80;
+	return c | (unsigned char)0x80;
     return c;
 }
 
 static char cbmtoasc(unsigned char c)
 {
     if (c >= ('A' | 0x80) && c <= ('Z' | 0x80))
-	return c & 0x7f;
+	return c & (unsigned char)0x7f;
     if (c >= 'A' && c <= 'Z')
-	return c | 0x20;
+	return c | (unsigned char)0x20;
     return c;
 }
 
@@ -598,7 +604,7 @@ static int BAM_free(unsigned int track, unsigned int sector)
     {
 	trackmap = d64_BAM->bam + track;
 	if ((trackmap->bitmap[sector >> 3] & ((unsigned char)1 << (sector & 7))) == 0) {
-	    trackmap->bitmap[sector >> 3] |= (unsigned char)1 << (sector & 7);
+	    trackmap->bitmap[sector >> 3] |= (unsigned char)(1 << (sector & 7));
 	    trackmap->freecnt++;
 	    if (!ImageRO)
 		ImageFlags[ZBR_st[18]] |= IF_DIRTY;
@@ -799,7 +805,7 @@ static int stat_2_mode(struct stat *st)
 	return TYPE_BIG;
     if (st->st_mode == S_IFREG)		/* '==', not '&' */
 	return TYPE_D;
-    m = st->st_mode & STAT_MASK;
+    m = st->st_mode & (short)STAT_MASK;
     switch (m) {
 	case STAT_PRG:
 	    return TYPE_P;
@@ -1138,7 +1144,7 @@ static int read_fs_dir(void)
 	if (!(S_ISREG(st.st_mode)) && !(S_ISDIR(st.st_mode))) 
 	    continue;
 	if ((tmp = is_pc64(dp->d_name, &st)) != TYPE_NOTHING) {
-	    c4dhook[i].mode = tmp;
+	    c4dhook[i].mode = (unsigned char)tmp;
 	    c4dhook[i].flags = FLG_PC64;
 	    c4dhook[i].size = st.st_size - sizeof(struct pc64entry);
 	    strcbm2asc(pc64header.name);
@@ -1155,7 +1161,7 @@ static int read_fs_dir(void)
 	    strncpy(c4dhook[i].name, dp->d_name, 16);
 	    c4dhook[i].name[16] = 0;    /* trust noone ... */
 	    strcpy(c4dhook[i].u.osname, c4dhook[i].name);	/* now always set the osname for PC64 support */
-	    c4dhook[i].mode = tmp;
+	    c4dhook[i].mode = (unsigned char)tmp;
 	    c4dhook[i].flags = 0;
 	    c4dhook[i].size = st.st_size;
 	    if ( c4dhook[i].mode == TYPE_L) {
@@ -1197,7 +1203,7 @@ static void read_d64_dir(void)
     for (track = d64_BAM->dirstart.track, sector = d64_BAM->dirstart.sector;
 		    (abssec = AbsoluteSector(track, sector)) != -1;
 				 track = dir[0].dirnext.track, sector = dir[0].dirnext.sector) {
-	if ((ImageFlags[abssec] && IF_USED))
+	if ((ImageFlags[abssec] & IF_USED))
 	    break;
 	ImageFlags[abssec] |= IF_USED;
 	dir = (struct FileEntry *)(ImageData + abssec * 256);
@@ -1228,20 +1234,23 @@ static void read_d64_dir(void)
     for (track = d64_BAM->dirstart.track, sector = d64_BAM->dirstart.sector;
 		    (abssec = AbsoluteSector(track, sector)) != -1;
 				 track = dir[0].dirnext.track, sector = dir[0].dirnext.sector) {
-	if ((ImageFlags[abssec] && IF_USED))
+	if ((ImageFlags[abssec] & IF_USED))
 	    break;
 	ImageFlags[abssec] |= IF_USED;
 	dir = (struct FileEntry *)(ImageData + abssec * 256);
 	for (i = 0; i < 8; i++) {
 	    if (dir[i].type != 0) {
+		c4dhook[cnt].dirtrack = track;
+		c4dhook[cnt].dirsect = sector;
+		c4dhook[cnt].dirindex = i;
 		c4dhook[cnt].u.d64.starttrack = dir[i].datastart.track;
 		c4dhook[cnt].u.d64.startsector = dir[i].datastart.sector;
 		c4dhook[cnt].size = (dir[i].size[0] + dir[i].size[1] * 256) * 254;
-		for (j = 0; j < 16 && dir[i].name[j] != (unsigned char)0xA0; j++)
+		for (j = 0; j < 16 && dir[i].name[j] != 0xA0; j++)
 		    c4dhook[cnt].name[j] = cbmtoasc(dir[i].name[j]);
 		c4dhook[cnt].name[j] = 0;
 		c4dhook[cnt].u.osname[0] = 0;
-		c4dhook[cnt].flags = (dir[i].type & (unsigned char)0x40) ? FLG_LOCK : 0; 
+		c4dhook[cnt].flags = (unsigned char)((dir[i].type & 0x40) ? FLG_LOCK : 0); 
 		c4dhook[cnt].recordsize = 0;
 		/* FIXME: FLG_UNCLOSED! */
 		switch (dir[i].type & (unsigned char)0x8F) {
@@ -1357,8 +1366,8 @@ int dirgetnext(void)
 
 static void setshort(unsigned char *p, int i)
 {
-    *p++ = i & 0xff;
-    *p = i >> 8;
+    *p++ = (unsigned char)(i & 0xff);
+    *p = (unsigned char)(i >> 8);
 }
 
 static void setheadline(unsigned char *bp)
@@ -1368,8 +1377,8 @@ static void setheadline(unsigned char *bp)
 
     memcpy(bp, dirintro, 8);
     if (emu_mode == EMU_MODE_D64) {
-	strcpy(bp + 8,"                \" ");
-	cp = d64_BAM->diskname;
+	strcpy((char *)bp + 8,"                \" ");
+	cp = (unsigned char *)d64_BAM->diskname;
 	i = 8;
 	while (*cp != (unsigned char)0xA0 && i < 24)
 	    bp[i++] = *cp++;
@@ -1379,12 +1388,12 @@ static void setheadline(unsigned char *bp)
 	    if (bp[i] == (unsigned char)0xA0)
 		bp[i] = ' ';
     } else {
-	strcpy(bp + 8,"           (ALE)");
-	cp = systemname();
+	strcpy((char *)bp + 8,"           (ALE)");
+	cp = (unsigned char *)systemname();
 	i = 8;
 	while (*cp)
 	    bp[i++] = asctocbm(*cp++);
-	strcpy(bp + 24,"\" 64 2A");
+	strcpy((char *)bp + 24,"\" 64 2A");
     }
 }
 
@@ -1392,30 +1401,30 @@ static void setstopline(char *bp)
 {
     int blfree, t;
 
-    setshort(bp, 257);
+    setshort((unsigned char *)bp, 257);
     if (emu_mode == EMU_MODE_D64) {
 	for (blfree = t = 0; t < 35; t++)
 	    if (t != d64_BAM->dirstart.track - 1)
 		blfree += d64_BAM->bam[t].freecnt;
-	setshort(bp + 2, blfree);
+	setshort((unsigned char *)bp + 2, blfree);
 	strcpy(bp + 4, "BLOCKS FREE.             ");
     } else {
 	blfree = freeblks(".");
 	if (blfree >= 64000) {      /* kilo blocks... */
 	    blfree /= 1024;
 	    if (blfree >= 64000) {
-		setshort(bp + 2, blfree / 1024);
+		setshort((unsigned char *)bp + 2, blfree / 1024);
 		strcpy(bp + 4, "MEGA BLOCKS FREE.        ");
 	    } else {
-		setshort(bp + 2, blfree);
+		setshort((unsigned char *)bp + 2, blfree);
 		strcpy(bp + 4, "KILO BLOCKS FREE.        ");
 	    }
 	} else {
-	    setshort(bp + 2, blfree);
+	    setshort((unsigned char *)bp + 2, blfree);
 	    strcpy(bp + 4, "BLOCKS FREE.             ");
 	}
     }
-    setshort(bp + 30, 0);
+    setshort((unsigned char *)bp + 30, 0);
 }
  
 static void setentry(char *cp) 
@@ -1435,13 +1444,13 @@ static void setentry(char *cp)
     dirisopen = i + 2;
     mode = c4->mode;
     np = c4->name;
-    setshort(cp, 257);   /* 0101 */
+    setshort((unsigned char *)cp, 257);   /* 0101 */
     if (mode == TYPE_BIG) {
-	setshort(cp + 2, 0);
+	setshort((unsigned char *)cp + 2, 0);
 	nspaces = 3;
     } else {
 	blks = (c4->size + 253) / 254;
-	setshort(cp + 2, blks);
+	setshort((unsigned char *)cp + 2, blks);
 	if (blks < 10) nspaces = 3;
 	else if (blks < 100) nspaces = 2;
 	else if (blks < 1000) nspaces = 1;
@@ -1523,7 +1532,7 @@ int read1541dirblock(int ch)
 
     nread = 0;
     if (dirpos == 0) {
-	setheadline(chanbuf[ch]);
+	setheadline((unsigned char *)chanbuf[ch]);
 	dirpos += 32;
 	nread++;
     }
@@ -1542,7 +1551,6 @@ int read1541dirblock(int ch)
 
 void SetError(int e, int t, int s)
 {
-    LedOff();
     if (e) {
 	if ((e != 73 && e != 1 && e != 65) || (e == 65 && t == 0)) {
 	    globflags |= F_ERRORMSG;
@@ -1876,7 +1884,9 @@ int cmd_go(char *cmd)
 static int cmd_scratch(char *cmd)
 {
     char *cp, *cp2, *cp3;
-    int i, idx, tpmod;
+    int i, idx, tpmod, track, sector;
+    struct FileEntry *direntry;
+    struct DataBlock *block;
 
     cp = strchr(cmd, ':');
     if (!cp) {
@@ -1886,10 +1896,6 @@ static int cmd_scratch(char *cmd)
     cp++;
     if (!*cp) {
 	SetError(30, 0, 0);
-	return 0;
-    }
-    if (emu_mode == EMU_MODE_D64) {
-	SetError(3, 0, 0);	/* unimplemented */
 	return 0;
     }
     strcbm2asc(cp);
@@ -1922,7 +1928,18 @@ static int cmd_scratch(char *cmd)
 		if (!(c4dhook[idx].flags & FLG_LOCK))
 		{
 		    c4dhook[idx].mode = -1;
-		    unlink(c4dhook[idx].u.osname);
+		        if (emu_mode == EMU_MODE_D64) {
+		            direntry = (struct FileEntry *)SectorPointer(c4dhook[idx].dirtrack, c4dhook[idx].dirsect);
+		            direntry[c4dhook[idx].dirindex].type=0;
+		            ImageFlags[AbsoluteSector(c4dhook[idx].dirtrack, c4dhook[idx].dirsect)] |= IF_DIRTY;
+		            for (track = direntry[c4dhook[idx].dirindex].datastart.track, sector = direntry[c4dhook[idx].dirindex].datastart.sector;
+		                (block = (struct DataBlock *)SectorPointer(track, sector)) != NULL;
+		                  track = block[0].datanext.track, sector = block[0].datanext.sector) {
+		                  BAM_free(track, sector);
+		            }
+		            ReWriteImage(); // BAM was updated
+		        }
+		    else unlink(c4dhook[idx].u.osname);
 		    i++;
 		}
 	    }
@@ -1945,6 +1962,7 @@ static int cmd_rename(char *cmd)
 {
     char *cp, *cp2, *cp3;
     int i, idx;
+    struct FileEntry *direntry;
 
     cp = strchr(cmd, ':');
     if (!cp) {
@@ -2001,8 +2019,12 @@ static int cmd_rename(char *cmd)
 #endif
     {
 	if (emu_mode == EMU_MODE_D64 || ((c4dhook[i].flags & FLG_PC64))) {
-	    SetError(3, 0, 0);	/* unimplemented */
-	    return 0;
+	    direntry = (struct FileEntry *)SectorPointer(c4dhook[i].dirtrack, c4dhook[i].dirsect);
+	    memset(direntry[c4dhook[i].dirindex].name, 0xA0, sizeof(direntry->name));	/* preset name data */
+	    memcpy(direntry[c4dhook[i].dirindex].name, cp, strlen(cp));
+	    SectorChanged(c4dhook[i].dirtrack, c4dhook[i].dirsect);
+	    SetError(0, 0, 0);
+	    return 1;
 	}
 	rename(c4dhook[i].u.osname, cp);
     }
@@ -2080,7 +2102,10 @@ static int cmd_concat(char *target, char *cmd)
 static int cmd_copy(char *cmd)
 {
     char *cp, *cp2, *cp3;
-    int i, idx, tpmod;
+    int i, idx;
+#ifdef DIRFILE
+    int tpmod;
+#endif
 
     cp = strchr(cmd, ':');
     if (!cp) {
@@ -2127,7 +2152,10 @@ static int cmd_copy(char *cmd)
 	SetError(30, 0, 0);
 	return 0;
     }
-    tpmod = i = -1;
+    i = -1;
+#ifdef DIRFILE
+    tpmod = -1;
+#endif
     if (*cp == '@') {
 	cp++;
 	i = dirgetfirst(cp);
@@ -2189,7 +2217,7 @@ int cmd_new(char *cmd)
 {
     char *cp, *cp2;
     unsigned char id[2];
-    int i, s, has_id = 0;
+    unsigned int i, s, has_id = 0;
 
     if (emu_mode == EMU_MODE_D64) {
 	cp = strchr(cmd, ':');
@@ -2461,7 +2489,7 @@ static void cmd_block_allocate(char *arg)
 	SetError(30, 0, 0);
 	return;
     }
-    if (t < 1 || t > 35 || s >= ZBR_ns[t]) {
+    if (t < 1 || t > 35 || s >= (int)ZBR_ns[t]) {
 	SetError(66, t, s);
 	return;
     }
@@ -2481,7 +2509,7 @@ static void cmd_block_allocate(char *arg)
     }
     t2 = t;
     s2 = s;
-    BAM_next_free_sector(&t2, &s2);
+    BAM_next_free_sector((unsigned int *)&t2, (unsigned int *)&s2);
     if (t2 == t && s2 == s)
 	SetError(0, 0, 0);
     else {
@@ -2517,7 +2545,7 @@ static void cmd_block_free(char *arg)
 	SetError(30, 0, 0);
 	return;
     }
-    if (t < 1 || t > 35 || s >= ZBR_ns[t]) {
+    if (t < 1 || t > 35 || s >= (int)ZBR_ns[t]) {
 	SetError(66, t, s);
 	return;
     }
@@ -2555,6 +2583,7 @@ static void PerformCommand(char *cmd, int len)
 	    }
 	    if (cmd[1] == '9' || cmd[1] == 'I') {
 		SetError(0, 0, 0);
+		LedOff();
 		return;
 	    }
 	    if (cmd[1] == '1' || cmd[1] == 'A') {
@@ -2587,6 +2616,7 @@ static void PerformCommand(char *cmd, int len)
 	}
 	if (*cmd == 'I' || *cmd == 'V') {
 	    SetError(0, 0, 0);
+	    LedOff();
 	    return;
 	}
 	if (*cmd == 'N') {      	/* new */
@@ -2670,6 +2700,10 @@ static void PerformCommand(char *cmd, int len)
     SetError(31, 0, 0);
 }
 
+void IECPerformCommand(char *cmd, int len)
+{
+        PerformCommand(cmd,len);
+}
 
 void SetCmdChannel(char *buf, int len)
 {
@@ -2677,7 +2711,6 @@ void SetCmdChannel(char *buf, int len)
     chanbufp[CMD_CHAN] = 0;
     chanpos[CMD_CHAN] = 0;
     filelen[CMD_CHAN] = len;
-    SetError(0, 0, 0);			/* next error */
 }
 
 void Init_IECDos(void)
@@ -2693,7 +2726,7 @@ void Init_IECDos(void)
     printer_unit = DEF_PRINTER;
 #endif
 #ifndef __GO32__
-    umask(UMask = umask(0));
+    umask(UMask = (mode_t)umask(0));
     UMask ^= 0666;
 #endif
     globflags = 0;
@@ -2709,6 +2742,7 @@ void Init_IECDos(void)
     read_the_dir();
     errors[73] = emulver + 5;
     SetError(73, 0, 0);
+    LedOff();
 }
 
 void ReadABlock(int ch)
@@ -2758,6 +2792,80 @@ void ReadABlock(int ch)
 
 void WriteABlock(int ch)
 {
+    static int trackStartBias=-1;
+    if (emu_mode == EMU_MODE_D64 && newD64entry) {
+        struct DataBlock *block;
+        unsigned int track = lastD64Sector.track;
+        unsigned int sector = lastD64Sector.sector;
+
+        if (chanbufp[ch]<=2) // no data
+        {
+            return;
+        }
+
+        if (track==18)
+        {
+                track+=trackStartBias; // do not use directory track
+                trackStartBias*=-1;
+        }
+
+        if (!BAM_next_free_sector(&track, &sector) || track==0) // Get next available sector
+        {
+            int n=0;
+            unsigned char temp[20] = ":\0";
+            strcat((char *)temp,(char *)newD64entry->name);
+            while (temp[n]!=0xA0 && temp[n]!='\0') n++;
+            temp[n]='\0';
+            read_the_dir();
+            cmd_scratch((char *)temp);
+            newD64entry=NULL;
+            SetError(72, 0, 0);  // disk full
+            return;
+        }
+
+        block = (struct DataBlock *)SectorPointer(track, sector);
+
+        if (!block)
+        {
+            SetError(25, 0, 0); // write error
+            newD64entry=NULL;
+            return;
+        }
+
+        block->datanext.track = 0;
+        block->datanext.sector = (unsigned char)(chanbufp[ch]-1);
+        memcpy(block->data, chanbuf[ch]+2, chanbufp[ch]-2);
+        ImageFlags[AbsoluteSector(track, sector)] |= IF_DIRTY;
+
+        (*(unsigned short *)newD64entry->size)++; // update size in directory
+
+        if (lastD64Sector.track==18)
+        {
+            // Update datastart in directory
+            newD64entry->datastart.track = (unsigned char)track;
+            newD64entry->datastart.sector = (unsigned char)sector;
+        }
+        else
+        {
+            // Update datanext in the last sector written to point to the current sector
+            block = (struct DataBlock *)SectorPointer(lastD64Sector.track, lastD64Sector.sector);
+            if (!block)
+            {
+                SetError(25, 0, 0); // write error
+                newD64entry=NULL;
+                return;
+            }
+            block->datanext.track=(unsigned char)track;
+            block->datanext.sector=(unsigned char)sector;
+        }
+
+        // Store the location of the current sector
+        lastD64Sector.track = (unsigned char)track;
+        lastD64Sector.sector = (unsigned char)sector;
+
+        return;
+    }
+
     write(chfd[ch], chanbuf[ch], chanbufp[ch]);
     filepos[ch] += chanbufp[ch];
     chanbufp[ch] = 0;
@@ -2797,7 +2905,7 @@ int DoOpenFile(int ch, char *name)
 	filepos[ch] = 0;
 	chanpos[ch] = 0;
 	filelen[ch] = 256;
-	chanbuf[ch][0] = ch;
+	chanbuf[ch][0] = (char)ch;
 	SetError(0, 0, 0);
 	return 0;
     }
@@ -2816,7 +2924,6 @@ int DoOpenFile(int ch, char *name)
 	    filepos[ch] = 0;
 	    chanpos[ch] = 0;
 	    ReadABlock(ch);
-	    SetError(0, 0, 0);
 	    return 0;
 	}
 	if (overwrite) {
@@ -2838,7 +2945,6 @@ int DoOpenFile(int ch, char *name)
 	    chanpos[ch] = 256;
 	    chanbuf[ch][0] = c4dhook[findfileidx].u.d64.starttrack;
 	    chanbuf[ch][1] = c4dhook[findfileidx].u.d64.startsector;
-	    SetError(0, 0, 0);
 	    ReadABlock(ch);
 	    return (errorcode != 0);
 	}
@@ -2898,9 +3004,81 @@ int DoOpenFile(int ch, char *name)
 	    overwrite = 1;
 	}
 
-	if (emu_mode == EMU_MODE_D64) {			/* for now! */
-	    SetError(26, 0, 0);	/* write protect */
-	    return 1;
+	if (emu_mode == EMU_MODE_D64) {
+            struct FileEntry *direntry=NULL;
+            struct DataBlock *block=NULL;
+            int dirtrack,dirsector,lasttrack,lastsector;
+            newD64entry=NULL;
+
+            i = dirgetfirst(name);
+            if (i >= 0) {
+	        SetError(63, 0, 0);
+	        return 1;
+            }
+
+            for (dirtrack = d64_BAM->dirstart.track, dirsector = d64_BAM->dirstart.sector;
+                (block = (struct DataBlock *)SectorPointer(dirtrack, dirsector)) != NULL;
+                dirtrack = block[0].datanext.track, dirsector = block[0].datanext.sector)
+            {
+                direntry = (struct FileEntry *)block;
+                lasttrack=dirtrack;
+                lastsector=dirsector;
+                for (i = 0; i<8; i++)
+                {
+                        if (direntry[i].type==0)
+                        {
+                                newD64entry=&direntry[i];
+                                break;
+                        }
+                }
+                if (newD64entry) break;
+            }
+
+            if (!direntry)
+            {
+                SetError(71, 0, 0);
+                return 1;
+            }
+
+            if (!newD64entry) // Unable to find free entry, so create another sector in the directory
+            {
+                if (lasttrack!=18 || (dirsector=BAM_find_free_sector_on_track(lasttrack, lastsector))==-1)
+                {
+                    SetError(72, 0, 0); // directory is full
+                    return 1;
+                }
+                dirtrack=lasttrack;
+                block = (struct DataBlock *)SectorPointer(dirtrack, dirsector);
+                if (!block)
+                {
+                    SetError(71, 0, 0);
+                    return 1;
+                }
+                block->datanext.track=0;
+                block->datanext.sector=1;
+                memset(block->data, 0, sizeof(block->data));
+                direntry[0].dirnext.track=(unsigned char)dirtrack;
+                direntry[0].dirnext.sector=(unsigned char)dirsector;
+                ImageFlags[AbsoluteSector(lasttrack, lastsector)] |= IF_DIRTY;
+                direntry = (struct FileEntry *)block;
+                newD64entry=direntry;
+            }
+
+            if (direntry[0].dirnext.track==0) direntry[0].dirnext.sector = 0xFF;
+
+            *(unsigned short *)newD64entry[0].size = 0;
+            newD64entry->type = 0x82;
+            memset(newD64entry->name, 0xA0, sizeof(newD64entry->name));
+            memcpy(newD64entry->name, nbuf, strlen(name));
+            ImageFlags[AbsoluteSector(dirtrack, dirsector)] |= IF_DIRTY;
+            lastD64Sector.track=18; // tells the write routine to update the directory's datastart
+            lastD64Sector.sector=0;
+	    chfd[ch] = -5;
+	    chanbufp[ch] = 2;
+	    flags[ch] = F_WRITE;
+	    if (overwrite)
+	        flags[ch] |= F_OVERWRITE;
+	    return 0;
 	}
 
 	if (strchr(nbuf, '*') || strchr(nbuf, '?')) 	/* has patterns */
@@ -3235,7 +3413,6 @@ int DoOpenFile(int ch, char *name)
 		}
 		SetError(28, 0, 0);
 		return 1;
-		break;
 	    case MODE_R:
 	    case MODE_M:
 	    default:
@@ -3311,6 +3488,10 @@ void DoCloseFile(int ch)
     } else if (chfd[ch] == -4 ) {
 	/* close a directory */
 	close1541dir(ch);
+    } else if (chfd[ch] == -5 ) {
+	/* Clear D64 new file entry */
+	newD64entry=NULL;
+	ReWriteImage();
     }
     read_the_dir();
 
@@ -3335,7 +3516,7 @@ void WriteToFile(int ch, int byte)
 	    IEC_SetStatus(0x03);
 	    return;
 	}
-	chanbuf[ch][chanbufp[ch]++] = byte;
+	chanbuf[ch][chanbufp[ch]++] = (char)byte;
 	chanpos[ch]++;
 	return;
     }
@@ -3351,11 +3532,14 @@ void WriteToFile(int ch, int byte)
 	    return;
 	} 
     }
-    chanbuf[ch][chanbufp[ch]++] = byte;
+    chanbuf[ch][chanbufp[ch]++] = (char)byte;
     chanpos[ch]++;
     if (chanbufp[ch] == 256) {
 	WriteABlock(ch);
-	chanbufp[ch] = 0;
+        if (chfd[ch] == -5)
+	    chanbufp[ch] = 2;
+        else
+	    chanbufp[ch] = 0;
     }
 }
 
@@ -3383,7 +3567,6 @@ int ReadFromFile(int ch)
     if (chanpos[ch] == filelen[ch]) {
 	IEC_SetStatus(0x40);
 	if (ch == CMD_CHAN) {
-	    SetError(0, 0, 0);
 	    SetCmdChannel(errorbuf, strlen(errorbuf));
 	}
     }
@@ -3491,6 +3674,7 @@ void IEC_SEC_Listen(int iec_sec)
 		filenamelen[channel] = 0;
 		filenamebuf[channel][0] = 0;
 		globflags = F_INNAMELISTEN;
+		LedOn();
 		break;
 	    case 0xe:           /* file schliessen */
 		globflags = F_INCLOSE;
@@ -3507,6 +3691,7 @@ void IEC_SEC_Listen(int iec_sec)
 		    filelen[CMD_CHAN] = 0;
 		}
 		globflags = F_INLISTEN;
+		LedOn();
 		break;
 	    default:
 		break;
@@ -3522,7 +3707,7 @@ void IEC_Write(int byte)
     if (globflags & F_INNAMELISTEN)
     {
 	if ((i = filenamelen[channel]) < 64) {
-	    filenamebuf[channel][i] = byte;
+	    filenamebuf[channel][i] = (char)byte;
 	    filenamelen[channel]++;
 	}
 	/* ignore rest of name silently.. */
@@ -3563,9 +3748,11 @@ void IEC_Unlisten(void)
 	filenamebuf[channel][filenamelen[channel]] = 0;
 	if (DoOpenFile(channel, filenamebuf[channel]) == 0)
 	    flags[channel] |= F_OPEN;
+        else
+            IEC_SetStatus(0x02);
     }
     else if ((globflags & F_INLISTEN)) {
-	if (chfd[channel] < -1) {	/* [fast] opened cmd channel */
+	if (channel == CMD_CHAN && chfd[channel] < -1) {	/* [fast] opened cmd channel */
 	    if (chfd[channel] != -6)	/* chanopen */
 	    {
 		if (chanbufp[channel])
@@ -3582,6 +3769,7 @@ void IEC_Unlisten(void)
 	DoCloseFile(channel);
 	flags[channel] = 0;
 	globflags = 0;
+	if (errorcode<=1) LedOff();
     }
 #ifdef PRINTER_SUPPORT
     else if ((globflags & F_PR_CLOSE)) {
@@ -3655,4 +3843,12 @@ int IEC_Read(void)
     return '\r';
 }
 
+int IEC_GetStatus(void)
+{
+        return IEC_Status;
+}
 #endif
+
+
+
+

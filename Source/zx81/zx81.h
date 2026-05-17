@@ -34,6 +34,7 @@ extern BYTE zx81_getbyte(int Address);
 extern BYTE zx81_opcode_fetch(int Address);
 extern void zx81_writeport(int Address, int Data, int *tstates);
 extern BYTE zx81_readport(int Address, int *tstates);
+extern void zx81_exit(void);
 extern int zx81_contend(int Address, int states, int time);
 extern int tstates, event_next_event;
 extern int framepos, frametstates;

@@ -280,6 +280,7 @@ void rzx_close_irb(void)
 int rzx_seek_irb(void)
 {
   int done=0;
+  int handler_return;
   long fpos;
   FILE *snapfile;
   while(!done)
@@ -346,7 +347,8 @@ int rzx_seek_irb(void)
             rzx_snap.options|=RZX_EXTERNAL;
           }
           /* tell the host emulator to load the snapshot */
-          emul_handler(RZXMSG_LOADSNAP,&rzx_snap);
+          handler_return = emul_handler(RZXMSG_LOADSNAP,&rzx_snap);
+          if (handler_return!=RZX_OK) return handler_return; 
           if(rzx_snap.options&RZX_REMOVE) remove(rzx_snap.filename);
           break;
      case RZXBLK_DATA:
@@ -413,6 +415,8 @@ int rzx_init(const RZX_EMULINFO *emul, const RZX_CALLBACK callback)
 
 int rzx_playback(const char *filename)
 {
+  int seekReturn;
+  
   if(filename==0) return RZX_INVALID;
   if(inputbuffer==NULL)
   {
@@ -451,10 +455,11 @@ int rzx_playback(const char *filename)
   }
   /* ok, open the first IRB */
   rzx.mode=RZX_PLAYBACK;
-  if(rzx_seek_irb()!=RZX_OK)
+  seekReturn=rzx_seek_irb();
+  if(seekReturn!=RZX_OK)
   {
      rzx_close();
-     return RZX_FINISHED;
+     return seekReturn;
   }
   INcount=0;
   INold=0xFFFF;

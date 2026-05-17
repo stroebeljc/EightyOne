@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <windows.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "floppy.h"
 #include "libdsk/config.h"
@@ -34,6 +35,8 @@
 #include "zx81config.h"
 #include "parallel.h"
 #include "z80.h"
+#include "iecbus.h"
+#include "1541.h"
 
 extern void fdl_setfilename(FDRV_PTR fd, const char *s);
 extern FDRV_PTR fd_newldsk(void);
@@ -42,11 +45,13 @@ FDC_PTR p3_fdc=NULL;
 FDRV_PTR p3_drive_a=NULL;
 FDRV_PTR p3_drive_b=NULL;
 FDRV_PTR p3_drive_null=NULL;
-wd1770_drive PlusDDrives[2], *PlusDCur;
+wd1770_drive PlusDDrives[FLOPPYDRIVES], *PlusDCur;
 
-#define LARKENSIZE (80*1984)
+#define LARKENSECTORSIZE 1984
+#define LARKENSIZE (80*LARKENSECTORSIZE)
 unsigned char LarkenDrive[LARKENSIZE*2];
-char LarkenPath0[MAXPATH], LarkenPath1[MAXPATH];
+char LarkenPath[FLOPPYDRIVES][MAXPATH];
+int LarkenDriveSelectValue=0;
 
 #include "larhead.h"
 
@@ -335,6 +340,11 @@ void floppy_ClockTick(int ts)
                 if (p3_fdc) fdc_tick(p3_fdc);
         }
 
+        if (machine.floppytype == FLOPPYZX1541)
+        {
+                IECClockTick(ts);
+        }
+
         if (machine.floppytype==FLOPPYPLUSD
                 || machine.floppytype==FLOPPYDISCIPLE
                 || machine.floppytype==FLOPPYOPUSD
@@ -352,6 +362,7 @@ void floppy_ClockTick(int ts)
                         if (NMICount<0)
                         {
                                 wd1770_set_datarq(PlusDCur);
+                                wd1770_check_stall(PlusDCur);
                                 NMICount+=(PlusDCur->state == wd1770_state_read)? NMIREADTICKER
                                                                         : NMIWRITETICKER;
                         }
@@ -368,7 +379,7 @@ void floppy_ClockTick(int ts)
                 {
                         index_pulse = !index_pulse;
 
-                        for( i = 0; i < 2; i++ )
+                        for( i = 0; i < FLOPPYDRIVES; i++ )
                         {
                                 wd1770_drive *d = &PlusDDrives[ i ];
 
@@ -396,18 +407,25 @@ void floppy_shutdown()
 
 void floppy_init()
 {
-        int i=0;
-        char filename[MAXPATH]="\0";
+        int i;
 
         Data_Reg_A=0; Data_Dir_A=0; Control_A=0;
         Data_Reg_B=0; Data_Dir_B=0; Control_B=0;
 
+        if (machine.floppytype==FLOPPYZX1541)
+        {
+                IECReset();
+                return;
+        }
+
         if (machine.floppytype==FLOPPYLARKEN81)
         {
-                memset(LarkenDrive, 0, LARKENSIZE*2);
-                LarkenPath0[0]='\0';
-                LarkenPath1[0]='\0';
-                if (strlen(filename)) floppy_setimage(i,filename,1);
+                for( i = 0; i < FLOPPYDRIVES; i++ )
+                {
+                    floppy_eject(i);
+                }
+
+                LarkenDriveSelectValue=0;
                 return;
         }
 
@@ -416,7 +434,7 @@ void floppy_init()
                 || machine.floppytype==FLOPPYOPUSD
                 || machine.floppytype==FLOPPYBETA)
         {
-                for( i = 0; i < 2; i++ )
+                for( i = 0; i < FLOPPYDRIVES; i++ )
                 {
                     floppy_eject(i);
                 }
@@ -429,8 +447,10 @@ void floppy_init()
         {
                 u765_Shutdown();
                 u765_Initialise();
-                floppy_setimage(0,machine.driveaimg,1);
-                floppy_setimage(1,machine.drivebimg,1);
+                for( i = 0; i < FLOPPYDRIVES; i++ )
+                {
+                    floppy_setimage(i,machine.driveimg[i],1);
+                }
                 return;
         }
 
@@ -514,23 +534,26 @@ void floppy_init()
 	        fdc_setdrive(p3_fdc, 2, p3_drive_null);
 	        fdc_setdrive(p3_fdc, 3, p3_drive_null);
 
-                floppy_setimage(0,machine.driveaimg,1);
-                floppy_setimage(1,machine.drivebimg,1);
+                for( i = 0; i < FLOPPYDRIVES; i++ )
+                {
+                    floppy_setimage(i,machine.driveimg[i],1);
+                }
         }
 }
 
 
 void floppy_eject(int drive)
 {
+        if (machine.floppytype==FLOPPYZX1541)
+        {
+                IECEjectDisk(drive);
+        }
+
         if (machine.floppytype==FLOPPYLARKEN81)
         {
                 int a;
-                char *filename;
 
-                if (drive==0) filename=LarkenPath0;
-                else filename=LarkenPath1;
-
-                a=open( filename, O_CREAT | O_RDWR | O_BINARY);
+                a=open( LarkenPath[drive], O_CREAT | O_RDWR | O_BINARY);
                 if (a!=-1)
                 {
                         write(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
@@ -538,7 +561,7 @@ void floppy_eject(int drive)
                 }
 
                 memset(LarkenDrive + (LARKENSIZE*drive), 0, LARKENSIZE);
-                filename[0]='\0';
+                LarkenPath[drive][0]='\0';
         }
 
         if (machine.floppytype==FLOPPYPLUS3)
@@ -605,6 +628,30 @@ void floppy_setimage(int drive, char *filename, int readonly)
 {
         int a;
 
+        if (machine.floppytype==FLOPPYZX1541)
+        {
+                if (strlen(filename))
+                {
+                        struct stat statbuf;
+                        if ((stat(filename, &statbuf)!=0 && errno==ENOENT) ||
+                                statbuf.st_size==0)
+                        {
+                                char *zeros = calloc(1, D64_35_SIZE);
+                                a=open( filename, O_RDWR | O_BINARY);
+
+                                if (zeros && a!=-1)
+                                {
+                                        write(a, zeros, D64_35_SIZE);
+                                        free(zeros);
+                                }
+
+                                close(a);
+                        }
+
+                        IECLoadDisk(drive, filename);
+                }
+        }
+
         if (machine.floppytype==FLOPPYLARKEN81)
         {
                 floppy_eject(drive);
@@ -615,17 +662,15 @@ void floppy_setimage(int drive, char *filename, int readonly)
                         {
                                 a=open( filename, O_RDWR | O_BINARY);
                                 read(a, LarkenDrive + (LARKENSIZE*drive), LARKENSIZE);
-                                if (drive==0) strcpy(LarkenPath0, filename);
-                                if (drive==1) strcpy(LarkenPath1, filename);
+                                strcpy(LarkenPath[drive], filename);
                         }
                         else
                         {
                                 if (errno==ENOENT)
                                 {
-                                        if (drive==0) strcpy(LarkenPath0, filename);
-                                        if (drive==1) strcpy(LarkenPath1, filename);
-                                        memset(LarkenDrive + (LARKENSIZE*drive), 0, 1984);
-                                        memcpy(LarkenDrive + (LARKENSIZE*drive), LarkenHeader,1984);
+                                        strcpy(LarkenPath[drive], filename);
+                                        memset(LarkenDrive + (LARKENSIZE*drive), 0, LARKENSECTORSIZE);
+                                        memcpy(LarkenDrive + (LARKENSIZE*drive), LarkenHeader,LARKENSECTORSIZE);
                                 }
                         }
                 }
@@ -656,11 +701,11 @@ void floppy_setimage(int drive, char *filename, int readonly)
 
                         if (machine.floppytype==FLOPPYDISCIPLE && d->density!=0) d->disk.sectorsize = 256;
 
-                        if( !strcmp( filename + ( l - 4 ), ".dsk" ) ) d->disk.alternatesides = 1;
-                        else if( !strcmp( filename + ( l - 4 ), ".mgt" ) ) d->disk.alternatesides = 1;
-                        else if( !strcmp( filename + ( l - 4 ), ".img" ) ) d->disk.alternatesides = 0;
-                        else if( !strcmp( filename + ( l - 4 ), ".opd" )
-                                   || !strcmp( filename + ( l - 4 ), ".opu" ))
+                        if( !stricmp( filename + ( l - 4 ), ".dsk" ) ) d->disk.alternatesides = 1;
+                        else if( !stricmp( filename + ( l - 4 ), ".mgt" ) ) d->disk.alternatesides = 1;
+                        else if( !stricmp( filename + ( l - 4 ), ".img" ) ) d->disk.alternatesides = 0;
+                        else if( !stricmp( filename + ( l - 4 ), ".opd" )
+                                   || !stricmp( filename + ( l - 4 ), ".opu" ))
                         {
                                 d->disk.alternatesides = 1;
                                 d->disk.numlayers = 1;
@@ -668,7 +713,7 @@ void floppy_setimage(int drive, char *filename, int readonly)
                                 d->disk.numsectors = 18;
                                 d->disk.sectorsize = 256;
                         }
-                        else if( !strcmp( filename + ( l - 4 ), ".trd" ))
+                        else if( !stricmp( filename + ( l - 4 ), ".trd" ))
                         {
                                 d->disk.alternatesides = 1;
                                 d->disk.numlayers = 2;
@@ -842,33 +887,38 @@ int do_format(char *outfile, char *outtyp, char *outcomp, int forcehead, dsk_for
 	return 0;
 }
 
-int LarkenLoadTrack(int Drive, int TrackNo, unsigned char *buf)
+void LarkenDriveSelect(BYTE data)
+{
+        LarkenDriveSelectValue = (data==2);
+}
+
+int LarkenLoadTrack(int TrackNo, unsigned char *buf)
 {
         int offset;
 
-        offset=Drive*LARKENSIZE;
+        offset=LarkenDriveSelectValue*LARKENSIZE;
 
         if (LarkenDrive[offset+140]!=0xff)
         {
-                memset(buf, 0, 1984);
+                memset(buf, 0, LARKENSECTORSIZE);
                 return(0);
         }
 
 
-        offset += TrackNo * 1984;
+        offset += TrackNo * LARKENSECTORSIZE;
 
-        memcpy(buf, LarkenDrive + offset, 1984);
+        memcpy(buf, LarkenDrive + offset, LARKENSECTORSIZE);
         return(1);
 }
 
-void LarkenSaveTrack(int Drive, int TrackNo, unsigned char *buf)
+void LarkenSaveTrack(int TrackNo, unsigned char *buf)
 {
         unsigned char *p;
 
-        p=LarkenDrive + LARKENSIZE*Drive;
-        p += TrackNo*1984;
+        p=LarkenDrive + LARKENSIZE*LarkenDriveSelectValue;
+        p += TrackNo*LARKENSECTORSIZE;
 
-        memcpy(p, buf, 1984);
+        memcpy(p, buf, LARKENSECTORSIZE);
 }
 
 

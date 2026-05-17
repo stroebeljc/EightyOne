@@ -411,7 +411,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                         IntDue=0;
                         IntPending=1664-fts;
                 }
-                z80_interrupt(!(IntPending>=0));
+                z80_interrupt(!(IntPending>=0),0);
 
                 z80_databus(idleDataBus);
                 ts=z80_do_opcode();
@@ -427,6 +427,7 @@ int ace_do_scanline(SCANLINE *CurScanLine)
                         ts=z80_do_opcode();
                         WavClockTick(ts,0);
                         i--;
+                        if (!WavPlaying()) break;
                 }
                 if (!WavPlaying()) FlashLoading=0;
 

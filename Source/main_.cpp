@@ -114,32 +114,32 @@ int VKRSHIFT=VK_RSHIFT, VKLSHIFT=VK_LSHIFT;
 int AutoLoadCount=0;
 
 SCANLINE *BuildLine, Video;
+HANDLE SoundDXReady;
 
 static bool iniFileExists = false;
 static HWND OldhWnd=NULL;
+static int lastRZXFrameCount=0;
+static int Drive=0;
 
 const int bufferLength = 255;
 char webBuffer[bufferLength];
 
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::WndProc(TMessage &Message)
+void __fastcall TForm1::WMKillFocus(TWMKillFocus &Message)
 {
-        switch(Message.Msg)
-        {
-        case WM_USER:
-                if (RunFrameEnable)
-                        Form1->RunFrame();
-                break;
-
-        case WM_KILLFOCUS:
-                PCAllKeysUp();
-                break;
-
-        default:
-                break;
-        }
-	TForm::WndProc(Message);
+    PCAllKeysUp();
+}
+void __fastcall TForm1::WMEraseBkgnd(TWMEraseBkgnd &Message)
+{
+    Message.Result = 1; // Indicate background is handled
+}
+void __fastcall TForm1::CreateWnd()
+{
+    RenderEnd();
+    TForm::CreateWnd();
+    RenderInit();
+    AccurateInit(true);
 }
 
 //---------------------------------------------------------------------------
@@ -150,7 +150,8 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         char path[256];
         int i;
 
-        RunFrameEnable=false;
+        RunFrameEnable=FrameIsRunning=false;
+        mWindowHandle=mWorkerThread=NULL;
 
         strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (emulator.cwd[strlen(emulator.cwd)-1]!='\\')
@@ -212,6 +213,12 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         TIniFile *ini;
 
         RunFrameEnable=false;
+        AccDrawInit();
+
+	SoundDXReady = CreateEvent(NULL, FALSE, FALSE, "SoundDX_Ready");
+        mWorkerThread = CreateThread(NULL, 0, HandleRunFrameThreadProc, this, 0, NULL);
+
+        ResumeThread(mWorkerThread);    // Start/Resume the Frame Thread
 
         Application->OnMessage = AppMessage;
 
@@ -239,8 +246,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
         delete ini;
 
-        Timer2->Interval=1000;
-
         LEDGreenOn = new Graphics::TBitmap;
         LEDGreenOff = new Graphics::TBitmap;
         LEDRedOn = new Graphics::TBitmap;
@@ -258,7 +263,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         BuildZX81ExamplesMenu();
         BuildSpectrumExamplesMenu();
 
-        if (Sound.Initialise(Form1->Handle, machine.fps, 16, 44100, 2)) MessageBox(NULL, "", "Sound Error", 0);
+        if (Sound.Initialise(Form1->Handle, SoundDXReady, machine.fps, 16, 44100, 2)) MessageBox(NULL, "", "Sound Error", 0);
 
         if (emulator.checkInstallationPathLength && strlen(emulator.cwd) >= 180)
         {
@@ -371,8 +376,9 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
 
         ClientWidth=BaseWidth;
         ClientHeight=BaseHeight;
-        if (StatusBar1->Visible)
+        if (StatusBar2->Checked)
         {
+                StatusBar1->Visible = true;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -380,6 +386,7 @@ void __fastcall TForm1::N1001Click(TObject *Sender)
 
         if (Form1->Handle != OldhWnd)
         {
+                OldhWnd = Form1->Handle;
                 Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
         }
 }
@@ -402,8 +409,9 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
 
         ClientWidth=BaseWidth*2;
         ClientHeight=BaseHeight*2;
-        if (StatusBar1->Visible)
+        if (StatusBar2->Checked)
         {
+                StatusBar1->Visible = true;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -411,6 +419,7 @@ void __fastcall TForm1::N2001Click(TObject *Sender)
 
         if (Form1->Handle != OldhWnd)
         {
+                OldhWnd = Form1->Handle;
                 Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
         }
 }
@@ -433,8 +442,9 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
 
         ClientWidth=BaseWidth*4;
         ClientHeight=BaseHeight*4;
-        if (StatusBar1->Visible)
+        if (StatusBar2->Checked)
         {
+                StatusBar1->Visible = true;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -442,6 +452,7 @@ void __fastcall TForm1::N4001Click(TObject *Sender)
 
         if (Form1->Handle != OldhWnd)
         {
+                OldhWnd = Form1->Handle;
                 Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
         }
 }
@@ -471,8 +482,9 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 
         ClientWidth=baseWidth;
         ClientHeight=baseHeight;
-        if (StatusBar1->Visible)
+        if (StatusBar2->Checked)
         {
+                StatusBar1->Visible = true;
                 ClientHeight += StatusBar1->Height;
                 StatusBar1->Refresh();
                 StatusBar1->Invalidate();
@@ -480,6 +492,7 @@ void __fastcall TForm1::UserDefined1Click(TObject *Sender)
 
         if (Form1->Handle != OldhWnd)
         {
+                OldhWnd = Form1->Handle;
                 Sound.ReInitialise(Form1->Handle, NULL, NULL, NULL, NULL);
         }
 }
@@ -540,15 +553,10 @@ void __fastcall TForm1::Keyboard1Click(TObject *Sender)
 void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 {
         AnsiString Extension, Filename;
-        int stopped;
-
-        stopped=emulation_stop;
-        emulation_stop=true;
 
         PCAllKeysUp();
         if (!OpenTape1->Execute())
         {
-                emulation_stop=stopped;
                 return;
         }
 
@@ -594,8 +602,6 @@ void __fastcall TForm1::InsertTape1Click(TObject *Sender)
 
                         loadFileSymbolsProxy(Filename.c_str());
         }
-
-        emulation_stop=stopped;
 }
 //---------------------------------------------------------------------------
 
@@ -685,6 +691,8 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
                 HistoryBox->ToolButtonClearClick(NULL);
         }
 
+        rzx_close();
+        
         if ((Ext == ".Z81") || (Ext == ".ACE")) load_snap(Path.c_str());
         if (Ext == ".Z80") spec_load_z80(Path.c_str());
         if (Ext == ".SNA") spec_load_sna(Path.c_str());
@@ -765,12 +773,17 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         emulation_stop=true;
         RunFrameEnable=false;
+        while (FrameIsRunning) Sleep(10);
 
         PCAllKeysUp();
 
         Sound.End();
 
+        if (mWorkerThread) TerminateThread(mWorkerThread,0);
+        mWorkerThread=NULL;
+
         RenderEnd();
+        AccDrawClose();
 
         if ((dir = opendir(emulator.temppath)) != NULL)
         {
@@ -807,16 +820,7 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         AnsiString Filename, Ext;
         int i=0;
 
-        if (Form1->Handle != OldhWnd)
-        {
-                OldhWnd=Form1->Handle;
-
-                RenderEnd();
-                RenderInit();
-                AccurateInit(true);
-        }
-
-
+        RunFrameEnable=true;
         if (startup<=6) startup++;
 
         switch(startup)
@@ -919,16 +923,46 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 }
         }
 
-        AnsiString scanlinesInfo = "";
-        if (emulator.scanlinesPerFrame > 0)
+        if (RZXModePlay())
         {
-                scanlinesInfo = "     ";
-                scanlinesInfo += emulator.scanlinesPerFrame;
-                scanlinesInfo += " Scanlines";
+                AnsiString RZXInfo = "    ";
+
+                if (emulator.machine!=MACHINESPECTRUM) rzx_close();
+                if (lastRZXFrameCount>RZXFrameCount) lastRZXFrameCount=0;
+                RZXInfo += RZXFrameCount;
+                RZXInfo += "/";
+                RZXInfo += RZXFramesTotal;
+                RZXInfo += " > ";
+                RZXInfo += RZXFrameCount-lastRZXFrameCount;
+                RZXInfo += "fps ";
+                if (RZXErrorFrame>0)
+                {
+                        RZXInfo += "(Error at ";
+                        RZXInfo += RZXErrorFrame;
+                        RZXInfo += ")";
+                }
+                StatusBar1->Panels->Items[3]->Text = RZXInfo;
+                lastRZXFrameCount=RZXFrameCount;
         }
-        StatusBar1->Panels->Items[3]->Text = scanlinesInfo;
+        else
+        {
+                AnsiString scanlinesInfo = "";
+                if (emulator.scanlinesPerFrame > 0)
+                {
+                        scanlinesInfo = "     ";
+                        scanlinesInfo += emulator.scanlinesPerFrame;
+                        scanlinesInfo += " Scanlines";
+                }
+                StatusBar1->Panels->Items[3]->Text = scanlinesInfo;
+        }
         
         StatusBar1->Panels->Items[1]->Text = text;
+        if (machine.drivebusy==0 && machine.drivebusy == Drive)
+        {
+                // make sure drive light turns off
+                StatusBar1->Refresh();
+                StatusBar1->Invalidate();
+        }
         fps=0;
 
         zx81.vsyncsound=Sound1->Checked;
@@ -1017,7 +1051,7 @@ void TForm1::SwitchFullScreen(void)
         {
                 if (RenderMode==RENDERGDI)
                 {
-                ChangeDisplaySettings(NULL, 0);
+                        ChangeDisplaySettings(NULL, 0);
                 }
                 RenderInit();
                 Screen->Cursor = crDefault;
@@ -1028,6 +1062,7 @@ void TForm1::SwitchFullScreen(void)
                 Height=SaveWinH;
                 Left=SaveX;
                 Top=SaveY;
+                StatusBar1->Visible = StatusBar2->Checked;
                 FileMenu1->Visible=true;
                 View1->Visible=true;
                 Control1->Visible=true;
@@ -1676,12 +1711,11 @@ void __fastcall TForm1::None1Click(TObject *Sender)
 
 void __fastcall TForm1::StatusBar2Click(TObject *Sender)
 {
-        StatusBar1->Visible = !StatusBar1->Visible;
+        StatusBar2->Checked = !StatusBar2->Checked;
+        StatusBar1->Visible = StatusBar2->Checked;
 
         if (StatusBar1->Visible) Height += StatusBar1->Height;
         else Height -= StatusBar1->Height;
-
-        StatusBar2->Checked = StatusBar1->Visible;
 }
 
 //---------------------------------------------------------------------------
@@ -2407,86 +2441,102 @@ void __fastcall TForm1::FormShow(TObject *Sender)
         StatusBar1->Invalidate();
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::RunFrame()
+
+DWORD WINAPI TForm1::HandleRunFrameThreadProc(LPVOID param)
 {
-        static int j, borrow, Drive;
+        TForm1* self = static_cast<TForm1*>(param);
+
+        if(!self) return -1;
+
+        self->HandleRunFrame();
+        return 0;
+}
+
+void TForm1::HandleRunFrame(void)
+{
+        int j;
+        int borrow=0;
         unsigned short rshift = VK_RSHIFT;
         unsigned short lshift = VK_LSHIFT;
 
-        if (emulator.UseRShift)
+        while(1)
         {
-                bool L=IsAsyncKeyPressed(VK_LSHIFT);
-                bool R=IsAsyncKeyPressed(VK_RSHIFT);
-                TShiftState z;
+                WaitForSingleObject(SoundDXReady,1000);
+                ResetEvent(SoundDXReady);
 
-                if (R != RShift)
+                FrameIsRunning = RunFrameEnable;
+                if (!RunFrameEnable)
                 {
-                        RShift=R;
-                        if (R) FormKeyDown(NULL, rshift, z);
-                        else FormKeyUp(NULL, rshift,z);
+                        continue;
                 }
 
-                if (L != LShift)
+                Sound.Frame(emulation_stop || emulator.single_step);
+                if (!emulation_stop && !emulator.single_step) LiveMemoryWindow->Update();
+
+                if (emulator.UseRShift)
                 {
-                        LShift=L;
-                        if (L) FormKeyDown(NULL, lshift,z);
-                        else FormKeyUp(NULL, lshift,z);
+                        bool L=IsAsyncKeyPressed(VK_LSHIFT);
+                        bool R=IsAsyncKeyPressed(VK_RSHIFT);
+                        TShiftState z;
+
+                        if (R != RShift)
+                        {
+                                RShift=R;
+                                if (R) FormKeyDown(NULL, rshift, z);
+                                else FormKeyUp(NULL, rshift,z);
+                        }
+
+                        if (L != LShift)
+                        {
+                                LShift=L;
+                                if (L) FormKeyDown(NULL, lshift,z);
+                                else FormKeyUp(NULL, lshift,z);
+                        }
                 }
-        }
 
-        Sound.Frame(emulation_stop || emulator.single_step);
+                if (emulation_stop)
+                {
+                        AccurateUpdateDisplay(false);
+                        continue;
+                }
+                if (AutoLoadCount) DoAutoLoad();
 
-        if (emulation_stop)
-        {
-                AccurateUpdateDisplay(false);
-                return;
-        }
-        if (AutoLoadCount) DoAutoLoad();
+                if (machine.drivebusy != Drive)
+                {
+                        StatusBar1->Refresh();
+                        StatusBar1->Invalidate();
+                        Drive=machine.drivebusy;
+                }
 
-        if (machine.drivebusy != Drive)
-        {
-                StatusBar1->Refresh();
-                StatusBar1->Invalidate();
-                Drive=machine.drivebusy;
-        }
+                if (spectrum.kmouse)
+                {
+                        mouse.x = Controls::Mouse->CursorPos.x;
+                        mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
+                }
 
-        if (spectrum.kmouse)
-        {
-                mouse.x = Controls::Mouse->CursorPos.x;
-                mouse.y = Screen->Height - Controls::Mouse->CursorPos.y;
-        }
+                fps++;
+                frametstates=0;
 
-        fps++;
-        frametstates=0;
+                j=emulator.single_step?1:(machine.tperframe + borrow);
 
-        j=emulator.single_step?1:(machine.tperframe + borrow);
+                if (j!=1 && !AutoLoadCount)
+                {
+                        j *= emulator.speedup;
+                }
 
-        if (emulator.machine != MACHINESPECTRUM && j!=1 && !AutoLoadCount)
-        {
-                j += (emulator.speedup * machine.tperframe) / machine.tperscanline;
-        }
+                while (j>0 && !emulation_stop)
+                {
+                        j-= machine.do_scanline(BuildLine);
+                        AccurateDraw(BuildLine);
+                }
 
-        while (j>0 && !emulation_stop)
-        {
-                j-= machine.do_scanline(BuildLine);
-                AccurateDraw(BuildLine);
-                //WaitForSingleObject(Mutex,INFINITE);
-                //templine=BuildLine;
-                //BuildLine=DisplayLine;
-                //DisplayLine=templine;
-                //BuildLine->sync_len=DisplayLine->sync_len;
-                //BuildLine->sync_valid=DisplayLine->sync_valid;
-                //ReleaseMutex(Mutex);
-                //SwitchToThread();
-                //Sleep(0);
-                //AccurateDraw(DisplayLine);
-        }
+                if (!emulation_stop) borrow=j;
+                else borrow=0;
 
-        if (!emulation_stop) borrow=j;
-
-        if (romcartridge.type == ROMCARTRIDGEZXC1)
-        {
-                RomCartridgeZXC1TimerTick();
+                if (romcartridge.type == ROMCARTRIDGEZXC1)
+                {
+                        RomCartridgeZXC1TimerTick();
+                }
         }
 }
 
@@ -3115,6 +3165,12 @@ void __fastcall TForm1::SwitchOnZ80AssemblerClick(TObject *Sender)
 {
         SwitchOnZ80Assembler->Checked = !SwitchOnZ80Assembler->Checked;
         zx81.z80AssemblerOn = (CFGBYTE)(SwitchOnZ80Assembler->Checked ?  1 : 0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FormPaint(TObject *Sender)
+{
+        AccPaint();
 }
 //---------------------------------------------------------------------------
 

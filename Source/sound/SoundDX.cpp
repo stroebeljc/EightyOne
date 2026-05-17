@@ -23,9 +23,10 @@ CDSnd::CDSnd(void)
 {
         m_ThreadHandle=NULL;
         m_hWnd=NULL;
+        m_readyEvent=NULL;
 }
 
-int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CDSnd::Initialise(HWND hWnd, HANDLE readyEvent, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
 
         m_BitsPerSample=BitsPerSample;
@@ -33,6 +34,7 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_Channels=Channels;
         m_FPS=FPS;
         m_hWnd=hWnd;
+        if (readyEvent!=NULL) m_readyEvent=readyEvent;
 
 
         // If any essentials haven't been initialised,
@@ -63,12 +65,12 @@ int CDSnd::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int
         m_WFE.nAvgBytesPerSec = m_WFE.nSamplesPerSec * m_WFE.nBlockAlign;
 
         // Calculate Bufferlengths
-        // AudioQueue is 2 Seconds long
+        // AudioQueue is only 8 frames long because it's synchronized with the CPU thread.
         // DXbuffer is 2 frames long
 
         m_DXBufLen = (m_WFE.nBlockAlign * m_WFE.nSamplesPerSec) / FPS;
         m_DXBufLen = (m_DXBufLen & ~1) * 2;
-        m_QueueLen = m_DXBufLen * 40;
+        m_QueueLen = m_DXBufLen * 4;
 
 	//Create DirectSound
         int r = DirectSoundCreate(NULL, &m_lpDS, NULL);
@@ -285,13 +287,9 @@ void CDSnd::ThreadFN()
 	                }
 
 
-                        int delta;
+                        DWORD delta = m_QueueSize;
+                        if (m_QueueSize >= dwBytesAudio1) m_QueueSize -= delta;
 
-                        delta= m_QueueSize;
-                        if (m_QueueSize < dwBytesAudio1) delta = m_QueueSize;
-                        else
-
-                        m_QueueSize -= delta;
                         m_QueueStart += delta;
                         if (m_QueueStart >= m_QueueLen)
                                 m_QueueStart -= m_QueueLen;    // BUG //
@@ -304,17 +302,7 @@ void CDSnd::ThreadFN()
                 ResetEvent(m_pHEvent[0]);
                 ResetEvent(m_pHEvent[1]);
 
-                SetLastError(0);
-                SendMessage( m_hWnd, WM_USER, NULL, NULL);
-                if (GetLastError())
-                {
-                        char buf[256];
-                        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                buf, sizeof(buf), NULL);
-
-                       MessageBox(NULL, buf,"Message Sending Error",2);
-                }
+                SetEvent(m_readyEvent);
         }
 }
 

@@ -97,6 +97,7 @@ typedef struct wd1770_drive
     int data_side;
     int data_multisector;
     int data_offset;
+    int data_track_first_write;
     int data_track_state;
     int data_track_leader_count;
 
@@ -150,5 +151,7 @@ void wd1770_set_cmdint( wd1770_drive *d );
 void wd1770_reset_cmdint( wd1770_drive *d );
 void wd1770_set_datarq( wd1770_drive *d );
 void wd1770_reset_datarq( wd1770_drive *d );
+
+void wd1770_check_stall( wd1770_drive *d );
 
 #endif                  /* #ifndef WD1770_H */

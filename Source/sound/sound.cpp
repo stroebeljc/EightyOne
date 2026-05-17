@@ -64,7 +64,7 @@ CSound Sound;
 // Each time we're called we store the provided information, and only when everything
 // needed has been provided do we actually do anything.
 
-int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
+int CSound::Initialise(HWND hWnd, HANDLE readyEvent, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
         // If a parameter is not NULL, store the data
 
@@ -88,7 +88,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 
         // Start by initialsing DirectSound
 
-        int r = DXSound.Initialise(m_hWnd, m_FPS, m_BitsPerSample, m_SampleRate, m_Channels);
+        int r = DXSound.Initialise(m_hWnd, readyEvent, m_FPS, m_BitsPerSample, m_SampleRate, m_Channels);
         if (r)
         {
                 return(r);
@@ -131,7 +131,7 @@ int CSound::Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, in
 int CSound::ReInitialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels)
 {
         End();
-        return Initialise(hWnd,FPS,BitsPerSample,SampleRate,Channels);
+        return Initialise(hWnd,NULL,FPS,BitsPerSample,SampleRate,Channels);
 }
 
 // End() - free the sound buffer and tell DirectSould it's all over.
@@ -706,6 +706,8 @@ void CSound::DigiTalkOverlay(void)
 void CSound::Frame(bool pause)
 {                  
         int f;
+
+        if (Buffer==NULL) return;
 
         if (pause)
         {

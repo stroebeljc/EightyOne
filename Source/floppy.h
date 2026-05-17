@@ -47,6 +47,8 @@ BYTE floppy_read_secreg(void);
 
 BYTE OpusD6821Access(BYTE reg, BYTE Data, BYTE Dir);
 
+void LarkenDriveSelect(BYTE data);
+
 #ifdef __cplusplus
 }
 #endif

@@ -69,11 +69,6 @@ void __fastcall TMidiForm::OKClick(TObject *Sender)
         Close();
 }
 //---------------------------------------------------------------------------
-void __fastcall TMidiForm::FormDestroy(TObject *Sender)
-{
-        Midi.Stop();
-}
-//---------------------------------------------------------------------------
 void __fastcall TMidiForm::MidiChange(TObject *Sender)
 {
         static int LastMidiItem=0;

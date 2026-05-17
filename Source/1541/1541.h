@@ -11,7 +11,22 @@
  *------------------------------------------------------------------------------
  */
 
+#ifndef _1541_H
+#define _1541_H
+
 /*----------------------------------------------------------------------------*/
+
+extern void IEC_Listen(int iec_unit);
+extern void IEC_SEC_Listen(int iec_sec);
+extern void IEC_Write(int byte);
+extern void IEC_Unlisten(void);
+extern void IEC_Talk(int iec_unit);
+extern void IEC_SEC_Talk(int iec_sec);
+extern void IEC_Untalk(void);
+extern int IEC_Read(void);
+extern int IEC_GetStatus(void);
+extern void Init_IECDos(void);
+extern void IECPerformCommand(char *, int);
 
 extern void Cleanup(void);
 extern void LedOn(void);
@@ -87,7 +102,9 @@ struct c4entry {
     unsigned char	PACKED(flags);
     unsigned long	PACKED(size);
     unsigned char	PACKED(recordsize);
-    unsigned char	PACKED(pad);
+    unsigned char	PACKED(dirtrack);
+    unsigned char	PACKED(dirsect);
+    unsigned char	PACKED(dirindex);
 };
 
 #define FLG_PC64	1
@@ -184,3 +201,6 @@ struct pc64entry {
 #define STAT_SEQ (S_ISUID)
 #define STAT_USR (S_ISGID)
 #define STAT_REL (S_ISUID|S_ISGID)
+
+#endif
+

@@ -40,6 +40,14 @@ __published:	// IDE-managed Components
         TLabel *Label12;
         TTrackBar *AccurateSpeed;
         TCheckBox *EnableFrameSkip;
+        TLabel *Label1;
+        TLabel *Label2;
+        TLabel *Label3;
+        TLabel *Label4;
+        TLabel *Label5;
+        TLabel *Label6;
+        TLabel *Label7;
+        TLabel *Label13;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall Recalc(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);

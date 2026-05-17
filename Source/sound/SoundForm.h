@@ -57,7 +57,6 @@ __published:	// IDE-managed Components
         TLabel *Label9;
         TCheckBox *SpecDrumMute;
         void __fastcall OKClick(TObject *Sender);
-        void __fastcall FormDestroy(TObject *Sender);
         void __fastcall MidiChange(TObject *Sender);
         void __fastcall BeeperExcludeHSyncsClick(TObject *Sender);
 private:	// User declarations

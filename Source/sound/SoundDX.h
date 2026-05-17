@@ -29,7 +29,7 @@ class CDSnd
 {
 public:
         CDSnd();
-	int Initialise(HWND hWnd, int FPS, int BitsPerSample, int SampleRate, int Channels);
+	int Initialise(HWND hWnd, HANDLE readyEvent, int FPS, int BitsPerSample, int SampleRate, int Channels);
         int Play();
 	int End();
         void Frame(unsigned char *data, unsigned int len);
@@ -46,6 +46,7 @@ private:
 
         DWORD m_ThreadID;
         HANDLE m_ThreadHandle;
+        HANDLE m_readyEvent;
 
         // DirectSound
 	WAVEFORMATEX m_WFE;

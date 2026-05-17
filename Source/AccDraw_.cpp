@@ -99,10 +99,12 @@ LPDIRECTDRAWCLIPPER pcClipper=NULL;
 HWND hWnd;
 LPDIRECTDRAWSURFACE7 DDFrame;
 DDSURFACEDESC2 DDFrameSurface;
+CRITICAL_SECTION CriticalSection;
 
 Graphics::TBitmap *GDIFrame;
 
 BYTE *dest=NULL, *buffer=NULL;
+bool initialized=false;
 
 TRect BorderTop, BorderBottom, BorderLeft, BorderRight;
 TRect rcsource, rcdest;
@@ -133,6 +135,7 @@ bool DDError(bool result, AnsiString Message)
 
 void DDEnd(void)
 {
+        DDFrame=NULL;
         if (m_pDD)
         {
                 if (m_pddsFrontBuffer != NULL)
@@ -399,14 +402,23 @@ void DDAccurateInit(int resize)
 void DDAccurateUpdateDisplay(bool singlestep)
 {
         static int framecounter=0;
-        HRESULT hRet;
-        RECT rDest;
 
         if (++framecounter > emulator.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
 
+        Form1->Invalidate();
+
+        dest=buffer= (BYTE*)DDFrameSurface.lpSurface;
+}
+
+void DDAccuratePaint(void)
+{
+        HRESULT hRet;
+        RECT rDest;
+
+        if (!DDFrame) return;
         DDFrame->Unlock(NULL);
 
         POINT p = {0, 0};
@@ -436,7 +448,6 @@ void DDAccurateUpdateDisplay(bool singlestep)
 
 
         DDFrame->Lock(NULL, &DDFrameSurface, DDLOCK_WAIT |  DDLOCK_NOSYSLOCK, NULL);
-        dest=buffer= (BYTE*)DDFrameSurface.lpSurface;
 }
 
 // -----------------------------------------------------------------------------
@@ -589,13 +600,21 @@ void GDIAccurateInit(int resize)
 void GDIAccurateUpdateDisplay(bool singlestep)
 {
         static int framecounter=0;
-        
+
         if (++framecounter > emulator.frameskip || singlestep)
                 framecounter=0;
         else
                 return;
 
-        StretchBlt(Form1->Canvas->Handle,
+        Form1->Invalidate();
+
+        dest=buffer= (unsigned char *) GDIFrame->ScanLine[0];
+}
+
+void GDIAccuratePaint(void)
+{
+        if (GDIFrame)
+                StretchBlt(Form1->Canvas->Handle,
                         rcdest.Left, rcdest.Top,
                         (rcdest.Right-rcdest.Left),
                         (rcdest.Bottom-rcdest.Top),
@@ -604,10 +623,6 @@ void GDIAccurateUpdateDisplay(bool singlestep)
                         (rcsource.Right-rcsource.Left),
                         (rcsource.Bottom-rcsource.Top),
                         SRCCOPY);
-// Commented out the error dialog to prevent error displayed after bring PC out of hibernation
-//      if (!ret) ShowMessage(SysErrorMessage(GetLastError()));
-
-        dest=buffer= (unsigned char *) GDIFrame->ScanLine[0];
 }
 
 void GDIDrawBorder()
@@ -646,10 +661,15 @@ int AccurateDraw(SCANLINE *Line)
         static int LastVSyncLen=0, Shade=0;
         int i,c;
 
-        if (!dest) return(0);
 
+        EnterCriticalSection(&CriticalSection);
         for(i=0; i<Line->scanline_len; i++)
         {
+                if (!dest || !buffer)
+                {
+                        goto LeaveEarly;
+                }
+
                 c=Line->scanline[i];
 
                 Plot(FrameNo*TVP, c+Shade);
@@ -727,6 +747,8 @@ int AccurateDraw(SCANLINE *Line)
                 for(i=0;i<8;i++) *(DWORD *)(dest+RasterX+i*BPP) = Colours[15];
                 AccurateUpdateDisplay(true);
         }
+LeaveEarly:
+        LeaveCriticalSection(&CriticalSection);
         return(0);
 }
 
@@ -743,6 +765,7 @@ void RecalcWinSize(void)
 
         if (Form1->FullScreen)
         {
+                Form1->StatusBar1->Visible = false;
                 if (FScreen.Stretch)
                 {
                         rcdest.Top=0; rcdest.Bottom=FScreen.Height;
@@ -815,12 +838,15 @@ void CompleteFrame(void)
 
 int RenderInit(void)
 {
+        if (!initialized) return(1);
         if (Form1->RenderMode==RENDERDDRAW) return(DDInit());
         return(1);
 }
 
 void RenderEnd(void)
 {
+        if (!initialized) return;
+        EnterCriticalSection(&CriticalSection);
         if (GDIFrame)
         {
                 delete GDIFrame;
@@ -828,6 +854,8 @@ void RenderEnd(void)
         }
 
         DDEnd();
+        dest=buffer=NULL;
+        LeaveCriticalSection(&CriticalSection);
 }
 
 void RenderDrawBorder()
@@ -884,17 +912,43 @@ void RecalcPalette(void)
         }
 }
 
+int AccDrawInit(void)
+{
+        if (initialized) return (1);
+        initialized=true;
+        return InitializeCriticalSectionAndSpinCount(&CriticalSection, 0x00000400);
+}
+
+void AccDrawClose(void)
+{
+        DeleteCriticalSection(&CriticalSection);
+}
+
 void AccurateInit(int resize)
 {
+        if (!initialized) return;
+        EnterCriticalSection(&CriticalSection);
         dest=buffer=NULL;
         if (Form1->RenderMode==RENDERDDRAW) DDAccurateInit(resize);
         else GDIAccurateInit(resize);
+        LeaveCriticalSection(&CriticalSection);
 }
 
 void AccurateUpdateDisplay(bool singlestep)
 {
+        EnterCriticalSection(&CriticalSection);
         if (Form1->RenderMode==RENDERDDRAW) DDAccurateUpdateDisplay(singlestep);
         else GDIAccurateUpdateDisplay(singlestep);
+        LeaveCriticalSection(&CriticalSection);
+}
+
+void AccPaint()
+{
+        if (!initialized) return;
+        EnterCriticalSection(&CriticalSection);
+        if (Form1->RenderMode==RENDERDDRAW) DDAccuratePaint();
+        else GDIAccuratePaint();
+        LeaveCriticalSection(&CriticalSection);
 }
 
 static void GetPixelColour(int x, int y, unsigned char *r, unsigned char *g, unsigned char *b)

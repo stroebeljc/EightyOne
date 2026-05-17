@@ -287,8 +287,8 @@ void spec_load_z80(char *fname)
                 case 1: speccy=SPECCY48; if1 = true; break;
                 case 3: speccy=SPECCY128; break;
                 case 4: speccy=SPECCY128; if1 = true; break;
-                case 7: speccy=SPECCYPLUS2A; break;
-                case 8: speccy=SPECCYPLUS2A; break;
+                case 7: speccy=SPECCYPLUS3; break;
+                case 8: speccy=SPECCYPLUS3; break;
                 case 9: speccy=SPECCY128; break;
                 case 10: speccy=SPECCY128; break;
                 case 11: speccy=SPECCY128; break;
@@ -310,8 +310,8 @@ void spec_load_z80(char *fname)
                 case 4: speccy=SPECCY128; break;
                 case 5: speccy=SPECCY128; if1 = true; break;
                 case 6: speccy=SPECCY128; mgt = true; break;
-                case 7: speccy=SPECCYPLUS2A; break;
-                case 8: speccy=SPECCYPLUS2A; break;
+                case 7: speccy=SPECCYPLUS3; break;
+                case 8: speccy=SPECCYPLUS3; break;
                 case 9: speccy=SPECCY128; break;
                 case 10: speccy=SPECCY128; break;
                 case 11: speccy=SPECCY128; break;
@@ -334,6 +334,7 @@ void spec_load_z80(char *fname)
                 }
         }
         HWSetMachine(MACHINESPECTRUM, speccy);
+        HW->DefaultsButtonClick(NULL);
 
         if (if1)
         {
@@ -392,7 +393,6 @@ void spec_load_z80(char *fname)
         }
 
         HWSetMachine(MACHINESPECTRUM, speccy);
-        machine.initialise();
 
         z80.af.b.h = buf[0]; z80.af.b.l = buf[1];
         z80.bc.w = (WORD)(buf[2] + 256*buf[3]);

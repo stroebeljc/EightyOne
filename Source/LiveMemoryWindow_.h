@@ -61,7 +61,6 @@ private:	// User declarations
         HBITMAP _hdib;
         BYTE _writes[65536];
         BYTE _reads[65536];
-        int _count;
         int _memStart, _memEnd;
 
 public:		// User declarations

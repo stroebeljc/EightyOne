@@ -87,6 +87,7 @@ THW *HW;
 //---------------------------------------------------------------------------
 void HWSetMachine(int machine, int speccy)
 {
+        Form1->RunFrameEnable=false;
         switch(machine)
         {
         case MACHINEZX80:   HW->ZX80BtnClick(NULL);   break;
@@ -244,6 +245,8 @@ void __fastcall THW::ApplyClick(TObject *Sender)
 
 void THW::UpdateHardwareSettings(bool disableReset)
 {
+        if (machine.exit) machine.exit();
+        Form1->RunFrameEnable=false;
         bool machineChanged = (NewMachine != emulator.machine);
         emulator.machine = (CFGBYTE)NewMachine;
         spectrum.model = NewSpec;
@@ -302,6 +305,8 @@ void THW::UpdateHardwareSettings(bool disableReset)
         Form1->ConnectSpectrum128Keypad->Hint = StringReplace(Form1->ConnectSpectrum128Keypad->Hint, "#", GetKeypadMultiplyKey(), TReplaceFlags() << rfReplaceAll);
         Kb->UpdateCursors();
 
+        machine.drivebusy = -1;
+
         if (disableReset)
         {
                 ResetRequired = false;
@@ -317,8 +322,6 @@ void THW::UpdateHardwareSettings(bool disableReset)
         InitialiseSound(machineChanged);
 
         Form1->EnableAnnotationOptions();
-
-        machine.drivebusy = -1;
 
         InitPatches(NewMachine);
 
@@ -1817,7 +1820,7 @@ void THW::ConfigureMachineSettings()
                 machine.contendio = zx81_contend;
                 machine.fps = machine.NTSC ? 60 : 50; // may be overwritten later
                 machine.reset = zx81_reset;
-                machine.exit = NULL;
+                machine.exit = zx81_exit;
                 break;
         }
 }

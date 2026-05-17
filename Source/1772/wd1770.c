@@ -81,6 +81,21 @@ void wd1770_reset_datarq( wd1770_drive *d )
     if( d->reset_datarq ) d->reset_datarq( d );
 }
 
+void wd1770_check_stall( wd1770_drive *d )
+{
+    if (d->state==wd1770_state_writetrack && d->data_track_first_write<1)
+    {
+        if (d->data_track_first_write--<-5)
+        {
+            d->status_register &= ~WD1770_SR_BUSY;
+            d->status_register |= WD1770_SR_LOST;
+            d->state = wd1770_state_none;
+            wd1770_set_cmdint( d );
+            wd1770_reset_datarq( d );
+        }
+    }
+}
+
 static void wd1770_seek( wd1770_drive *d, int track, int update, int verify )
 {
     if( track < d->track ) 
@@ -226,6 +241,14 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 
         if( !( b & 0x20 ) )
         {                               /* Read Sector */
+            if (b & 0x01)
+            {
+                d->status_register &= ~WD1770_SR_BUSY;
+                d->state = wd1770_state_none;
+                wd1770_set_cmdint( d );
+                wd1770_reset_datarq( d );
+                return;
+            }
             d->state = wd1770_state_read;
         }
         else
@@ -299,6 +322,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
             d->data_side = d->side;
             d->data_offset = 0;
             d->data_multisector = 1;
+            d->data_track_first_write=0;
             d->data_track_state = 0;
             d->data_track_leader_count = 0;
             d->status_type = wd1770_status_type3;
@@ -331,6 +355,7 @@ void wd1770_cr_write( wd1770_drive *d, BYTE b )
 
         default:
             d->state = wd1770_state_none;
+            wd1770_set_cmdint( d );
             break;
         }
 
@@ -466,22 +491,9 @@ void wd1770_dr_write( wd1770_drive *d, BYTE b )
         return;
     }
 
-    if( d->disk.fd == -1
-        || d->data_sector >= d->disk.numsectors
-        || d->data_track >= d->disk.numtracks
-        || d->data_side >= 2 )
-    {
-            d->status_register |= WD1770_SR_RNF;
-            d->status_register &= ~WD1770_SR_BUSY;
-            d->status_type = wd1770_status_type2;
-            d->state = wd1770_state_none;
-            wd1770_set_cmdint( d );
-            wd1770_reset_datarq( d );
-            return;
-     }
-
     if (d->state == wd1770_state_writetrack)
     {
+        d->data_track_first_write=1;
         if (d->data_track_state==0)
         {
             // MFM Double Density

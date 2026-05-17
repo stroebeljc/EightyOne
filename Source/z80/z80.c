@@ -115,9 +115,10 @@ void z80_reset( void )
         refreshAddr = 0;
 }
 
-void z80_interrupt(int state)
+void z80_interrupt(int state, int force)
 {
         interruptLine = (state != 0);
+        if (force) interruptLatchEnable = 1;
 }
 
 void z80_databus(int bus)

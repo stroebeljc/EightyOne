@@ -56,4 +56,9 @@ extern int spec48_contendio(int Address, int states, int time);
 extern void spec48_reset(void);
 extern void spec48_exit(void);
 
+extern int RZXFramesTotal;
+extern int RZXErrorFrame;
+extern int RZXFrameCount;
+extern bool RZXModePlay();
+
 #endif

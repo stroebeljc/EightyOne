@@ -250,6 +250,11 @@ void zx81_interruptack(void)
         interruptAck = true;
 }
 
+void zx81_exit(void)
+{
+        floppy_shutdown();
+}
+
 void DisableLambda()
 {
         if (lambdaSelected)
@@ -399,9 +404,6 @@ void zx81_initialise()
                 memory[0x3A0E] = 0x2B;
                 memory[0x3A0F] = 0x0F;
                 memory[0x3A10] = 0xC9;
-
-                memory[12300]=69;
-                memory[12301]=0;
         }
 
         if (machine.HDType==HDSIMPLECF)
@@ -644,9 +646,9 @@ void zx81_WriteByte(int Address, int Data)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541)
         {
-                if (Address>=0x2000 && Address<0x4000)
+                if (Address>=0x2000 && Address<0x4000 && (ZX1541PORT&1))
                 {
                         ZX1541Mem[Address-0x2000]=(BYTE)Data;
                         return;
@@ -815,7 +817,7 @@ BYTE zx81_ReadByte(int Address)
         // zx1541 floppy controller has 8k of EEPROM at 0x2000 and 32k RAM
         // in 2 banks at 0x8000
 
-        if (machine.floppytype==FLOPPYZX1541 && !(ZX1541PORT&1))
+        if (machine.floppytype==FLOPPYZX1541)
         {
                 if (Address>=0x2000 && Address<0x4000)
                 {
@@ -1291,6 +1293,10 @@ void zx81_writeport(int Address, int Data, int *tstates)
                 }
                 break;
 
+        case 0x57:
+                if (machine.floppytype==FLOPPYLARKEN81) LarkenDriveSelect((BYTE)Data);
+                break;
+
         case 0x73:
                 if (machine.ts2050) d8251writeDATA((BYTE)Data);
                 break;
@@ -1302,14 +1308,13 @@ void zx81_writeport(int Address, int Data, int *tstates)
         case 0xbf:
                 if (machine.floppytype==FLOPPYZX1541)
                 {
-                        ZX1541PORT=(BYTE)Data;
+                        ZX1541PORT&=(BYTE)~0x03E;
+                        ZX1541PORT|=(BYTE)(Data&0x3E);
 
-                        Data>>=2;
-
-                        if (Data&1) IECAssertReset(0); else IECReleaseReset(0);
-                        if (Data&2) IECAssertATN(0); else IECReleaseATN(0);
-                        if (Data&4) IECAssertClock(0); else IECReleaseClock(0);
-                        if (Data&8) IECAssertData(0); else IECReleaseData(0);
+                        if (Data&0x04) IECAssertReset(0); else IECReleaseReset(0);
+                        if (Data&0x08) IECAssertATN(0); else IECReleaseATN(0);
+                        if (Data&0x10) IECAssertClock(0); else IECReleaseClock(0);
+                        if (Data&0x20) IECAssertData(0); else IECReleaseData(0);
                 }
                 break;
 
@@ -1465,8 +1470,6 @@ BYTE ReadInputPort(int Address, int *tstates)
                         {
                                 int a = ZX1541PORT & 3;
 
-                                if (!IECIsReset()) a |= 16;
-                                if (!IECIsATN()) a |= 32;
                                 if (!IECIsClock()) a |= 64;
                                 if (!IECIsData()) a |= 128;
                                 return (BYTE)a;
@@ -1687,7 +1690,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 int ts=z80_do_opcode();
 
                 z80_databus(idleDataBus);
-                z80_interrupt((z80_refreshAddr() & 0x0040)!=0);
+                z80_interrupt((z80_refreshAddr() & 0x0040)!=0,0);
 
                 if (BasicLister->Visible && zx81rom && ((z80.pc.w == 0x0709 && (z80.af.b.l & FLAG_Z)) || z80.pc.w == 0x072B || z80.pc.w == 0x0206))
                 {
@@ -1865,11 +1868,8 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (machine.floppytype == FLOPPYZX1541)
-                {
-                        IECClockTick(ts);
-                }
-
+                if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
+                
                 bool previousSyncOutputWhite = syncOutputWhite;
 
                 switch (LastInstruction)
@@ -2278,7 +2278,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                 int ts=z80_do_opcode();
 
                 z80_databus(idleDataBus);
-                z80_interrupt((z80_refreshAddr() & 0x0040)!=0);
+                z80_interrupt((z80_refreshAddr() & 0x0040)!=0,0);
 
                 if (BasicLister->Visible &&
                     ((zx80rom && (z80.pc.w == 0x04F4 || z80.pc.w == 0x0202)) ||
@@ -2390,10 +2390,7 @@ int zx80_do_scanline(SCANLINE *CurScanLine)
                         ZXPrinterClockTick(ts);
                 }
 
-                if (machine.floppytype == FLOPPYZX1541)
-                {
-                        IECClockTick(ts);
-                }
+                if (machine.floppytype!=FLOPPYNONE) floppy_ClockTick(ts);
 
                 switch (LastInstruction)
                 {

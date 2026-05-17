@@ -54,7 +54,8 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         mBasicLister(NULL),
         mLastBreakPointIndex(-1),
         mLastBreakPointMenuIndex(-1),
-        mHasDebug(false)
+        mHasDebug(false),
+        mWorkerRunning(false)
 {
         mLines = new std::vector<LineInfo>();
         Dbg->SetBPListChangedCB(RefreshCallback);
@@ -88,7 +89,7 @@ __fastcall TBasicLister::~TBasicLister()
 void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
 {
         mLines->clear();
-
+        
         if (mBasicLister != NULL)
         {
                 delete mBasicLister;
@@ -165,7 +166,7 @@ void TBasicLister::ClearBitmap()
         rect.right = mBMWidth;
         rect.bottom = mBMHeight;
 
-        mBasicLister->ClearRenderedListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down);
+        if (mBasicLister) mBasicLister->ClearRenderedListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -245,11 +246,6 @@ void TBasicLister::BreakPointRows(int startRow, int endRow)
 
 void TBasicLister::ColourRows(int startRow, int endRow, LineMode mode, bool setornot)
 {
-        if (endRow - startRow > 20)
-        {
-                Screen->Cursor = crHourGlass;
-        }
-
         HDC hdc = (HDC)Canvas->Handle;
         HDC chdc = CreateCompatibleDC(hdc);
         HGDIOBJ oldbm = SelectObject(chdc, mBitmap);
@@ -301,8 +297,6 @@ void TBasicLister::ColourRows(int startRow, int endRow, LineMode mode, bool seto
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
-
-        Screen->Cursor = crDefault;
 }
 
 void TBasicLister::HighlightLine(int lineNumber)
@@ -475,7 +469,7 @@ void TBasicLister::CallShow()
 
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
-        LoadProgram();
+        Refresh(false);
 }
 //---------------------------------------------------------------------------
 
@@ -492,27 +486,64 @@ void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TBasicLister::Refresh(bool keepScrollbarPosition)
+DWORD WINAPI TBasicLister::HandleRefreshThreadProc(LPVOID param)
 {
-        double relativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
+        TBasicLister* self = static_cast<TBasicLister*>(param);
+        if (self->mWorkerRunning) return 1;
+
+        self->mWorkerRunning=true;
+        try {
+                self->DisableButtons();
+                self->HandleRefresh();
+                self->EnableButtons();
+        }
+        catch (...) {}
+        self->mWorkerRunning=false;
+        return 0;
+}
+
+void TBasicLister::HandleRefresh(void)
+{
+        BreakPointEntry(mLastBreakPointIndex);
 
         ClearBitmap();
         Invalidate();
 
         LoadProgram();
+}
 
-        BreakPointEntry(mLastBreakPointIndex);
+void TBasicLister::Refresh(bool keepScrollbarPosition)
+{
+        double relativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
+
+        CreateThread(NULL, 0, HandleRefreshThreadProc, this, 0, NULL);
 
         if (keepScrollbarPosition)
         {
                 ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
         }
 
-        BasicVariables->Refresh(false);
+        if (BasicVariables) BasicVariables->Refresh(false);
 }
 //---------------------------------------------------------------------------
 
-void TBasicLister::Clear()
+DWORD WINAPI TBasicLister::HandleClearThreadProc(LPVOID param)
+{
+        TBasicLister* self = static_cast<TBasicLister*>(param);
+        if (self->mWorkerRunning) return 1;
+
+        self->mWorkerRunning=true;
+        try {
+                self->DisableButtons();
+                self->HandleClear();
+                self->EnableButtons();
+        }
+        catch (...) {}
+        self->mWorkerRunning=false;
+        return 0;
+}
+
+void TBasicLister::HandleClear(void)
 {
         mLines->clear();
 
@@ -520,8 +551,11 @@ void TBasicLister::Clear()
         ConfigureStatusBar();
         ConfigureScrollBar();
         Invalidate();
+}
 
-        EnableButtons();
+void TBasicLister::Clear()
+{
+        CreateThread(NULL, 0, HandleClearThreadProc, this, 0, NULL);
 
         BasicVariables->Clear();
 }
@@ -529,11 +563,6 @@ void TBasicLister::Clear()
 
 void TBasicLister::LoadProgram()
 {
-        TCursor oldCursor = Screen->Cursor;
-        Screen->Cursor = crHourGlass;
-
-        DisableButtons();
-
         mLastHighlightedEntryIndex = -1;
         
         if (mBasicLister != NULL)
@@ -546,10 +575,6 @@ void TBasicLister::LoadProgram()
         ConfigureScrollBar();
 
         Invalidate();
-
-        EnableButtons();
-
-        Screen->Cursor = oldCursor;
 }
 
 void TBasicLister::ConfigureScrollBar()
@@ -664,6 +689,34 @@ void TBasicLister::ScrollToIndex(int index)
         }
 }
 
+DWORD WINAPI TBasicLister::HandleMouseDownThreadProc(LPVOID param)
+{
+        TBasicLister* self = static_cast<TBasicLister*>(param);
+        if (self->mWorkerRunning) return 1;
+
+        self->mWorkerRunning=true;
+        try {
+                self->DisableButtons();
+                self->HandleMouseDown();
+                self->EnableButtons();
+        }
+        catch (...) {}
+        self->mWorkerRunning=false;
+        return 0;
+}
+
+void TBasicLister::HandleMouseDown(void)
+{
+        if (mIndex != -1 && mIndex != mLastHighlightedEntryIndex)
+        {
+                HighlightEntry(mIndex);
+        }
+        else
+        {
+                UnhighlightEntry(mIndex);
+        }
+}
+
 //---------------------------------------------------------------------------
 
 void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
@@ -692,6 +745,8 @@ void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
         {
                 if (mLastRowIndex != -1) PopupMenu1->Popup(Mouse->CursorPos.x, Mouse->CursorPos.y);
         }
+
+        CreateThread(NULL, 0, HandleMouseDownThreadProc, this, 0, NULL);
 }
 
 //---------------------------------------------------------------------------
@@ -732,9 +787,25 @@ void __fastcall TBasicLister::FormClose(TObject *Sender,
                     
 void __fastcall TBasicLister::ToolButtonSaveClick(TObject *Sender)
 {
-        SaveListingToFile();
+        CreateThread(NULL, 0, HandleSaveListingToFileThreadProc, this, 0, NULL);
 }
 //---------------------------------------------------------------------------
+
+DWORD WINAPI TBasicLister::HandleSaveListingToFileThreadProc(LPVOID param)
+{
+        TBasicLister* self = static_cast<TBasicLister*>(param);
+        if (self->mWorkerRunning) return 1;
+
+        self->mWorkerRunning=true;
+        try {
+                self->DisableButtons();
+                self->SaveListingToFile();
+                self->EnableButtons();
+        }
+        catch (...) {}
+        self->mWorkerRunning=false;
+        return 0;
+}
 
 void TBasicLister::SaveListingToFile()
 {
@@ -852,12 +923,24 @@ void TBasicLister::CheckUpdate(int pc)
                 BasicVariables->Refresh(true);
 }
 
-void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
+DWORD WINAPI TBasicLister::HandleLineEndsThreadProc(LPVOID param)
 {
-        int scrollPos = ScrollBar->Position;
+        TBasicLister* self = static_cast<TBasicLister*>(param);
+        if (self->mWorkerRunning) return 1;
 
-        ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
+        self->mWorkerRunning=true;
+        try {
+                self->DisableButtons();
+                self->HandleLineEnds();
+                self->EnableButtons();
+        }
+        catch (...) {}
+        self->mWorkerRunning=false;
+        return 0;
+}
 
+void TBasicLister::HandleLineEnds(void)
+{
         int highlightIndex = mLastHighlightedEntryIndex;
         int breakpointIndex = mLastBreakPointIndex;
 
@@ -865,9 +948,16 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 
         HighlightEntry(highlightIndex);
         BreakPointEntry(breakpointIndex);
+}
 
-        EnableButtons();
-        
+void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
+{
+        int scrollPos = ScrollBar->Position;
+
+        ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
+
+        CreateThread(NULL, 0, HandleLineEndsThreadProc, this, 0, NULL);
+
         if (scrollPos <= ScrollBar->Max)
         {
                 ScrollBar->Position = scrollPos;

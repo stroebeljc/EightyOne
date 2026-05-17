@@ -45,10 +45,10 @@ break;
 case 0x21:		/* LD REGISTER,nnnn */
 InsertMCycle(3);
 contend( PC, 3 );
-REGISTERL=opcode_fetch(PC++);
+REGISTERL=readoperandbyte(PC++);
 InsertMCycle(3);
 contend( PC, 3 );
-REGISTERH=opcode_fetch(PC++);
+REGISTERH=readoperandbyte(PC++);
 break;
 
 case 0x22:		/* LD (nnnn),REGISTER */
@@ -72,7 +72,7 @@ break;
 case 0x26:		/* LD REGISTERH,nn */
 InsertMCycle(3);
 contend( PC, 3 );
-REGISTERH=opcode_fetch(PC++);
+REGISTERH=readoperandbyte(PC++);
 break;
 
 case 0x29:		/* ADD REGISTER,REGISTER */
@@ -101,7 +101,7 @@ break;
 case 0x2e:		/* LD REGISTERL,nn */
 InsertMCycle(3);
 contend( PC, 3 );
-REGISTERL=opcode_fetch(PC++);
+REGISTERL=readoperandbyte(PC++);
 break;
 
 case 0x34:		/* INC (REGISTER+dd) */
@@ -110,7 +110,7 @@ InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(4);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   INC(bytetemp);
@@ -124,7 +124,7 @@ InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(4);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   DEC(bytetemp);
@@ -138,8 +138,8 @@ InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
 {
-  WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
-  writebyte(WZ_,opcode_fetch(PC++));
+  WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
+  writebyte(WZ_,readoperandbyte(PC++));
 }
 break;
 
@@ -161,7 +161,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 B=readbyte(WZ_);
 break;
 
@@ -178,7 +178,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 C=readbyte(WZ_);
 break;
 
@@ -195,7 +195,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 D=readbyte(WZ_);
 break;
 
@@ -212,7 +212,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 E=readbyte(WZ_);
 break;
 
@@ -244,7 +244,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 H=readbyte(WZ_);
 break;
 
@@ -280,7 +280,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 L=readbyte(WZ_);
 break;
 
@@ -293,7 +293,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, B);
 break;
 
@@ -302,7 +302,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, C);
 break;
 
@@ -311,7 +311,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, D);
 break;
 
@@ -320,7 +320,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, E);
 break;
 
@@ -329,7 +329,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, H);
 break;
 
@@ -338,7 +338,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, L);
 break;
 
@@ -347,7 +347,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 writebyte(WZ_, A);
 break;
 
@@ -364,7 +364,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER + (SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER + (SBYTE)readoperandbyte(PC++));
 A=readbyte(WZ_);
 break;
 
@@ -381,7 +381,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   ADD(bytetemp);
@@ -401,7 +401,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   ADC(bytetemp);
@@ -420,7 +420,7 @@ case 0x96:		/* SUB A,(REGISTER+dd) */
 tstates += 11;		/* FIXME: how is this contended? */
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   SUB(bytetemp);
@@ -440,7 +440,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   SBC(bytetemp);
@@ -460,7 +460,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   AND(bytetemp);
@@ -480,7 +480,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   XOR(bytetemp);
@@ -500,7 +500,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   OR(bytetemp);
@@ -520,7 +520,7 @@ tstates += 11;		/* FIXME: how is this contended? */
 InsertMCycle(3);
 AddToMCycle(5);
 InsertMCycle(3);
-WZ_=(WORD)(REGISTER+(SBYTE)opcode_fetch(PC++));
+WZ_=(WORD)(REGISTER+(SBYTE)readoperandbyte(PC++));
 {
   BYTE bytetemp=readbyte(WZ_);
   CP(bytetemp);
@@ -533,10 +533,10 @@ case 0xcb:		/* {DD,FD}CBxx opcodes */
   BYTE opcode3;
   InsertMCycle(3);
   contend( PC, 3 );
-  WZ_ = (WORD)(REGISTER + (SBYTE)opcode_fetch( PC++ ));
+  WZ_ = (WORD)(REGISTER + (SBYTE)readoperandbyte( PC++ ));
   AddToMCycle(5);
   contend( PC, 4 );
-  opcode3 = opcode_fetch( PC++ );
+  opcode3 = readoperandbyte( PC++ ); // not an M1 fetch
 #ifdef HAVE_ENOUGH_MEMORY
   switch(opcode3) {
 #include "z80_ddfdcb.c"

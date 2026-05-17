@@ -117,6 +117,7 @@ private:	// User declarations
         HBITMAP mBitmap;
         HWND mHWND;
         int mLastHighlightedEntryIndex;
+        int mIndex;
         int mLastFilterIndex;
         int mLastRowIndex;
         int mLastBreakPointIndex;
@@ -133,6 +134,7 @@ private:	// User declarations
         bool mLimitLineLengths;
         bool mOutputFullWidthLineNumbers;
         int mScaling;
+        bool mWorkerRunning;
         int mToolbarHeight;
         bool mHasDebug;
 
@@ -164,6 +166,15 @@ private:	// User declarations
         void GetSaveOptions();
         void SizeWindow();
         void ScrollToIndex(int index);
+        static DWORD WINAPI HandleMouseDownThreadProc(LPVOID param);
+        void HandleMouseDown(void);
+        static DWORD WINAPI HandleRefreshThreadProc(LPVOID param);
+        void HandleRefresh(void);
+        static DWORD WINAPI HandleLineEndsThreadProc(LPVOID param);
+        void HandleLineEnds(void);
+        static DWORD WINAPI HandleSaveListingToFileThreadProc(LPVOID param);
+        static DWORD WINAPI HandleClearThreadProc(LPVOID param);
+        void HandleClear(void);
 
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);

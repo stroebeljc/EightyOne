@@ -18,6 +18,7 @@
 
 #include <vcl4.h>
 #include <io.h>
+#include <sys/stat.h>
 #pragma hdrstop
 
 #include "zx81config.h"
@@ -230,6 +231,7 @@ void __fastcall TP3Drive::DriveAFSBtnClick(TObject *Sender)
         {
                 Filename = ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
                 if (Filename == "") return;
+                chmod(Filename.c_str(), 0444);
                 Ext = FileNameGetExt(Filename);
                 readonly = 1;
         }
@@ -257,6 +259,7 @@ void __fastcall TP3Drive::DriveBFSBtnClick(TObject *Sender)
         {
                 Filename = ZipFile->ExpandZIP(Filename, OpenDialogFloppyDiskImage->Filter);
                 if (Filename == "") return;
+                chmod(Filename.c_str(), 0444);
                 Ext = FileNameGetExt(Filename);
                 readonly = 1;
         }

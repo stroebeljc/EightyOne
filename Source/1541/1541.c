@@ -1929,6 +1929,11 @@ static int cmd_scratch(char *cmd)
 		{
 		    c4dhook[idx].mode = -1;
 		        if (emu_mode == EMU_MODE_D64) {
+		            if (ImageRO) {
+		                SetError(26, 0, 0);	/* write protect */
+		                return 0;
+		            }
+
 		            direntry = (struct FileEntry *)SectorPointer(c4dhook[idx].dirtrack, c4dhook[idx].dirsect);
 		            direntry[c4dhook[idx].dirindex].type=0;
 		            ImageFlags[AbsoluteSector(c4dhook[idx].dirtrack, c4dhook[idx].dirsect)] |= IF_DIRTY;
@@ -2019,6 +2024,11 @@ static int cmd_rename(char *cmd)
 #endif
     {
 	if (emu_mode == EMU_MODE_D64 || ((c4dhook[i].flags & FLG_PC64))) {
+	    if (ImageRO) {
+	        SetError(26, 0, 0);	/* write protect */
+	        return 0;
+	    }
+
 	    direntry = (struct FileEntry *)SectorPointer(c4dhook[i].dirtrack, c4dhook[i].dirsect);
 	    memset(direntry[c4dhook[i].dirindex].name, 0xA0, sizeof(direntry->name));	/* preset name data */
 	    memcpy(direntry[c4dhook[i].dirindex].name, cp, strlen(cp));
@@ -3012,8 +3022,13 @@ int DoOpenFile(int ch, char *name)
 
             i = dirgetfirst(name);
             if (i >= 0) {
-	        SetError(63, 0, 0);
-	        return 1;
+                SetError(63, 0, 0);
+                return 1;
+            }
+
+            if (ImageRO) {
+                SetError(26, 0, 0);	/* write protect */
+                return 1;
             }
 
             for (dirtrack = d64_BAM->dirstart.track, dirsector = d64_BAM->dirstart.sector;

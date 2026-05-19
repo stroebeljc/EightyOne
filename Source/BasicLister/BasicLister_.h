@@ -135,6 +135,7 @@ private:	// User declarations
         bool mOutputFullWidthLineNumbers;
         int mScaling;
         bool mWorkerRunning;
+        double mRelativePos;
         int mToolbarHeight;
         bool mHasDebug;
 

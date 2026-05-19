@@ -1864,42 +1864,42 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
 
                         if ((machine.speech == SPEECH_TYPE_USPEECH) && LastPC==56) uSpeechPaged = !uSpeechPaged;
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
-                }                 
+                }
+
+                if (IntDue && (RZXModePlay() ? RZXCounter<=0 : fts>InteruptPosition))
+                {
+                        if (++flash >32) flash=0;
+                        DrawingBorder=1;
+                        DCCount = (++DCCount)&3;
+                        IntDue=0;
+                        IntPending=RZXModePlay() ? -1 : 32-(fts-InteruptPosition);
+                        ContendCounter=RZXModePlay() ? 0 : (fts-InteruptPosition);
+                        ContendCounter= (ContendCounter+1)&~3;
+
+                        if (RZXModePlay())
+                        {
+                                rzx_u16 rzx_counter;
+                                int rzx_update_result;
+                                do
+                                {
+                                        rzx_update_result=rzx_update(&rzx_counter);
+                                        RZXFrameCount++;
+                                } while (rzx_counter==0 && rzx_update_result==RZX_OK);
+
+                                if (rzx_update_result==RZX_OK)
+                                {
+                                        RZXCounter=rzx_counter;
+                                        IntPending=4;
+                                        if (RZXCounter<=4)
+                                                rzxInterruptRetrig=1;
+                                }
+                                else
+                                        emulation_stop=1;
+                        }
+                }
 
                 if (!insertWaitsWhileSP0256Busy)
                 {
-                        if (IntDue && (RZXModePlay() ? RZXCounter<=0 : fts>InteruptPosition))
-                        {
-                                if (++flash >32) flash=0;
-                                DrawingBorder=1;
-                                DCCount = (++DCCount)&3;
-                                IntDue=0;
-                                IntPending=RZXModePlay() ? -1 : 32-(fts-InteruptPosition);
-                                ContendCounter=RZXModePlay() ? 0 : (fts-InteruptPosition);
-                                ContendCounter= (ContendCounter+1)&~3;
-
-                                if (RZXModePlay())
-                                {
-                                        rzx_u16 rzx_counter;
-                                        int rzx_update_result;
-                                        do
-                                        {
-                                                rzx_update_result=rzx_update(&rzx_counter);
-                                                RZXFrameCount++;
-                                        } while (rzx_counter==0 && rzx_update_result==RZX_OK);
-
-                                        if (rzx_update_result==RZX_OK)
-                                        {
-                                                RZXCounter=rzx_counter;
-                                                IntPending=4;
-                                                if (RZXCounter<=4)
-                                                        rzxInterruptRetrig=1;
-                                        }
-                                        else
-                                                emulation_stop=1;
-                                }
-                        }
-
                         z80_databus(idleDataBus);
                         if (!RZXModePlay() || RZXCounter>0)
                         {

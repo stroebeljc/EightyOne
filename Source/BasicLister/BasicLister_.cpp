@@ -153,7 +153,7 @@ void TBasicLister::ClearBitmap()
             ::DeleteObject(mBitmap);
         }
 
-        HDC hdc = (HDC)Canvas->Handle;
+        HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
 
         mBitmap = ::CreateCompatibleBitmap(hdc, mBMWidth, mBMHeight);
@@ -192,7 +192,7 @@ void TBasicLister::ConstructBitmap()
 
         ClientWidth = mBMWidth + ScrollBar->Width + 1;
 
-        HDC hdc = (HDC)Canvas->Handle;
+        HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
 
         mBitmap = ::CreateCompatibleBitmap(hdc, mBMWidth, mBMHeight);
@@ -246,7 +246,7 @@ void TBasicLister::BreakPointRows(int startRow, int endRow)
 
 void TBasicLister::ColourRows(int startRow, int endRow, LineMode mode, bool setornot)
 {
-        HDC hdc = (HDC)Canvas->Handle;
+        HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
         HGDIOBJ oldbm = SelectObject(chdc, mBitmap);
 
@@ -489,15 +489,12 @@ void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 DWORD WINAPI TBasicLister::HandleRefreshThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        if (self->mWorkerRunning) return 1;
+        while (self->mWorkerRunning) Sleep(10);
 
         self->mWorkerRunning=true;
-        try {
-                self->DisableButtons();
-                self->HandleRefresh();
-                self->EnableButtons();
-        }
-        catch (...) {}
+        self->DisableButtons();
+        self->HandleRefresh();
+        self->EnableButtons();
         self->mWorkerRunning=false;
         return 0;
 }
@@ -530,15 +527,12 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
 DWORD WINAPI TBasicLister::HandleClearThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        if (self->mWorkerRunning) return 1;
+        while (self->mWorkerRunning) Sleep(10);
 
         self->mWorkerRunning=true;
-        try {
-                self->DisableButtons();
-                self->HandleClear();
-                self->EnableButtons();
-        }
-        catch (...) {}
+        self->DisableButtons();
+        self->HandleClear();
+        self->EnableButtons();
         self->mWorkerRunning=false;
         return 0;
 }
@@ -692,15 +686,12 @@ void TBasicLister::ScrollToIndex(int index)
 DWORD WINAPI TBasicLister::HandleMouseDownThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        if (self->mWorkerRunning) return 1;
+        while (self->mWorkerRunning) Sleep(10);
 
         self->mWorkerRunning=true;
-        try {
-                self->DisableButtons();
-                self->HandleMouseDown();
-                self->EnableButtons();
-        }
-        catch (...) {}
+        self->DisableButtons();
+        self->HandleMouseDown();
+        self->EnableButtons();
         self->mWorkerRunning=false;
         return 0;
 }
@@ -794,15 +785,12 @@ void __fastcall TBasicLister::ToolButtonSaveClick(TObject *Sender)
 DWORD WINAPI TBasicLister::HandleSaveListingToFileThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        if (self->mWorkerRunning) return 1;
+        while (self->mWorkerRunning) Sleep(10);
 
         self->mWorkerRunning=true;
-        try {
-                self->DisableButtons();
-                self->SaveListingToFile();
-                self->EnableButtons();
-        }
-        catch (...) {}
+        self->DisableButtons();
+        self->SaveListingToFile();
+        self->EnableButtons();
         self->mWorkerRunning=false;
         return 0;
 }
@@ -926,15 +914,12 @@ void TBasicLister::CheckUpdate(int pc)
 DWORD WINAPI TBasicLister::HandleLineEndsThreadProc(LPVOID param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        if (self->mWorkerRunning) return 1;
+        while (self->mWorkerRunning) Sleep(10);
 
         self->mWorkerRunning=true;
-        try {
-                self->DisableButtons();
-                self->HandleLineEnds();
-                self->EnableButtons();
-        }
-        catch (...) {}
+        self->DisableButtons();
+        self->HandleLineEnds();
+        self->EnableButtons();
         self->mWorkerRunning=false;
         return 0;
 }

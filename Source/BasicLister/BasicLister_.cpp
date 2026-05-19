@@ -71,8 +71,6 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
 
 void TBasicLister::SizeWindow()
 {
-        mScaling = SaveBasicListingOptionsForm->GetScalingFator();
-
         int displayAreaWidth = (DisplayableColumns * PixelsPerCharacterHeight * mScaling);
         int displayAreaHeight = (DisplayableRows * PixelsPerCharacterHeight * mScaling);
 
@@ -107,7 +105,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                         DebugControls->Enabled = true;
                         ToolButtonRunStop->Enabled = true;
                         Variables->Enabled = true;
-                        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->Show();
+                        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->ShowScale(mScaling);
                 }
                 else
                 {
@@ -463,13 +461,14 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
 void TBasicLister::CallShow()
 {
         Show();
-        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->Show();
+        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->ShowScale(mScaling);
 }
 
 //---------------------------------------------------------------------------
 
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
+        GetSaveOptions();
         Refresh(false);
 }
 //---------------------------------------------------------------------------
@@ -960,6 +959,8 @@ void __fastcall TBasicLister::ToolButtonSettingsClick(TObject *Sender)
 
         EnableButtons();
 
+        if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->ShowScale(mScaling);
+        
         const bool keepScrollbarPosition = false;
         Refresh(keepScrollbarPosition);
 }
@@ -972,6 +973,7 @@ void TBasicLister::GetSaveOptions()
         mOutputVariableNamesInLowercase = SaveBasicListingOptionsForm->GetOutputVariableNamesInLowercase();
         mLimitLineLengths = SaveBasicListingOptionsForm->GetLimitLineLengths();
         mOutputFullWidthLineNumbers = SaveBasicListingOptionsForm->GetOutputFullWidthLineNumbers();
+        mScaling = SaveBasicListingOptionsForm->GetScalingFator();
 }
 
 void __fastcall TBasicLister::ToolButtonInfoClick(TObject *Sender)

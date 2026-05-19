@@ -66,6 +66,7 @@ public:		// User declarations
         void LoadSettings(TIniFile* ini);
         void Refresh(bool onLineExec);
         void Clear();
+        void ShowScale(int scale);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TBasicVariables *BasicVariables;

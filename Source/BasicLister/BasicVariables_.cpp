@@ -24,7 +24,8 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
         : TForm(Owner),
         mBitmap(NULL),
         mHWND(this->Handle),
-        mBasicLister(NULL)
+        mBasicLister(NULL),
+        mScaling(1)
 {
         mHWND = this->Handle;
         mVariables = new std::vector<VariableInfo>();
@@ -46,10 +47,14 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
         delete mVariables;
 }
 
+void TBasicVariables::ShowScale(int scale)
+{
+        mScaling = scale;
+        Show();
+}
+
 void TBasicVariables::SizeWindow()
 {
-        mScaling = SaveBasicListingOptionsForm->GetScalingFator();
-
         int totalRows = mBasicLister != NULL ? mBasicLister->GetVariablesRows() : DisplayableRows;
         int displayRows = min(totalRows, DisplayableRows);
         int displayColumns = mBasicLister != NULL ? mBasicLister->GetVarDisplayColumns() : 40;

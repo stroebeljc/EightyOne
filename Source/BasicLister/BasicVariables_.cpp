@@ -90,7 +90,7 @@ void TBasicVariables::ClearBitmap()
             ::DeleteObject(mBitmap);
         }
 
-        HDC hdc = (HDC)Canvas->Handle;
+        HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
 
         mBitmap = ::CreateCompatibleBitmap(hdc, mBMWidth, mBMHeight);
@@ -196,7 +196,7 @@ void TBasicVariables::HighlightRow(int row)
 
 void TBasicVariables::ColourRows(int row, bool setornot)
 {
-        HDC hdc = (HDC)Canvas->Handle;
+        HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
         HGDIOBJ oldbm = SelectObject(chdc, mBitmap);
 
@@ -253,7 +253,7 @@ void TBasicVariables::ConstructBitmap()
 
         SizeWindow();
 
-        HDC hdc = (HDC)Canvas->Handle;
+        HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
 
         mBitmap = ::CreateCompatibleBitmap(hdc, mBMWidth, mBMHeight);

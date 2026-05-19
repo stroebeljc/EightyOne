@@ -88,6 +88,7 @@ private:	// User declarations
         bool mOutputFullWidthLineNumbers;
         int mScaling;
         bool mWorkerRunning;
+        double mRelativePos;
 
         void ClearBitmap();
         void ConstructBitmap();

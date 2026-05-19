@@ -44,7 +44,7 @@ enum StatusBarIndex
 __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         : TForm(Owner), mBitmap(NULL), mHWND(this->Handle),
           mLastHighlightedEntryIndex(-1), mLastFilterIndex(1), mBasicLister(NULL),
-          mWorkerRunning(false)
+          mWorkerRunning(false), mRelativePos(0)
 {
         mLines = new std::vector<LineInfo>();
 
@@ -341,7 +341,7 @@ void __fastcall TBasicLister::ScrollBarChange(TObject *Sender)
 
 void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 {
-        const bool keepScrollbarPosition = false;
+        const bool keepScrollbarPosition = true;
         Refresh(keepScrollbarPosition);
 }
 //---------------------------------------------------------------------------
@@ -362,21 +362,19 @@ DWORD WINAPI TBasicLister::HandleRefreshThreadProc(LPVOID param)
 void TBasicLister::HandleRefresh(void)
 {
         ClearBitmap();
-        Invalidate();
 
         LoadProgram();
+
+        ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
 }
 
 void TBasicLister::Refresh(bool keepScrollbarPosition)
 {
         double relativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
 
-        CreateThread(NULL, 0, HandleRefreshThreadProc, this, 0, NULL);
+        mRelativePos = keepScrollbarPosition ? relativePos : 0;
 
-        if (keepScrollbarPosition)
-        {
-                ScrollBar->Position = (int)(ceil(relativePos * ScrollBar->Max));
-        }
+        CreateThread(NULL, 0, HandleRefreshThreadProc, this, 0, NULL);
 }
 //---------------------------------------------------------------------------
 
@@ -732,20 +730,17 @@ void TBasicLister::HandleLineEnds(void)
         LoadProgram();
 
         HighlightEntry(highlightIndex);
+        
+        ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
 }
 
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
-        int scrollPos = ScrollBar->Position;
+        mRelativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
 
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
 
         CreateThread(NULL, 0, HandleLineEndsThreadProc, this, 0, NULL);
-
-        if (scrollPos <= ScrollBar->Max)
-        {
-                ScrollBar->Position = scrollPos;
-        }
 }
 //---------------------------------------------------------------------------
 

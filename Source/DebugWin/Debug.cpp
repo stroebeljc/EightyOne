@@ -1315,15 +1315,9 @@ void TDbg::EnableVals(void)
 __fastcall TDbg::TDbg(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
         DoNext=false;
         Breakpoints=0;
         NMIRetAddr=INTRetAddr=-1;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 
         ClientHeight=GroupBox2->Top+GroupBox2->Height+4;
         ClientWidth=GroupBox4->Left+GroupBox4->Width+4;
@@ -1331,8 +1325,6 @@ __fastcall TDbg::TDbg(TComponent* Owner)
         BPList->DefaultColWidth = BPList->Width;
 
         ResetLastIOAccesses();
-
-        MemoryWindowTimer->Interval = 50;
 }
 //---------------------------------------------------------------------------
 
@@ -2327,25 +2319,7 @@ void __fastcall TDbg::ResetHitCountClick(TObject *Sender)
 
 void __fastcall TDbg::AutoUpdateMemoryClick(TObject *Sender)
 {
-        MemoryWindowTimer->Enabled = AutoUpdateMemory->Checked;
+        MemoryWindow->MemoryWindowTimerEnable(AutoUpdateMemory->Checked);
 }
 //---------------------------------------------------------------------------
-
-void __fastcall TDbg::MemoryWindowTimerExpired(TObject *Sender)
-{
-        if (MemoryWindow && MemoryWindow->Visible)
-        {
-                MemoryWindow->UpdateChanges();
-        }
-}
-//---------------------------------------------------------------------------
-
-void TDbg::DisableMemoryWindowAutoUpdates()
-{
-        if (MemoryWindow->Visible)
-        {
-                MemoryWindowTimer->Enabled = false;
-        }
-}
-
 

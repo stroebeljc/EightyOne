@@ -33,11 +33,6 @@ TZipFile *ZipFile;
 __fastcall TZipFile::TZipFile(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 AnsiString TZipFile::ExpandZIP(AnsiString Path, AnsiString DialogueFilter)

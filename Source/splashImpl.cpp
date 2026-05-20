@@ -70,6 +70,8 @@
                  // Always do this last
                  spl->IncProgress("Machine Emulation"); Application->CreateForm(__classid(THW), &HW);
 
+                 spl->IncProgress("Configuration"); Form1->LoadAtStartup();
+
                  spl->Close();
 
                  Form1->Enabled = true;

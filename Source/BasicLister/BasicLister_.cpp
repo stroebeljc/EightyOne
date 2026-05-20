@@ -48,10 +48,6 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
 {
         mLines = new std::vector<LineInfo>();
 
-        TIniFile* ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
-
         SizeWindow();
 }
 

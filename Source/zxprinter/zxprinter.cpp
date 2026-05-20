@@ -94,8 +94,6 @@ void TZXPrinter::ScrollOutput()
 __fastcall TZXPrinter::TZXPrinter(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
         Fg=clBlack;
         Bg=clWhite;
 
@@ -118,10 +116,6 @@ __fastcall TZXPrinter::TZXPrinter(TComponent* Owner)
         ScrollBar->Position=0;
         ScrollBar->Enabled=false;
         ScrollBar->Visible=false;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void __fastcall TZXPrinter::DrawImage()

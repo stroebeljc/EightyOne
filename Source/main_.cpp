@@ -757,7 +757,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
         struct dirent *ent;
 
-        Dbg->DisableMemoryWindowAutoUpdates();
+        MemoryWindow->MemoryWindowTimerEnable(false);
 
         if (FullScreen) SwitchFullScreen();
         
@@ -2154,6 +2154,11 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
         LoadIniFile(FileName);
 }
 //---------------------------------------------------------------------------
+
+void TForm1::LoadAtStartup(void)
+{
+        LoadIniFile(emulator.inipath);
+}
 
 void TForm1::LoadIniFile(AnsiString FileName)
 {                      

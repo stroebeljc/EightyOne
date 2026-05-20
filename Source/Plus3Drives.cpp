@@ -51,10 +51,6 @@ __fastcall TP3Drive::TP3Drive(TComponent* Owner)
         BuildHDList(HD0List);
         BuildHDList(HD1List);
 
-        TIniFile* ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
-
         FormShow(Owner);
 }
 //---------------------------------------------------------------------------

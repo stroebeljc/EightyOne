@@ -64,11 +64,6 @@ __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
         Img=this->Canvas;
         m_dataBuffer=NULL;
 
-        TIniFile *ini;
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
-
         FormResize(NULL);
 }
 //---------------------------------------------------------------------------

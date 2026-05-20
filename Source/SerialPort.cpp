@@ -240,8 +240,6 @@ void __fastcall TSerialConfig::ComPort1RxChar(TObject *Sender, int Count)
 __fastcall TSerialConfig::TSerialConfig(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
         ComPortList->Items->Add("FILE...");
         ComPortList->Items->Add("TCP/IP...");
         if (access("nocomport",0)) EnumeratePorts(ComPortList->Items,"COM");
@@ -254,10 +252,6 @@ __fastcall TSerialConfig::TSerialConfig(TComponent* Owner)
 
         FileNameBox->Text="c:\\rs232.txt";
         File=NULL;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 
 //---------------------------------------------------------------------------

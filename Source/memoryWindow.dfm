@@ -172,4 +172,11 @@ object MemoryWindow: TMemoryWindow
       OnClick = ClearHighlightsClick
     end
   end
+  object MemoryWindowTimer: TTimer
+    Enabled = False
+    Interval = 10000
+    OnTimer = MemoryWindowTimerTimer
+    Left = 40
+    Top = 160
+  end
 end

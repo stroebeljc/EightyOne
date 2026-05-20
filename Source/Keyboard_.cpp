@@ -36,11 +36,6 @@ TKeyboard *Keyboard;
 __fastcall TKeyboard::TKeyboard(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void __fastcall TKeyboard::FormClose(TObject *Sender, TCloseAction &Action)

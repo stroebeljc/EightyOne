@@ -42,12 +42,7 @@ TArtifacts *Artifacts;
 __fastcall TArtifacts::TArtifacts(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
         emulator.dirtydisplay=true;
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void __fastcall TArtifacts::CloseBtnClick(TObject *Sender)

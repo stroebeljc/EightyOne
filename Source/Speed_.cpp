@@ -33,11 +33,6 @@ TSpeed *Speed;
 __fastcall TSpeed::TSpeed(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void __fastcall TSpeed::Button1Click(TObject *Sender)

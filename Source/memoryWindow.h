@@ -126,6 +126,7 @@ __published:	// IDE-managed Components
         TMenuItem *ViewDecimal1;
         TMenuItem *Search1;
         TMenuItem *ClearHighlights;
+        TTimer *MemoryWindowTimer;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormResize(TObject *Sender);
         void __fastcall ScrollBar1Change(TObject *Sender);
@@ -152,6 +153,7 @@ __published:	// IDE-managed Components
         void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
           int WheelDelta, TPoint &MousePos, bool &Handled);
         void __fastcall ClearHighlightsClick(TObject *Sender);
+        void __fastcall MemoryWindowTimerTimer(TObject *Sender);
 
 private:
        void __fastcall OnEraseBkgnd (TMessage msg);
@@ -169,6 +171,7 @@ private:
         int mRows;
         int mBaseAddress;
         bool ignoreScrollChange;
+        bool mTimerEnabled;
         
         HWND mHWND;
         HBITMAP mOffscreenBitmap;
@@ -202,6 +205,8 @@ public:		// User declarations
 
         void __fastcall UpdateChanges();
         void __fastcall ClearChanges();
+        void __fastcall WriteToAddress(int address);
+        void __fastcall MemoryWindowTimerEnable(bool enabled);
 };
 
 //---------------------------------------------------------------------------

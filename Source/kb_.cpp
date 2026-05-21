@@ -36,12 +36,6 @@ __fastcall TKb::TKb(TComponent* Owner)
         : TForm(Owner)
 {
         if (CursorMode->ItemIndex==-1) CursorMode->ItemIndex=1;
-
-        TIniFile *ini;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void __fastcall TKb::OKClick(TObject *Sender)

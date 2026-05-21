@@ -35,11 +35,6 @@ unsigned char zx97bankmem[16*16384];
 __fastcall TZX97Dialog::TZX97Dialog(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void TZX97Dialog::UpdateMachine(ZX97& settings)

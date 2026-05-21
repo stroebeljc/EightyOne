@@ -35,8 +35,6 @@
 TMemoryWindow *MemoryWindow;
 //---------------------------------------------------------------------------
 
-extern bool directMemoryAccess;
-
 std::set<int> dirtyBird;
 std::set<int>::iterator changeCursor;
 
@@ -56,6 +54,8 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
 
         mCharSize = Canvas->TextExtent(AnsiString("0"));
        	mHeadingHeight = mCharSize.cy + (mCharSize.cy / 2);
+
+        MemoryWindowTimer->Interval = 50;
 }
 
  __fastcall TMemoryWindow::~TMemoryWindow()
@@ -65,6 +65,17 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
                 ::DeleteObject(mOffscreenBitmap);
         }
         delete mRowRenderer;
+}
+
+void __fastcall TMemoryWindow::WriteToAddress(int address)
+{
+        dirtyBird.insert(address);
+}
+
+void __fastcall TMemoryWindow::MemoryWindowTimerEnable(bool enabled)
+{
+        mTimerEnabled = enabled;
+        MemoryWindowTimer->Enabled = mTimerEnabled;
 }
 
 //---------------------------------------------------------------------------
@@ -714,7 +725,7 @@ void __fastcall TMemoryWindow::FormMouseMove(TObject *Sender,
 
         StatusBar1->Panels->Items[4]->Text = t;
 
-        UpdateChanges();
+        MemoryWindowTimer->Enabled = true;
 }
 //---------------------------------------------------------------------------
 
@@ -960,6 +971,13 @@ void __fastcall TMemoryWindow::FormMouseWheel(TObject *Sender,
 void __fastcall TMemoryWindow::ClearHighlightsClick(TObject *Sender)
 {
         ClearChanges();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMemoryWindow::MemoryWindowTimerTimer(TObject *Sender)
+{
+        if (Visible) UpdateChanges();
+        MemoryWindowTimer->Enabled = mTimerEnabled;
 }
 //---------------------------------------------------------------------------
 

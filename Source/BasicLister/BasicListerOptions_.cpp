@@ -30,9 +30,6 @@ TSaveBasicListingOptionsForm *SaveBasicListingOptionsForm;
 __fastcall TSaveBasicListingOptionsForm::TSaveBasicListingOptionsForm(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile* ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 

@@ -2141,11 +2141,4 @@ object Dbg: TDbg
       Caption = 'Hit Count = x'
     end
   end
-  object MemoryWindowTimer: TTimer
-    Enabled = False
-    Interval = 10000
-    OnTimer = MemoryWindowTimerExpired
-    Left = 326
-    Top = 216
-  end
 end

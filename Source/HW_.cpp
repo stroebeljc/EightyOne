@@ -43,6 +43,7 @@
 #include "interface1.h"
 #include "debug.h"
 #include "symbolstore.h"
+#include "memoryWindow.h"
 #include "SymBrowse.h"
 #include "Chroma\Chroma.h"
 #include "Spectra\Spectra.h"
@@ -58,7 +59,6 @@
 #include "SoundForm.h"
 
 #include <set>
-extern std::set<int> dirtyBird;
 
 extern "C" BYTE ZX1541Mem[];
 
@@ -140,9 +140,6 @@ __fastcall THW::THW(TComponent* Owner)
         ZX81BtnClick(NULL);
 
         SaveToInternalSettings(); // save in case there is no INI file
-        TIniFile* ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 
         SetUpRomCartridges();
 
@@ -215,19 +212,19 @@ void THW::SetUpRomCartridges()
 void zx81_writebyteProxy(int address, int data)
 {
         zx81_writebyte(address, data);
-        dirtyBird.insert(address);
+        MemoryWindow->WriteToAddress(address);
 }
 
 void spec48_writebyteProxy(int address, int data)
 {
         spec48_writebyte(address, data);
-        dirtyBird.insert(address);
+        MemoryWindow->WriteToAddress(address);
 }
 
 void ace_writebyteProxy(int address, int data)
 {
         ace_writebyte(address, data);
-        dirtyBird.insert(address);
+        MemoryWindow->WriteToAddress(address);
 }
 
 void __fastcall THW::OKClick(TObject *Sender)

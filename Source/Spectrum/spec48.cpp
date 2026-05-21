@@ -74,7 +74,6 @@ extern void SpectraRAMWrite(int Address, BYTE Data);
 extern void DetermineSpectraDisplayBank();
 extern BYTE SpectraRAMRead(int bankOffset);
 
-extern bool directMemoryAccess;
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
@@ -263,7 +262,6 @@ void spec48_initialise()
         divIDEPage1WP=0;
         divIDEAllRamMode=0;
 
-        directMemoryAccess = false;
         ResetLastIOAccesses();
         InitialiseRomCartridge();
         InitialiseSpectra();
@@ -696,7 +694,7 @@ void SPECLoadCheck(void)
         return;
 }
 
-void spec48_WriteByte(int Address, int Data)
+void spec48_WriteByte(int Address, int Data, bool directMemoryAccess=false)
 {
         LiveMemoryWindow->Write((unsigned short)Address);
 
@@ -769,7 +767,7 @@ void spec48_WriteByte(int Address, int Data)
                 if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETC2068) && (romcartridge.type != ROMCARTRIDGETS2068) && (RomCartridgeCapacity != 0))
                 {
                         BYTE data;
-                        if (ReadRomCartridge(Address, (BYTE*)&data))
+                        if (ReadRomCartridge(Address, (BYTE*)&data, directMemoryAccess))
                         {
                                 return;
                         }
@@ -798,9 +796,7 @@ void spec48_WriteByte(int Address, int Data)
 // Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
 void spec48_setbyte(int Address, int Data)
 {
-        directMemoryAccess = true;
-        spec48_WriteByte(Address, Data);
-        directMemoryAccess = false;
+        spec48_WriteByte(Address, Data, true);
 }
 
 void spec48_writebyte(int Address, int Data)
@@ -815,7 +811,7 @@ void spec48_writebyte(int Address, int Data)
         spec48_WriteByte(Address, Data);
 }
 
-BYTE spec48_ReadByte(int Address)
+BYTE spec48_ReadByte(int Address, bool directMemoryAccess=false)
 {
         BYTE data;
 
@@ -905,7 +901,7 @@ BYTE spec48_ReadByte(int Address)
 
                 if ((romcartridge.type != ROMCARTRIDGENONE) && (romcartridge.type != ROMCARTRIDGETC2068) && (romcartridge.type != ROMCARTRIDGETS2068)  && (RomCartridgeCapacity != 0))
                 {
-                        if (ReadRomCartridge(Address, (BYTE*)&data))
+                        if (ReadRomCartridge(Address, (BYTE*)&data, directMemoryAccess))
                         {
                                 return data;
                         }
@@ -937,11 +933,7 @@ BYTE spec48_ReadByte(int Address)
 // Called by debugger routines
 BYTE spec48_getbyte(int Address)
 {
-        directMemoryAccess = true;
-        BYTE b = spec48_ReadByte(Address);
-        directMemoryAccess = false;
-
-        return b;
+        return spec48_ReadByte(Address, true);
 }
 
 // Called by emulated program

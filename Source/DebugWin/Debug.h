@@ -225,7 +225,6 @@ __published:	// IDE-managed Components
         TMenuItem *CurrentHitCount;
         TButton *ResetBrkBtn;
         TCheckBox *AutoUpdateMemory;
-        TTimer *MemoryWindowTimer;
         void __fastcall RunStopClick(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -317,7 +316,6 @@ __published:	// IDE-managed Components
         void __fastcall ResetBrkBtnClick(TObject *Sender);
         void __fastcall ResetHitCountClick(TObject *Sender);
         void __fastcall AutoUpdateMemoryClick(TObject *Sender);
-        void __fastcall MemoryWindowTimerExpired(TObject *Sender);
 private:	// User declarations
         void (*BPListChangeCB)(void);
         void EnableValues(bool enable);
@@ -398,7 +396,6 @@ public:		// User declarations
 
         void ReloadHistoryWindow();
         void ClearHistoryWindow();
-        void DisableMemoryWindowAutoUpdates();
         void SetBPListChangedCB(void (*callback)(void));
         void BasicStartStop(bool addBP);
         void RemoveAllBasicBPs();

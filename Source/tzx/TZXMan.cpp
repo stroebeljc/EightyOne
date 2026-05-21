@@ -187,12 +187,6 @@ void TTZX::UpdateButtons(void)
 __fastcall TTZX::TTZX(TComponent* Owner)
         : TForm(Owner)
 {
-        TIniFile *ini;
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
-
         DragAcceptFiles(Handle, true);
         Table->Rows[0]->CommaText="Description,Size";
         FormResize(NULL);

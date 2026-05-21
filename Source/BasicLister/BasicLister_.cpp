@@ -62,10 +62,6 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         Dbg->SetBPListChangedCB(RefreshCallback);
         mToolbarHeight = ToolBar->Height;
 
-        TIniFile* ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
-
         SizeWindow();
 }
 

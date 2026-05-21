@@ -39,7 +39,6 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
 {
         int i,Devices;
         MIDIOUTCAPS moc;
-        TIniFile *ini;
 
         Devices=midiOutGetNumDevs();
 
@@ -56,10 +55,6 @@ __fastcall TMidiForm::TMidiForm(TComponent* Owner)
 
         MidiBox->ItemIndex=1;
         Midi.Start();
-
-        ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMidiForm::OKClick(TObject *Sender)

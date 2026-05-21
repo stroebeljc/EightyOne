@@ -64,15 +64,13 @@ const BYTE idleDataBus = 0xFF;
 static BYTE AccessRomCartridgeSinclair(int Address);
 static bool AccessRomCartridgeTimex(int Address, BYTE* Data);
 static bool AccessRomCartridgeZXC1(int Address, BYTE* Data);
-static bool AccessRomCartridgeZXC2(int Address, BYTE* Data);
-static bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess);
-static bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess);
+static bool AccessRomCartridgeZXC2(int Address, BYTE* Data, bool directMemoryAccess);
+static bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess, bool directMemoryAccess);
+static bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess, bool directMemoryAccess);
 static BYTE AccessRomCartridgeBank(int bank, int Address);
-static bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess);
+static bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess, bool directMemoryAccess);
 void ConfigureZXC1();
 void ResetRomCartridge();
-
-extern bool directMemoryAccess;
 
 void InitialiseRomCartridge()
 {
@@ -257,19 +255,19 @@ bool LoadRomCartridgeFile(char *filename)
         return true;
 }
 
-bool WriteRomCartridge(int Address, BYTE* Data)
+bool WriteRomCartridge(int Address, BYTE* Data, bool directMemoryAccess)
 {
         const bool writeAccess = true;
-        return AccessRomCartridge(Address, Data, writeAccess);
+        return AccessRomCartridge(Address, Data, writeAccess, directMemoryAccess);
 }
 
-bool ReadRomCartridge(int Address, BYTE* Data)
+bool ReadRomCartridge(int Address, BYTE* Data, bool directMemoryAccess)
 {
         const bool writeAccess = false;
-        return AccessRomCartridge(Address, Data, writeAccess);
+        return AccessRomCartridge(Address, Data, writeAccess, directMemoryAccess);
 }
 
-bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
+bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess, bool directMemoryAccess)
 {
         bool readStatus = false;
 
@@ -301,15 +299,15 @@ bool AccessRomCartridge(int Address, BYTE* Data, bool writeAccess)
                         break;
 
                 case ROMCARTRIDGEZXC2:
-                        readStatus = AccessRomCartridgeZXC2(Address, Data);
+                        readStatus = AccessRomCartridgeZXC2(Address, Data, directMemoryAccess);
                         break;
 
                 case ROMCARTRIDGEZXC3:
-                        readStatus = AccessRomCartridgeZXC3(Address, Data, writeAccess);
+                        readStatus = AccessRomCartridgeZXC3(Address, Data, writeAccess, directMemoryAccess);
                         break;
 
                 case ROMCARTRIDGEZXC4:
-                        readStatus = AccessRomCartridgeZXC4(Address, Data, writeAccess);
+                        readStatus = AccessRomCartridgeZXC4(Address, Data, writeAccess, directMemoryAccess);
                         break;
                 }
         }
@@ -385,7 +383,7 @@ static inline bool AccessRomCartridgeZXC1(int Address, BYTE* Data)
         return dataRead;
 }
 
-static inline bool AccessRomCartridgeZXC2(int Address, BYTE* Data)
+static inline bool AccessRomCartridgeZXC2(int Address, BYTE* Data, bool directMemoryAccess)
 {
         bool dataRead = true;
 
@@ -407,7 +405,7 @@ static inline bool AccessRomCartridgeZXC2(int Address, BYTE* Data)
         return dataRead;
 }
 
-static inline bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess)
+static inline bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAccess, bool directMemoryAccess)
 {
         bool dataRead = true;
 
@@ -437,7 +435,7 @@ static inline bool AccessRomCartridgeZXC3(int Address, BYTE* Data, bool writeAcc
         return dataRead;
 }
 
-static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess)
+static inline bool AccessRomCartridgeZXC4(int Address, BYTE* Data, bool writeAccess, bool directMemoryAccess)
 {
         bool dataRead = true;
         bool controlAccessLocked = (romcartridge.zxcPaging & zxc4Locked);

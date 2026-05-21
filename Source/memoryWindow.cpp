@@ -35,8 +35,6 @@
 TMemoryWindow *MemoryWindow;
 //---------------------------------------------------------------------------
 
-extern bool directMemoryAccess;
-
 std::set<int> dirtyBird;
 std::set<int>::iterator changeCursor;
 

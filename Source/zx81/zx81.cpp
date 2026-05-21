@@ -78,7 +78,6 @@ extern int RasterY;
 extern int VSYNC_TOLLERANCEMAX;
 extern int VSYNC_TOLLERANCEMIN;
 
-extern bool directMemoryAccess;
 extern int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 extern int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 extern int lastMemoryReadValueLo, lastMemoryWriteValueLo;
@@ -267,7 +266,7 @@ void DisableLambda()
         }
 }
 
-void UpdateLambdaColour(int address)
+void UpdateLambdaColour(int address, bool directMemoryAccess)
 {
         int c;
 
@@ -299,7 +298,6 @@ void zx81_initialise()
         lambdaSelected = (emulator.machine == MACHINELAMBDA);
         zx81.lambdaColourEnabled = false;
 
-        directMemoryAccess = false;
         ResetLastIOAccesses();
         InitialiseRomCartridge();
 
@@ -539,7 +537,7 @@ BOOL IsAnnotatableROM()
 // Stores the supplied byte in memory,
 // taking into account memory mapped devices and RAM/ROM shadows.
 
-void zx81_WriteByte(int Address, int Data)
+void zx81_WriteByte(int Address, int Data, bool directMemoryAccess=false)
 {
         bool g007RamWrite;
 
@@ -554,7 +552,7 @@ void zx81_WriteByte(int Address, int Data)
         if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
         {
                 BYTE data;
-                if (WriteRomCartridge(Address, (BYTE*)&data))
+                if (WriteRomCartridge(Address, (BYTE*)&data, directMemoryAccess))
                 {
                         LiveMemoryWindow->Write((unsigned short)Address);
                         return;
@@ -605,7 +603,7 @@ void zx81_WriteByte(int Address, int Data)
                         goto writeMem;
                 }
 
-                UpdateLambdaColour(Address);
+                UpdateLambdaColour(Address, directMemoryAccess);
         }
 
         // ZX97 has various bank switched modes - check out the website for details
@@ -740,9 +738,7 @@ writeMem:
 // Write to memory without accidentally invoking the ZXC ROM cartridge paging mechanism
 void zx81_setbyte(int Address, int Data)
 {
-        directMemoryAccess = true;
-        zx81_WriteByte(Address, Data);
-        directMemoryAccess = false;
+        zx81_WriteByte(Address, Data, true);
 }
 
 // Called by emulated program
@@ -763,7 +759,7 @@ void zx81_writebyte(int Address, int Data)
 // taking into account memory mapped devices and RAM/ROM shadows.
 int video = 0;
 
-BYTE zx81_ReadByte(int Address)
+BYTE zx81_ReadByte(int Address, bool directMemoryAccess=false)
 {
         BYTE data;
 
@@ -773,7 +769,7 @@ BYTE zx81_ReadByte(int Address)
         // ensures by masking out the MREQ line
         if ((romcartridge.type != ROMCARTRIDGENONE) && (RomCartridgeCapacity != 0))
         {
-                if (ReadRomCartridge(Address, (BYTE*)&data))
+                if (ReadRomCartridge(Address, (BYTE*)&data, directMemoryAccess))
                 {
                         return data;
                 }
@@ -796,7 +792,7 @@ BYTE zx81_ReadByte(int Address)
                         return (BYTE)data;
                 }
 
-                UpdateLambdaColour(Address);
+                UpdateLambdaColour(Address, directMemoryAccess);
         }
 
         // ZX97 has various bank switched modes - check out the website for details
@@ -987,11 +983,7 @@ BYTE zx81_ReadByte(int Address)
 // Called by debugger routines
 BYTE zx81_getbyte(int Address)
 {
-        directMemoryAccess = true;
-        BYTE b = zx81_ReadByte(Address);
-        directMemoryAccess = false;
-
-        return b;
+        return zx81_ReadByte(Address, true);
 }
 
 // Called by Z80 instruction operand fetches
@@ -1084,7 +1076,7 @@ BYTE zx81_opcode_fetch(int Address)
         }
 
         if (machine.colour==COLOURLAMBDA)
-                UpdateLambdaColour(Address);
+                UpdateLambdaColour(Address, false);
 
         // We can only execute code below M1NOT.  If an opcode fetch occurs
         // above M1NOT, we actually fetch (address&32767).  This is important

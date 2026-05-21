@@ -25,8 +25,8 @@ void ResetRomCartridge();
 void InitialiseRomCartridge();
 bool RomCartridgePagedIn();
 bool LoadRomCartridgeFile(char *filename);
-bool WriteRomCartridge(int Address, BYTE* Data);
-bool ReadRomCartridge(int Address, BYTE* Data);
+bool WriteRomCartridge(int Address, BYTE* Data, bool directMemoryAccess);
+bool ReadRomCartridge(int Address, BYTE* Data, bool directMemoryAccess);
 void RomCartridgeZXC1TimerTick();
 
 #endif

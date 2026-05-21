@@ -35,7 +35,6 @@ int lastMemoryReadAddrLo, lastMemoryWriteAddrLo;
 int lastMemoryReadValueLo, lastMemoryWriteValueLo;
 int lastMemoryReadAddrHi, lastMemoryWriteAddrHi;
 int lastMemoryReadValueHi, lastMemoryWriteValueHi;
-bool directMemoryAccess;
 
 const char* iniFolder                     = "EightyOne\\";
 const char* temporaryFolder               = "EightyOne\\";

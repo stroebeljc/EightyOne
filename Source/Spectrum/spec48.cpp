@@ -1241,7 +1241,7 @@ void spec48_writeport(int Address, int Data, int *tstates)
                 switch ((Address>>8)&0xf0)
                 {
                 case 0x00:
-                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A))
+                        if ((emulator.machine == MACHINESPECTRUM) && (spectrum.model >= SPECCYPLUS2A) && ParallelPort->PortConnected())
                         {
                                 PrinterWriteData((unsigned char)Data);
                         }
@@ -1637,7 +1637,7 @@ BYTE ReadPort(int Address, int *tstates)
                 switch((Address>>8)&0xf0)
                 {
                 case 0x00:
-                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A)
+                        if (emulator.machine == MACHINESPECTRUM && spectrum.model >= SPECCYPLUS2A && ParallelPort->PortConnected())
                         {
                                 return (BYTE)PrinterBusy();
                         }
@@ -1723,7 +1723,7 @@ BYTE ReadPort(int Address, int *tstates)
                 break;
         }
 
-        if (spectrum.model<=SPECCY128) return (BYTE)FloatingBus;
+        if (spectrum.model<=SPECCYPLUS2) return (BYTE)FloatingBus;
 
         return(idleDataBus);
 }

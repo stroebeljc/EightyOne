@@ -87,7 +87,7 @@ THW *HW;
 //---------------------------------------------------------------------------
 void HWSetMachine(int machine, int speccy)
 {
-        Form1->RunFrameEnable=false;
+        Form1->StopFrames();
         switch(machine)
         {
         case MACHINEZX80:   HW->ZX80BtnClick(NULL);   break;
@@ -243,7 +243,7 @@ void __fastcall THW::ApplyClick(TObject *Sender)
 void THW::UpdateHardwareSettings(bool disableReset)
 {
         if (machine.exit) machine.exit();
-        Form1->RunFrameEnable=false;
+        Form1->StopFrames();
         bool machineChanged = (NewMachine != emulator.machine);
         emulator.machine = (CFGBYTE)NewMachine;
         spectrum.model = NewSpec;
@@ -304,15 +304,11 @@ void THW::UpdateHardwareSettings(bool disableReset)
 
         machine.drivebusy = -1;
 
-        if (disableReset)
-        {
-                ResetRequired = false;
-        }
-        else if (ResetRequired)
+        if (!disableReset && ResetRequired)
         {
                 machine.initialise();
-                ResetRequired = false;
         }
+        ResetRequired = false;
 
         Keyboard->KbChange();
 
@@ -332,6 +328,8 @@ void THW::UpdateHardwareSettings(bool disableReset)
         ZX97Dialog->UpdateMachine(Hwform.ZX97Form);
 
         UpdateApplyButton();
+
+        Form1->RunFrames();
 }
                              
 void THW::LoadFromInternalSettings()

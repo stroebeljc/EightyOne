@@ -87,7 +87,6 @@ private:	// User declarations
         bool mLimitLineLengths;
         bool mOutputFullWidthLineNumbers;
         int mScaling;
-        bool mWorkerRunning;
         double mRelativePos;
 
         void ClearBitmap();
@@ -112,14 +111,14 @@ private:	// User declarations
         COLORREF GetHighlightColour();
         void GetSaveOptions();
         void SizeWindow();
-        static DWORD WINAPI HandleMouseDownThreadProc(LPVOID param);
+        static int HandleMouseDownThreadProc(void *param);
         void HandleMouseDown(void);
-        static DWORD WINAPI HandleRefreshThreadProc(LPVOID param);
+        static int HandleRefreshThreadProc(void *param);
         void HandleRefresh(void);
-        static DWORD WINAPI HandleLineEndsThreadProc(LPVOID param);
+        static int HandleLineEndsThreadProc(void *param);
         void HandleLineEnds(void);
-        static DWORD WINAPI HandleSaveListingToFileThreadProc(LPVOID param);
-        static DWORD WINAPI HandleClearThreadProc(LPVOID param);
+        static int HandleSaveListingToFileThreadProc(void *param);
+        static int HandleClearThreadProc(void *param);
         void HandleClear(void);
 
 public:		// User declarations

@@ -44,7 +44,7 @@ enum StatusBarIndex
 __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         : TForm(Owner), mBitmap(NULL), mHWND(this->Handle),
           mLastHighlightedEntryIndex(-1), mLastFilterIndex(1), mBasicLister(NULL),
-          mWorkerRunning(false), mRelativePos(0)
+          mRelativePos(0)
 {
         mLines = new std::vector<LineInfo>();
 
@@ -342,16 +342,13 @@ void __fastcall TBasicLister::ToolButtonRefreshClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-DWORD WINAPI TBasicLister::HandleRefreshThreadProc(LPVOID param)
+int TBasicLister::HandleRefreshThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
 
-        self->mWorkerRunning=true;
         self->DisableButtons();
         self->HandleRefresh();
         self->EnableButtons();
-        self->mWorkerRunning=false;
         return 0;
 }
 
@@ -370,20 +367,17 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
 
         mRelativePos = keepScrollbarPosition ? relativePos : 0;
 
-        CreateThread(NULL, 0, HandleRefreshThreadProc, this, 0, NULL);
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleRefreshThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
 
-DWORD WINAPI TBasicLister::HandleClearThreadProc(LPVOID param)
+int TBasicLister::HandleClearThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
 
-        self->mWorkerRunning=true;
         self->DisableButtons();
         self->HandleClear();
         self->EnableButtons();
-        self->mWorkerRunning=false;
         return 0;
 }
 
@@ -399,7 +393,8 @@ void TBasicLister::HandleClear(void)
 
 void TBasicLister::Clear()
 {
-        CreateThread(NULL, 0, HandleClearThreadProc, this, 0, NULL);
+        // Only clear if there are lines to clear
+        if (mLines->size()>0) Form1->ThreadPool.EnqueueTask(new TTask(HandleClearThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
 
@@ -521,16 +516,13 @@ int TBasicLister::FindLineDisplayedOnRow(int row)
         return index;
 }
 
-DWORD WINAPI TBasicLister::HandleMouseDownThreadProc(LPVOID param)
+int TBasicLister::HandleMouseDownThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
 
-        self->mWorkerRunning=true;
         self->DisableButtons();
         self->HandleMouseDown();
         self->EnableButtons();
-        self->mWorkerRunning=false;
         return 0;
 }
 
@@ -561,7 +553,7 @@ void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
 
         mIndex = FindLineDisplayedOnRow(row);
 
-        CreateThread(NULL, 0, HandleMouseDownThreadProc, this, 0, NULL);
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleMouseDownThreadProc, (void *)this));
 }
 
 //---------------------------------------------------------------------------
@@ -598,23 +590,20 @@ void __fastcall TBasicLister::FormClose(TObject *Sender,
         Form1->BasicListerOption->Checked = false;        
 }
 //---------------------------------------------------------------------------
-                    
+
 void __fastcall TBasicLister::ToolButtonSaveClick(TObject *Sender)
 {
-        CreateThread(NULL, 0, HandleSaveListingToFileThreadProc, this, 0, NULL);
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleSaveListingToFileThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
 
-DWORD WINAPI TBasicLister::HandleSaveListingToFileThreadProc(LPVOID param)
+int TBasicLister::HandleSaveListingToFileThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
 
-        self->mWorkerRunning=true;
         self->DisableButtons();
         self->SaveListingToFile();
         self->EnableButtons();
-        self->mWorkerRunning=false;
         return 0;
 }
 
@@ -706,16 +695,13 @@ void TBasicLister::LoadSettings(TIniFile *ini)
         if (Form1->BasicListerOption->Checked) Show();
 }
 
-DWORD WINAPI TBasicLister::HandleLineEndsThreadProc(LPVOID param)
+int TBasicLister::HandleLineEndsThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
-        while (self->mWorkerRunning) Sleep(10);
 
-        self->mWorkerRunning=true;
         self->DisableButtons();
         self->HandleLineEnds();
         self->EnableButtons();
-        self->mWorkerRunning=false;
         return 0;
 }
 
@@ -736,7 +722,7 @@ void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
 
-        CreateThread(NULL, 0, HandleLineEndsThreadProc, this, 0, NULL);
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleLineEndsThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
 

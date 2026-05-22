@@ -143,14 +143,14 @@ void __fastcall TForm1::CreateWnd()
 
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
-        : TForm(Owner)
+        : TForm(Owner), ThreadPool(THREADPOOLSIZE)
 {
         AnsiString IniPath;
         char path[256];
         int i;
 
         RunFrameEnable=FrameIsRunning=false;
-        mWindowHandle=mWorkerThread=NULL;
+        mWindowHandle=NULL;
 
         strcpy(emulator.cwd, (FileNameGetPath(Application->ExeName)).c_str());
         if (emulator.cwd[strlen(emulator.cwd)-1]!='\\')
@@ -211,13 +211,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 {
         TIniFile *ini;
 
-        RunFrameEnable=false;
         AccDrawInit();
 
 	SoundDXReady = CreateEvent(NULL, FALSE, FALSE, "SoundDX_Ready");
-        mWorkerThread = CreateThread(NULL, 0, HandleRunFrameThreadProc, this, 0, NULL);
-
-        ResumeThread(mWorkerThread);    // Start/Resume the Frame Thread
 
         Application->OnMessage = AppMessage;
 
@@ -233,7 +229,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
         EnableSplashScreen->Checked = ShowSplash;
 
         iniFileExists = FileExists(emulator.inipath);
-        LoadSettings(ini);
 
         RenderMode=ini->ReadInteger("MAIN","RenderMode", RENDERGDI);
 
@@ -771,15 +766,11 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
         if (machine.exit) machine.exit();
 
         emulation_stop=true;
-        RunFrameEnable=false;
-        while (FrameIsRunning) Sleep(10);
+        StopFrames();
 
         PCAllKeysUp();
 
         Sound.End();
-
-        if (mWorkerThread) TerminateThread(mWorkerThread,0);
-        mWorkerThread=NULL;
 
         RenderEnd();
         AccDrawClose();
@@ -812,6 +803,37 @@ void __fastcall TForm1::ViewPrinterClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Allow/disallow automatic frame resumption after hardware changes.
+void TForm1::RunFramesAllow(void)
+{
+        mDisallowFrames=false;
+        RunFrames();
+}
+
+void TForm1::StopFramesDisallow(void)
+{
+        mDisallowFrames=true;
+        StopFrames();
+}
+
+void TForm1::RunFrames(void)
+{
+        if (mDisallowFrames || RunFrameEnable) return;
+        while (FrameIsRunning) Sleep(10);
+        RunFrameEnable=true;
+        ThreadPool.EnqueueTask(new TTask(HandleRunFrameThreadProc, (void *)this));
+}
+
+void TForm1::StopFrames(void)
+{
+        // This gives a new frame a chance to start before stopping it, preventing
+        //   the possibility of more than one frame task from running simultaneously.
+        if (RunFrameEnable) while (!FrameIsRunning) Sleep(10);
+
+        RunFrameEnable=false;
+        while (FrameIsRunning) Sleep(10);
+}
+
 void __fastcall TForm1::Timer2Timer(TObject *Sender)
 {
         static int startup=0;
@@ -819,7 +841,6 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
         AnsiString Filename, Ext;
         int i=0;
 
-        RunFrameEnable=true;
         if (startup<=6) startup++;
 
         switch(startup)
@@ -2158,6 +2179,7 @@ void __fastcall TForm1::ConfigItem1Click(TObject *Sender)
 void TForm1::LoadAtStartup(void)
 {
         LoadIniFile(emulator.inipath);
+        Show();
 }
 
 void TForm1::LoadIniFile(AnsiString FileName)
@@ -2442,7 +2464,7 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-DWORD WINAPI TForm1::HandleRunFrameThreadProc(LPVOID param)
+int TForm1::HandleRunFrameThreadProc(void *param)
 {
         TForm1* self = static_cast<TForm1*>(param);
 
@@ -2459,16 +2481,11 @@ void TForm1::HandleRunFrame(void)
         unsigned short rshift = VK_RSHIFT;
         unsigned short lshift = VK_LSHIFT;
 
-        while(1)
+        while(RunFrameEnable)
         {
+                FrameIsRunning = true;
                 WaitForSingleObject(SoundDXReady,1000);
                 ResetEvent(SoundDXReady);
-
-                FrameIsRunning = RunFrameEnable;
-                if (!RunFrameEnable)
-                {
-                        continue;
-                }
 
                 Sound.Frame(emulation_stop || emulator.single_step);
                 if (!emulation_stop && !emulator.single_step) LiveMemoryWindow->Update();
@@ -2538,6 +2555,7 @@ void TForm1::HandleRunFrame(void)
                         RomCartridgeZXC1TimerTick();
                 }
         }
+        FrameIsRunning = false;
 }
 
 //---------------------------------------------------------------------------

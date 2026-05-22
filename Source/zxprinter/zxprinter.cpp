@@ -50,12 +50,20 @@ void TZXPrinter::ResetPrinter(void)
         StylusActive=false;
         Momentum=0;
 }
+void __fastcall TZXPrinter::WMOutputBit(TMessage &msg)
+{
+        OutputBit();
+}
 void TZXPrinter::OutputBit(void)
 {
         if (XPos<1 || XPos>(PrinterOutput->Width)) return;
         PrinterOutput->Canvas->Pixels[XPos-1][YPos]= StylusActive?Fg:Bg;
 }
 
+void __fastcall TZXPrinter::WMOutputLine(TMessage &msg)
+{
+        OutputLine();
+}
 void TZXPrinter::OutputLine(void)
 {
         YPos++;
@@ -96,6 +104,7 @@ __fastcall TZXPrinter::TZXPrinter(TComponent* Owner)
 {
         Fg=clBlack;
         Bg=clWhite;
+        mWindowHandle=this->Handle;
 
         PrinterOutput= new Graphics::TBitmap;
         PrinterOutput->PixelFormat=pf4bit;
@@ -181,12 +190,12 @@ void TZXPrinter::ClockTick(int ts)
         {
                 if (XPos==0) OnPaper=true;
                 EncoderWheel=true;
-                OutputBit();
+                SendMessage((HWND)(ZXPrinter->mWindowHandle), WM_ZXPRINTEROUTPUTBIT, 0, 0);
                 XPos++;
 
                 if (XPos==(emulator.machine==MACHINESPECTRUM ? 257:258))
                 {
-                        OutputLine();
+                        SendMessage((HWND)(ZXPrinter->mWindowHandle), WM_ZXPRINTEROUTPUTLINE, 0, 0);
                         OnPaper=false;
                         EncoderWheel=false;
                         XPos=0;

@@ -31,6 +31,10 @@
 #include <IniFiles.hpp>
 #include <ComCtrls.hpp>
 //---------------------------------------------------------------------------
+
+#define WM_ZXPRINTEROUTPUTLINE (WM_USER+1)
+#define WM_ZXPRINTEROUTPUTBIT (WM_USER+2)
+
 class TZXPrinter : public TForm
 {
 __published:	// IDE-managed Components
@@ -78,6 +82,14 @@ private:	// User declarations
         float Momentum;
 public:		// User declarations
         __fastcall TZXPrinter(TComponent* Owner);
+        void __fastcall WMOutputLine(TMessage &msg);
+        void __fastcall WMOutputBit(TMessage &msg);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_ZXPRINTEROUTPUTLINE, TMessage, WMOutputLine)
+   MESSAGE_HANDLER(WM_ZXPRINTEROUTPUTBIT, TMessage, WMOutputBit)
+ END_MESSAGE_MAP(TForm)
+
         void ResetPrinter(void);
         void WritePort(unsigned char Data);
         unsigned char ReadPort(BYTE idleDataBus);
@@ -86,6 +98,7 @@ public:		// User declarations
         void SaveSettings(TIniFile *ini);
         TColor Fg,Bg;
         int BitSpeed, LineSpeed;
+        HANDLE mWindowHandle;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TZXPrinter *ZXPrinter;

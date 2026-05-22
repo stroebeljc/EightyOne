@@ -141,6 +141,7 @@ USEFORM("Keypad_.cpp", Keypad128);
 USEUNIT("Keypad\keypad.cpp");
 USEUNIT("Lambda\lambdaBasicLoader.cpp");
 USEUNIT("Lambda\lambdaBasicLister.cpp");
+USEUNIT("ThreadPool.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

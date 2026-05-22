@@ -39,7 +39,7 @@
       SP0256\sp0256drv.obj SP0256\sp0256.obj SP0256\sp0256_012.obj 
       Digitalker\Digitalk.obj Digitalker\Digitalkdrv.obj Joystick\Joystick.obj 
       sound\midi.obj Keypad_.obj Keypad\keypad.obj Lambda\lambdaBasicLoader.obj 
-      Lambda\lambdaBasicLister.obj"/>
+      Lambda\lambdaBasicLister.obj ThreadPool.obj"/>
     <RESFILES value="EightyOne.res WinXP.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>

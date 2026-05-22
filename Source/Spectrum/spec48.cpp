@@ -474,8 +474,7 @@ void spec48_interruptack(void)
 
 void spec48_LoadRZX(char *FileName)
 {
-        Form1->RunFrameEnable=false;
-        while (Form1->FrameIsRunning) Sleep(10);
+        Form1->StopFramesDisallow();
         rzx_close();
         emulation_stop=0;
         RZXFramesTotal=RZXErrorFrame=0;
@@ -510,7 +509,7 @@ rzx_u32 RZXcallback(int Msg, void *data)
         case RZXMSG_IRBNOTIFY:
                 RZXFramesTotal=((RZX_IRBINFO *) data)->framecount;
                 RZXFrameCount=0;
-                Form1->RunFrameEnable=true;
+                Form1->RunFramesAllow();
                 break;
         default:
                 return RZX_INVALID;

@@ -454,7 +454,6 @@ extern const char* speechRomsFolder;
 
 extern void load_config();
 
-#define readbyte_internal(Addr) (machine.opcode_fetch(Addr))
 #define readbyte(Addr) (machine.readbyte(Addr))
 #define readoperandbyte(Addr) (machine.readoperandbyte(Addr))
 #define getbyte(Addr) (machine.getbyte(Addr))

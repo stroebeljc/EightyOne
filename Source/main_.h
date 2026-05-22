@@ -33,10 +33,12 @@
 #include <ImgList.hpp>
 #include <IniFiles.hpp>
 #include "ThemeMgr.hpp"
+#include "ThreadPool.h"
 
 
 #define RENDERGDI 0
 #define RENDERDDRAW 1
+#define THREADPOOLSIZE 4
 
 //---------------------------------------------------------------------------
 class TForm1 : public TForm
@@ -332,7 +334,8 @@ private:	// User declarations
         void AddSpectrumExampleFolders(TMenuItem* CategorySubMenu, AnsiString path);
         bool DrivesChanged;
         bool LShift, RShift;
-        HANDLE mWorkerThread;
+        bool mDisallowFrames;
+        int RunFrameEnable,FrameIsRunning;
         HANDLE mWindowHandle;
         Graphics::TBitmap *LEDGreenOn;
         Graphics::TBitmap *LEDGreenOff;
@@ -346,7 +349,7 @@ private:	// User declarations
         void __fastcall SelectJoystick2Click(TObject *Sender);
         void UpdateJoystickMenuOptions();
         void SwitchFullScreen();
-        static DWORD WINAPI HandleRunFrameThreadProc(LPVOID param);
+        static int HandleRunFrameThreadProc(void *param);
         void HandleRunFrame(void);
 
 public:		// User declarations
@@ -368,13 +371,17 @@ public:		// User declarations
         int SaveX, SaveY, SaveW, SaveH, SaveWinW, SaveWinH;
         int SaveScrW, SaveScrH, SaveScrBpp;
         LONG_PTR SaveStyle, SaveExStyle;
+        TThreadPool ThreadPool;
         void __fastcall AppMessage(TMsg &Msg, bool &Handled);
+        void RunFrames(void);
+        void RunFramesAllow(void);
+        void StopFrames(void);
+        void StopFramesDisallow(void);
         void LoadAtStartup(void);
         void LoadSettings(TIniFile *ini);
         void SaveSettings(TIniFile *ini);
         void DoAutoLoad(void);
         void GatherWindowsIfRequired();
-        int RunFrameEnable,FrameIsRunning;
         void EnableAnnotationOptions();
         void BuildMenuJoystickSelection();
         void BuildMemotechInterfaceSelection();

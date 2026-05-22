@@ -142,6 +142,7 @@ USEUNIT("Keypad\keypad.cpp");
 USEUNIT("Lambda\lambdaBasicLoader.cpp");
 USEUNIT("Lambda\lambdaBasicLister.cpp");
 USEFORM("BasicLister\BasicVariables_.cpp", BasicVariables);
+USEUNIT("ThreadPool.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

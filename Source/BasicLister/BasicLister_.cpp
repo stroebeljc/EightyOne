@@ -471,6 +471,7 @@ void TBasicLister::CallShow()
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
         GetSaveOptions();
+        SizeWindow();
         Refresh(false);
 }
 //---------------------------------------------------------------------------

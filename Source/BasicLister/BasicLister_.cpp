@@ -324,6 +324,7 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
         GetSaveOptions();
+        SizeWindow();
         Refresh(false);
 }
 //---------------------------------------------------------------------------

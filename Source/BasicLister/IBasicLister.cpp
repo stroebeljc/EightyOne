@@ -33,10 +33,18 @@ extern Graphics::TPicture *listerBPpicture;
 
 IBasicLister::IBasicLister() :
         mProgramDisplayRows(0),
+        mCset(NULL),
         mVariablesDisplayRows(0),
         BpEnabledBitmap(NULL),
         BpDisabledBitmap(NULL)
 {
+}
+
+void IBasicLister::CopyCsetImage()
+{
+        if (mCset) delete mCset;
+        mCset = new Graphics::TBitmap();
+        mCset->Assign((Graphics::TBitmap*)machine.cset);
 }
 
 void IBasicLister::PopulateKeywords()
@@ -65,6 +73,7 @@ void IBasicLister::PopulateKeywords()
 
 IBasicLister::~IBasicLister()
 {
+        if (mCset) delete mCset;
         BpEnabledBitmap = NULL;
         BpDisabledBitmap = NULL;
 }
@@ -447,6 +456,7 @@ void IBasicLister::ClearRenderedVariablesList(HDC hdc, HBITMAP bitmap, RECT rect
 void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling)
 {
         mScaling = scaling;
+        if (!mCset) return;
 
         int yOffset = 0;
 
@@ -454,7 +464,7 @@ void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLi
 
         HDC cshdc = CreateCompatibleDC(hdc);
 
-        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)((Graphics::TBitmap*)machine.cset)->Handle);
+        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCset->Handle);
 
         ClearRenderedListing(hdc, bitmap, rect, showLineEnds);              
 
@@ -478,7 +488,7 @@ void IBasicLister::RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scali
 
         HDC cshdc = CreateCompatibleDC(hdc);
 
-        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)((Graphics::TBitmap*)machine.cset)->Handle);
+        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCset->Handle);
 
         ClearRenderedVariablesList(hdc, bitmap, rect);
 

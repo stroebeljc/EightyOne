@@ -38,8 +38,6 @@
 #include <string>
 #include <vector>
 
-#define WM_BREAKNEXTLINE (WM_USER+1)
-
 //---------------------------------------------------------------------------
 
 enum LineMode
@@ -144,7 +142,7 @@ private:	// User declarations
         void ConstructBitmap();
         bool ExtractLine(int* basicPos, int* displayLength);
         void ExtractProgramDetails();
-        void LoadProgram();
+        void LoadProgram(bool keepEntries);
         int ProgramSize();
         void UnhighlightRows(int startRow, int endRow);
         void HighlightRows(int startRow, int endRow);
@@ -172,6 +170,8 @@ private:	// User declarations
         void HandleMouseDown(void);
         static int HandleRefreshThreadProc(void *param);
         void HandleRefresh(void);
+        static int HandleLineEndsThreadProc(void *param);
+        void HandleLineEnds(void);
         static int HandleSaveListingToFileThreadProc(void *param);
         static int HandleClearThreadProc(void *param);
         void HandleClear(void);
@@ -179,17 +179,13 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);
         virtual __fastcall ~TBasicLister();
-        void __fastcall WMBreakAtNextBasicLine(TMessage &msg);
-
- BEGIN_MESSAGE_MAP
-   MESSAGE_HANDLER(WM_BREAKNEXTLINE, TMessage, WMBreakAtNextBasicLine)
- END_MESSAGE_MAP(TForm)
 
         void SetBasicLister(IBasicLister* basicLister, bool exiting = false);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
         bool ListerAvailable();
         void Refresh(bool keepScrollbarPosition);
+        void RefreshCB();
         void Clear();
         void BreakAtNextBasicLine();
         void UnBreakPointLastEntry();

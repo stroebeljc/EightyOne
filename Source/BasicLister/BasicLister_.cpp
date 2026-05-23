@@ -60,8 +60,6 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
         mLines = new std::vector<LineInfo>();
         Dbg->SetBPListChangedCB(RefreshCallback);
         mToolbarHeight = ToolBar->Height;
-
-        SizeWindow();
 }
 
 void TBasicLister::SizeWindow()
@@ -93,6 +91,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
         
         if (mBasicLister != NULL)
         {
+                mBasicLister->CopyCsetImage();
                 mHasDebug = mBasicLister->BasicDebugSupported();
                 if (mHasDebug)
                 {
@@ -306,10 +305,18 @@ void TBasicLister::BreakPointLine(int lineNumber)
         ScrollToIndex(index);
 }
 
+void TBasicLister::RefreshCB()
+{
+        ConstructBitmap();
+        BreakPointEntry(mLastBreakPointIndex);
+        Invalidate();
+}
+
 void RefreshCallback()
 {
-        const bool keepScrollbarPosition = true;
-        BasicLister->Refresh(keepScrollbarPosition);
+        //const bool keepScrollbarPosition = true;
+        //BasicLister->Refresh(keepScrollbarPosition);
+        BasicLister->RefreshCB();
 }
 
 void TBasicLister::UnhighlightEntry(int index)
@@ -493,13 +500,8 @@ int TBasicLister::HandleRefreshThreadProc(void *param)
 
 void TBasicLister::HandleRefresh(void)
 {
-        int highlightIndex = mLastHighlightedEntryIndex;
-        int breakpointIndex = mLastBreakPointIndex;
-
-        LoadProgram();
-
-        HighlightEntry(highlightIndex);
-        BreakPointEntry(breakpointIndex);
+        LoadProgram(false);
+        BreakPointEntry(mLastBreakPointIndex);
 
         ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
 }
@@ -545,9 +547,9 @@ void TBasicLister::Clear()
 }
 //---------------------------------------------------------------------------
 
-void TBasicLister::LoadProgram()
+void TBasicLister::LoadProgram(bool keepEntries)
 {
-        mLastHighlightedEntryIndex = -1;
+        if (!keepEntries) mLastHighlightedEntryIndex = -1;
         
         if (mBasicLister != NULL)
         {
@@ -774,7 +776,7 @@ void TBasicLister::SaveListingToFile()
                 return;
         }
 
-        LoadProgram();
+        LoadProgram(true);
 
         bool programLoaded = (ProgramSize() > 0);
         if (!programLoaded)
@@ -869,11 +871,6 @@ int TBasicLister::NextBasicLineNumberToExecute()
 
 void TBasicLister::BreakAtNextBasicLine()
 {
-        SendMessage(mHWND, WM_BREAKNEXTLINE, 0, 0);
-}
-
-void __fastcall TBasicLister::WMBreakAtNextBasicLine(TMessage &msg)
-{
         if (mBasicLister == NULL) return;
 
         ToolButtonRunStop->Caption = "Run";
@@ -888,13 +885,32 @@ void TBasicLister::CheckUpdate(int pc)
                 BasicVariables->Refresh(true);
 }
 
+int TBasicLister::HandleLineEndsThreadProc(void *param)
+{
+        TBasicLister* self = static_cast<TBasicLister*>(param);
+
+        self->DisableButtons();
+        self->HandleLineEnds();
+        self->EnableButtons();
+        return 0;
+}
+
+void TBasicLister::HandleLineEnds(void)
+{
+        LoadProgram(true);
+        
+        HighlightEntry(mLastHighlightedEntryIndex);
+        
+        ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
+}
+
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         mRelativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
 
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
 
-        Form1->ThreadPool.EnqueueTask(new TTask(HandleRefreshThreadProc, (void *)this));
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleLineEndsThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
 
@@ -973,6 +989,7 @@ void __fastcall TBasicLister::AddBreakPointClick(TObject *Sender)
         {
                 Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
         }
+        Refresh(true);
 }
 //---------------------------------------------------------------------------
 
@@ -980,6 +997,7 @@ void __fastcall TBasicLister::Enabled1Click(TObject *Sender)
 {
         int newstate = !Dbg->BreakpointIsEnabled(mLastBreakPointMenuIndex);
         Dbg->SetBreakpointEnabledState(mLastBreakPointMenuIndex, newstate);
+        Refresh(true);
 }
 //---------------------------------------------------------------------------
 
@@ -1031,6 +1049,7 @@ void __fastcall TBasicLister::VariablesClick(TObject *Sender)
 void __fastcall TBasicLister::DeletAll1Click(TObject *Sender)
 {
         Dbg->RemoveAllBasicBPs();
+        Refresh(true);
 }
 //---------------------------------------------------------------------------
 
@@ -1049,6 +1068,7 @@ void __fastcall TBasicLister::RuntoLine1Click(TObject *Sender)
         {
                 Dbg->DelBreakPoint(mLastBreakPointMenuIndex);
         }
+        Refresh(true);
 }
 //---------------------------------------------------------------------------
 

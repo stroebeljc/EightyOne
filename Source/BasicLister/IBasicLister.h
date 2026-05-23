@@ -19,6 +19,7 @@
 #ifndef IBASICLISTER
 #define IBASICLISTER
 
+#include <vcl4.h>
 #include <Classes.hpp>
 #include <Graphics.hpp>
 #include <vector>
@@ -79,6 +80,7 @@ private:
         bool mSupportEmbeddedControlCodes;
         AnsiString mEscapeCharacter;
         int mScaling;
+        Graphics::TBitmap *mCset;
         void* BpEnabledBitmap;
         void* BpDisabledBitmap;
 
@@ -120,6 +122,7 @@ public:
         void RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scaling);
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
+        void CopyCsetImage();
         void SetVariables(std::vector<VariableInfo>* variablesInfo);
         void SetBpEnabledBitmap(Graphics::TBitmap* bitmap);
         void SetBpDisabledBitmap(Graphics::TBitmap* bitmap);

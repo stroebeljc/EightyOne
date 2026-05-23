@@ -493,11 +493,13 @@ int TBasicLister::HandleRefreshThreadProc(void *param)
 
 void TBasicLister::HandleRefresh(void)
 {
-        BreakPointEntry(mLastBreakPointIndex);
-
-        ClearBitmap();
+        int highlightIndex = mLastHighlightedEntryIndex;
+        int breakpointIndex = mLastBreakPointIndex;
 
         LoadProgram();
+
+        HighlightEntry(highlightIndex);
+        BreakPointEntry(breakpointIndex);
 
         ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
 }
@@ -510,7 +512,7 @@ void TBasicLister::Refresh(bool keepScrollbarPosition)
 
         Form1->ThreadPool.EnqueueTask(new TTask(HandleRefreshThreadProc, (void *)this));
 
-        if (BasicVariables) BasicVariables->Refresh(false);
+        BasicVariables->Refresh(false);
 }
 //---------------------------------------------------------------------------
 
@@ -683,13 +685,13 @@ int TBasicLister::HandleMouseDownThreadProc(void *param)
 
 void TBasicLister::HandleMouseDown(void)
 {
-        if (mIndex != -1 && mIndex != mLastHighlightedEntryIndex)
+        if (mLastRowIndex != mLastHighlightedEntryIndex)
         {
-                HighlightEntry(mIndex);
+                HighlightEntry(mLastRowIndex);
         }
         else
         {
-                UnhighlightEntry(mIndex);
+                UnhighlightEntry(mLastRowIndex);
         }
 }
 
@@ -705,24 +707,12 @@ void __fastcall TBasicLister::FormMouseDown(TObject *Sender,
 
         if (Button == mbLeft)
         {
-                if (mLastRowIndex != mLastHighlightedEntryIndex)
-                {
-                        HighlightEntry(mLastRowIndex);
-                }
-                else
-                {
-                        UnhighlightEntry(mLastRowIndex);
-                }
-
-                EnableButtons();
-                return;
+                Form1->ThreadPool.EnqueueTask(new TTask(HandleMouseDownThreadProc, (void *)this));
         }
         else if (Button == mbRight && mHasDebug)
         {
                 if (mLastRowIndex != -1) PopupMenu1->Popup(Mouse->CursorPos.x, Mouse->CursorPos.y);
         }
-
-        Form1->ThreadPool.EnqueueTask(new TTask(HandleMouseDownThreadProc, (void *)this));
 }
 
 //---------------------------------------------------------------------------
@@ -879,6 +869,11 @@ int TBasicLister::NextBasicLineNumberToExecute()
 
 void TBasicLister::BreakAtNextBasicLine()
 {
+        SendMessage(mHWND, WM_BREAKNEXTLINE, 0, 0);
+}
+
+void __fastcall TBasicLister::WMBreakAtNextBasicLine(TMessage &msg)
+{
         if (mBasicLister == NULL) return;
 
         ToolButtonRunStop->Caption = "Run";
@@ -893,36 +888,13 @@ void TBasicLister::CheckUpdate(int pc)
                 BasicVariables->Refresh(true);
 }
 
-int TBasicLister::HandleLineEndsThreadProc(void *param)
-{
-        TBasicLister* self = static_cast<TBasicLister*>(param);
-
-        self->DisableButtons();
-        self->HandleLineEnds();
-        self->EnableButtons();
-        return 0;
-}
-
-void TBasicLister::HandleLineEnds(void)
-{
-        int highlightIndex = mLastHighlightedEntryIndex;
-        int breakpointIndex = mLastBreakPointIndex;
-
-        LoadProgram();
-
-        HighlightEntry(highlightIndex);
-        BreakPointEntry(breakpointIndex);
-        
-        ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
-}
-
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         mRelativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
 
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
 
-        Form1->ThreadPool.EnqueueTask(new TTask(HandleLineEndsThreadProc, (void *)this));
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleRefreshThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
 

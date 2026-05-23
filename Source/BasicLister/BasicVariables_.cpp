@@ -81,6 +81,7 @@ void __fastcall TBasicVariables::SetLister(IBasicLister *lister)
 
 void TBasicVariables::Clear()
 {
+        if (mVariables->size()==0) return;
         mVariables->clear();
 
         SizeWindow();

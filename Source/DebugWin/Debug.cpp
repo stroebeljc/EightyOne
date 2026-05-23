@@ -319,7 +319,6 @@ void TDbg::SetEnabledStateAllOfType(BreakpointType type, bool enable)
 
 void TDbg::BasicStartStop(bool addBP)
 {
-        MemoryWindow->ClearChanges();
         BasicLister->UnBreakPointLastEntry();
         breakpoint bp(-1, BP_BASIC);
         if (addBP)

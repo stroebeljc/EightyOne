@@ -28,8 +28,15 @@
 using namespace std;
 
 IBasicLister::IBasicLister() :
-        mProgramDisplayRows(0)
+        mProgramDisplayRows(0), mCset(NULL)
 {
+}
+
+void IBasicLister::CopyCsetImage()
+{
+        if (mCset) delete mCset;
+        mCset = new Graphics::TBitmap();
+        mCset->Assign((Graphics::TBitmap*)machine.cset);
 }
 
 void IBasicLister::PopulateKeywords()
@@ -58,6 +65,7 @@ void IBasicLister::PopulateKeywords()
 
 IBasicLister::~IBasicLister()
 {
+        if (mCset) delete mCset;
 }
 
 int IBasicLister::GetKeywordLength(unsigned char code)
@@ -234,6 +242,7 @@ void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool
 void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling)
 {
         mScaling = scaling;
+        if (!mCset) return;
 
         int yOffset = 0;
 
@@ -241,7 +250,7 @@ void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLi
 
         HDC cshdc = CreateCompatibleDC(hdc);
 
-        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)((Graphics::TBitmap*)machine.cset)->Handle);
+        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCset->Handle);
 
         ClearRenderedListing(hdc, bitmap, rect, showLineEnds);              
 

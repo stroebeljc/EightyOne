@@ -47,14 +47,10 @@ __fastcall TBasicLister::TBasicLister(TComponent* Owner)
           mRelativePos(0)
 {
         mLines = new std::vector<LineInfo>();
-
-        SizeWindow();
 }
 
 void TBasicLister::SizeWindow()
 {
-        mScaling = SaveBasicListingOptionsForm->GetScalingFator();
-
         int displayAreaWidth = (DisplayableColumns * PixelsPerCharacterHeight * mScaling);
         int displayAreaHeight = (DisplayableRows * PixelsPerCharacterHeight * mScaling);
 
@@ -82,8 +78,10 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
         
         if (mBasicLister != NULL)
         {
+                mBasicLister->CopyCsetImage();
                 mBasicLister->PopulateKeywords();
                 mBasicLister->SetLines(mLines);
+                SizeWindow();
         }
 }
 
@@ -325,6 +323,7 @@ void __fastcall TBasicLister::FormPaint(TObject *Sender)
 
 void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
+        GetSaveOptions();
         Refresh(false);
 }
 //---------------------------------------------------------------------------
@@ -354,9 +353,7 @@ int TBasicLister::HandleRefreshThreadProc(void *param)
 
 void TBasicLister::HandleRefresh(void)
 {
-        ClearBitmap();
-
-        LoadProgram();
+        LoadProgram(false);
 
         ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
 }
@@ -398,9 +395,9 @@ void TBasicLister::Clear()
 }
 //---------------------------------------------------------------------------
 
-void TBasicLister::LoadProgram()
+void TBasicLister::LoadProgram(bool keepEntries)
 {
-        mLastHighlightedEntryIndex = -1;
+        if (!keepEntries) mLastHighlightedEntryIndex = -1;
         
         if (mBasicLister != NULL)
         {
@@ -614,7 +611,7 @@ void TBasicLister::SaveListingToFile()
                 return;
         }
 
-        LoadProgram();
+        LoadProgram(true);
 
         bool programLoaded = (ProgramSize() > 0);
         if (!programLoaded)
@@ -707,11 +704,9 @@ int TBasicLister::HandleLineEndsThreadProc(void *param)
 
 void TBasicLister::HandleLineEnds(void)
 {
-        int highlightIndex = mLastHighlightedEntryIndex;
+        LoadProgram(true);
 
-        LoadProgram();
-
-        HighlightEntry(highlightIndex);
+        HighlightEntry(mLastHighlightedEntryIndex);
         
         ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
 }
@@ -752,6 +747,7 @@ void TBasicLister::GetSaveOptions()
         mOutputVariableNamesInLowercase = SaveBasicListingOptionsForm->GetOutputVariableNamesInLowercase();
         mLimitLineLengths = SaveBasicListingOptionsForm->GetLimitLineLengths();
         mOutputFullWidthLineNumbers = SaveBasicListingOptionsForm->GetOutputFullWidthLineNumbers();
+        mScaling = SaveBasicListingOptionsForm->GetScalingFator();
 }
 
 void __fastcall TBasicLister::ToolButtonInfoClick(TObject *Sender)

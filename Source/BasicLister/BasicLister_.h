@@ -93,7 +93,7 @@ private:	// User declarations
         void ConstructBitmap();
         bool ExtractLine(int* basicPos, int* displayLength);
         void ExtractProgramDetails();
-        void LoadProgram();
+        void LoadProgram(bool keepEntries);
         int ProgramSize();
         void UnhighlightRows(int startRow, int endRow);
         void HighlightRows(int startRow, int endRow);

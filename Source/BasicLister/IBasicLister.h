@@ -19,6 +19,7 @@
 #ifndef IBASICLISTER
 #define IBASICLISTER
 
+#include <vcl4.h>
 #include <Classes.hpp>
 #include <vector>
 #include <string>
@@ -54,6 +55,7 @@ private:
         bool mSupportEmbeddedControlCodes;
         AnsiString mEscapeCharacter;
         int mScaling;
+        Graphics::TBitmap *mCset;
 
         void RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
         void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
@@ -74,6 +76,7 @@ public:
         void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
+        void CopyCsetImage();
 
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }

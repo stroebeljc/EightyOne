@@ -34,6 +34,7 @@
 #include <Menus.hpp>
 #include <ExtCtrls.hpp>
 #include <Graphics.hpp>
+#include <SyncObjs.hpp>
 
 #include <string>
 #include <vector>
@@ -137,6 +138,7 @@ private:	// User declarations
         double mRelativePos;
         int mToolbarHeight;
         bool mHasDebug;
+        TCriticalSection *mRefreshLock;
 
         void ClearBitmap();
         void ConstructBitmap();
@@ -185,7 +187,6 @@ public:		// User declarations
         void LoadSettings(TIniFile* ini);
         bool ListerAvailable();
         void Refresh(bool keepScrollbarPosition);
-        void RefreshCB();
         void Clear();
         void BreakAtNextBasicLine();
         void UnBreakPointLastEntry();

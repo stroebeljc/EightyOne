@@ -24,17 +24,9 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
         : TForm(Owner),
         mBitmap(NULL),
         mHWND(this->Handle),
-        mBasicLister(NULL),
-        mScaling(1)
+        mBasicLister(NULL)
 {
-        mHWND = this->Handle;
         mVariables = new std::vector<VariableInfo>();
-
-        TIniFile* ini = new TIniFile(emulator.inipath);
-        LoadSettings(ini);
-        delete ini;
-
-        SizeWindow();
 }
 
  __fastcall TBasicVariables::~TBasicVariables()
@@ -50,6 +42,7 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
 void TBasicVariables::ShowScale(int scale)
 {
         mScaling = scale;
+        SizeWindow();
         Show();
 }
 

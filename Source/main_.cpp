@@ -2207,9 +2207,9 @@ void TForm1::LoadIniFile(AnsiString FileName)
         ParallelPort->LoadSettings(ini);
         MidiForm->LoadSettings(ini);
         ZipFile->LoadSettings(ini);
-        BasicLister->LoadSettings(ini);
         LoadBasicListingOptionsForm->LoadSettings(ini);
         SaveBasicListingOptionsForm->LoadSettings(ini);
+        BasicLister->LoadSettings(ini);
 
         delete ini;
 

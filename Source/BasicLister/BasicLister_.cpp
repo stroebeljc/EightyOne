@@ -1038,7 +1038,7 @@ void __fastcall TBasicLister::VariablesClick(TObject *Sender)
                 return;
         }
 
-        BasicVariables->Show();
+        BasicVariables->ShowScale(mScaling);
 }
 //---------------------------------------------------------------------------
 

@@ -2955,6 +2955,7 @@ int DoOpenFile(int ch, char *name)
 	    chanpos[ch] = 256;
 	    chanbuf[ch][0] = c4dhook[findfileidx].u.d64.starttrack;
 	    chanbuf[ch][1] = c4dhook[findfileidx].u.d64.startsector;
+	    SetError(0, 0, 0);
 	    ReadABlock(ch);
 	    return (errorcode != 0);
 	}

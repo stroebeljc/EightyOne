@@ -106,6 +106,7 @@ void TBasicVariables::ClearBitmap()
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+        ReleaseDC(mHWND,hdc);
 }
 
 void TBasicVariables::ConfigureScrollBar()
@@ -235,6 +236,7 @@ void TBasicVariables::ColourRows(int row, bool setornot)
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+        ReleaseDC(mHWND,hdc);
 }
 
 
@@ -269,6 +271,7 @@ void TBasicVariables::ConstructBitmap()
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+        ReleaseDC(mHWND,hdc);
 }
 
 void TBasicVariables::UnhighlightEntry(int index)

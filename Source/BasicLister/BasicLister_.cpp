@@ -114,6 +114,7 @@ void TBasicLister::ClearBitmap()
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+        ReleaseDC(mHWND,hdc);
 }
 
 void TBasicLister::ExtractProgramDetails()
@@ -153,6 +154,7 @@ void TBasicLister::ConstructBitmap()
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+        ReleaseDC(mHWND,hdc);
 }
 
 //---------------------------------------------------------------------------
@@ -207,6 +209,7 @@ void TBasicLister::ColourRows(int startRow, int endRow, bool highlight)
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
+        ReleaseDC(mHWND,hdc);
 }
 
 void TBasicLister::HighlightLine(int lineNumber)

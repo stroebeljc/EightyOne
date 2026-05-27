@@ -242,8 +242,8 @@ void __fastcall THW::ApplyClick(TObject *Sender)
 
 void THW::UpdateHardwareSettings(bool disableReset)
 {
-        if (machine.exit) machine.exit();
         Form1->StopFrames();
+        if (machine.exit) machine.exit();
         bool machineChanged = (NewMachine != emulator.machine);
         emulator.machine = (CFGBYTE)NewMachine;
         spectrum.model = NewSpec;

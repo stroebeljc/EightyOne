@@ -15,7 +15,7 @@ public:
         int  IO_Read(int addr);
         int  IO_ReadStatus();
 
-        static void SetSDCardPath();
+        void SetSDCardPath();
 };
 
 enum

@@ -51,7 +51,7 @@ void TSoundOutput::UpdateImage(short *data, int channels, int framesize)
                 m_dataBuffer = new short[size];
         else if (size!=oldsize)
         {
-                delete m_dataBuffer;
+                delete[] m_dataBuffer;
                 m_dataBuffer = new short[size];
         }
         memcpy(m_dataBuffer,data,size*sizeof(short));
@@ -65,6 +65,11 @@ __fastcall TSoundOutput::TSoundOutput(TComponent* Owner)
         m_dataBuffer=NULL;
 
         FormResize(NULL);
+}
+
+__fastcall TSoundOutput::~TSoundOutput()
+{
+        if (m_dataBuffer!=NULL) delete[] m_dataBuffer;
 }
 //---------------------------------------------------------------------------
 

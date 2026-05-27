@@ -41,6 +41,7 @@
 #define MDR_RECORD 543
 #define MDVRECSIZE 745  //707
 #define MDVSTREAMLEN 4
+#define MDVDRIVECOUNT 8
 //#define MDVTPERBYTE 250
 
 //---------------------------------------------------------------------------
@@ -102,7 +103,7 @@ private:	// User declarations
         int RxBufSize, TxBufSize;
         int MDVDriveMap, MDVCurDrive;
         bool WriteEnable;
-        MDVDrive Drives[8];
+        MDVDrive Drives[MDVDRIVECOUNT];
         unsigned char MDVStream[MDVSTREAMLEN];
         int MDVCount;
         char WriteData;

@@ -27,7 +27,7 @@ extern void dirReadNext(void *fileinfo);
 
 // rootpath, curpath; always slash-terminated.
 //
-const char *zxpandSDCardFolderRoot = NULL;
+char *zxpandSDCardFolderRoot = NULL;
 char curPath[32768] = {0};
 char tempPath[32768] = {0};
 
@@ -60,8 +60,15 @@ void SetRoot(const char *root)
       }
    }
 
-   zxpandSDCardFolderRoot = strdup(tempPath);
+   if (zxpandSDCardFolderRoot!=NULL) free(zxpandSDCardFolderRoot);
+   zxpandSDCardFolderRoot = strdup((const char *)tempPath);
    strcpy(curPath, zxpandSDCardFolderRoot);
+}
+
+void CleanFF()
+{
+   if (zxpandSDCardFolderRoot!=NULL) free(zxpandSDCardFolderRoot);
+   zxpandSDCardFolderRoot=NULL;
 }
 
 // builds an absolute path to an actual folder in the filing system

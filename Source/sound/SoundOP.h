@@ -43,6 +43,7 @@ private:	// User declarations
         short *m_dataBuffer;
 public:		// User declarations
         __fastcall TSoundOutput(TComponent* Owner);
+        virtual __fastcall ~TSoundOutput();
         void __fastcall WMEraseBkgnd(TWMEraseBkgnd &Message);
 
  BEGIN_MESSAGE_MAP

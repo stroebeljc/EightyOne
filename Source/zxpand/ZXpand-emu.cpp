@@ -10,6 +10,7 @@
 #include "zxpandclass.h"
  
 extern void SetRoot(const char*);
+extern void CleanFF(void);
 
 void ZXpand::SetSDCardPath()
 {
@@ -36,6 +37,7 @@ ZXpand::~ZXpand()
 {
    try
    {
+      CleanFF();
       delete _zxpand;
    }
    catch(...)

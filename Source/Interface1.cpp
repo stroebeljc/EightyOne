@@ -626,7 +626,7 @@ __fastcall TIF1::TIF1(TComponent* Owner)
         
         ComPortListChange(NULL);
 
-        for(i=0;i<8;i++) Drives[i].FileName[0]='\0';
+        for(i=0;i<MDVDRIVECOUNT;i++) Drives[i].FileName[0]='\0';
 }
 //---------------------------------------------------------------------------
 
@@ -830,7 +830,7 @@ void TIF1::LoadSettings(TIniFile *ini)
 
 void __fastcall TIF1::FormDestroy(TObject *Sender)
 {
-        for (int i = 0; i < MDVNoDrives; i++)
+        for (int i = 0; i < MDVDRIVECOUNT; i++)
         {
                 MDVSetFileName(i, NULL);
         }

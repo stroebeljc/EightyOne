@@ -339,7 +339,7 @@ void spec_load_z80(char *fname)
         if (if1)
         {
                 HW->FDCBox->ItemIndex = HW->SelectEntry(HW->FDCBox, "ZX Interface 1");
-                IF1->MDVNoDrives = 8;
+                IF1->MDVNoDrives = MDVDRIVECOUNT;
                 HW->FDCBoxChange(HW->FDCBox);
         }    
         else if (mgt)

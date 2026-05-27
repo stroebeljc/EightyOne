@@ -192,6 +192,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                 p+=strlen(p)+1;
         }
         CommandLine[i]=NULL;
+        free(CmdLineRaw);
 
         i=0;
         while(CommandLine[i])
@@ -233,6 +234,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR cmdline, int)
                  Application->ShowException(&exception);
         }
 
+        free(CommandLine);
         return 0;
 }
 //---------------------------------------------------------------------------

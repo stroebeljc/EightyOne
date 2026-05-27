@@ -252,6 +252,11 @@ void zx81_interruptack(void)
 void zx81_exit(void)
 {
         floppy_shutdown();
+        if (zxpand)
+        {
+                delete(zxpand);
+                zxpand = NULL;
+        }
 }
 
 void DisableLambda()
@@ -483,8 +488,6 @@ void zx81_reset()
 
 void CreateZXpand()
 {
-        ZXpand::SetSDCardPath();
-
         if (zxpand)
         {
                 delete(zxpand);
@@ -493,6 +496,7 @@ void CreateZXpand()
         if (zx81.zxpand)
         {
                 zxpand = new ZXpand();
+                zxpand->SetSDCardPath();
         }
 }
 

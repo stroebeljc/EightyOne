@@ -250,6 +250,7 @@ void spec_load_z80(char *fname)
         unsigned char *buf;
         int z80version;
         int speccy;
+        int headerSize=0;
 
         InitialiseSpectra();
         HW->ColourBox->ItemIndex = COLOURDISABLED;
@@ -268,7 +269,8 @@ void spec_load_z80(char *fname)
         if (buf[12]==255) buf[12]=1;
         if ((buf[6]==0) && (buf[7]==0))
         {
-                if (buf[30]==23) z80version=2;
+                headerSize=buf[30]+256*buf[31];
+                if (headerSize==23) z80version=2;
                 else z80version=3;
         }
 
@@ -431,8 +433,7 @@ void spec_load_z80(char *fname)
                 int page, len;
               
                 ptr = buf+32;
-                int h2len = buf[30] + (buf[31] << 8);
-                ptr += h2len;
+                ptr += headerSize;
 
                 while(ptr < (buf+FileLen))
                 {
@@ -535,7 +536,7 @@ void spec_load_z80(char *fname)
                         Sound.AYRegisterStore[i] = buf[39 + i]; // AY registers
                 }
 
-                SPECLast1ffd = buf[86];
+                if (headerSize==55) SPECLast1ffd = buf[86];
 
                 bool spectraPresent = (buf[37] & 0x08);
                 if (spectraPresent)
@@ -577,7 +578,7 @@ void spec_load_z80(char *fname)
         z80.pc.w=(WORD)(buf[32]+ 256*buf[33]);
         if (speccy==SPECCYTC2048 || speccy==SPECCYTS2068 || speccy==SPECCYTC2068)
                 spec48_writeport(0xff,buf[36], &i);
-        spec48_writeport(0x7ffd,buf[35], &i);
+        if (speccy>=SPECCY128) spec48_writeport(0x7ffd,buf[35], &i);
 
         fts=17471 - (buf[55] | (buf[56]<<8));
         fts = (((buf[57]+1)&3)<<16) | fts;

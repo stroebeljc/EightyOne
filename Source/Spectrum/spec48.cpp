@@ -1881,6 +1881,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 {
                                         RZXCounter=rzx_counter;
                                         IntPending=4;
+                                        if (!z80.iff1)
+                                                IntPending=-1;
                                         if (RZXCounter<=4)
                                                 rzxInterruptRetrig=1;
                                 }
@@ -1892,9 +1894,14 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 if (!insertWaitsWhileSP0256Busy)
                 {
                         z80_databus(idleDataBus);
-                        if (!RZXModePlay() || RZXCounter>0)
+                        if (!RZXModePlay())
                         {
-                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),RZXModePlay());
+                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),0);
+                                ts=z80_do_opcode();
+                        }
+                        else if (RZXCounter>0)
+                        {
+                                if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),1);
                                 ts=z80_do_opcode();
                         }
                         else if (rzxInterruptRetrig)

@@ -675,22 +675,22 @@ void __fastcall TForm1::LoadSnapshot1Click(TObject *Sender)
         emulation_stop=1;
         Sound.InitDevices();
 
-        if (BasicLister->ListerAvailable())
-        {
-                BasicLister->Clear();
-        }
-
         if (HistoryBox->Visible)
         {
                 HistoryBox->ToolButtonClearClick(NULL);
         }
 
         rzx_close();
-        
+
         if ((Ext == ".Z81") || (Ext == ".ACE")) load_snap(Path.c_str());
         if (Ext == ".Z80") spec_load_z80(Path.c_str());
         if (Ext == ".SNA") spec_load_sna(Path.c_str());
         emulation_stop=stopped;
+
+        if (BasicLister->ListerAvailable())
+        {
+                BasicLister->Refresh(false);
+        }
 
         Dbg->UpdateVals();
 }

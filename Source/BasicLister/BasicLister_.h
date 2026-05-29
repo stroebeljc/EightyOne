@@ -31,11 +31,16 @@
 #include <ToolWin.hpp>
 #include <Dialogs.hpp>
 #include <IniFiles.hpp>
+#include <SyncObjs.hpp>
 
 #include <string>
 #include <vector>
 
 //---------------------------------------------------------------------------
+
+#define WM_STATUSBAR (WM_USER+1)
+#define WM_SCROLLBAR (WM_USER+2)
+
 class TBasicLister : public TForm
 {
 __published:	// IDE-managed Components
@@ -87,7 +92,8 @@ private:	// User declarations
         bool mLimitLineLengths;
         bool mOutputFullWidthLineNumbers;
         int mScaling;
-        double mRelativePos;
+        int mRelativePos;
+        TCriticalSection *mRefreshLock;
 
         void ClearBitmap();
         void ConstructBitmap();
@@ -104,8 +110,6 @@ private:	// User declarations
         void DisableButtons();
         void EnableButtons();
         void SaveListingToFile();
-        void ConfigureScrollBar();
-        void ConfigureStatusBar();
         int FindLineIndex(int lineNumber);
         int FindLineDisplayedOnRow(int row);
         COLORREF GetHighlightColour();
@@ -124,6 +128,14 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);
         virtual __fastcall ~TBasicLister();
+        void __fastcall WMUpdateStatusBar(TMessage &Message);
+        void __fastcall WMUpdateScrollBar(TMessage &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_STATUSBAR, TMessage, WMUpdateStatusBar)
+   MESSAGE_HANDLER(WM_SCROLLBAR, TMessage, WMUpdateScrollBar)
+ END_MESSAGE_MAP(TForm)
+
         void SetBasicLister(IBasicLister* basicLister);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);

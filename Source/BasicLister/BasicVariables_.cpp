@@ -77,7 +77,6 @@ void TBasicVariables::Clear()
         if (mVariables->size()==0) return;
         mVariables->clear();
 
-        SizeWindow();
         ClearBitmap();
         Invalidate();
 }
@@ -109,7 +108,7 @@ void TBasicVariables::ClearBitmap()
         ReleaseDC(mHWND,hdc);
 }
 
-void TBasicVariables::ConfigureScrollBar()
+void __fastcall TBasicVariables::WMUpdateScrollBar(TMessage &Message)
 {
         ScrollBar->Min = 0;
         mVariablesDisplayRows = mBasicLister != NULL ? mBasicLister->GetVariablesRows() : 0;
@@ -128,9 +127,11 @@ void TBasicVariables::ConfigureScrollBar()
         ScrollBar->Position = 1;
         ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
         ScrollBar->Enabled = scrollable;
+
+        Invalidate();
 }
 
-void TBasicVariables::ConfigureStatusBar()
+void __fastcall TBasicVariables::WMUpdateStatusBar(TMessage &Message)
 {
         AnsiString variableDetails;
 
@@ -151,6 +152,9 @@ void TBasicVariables::ConfigureStatusBar()
 
         StatusBar->Panels->Items[PanelVariables]->Text = variableDetails;
         StatusBar->Panels->Items[PanelVariableInfo]->Text = "";
+
+        SizeWindow();
+        Invalidate();
 }
 
 int TBasicVariables::TotalVariablesSize()
@@ -251,8 +255,6 @@ void TBasicVariables::ConstructBitmap()
         {
             ::DeleteObject(mBitmap);
         }
-
-        SizeWindow();
 
         HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
@@ -396,8 +398,9 @@ void __fastcall TBasicVariables::FormPaint(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void TBasicVariables::Refresh(bool onLineExec)
+void TBasicVariables::Refresh()
 {
+        static unsigned int lastSize=0;
         if (!Visible) return;
 
         if (mBasicLister != NULL)
@@ -406,14 +409,13 @@ void TBasicVariables::Refresh(bool onLineExec)
                 ConstructBitmap();
         }
 
-        ConfigureStatusBar();
-        
-        if (!onLineExec)
+        if (lastSize!=mVariables->size())
         {
-                ConfigureScrollBar();
+                PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
         }
 
-        Invalidate();
+        PostMessage(mHWND, WM_STATUSBAR, 0, 0);
+        lastSize=mVariables->size();
 }
 
 void TBasicVariables::SaveSettings(TIniFile *ini)

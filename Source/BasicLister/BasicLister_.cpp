@@ -492,9 +492,7 @@ int TBasicLister::HandleRefreshThreadProc(void *param)
         self->mRefreshLock->Acquire();
         try {
 
-                self->DisableButtons();
                 self->HandleRefresh();
-                self->EnableButtons();
         } __finally {
                 self->mRefreshLock->Release();
         }
@@ -506,17 +504,18 @@ void TBasicLister::HandleRefresh(void)
         LoadProgram(false);
         BreakPointEntry(mLastBreakPointIndex);
 
-        ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
+        PostMessage(mHWND, WM_SCROLLBAR, mRelativePos, 0);
 
-        BasicVariables->Refresh(false);
+        BasicVariables->Refresh();
 }
 
 void TBasicLister::Refresh(bool keepScrollbarPosition)
 {
         double relativePos = ScrollBar->Max > 0 ? (double)ScrollBar->Position / ScrollBar->Max : 0;
 
-        mRelativePos = keepScrollbarPosition ? relativePos : 0;
+        mRelativePos = (keepScrollbarPosition ? relativePos : 0)*1000;
 
+        DisableButtons();
         Form1->ThreadPool.EnqueueTask(new TTask(HandleRefreshThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
@@ -525,9 +524,7 @@ int TBasicLister::HandleClearThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
 
-        self->DisableButtons();
         self->HandleClear();
-        self->EnableButtons();
         return 0;
 }
 
@@ -536,15 +533,18 @@ void TBasicLister::HandleClear(void)
         mLines->clear();
 
         ClearBitmap();
-        ConfigureStatusBar();
-        ConfigureScrollBar();
-        Invalidate();
+        PostMessage(mHWND, WM_STATUSBAR, 0, 0);
+        PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
 }
 
 void TBasicLister::Clear()
 {
         // Only clear if there are lines to clear
-        if (mLines->size()>0) Form1->ThreadPool.EnqueueTask(new TTask(HandleClearThreadProc, (void *)this));
+        if (mLines->size()>0)
+        {
+                DisableButtons();
+                Form1->ThreadPool.EnqueueTask(new TTask(HandleClearThreadProc, (void *)this));
+        }
 
         BasicVariables->Clear();
 }
@@ -560,34 +560,35 @@ void TBasicLister::LoadProgram(bool keepEntries)
                 ConstructBitmap();
         }
 
-        ConfigureStatusBar();
-        ConfigureScrollBar();
-
-        Invalidate();
+        PostMessage(mHWND, WM_STATUSBAR, 0, 0);
 }
 
-void TBasicLister::ConfigureScrollBar()
+void __fastcall TBasicLister::WMUpdateScrollBar(TMessage &Message)
 {
-        ScrollBar->Min = 0;
-        mProgramDisplayRows = mBasicLister != NULL ? mBasicLister->GetProgramRows() : 0;
-        bool scrollable = (mProgramDisplayRows > DisplayableRows);
-        if (scrollable)
+        if (Message.WParam==0)
         {
-                ScrollBar->Max = mProgramDisplayRows - DisplayableRows;
+                ScrollBar->Min = 0;
+                mProgramDisplayRows = mBasicLister != NULL ? mBasicLister->GetProgramRows() : 0;
+                bool scrollable = (mProgramDisplayRows > DisplayableRows);
+                if (scrollable)
+                        ScrollBar->Max = mProgramDisplayRows - DisplayableRows;
+                else
+                        ScrollBar->Max = mProgramDisplayRows;
+
+                ScrollBar->SmallChange = 1;
+                ScrollBar->LargeChange = DisplayableRows;
+                ScrollBar->Position = 1;
+                ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
+                ScrollBar->Enabled = scrollable;
         }
         else
-        {
-                ScrollBar->Max = mProgramDisplayRows;
-        }
+                ScrollBar->Position = (int)(ceil((Message.WParam/1000.0) * ScrollBar->Max));
 
-        ScrollBar->SmallChange = 1;
-        ScrollBar->LargeChange = DisplayableRows;
-        ScrollBar->Position = 1;
-        ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
-        ScrollBar->Enabled = scrollable;
+        Invalidate();
+        EnableButtons();
 }
 
-void TBasicLister::ConfigureStatusBar()
+void __fastcall TBasicLister::WMUpdateStatusBar(TMessage &Message)
 {
         AnsiString programDetails;
 
@@ -608,6 +609,9 @@ void TBasicLister::ConfigureStatusBar()
 
         StatusBar->Panels->Items[PanelLines]->Text = programDetails;
         StatusBar->Panels->Items[PanelLineInfo]->Text = "";
+
+        Invalidate();
+        EnableButtons();
 }
 
 void TBasicLister::DisableButtons()
@@ -682,9 +686,7 @@ int TBasicLister::HandleMouseDownThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
 
-        self->DisableButtons();
         self->HandleMouseDown();
-        self->EnableButtons();
         return 0;
 }
 
@@ -758,6 +760,7 @@ void __fastcall TBasicLister::FormClose(TObject *Sender,
 
 void __fastcall TBasicLister::ToolButtonSaveClick(TObject *Sender)
 {
+        DisableButtons();
         Form1->ThreadPool.EnqueueTask(new TTask(HandleSaveListingToFileThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------
@@ -766,9 +769,8 @@ int TBasicLister::HandleSaveListingToFileThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
 
-        self->DisableButtons();
         self->SaveListingToFile();
-        self->EnableButtons();
+        PostMessage(self->mHWND, WM_STATUSBAR, 0, 0);
         return 0;
 }
 
@@ -885,16 +887,14 @@ void TBasicLister::BreakAtNextBasicLine()
 void TBasicLister::CheckUpdate(int pc)
 {
         if (pc == BasicLineExecuteStartAddress())
-                BasicVariables->Refresh(true);
+                BasicVariables->Refresh();
 }
 
 int TBasicLister::HandleLineEndsThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);
 
-        self->DisableButtons();
         self->HandleLineEnds();
-        self->EnableButtons();
         return 0;
 }
 
@@ -903,14 +903,16 @@ void TBasicLister::HandleLineEnds(void)
         LoadProgram(true);
         
         HighlightEntry(mLastHighlightedEntryIndex);
-        
-        ScrollBar->Position = (int)(ceil(mRelativePos * ScrollBar->Max));
+        BreakPointEntry(mLastBreakPointIndex);
+
+        PostMessage(mHWND, WM_STATUSBAR, 0, 0);
 }
 
 void __fastcall TBasicLister::ToolButtonLineEndsClick(TObject *Sender)
 {
         ToolButtonLineEnds->Down = !ToolButtonLineEnds->Down;
 
+        DisableButtons();
         Form1->ThreadPool.EnqueueTask(new TTask(HandleLineEndsThreadProc, (void *)this));
 }
 //---------------------------------------------------------------------------

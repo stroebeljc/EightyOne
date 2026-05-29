@@ -12,6 +12,8 @@
 #include <ComCtrls.hpp>
 //---------------------------------------------------------------------------
 
+#define WM_STATUSBAR (WM_USER+1)
+#define WM_SCROLLBAR (WM_USER+2)
 
 class TBasicVariables : public TForm
 {
@@ -52,20 +54,25 @@ private:	// User declarations
         void HighlightEntry(int index);
         int FindVariableDisplayedOnRow(int row);
         int FindHighlightedVariableIndex();
-        void ConfigureScrollBar();
-        void ConfigureStatusBar();
         int TotalVariablesSize();
         int SingleVariableSize(int index);
 
 public:		// User declarations
         __fastcall TBasicVariables(TComponent* Owner);
         virtual __fastcall ~TBasicVariables();
+        void __fastcall WMUpdateStatusBar(TMessage &Message);
+        void __fastcall WMUpdateScrollBar(TMessage &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_STATUSBAR, TMessage, WMUpdateStatusBar)
+   MESSAGE_HANDLER(WM_SCROLLBAR, TMessage, WMUpdateScrollBar)
+ END_MESSAGE_MAP(TForm)
 
         void __fastcall SetLister(IBasicLister *lister);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
-        void Refresh(bool onLineExec);
-        void Clear();
+        void Refresh(void);
+        void Clear(void);
         void ShowScale(int scale);
 };
 //---------------------------------------------------------------------------

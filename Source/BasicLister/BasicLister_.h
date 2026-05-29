@@ -41,6 +41,9 @@
 
 //---------------------------------------------------------------------------
 
+#define WM_STATUSBAR (WM_USER+1)
+#define WM_SCROLLBAR (WM_USER+2)
+
 enum LineMode
 {
         HIGHLIGHT,
@@ -135,7 +138,7 @@ private:	// User declarations
         bool mLimitLineLengths;
         bool mOutputFullWidthLineNumbers;
         int mScaling;
-        double mRelativePos;
+        int mRelativePos;
         int mToolbarHeight;
         bool mHasDebug;
         TCriticalSection *mRefreshLock;
@@ -159,8 +162,6 @@ private:	// User declarations
         void DisableButtons();
         void EnableButtons();
         void SaveListingToFile();
-        void ConfigureScrollBar();
-        void ConfigureStatusBar();
         int FindLineIndex(int lineNumber);
         int FindLineDisplayedOnRow(int row);
         COLORREF GetHighlightColour();
@@ -181,6 +182,13 @@ private:	// User declarations
 public:		// User declarations
         __fastcall TBasicLister(TComponent* Owner);
         virtual __fastcall ~TBasicLister();
+        void __fastcall WMUpdateStatusBar(TMessage &Message);
+        void __fastcall WMUpdateScrollBar(TMessage &Message);
+
+ BEGIN_MESSAGE_MAP
+   MESSAGE_HANDLER(WM_STATUSBAR, TMessage, WMUpdateStatusBar)
+   MESSAGE_HANDLER(WM_SCROLLBAR, TMessage, WMUpdateScrollBar)
+ END_MESSAGE_MAP(TForm)
 
         void SetBasicLister(IBasicLister* basicLister, bool exiting = false);
         void SaveSettings(TIniFile* ini);

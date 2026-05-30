@@ -1860,7 +1860,7 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                 {
                                         RZXCounter=rzx_counter;
                                         IntPending=4;
-                                        if (!z80.iff1)
+                                        if (!z80.iff1 || RZXFrameCount==1)
                                                 IntPending=-1;
                                         if (RZXCounter<=4)
                                                 rzxInterruptRetrig=1;

@@ -1760,7 +1760,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
         static int shift_register;
         static int clean_exit=1;
         static int IntPending=0;
-        static int rzxInterruptRetrig=0;
         int attr, attr2, b1, b2;
         int MaxScanLen;
         int PrevBit=0, PrevGhost=0;
@@ -1849,12 +1848,8 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if (RZXModePlay())
                         {
                                 rzx_u16 rzx_counter;
-                                int rzx_update_result;
-                                do
-                                {
-                                        rzx_update_result=rzx_update(&rzx_counter);
-                                        RZXFrameCount++;
-                                } while (rzx_counter==0 && rzx_update_result==RZX_OK);
+                                int rzx_update_result=rzx_update(&rzx_counter);
+                                RZXFrameCount++;
 
                                 if (rzx_update_result==RZX_OK)
                                 {
@@ -1862,8 +1857,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                                         IntPending=4;
                                         if (!z80.iff1 || RZXFrameCount==1)
                                                 IntPending=-1;
-                                        if (RZXCounter<=4)
-                                                rzxInterruptRetrig=1;
                                 }
                                 else
                                         emulation_stop=1;
@@ -1882,12 +1875,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         {
                                 if (!(TIMEXByte&64)) z80_interrupt(!(IntPending>=0),1);
                                 ts=z80_do_opcode();
-                        }
-                        else if (rzxInterruptRetrig)
-                        {
-                                IntDue=1;
-                                rzxInterruptRetrig=0;
-                                ts=0;
                         }
                         else
                         {

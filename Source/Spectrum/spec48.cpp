@@ -391,23 +391,11 @@ void spec48_initialise()
 
         for(i=0;i<192;i++)
         {
-                if (spectrum.model == SPECCYPLUS2A || spectrum.model == SPECCYPLUS3)
+                delay=6;
+                for(j=0;j<128;j++)
                 {
-                        delay=1;
-                        for(j=0;j<128;j++)
-                        {
-                                if (delay>0) ContendArray[pos+j]=(BYTE)delay;
-                                if (--delay<0) delay=7;
-                        }
-                }
-                else
-                {
-                        delay=6;
-                        for(j=0;j<128;j++)
-                        {
-                                if (delay>0) ContendArray[pos+j]=(BYTE)delay;
-                                if (--delay==-2) delay=6;
-                        }
+                        if (delay>0) ContendArray[pos+j]=(BYTE)delay;
+                        if (--delay==-2) delay=6;
                 }
 
                 pos += machine.tperscanline;
@@ -1366,23 +1354,14 @@ void spec48_writeport(int Address, int Data, int *tstates)
 
 int spec48_contend(int Address, int states, int time)
 {
-        if ((Address>=0x4000 && Address<0x8000) ||
-            (Address>=0xC000 && emulator.machine == MACHINESPECTRUM &&
-             ((spectrum.model >= SPECCY128 && spectrum.model <= SPECCYPLUS2 && (SPECBlk[3]&1)) ||
-              (spectrum.model >= SPECCYPLUS2A && SPECBlk[3] >= 4+4))))
-        {
-                time += ContendArray[ContendCounter+states+time];
-        }
+        if (Address>=16384 && Address<=32768) time += ContendArray[ContendCounter+states+time];
         return(time);
 }
 
 int spec48_contendio(int Address, int states, int time)
 {
-        if (!(Address&1) || (Address>=0x4000 && Address<0x8000))
-        {
+        if (!(Address&1) || (Address>=16384 && Address<=32768))
                 time += ContendArray[ContendCounter+states+time];
-        }
-
         return(time);
 
 /*
@@ -2008,8 +1987,6 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                 {
                         int colour, altcolour;
                         delay--;
-                        if (ContendCounter>machine.tperframe)
-                                ContendCounter-=machine.tperframe;
 
                         if (TIMEXMode&4) SPECBorder=8+((~TIMEXColour)&7);
                         else if (((CurScanLine->scanline_len-10)%16)==0)

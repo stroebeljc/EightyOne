@@ -17,8 +17,11 @@ void __fastcall TWorkerThread::Execute() {
             if (Task != NULL) {
                 // Execute the task (cast to your specific function/object)
                 // e.g., ((TMyTask*)Task)->Execute();
-                ((TTask*)Task)->Execute();
-                delete Task;
+                try {
+                        ((TTask*)Task)->Execute();
+                } __finally {
+                        delete Task;
+                }
             }
         }
     }

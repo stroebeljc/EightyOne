@@ -158,6 +158,7 @@ COLORREF spec128BasicLister::GetInkColour()
 {
         int bright = (mBrightValue != 0) ? 8 : 0;
         COLORREF ink = mInverseValue ? mColours[mPaperValue + bright] : mColours[mInkValue + bright];
+        if (mPaperValue==mInkValue) ink=mColours[(~mPaperValue)&7 + bright];
         return ink;
 }
 

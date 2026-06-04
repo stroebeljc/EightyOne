@@ -308,13 +308,13 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
         varInfo.address = *address;
 
         const int EndOfVariablesMarker = 0x80;
-        int typeByte = ReadByte((*address)++);
+        unsigned char typeByte = ReadByte((*address)++);
         if (typeByte == EndOfVariablesMarker)
         {
                 return false;
         }
 
-        varInfo.type = TranslateVariableType((unsigned char)(typeByte & 0xE0));
+        varInfo.type = TranslateVariableType(typeByte);
         unsigned char letter;
         int size;
         switch (varInfo.type)
@@ -333,7 +333,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
                 {
                         letter = ReadByte((*address)++);
                         varInfo.nameSize++;
-                } while (!(letter & 0xC0));
+                } while (!DetectLastLetter(letter));
                 varInfo.addressContent = *address;
                 varInfo.overheadLength = 0;
                 varInfo.contentLength = mEmbeddedNumberSize;

@@ -109,6 +109,8 @@ protected:
         static const int CharacterArray = 6;
         static const int ZX80String = 7;
         static const int ZX80Array = 8;
+        static const int SpecSimpleString = 9;
+        static const int SpecCharacterArray = 10;
 
         virtual std::string GetKeywords() { return std::string(""); }
         virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }
@@ -171,8 +173,10 @@ public:
         virtual int GetBasicLineExecuteStartAddress() { return 65535; }
         virtual int GetNextBasicLineNumber() { return 65535; }
         virtual bool BasicDebugSupported() { return false; }
+        virtual bool BasicVariablesSupported() { return false; }
         virtual int GetVariablesStartAddress() { return 65535; }
         virtual int GetForVariableLength() { return 17; }
+        virtual bool DetectLastLetter(unsigned char letter) { return (letter & 0xC0); }
 };
 
 #endif

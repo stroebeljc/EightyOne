@@ -97,22 +97,30 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
         {
                 mBasicLister->CopyCsetImage();
                 mHasDebug = mBasicLister->BasicDebugSupported();
-                if (mHasDebug)
+                bool hasVariables = mBasicLister->BasicVariablesSupported();
+                bool hasExtras = mHasDebug || hasVariables;
+
+                DebugControls->Visible = false;
+                DebugControls->Enabled = false;
+                ToolButtonRunStop->Enabled = false;
+                Variables->Enabled = false;
+                BasicVariables->Close();
+
+                if (hasExtras)
                 {
                         DebugControls->Visible = true;
                         DebugControls->Enabled = true;
+                }
+
+                if (mHasDebug)
+                {
                         ToolButtonRunStop->Enabled = true;
+                }
+
+                if (hasVariables)
+                {
                         Variables->Enabled = true;
                         if (Form1->BasicListerOption->Checked && Variables->Down) BasicVariables->ShowScale(mScaling);
-                }
-                else
-                {
-                        DebugControls->Visible = false;
-                        DebugControls->Enabled = false;
-                        ToolButtonRunStop->Enabled = false;
-                        Variables->Enabled = false;
-                        Variables->Down = false;
-                        BasicVariables->Close();
                 }
 
 
@@ -120,7 +128,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
                 mBasicLister->SetLines(mLines);
                 mBasicLister->SetBpEnabledBitmap(BpEnabledImg->Picture->Bitmap);
                 mBasicLister->SetBpDisabledBitmap(BpDisabledImg->Picture->Bitmap);
-                mToolbarHeight = ToolBar->Height + (mHasDebug ? DebugControls->Height: 0);
+                mToolbarHeight = ToolBar->Height + (hasExtras ? DebugControls->Height: 0);
                 SizeWindow();
         }
         else

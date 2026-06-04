@@ -156,10 +156,15 @@ int zx81BasicLister::GetBasicLineExecuteStartAddress()
 int zx81BasicLister::GetNextBasicLineNumber()
 {
         const int ppc = 16391;
-        return getbyte(ppc) + (getbyte(ppc + 1) << 8);
+        return ReadByte(ppc) + (ReadByte(ppc + 1) << 8);
 }
 
 bool zx81BasicLister::BasicDebugSupported()
+{
+        return true;
+}
+
+bool zx81BasicLister::BasicVariablesSupported()
 {
         return true;
 }
@@ -276,6 +281,7 @@ bool zx81BasicLister::ZxTokenSupported()
 
 int zx81BasicLister::TranslateVariableType(unsigned char code)
 {
+        code&=0xE0;
         switch (code)
         {
         case 0x60:
@@ -303,7 +309,7 @@ int zx81BasicLister::GetForVariableLength()
 int zx81BasicLister::GetVariablesStartAddress()
 {
         const int vars = 16400;
-        return getbyte(vars) + (getbyte(vars + 1) << 8);
+        return ReadByte(vars) + (ReadByte(vars + 1) << 8);
 }
 
 
@@ -337,11 +343,11 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
 
 double zx81BasicLister::ConvertZXNumberToDouble(int* address)
 {
-        unsigned char exponent = getbyte((*address)++);
-        unsigned char mantissa0 = getbyte((*address)++);
-        unsigned char mantissa1 = getbyte((*address)++);
-        unsigned char mantissa2 = getbyte((*address)++);
-        unsigned char mantissa3 = getbyte((*address)++);
+        unsigned char exponent = ReadByte((*address)++);
+        unsigned char mantissa0 = ReadByte((*address)++);
+        unsigned char mantissa1 = ReadByte((*address)++);
+        unsigned char mantissa2 = ReadByte((*address)++);
+        unsigned char mantissa3 = ReadByte((*address)++);
         if (exponent + mantissa0 + mantissa1 + mantissa2 + mantissa3 == 0) return 0;
         double signMultiplier = ((mantissa0 & 0x80) != 0) ? -1.0 : 1.0;
         double mantissaSum = (mantissa0 | 0x80)/256.0 + mantissa1/65536.0 + mantissa2/16777216.0 + mantissa3/4294967296.0;

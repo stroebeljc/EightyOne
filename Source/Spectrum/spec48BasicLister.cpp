@@ -195,3 +195,77 @@ bool spec48BasicLister::RequiresInitialSpace()
         return false;
 }
 
+bool spec48BasicLister::BasicVariablesSupported()
+{
+        return true;
+}
+
+int spec48BasicLister::GetVariablesStartAddress()
+{
+        const int vars = 0x5C4B;
+        return ReadByte(vars) + (ReadByte(vars + 1) << 8);
+}
+
+int spec48BasicLister::TranslateVariableType(unsigned char code)
+{
+        if (code >= 0x61 && code <= 0x7A)
+                return SingleNumber;
+        else if (code >= 0xA1 && code <= 0xBA)
+                return MultiNumber;
+        else if (code >= 0x81 && code <= 0x9A)
+                return NumberArray;
+        else if (code >= 0xE1 && code <= 0xFA)
+                return ForNextControl;
+        else if (code >= 0x41 && code <= 0x5A)
+                return SimpleString;
+        else if (code >= 0xC1 && code <= 0xDA)
+                return CharacterArray;
+        else
+                return UnsupportedType;
+}
+
+unsigned char spec48BasicLister::ConvertVariableNameCode(unsigned char code, bool first)
+{
+        unsigned char retVal = (unsigned char)((code & 0x1F) + 0x60);
+        return retVal;
+}
+
+int spec48BasicLister::GetForVariableLength()
+{
+        return 18;
+}
+
+bool spec48BasicLister::DetectLastLetter(unsigned char letter)
+{
+        return (letter & 0x80);
+}
+
+unsigned char spec48BasicLister::LowerCaseConvert(unsigned char code)
+{
+        return (unsigned char)((code & 0x7F) + 0x20);
+}
+
+double spec48BasicLister::ConvertZXNumberToDouble(int* address)
+{
+        unsigned char exponent = ReadByte((*address)++);
+        if (exponent!=0)
+        {
+                unsigned char mantissa0 = ReadByte((*address)++);
+                unsigned char mantissa1 = ReadByte((*address)++);
+                unsigned char mantissa2 = ReadByte((*address)++);
+                unsigned char mantissa3 = ReadByte((*address)++);
+                if (exponent + mantissa0 + mantissa1 + mantissa2 + mantissa3 == 0) return 0;
+                double signMultiplier = ((mantissa0 & 0x80) != 0) ? -1.0 : 1.0;
+                double mantissaSum = (mantissa0 | 0x80)/256.0 + mantissa1/65536.0 + mantissa2/16777216.0 + mantissa3/4294967296.0;
+                double absRawResult = pow(2.0,exponent-128) * mantissaSum;
+                int sigfigs = 8-(1+int(log10(absRawResult)));
+                return int(pow(10.0,sigfigs) * absRawResult + 0.5)/pow(10.0,sigfigs) * signMultiplier;
+        }
+        else
+        {
+                int sign = ReadByte((*address)++) ? -1 : 1;
+                int word = ReadByte((*address)++) + 256*ReadByte((*address)++);
+                (*address)++;
+                return sign * word;
+        }
+}

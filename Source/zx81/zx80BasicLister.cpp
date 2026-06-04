@@ -176,10 +176,15 @@ int zx80BasicLister::GetBasicLineExecuteStartAddress()
 int zx80BasicLister::GetNextBasicLineNumber()
 {
         const int ppc = 16386;
-        return getbyte(ppc) + (getbyte(ppc + 1) << 8);
+        return ReadByte(ppc) + (ReadByte(ppc + 1) << 8);
 }
 
 bool zx80BasicLister::BasicDebugSupported()
+{
+        return true;
+}
+
+bool zx80BasicLister::BasicVariablesSupported()
 {
         return true;
 }
@@ -375,11 +380,12 @@ int zx80BasicLister::GetForVariableLength()
 int zx80BasicLister::GetVariablesStartAddress()
 {
         const int vars = 16392;
-        return getbyte(vars) + (getbyte(vars + 1) << 8);
+        return ReadByte(vars) + (ReadByte(vars + 1) << 8);
 }
 
 int zx80BasicLister::TranslateVariableType(unsigned char code)
 {
+        code&=0xE0;
         switch (code)
         {
         case 0x60:
@@ -431,5 +437,5 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
 
 double zx80BasicLister::ConvertZXNumberToDouble(int* address)
 {
-        return (signed short)(getbyte((*address)++) + 256*getbyte((*address)++));
+        return (signed short)(ReadByte((*address)++) + 256*ReadByte((*address)++));
 }

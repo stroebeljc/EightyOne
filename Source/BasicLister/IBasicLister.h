@@ -57,10 +57,10 @@ private:
         int mScaling;
         Graphics::TBitmap *mCset;
 
-        void RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
-        void RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
-        void RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
-        void RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
+        bool RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
+        bool RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
+        bool RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace);
+        bool RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c);
         bool RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem);
         AnsiString FormatLineNumber(int lineNumber, bool outputFullWidthLineNumbers = false);
         COLORREF GetBackgroundColour();
@@ -73,7 +73,7 @@ public:
         void ExtractProgramDetails();
         int GetProgramRows();
         void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        void RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
+        bool RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
         void CopyCsetImage();

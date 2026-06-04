@@ -239,10 +239,11 @@ void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool
         DeleteObject(hBrush);
 }
 
-void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling)
+bool IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling)
 {
+        bool retVal = true;
         mScaling = scaling;
-        if (!mCset) return;
+        if (!mCset) return retVal;
 
         int yOffset = 0;
 
@@ -257,11 +258,16 @@ void IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLi
         for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
         {
                 LineInfo lineInfo = *it;
-                RenderLine(hdc, cshdc, yOffset, lineInfo);
+                if (!RenderLine(hdc, cshdc, yOffset, lineInfo)) {
+                        retVal = false;
+                        break;
+                }
         }
 
         SelectObject(cshdc, oldBitmap);
         DeleteDC(cshdc);
+
+        return retVal;
 }
 
 COLORREF IBasicLister::GetBackgroundColour()
@@ -269,17 +275,17 @@ COLORREF IBasicLister::GetBackgroundColour()
         return RGB(132, 130, 132);
 }
 
-void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
+bool IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
 {
         int x = 0;
 
         int lineNumber = lineInfo.lineNumber;
 
-        RenderLineNumber(hdc, cshdc, x, y, lineNumber);
+        if (!RenderLineNumber(hdc, cshdc, x, y, lineNumber)) return false;
         bool requiresInitialSpace = RequiresInitialSpace();
         if (requiresInitialSpace)
         {
-                RenderCharacter(hdc, cshdc, x, y, ConvertToZXCode(' '));
+                if (!RenderCharacter(hdc, cshdc, x, y, ConvertToZXCode(' '))) return false;
         }
 
         int address = lineInfo.addressContent;
@@ -288,7 +294,7 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
 
         do
         {
-                RenderToken(hdc, cshdc, address, x, y, lengthRemaining, lastKeywordEndedWithSpace);
+                if (!RenderToken(hdc, cshdc, address, x, y, lengthRemaining, lastKeywordEndedWithSpace)) return false;
         }
         while (lengthRemaining > 0);
 
@@ -297,20 +303,24 @@ void IBasicLister::RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo)
                 x = 0;
                 y++;
         }
+
+        return true;
 }
 
-void IBasicLister::RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber)
+bool IBasicLister::RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber)
 {
         AnsiString formattedLineNumber = FormatLineNumber(lineNumber);
 
         for (signed int i = 2; i <= formattedLineNumber.Length(); i++)
         {
                 unsigned char c = ConvertToZXCode(formattedLineNumber[i]);
-                RenderCharacter(hdc, cshdc, x, y, c);
+                if (!RenderCharacter(hdc, cshdc, x, y, c)) return false;
         }
+
+        return true;
 }
 
-void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace)
+bool IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace)
 {
         unsigned char c = (unsigned char)getbyte(address);
         address++;
@@ -319,7 +329,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
         if (endOfLine && (c == mLineEndingCode))
         {
-                return;
+                return true;
         }
 
         if (mSupportsFloatingPointNumbers && (c == mFloatingPointNumberCode))
@@ -335,7 +345,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                         lengthRemaining = 0;
                 }
                 
-                return;
+                return true;
         }
 
         if (mSupportEmbeddedControlCodes && IsEmbeddedControlCode(c))
@@ -354,7 +364,7 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
                 ProcessControlCode(c, arg1, arg2);
 
-                return;
+                return true;
         }
 
         int length = GetKeywordLength(c);
@@ -375,14 +385,14 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                 {
                         unsigned char code = mKeyword[c].at(i);
                         unsigned char zxCode = ConvertToZXCode(code);
-                        RenderCharacter(hdc, cshdc, x, y, zxCode);
+                        if (!RenderCharacter(hdc, cshdc, x, y, zxCode)) return false;
                 }
 
                 lastKeywordEndedWithSpace = keywordEndsWithSpace;
         }
         else
         {
-                RenderCharacter(hdc, cshdc, x, y, c);
+                if (!RenderCharacter(hdc, cshdc, x, y, c)) return false;
 
                 bool characterIsSpace = (mKeyword[c] == " ");
 
@@ -391,9 +401,11 @@ void IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
                         lastKeywordEndedWithSpace = false;
                 }
         }
+
+        return true;
 }
 
-void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
+bool IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
 {
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
@@ -403,7 +415,8 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
         const int srcH = 8;
         int destW = 8 * mScaling;
         int destH = 8 * mScaling;
-        StretchBlt(hdc, xpos, ypos, destW, destH, cshdc, charX, charY, srcW, srcH, SRCCOPY);
+        bool bltresult = StretchBlt(hdc, xpos, ypos, destW, destH, cshdc, charX, charY, srcW, srcH, SRCCOPY);
+        if (!bltresult) return false;
 
         if (CustomColoursSupported())
         {
@@ -455,6 +468,8 @@ void IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned 
                 x = 0;
                 y++;
         }
+
+        return true;
 }
 
 AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers)

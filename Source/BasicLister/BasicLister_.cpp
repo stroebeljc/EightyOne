@@ -69,6 +69,7 @@ __fastcall TBasicLister::~TBasicLister()
 
 void TBasicLister::SetBasicLister(IBasicLister* basicLister)
 {
+        mRefreshLock->Acquire();
         mLines->clear();
         
         if (mBasicLister != NULL)
@@ -85,6 +86,8 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
                 mBasicLister->SetLines(mLines);
                 SizeWindow();
         }
+
+        mRefreshLock->Release();
 }
 
 bool TBasicLister::ListerAvailable()
@@ -388,11 +391,14 @@ int TBasicLister::HandleClearThreadProc(void *param)
 
 void TBasicLister::HandleClear(void)
 {
+        mRefreshLock->Acquire();
         mLines->clear();
 
         ClearBitmap();
         PostMessage(mHWND, WM_STATUSBAR, 0, 0);
         PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
+
+        mRefreshLock->Release();
 }
 
 void TBasicLister::Clear()

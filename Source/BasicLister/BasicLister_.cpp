@@ -82,15 +82,17 @@ __fastcall TBasicLister::~TBasicLister()
 
 void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
 {
+        IBasicLister::StopRefresh();
+        mRefreshLock->Acquire();
         mLines->clear();
-        
+
         if (mBasicLister != NULL)
         {
                 delete mBasicLister;
         }
 
         mBasicLister = basicLister;
-        
+
         if (mBasicLister != NULL)
         {
                 mBasicLister->CopyCsetImage();
@@ -134,6 +136,9 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister, bool exiting)
         StepBasic->Enabled = false;
 
         if (!exiting) BasicVariables->SetLister(mBasicLister);
+
+        mRefreshLock->Release();
+        IBasicLister::GoRefresh();
 }
 
 bool TBasicLister::ListerAvailable()
@@ -469,7 +474,7 @@ void __fastcall TBasicLister::FormShow(TObject *Sender)
 {
         GetSaveOptions();
         SizeWindow();
-        Refresh(false);
+        //Refresh(false);
 }
 //---------------------------------------------------------------------------
 
@@ -530,11 +535,16 @@ int TBasicLister::HandleClearThreadProc(void *param)
 
 void TBasicLister::HandleClear(void)
 {
+        IBasicLister::StopRefresh();
+        mRefreshLock->Acquire();
         mLines->clear();
 
         ClearBitmap();
         PostMessage(mHWND, WM_STATUSBAR, 0, 0);
         PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
+
+        mRefreshLock->Release();
+        IBasicLister::GoRefresh();
 }
 
 void TBasicLister::Clear()

@@ -16,8 +16,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "spec48BasicLister.h"
 #include "spec128BasicLister.h"
 #include "zx81config.h"
+#include "spec48.h"
 
 // The following embedded codes are not supported:
 // AT
@@ -28,24 +30,7 @@
 
 spec128BasicLister::spec128BasicLister()
 {
-        InitialiseColours();
-
-        mColours[0] = RGB(0, 0, 0);
-        mColours[1] = RGB(0, 0, 206);
-        mColours[2] = RGB(206, 0, 0);
-        mColours[3] = RGB(206, 0, 206);
-        mColours[4] = RGB(0, 206, 0);
-        mColours[5] = RGB(0, 206, 206);
-        mColours[6] = RGB(206, 206, 0);
-        mColours[7] = RGB(206, 206, 206);
-        mColours[8] = RGB(0, 0, 0);
-        mColours[9] = RGB(0, 0, 255);
-        mColours[10] = RGB(255, 0, 0);
-        mColours[11] = RGB(255, 0, 255);
-        mColours[12] = RGB(0, 255, 0);
-        mColours[13] = RGB(0, 255, 255);
-        mColours[14] = RGB(255, 255, 0);
-        mColours[15] = RGB(255, 255, 255);}
+}
 
 std::string spec128BasicLister::GetKeywords()
 {
@@ -66,131 +51,17 @@ std::string spec128BasicLister::GetKeywords()
         return keywords;
 }
 
-void spec128BasicLister::InitialiseColours()
+unsigned char spec128BasicLister::ReadByte(int address)
 {
-        mInkValue = 0;
-        mPaperValue = 7;
-        mInverseValue = 0;
-        mBrightValue = 0;
+        int bank;
+        if (address>=0x4000 && address<0x8000)
+                bank = 5+4;
+        else if (address>=0x8000 && address<0xC000)
+                bank = 2+4;
+        else
+                bank = 0+4;
+                
+        return RAMRead(bank,address&0x3FFF);
 }
 
-int spec128BasicLister::GetProgramStartAddress()
-{
-        return getbyte(23635) + (getbyte(23636) << 8);
-}
-
-int spec128BasicLister::GetProgramEndAddress()
-{
-        const int vars = 23627;
-        return getbyte(vars) + (getbyte(vars + 1) << 8);
-}
-
-unsigned char spec128BasicLister::GetFloatingPointNumberCode()
-{
-        return Number;
-}
-
-unsigned char spec128BasicLister::GetLineEndingCode()
-{
-        return Return;
-}
-
-bool spec128BasicLister::SupportEmbeddedControlCodes()
-{
-        return true;
-}
-
-bool spec128BasicLister::IsEmbeddedControlCode(unsigned char code)
-{
-        bool controlCode = false;
-
-        switch (code)
-        {
-                case Ink:
-                case Paper:
-                case Flash:
-                case Bright:
-                case Inverse:
-                case Over:
-                case At:
-                case Tab:
-                        controlCode = true;
-                        break;
-        }
-
-        return controlCode;
-}
-
-int spec128BasicLister::GetEmbeddedControlCodeSize(unsigned char code)
-{
-        return (code == At) ? 2 : 1;
-}
-
-void spec128BasicLister::ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2)
-{
-        switch (code)
-        {
-                case Ink:
-                        if (arg1 <= 7)
-                        {
-                                mInkValue = arg1;
-                        }
-                        break;
-
-                case Paper:
-                        if (arg1 <= 7)
-                        {
-                                mPaperValue = arg1;
-                        }
-                        break;
-
-                case Bright:
-                        mBrightValue = arg1;
-                        break;
-
-                case Inverse:
-                        mInverseValue = arg1;
-                        break;
-        }
-}
-
-COLORREF spec128BasicLister::GetInkColour()
-{
-        int bright = (mBrightValue != 0) ? 8 : 0;
-        COLORREF ink = mInverseValue ? mColours[mPaperValue + bright] : mColours[mInkValue + bright];
-        if (mPaperValue==mInkValue) ink=mColours[(~mPaperValue)&7 + bright];
-        return ink;
-}
-
-COLORREF spec128BasicLister::GetPaperColour()
-{
-        int bright = (mBrightValue != 0) ? 8 : 0;
-        COLORREF paper = mInverseValue ? mColours[mInkValue + bright] : mColours[mPaperValue + bright];
-        return paper;
-}
-
-bool spec128BasicLister::CustomColoursSupported()
-{
-        return true;
-}
-
-COLORREF spec128BasicLister::GetDefaultPaperColour()
-{
-        return mColours[7];
-}
-
-AnsiString spec128BasicLister::GetMachineName()
-{
-        return "Spectrum";
-}
-
-AnsiString spec128BasicLister::GetBasicFileExtension()
-{
-        return "b82";
-}
-
-bool spec128BasicLister::RequiresInitialSpace()
-{
-        return false;
-}
 

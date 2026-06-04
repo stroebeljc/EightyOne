@@ -69,16 +69,17 @@ __fastcall TBasicLister::~TBasicLister()
 
 void TBasicLister::SetBasicLister(IBasicLister* basicLister)
 {
+        IBasicLister::StopRefresh();
         mRefreshLock->Acquire();
         mLines->clear();
-        
+
         if (mBasicLister != NULL)
         {
                 delete mBasicLister;
         }
 
         mBasicLister = basicLister;
-        
+
         if (mBasicLister != NULL)
         {
                 mBasicLister->CopyCsetImage();
@@ -88,6 +89,7 @@ void TBasicLister::SetBasicLister(IBasicLister* basicLister)
         }
 
         mRefreshLock->Release();
+        IBasicLister::GoRefresh();
 }
 
 bool TBasicLister::ListerAvailable()
@@ -391,6 +393,7 @@ int TBasicLister::HandleClearThreadProc(void *param)
 
 void TBasicLister::HandleClear(void)
 {
+        IBasicLister::StopRefresh();
         mRefreshLock->Acquire();
         mLines->clear();
 
@@ -399,6 +402,7 @@ void TBasicLister::HandleClear(void)
         PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
 
         mRefreshLock->Release();
+        IBasicLister::GoRefresh();
 }
 
 void TBasicLister::Clear()

@@ -77,6 +77,8 @@ public:
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
         void CopyCsetImage();
+        static void StopRefresh();
+        static void GoRefresh();
 
         virtual int GetDisplayColumns() { return DisplayColumns; };
         virtual COLORREF GetInkColour() { return RGB(0, 0, 0); }

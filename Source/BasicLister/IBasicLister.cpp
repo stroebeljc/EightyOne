@@ -27,9 +27,21 @@
 
 using namespace std;
 
+static bool RefreshEnabled = true;
+
 IBasicLister::IBasicLister() :
         mProgramDisplayRows(0), mCset(NULL)
 {
+}
+
+void IBasicLister::StopRefresh()
+{
+        RefreshEnabled = false;
+}
+
+void IBasicLister::GoRefresh()
+{
+        RefreshEnabled = true;
 }
 
 void IBasicLister::CopyCsetImage()
@@ -407,6 +419,11 @@ bool IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
 bool IBasicLister::RenderCharacter(HDC hdc, HDC cshdc, int& x, int& y, unsigned char c)
 {
+        if (!RefreshEnabled)
+        {
+                RefreshEnabled = true;
+                return false;
+        }
         int charX = (c % 32) << 3;
         int charY = (c / 32) << 3;
         int xpos = (x << 3) * mScaling;

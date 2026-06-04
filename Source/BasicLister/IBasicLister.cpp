@@ -150,16 +150,16 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         lineInfo.addressContent = lineHeaderLength + lineInfo.address;
 
         const int EndOfBasicMarker = 0x40;
-        int lineNumber = getbyte((*address)++);
+        int lineNumber = ReadByte((*address)++);
         if (lineNumber >= EndOfBasicMarker)
         {
                 return false;
         }
 
-        lineNumber = (lineNumber << 8) + getbyte((*address)++);
+        lineNumber = (lineNumber << 8) + ReadByte((*address)++);
         lineInfo.lineNumber = lineNumber;
 
-        int length = getbyte((*address)++) + (getbyte((*address)++) << 8);
+        int length = ReadByte((*address)++) + (ReadByte((*address)++) << 8);
         if (length < 1)
         {
                 return false;
@@ -177,7 +177,7 @@ bool IBasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         {
                 bool endOfLine = (c == (length - 1));
 
-                unsigned char b = (unsigned char)getbyte((*address)++);
+                unsigned char b = (unsigned char)ReadByte((*address)++);
 
                 if (mSupportsFloatingPointNumbers && (b == mFloatingPointNumberCode))
                 {
@@ -334,7 +334,7 @@ bool IBasicLister::RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int line
 
 bool IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y, int& lengthRemaining, bool& lastKeywordEndedWithSpace)
 {
-        unsigned char c = (unsigned char)getbyte(address);
+        unsigned char c = (unsigned char)ReadByte(address);
         address++;
         lengthRemaining--;
         bool endOfLine = (lengthRemaining <= 0);
@@ -362,14 +362,14 @@ bool IBasicLister::RenderToken(HDC hdc, HDC cshdc, int& address, int& x, int& y,
 
         if (mSupportEmbeddedControlCodes && IsEmbeddedControlCode(c))
         {
-                unsigned char arg1 = (unsigned char)getbyte(address);
+                unsigned char arg1 = (unsigned char)ReadByte(address);
                 address++;
                 lengthRemaining--;
 
                 unsigned char arg2;
                 if (GetEmbeddedControlCodeSize(c) == 2)
                 {
-                        arg2 = (unsigned char)getbyte(address);
+                        arg2 = (unsigned char)ReadByte(address);
                         address++;
                         lengthRemaining--;
                 }
@@ -545,7 +545,7 @@ AnsiString IBasicLister::RenderLineAsText(LineInfo& lineInfo, bool outputRemToke
 
 bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& lastKeywordEndedWithSpace, AnsiString& zxCharacter, bool& outputLineAsControlCodes, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool& withinQuotes, bool& withinRem)
 {
-        unsigned char c = (unsigned char)getbyte(address);
+        unsigned char c = (unsigned char)ReadByte(address);
         address++;
         lengthRemaining--;
         bool endOfLine = (lengthRemaining <= 0);
@@ -642,7 +642,7 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
                 {
                         zxCharacter += mEscapeCharacter;
 /*
-                        unsigned char nc = (unsigned char)getbyte(address);
+                        unsigned char nc = (unsigned char)ReadByte(address);
                         string nextChr = mKeyword[nc].substr(0, 1);
 
                         string validEscapeChars;

@@ -30,7 +30,7 @@ public:
         virtual AnsiString GetMachineName();
         virtual AnsiString GetBasicFileExtension();
 
-private:
+protected:
         static const unsigned char Return = 13;
         static const unsigned char Number = 14;
         static const unsigned char Ink = 16;

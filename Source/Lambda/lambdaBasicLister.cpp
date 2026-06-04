@@ -142,7 +142,7 @@ int lambdaBasicLister::GetProgramStartAddress()
 int lambdaBasicLister::GetProgramEndAddress()
 {
         const int vars = 16400;
-        return getbyte(vars) + (getbyte(vars + 1) << 8);
+        return ReadByte(vars) + (ReadByte(vars + 1) << 8);
 }
 
 unsigned char lambdaBasicLister::ConvertToZXCode(unsigned char code)
@@ -227,7 +227,7 @@ bool lambdaBasicLister::RemContainsMachineCode(int address, int lengthRemaining,
 
         while (!endOfLine)
         {
-                int c = getbyte(address);
+                int c = ReadByte(address);
                 address++;
                 lengthRemaining--;
                 endOfLine = (lengthRemaining <= 0);

@@ -145,7 +145,7 @@ int zx81BasicLister::GetProgramStartAddress()
 int zx81BasicLister::GetProgramEndAddress()
 {
         const int vars = 16400;
-        return getbyte(vars) + (getbyte(vars + 1) << 8);
+        return ReadByte(vars) + (ReadByte(vars + 1) << 8);
 }
 
 unsigned char zx81BasicLister::ConvertToZXCode(unsigned char code)
@@ -230,7 +230,7 @@ bool zx81BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
 
         while (!endOfLine)
         {
-                int c = getbyte(address);
+                int c = ReadByte(address);
                 address++;
                 lengthRemaining--;
                 endOfLine = (lengthRemaining <= 0);

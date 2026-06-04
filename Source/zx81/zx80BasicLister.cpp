@@ -164,7 +164,7 @@ int zx80BasicLister::GetProgramStartAddress()
 int zx80BasicLister::GetProgramEndAddress()
 {
         const int vars = 16392;
-        return getbyte(vars) + (getbyte(vars + 1) << 8);
+        return ReadByte(vars) + (ReadByte(vars + 1) << 8);
 }
 
 bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
@@ -180,13 +180,13 @@ bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
         lineInfo.addressContent = lineHeaderLength + lineInfo.address;
 
         const int EndOfBasicMarker = 0x40;
-        int lineNumber = getbyte((*address)++);
+        int lineNumber = ReadByte((*address)++);
         if (lineNumber >= EndOfBasicMarker)
         {
                 return false;
         }
 
-        lineNumber = (lineNumber << 8) + getbyte((*address)++);
+        lineNumber = (lineNumber << 8) + ReadByte((*address)++);
         lineInfo.lineNumber = lineNumber;
 
         int length = 0;    
@@ -198,7 +198,7 @@ bool zx80BasicLister::ExtractLineDetails(int* address, LineInfo& lineInfo)
 
         do
         {
-                b = getbyte((*address)++);
+                b = ReadByte((*address)++);
                 
                 endOfLine = (b == Newline);
                 
@@ -296,7 +296,7 @@ bool zx80BasicLister::RemContainsMachineCode(int address, int lengthRemaining, b
 
         while (!endOfLine)
         {
-                int c = getbyte(address);
+                int c = ReadByte(address);
                 address++;
                 lengthRemaining--;
                 endOfLine = (lengthRemaining <= 0);

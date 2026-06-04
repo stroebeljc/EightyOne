@@ -42,7 +42,7 @@ struct LineInfo
 
 class IBasicLister
 {
-private:
+protected:
         static const int DisplayColumns = 32;
         static const int EmbeddedNumberSize = 5;
 
@@ -56,6 +56,8 @@ private:
         AnsiString mEscapeCharacter;
         int mScaling;
         Graphics::TBitmap *mCset;
+        COLORREF mInk;
+        COLORREF mPaper;
 
         bool RenderLine(HDC hdc, HDC cshdc, int& y, LineInfo& lineInfo);
         bool RenderLineNumber(HDC hdc, HDC cshdc, int& x, int& y, int lineNumber);
@@ -65,6 +67,29 @@ private:
         AnsiString FormatLineNumber(int lineNumber, bool outputFullWidthLineNumbers = false);
         COLORREF GetBackgroundColour();
         unsigned char GetEscapeCharacter() { return '\\'; }
+
+        virtual std::string GetKeywords() { return std::string(""); }
+        virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }
+        virtual inline bool SupportFloatingPointNumbers() { return true; }
+        virtual unsigned char GetFloatingPointNumberCode() { return 0; }
+        virtual unsigned char GetLineEndingCode() { return 0; }
+        virtual int GetEmbeddedNumberSize() { return EmbeddedNumberSize; }
+        virtual bool ExtractLineDetails(int* address, LineInfo& lineInfo);
+        virtual inline bool SupportEmbeddedControlCodes() { return false; }
+        virtual bool IsEmbeddedControlCode(unsigned char code) { return false; }
+        virtual int GetEmbeddedControlCodeSize(unsigned char code) { return 0; }
+        virtual void ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2) {}
+        virtual void InitialiseColours() { }
+        virtual inline bool CustomColoursSupported() { return false; }
+        virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
+        virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
+        virtual bool RequiresInitialSpace() { return true; }
+        virtual AnsiString TranslateToZxToken(AnsiString chr) { return chr; }
+        virtual unsigned char ReadByte(int address) { return getbyte(address); }
+
+        int GetKeywordLength(unsigned char code);
+
+        std::string mKeyword[256];
 
 public:
         IBasicLister();
@@ -88,32 +113,6 @@ public:
         virtual bool ZxTokenSupported() { return false; }
         virtual int GetProgramStartAddress() { return 65535; }
         virtual int GetProgramEndAddress() { return 65535; }
-
-protected:
-        COLORREF mInk;
-        COLORREF mPaper;
-
-        virtual std::string GetKeywords() { return std::string(""); }
-        virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }
-        virtual inline bool SupportFloatingPointNumbers() { return true; }
-        virtual unsigned char GetFloatingPointNumberCode() { return 0; }
-        virtual unsigned char GetLineEndingCode() { return 0; }
-        virtual int GetEmbeddedNumberSize() { return EmbeddedNumberSize; }
-        virtual bool ExtractLineDetails(int* address, LineInfo& lineInfo);
-        virtual inline bool SupportEmbeddedControlCodes() { return false; }
-        virtual bool IsEmbeddedControlCode(unsigned char code) { return false; }
-        virtual int GetEmbeddedControlCodeSize(unsigned char code) { return 0; }
-        virtual void ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2) {}
-        virtual void InitialiseColours() { }
-        virtual inline bool CustomColoursSupported() { return false; }
-        virtual COLORREF GetDefaultPaperColour() { return RGB(255, 255, 255); }
-        virtual bool RemContainsMachineCode(int address, int lengthRemaining, bool outputRemTokensAsCharacterCodes) { return false; }
-        virtual bool RequiresInitialSpace() { return true; }
-        virtual AnsiString TranslateToZxToken(AnsiString chr) { return chr; }
-        
-        int GetKeywordLength(unsigned char code);
-
-        std::string mKeyword[256];
 };
 
 #endif

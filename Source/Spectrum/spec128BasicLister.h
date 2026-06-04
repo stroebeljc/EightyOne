@@ -21,45 +21,13 @@
 #include "BasicLister\IBasicLister.h"
 #include <Classes.hpp>
 
-class spec128BasicLister : public IBasicLister
+class spec128BasicLister : public spec48BasicLister
 {
 public:
         spec128BasicLister();
-        virtual COLORREF GetPaperColour();
-        virtual COLORREF GetInkColour();
-        virtual AnsiString GetMachineName();
-        virtual AnsiString GetBasicFileExtension();
 
 private:
-        static const unsigned char Return = 13;
-        static const unsigned char Number = 14;
-        static const unsigned char Ink = 16;
-        static const unsigned char Paper = 17;
-        static const unsigned char Flash = 18;
-        static const unsigned char Bright = 19;
-        static const unsigned char Inverse = 20;
-        static const unsigned char Over = 21;
-        static const unsigned char At = 22;
-        static const unsigned char Tab = 23;
-
-        int mInkValue;
-        int mPaperValue;
-        int mInverseValue;
-        int mBrightValue;
-        COLORREF mColours[16];
-
-        virtual int GetProgramStartAddress();
-        virtual int GetProgramEndAddress();
-        virtual unsigned char GetFloatingPointNumberCode();
-        virtual inline unsigned char GetLineEndingCode();
-        virtual inline bool SupportEmbeddedControlCodes();
-        virtual inline bool IsEmbeddedControlCode(unsigned char code);
-        virtual inline int GetEmbeddedControlCodeSize(unsigned char code);
         virtual std::string GetKeywords();
-        virtual void ProcessControlCode(unsigned char code, unsigned char arg1, unsigned char arg2);
-        virtual void InitialiseColours();
-        virtual bool CustomColoursSupported();
-        virtual COLORREF GetDefaultPaperColour();
-        virtual bool RequiresInitialSpace();
+        virtual unsigned char ReadByte(int address);
 };
 

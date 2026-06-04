@@ -944,7 +944,8 @@ void spec_save_z80(char *fname)
         switch (spectrum.model)
         {
         case SPECCY16:     mode=0;   flags=128; break;
-        case SPECCY48:     mode=0;   flags=0;   break;
+        case SPECCY48:
+        case SPECCYPLUS:   mode=0;   flags=0;   break;
         case SPECCYTC2048: mode=14;  flags=0;   break;
         case SPECCYTC2068: mode=15;  flags=0;   break;
         case SPECCYTS2068: mode=128; flags=0;   break;

@@ -440,7 +440,7 @@ int IBasicLister::GetVariablesRows()
         return mVariablesDisplayRows;
 }
 
-void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds)
+void IBasicLister::ClearRenderedListing(HDC hdc, RECT rect, bool showLineEnds)
 {
         COLORREF canvasColour = GetSysColor(COLOR_BTNFACE);
         if (mLines->size() > 0)
@@ -452,7 +452,7 @@ void IBasicLister::ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool
         DeleteObject(hBrush);
 }
 
-void IBasicLister::ClearRenderedVariablesList(HDC hdc, HBITMAP bitmap, RECT rect)
+void IBasicLister::ClearRenderedVariablesList(HDC hdc, RECT rect)
 {
         COLORREF canvasColour = GetSysColor(COLOR_BTNFACE);
         if (mLines->size() > 0)
@@ -464,7 +464,7 @@ void IBasicLister::ClearRenderedVariablesList(HDC hdc, HBITMAP bitmap, RECT rect
         DeleteObject(hBrush);
 }
 
-bool IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling)
+bool IBasicLister::RenderListing(HDC hdc, RECT rect, bool showLineEnds, int scaling)
 {
         bool retVal = true;
         mScaling = scaling;
@@ -478,7 +478,7 @@ bool IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLi
 
         HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCset->Handle);
 
-        ClearRenderedListing(hdc, bitmap, rect, showLineEnds);              
+        ClearRenderedListing(hdc, rect, showLineEnds);
 
         for (std::vector<LineInfo>::iterator it = mLines->begin(); it != mLines->end(); it++)
         {
@@ -495,7 +495,7 @@ bool IBasicLister::RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLi
         return retVal;
 }
 
-void IBasicLister::RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scaling)
+void IBasicLister::RenderVariables(HDC hdc, RECT rect, int scaling)
 {
         mScaling = scaling;
 
@@ -507,7 +507,7 @@ void IBasicLister::RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scali
 
         HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCset->Handle);
 
-        ClearRenderedVariablesList(hdc, bitmap, rect);
+        ClearRenderedVariablesList(hdc, rect);
 
         int maxNameSize = 0;
         for (std::vector<VariableInfo>::iterator it = mVariables->begin(); it != mVariables->end(); it++)

@@ -145,10 +145,10 @@ public:
         void ExtractVariablesDetails();
         int GetVariablesRows();
         int GetProgramRows();
-        void ClearRenderedListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds);
-        bool RenderListing(HDC hdc, HBITMAP bitmap, RECT rect, bool showLineEnds, int scaling);
-        void ClearRenderedVariablesList(HDC hdc, HBITMAP bitmap, RECT rect);
-        void RenderVariables(HDC hdc, HBITMAP bitmap, RECT rect, int scaling);
+        void ClearRenderedListing(HDC hdc, RECT rect, bool showLineEnds);
+        bool RenderListing(HDC hdc, RECT rect, bool showLineEnds, int scaling);
+        void ClearRenderedVariablesList(HDC hdc, RECT rect);
+        void RenderVariables(HDC hdc, RECT rect, int scaling);
         AnsiString RenderLineAsText(LineInfo& lineInfo, bool outputRemTokensAsCharacterCodes, bool outputStringTokensAsCharacterCodes, bool outputNonAsciiAsCharacterCodes, bool outputVariableNamesInLowercase, bool outputInZxTokenFormat, bool limitLineLengths, bool outputFullWidthLineNumbers);
         void SetLines(std::vector<LineInfo>* linesInfo);
         void CopyCsetImage();

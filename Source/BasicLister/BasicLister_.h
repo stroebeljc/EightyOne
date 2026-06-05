@@ -200,8 +200,6 @@ public:		// User declarations
         void UnBreakPointLastEntry();
         int BasicLineExecuteStartAddress();
         int NextBasicLineNumberToExecute();
-        void CheckUpdate(int pc);
-        void VariablesUpdate();
         void CallShow();
 };
 //---------------------------------------------------------------------------

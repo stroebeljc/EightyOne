@@ -6,6 +6,7 @@
 #include "BasicVariables_.h"
 #include "BasicListerOptions_.h"
 #include "zx81config.h"
+#include "main_.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -57,7 +58,7 @@ void TBasicVariables::SizeWindow()
         mBMWidth = displayColumns * PixelsPerCharacterWidth * mScaling;
         mBMHeight = totalRows * PixelsPerCharacterHeight * mScaling;
 
-        ClientWidth = mBMWidth + ScrollBar->Width + 1;
+        ClientWidth = mBMWidth + (ScrollBar->Visible ? ScrollBar->Width + 1 : 0);
         ClientHeight = displayRows * PixelsPerCharacterHeight * mScaling + StatusBar->Height + 1;
 }
 
@@ -93,17 +94,14 @@ void TBasicVariables::ClearBitmap()
         HDC hdc = GetDC(mHWND);
         HDC chdc = CreateCompatibleDC(hdc);
 
-        mBitmap = ::CreateCompatibleBitmap(hdc, mBMWidth, mBMHeight);
+        RECT rect;
+        ::GetClientRect(mHWND, (LPRECT) &rect);
+
+        mBitmap = ::CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 
         HGDIOBJ oldbm = SelectObject(chdc, mBitmap);
 
-        RECT rect;
-        rect.left = 0;
-        rect.top = 0;
-        rect.right = mBMWidth;
-        rect.bottom = mBMHeight;
-
-        mBasicLister->ClearRenderedVariablesList(chdc, mBitmap, rect);
+        mBasicLister->ClearRenderedVariablesList(chdc, rect);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -113,22 +111,24 @@ void TBasicVariables::ClearBitmap()
 void __fastcall TBasicVariables::WMUpdateScrollBar(TMessage &Message)
 {
         ScrollBar->Min = 0;
-        mVariablesDisplayRows = mBasicLister != NULL ? mBasicLister->GetVariablesRows() : 0;
-        bool scrollable = (mVariablesDisplayRows > DisplayableRows);
+        int variablesDisplayRows = mBasicLister != NULL ? mBasicLister->GetVariablesRows() : 0;
+        bool scrollable = (variablesDisplayRows > DisplayableRows);
         if (scrollable)
         {
-                ScrollBar->Max = mVariablesDisplayRows - DisplayableRows;
+                ScrollBar->Max = variablesDisplayRows - DisplayableRows;
         }
         else
         {
-                ScrollBar->Max = mVariablesDisplayRows;
+                ScrollBar->Max = variablesDisplayRows;
         }
 
         ScrollBar->SmallChange = 1;
         ScrollBar->LargeChange = DisplayableRows;
-        ScrollBar->Position = ScrollBar->Max;
         ScrollBar->Enabled = scrollable;
+        ScrollBar->Visible = scrollable;
+        ScrollBar->Position = 1;
         if (!scrollable) ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
+        else ScrollBar->Position = ScrollBar->Max;
 
         Invalidate();
 }
@@ -271,7 +271,7 @@ void TBasicVariables::ConstructBitmap()
         rect.right = mBMWidth;
         rect.bottom = mBMHeight;
 
-        mBasicLister->RenderVariables(chdc, mBitmap, rect, mScaling);
+        mBasicLister->RenderVariables(chdc, rect, mScaling);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -340,7 +340,7 @@ void __fastcall TBasicVariables::FormPaint(TObject *Sender)
                 int variablesDisplayPixels = variablesDisplayRows * PixelsPerCharacterHeight * mScaling;
                 int copyHeight = (variablesDisplayPixels > mBMHeight) ? variablesDisplayPixels : mBMHeight;
 
-                ::BitBlt(hdc, 0, - ScrollBar->Position * PixelsPerCharacterHeight * mScaling, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
+                ::BitBlt(hdc, 0, 0 - ScrollBar->Position * PixelsPerCharacterHeight * mScaling, mBMWidth, copyHeight, chdc, 0, 0, SRCCOPY);
         }
         else
         {
@@ -356,27 +356,6 @@ void __fastcall TBasicVariables::FormPaint(TObject *Sender)
         DeleteDC(chdc);
 }
 //---------------------------------------------------------------------------
-
-void TBasicVariables::Refresh()
-{
-        static unsigned int lastSize=0;
-        if (!Visible) return;
-
-        if (mBasicLister != NULL)
-        {
-                ExtractVariablesDetails();
-                ConstructBitmap();
-                HighlightEntry();
-        }
-
-        if (lastSize!=mVariables->size())
-        {
-                PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
-        }
-
-        PostMessage(mHWND, WM_STATUSBAR, 0, 0);
-        lastSize=mVariables->size();
-}
 
 void TBasicVariables::SaveSettings(TIniFile *ini)
 {
@@ -421,7 +400,7 @@ void __fastcall TBasicVariables::FormMouseDown(TObject *Sender,
 void __fastcall TBasicVariables::FormMouseWheel(TObject *Sender,
       TShiftState Shift, int WheelDelta, TPoint &MousePos, bool &Handled)
 {
-        if (mVariablesDisplayRows > DisplayableRows)
+        if (mBasicLister != NULL  && mBasicLister->GetVariablesRows() > DisplayableRows)
         {
                 int currentPos = ScrollBar->Position;
                 int newPos = currentPos - (WheelDelta / 120);
@@ -448,6 +427,65 @@ void __fastcall TBasicVariables::FormMouseWheel(TObject *Sender,
 void __fastcall TBasicVariables::ScrollBarChange(TObject *Sender)
 {
         Invalidate();
+}
+//---------------------------------------------------------------------------
+
+int TBasicVariables::HandleUpdateWindow(void *param)
+{
+        TBasicVariables* self = static_cast<TBasicVariables*>(param);
+
+        self->UpdateWindow();
+        return 0;
+}
+
+void TBasicVariables::UpdateWindow()
+{
+        static unsigned int lastSize=0;
+
+        if (mBasicLister != NULL)
+        {
+                ExtractVariablesDetails();
+                if (mVariables->size() > 0)
+                {
+                        ConstructBitmap();
+                        HighlightEntry();
+                }
+                else
+                        ClearBitmap();
+        }
+        else
+                ClearBitmap();
+
+        if (lastSize!=mVariables->size())
+        {
+                PostMessage(mHWND, WM_SCROLLBAR, 0, 0);
+        }
+
+        PostMessage(mHWND, WM_STATUSBAR, 0, 0);
+        lastSize=mVariables->size();
+        Invalidate();
+        BasicVariablesRefreshTimer->Enabled = true;
+}
+
+void __fastcall TBasicVariables::BasicVariablesRefreshTimerTimer(
+      TObject *Sender)
+{
+        if (!Visible) return;
+        BasicVariablesRefreshTimer->Enabled = false;
+        Form1->ThreadPool.EnqueueTask(new TTask(HandleUpdateWindow, (void *)this));
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicVariables::FormClose(TObject *Sender,
+      TCloseAction &Action)
+{
+        BasicVariablesRefreshTimer->Enabled = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TBasicVariables::FormShow(TObject *Sender)
+{
+        BasicVariablesRefreshTimer->Enabled = true;
 }
 //---------------------------------------------------------------------------
 

@@ -180,7 +180,6 @@ void DebugUpdate(void)
         }
 
         Profiler->DebugTick(&z80);
-        BasicLister->CheckUpdate(z80.pc.w);
 
         if (Dbg->Continuous->Checked==true && Dbg->Visible==true)
                 Dbg->UpdateVals();

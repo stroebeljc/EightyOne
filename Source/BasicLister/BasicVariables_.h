@@ -10,6 +10,7 @@
 #include <Forms.hpp>
 #include "IBasicLister.h"
 #include <ComCtrls.hpp>
+#include <ExtCtrls.hpp>
 //---------------------------------------------------------------------------
 
 #define WM_STATUSBAR (WM_USER+1)
@@ -20,12 +21,16 @@ class TBasicVariables : public TForm
 __published:	// IDE-managed Components
         TStatusBar *StatusBar;
         TScrollBar *ScrollBar;
+        TTimer *BasicVariablesRefreshTimer;
         void __fastcall FormPaint(TObject *Sender);
         void __fastcall FormMouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
         void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
           int WheelDelta, TPoint &MousePos, bool &Handled);
         void __fastcall ScrollBarChange(TObject *Sender);
+        void __fastcall BasicVariablesRefreshTimerTimer(TObject *Sender);
+        void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+        void __fastcall FormShow(TObject *Sender);
 
 private:	// User declarations
         static const int DisplayableRows = 20;
@@ -36,7 +41,6 @@ private:	// User declarations
         int mRows;
         IBasicLister* mBasicLister;
         std::vector<VariableInfo>* mVariables;
-        int mVariablesDisplayRows;
         int mHighlightedVariableIndex;
 
         int mBMWidth;
@@ -57,6 +61,8 @@ private:	// User declarations
         int FindVariableDisplayedOnRow(int row);
         int TotalVariablesSize();
         int SingleVariableSize(int index);
+        static int HandleUpdateWindow(void *param);
+        void UpdateWindow();
 
 public:		// User declarations
         __fastcall TBasicVariables(TComponent* Owner);
@@ -72,7 +78,6 @@ public:		// User declarations
         void __fastcall SetLister(IBasicLister *lister);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
-        void Refresh(void);
         void Clear(void);
         void ShowScale(int scale);
 };

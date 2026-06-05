@@ -174,7 +174,7 @@ void TBasicLister::ClearBitmap()
         rect.right = mBMWidth;
         rect.bottom = mBMHeight;
 
-        if (mBasicLister) mBasicLister->ClearRenderedListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down);
+        if (mBasicLister) mBasicLister->ClearRenderedListing(chdc, rect, ToolButtonLineEnds->Down);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -214,7 +214,7 @@ void TBasicLister::ConstructBitmap()
         rect.right = mBMWidth;
         rect.bottom = mBMHeight;
 
-        mBasicLister->RenderListing(chdc, mBitmap, rect, ToolButtonLineEnds->Down, mScaling);
+        mBasicLister->RenderListing(chdc, rect, ToolButtonLineEnds->Down, mScaling);
 
         SelectObject(chdc, oldbm);
         DeleteDC(chdc);
@@ -518,8 +518,6 @@ void TBasicLister::HandleRefresh(void)
         BreakPointEntry(mLastBreakPointIndex);
 
         PostMessage(mHWND, WM_SCROLLBAR, mRelativePos, 0);
-
-        BasicVariables->Refresh();
 }
 
 void TBasicLister::Refresh(bool keepScrollbarPosition)
@@ -900,17 +898,6 @@ void TBasicLister::BreakAtNextBasicLine()
         StepBasic->Enabled = true;
 
         BreakPointLine(mBasicLister->GetNextBasicLineNumber());
-}
-
-void TBasicLister::CheckUpdate(int pc)
-{
-        if (pc == BasicLineExecuteStartAddress())
-                BasicVariables->Refresh();
-}
-
-void TBasicLister::VariablesUpdate()
-{
-        BasicVariables->Refresh();
 }
 
 int TBasicLister::HandleLineEndsThreadProc(void *param)

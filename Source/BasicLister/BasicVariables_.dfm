@@ -22,9 +22,11 @@ object BasicVariables: TBasicVariables
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
+  OnClose = FormClose
   OnMouseDown = FormMouseDown
   OnMouseWheel = FormMouseWheel
   OnPaint = FormPaint
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar: TStatusBar
@@ -52,5 +54,12 @@ object BasicVariables: TBasicVariables
     PageSize = 0
     TabOrder = 1
     OnChange = ScrollBarChange
+  end
+  object BasicVariablesRefreshTimer: TTimer
+    Enabled = False
+    Interval = 50
+    OnTimer = BasicVariablesRefreshTimerTimer
+    Left = 32
+    Top = 16
   end
 end

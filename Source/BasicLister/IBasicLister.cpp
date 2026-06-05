@@ -288,7 +288,6 @@ void IBasicLister::ExtractVariablesDetails()
         do
         {
                 VariableInfo varInfo;
-                varInfo.highLighted = false;
 
                 varAvailable = ExtractEachVariable(&address, varInfo);
                 if (varAvailable)

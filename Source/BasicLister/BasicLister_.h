@@ -201,6 +201,7 @@ public:		// User declarations
         int BasicLineExecuteStartAddress();
         int NextBasicLineNumberToExecute();
         void CheckUpdate(int pc);
+        void VariablesUpdate();
         void CallShow();
 };
 //---------------------------------------------------------------------------

@@ -908,6 +908,11 @@ void TBasicLister::CheckUpdate(int pc)
                 BasicVariables->Refresh();
 }
 
+void TBasicLister::VariablesUpdate()
+{
+        BasicVariables->Refresh();
+}
+
 int TBasicLister::HandleLineEndsThreadProc(void *param)
 {
         TBasicLister* self = static_cast<TBasicLister*>(param);

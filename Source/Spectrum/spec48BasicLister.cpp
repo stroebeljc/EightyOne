@@ -240,11 +240,6 @@ bool spec48BasicLister::DetectLastLetter(unsigned char letter)
         return (letter & 0x80);
 }
 
-unsigned char spec48BasicLister::LowerCaseConvert(unsigned char code)
-{
-        return (unsigned char)((code & 0x7F) + 0x20);
-}
-
 double spec48BasicLister::ConvertZXNumberToDouble(int* address)
 {
         unsigned char exponent = ReadByte((*address)++);

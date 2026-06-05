@@ -65,7 +65,6 @@ protected:
         virtual int GetForVariableLength();
         virtual int GetVariablesStartAddress();
         virtual bool DetectLastLetter(unsigned char letter);
-        virtual unsigned char LowerCaseConvert(unsigned char code);
         virtual int TranslateVariableType(unsigned char code);
         virtual unsigned char ConvertVariableNameCode(unsigned char code, bool first);
         virtual double ConvertZXNumberToDouble(int* address);

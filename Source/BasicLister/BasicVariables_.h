@@ -37,10 +37,12 @@ private:	// User declarations
         IBasicLister* mBasicLister;
         std::vector<VariableInfo>* mVariables;
         int mVariablesDisplayRows;
+        int mHighlightedVariableIndex;
 
         int mBMWidth;
         int mBMHeight;
         int mScaling;
+        AnsiString mLineDetails;
 
         void ClearBitmap();
         void ConstructBitmap();
@@ -50,10 +52,9 @@ private:	// User declarations
         void HighlightRow(int row);
         void ColourRows(int row, bool setornot);
         COLORREF GetHighlightColour();
-        void UnhighlightEntry(int index);
-        void HighlightEntry(int index);
+        void UnhighlightEntry();
+        void HighlightEntry();
         int FindVariableDisplayedOnRow(int row);
-        int FindHighlightedVariableIndex();
         int TotalVariablesSize();
         int SingleVariableSize(int index);
 

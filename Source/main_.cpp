@@ -988,6 +988,10 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 
         zx81.vsyncsound=Sound1->Checked;
         TZX->RecStopCheck();
+        if (BasicLister->ListerAvailable())
+        {
+                BasicLister->VariablesUpdate();
+        }
 }
 //---------------------------------------------------------------------------
 

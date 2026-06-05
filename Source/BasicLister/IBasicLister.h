@@ -59,7 +59,6 @@ struct VariableInfo
         int addressArray;
         int contentLength;
         int startDisplayRow;
-        bool highLighted;
 };
 
 class IBasicLister
@@ -109,8 +108,6 @@ protected:
         static const int CharacterArray = 6;
         static const int ZX80String = 7;
         static const int ZX80Array = 8;
-        static const int SpecSimpleString = 9;
-        static const int SpecCharacterArray = 10;
 
         virtual std::string GetKeywords() { return std::string(""); }
         virtual inline unsigned char ConvertToZXCode(unsigned char code) { return code; }

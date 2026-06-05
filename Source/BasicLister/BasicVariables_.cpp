@@ -24,9 +24,11 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
         : TForm(Owner),
         mBitmap(NULL),
         mHWND(this->Handle),
-        mBasicLister(NULL)
+        mBasicLister(NULL),
+        mHighlightedVariableIndex(-1)
 {
         mVariables = new std::vector<VariableInfo>();
+        mLineDetails = "";
 }
 
  __fastcall TBasicVariables::~TBasicVariables()
@@ -124,9 +126,9 @@ void __fastcall TBasicVariables::WMUpdateScrollBar(TMessage &Message)
 
         ScrollBar->SmallChange = 1;
         ScrollBar->LargeChange = DisplayableRows;
-        ScrollBar->Position = 1;
-        ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
+        ScrollBar->Position = ScrollBar->Max;
         ScrollBar->Enabled = scrollable;
+        if (!scrollable) ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
 
         Invalidate();
 }
@@ -151,7 +153,7 @@ void __fastcall TBasicVariables::WMUpdateStatusBar(TMessage &Message)
         }
 
         StatusBar->Panels->Items[PanelVariables]->Text = variableDetails;
-        StatusBar->Panels->Items[PanelVariableInfo]->Text = "";
+        StatusBar->Panels->Items[PanelVariableInfo]->Text = mLineDetails;
 
         SizeWindow();
         Invalidate();
@@ -276,52 +278,26 @@ void TBasicVariables::ConstructBitmap()
         ReleaseDC(mHWND,hdc);
 }
 
-void TBasicVariables::UnhighlightEntry(int index)
+void TBasicVariables::UnhighlightEntry()
 {
-        if (index == -1)
-        {
-                index = FindHighlightedVariableIndex();
-        }
-
-        if (index != -1)
-        {
-                int row = (*mVariables)[index].startDisplayRow;
-                UnhighlightRow(row);
-                (*mVariables)[index].highLighted = false;
-
-                StatusBar->Panels->Items[PanelVariableInfo]->Text = "";
-
-                Invalidate();
-        }
+        mLineDetails = "";
 }
 
-void TBasicVariables::HighlightEntry(int index)
+void TBasicVariables::HighlightEntry()
 {
-        if (index != -1)
-        {
-                UnhighlightEntry(-1);
+        if (mHighlightedVariableIndex<0) return;
 
-                int row = (*mVariables)[index].startDisplayRow;
-                HighlightRow(row);
-                (*mVariables)[index].highLighted = true;
-        }
-        Invalidate();
+        int row = (*mVariables)[mHighlightedVariableIndex].startDisplayRow;
+        HighlightRow(row);
 
-        AnsiString lineDetails = "";
+        //int lineNumber = (*mLines)[mHighlightedVariableIndex].lineNumber;
+        //mLineDetails = "Line " + AnsiString(lineNumber) + ": ";
 
-        if (index != -1)
-        {
-                //int lineNumber = (*mLines)[index].lineNumber;
-                //lineDetails += "Line " + AnsiString(lineNumber) + ": ";
+        int startAddress = (*mVariables)[mHighlightedVariableIndex].address;
+        mLineDetails = "$" + AnsiString::IntToHex(startAddress, 4);
 
-                int startAddress = (*mVariables)[index].address;
-                lineDetails += "$" + AnsiString::IntToHex(startAddress, 4);
-
-                int endAddress = startAddress - 1 + SingleVariableSize(index);
-                lineDetails += "-$" + AnsiString::IntToHex(endAddress, 4);
-        }
-
-        StatusBar->Panels->Items[PanelVariableInfo]->Text = lineDetails;
+        int endAddress = startAddress - 1 + SingleVariableSize(mHighlightedVariableIndex);
+        mLineDetails += "-$" + AnsiString::IntToHex(endAddress, 4);
 }
 
 int TBasicVariables::FindVariableDisplayedOnRow(int row)
@@ -333,23 +309,6 @@ int TBasicVariables::FindVariableDisplayedOnRow(int row)
                 int displayRow = (*mVariables)[index].startDisplayRow;
 
                 if (row == displayRow)
-                {
-                        break;
-                }
-
-                index--;
-        }
-
-        return index;
-}
-
-int TBasicVariables::FindHighlightedVariableIndex(void)
-{
-        int index = mVariables->size() - 1;
-
-        while (index >= 0)
-        {
-                if ((*mVariables)[index].highLighted)
                 {
                         break;
                 }
@@ -407,6 +366,7 @@ void TBasicVariables::Refresh()
         {
                 ExtractVariablesDetails();
                 ConstructBitmap();
+                HighlightEntry();
         }
 
         if (lastSize!=mVariables->size())
@@ -441,15 +401,19 @@ void __fastcall TBasicVariables::FormMouseDown(TObject *Sender,
 
         if (Button == mbLeft)
         {
-                int currentHighlightedIndex = FindHighlightedVariableIndex();
-                if (index != currentHighlightedIndex)
+                if (index != mHighlightedVariableIndex)
                 {
-                        HighlightEntry(index);
+                        mHighlightedVariableIndex = index;
+                        HighlightEntry();
                 }
                 else
                 {
-                        UnhighlightEntry(index);
+                        UnhighlightEntry();
+                        mHighlightedVariableIndex = -1;
                 }
+
+                ConstructBitmap();
+                Invalidate();
         }
 }
 //---------------------------------------------------------------------------

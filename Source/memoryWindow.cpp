@@ -54,8 +54,6 @@ __fastcall TMemoryWindow::TMemoryWindow(TComponent* Owner)
 
         mCharSize = Canvas->TextExtent(AnsiString("0"));
        	mHeadingHeight = mCharSize.cy + (mCharSize.cy / 2);
-
-        MemoryWindowTimer->Interval = 50;
 }
 
  __fastcall TMemoryWindow::~TMemoryWindow()

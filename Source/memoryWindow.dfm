@@ -174,7 +174,7 @@ object MemoryWindow: TMemoryWindow
   end
   object MemoryWindowTimer: TTimer
     Enabled = False
-    Interval = 10000
+    Interval = 50
     OnTimer = MemoryWindowTimerTimer
     Left = 40
     Top = 160

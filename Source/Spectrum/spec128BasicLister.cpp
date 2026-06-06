@@ -64,4 +64,3 @@ unsigned char spec128BasicLister::ReadByte(int address)
         return RAMRead(bank,address&0x3FFF);
 }
 
-

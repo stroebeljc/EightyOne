@@ -79,7 +79,7 @@ protected:
         bool mSupportEmbeddedControlCodes;
         AnsiString mEscapeCharacter;
         int mScaling;
-        Graphics::TBitmap *mCset;
+        Graphics::TBitmap *mCset, *mCsetVars;
         COLORREF mInk;
         COLORREF mPaper;
         void* BpEnabledBitmap;

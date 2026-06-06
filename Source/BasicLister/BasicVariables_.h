@@ -11,6 +11,7 @@
 #include "IBasicLister.h"
 #include <ComCtrls.hpp>
 #include <ExtCtrls.hpp>
+#include <SyncObjs.hpp>
 //---------------------------------------------------------------------------
 
 #define WM_STATUSBAR (WM_USER+1)
@@ -27,7 +28,6 @@ __published:	// IDE-managed Components
           TShiftState Shift, int X, int Y);
         void __fastcall FormMouseWheel(TObject *Sender, TShiftState Shift,
           int WheelDelta, TPoint &MousePos, bool &Handled);
-        void __fastcall ScrollBarChange(TObject *Sender);
         void __fastcall BasicVariablesRefreshTimerTimer(TObject *Sender);
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
@@ -47,6 +47,7 @@ private:	// User declarations
         int mBMHeight;
         int mScaling;
         AnsiString mLineDetails;
+        TCriticalSection *mVariablesLock;
 
         void ClearBitmap();
         void ConstructBitmap();

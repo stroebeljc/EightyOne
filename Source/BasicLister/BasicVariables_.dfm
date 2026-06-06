@@ -53,7 +53,6 @@ object BasicVariables: TBasicVariables
     Kind = sbVertical
     PageSize = 0
     TabOrder = 1
-    OnChange = ScrollBarChange
   end
   object BasicVariablesRefreshTimer: TTimer
     Enabled = False

@@ -36,6 +36,7 @@ extern Graphics::TPicture *listerBPpicture;
 IBasicLister::IBasicLister() :
         mProgramDisplayRows(0),
         mCset(NULL),
+        mCsetVars(NULL),
         mVariablesDisplayRows(0),
         BpEnabledBitmap(NULL),
         BpDisabledBitmap(NULL)
@@ -57,6 +58,9 @@ void IBasicLister::CopyCsetImage()
         if (mCset) delete mCset;
         mCset = new Graphics::TBitmap();
         mCset->Assign((Graphics::TBitmap*)machine.cset);
+        if (mCsetVars) delete mCsetVars;
+        mCsetVars = new Graphics::TBitmap();
+        mCsetVars->Assign((Graphics::TBitmap*)machine.cset);
 }
 
 void IBasicLister::PopulateKeywords()
@@ -86,6 +90,7 @@ void IBasicLister::PopulateKeywords()
 IBasicLister::~IBasicLister()
 {
         if (mCset) delete mCset;
+        if (mCsetVars) delete mCsetVars;
         BpEnabledBitmap = NULL;
         BpDisabledBitmap = NULL;
 }
@@ -308,7 +313,7 @@ bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
 
         const int EndOfVariablesMarker = 0x80;
         unsigned char typeByte = ReadByte((*address)++);
-        if (typeByte == EndOfVariablesMarker)
+        if (varInfo.address<0 || varInfo.address>0xFFFF || typeByte == EndOfVariablesMarker)
         {
                 return false;
         }
@@ -498,6 +503,7 @@ bool IBasicLister::RenderListing(HDC hdc, RECT rect, bool showLineEnds, int scal
 void IBasicLister::RenderVariables(HDC hdc, RECT rect, int scaling)
 {
         mScaling = scaling;
+        if (!mCsetVars) return;
 
         int yOffset = 0;
 
@@ -505,7 +511,7 @@ void IBasicLister::RenderVariables(HDC hdc, RECT rect, int scaling)
 
         HDC cshdc = CreateCompatibleDC(hdc);
 
-        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCset->Handle);
+        HGDIOBJ oldBitmap = SelectObject(cshdc, (HGDIOBJ)mCsetVars->Handle);
 
         ClearRenderedVariablesList(hdc, rect);
 

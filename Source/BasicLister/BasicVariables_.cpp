@@ -30,6 +30,7 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
 {
         mVariables = new std::vector<VariableInfo>();
         mLineDetails = "";
+        mVariablesLock = new TCriticalSection();
 }
 
  __fastcall TBasicVariables::~TBasicVariables()
@@ -40,6 +41,7 @@ __fastcall TBasicVariables::TBasicVariables(TComponent* Owner)
         }
 
         delete mVariables;
+        delete mVariablesLock;
 }
 
 void TBasicVariables::ShowScale(int scale)
@@ -64,6 +66,7 @@ void TBasicVariables::SizeWindow()
 
 void __fastcall TBasicVariables::SetLister(IBasicLister *lister)
 {
+        mVariablesLock->Acquire();
         mBasicLister = lister;
         if (mVariables != NULL)
         {
@@ -73,15 +76,19 @@ void __fastcall TBasicVariables::SetLister(IBasicLister *lister)
                         mBasicLister->SetVariables(mVariables);
                 }
         }
+        mVariablesLock->Release();
 }
 
 void TBasicVariables::Clear()
 {
         if (mVariables->size()==0) return;
+
+        mVariablesLock->Acquire();
         mVariables->clear();
 
         ClearBitmap();
         Invalidate();
+        mVariablesLock->Release();
 }
 
 void TBasicVariables::ClearBitmap()
@@ -129,8 +136,6 @@ void __fastcall TBasicVariables::WMUpdateScrollBar(TMessage &Message)
         ScrollBar->Position = 1;
         if (!scrollable) ScrollBar->Position = 0;     // This forces the scroll bar to be disabled
         else ScrollBar->Position = ScrollBar->Max;
-
-        Invalidate();
 }
 
 void __fastcall TBasicVariables::WMUpdateStatusBar(TMessage &Message)
@@ -156,7 +161,6 @@ void __fastcall TBasicVariables::WMUpdateStatusBar(TMessage &Message)
         StatusBar->Panels->Items[PanelVariableInfo]->Text = mLineDetails;
 
         SizeWindow();
-        Invalidate();
 }
 
 int TBasicVariables::TotalVariablesSize()
@@ -390,9 +394,6 @@ void __fastcall TBasicVariables::FormMouseDown(TObject *Sender,
                         UnhighlightEntry();
                         mHighlightedVariableIndex = -1;
                 }
-
-                ConstructBitmap();
-                Invalidate();
         }
 }
 //---------------------------------------------------------------------------
@@ -416,19 +417,12 @@ void __fastcall TBasicVariables::FormMouseWheel(TObject *Sender,
                 }
 
                 ScrollBar->Position = newPos;
-                
-                Invalidate();
         }
 
         Handled = true;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TBasicVariables::ScrollBarChange(TObject *Sender)
-{
-        Invalidate();
-}
-//---------------------------------------------------------------------------
 
 int TBasicVariables::HandleUpdateWindow(void *param)
 {
@@ -442,6 +436,7 @@ void TBasicVariables::UpdateWindow()
 {
         static unsigned int lastSize=0;
 
+        mVariablesLock->Acquire();
         if (mBasicLister != NULL)
         {
                 ExtractVariablesDetails();
@@ -465,6 +460,7 @@ void TBasicVariables::UpdateWindow()
         lastSize=mVariables->size();
         Invalidate();
         BasicVariablesRefreshTimer->Enabled = true;
+        mVariablesLock->Release();
 }
 
 void __fastcall TBasicVariables::BasicVariablesRefreshTimerTimer(

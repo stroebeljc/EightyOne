@@ -1713,8 +1713,6 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 bool instructionOverlapsHSync = (lineClockCounterAfterInstruction < ZX81HSyncPositionStart);
                 bool startOfHSyncPulse = (lineClockCounter >= ZX81HSyncPositionStart) && instructionOverlapsHSync;
-                if (nmiGeneratorEnabled && startOfHSyncPulse)
-                        z80_nmi();
                 if (syncOutputWhite && startOfHSyncPulse)
                 {
                         lineCounter = (++lineCounter) & 7;
@@ -1980,6 +1978,9 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                 lineClockCounter -= ts;
 
+                if (nmiGeneratorEnabled && startOfHSyncPulse)
+                        z80_nmi();
+                        
                 bool OtherInstructionOverlapsHSync = !nmiOnInstruction && startOfHSyncPulse;
                 bool nmiOnInstructionOverlapsHSync = nmiOnInstruction && (lineClockCounterAfterInstruction + PortActiveDuration >= ZX81HSyncPositionEnd) && startOfHSyncPulse;
 

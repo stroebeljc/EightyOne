@@ -16,7 +16,7 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Default button ROM setting for Lambda 8300 did not match program default.
   - Corrected typo and formatting of the Lambda 8300 colour interface instructions.
   - Fixed stuck keys when the application loses focus.
-  - Fixed incorrect Z80 behavior related to interrupts and halting.
+  - Fixed incorrect Z80 behavior related to interrupts, halting, and prefixed instructions.
   - Fixed incorrect frame alignment and timing on Ace and Spectrum machines.
   - Fixed an issue with flash loads on Ace and Spectrum machines when end of file is reached.
   - Fixed possible infinite loop when using DirectDraw video.
@@ -25,6 +25,7 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Fixed a typo in the Lambda Colour documentation.
   - Fixed Lambda Colour border behavior.
   - Fixed incorrect Z80 instruction fetch and associated debug behavior when halted.
+  - Fixed Z80 operand fetch behavior above 32k boundary so non-M1 fetches are not forced to NOPs.
   - Fixed incorrect RAMTOP initialization when RAM pack value of None is selected.
   - Fixed live memory view status bar display address for mouse location.
   - Corrected documentation folder name for Business Applications.
@@ -38,6 +39,10 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Fixed handling of hidden floating numbers near end of lines in Basic Lister.
   - Fixed Convert Block to Wave interaction with Flash Load.
   - Fixed Colour selection on Hardware dialog when switching between Timex and Spectrum machines.
+  - Fixed Beta Disk 128 floppy driver to operate correctly with released TR-DOS versions.
+  - Addressed some startup sequencing issues by loading the system configuration after construction.
+  - Fixed Spectrum BASIC listings to contrast foreground and background when necessary and to show
+    listings that extend beyond the 48k boundary on Spectrum 128 and Spectrum +2/+2A/+3 machines.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to
@@ -49,6 +54,11 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Improved ZX Printer display scroll bar behavior and added mouse wheel control.
   - Added momentum to motor on ZX printer to support HiRes printing routines (ex., G007).
   - Aligned resetting of QuickSilva video address counter with hardware implementation.
+  - Implemented the ZX1541 floppy driver over the IEC bus, adding support for D64 disk images.
+  - Added support for joysticks that provide POV information.
+  - Moved CPU loop and lister rendering off the main UI thread to improve overall performance.
+  - Changed Memory View window to update no faster then once every 50ms to improve UI performance.
+  - Added support for RZX Playback on Spectrum machines.
 
 Version 1.41 - 02/03/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:

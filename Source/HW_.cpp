@@ -55,6 +55,7 @@
 #include "Lambda\lambdaBasicLister.h"
 #include "spectrum\spec48BasicLister.h"
 #include "spectrum\spec128BasicLister.h"
+#include "spectrum\timexBasicLister.h"
 #include "zx97config.h"
 #include "SoundForm.h"
 
@@ -935,7 +936,8 @@ void THW::ConfigureBasicLister()
                 BasicLister->SetBasicLister(new lambdaBasicLister(!strcmp(machine.CurRom, "lambda8300colour.rom")));
                 Form1->BasicListerOption->Enabled = true;
         }
-        else if (!strcmp(machine.CurRom, "spectrum48.rom") ||
+        else if (!strcmp(machine.CurRom, "tc2048.rom") ||
+                 !strcmp(machine.CurRom, "spectrum48.rom") ||
                  !strcmp(machine.CurRom, "spectrum48.spanish.rom"))
         {
                 BasicLister->SetBasicLister(new spec48BasicLister());
@@ -954,7 +956,12 @@ void THW::ConfigureBasicLister()
                 BasicLister->SetBasicLister(new spec128BasicLister());
                 Form1->BasicListerOption->Enabled = true;
         }
-        
+        else if (!strcmp(machine.CurRom, "ts2068.rom"))
+        {
+                BasicLister->SetBasicLister(new timexBasicLister());
+                Form1->BasicListerOption->Enabled = true;
+        }
+
         if (!BasicLister->ListerAvailable() && BasicLister->Visible)
         {
                 BasicLister->Close();

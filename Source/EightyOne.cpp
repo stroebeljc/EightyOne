@@ -142,6 +142,7 @@ USEUNIT("Keypad\keypad.cpp");
 USEUNIT("Lambda\lambdaBasicLoader.cpp");
 USEUNIT("Lambda\lambdaBasicLister.cpp");
 USEUNIT("ThreadPool.cpp");
+USEUNIT("Spectrum\timexBasicLister.cpp");
 //---------------------------------------------------------------------------
 #include "SplashScreen.h"
 #include "main_.h"

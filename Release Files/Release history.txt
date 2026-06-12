@@ -59,6 +59,8 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Moved CPU loop and lister rendering off the main UI thread to improve overall performance.
   - Changed Memory View window to update no faster then once every 50ms to improve UI performance.
   - Added support for RZX Playback on Spectrum machines.
+  - Improved behavior and usability of the Speed control, including speeds slower than real time.
+  - Added BASIC lister support for TS2068, TC2068, and TC2048.
 
 Version 1.41 - 02/03/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:

@@ -61,6 +61,7 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Added support for RZX Playback on Spectrum machines.
   - Improved behavior and usability of the Speed control, including speeds slower than real time.
   - Added BASIC lister support for TS2068, TC2068, and TC2048.
+  - Added flash save support for TC2068 and TC2048.
 
 Version 1.41 - 02/03/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:

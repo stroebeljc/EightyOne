@@ -1835,6 +1835,18 @@ int spec48_do_scanline(SCANLINE *CurScanLine)
                         if ((machine.speech == SPEECH_TYPE_USPEECH) && LastPC==56) uSpeechPaged = !uSpeechPaged;
                         if (spectrum.usource && LastPC==0x2BAE) uSourcePaged = !uSourcePaged;
                 }
+                else if ((TIMEXPage&1) && SPECBlk[0]==0 && (spectrum.model==SPECCYTC2068 || spectrum.model==SPECCYTS2068))
+                {
+                        if (IsFlashSaveable() && !RomCartridgePagedIn())
+                        {
+                                if (LastPC==0x0076) z80.hl.w=0x0102;
+                                if (LastPC==0x00CB)
+                                {
+                                        WavRecordByte(z80.hl.b.l);
+                                        z80.pc.w=0x00D0;
+                                }
+                        }
+                }
 
                 if (IntDue && (RZXModePlay() ? RZXCounter<=0 : fts>InteruptPosition))
                 {

@@ -169,6 +169,7 @@ BOOL nmiGeneratorEnabled;
 BOOL syncOutputWhite;
 int lineCounter;
 int lineClockCounter;
+BOOL syncOccurred;
 int lineClockCarryCounter;
 int tstates, frametstates;
 int tStatesCount;
@@ -450,6 +451,7 @@ void zx81_initialise()
         ZX80MaximumSupportedScanlineLength = scanlinePixelLength + ZX80MaximumSupportedScanlineOverhangPixels;
 
         lineClockCounter = machine.tperscanline;
+        syncOccurred = false;
         lineCounter = 0;
         lineClockCarryCounter = 0;
         nmiGeneratorEnabled = false;
@@ -1712,10 +1714,12 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                 int lineClockCounterAfterInstruction = (lineClockCounter - ts);
 
                 bool instructionOverlapsHSync = (lineClockCounterAfterInstruction < ZX81HSyncPositionStart);
-                bool startOfHSyncPulse = (lineClockCounter >= ZX81HSyncPositionStart) && instructionOverlapsHSync;
-                if (syncOutputWhite && startOfHSyncPulse)
+                bool startOfHSyncPulse = !syncOccurred && (lineClockCounter >= ZX81HSyncPositionStart) && instructionOverlapsHSync;
+                if (startOfHSyncPulse)
                 {
-                        lineCounter = (++lineCounter) & 7;
+                        syncOccurred = true;
+                        if (syncOutputWhite)
+                                lineCounter = (++lineCounter) & 7;
                 }
 
                 z80Halted = z80.halted;
@@ -1766,6 +1770,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
 
                         // Immediately after the instruction is the interrupt response. This should occur at a known position relative to the HSync pulse.
                         // If it does not then the line clock counter is adjusted.
+                        // Note that this could obscure synchronization issues present in the running software.
                         if (lineClockCounter != InterruptResponsePositionStart)
                         {
                                 int lineCounterAdjustment = InterruptResponsePositionStart - lineClockCounter;
@@ -2100,6 +2105,7 @@ int zx81_do_scanline(SCANLINE *CurScanLine)
                         }
 
                         lineClockCounter += machine.tperscanline;
+                        syncOccurred = false;
                 }
 
                 tstotal += ts;

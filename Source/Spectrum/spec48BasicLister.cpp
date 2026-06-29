@@ -226,7 +226,8 @@ int spec48BasicLister::TranslateVariableType(unsigned char code)
 
 unsigned char spec48BasicLister::ConvertVariableNameCode(unsigned char code, bool first)
 {
-        unsigned char retVal = (unsigned char)((code & 0x1F) + 0x60);
+        unsigned char retVal = (unsigned char)(code & 0x7F);
+        if (first) retVal |= 0x40;
         return retVal;
 }
 

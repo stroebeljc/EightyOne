@@ -310,13 +310,13 @@ void IBasicLister::ExtractVariablesDetails()
 bool IBasicLister::ExtractEachVariable(int* address, VariableInfo& varInfo)
 {
         varInfo.address = *address;
+        if (varInfo.address<0 || varInfo.address>0xFFFF)
+                return false;
 
         const int EndOfVariablesMarker = 0x80;
         unsigned char typeByte = ReadByte((*address)++);
-        if (varInfo.address<0 || varInfo.address>0xFFFF || typeByte == EndOfVariablesMarker)
-        {
+        if (typeByte == EndOfVariablesMarker)
                 return false;
-        }
 
         varInfo.type = TranslateVariableType(typeByte);
         unsigned char letter;

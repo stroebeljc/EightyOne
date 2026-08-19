@@ -554,6 +554,7 @@ void IBasicLoader::OutputEmbeddedNumber(int& index, int& addressOffset, bool bin
         }
 
         int withoutSpacesNumberLength = (unsigned char*)pWithoutSpacesNumberEnd - pLineBufferWithoutSpaces;
+        if (withoutSpacesNumberLength == 0) withoutSpacesNumberLength = 1;
              
         int withSpacesIndex = 0;
 

@@ -1002,9 +1002,11 @@ bool IBasicLister::RenderTokenAsText(int& address, int& lengthRemaining, bool& l
         lengthRemaining--;
         bool endOfLine = (lengthRemaining <= 0);
 
-        if (endOfLine && (c == mLineEndingCode))
+        if (c == mLineEndingCode)
         {
-                return false;
+                if (endOfLine)
+                        return false;
+                withinRem = true;
         }
 
         bool remToken = (mKeyword[c] == " REM ");

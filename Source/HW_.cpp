@@ -70,6 +70,7 @@ extern void InitPatches(int machineType);
 extern bool LoadRomCartridgeFile(char *filename);
 extern int RomCartridgeCapacity;
 extern int LoadDock(char *Filename);
+extern int LoadExROM(char *Filename);
 
 static AnsiString programmableJoystickLeft;
 static AnsiString programmableJoystickRight;
@@ -1137,7 +1138,10 @@ void THW::ConfigureRomCartridge()
 
                 if (emulator.machine == MACHINESPECTRUM && (spectrum.model == SPECCYTS2068 || spectrum.model == SPECCYTC2068))
                 {
-                        loadSuccessful = LoadDock(romCartridgeFilePath.c_str());
+                        if (ExtractFileExt(romCartridgeFilePath).LowerCase()!=".dck")
+                                loadSuccessful = LoadExROM(romCartridgeFilePath.c_str());
+                        else
+                                loadSuccessful = LoadDock(romCartridgeFilePath.c_str());
                 }
                 else
                 {

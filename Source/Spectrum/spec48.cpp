@@ -51,6 +51,7 @@
 #include "Digitalkdrv.h"
 #include "Joystick.h"
 #include "main_.h"
+#include "HW_.h"
 
 #define VBLANKCOLOUR    (0*16)     
 #define HSYNCCOLOUR     VBLANKCOLOUR
@@ -82,7 +83,8 @@ extern int lastMemoryReadValueHi, lastMemoryWriteValueHi;
 extern void add_blank(SCANLINE *line, int borrow, BYTE colour);
 
 extern void add_blank(SCANLINE *line, int tstates, BYTE colour);
-extern void LoadDock(char *filename);
+extern int LoadDock(char *filename);
+extern int LoadExROM(char *Filename);
 
 extern long noise;
 extern int SelectAYReg;
@@ -279,6 +281,8 @@ void spec48_initialise()
         for(i=0;i<sizeof(TimexWritable);i++)
                 TimexWritable[i]=0;
 
+        HW->ConfigureRomCartridge();
+        
         if (machine.HDType == HDSIMPLECF)
         {
                 AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLECF);

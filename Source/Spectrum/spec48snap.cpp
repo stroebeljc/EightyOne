@@ -158,6 +158,41 @@ int LoadDock(char *Filename)
         return(1);
 }
 
+int LoadExROM(char *Filename)
+{
+        FILE *f;
+        int i;
+        BYTE *ptr = NULL;
+
+        if (spectrum.model!=SPECCYTC2048 && spectrum.model!=SPECCYTS2068 && spectrum.model!=SPECCYTC2068)
+                return(0);
+
+        if (!strlen(Filename))
+        {
+                for(i=0;i<((64+64)*1024);i++) TimexMem[i]=255;
+                emulator.ROMDock[0]='\0';
+                return(1);
+        }
+
+        f=fopen(Filename, "rb");
+        if (!f) return(0);
+
+        for(i=0;i<8;i++)
+        {
+                TimexWritable[i+8]=0;
+                ptr=TimexMem+65536;  //ExROM chunk
+
+                if (ptr == NULL) return 0;
+
+                ptr += i*8192;
+                fread(ptr,1,8192,f);
+                rewind(f);
+        }
+        fclose(f);
+        strcpy(emulator.ROMDock, Filename);
+        return(1);
+}
+
 unsigned char *z80expandSpectra(unsigned char *in, int OutAddr, int Count)
 {
         while(Count)

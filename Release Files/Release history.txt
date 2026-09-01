@@ -43,6 +43,8 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Addressed some startup sequencing issues by loading the system configuration after construction.
   - Fixed Spectrum BASIC listings to contrast foreground and background when necessary and to show
     listings that extend beyond the 48k boundary on Spectrum 128 and Spectrum +2/+2A/+3 machines.
+  - Fixed unsupported BIN and ROM file types for cartridges.
+  - Fixed issue loading BASIC files that contain numbers represented by a single decimal point.
 * Enhancements:
   - Added an Automatic selection to Fullscreen display options, which uses the screen
     resolution detected at application start. Also changed default width setting to
@@ -63,6 +65,7 @@ Version 1.42 - 09/07/2025 (by John Stroebel and Paul Farrow)
   - Added BASIC lister support for TS2068, TC2068, and TC2048.
   - Added flash save support for TC2068 and TC2048.
   - Added support for BASIC lister saving of code hidden after a newline in non-REM statements.
+  - Added support for multi-segment DCK files.
 
 Version 1.41 - 02/03/2025 (by Paul Farrow and John Stroebel)
 * Bug fixes:

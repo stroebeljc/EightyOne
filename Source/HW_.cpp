@@ -1134,32 +1134,37 @@ void THW::ConfigureRomCartridge()
                         romcartridge.zxc1Configuration = (ZXC1TYPE)ZXC1ConfigurationBox->ItemIndex;
                 }
 
-                int loadSuccessful;
+                LoadRomCartridge(romCartridgeFilePath);
+        }
+}
 
-                if (emulator.machine == MACHINESPECTRUM && (spectrum.model == SPECCYTS2068 || spectrum.model == SPECCYTC2068))
-                {
-                        if (ExtractFileExt(romCartridgeFilePath).LowerCase()!=".dck")
-                                loadSuccessful = LoadExROM(romCartridgeFilePath.c_str());
-                        else
-                                loadSuccessful = LoadDock(romCartridgeFilePath.c_str());
-                }
+void THW::LoadRomCartridge(AnsiString filePath)
+{
+        int loadSuccessful;
+
+        if (emulator.machine == MACHINESPECTRUM && (spectrum.model == SPECCYTS2068 || spectrum.model == SPECCYTC2068))
+        {
+                if (ExtractFileExt(filePath).LowerCase()!=".dck")
+                        loadSuccessful = LoadExROM(filePath.c_str());
                 else
-                {
-                        LoadDock((char *)"");
-                        loadSuccessful = LoadRomCartridgeFile(romCartridgeFilePath.c_str());
-                }
+                        loadSuccessful = LoadDock(filePath.c_str());
+        }
+        else
+        {
+                LoadDock((char *)"");
+                loadSuccessful = LoadRomCartridgeFile(filePath.c_str());
+        }
 
-                strcpy(emulator.romcartridgefilepath, romCartridgeFilePath.c_str());
+        strcpy(emulator.romcartridgefilepath, filePath.c_str());
 
-                if (!loadSuccessful)
-                {
-                        AnsiString msg;
-                        msg = "Failed to load cartridge file:\n\n";
-                        msg += romCartridgeFilePath;
-                        Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
+        if (!loadSuccessful)
+        {
+                AnsiString msg;
+                msg = "Failed to load cartridge file:\n\n";
+                msg += filePath;
+                Application->MessageBox(msg.c_str(), "Error", MB_OK | MB_ICONERROR);
 
-                        LoadDock((char *)"");
-                }
+                LoadDock((char *)"");
         }
 }
 

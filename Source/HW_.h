@@ -380,6 +380,7 @@ private:	// User declarations
         void ConfigureColour();
         void ConfigureChroma(bool prevChromaColourSwitchOn);
         void ConfigureSpectra(bool prevSpectraColourSwitchOn);
+        void ConfigureRomCartridge();
         void ConfigureCharacterGenerator();
         void ConfigureHiRes();
         void ConfigureSound();
@@ -406,12 +407,12 @@ private:	// User declarations
 public:		// User declarations
         __fastcall THW(TComponent* Owner);
         bool ResetRequired;
-        void ConfigureRomCartridge();
         void UpdateHardwareSettings(bool disableReset);
         void SaveSettings(TIniFile* ini);
         void LoadSettings(TIniFile* ini);
         void SetZXpandState(bool checked, bool enabled);
         void UpdateSinclairJoystickKeys();
+        void LoadRomCartridge(AnsiString filePath);
         int SelectEntry(TComboBox* comboBox, AnsiString text);
 };
 //---------------------------------------------------------------------------

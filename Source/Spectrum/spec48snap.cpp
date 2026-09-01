@@ -126,32 +126,35 @@ int LoadDock(char *Filename)
         f=fopen(Filename, "rb");
         if (!f) return(0);
 
-        bank=fgetc(f);
-        if (feof(f)) return 0;
-
-        if (bank > 0 && bank < 254) return 0;
-
-        for(i=0;i<8;i++)
+        while (1)
         {
-                int b = fgetc(f);
-                if (feof(f)) return 0;
-                chunks[i]=b;
-                if ((bank==0) && (chunks[i]&1))
-                        TimexWritable[i]=1;
-                if ((bank==254) && (chunks[i]&1))
-                        TimexWritable[i+8]=1;
-        }
+                bank=fgetc(f);
+                if (feof(f)) break;
 
-        for(i=0;i<8;i++)
-        {
-                if (bank==0) ptr=TimexMem;  // Dock chunk
-                else if (bank==254) ptr=TimexMem+65536;  //ExROM chunk
-                else if (bank==255) ptr=SpectrumMem;  // Home chunk
+                if (bank > 0 && bank < 254) break;
 
-                if (ptr == NULL) return 0;
-                
-                ptr += i*8192;
-                if (chunks[i]&2) fread(ptr,1,8192,f);
+                for(i=0;i<8;i++)
+                {
+                        int b = fgetc(f);
+                        if (feof(f)) return 0;
+                        chunks[i]=b;
+                        if ((bank==0) && (chunks[i]&1))
+                                TimexWritable[i]=1;
+                        if ((bank==254) && (chunks[i]&1))
+                                TimexWritable[i+8]=1;
+                }
+
+                for(i=0;i<8;i++)
+                {
+                        if (bank==0) ptr=TimexMem;  // Dock chunk
+                        else if (bank==254) ptr=TimexMem+65536;  //ExROM chunk
+                        else if (bank==255) ptr=SpectrumMem;  // Home chunk
+
+                        if (ptr == NULL) return 0;
+
+                        ptr += i*8192;
+                        if (chunks[i]&2) fread(ptr,1,8192,f);
+                }
         }
         fclose(f);
         strcpy(emulator.ROMDock, Filename);

@@ -281,8 +281,6 @@ void spec48_initialise()
         for(i=0;i<sizeof(TimexWritable);i++)
                 TimexWritable[i]=0;
 
-        HW->ConfigureRomCartridge();
-        
         if (machine.HDType == HDSIMPLECF)
         {
                 AnsiString romFile = PrependFolder(ideRomsFolder, emulator.ROMSIMPLECF);
@@ -381,7 +379,7 @@ void spec48_initialise()
                 memcpy(MultifaceMem,memory,romlen);
         }
 
-        if (strlen(emulator.ROMDock)) LoadDock(emulator.ROMDock);
+        if (strlen(emulator.ROMDock)) HW->LoadRomCartridge(emulator.ROMDock);
 
         SPECTopBorder = (machine.NTSC) ? 32:56;
         SPECLeftBorder = 1+37*2;

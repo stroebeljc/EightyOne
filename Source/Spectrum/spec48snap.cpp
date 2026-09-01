@@ -131,7 +131,7 @@ int LoadDock(char *Filename)
                 bank=fgetc(f);
                 if (feof(f)) break;
 
-                if (bank > 0 && bank < 254) break;
+                if (bank > 0 && bank < 254) return(0);
 
                 for(i=0;i<8;i++)
                 {
@@ -165,7 +165,7 @@ int LoadExROM(char *Filename)
 {
         FILE *f;
         int i;
-        BYTE *ptr = NULL;
+        BYTE *ptr;
 
         if (spectrum.model!=SPECCYTC2048 && spectrum.model!=SPECCYTS2068 && spectrum.model!=SPECCYTC2068)
                 return(0);

@@ -119,6 +119,7 @@ static bool iniFileExists = false;
 static HWND OldhWnd=NULL;
 static int lastRZXFrameCount=0;
 static int Drive=0;
+static bool restartNeeded = false;
 
 const int bufferLength = 255;
 char webBuffer[bufferLength];
@@ -895,6 +896,15 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
                 break;
         default:
                 break;
+        }
+
+        if (restartNeeded)
+        {
+                restartNeeded = false;
+                const bool disableResetStatus = false;
+                HW->UpdateHardwareSettings(disableResetStatus);
+
+                HardReset1Click(NULL);
         }
 
         if (P3Drive->Height<80)
@@ -2470,7 +2480,15 @@ int TForm1::HandleRunFrameThreadProc(void *param)
 
         if(!self) return -1;
 
-        self->HandleRunFrame();
+        try {
+                self->HandleRunFrame();
+        }
+        catch (...) {
+                self->FrameIsRunning = false;
+                self->RunFrameEnable = false;
+                ZXDB("Unknown Internal Error Occurred. Executing hard reset.");
+                restartNeeded = true;
+        }
         return 0;
 }
 
